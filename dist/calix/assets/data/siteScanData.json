@@ -1,0 +1,956 @@
+{
+    "msg": "result",
+    "id": "50",
+    "result": {
+      "neighbor": [
+        {
+          "radio": "5g",
+          "ssid": "A_U4_Supreme",
+          "channel": 36,
+          "rssi": -19,
+          "security": "wpa-wpa2",
+          "bssid": "D0:76:8F:27:17:8A",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "",
+          "channel": 36,
+          "rssi": -20,
+          "security": "wpa2",
+          "bssid": "F2:76:8F:27:17:8A",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "test1",
+          "channel": 64,
+          "rssi": -25,
+          "security": "none",
+          "bssid": "4E:77:46:85:BD:D1",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "",
+          "channel": 64,
+          "rssi": -25,
+          "security": "wpa2",
+          "bssid": "6A:77:46:85:BD:D1",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "5GHz_IPTV_SSID7669D7",
+          "channel": 64,
+          "rssi": -26,
+          "security": "wpa2",
+          "bssid": "5E:77:46:85:BD:D1",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "wifi2028",
+          "channel": 64,
+          "rssi": -26,
+          "security": "wpa2",
+          "bssid": "48:77:46:85:BD:D1",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "u4#apos;123",
+          "channel": 132,
+          "rssi": -30,
+          "security": "wpa2",
+          "bssid": "D0:76:8F:2B:34:C7",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "",
+          "channel": 132,
+          "rssi": -31,
+          "security": "wpa2",
+          "bssid": "6A:77:46:85:BF:01",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "CXNK007669FD",
+          "channel": 132,
+          "rssi": -31,
+          "security": "wpa2",
+          "bssid": "48:77:46:85:BF:01",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "",
+          "channel": 157,
+          "rssi": -32,
+          "security": "wpa-wpa2",
+          "bssid": "42:65:7F:E4:D0:4C",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "Yang-4220",
+          "channel": 36,
+          "rssi": -34,
+          "security": "wpa2",
+          "bssid": "D0:76:8F:27:1E:82",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "u12#apos;123",
+          "channel": 157,
+          "rssi": -34,
+          "security": "wpa2",
+          "bssid": "44:65:7F:0A:70:01",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "21321",
+          "channel": 132,
+          "rssi": -34,
+          "security": "none",
+          "bssid": "4E:77:46:85:BF:01",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "CXNK0088AD82",
+          "channel": 149,
+          "rssi": -34,
+          "security": "wpa2",
+          "bssid": "D0:76:8F:27:1B:52",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "CXNK001D8E3D",
+          "channel": 157,
+          "rssi": -34,
+          "security": "wpa-wpa2",
+          "bssid": "44:65:7F:E4:D0:4C",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "",
+          "channel": 149,
+          "rssi": -35,
+          "security": "wpa2",
+          "bssid": "F2:76:8F:27:1B:52",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "CXNK001D8E3D",
+          "channel": 157,
+          "rssi": -36,
+          "security": "wpa-wpa2",
+          "bssid": "00:06:31:ED:E9:57",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "!!!844e_5g",
+          "channel": 157,
+          "rssi": -36,
+          "security": "wpa-wpa2",
+          "bssid": "0A:06:31:ED:E9:57",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "CXNK001D1D3C",
+          "channel": 100,
+          "rssi": -36,
+          "security": "wpa-wpa2",
+          "bssid": "00:06:31:E9:CD:C8",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "",
+          "channel": 157,
+          "rssi": -37,
+          "security": "wpa2",
+          "bssid": "6A:77:46:D8:F2:C0",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "guest",
+          "channel": 44,
+          "rssi": -37,
+          "security": "none",
+          "bssid": "4E:77:46:85:BC:F1",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "guest",
+          "channel": 44,
+          "rssi": -37,
+          "security": "none",
+          "bssid": "4A:65:7F:15:0C:9E",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "",
+          "channel": 100,
+          "rssi": -37,
+          "security": "wpa-wpa2",
+          "bssid": "02:06:31:E9:CD:C8",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "CXNK007F4AC0",
+          "channel": 157,
+          "rssi": -38,
+          "security": "wpa-wpa2",
+          "bssid": "48:77:46:D8:F2:C0",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "Yang-4220",
+          "channel": 36,
+          "rssi": -38,
+          "security": "wpa2",
+          "bssid": "D0:76:8F:2B:34:95",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "",
+          "channel": 44,
+          "rssi": -38,
+          "security": "wpa2",
+          "bssid": "5A:65:7F:69:16:12",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "CXNK001D8E3D",
+          "channel": 157,
+          "rssi": -38,
+          "security": "wpa-wpa2",
+          "bssid": "44:65:7F:7C:82:88",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "!!!aileen_854_5g",
+          "channel": 108,
+          "rssi": -40,
+          "security": "wpa-wpa2",
+          "bssid": "EA:4F:82:83:7C:54",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "5g_CXNK001D8888",
+          "channel": 108,
+          "rssi": -40,
+          "security": "wpa-wpa2",
+          "bssid": "EC:4F:82:83:7C:54",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "Jing_2028_CXNK0088ADE5",
+          "channel": 132,
+          "rssi": -40,
+          "security": "wpa-wpa2",
+          "bssid": "D0:76:8F:2B:33:46",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "",
+          "channel": 153,
+          "rssi": -41,
+          "security": "wpa-wpa2",
+          "bssid": "42:65:7F:E4:D0:04",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "CXNK005A79F9",
+          "channel": 44,
+          "rssi": -41,
+          "security": "wpa2",
+          "bssid": "44:65:7F:69:16:12",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "a_4227_ywu",
+          "channel": 36,
+          "rssi": -41,
+          "security": "wpa2",
+          "bssid": "48:77:46:BD:D6:8B",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "",
+          "channel": 132,
+          "rssi": -41,
+          "security": "wpa2",
+          "bssid": "E6:76:8F:2B:33:46",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "CXNK007A3FD6",
+          "channel": 36,
+          "rssi": -42,
+          "security": "wpa2",
+          "bssid": "48:77:46:BD:D8:56",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "",
+          "channel": 108,
+          "rssi": -42,
+          "security": "wpa-wpa2",
+          "bssid": "E2:4F:82:83:7C:54",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "",
+          "channel": 153,
+          "rssi": -42,
+          "security": "wpa2",
+          "bssid": "66:65:7F:14:9A:D4",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "",
+          "channel": 100,
+          "rssi": -42,
+          "security": "wpa-wpa2",
+          "bssid": "02:06:31:ED:EB:4F",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "CXNK001D8ECF",
+          "channel": 100,
+          "rssi": -42,
+          "security": "wpa-wpa2",
+          "bssid": "00:06:31:ED:EB:4F",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "aileen_csc_4220",
+          "channel": 144,
+          "rssi": -42,
+          "security": "none",
+          "bssid": "4E:77:46:BD:D6:5E",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "",
+          "channel": 132,
+          "rssi": -42,
+          "security": "wpa2",
+          "bssid": "6A:77:46:85:C0:89",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "Gggggh",
+          "channel": 36,
+          "rssi": -42,
+          "security": "none",
+          "bssid": "4E:77:46:BD:D8:56",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "CXNK0088AD5D",
+          "channel": 132,
+          "rssi": -43,
+          "security": "wpa2",
+          "bssid": "48:77:46:86:B4:02",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "Calix-5G-backhaul778D3D",
+          "channel": 112,
+          "rssi": -43,
+          "security": "wpa2",
+          "bssid": "6A:77:46:9A:06:56",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "11111111111111111111111111111111",
+          "channel": 112,
+          "rssi": -43,
+          "security": "none",
+          "bssid": "48:77:46:9A:06:56",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "CXNK001D8F70",
+          "channel": 64,
+          "rssi": -43,
+          "security": "wpa-wpa2",
+          "bssid": "00:01:02:03:04:05",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "",
+          "channel": 64,
+          "rssi": -43,
+          "security": "wpa-wpa2",
+          "bssid": "02:01:02:03:04:05",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "",
+          "channel": 44,
+          "rssi": -44,
+          "security": "wpa2",
+          "bssid": "66:65:7F:14:9D:44",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "",
+          "channel": 44,
+          "rssi": -44,
+          "security": "wpa2",
+          "bssid": "5A:65:7F:14:9D:44",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "CXNK005A79F9",
+          "channel": 44,
+          "rssi": -44,
+          "security": "wpa2",
+          "bssid": "44:65:7F:14:9D:44",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "ywu_2028",
+          "channel": 132,
+          "rssi": -44,
+          "security": "wpa2",
+          "bssid": "48:77:46:85:C0:89",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "5GHz_Backhaul_SSID1B82AF",
+          "channel": 112,
+          "rssi": -45,
+          "security": "wpa-wpa2",
+          "bssid": "02:06:31:E0:5E:93",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "CXNK001B82AF",
+          "channel": 112,
+          "rssi": -45,
+          "security": "wpa-wpa2",
+          "bssid": "00:06:31:E0:5E:93",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "",
+          "channel": 48,
+          "rssi": -45,
+          "security": "wpa-wpa2",
+          "bssid": "30:91:8F:5F:2C:12",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "",
+          "channel": 48,
+          "rssi": -46,
+          "security": "none",
+          "bssid": "E6:76:8F:2B:34:D1",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "guest4",
+          "channel": 48,
+          "rssi": -46,
+          "security": "none",
+          "bssid": "E2:76:8F:2B:34:D1",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "aaaaaaaria network",
+          "channel": 153,
+          "rssi": -46,
+          "security": "wpa-wpa2",
+          "bssid": "44:65:7F:09:FC:01",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "CXNK005A79F9",
+          "channel": 44,
+          "rssi": -46,
+          "security": "wpa2",
+          "bssid": "44:65:7F:09:FC:81",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "guest2",
+          "channel": 48,
+          "rssi": -46,
+          "security": "none",
+          "bssid": "DA:76:8F:2B:34:D1",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "guest3",
+          "channel": 48,
+          "rssi": -46,
+          "security": "none",
+          "bssid": "52:65:7F:15:A6:FC",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "guest2",
+          "channel": 48,
+          "rssi": -46,
+          "security": "none",
+          "bssid": "4E:65:7F:15:A6:FC",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "guest1",
+          "channel": 48,
+          "rssi": -46,
+          "security": "none",
+          "bssid": "4A:65:7F:15:A6:FC",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "guest1",
+          "channel": 48,
+          "rssi": -46,
+          "security": "none",
+          "bssid": "D6:76:8F:2B:34:D1",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "5g",
+          "ssid": "guest3",
+          "channel": 48,
+          "rssi": -47,
+          "security": "none",
+          "bssid": "DE:76:8F:2B:34:D1",
+          "channel_bandwidth": "80MHz"
+        },
+        {
+          "radio": "24g",
+          "ssid": "CXNK007A2816",
+          "channel": 6,
+          "rssi": -14,
+          "security": "wpa2",
+          "bssid": "48:77:46:BD:03:A3",
+          "channel_bandwidth": "20MHz"
+        },
+        {
+          "radio": "24g",
+          "ssid": "",
+          "channel": 6,
+          "rssi": -14,
+          "security": "wpa2",
+          "bssid": "6A:77:46:BD:03:A3",
+          "channel_bandwidth": "20MHz"
+        },
+        {
+          "radio": "24g",
+          "ssid": "u12#apos;123",
+          "channel": 11,
+          "rssi": -16,
+          "security": "wpa2",
+          "bssid": "48:77:46:B5:39:64",
+          "channel_bandwidth": "20MHz"
+        },
+        {
+          "radio": "24g",
+          "ssid": "",
+          "channel": 11,
+          "rssi": -17,
+          "security": "wpa2",
+          "bssid": "F2:76:8F:27:17:89",
+          "channel_bandwidth": "20MHz"
+        },
+        {
+          "radio": "24g",
+          "ssid": "",
+          "channel": 11,
+          "rssi": -19,
+          "security": "wpa2",
+          "bssid": "6A:77:46:B5:37:70",
+          "channel_bandwidth": "20MHz"
+        },
+        {
+          "radio": "24g",
+          "ssid": "!!!!!!!!!not more than me",
+          "channel": 11,
+          "rssi": -19,
+          "security": "wpa2",
+          "bssid": "48:77:46:B5:37:70",
+          "channel_bandwidth": "20MHz"
+        },
+        {
+          "radio": "24g",
+          "ssid": "",
+          "channel": 11,
+          "rssi": -21,
+          "security": "wpa2",
+          "bssid": "6A:77:46:85:BF:60",
+          "channel_bandwidth": "20MHz"
+        },
+        {
+          "radio": "24g",
+          "ssid": "guest",
+          "channel": 11,
+          "rssi": -22,
+          "security": "none",
+          "bssid": "4A:65:7F:15:0C:9D",
+          "channel_bandwidth": "20MHz"
+        },
+        {
+          "radio": "24g",
+          "ssid": "CXNK0088AD0E",
+          "channel": 1,
+          "rssi": -22,
+          "security": "wpa2",
+          "bssid": "D0:76:8F:27:17:B1",
+          "channel_bandwidth": "20MHz"
+        },
+        {
+          "radio": "24g",
+          "ssid": "",
+          "channel": 11,
+          "rssi": -22,
+          "security": "wpa2",
+          "bssid": "66:65:7F:15:0C:9D",
+          "channel_bandwidth": "20MHz"
+        },
+        {
+          "radio": "24g",
+          "ssid": "Cary3",
+          "channel": 11,
+          "rssi": -22,
+          "security": "wpa2",
+          "bssid": "44:65:7F:15:0C:9D",
+          "channel_bandwidth": "20MHz"
+        },
+        {
+          "radio": "24g",
+          "ssid": "CXNK003C95A2",
+          "channel": 1,
+          "rssi": -23,
+          "security": "wpa-wpa2",
+          "bssid": "EC:4F:82:F4:56:99",
+          "channel_bandwidth": "20MHz"
+        },
+        {
+          "radio": "24g",
+          "ssid": "2028_Jenny",
+          "channel": 11,
+          "rssi": -24,
+          "security": "wpa2",
+          "bssid": "48:77:46:85:BF:60",
+          "channel_bandwidth": "20MHz"
+        },
+        {
+          "radio": "24g",
+          "ssid": "wifi2028",
+          "channel": 1,
+          "rssi": -25,
+          "security": "wpa2",
+          "bssid": "48:77:46:85:BD:D0",
+          "channel_bandwidth": "20MHz"
+        },
+        {
+          "radio": "24g",
+          "ssid": "test1",
+          "channel": 1,
+          "rssi": -25,
+          "security": "none",
+          "bssid": "4E:77:46:85:BD:D0",
+          "channel_bandwidth": "20MHz"
+        },
+        {
+          "radio": "24g",
+          "ssid": "Yang-2026",
+          "channel": 6,
+          "rssi": -25,
+          "security": "wpa2",
+          "bssid": "44:65:7F:14:9D:B5",
+          "channel_bandwidth": "20MHz"
+        },
+        {
+          "radio": "24g",
+          "ssid": "Yang-2026",
+          "channel": 6,
+          "rssi": -25,
+          "security": "wpa2",
+          "bssid": "44:65:7F:68:64:6D",
+          "channel_bandwidth": "20MHz"
+        },
+        {
+          "radio": "24g",
+          "ssid": "u12#apos;123",
+          "channel": 11,
+          "rssi": -26,
+          "security": "wpa2",
+          "bssid": "CC:BE:59:FC:0D:37",
+          "channel_bandwidth": "20MHz"
+        },
+        {
+          "radio": "24g",
+          "ssid": "",
+          "channel": 6,
+          "rssi": -26,
+          "security": "wpa2",
+          "bssid": "66:65:7F:14:9D:B5",
+          "channel_bandwidth": "20MHz"
+        },
+        {
+          "radio": "24g",
+          "ssid": "2026guest1",
+          "channel": 1,
+          "rssi": -26,
+          "security": "wpa-wpa2",
+          "bssid": "4A:65:7F:15:37:75",
+          "channel_bandwidth": "20MHz"
+        },
+        {
+          "radio": "24g",
+          "ssid": "CXNK007A2817",
+          "channel": 1,
+          "rssi": -26,
+          "security": "wpa-wpa2",
+          "bssid": "48:77:46:BD:03:AC",
+          "channel_bandwidth": "20MHz"
+        },
+        {
+          "radio": "24g",
+          "ssid": "CXNK007669FD",
+          "channel": 1,
+          "rssi": -27,
+          "security": "wpa2",
+          "bssid": "48:77:46:85:BF:00",
+          "channel_bandwidth": "20MHz"
+        },
+        {
+          "radio": "24g",
+          "ssid": "",
+          "channel": 1,
+          "rssi": -27,
+          "security": "wpa2",
+          "bssid": "6A:77:46:85:BF:00",
+          "channel_bandwidth": "20MHz"
+        },
+        {
+          "radio": "24g",
+          "ssid": "",
+          "channel": 11,
+          "rssi": -27,
+          "security": "wpa2",
+          "bssid": "EE:BE:59:FC:0D:37",
+          "channel_bandwidth": "20MHz"
+        },
+        {
+          "radio": "24g",
+          "ssid": "",
+          "channel": 1,
+          "rssi": -27,
+          "security": "wpa2",
+          "bssid": "F2:76:8F:27:1C:E9",
+          "channel_bandwidth": "20MHz"
+        },
+        {
+          "radio": "24g",
+          "ssid": "",
+          "channel": 11,
+          "rssi": -27,
+          "security": "wpa2",
+          "bssid": "6A:77:46:BD:D8:A6",
+          "channel_bandwidth": "20MHz"
+        },
+        {
+          "radio": "24g",
+          "ssid": "",
+          "channel": 1,
+          "rssi": -28,
+          "security": "wpa2",
+          "bssid": "66:65:7F:15:37:75",
+          "channel_bandwidth": "20MHz"
+        },
+        {
+          "radio": "24g",
+          "ssid": "",
+          "channel": 6,
+          "rssi": -28,
+          "security": "wpa2",
+          "bssid": "EE:BE:59:E0:42:ED",
+          "channel_bandwidth": "20MHz"
+        },
+        {
+          "radio": "24g",
+          "ssid": "CXNK66664444",
+          "channel": 6,
+          "rssi": -28,
+          "security": "wpa2",
+          "bssid": "CC:BE:59:E0:42:ED",
+          "channel_bandwidth": "20MHz"
+        },
+        {
+          "radio": "24g",
+          "ssid": "aaaaaaaria network",
+          "channel": 11,
+          "rssi": -28,
+          "security": "wpa-wpa2",
+          "bssid": "48:77:46:BD:D8:A6",
+          "channel_bandwidth": "20MHz"
+        },
+        {
+          "radio": "24g",
+          "ssid": "CXNK001D8F70",
+          "channel": 11,
+          "rssi": -29,
+          "security": "wpa-wpa2",
+          "bssid": "00:06:31:ED:F0:F7",
+          "channel_bandwidth": "20MHz"
+        },
+        {
+          "radio": "24g",
+          "ssid": "2026guest2",
+          "channel": 1,
+          "rssi": -29,
+          "security": "wpa2",
+          "bssid": "4E:65:7F:15:37:75",
+          "channel_bandwidth": "20MHz"
+        }
+      ],
+      "busyness": [
+        {
+          "radio": "5g",
+          "channel": 44,
+          "channel_bandwidth": "20MHz",
+          "busyness": 200
+        },
+        {
+          "radio": "24g",
+          "channel": 1,
+          "channel_bandwidth": "20MHz",
+          "busyness": 990
+        }
+      ],
+      "24g": {
+        "channel_bandwidth": "20MHz",
+        "current": {
+          "channel": 6,
+          "power": -3.38,
+          "coc_channel_number": 7,
+          "uoc_channel_number": 0
+        },
+        "recommend": {
+          "channel": 6,
+          "power": -3.38,
+          "coc_channel_number": 7,
+          "uoc_channel_number": 0
+        },
+        "ranking_list": [
+          {
+            "channel": 6,
+            "power": -3.38,
+            "coc_channel_number": 7,
+            "uoc_channel_number": 0
+          },
+          {
+            "channel": 11,
+            "power": 4.43,
+            "coc_channel_number": 14,
+            "uoc_channel_number": 0
+          },
+          {
+            "channel": 1,
+            "power": 35.98,
+            "coc_channel_number": 11,
+            "uoc_channel_number": 0
+          }
+        ],
+        "ranking": 1
+      },
+      "5g": {
+        "channel_bandwidth": "80MHz",
+        "current": {
+          "channel": 161,
+          "power": -1.78,
+          "coc_channel_number": 0,
+          "uoc_channel_number": 13
+        },
+        "recommend": {
+          "channel": 149,
+          "power": -2.71,
+          "coc_channel_number": 2,
+          "uoc_channel_number": 11
+        },
+        "ranking_list": [
+          {
+            "channel": 149,
+            "power": -2.71,
+            "coc_channel_number": 2,
+            "uoc_channel_number": 11
+          },
+          {
+            "channel": 36,
+            "power": 9.24,
+            "coc_channel_number": 7,
+            "uoc_channel_number": 17
+          }
+        ],
+        "ranking": -1
+      },
+      "orgId": "470053",
+      "sn": "CXNK005AA8BE",
+      "timestamp": "2020-11-13T10:07:23.261Z",
+      "_id": "40e2af2d-efbd-4406-a674-0e7bf2c61897"
+    }
+  }

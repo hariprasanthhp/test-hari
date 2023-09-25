@@ -1,0 +1,62 @@
+@mixin shadow {
+  box-shadow: 0 0px 0px 0 rgba(0, 0, 0, 0.16), 0 0px 5px 0 rgba(0, 0, 0, 0.16) !important
+}
+
+input[type="text"], input[type="search"],
+input[type="email"], input[type="password"]{
+  border-radius: 20px !important;
+  border: none !important;
+  outline: none !important;
+  background-color: $white-grey !important;
+  padding: 6px 20px !important;
+}
+
+input[type="text"]:hover, input[type="email"]:hover,
+input[type="password"]:hover {
+  border: 2px solid $light-grey !important;
+}
+
+input[type="text"]:active, input[type="text"]:focus,
+input[type="email"]:active, input[type="email"]:focus,
+input[type="password"]:active, input[type="password"]:focus {
+  border: 2px solid $primary !important;
+}
+
+input[type="text"].ng-invalid.ng-touched,
+input[type="email"].ng-invalid.ng-touched,
+input[type="password"].ng-invalid.ng-touched {
+  border: 2px solid $bright-red !important;
+}
+
+// to remove the defaukt 'x' in input search
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration { display: none; }
+
+.help-block {
+  display: inline-block !important;
+  margin-left: 20px !important;
+  .error {
+    color: $bright-red !important;
+    font-size: 13px !important;
+  }
+}
+
+.autocomplete {
+  width: 100%;
+  display: flex;
+  position: relative;
+  input {
+    &:focus, &:active {
+      @include shadow;
+    }
+  }
+  button {
+    position: absolute !important;
+    right: 0 !important;
+    top: -6px !important;
+    font-size: 20px !important;
+    padding: 9px 15px !important;
+  }
+}

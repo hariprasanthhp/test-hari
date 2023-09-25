@@ -1,0 +1,1 @@
+export const ALARM_BY_SEVERITY = { "alarm": { "cleared": { "critical": 0, "major": 2, "minor": 265, "warning": 0, "info": 2 }, "raised": { "critical": 0, "major": 8, "minor": 268, "warning": 0, "info": 2 } }, "event": { "count": 0 } };

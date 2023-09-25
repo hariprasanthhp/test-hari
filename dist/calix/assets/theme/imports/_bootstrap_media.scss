@@ -1,0 +1,57 @@
+@import './variables';
+
+/* Huge Screen */
+@media (min-width: 1596px) {
+
+  .header {
+    height: auto !important;
+    color: $calix-black;
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    z-index: 1;
+  }
+
+}
+
+/* Tier 1 */
+@media (max-width: 1595px) {
+
+  .header {
+    height: auto !important;
+    color: $calix-black;
+    left: 0px;
+    top: 0px;
+    z-index: 1;
+  }
+
+}
+
+/* Tier 2 */
+@media (max-width: 1223px) {
+
+  .header {
+    height: auto !important;
+    color: $calix-black;
+    left: 0px;
+    top: 0px;
+    z-index: 1;
+  }
+}
+
+/* Tier 3 */
+@media (max-width: 1022px) {
+
+  .header {
+    height: auto !important;
+    color: $calix-black;
+  }
+}
+
+/* Mobile Devices */
+@media (max-width: 414px) {
+
+  .header {
+    color: $calix-black;
+  }
+}

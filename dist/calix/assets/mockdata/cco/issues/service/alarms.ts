@@ -1,0 +1,1 @@
+export const ALARMS = ["misc", "ont - sw - mismatch", "rx - frame - 256 - to - 511", "mgmt - ge - not - reachable", "icl - aps - forced -switch"]

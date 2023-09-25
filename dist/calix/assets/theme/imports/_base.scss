@@ -1,0 +1,33 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  //height: auto !important;
+}
+
+html, body {
+  font-family: 'Source Sans Pro', sans-serif !important;
+  background-color: #ffffff !important;
+  margin: 0 auto !important;
+  padding: 0 auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow-x: hidden;
+}
+
+body {
+  padding-left: 100px !important;
+  padding-right: 120px !important;
+}
+
+/***** REMOVE FOCUS HALLO *****/
+
+/* https://stackoverflow.com/questions/44295149/bootstrap-remove-blue-or-whatever-color-outline-from-a-focused-element */
+label,
+.btn:focus,
+.btn:active,
+.form-control:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+}

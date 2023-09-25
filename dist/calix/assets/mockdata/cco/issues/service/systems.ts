@@ -1,0 +1,1 @@
+export const SYSTEMS = [{ "uuid": "bc68c15c-2a50-4bd9-a699-24071684be37", "name": "E9-2_10.245.57.110", "fqn": "DEVICE=E9-2_10.245.57.110", "isDeleted": false }]

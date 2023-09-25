@@ -1,0 +1,110 @@
+
+$btn-color: #2078fa;
+$btn-hover-color: #1454b2;
+$btn-disabled: #c0ddfd;
+
+$btn-sec-color: #f8f8fa;
+$btn-sec-hover-color: #ebeaef;
+$btn-sec-disabled: #fcfcfd;
+
+button.sm-btn {
+  font-size: 11px !important;
+  padding: 0.375rem 1rem !important;
+}
+
+button.md-btn {
+  font-size: 15px !important;
+  padding: 0.375rem 1.5rem !important;
+}
+
+button.lg-btn {
+  font-size: 20px !important;
+  padding: 0.375rem 2rem !important;
+}
+
+.btn {
+  font-weight: unset !important;
+  border-radius: 25px !important;
+  outline-color: unset !important;
+  border: unset !important;
+}
+
+.btn-primary {
+  background-color: $btn-color !important;
+  color: $white !important;
+}
+
+.btn-primary:hover,
+.btn-primary:active,
+.btn-primary.active,
+.open .dropdown-toggle.btn-primary,
+.btn-primary:active:hover,
+.btn-primary.active:hover,
+.btn-primary:focus,
+.btn-primary:active:focus,
+.btn-primary.active:focus {
+  background-color: $calix-blue !important;
+  border-color: $calix-blue !important;
+  color: $white !important;
+}
+
+button.btn-primary.disabled,
+.btn-primary.disabled:focus,
+.btn-primary.disabled:active:focus,
+.btn-primary.disabled.active:focus {
+  background-color: $btn-disabled !important;
+}
+
+.btn-secondary {
+  background-color: $btn-sec-color !important;
+  color: $calix-black !important;
+}
+
+.btn-secondary:hover,
+.btn-secondary:active,
+.btn-secondary.active,
+.open .dropdown-toggle.btn-secondary,
+.btn-secondary:active:hover,
+.btn-secondary.active:hover {
+  background-color: $btn-sec-hover-color !important;
+  border-color: $btn-sec-hover-color !important;
+  color: $calix-black !important;
+}
+
+.btn-secondary:focus,
+.btn-secondary:active:focus,
+.btn-secondary.active:focus {
+  background-color: $btn-sec-hover-color !important;
+  color: $btn-color !important;
+}
+
+button.btn-secondary.disabled,
+.btn-secondary.disabled:focus,
+.btn-secondary.disabled:active:focus,
+.btn-secondary.disabled.active:focus {
+  background-color: $btn-sec-disabled !important;
+  color: $dark-grey !important;
+}
+
+button.disabled {
+  cursor: not-allowed !important;
+}
+
+.btn-icon-lg {
+  padding: 8px 15px !important;
+  font-size: 20px !important;
+  border-radius: 25px !important;
+}
+
+.btn-icon-md {
+  padding: 8px 13px !important;
+  font-size: 15px !important;
+  border-radius: 25px !important;
+}
+
+.btn-icon-sm {
+  padding: 6px 10px !important;
+  font-size: 11px !important;
+  border-radius: 25px !important;
+}
+
