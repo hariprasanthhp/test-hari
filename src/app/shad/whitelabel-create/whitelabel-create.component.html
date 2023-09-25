@@ -1,0 +1,299 @@
+<div class="position-relative">
+  <div class="border-bottom whitelabel-name">{{ language.Add_Whitelabel_Theme }}
+  </div>
+
+  <div class="alert alert-warning alert-dismissible fade show" role="alert" *ngIf="showError">
+    <div class="error-alert-wrapper d-flex justify-content-between">
+      <div class="error-alert-icon">
+        <img src="../../../assets/img/error-icon.svg" alt="">
+      </div>
+      <div class="error-alert-msg">
+        <strong>Error!</strong> {{ errorMsg }}.
+      </div>
+      <div class="error-alert-close">
+        <button type="button" class="close" (click)="hideError();">
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+      </div>
+  </div>
+
+  <div class="loader" *ngIf="loader">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary" role="">
+        <span class="sr-only">{{ language.Loading }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="row my-3">
+    <div class="col-md-12">
+      <div class="toggle-swtbtn checkbox switcher">
+        <label>
+          <input type="checkbox" name="Status" id="Status" [(ngModel)]="isActive" />
+          <span class="mr-1"><small></small></span>
+          {{ language.Enabled }}
+        </label>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+      <div class="form-input-field">
+        <label class="label-control">{{ language.Service_Provider }}
+        </label>
+
+        <div class="input-field">
+          {{ SPID }}
+        </div>
+      </div>
+      <div class="form-input-field ccl-form">
+        <label class="label-control">{{ language.Seller_Name }}<span class="error">*</span>
+        </label>
+
+        <div class="input-field">
+          <input id="appName" type="text" name="appName" [(ngModel)]="appName" />
+        </div>
+      </div>
+      <div class="form-input-field ccl-form">
+        <label class="label-control">{{ language.Primary_Color }}<span class="error">*</span>
+        </label>
+
+        <div class="input-field">
+          <!--<input [style.background]="primaryColor" [cpOutputFormat]="'hex'" [(colorPicker)]="primaryColor"
+            name="primaryColor" id="primaryColor" />-->
+
+            <input class="form-control"
+						name="primaryColor"
+						[(colorPicker)]="primaryColor"
+						[style.background]="primaryColor"
+						[(ngModel)]="primaryColor"
+						id="primaryColor"
+						[cpOutputFormat]="'hex'"
+						style="color: #faf9f5;"
+				   />
+
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-input-field">
+        <label class="label-control">{{ language.Logo_Icon }}<span class="error">*</span>
+          <!-- <span>
+            * {{language['Max-Width']}}: 1080px<br>
+            * {{language['Max-Height']}}: 180px<br>
+            * {{language.Format}}: .png ({{language['transparent background']}})<br>
+            * {{language['Max File size']}}: 250KB
+          </span> -->
+        </label>
+        <div class="input-field">
+          <div class="Commandiq-loge-name">
+            <input type="file"  name="logo" id="logo"  class="white-logo-input" #logo (change)="readURL(logo, 'logo')" accept= ".jpeg, .JPEG, .PNG, .jpg, .png, .JPG, .img, .IMG, .bin, .BIN"/>
+
+            <img id="logo_image" height="100px" width="200px" src=" "  
+							/>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-input-field">
+        <label class="label-control">{{ language.White_Logo_Icon }}<span class="error">*</span>
+          <!-- <span>
+            * {{language['Max-Width']}}: 1080px<br>
+            * {{language['Max-Height']}}: 180px<br>
+            * {{language.Format}}: .png ({{language['transparent background']}})<br>
+            * {{language['Max File size']}}: 250KB
+          </span> -->
+        </label>
+        <div class="input-field">
+          <div class="Commandiq-loge-name">
+            <input type="file"  name="white_logo" id="white_logo" class="white-logo-input" #white_logo (change)="readURL(white_logo, 'white_logo')"  accept= ".PNG, .png"/>
+            <img id="whitelogo_image" height="100px" width="200px" src=" " 
+							/>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">{{ language.Logo_Guidelines }}
+      <div class="guidelines">
+        <ul>
+
+           
+          <li>{{language['Max-Width']}}: 1080px</li>
+          <li>{{language['Max-Height']}}: 180px</li>
+         <!--<li>{{language.Format}}: .png ({{language['transparent background']}})</li>-->
+          <li>{{language['Max File size']}}: 250KB</li>
+         
+            <li>{{language.Format}}</li> <small>
+              {{language.Primary_Logo}}:
+              jpeg,JPEG,jpg,JPG,png,PNG,img,IMG,bin,BIN<br>
+              {{language.White_Logo}}:
+              png,PNG
+            </small>
+
+            
+          
+          
+          <!--<li>Max File Size : 250kb</li>
+          <li>Max Width : 1080px</li>
+          <li>Max Height :180px</li>
+          <li>Format:png</li>
+          <li>Transparent background recommended</li>-->
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <form>
+    <div class="white-form my-3">
+
+
+      <!-- <div class="form-input-field ccl-form">
+        <label class="label-control"
+          ><b>{{ language.App_Name }}</b>
+        </label>
+
+        <div class="input-field">
+          <input
+            id="appName"
+            type="text"
+            name="appName"
+            [(ngModel)]="appName"
+          />
+        </div>
+      </div> -->
+      <!-- <div class="form-input-field">
+        <label class="label-control"><b>{{ language.Logo_Icon }}</b>
+        </label>
+
+        <div class="input-field">
+          <div class="">
+            <input type="file" name="appIcon" id="appIcon" #appIcon (change)="readURL(appIcon, 'appIcon')" />
+          </div>
+        </div>
+      </div> -->
+
+
+
+      <!-- <div class="form-input-field ccl-form">
+        <label class="label-control"><b>Secondary Color </b> </label>
+
+        <div class="input-field">
+          <input [style.background]="secondaryColor" [(colorPicker)]="secondaryColor" name="secondaryColor"
+            id="secondaryColor" />
+        </div>
+      </div> -->
+
+
+      <!-- <div class="form-input-field flex-input">
+        <label class="label-control"><b>EULA</b> </label>
+
+        <div class="multi-file-upload input-field">
+          <label class="label-text">
+            {{ language.English_for_Android }}:
+          </label>
+
+          <div class="browse-file">
+            <div class="input-field">
+              <input type="file" name="eulaAndroidEnglish" id="eulaAndroidEnglish" #eulaAndroidEnglish
+                (change)="readURL(eulaAndroidEnglish, 'eulaAndroidEnglish ')" />
+            </div>
+          </div>
+          <label class="label-text"> {{ language.French_for_Android }}: </label>
+
+          <div class="browse-file">
+            <div class="input-field">
+              <input type="file" name="eulaAndroidFrench" id="eulaAndroidFrench" #eulaAndroidFrench
+                (change)="readURL(eulaAndroidFrench, 'eulaAndroidFrench ')" />
+            </div>
+          </div>
+          <label class="label-text"> {{ language.English_for_IOS }}: </label>
+          <div class="browse-file">
+            <div class="input-field">
+              <input type="file" name="eulaIOSEnglish" id="eulaIOSEnglish" #eulaIOSEnglish
+                (change)="readURL(eulaIOSEnglish, 'eulaIOSEnglish ')" />
+            </div>
+          </div>
+          <label class="label-text"> {{ language.French_for_IOS }}: </label>
+          <div class="browse-file">
+            <div class="input-field">
+              <input type="file" name="eulaIOSFrench" id="eulaIOSFrench" #eulaIOSFrench
+                (change)="readURL(eulaIOSFrench, 'eulaIOSFrench ')" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-input-field flex-input">
+        <label class="label-control"><b>{{ language.About }}</b>
+        </label>
+
+        <div class="multi-file-upload input-field">
+          <label class="label-text"> {{ language.English }} </label>
+          <div class="browse-file">
+            <div class="input-field">
+              <input type="file" name="aboutEnglish" id="aboutEnglish" #aboutEnglish
+                (change)="readURL(aboutEnglish, 'aboutEnglish ')" />
+            </div>
+          </div>
+          <label class="label-text"> {{ language.French }} </label>
+          <div class="browse-file">
+            <div class="input-field">
+              <input type="file" name="aboutFrench" id="aboutFrench" #aboutFrench
+                (change)="readURL(aboutFrench, 'aboutFrench ')" />
+            </div>
+            
+          </div>
+        </div>
+      </div>
+      <div class="form-input-field flex-input">
+        <div class="form-input-field ccl-form">
+          <label class="label-control"><b>{{ language.Privacy_Policy_Link_English }}</b>
+          </label>
+
+          <div class="input-field">
+            <input id="privacyPolicyLinkEnglish" type="text" name="privacyPolicyLinkEnglish"
+              [(ngModel)]="privacyPolicyLinkEnglish" />
+          </div>
+        </div>
+      </div>
+      <div class="form-input-field flex-input">
+        <div class="form-input-field ccl-form">
+          <label class="label-control"><b>{{ language.Privacy_Policy_Link_French }}</b>
+          </label>
+
+          <div class="input-field">
+            <input id="privacyPolicyLinkFrench" type="text" name="privacyPolicyLinkFrench"
+              [(ngModel)]="privacyPolicyLinkFrench" />
+          </div>
+        </div>
+      </div> -->
+      <!--<div class="form-input-field flex-input">
+        <div class="form-input-field ccl-form">
+          <label class="label-control"><b>{{ language.Status }}</b>
+          </label>
+
+         <div class="input-field">
+            <!-- <input id="privacyPolicyLinkFrench" type="text" name="isActive" [(ngModel)]="isActive" /> -->
+      <!-- <select name="isActive" class="drop-down" [(ngModel)]="isActive">
+              <option [value]="true">{{ language.true }}</option>
+              <option [value]="false">{{ language.false }}</option>
+            </select> -->
+      <!--<ng-select [items]="selectOptions" bindLabel="label" bindValue="value" [multiple]="false" placeholder=""
+              [(ngModel)]="isActive" [ngModelOptions]="{standalone: true}" [clearable]="false" [searchable]="false">
+            </ng-select>
+          </div>
+        </div>
+      </div>-->
+      <button class="btn-default primary px-3" (click)="add()">
+        {{ language.Save }}
+      </button>
+      <button class="btn-default btn-dft py-1 ml-3 px-3" (click)="cancel()">
+        {{language.Cancel}}
+      </button>
+    </div>
+  </form>
+</div>

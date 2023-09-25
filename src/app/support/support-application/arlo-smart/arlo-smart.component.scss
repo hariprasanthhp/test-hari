@@ -1,0 +1,191 @@
+.arlo-smart-table {
+    table {
+        thead {
+            tr {
+                th {
+                    padding: 0px 10px;
+                    border-bottom: 1px solid #EBEAEF !important;
+                    line-height: 32px;
+                    border-top: none;
+                }
+            }
+        }
+    }
+
+    table {
+        tbody {
+            tr {
+                border-bottom: 1px solid #EBEAEF !important;
+
+                td {
+                    padding: 0px 10px;
+                    border: 0px solid #EBEAEF !important;
+                    line-height: 24px;
+                }
+            }
+        }
+    }
+}
+
+.arlo-smart-devices-table {
+    table {
+        thead {
+            tr {
+                th {
+                    padding: 0px 10px;
+                    border-top: none;
+                    font-size: 16px;
+
+                    font-style: normal;
+
+                    font-weight: 400;
+
+                    line-height: 16px;
+
+                    letter-spacing: 0em;
+                    padding-bottom: 6px;
+
+                }
+            }
+        }
+
+        tbody {
+            tr {
+                background-color: #ffff !important;
+
+                th,
+                td {
+                    padding: 5px 10px;
+                    background-color: #ffff !important;
+                    line-height: 24px;
+                }
+
+
+                td.error {
+                    color: #C70000;
+                }
+
+                td.success {
+                    color: #82BF00;
+                }
+            }
+        }
+    }
+
+
+}
+
+.arlo-smart-devices-table {
+    table {
+        thead {
+            tr {
+                th:nth-child(6) {
+                    width: 140px;
+                }
+            }
+        }
+    }
+}
+
+.refresh-icon {
+    fill: #0279ff;
+    width: 24px;
+    cursor: pointer;
+}
+
+.highlightRed {
+    color: #C70000;
+}
+
+.highlightGreen {
+    color: green
+}
+
+.escalate-list {
+    ul {
+        margin-top: 30px;
+        list-style: disc;
+        // margin-left: 15px;
+
+        li {
+            margin-bottom: 8px;
+            // list-style-image: url("../../../../assets/img/asterisk-solid.svg");
+            list-style: none;
+        }
+    }
+
+    ol {
+
+        margin-left: 15px;
+
+        li {
+            margin-bottom: 8px;
+        }
+    }
+}
+
+.modal.fade .modal-dialog {
+    border-radius: 26px;
+    max-width: 75%;
+}
+
+.modal.fade .modal-dialog .modal-content {
+    padding: 42px 62px;
+}
+
+.escalation-process-sub {
+    font-weight: 300;
+    margin-bottom: 17px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 8px;
+}
+
+.blast-grey {
+    color: #808080;
+}
+
+.succ-img-w {
+    width: 40px;
+    float: left;
+    height: 100%;
+}
+
+.d-inline-error {
+    width: 85%;
+    height: 100%;
+}
+
+.w-24-cursor {
+    width: 24px;
+    cursor: pointer;
+}
+
+.border-top-0 {
+    border-top: 0px;
+}
+
+.ref-icon {
+    width: 24px;
+    cursor: pointer;
+    line-height: unset;
+}
+
+//used for editor with Quill and primeng
+.col-auto-width {
+    min-width: 100px;
+}
+ 
+.arlo-mail-body {
+    overflow: auto;
+    max-height: 300px;
+}
+
+.mail-disable {
+    background-color: transparent;
+    cursor: not-allowed;
+    border: none;
+}
+
+.align-center {
+    text-align: center;
+}

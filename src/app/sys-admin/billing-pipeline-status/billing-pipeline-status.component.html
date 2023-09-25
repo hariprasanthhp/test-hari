@@ -1,0 +1,101 @@
+<div class="container position-relative">
+    <div class="no-data" *ngIf="loading">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{language.Loading}}</span>
+        </div>
+      </div>
+    <div class="row">
+      <div class="w-100">
+        <div class="ccl-admin-title">
+            {{language['Billing Pipeline Status']}}
+        </div>
+      </div>
+    </div>
+    <ng-container *ngIf="pipelineSummary">
+    <div class="row d-flex w-100 flex-wrap my-4">
+      <div class="dflex-item pr-4">
+        <h5>{{language['Last Billing File Generated']}}</h5>
+        <h1>{{pipelineSummary?.uploadFile?.timestamp | date: "'MMM d, y, HH:mm"}}</h1>
+      </div>
+    </div>
+    <div class="row" >
+        <div class="col-md-6">
+            <div class="cco-secondary-title border-bottom pb-2 mb-2">{{language['Subscriber Sync']}}</div>
+            <div class="pl-3">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td>{{language['Last Successful Processing']}}</td>
+                            <td>{{(pipelineSummary?.sync?.timestamp | date: "MMM d, y") || '-'}}</td>
+                        </tr>
+                        <tr>
+                            <td>{{language['Subscribers Added']}}</td>
+                            <td>{{pipelineSummary?.sync?.added || '-'}}</td>
+                        </tr>
+                        <tr>
+                            <td>{{language['Subscribers Updated']}}</td>
+                            <td>{{pipelineSummary?.sync?.updated || '-'}}</td>
+                        </tr>
+                        <tr>
+                            <td>{{language['Subscribers Deleted']}}</td>
+                            <td>{{pipelineSummary?.sync?.deleted || '-'}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="cco-secondary-title border-bottom pb-2 mb-2">{{language['Billing Data']}}</div>
+            <div class="pl-3">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td>{{language['Last Billing Data Sanity Check']}} </td>
+                            <td><span [ngClass]="pipelineSummary?.dataCheck?.status === 'pass' ? 'text-green' : 'text-red'">{{pipelineSummary?.dataCheck?.status | titlecase}}</span> - {{pipelineSummary?.dataCheck?.timestamp | date: "MMM d, y"}}</td>
+                        </tr>
+                        <tr>
+                            <td>{{language['Total Record Count Check']}}:</td>
+                            <td><span [ngClass]="pipelineSummary?.dataCheck?.recordCountCheck === 'pass' ? 'text-green' : 'text-red'">{{pipelineSummary?.dataCheck?.recordCountCheck | titlecase}}</span></td>
+                        </tr>
+                        <tr>
+                            <td>{{language['Unique Subscriber Count Check']}}:</td>
+                            <td><span [ngClass]="pipelineSummary?.dataCheck?.uniqueIdCountCheck === 'pass' ? 'text-green' : 'text-red'">{{pipelineSummary?.dataCheck?.uniqueIdCountCheck | titlecase}}</span></td>
+                        </tr>
+                        <tr>
+                            <td>{{language['Matched Endpoint Count Check']}}: </td>
+                            <td><span [ngClass]="pipelineSummary?.dataCheck?.endpointCountCheck === 'pass' ? 'text-green' : 'text-red'">{{pipelineSummary?.dataCheck?.endpointCountCheck | titlecase}}</span></td>
+                        </tr>
+                        <tr>
+                            <td>{{language['Unique “Location ID” Count Check']}}: </td>
+                            <td><span [ngClass]="pipelineSummary?.dataCheck?.csckeyCountCheck === 'pass' ? 'text-green' : 'text-red'">{{pipelineSummary?.dataCheck?.csckeyCountCheck | titlecase}}</span></td>
+                        </tr>
+                        <tr>
+                            <td>{{language['Systems Count Check']}}: </td>
+                            <td><span [ngClass]="pipelineSummary?.dataCheck?.deviceCountCheck === 'pass' ? 'text-green' : 'text-red'">{{pipelineSummary?.dataCheck?.deviceCountCheck | titlecase}}</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    </ng-container>
+</div>
+
+<ng-template #infoModal let-data let-ref="dialogRef">
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">{{ infoTitle }}</h4>
+      <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+    <div class="modal-body modal-scrll">
+      <div class="w-100">
+        <p class="f-size-16px">{{infoBody}}</p>
+    </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-default primary px-3" data-dismiss="modal" (click)="closeModal()">
+        {{ language["Okay"] }}
+      </button>
+    </div>
+</ng-template> 

@@ -1,0 +1,53 @@
+#append-routers, .d-inline-flex{
+    display: inline-flex;
+    align-items: center;
+    // justify-content: space-between;
+    
+}
+// .router-arrowtype{
+//     position: relative;
+//     left: -80px;
+//     top: -15px;
+// }
+
+input:disabled {
+    cursor: not-allowed;
+    pointer-events: all !important;
+}
+
+button:disabled {
+    cursor: not-allowed;
+    pointer-events: all !important;
+}
+
+.router-sec {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    flex: 0 0 100%;
+}
+
+.router-net {
+    padding-right: 20px;
+}
+
+.router-list {
+    width: 25%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+.router-search-icon{
+     position: absolute;
+   
+    right: 16px;
+    top: 15px;
+}
+
+.border-bottom-grey{border-bottom:1px solid #cdcdcd;}
+.bg-empty-col{background-color: #fabbc3; padding: 30px !important;}
+.card-title-alt{text-align: center; padding: 15px !important;font-size: 28px;font-weight: 700;}
+.card-body-flex{display: flex;flex-wrap: wrap;}
+.border-bot-gray{border: 1px solid #ccc; margin: 10px;}
+.w-150px{width: 150px;}

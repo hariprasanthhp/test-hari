@@ -1,0 +1,373 @@
+<div class="settings-wizard" id="settingsWizard">
+    <br>
+    <!-- <h3 class="step-header"><strong>{{language.Step_3}}</strong>- {{language.Add_Setting}}</h3> -->
+    <form class="smart-form" id="port-settings-form" novalidate="novalidate">
+
+        <h3 class="mb-2">{{language.RG}}</h3>
+        <hr>
+        <br>
+        <section id="settingwiz-powersaving">
+            <div class="row">
+                <label class="col col-2 control-label f-w-600">{{language.Power_Saving}}</label>
+                <div class="col col-10">
+                    <div class="checkbox switcher">
+                        <label for="powerSaving">
+                            <input type="checkbox" id="powerSaving" [(ngModel)]="addDeviceObj?.settings.isPowerSaving"
+                                name="settingPwSaving" [checked]="addDeviceObj?.settings.isPowerSaving">
+                            <span><small></small></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <br>
+        <br>
+        <h3 class="f-w-600 mb-2">{{language['LAN Port 1']}}</h3>
+        <hr>
+        <br>
+        <section class="pb-4" id="settingwiz-one-adminstate">
+            <div class="row">
+                <label for="adminStateElemId" class="col col-2 f-w-600">{{language.Admin_State}}</label>
+                <div class="col col-4">
+                    <ng-select [items]="adminStateOption" id="lanOneAdminState" name="lanOneAdminState"
+                        [(ngModel)]="addDeviceObj?.settings.lanPortOne.adminState" placeholder="Select Admin State">
+                    </ng-select>
+                </div>
+
+                <label class="col col-2 control-label f-w-600">{{language.Power_Saving}}</label>
+                <div class="col col-4">
+                    <div class="checkbox switcher">
+                        <label for="lanOnePort">
+                            <input type="checkbox" name="lanOnePort" id="lanOnePort"
+                                [(ngModel)]="addDeviceObj?.settings.lanPortOne.powerSaving"
+                                [checked]="addDeviceObj?.settings.lanPortOne.powerSaving">
+                            <span><small></small></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="pb-4" id="settingwiz-one-speed">
+            <div class="row">
+                <label for="speedElemId" class="col col-2 f-w-600">{{language.Speed}}</label>
+                <div class="col col-4">
+                    <ng-select [items]="speedElemOption" [(ngModel)]="addDeviceObj?.settings.lanPortOne.speed"
+                        id="lanOneSpeed" name="lanOneSpeed" placeholder="Select Speed Element">
+                    </ng-select>
+                </div>
+
+                <label for="duplexElemId" class="col col-2 f-w-600">{{language.Duplex}}</label>
+                <div class="col col-4">
+                    <ng-select [items]="portElemOption" id="lanOneDuplex"
+                        [(ngModel)]="addDeviceObj?.settings.lanPortOne.duplex" name="lanOneDuplex"
+                        placeholder="Select Port Element">
+                    </ng-select>
+                </div>
+            </div>
+        </section>
+
+        <section class="pb-4" id="settingwiz-one-dhcp">
+            <div class="row">
+                <label class="col col-2 control-label f-w-600">{{language.DHCP_Leas_Limit}}</label>
+                <div class="col col-4">
+                    <label class="input w-100">
+                        <input class="form-control valid" name="lanOneDHCP"
+                            [(ngModel)]="addDeviceObj?.settings.lanPortOne.DHCPLeaseLimit" id="DhcpLeaseLimit1"
+                            type="number" min="0" max="512" aria-invalid="false"
+                            (keydown)="changeLanPortoneDhcpLeaseLimit()" (keyup)="changeLanPortoneDhcpLeaseLimit()"
+                            (change)="changeLanPortoneDhcpLeaseLimit()">
+
+                        <div class="errorMessage" *ngIf="lanPortoneDhcpLeaseLimitError">
+                            <small>{{lanPortoneErrorMsg}}</small>
+                        </div>
+                    </label>
+                </div>
+                <div class="col col-6"></div> <!-- padding -->
+            </div>
+        </section>
+        <br>
+        <br>
+        <h3 class="f-w-600 mb-2">{{language['LAN Port 2']}}</h3>
+        <hr>
+        <br>
+
+        <!-- Convention: name is the param name from BE model -->
+        <section class="pb-4" id="settingwiz-two-adminstate">
+            <div class="row">
+                <label for="adminStateElemId" class="col col-2 f-w-600">{{language.Admin_State}}</label>
+                <div class="col col-4">
+                    <ng-select [items]="adminStateOption" id="lanTwoAdminState"
+                        [(ngModel)]="addDeviceObj?.settings.lanPortTwo.adminState" name="lanTwoAdminState"
+                        placeholder="Select Admin State">
+                    </ng-select>
+                </div>
+
+                <label class="col col-2 control-label f-w-600">{{language.Power_Saving}}</label>
+                <div class="col col-4">
+                    <div class="checkbox switcher">
+                        <label for="lanTwoPort">
+                            <input type="checkbox" name="lanTwoPort" id="lanTwoPort"
+                                [(ngModel)]="addDeviceObj?.settings.lanPortTwo.powerSaving"
+                                [checked]="addDeviceObj?.settings.lanPortTwo.powerSaving">
+                            <span><small></small></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="pb-4" id="settingwiz-two-speed">
+            <div class="row">
+                <label for="speedElemId" class="col col-2 f-w-600">{{language.Speed}}</label>
+                <div class="col col-4">
+                    <ng-select [items]="speedElemOption" id="lanTwoSpeed"
+                        [(ngModel)]="addDeviceObj?.settings.lanPortTwo.speed" name="lanTwoSpeed"
+                        placeholder="Select Speed Element">
+                    </ng-select>
+                </div>
+
+                <label for="duplexElemId" class="col col-2 f-w-600">{{language.Duplex}}</label>
+                <div class="col col-4">
+                    <ng-select [items]="portElemOption" id="lanTwoDiplex"
+                        [(ngModel)]="addDeviceObj?.settings.lanPortTwo.duplex" name="lanTwoDuplex"
+                        placeholder="Select Port Element">
+                    </ng-select>
+                </div>
+            </div>
+        </section>
+
+        <section class="pb-4" id="settingwiz-two-dhcp">
+            <div class="row">
+                <label class="col col-2 control-label f-w-600">{{language.DHCP_Leas_Limit}}</label>
+                <div class="col col-4">
+                    <label class="input w-100">
+                        <input class="form-control valid" name="lanTwoDHCP"
+                            [(ngModel)]="addDeviceObj?.settings.lanPortTwo.DHCPLeaseLimit" id="lanTwoDHCP" type="number"
+                            min="0" max="512" aria-invalid="false" (keydown)="changeLanPorttwoDhcpLeaseLimit()"
+                            (keyup)="changeLanPorttwoDhcpLeaseLimit()" (change)="changeLanPorttwoDhcpLeaseLimit()">
+
+                        <div class="errorMessage" *ngIf="lanPorttwoDhcpLeaseLimitError">
+                            <small>{{lanPorttwoErrorMsg}}</small>
+                        </div>
+                    </label>
+                </div>
+                <div class="col col-6"></div> <!-- padding -->
+            </div>
+        </section>
+
+        <br>
+        <br>
+        <h3 class="f-w-600 mb-2">{{language['LAN Port 3']}}</h3>
+        <hr>
+        <br>
+
+        <!-- Convention: name is the param name from BE model -->
+        <section class="pb-4" id="settingwiz-three-adminstate">
+            <div class="row">
+                <label for="adminStateElemId" class="col col-2 f-w-600">{{language.Admin_State}}</label>
+                <div class="col col-4">
+                    <ng-select [items]="adminStateOption" id="lanThreeAdminState"
+                        [(ngModel)]="addDeviceObj?.settings.lanPortThree.adminState" name="lanThreeAdminState"
+                        placeholder="Select Admin State">
+                    </ng-select>
+                </div>
+
+                <label class="col col-2 control-label f-w-600">{{language.Power_Saving}}</label>
+                <div class="col col-4">
+                    <div class="checkbox switcher">
+                        <label for="lanThreePort">
+                            <input type="checkbox" name="lanThreePort" id="lanThreePort"
+                                [(ngModel)]="addDeviceObj?.settings.lanPortThree.powerSaving"
+                                [checked]="addDeviceObj?.settings.lanPortThree.powerSaving">
+                            <span><small></small></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="pb-4" id="settingwiz-three-speed">
+            <div class="row">
+                <label for="speedElemId" class="col col-2 f-w-600">{{language.Speed}}</label>
+                <div class="col col-4">
+                    <ng-select [items]="speedElemOption" id="lanThreeSpeed"
+                        [(ngModel)]="addDeviceObj?.settings.lanPortThree.speed" name="lanThreeSpeed"
+                        placeholder="Select Speed Element">
+                    </ng-select>
+                </div>
+
+                <label for="duplexElemId" class="col col-2 f-w-600">{{language.Duplex}}</label>
+                <div class="col col-4">
+                    <ng-select [items]="portElemOption" id="lanThreeDuplex"
+                        [(ngModel)]="addDeviceObj?.settings.lanPortThree.duplex" name="lanThreeDuplex"
+                        placeholder="Select Port Element">
+                    </ng-select>
+
+                </div>
+            </div>
+        </section>
+
+        <section class="pb-4" id="settingwiz-three-dhcp">
+            <div class="row">
+                <label class="col col-2 control-label f-w-600">{{language.DHCP_Leas_Limit}}</label>
+                <div class="col col-4">
+                    <label class="input w-100">
+                        <input class="form-control valid" name="lanThreeDHCP"
+                            [(ngModel)]="addDeviceObj?.settings.lanPortThree.DHCPLeaseLimit" id="lanThreeDHCP"
+                            type="number" min="0" max="512" aria-invalid="false"
+                            (keydown)="changeLanPortthreeDhcpLeaseLimit()" (keyup)="changeLanPortthreeDhcpLeaseLimit()"
+                            (change)="changeLanPortthreeDhcpLeaseLimit()">
+
+                        <div class="errorMessage" *ngIf="lanPortthreeDhcpLeaseLimitError">
+                            <small>{{lanPortthreeErrorMsg}}</small>
+                        </div>
+                    </label>
+                </div>
+                <div class="col col-6"></div> <!-- padding -->
+            </div>
+        </section><br>
+        <br>
+        <h3 class="f-w-600 mb-2">{{language['LAN Port 4']}}</h3>
+        <hr>
+        <br>
+
+        <!-- Convention: name is the param name from BE model -->
+        <section class="pb-4" id="settingwiz-four-adminstate">
+            <div class="row">
+                <label for="adminStateElemId" class="col col-2 f-w-600">
+                    {{language.Admin_State}}
+                </label>
+                <div class="col col-4">
+                    <ng-select [items]="adminStateOption" id="lanFourAdminState"
+                        [(ngModel)]="addDeviceObj?.settings.lanPortFour.adminState" name="lanFourAdminState"
+                        placeholder="Select Admin State">
+                    </ng-select>
+                </div>
+
+                <label class="col col-2 control-label f-w-600">{{language.Power_Saving}}</label>
+                <div class="col col-4">
+                    <div class="checkbox switcher">
+                        <label for="lanFourPort">
+                            <input type="checkbox" name="lanFourPort" id="lanFourPort"
+                                [(ngModel)]="addDeviceObj?.settings.lanPortFour.powerSaving"
+                                [checked]="addDeviceObj?.settings.lanPortFour.powerSaving">
+                            <span><small></small></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="pb-4" id="settingwiz-four-speed">
+            <div class="row">
+                <label for="speedElemId" class="col col-2 f-w-600">{{language.Speed}}</label>
+                <div class="col col-4">
+                    <ng-select [items]="speedElemOption" [(ngModel)]="addDeviceObj?.settings.lanPortFour.speed"
+                        id="lanFourSpeed" name="lanFourSpeed" placeholder="Select Speed Element">
+                    </ng-select>
+                </div>
+
+                <label for="duplexElemId" class="col col-2 f-w-600">{{language.Duplex}}</label>
+                <div class="col col-4">
+                    <ng-select [items]="portElemOption" id="lanFourDuplex"
+                        [(ngModel)]="addDeviceObj?.settings.lanPortFour.duplex" name="lanFourDuplex"
+                        placeholder="Select Port Element">
+                    </ng-select>
+                </div>
+            </div>
+        </section>
+
+        <section class="pb-4" id="settingwiz-four-dhcp">
+            <div class="row">
+                <label class="col col-2 control-label f-w-600">{{language.DHCP_Leas_Limit}}</label>
+                <div class="col col-4">
+                    <label class="input w-100">
+                        <input class="form-control valid" name="lanFourDHCP"
+                            [(ngModel)]="addDeviceObj?.settings.lanPortFour.DHCPLeaseLimit" id="lanFourDHCP"
+                            type="number" min="0" max="512" aria-invalid="false"
+                            (keydown)="changeLanPortfourDhcpLeaseLimit()" (keyup)="changeLanPortfourDhcpLeaseLimit()"
+                            (change)="changeLanPortfourDhcpLeaseLimit()">
+
+                        <div class="errorMessage" *ngIf="lanPortfourDhcpLeaseLimitError">
+                            <small>{{lanPortfourErrorMsg}}</small>
+                        </div>
+                    </label>
+                </div>
+                <div class="col col-6"></div>
+            </div>
+        </section>
+
+        <section *ngIf="addDeviceObj?.settings?.lanPortFive">
+            <br>
+            <h3 class="f-w-600 mb-2">{{language['LAN Port 5'] || "LAN Port 5"}}</h3>
+            <hr>
+            <br>
+        
+            <!-- Convention: name is the param name from BE model -->
+            <section class="pb-4" id="settingwiz-five-adminstate">
+                <div class="row">
+                    <label for="adminStateElemId" class="col col-2 f-w-600">
+                        {{language.Admin_State}}
+                    </label>
+                    <div class="col col-4">
+                        <ng-select [items]="adminStateOption" id="lanFiveAdminState"
+                            [(ngModel)]="addDeviceObj?.settings.lanPortFive.adminState" name="lanFiveAdminState"
+                            placeholder="Select Admin State">
+                        </ng-select>
+                    </div>
+        
+                    <label class="col col-2 control-label f-w-600">{{language.Power_Saving}}</label>
+                    <div class="col col-4">
+                        <div class="checkbox switcher">
+                            <label for="lanFivePort">
+                                <input type="checkbox" name="lanFivePort" id="lanFivePort"
+                                    [(ngModel)]="addDeviceObj?.settings.lanPortFive.powerSaving"
+                                    [checked]="addDeviceObj?.settings.lanPortFive.powerSaving">
+                                <span><small></small></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        
+            <section class="pb-4" id="settingwiz-four-speed">
+                <div class="row">
+                    <label for="speedElemId" class="col col-2 f-w-600">{{language.Speed}}</label>
+                    <div class="col col-4">
+                        <ng-select [items]="lan5SpeedOPtion" [(ngModel)]="addDeviceObj?.settings.lanPortFive.speed"
+                            id="lanFiveSpeed" name="lanFiveSpeed" placeholder="Select Speed Element">
+                        </ng-select>
+                    </div>
+        
+                    <label for="duplexElemId" class="col col-2 f-w-600">{{language.Duplex}}</label>
+                    <div class="col col-4">
+                        <ng-select [items]="portElemOption" id="lanFiveDuplex"
+                            [(ngModel)]="addDeviceObj?.settings.lanPortFive.duplex" name="lanFiveDuplex"
+                            placeholder="Select Port Element">
+                        </ng-select>
+                    </div>
+                </div>
+            </section>
+        
+            <section class="pb-4" id="settingwiz-four-dhcp">
+                <div class="row">
+                    <label class="col col-2 control-label f-w-600">{{language.DHCP_Leas_Limit}}</label>
+                    <div class="col col-4">
+                        <label class="input w-100">
+                            <input class="form-control valid" name="lanFiveDHCP"
+                                [(ngModel)]="addDeviceObj?.settings.lanPortFive.DHCPLeaseLimit" id="lanFiveDHCP" type="number"
+                                min="0" max="512" aria-invalid="false" (keydown)="changeLanPortfiveDhcpLeaseLimit()"
+                                (keyup)="changeLanPortfiveDhcpLeaseLimit()" (change)="changeLanPortfiveDhcpLeaseLimit()">
+        
+                            <div class="errorMessage" *ngIf="lanPortfiveDhcpLeaseLimitError">
+                                <small>{{lanPortfiveErrorMsg}}</small>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="col col-6"></div>
+                </div>
+            </section>
+        </section>
+    </form>
+</div>

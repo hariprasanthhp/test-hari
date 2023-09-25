@@ -1,0 +1,142 @@
+<div class="custom-modal">
+    <div class="col-md-12 mb-3 loader-wrapper min-h-300px">
+        <div class="loader-wrapper-info"
+            *ngIf="loading || dataloading || voiceloading || videoloading || !systemDataAvail || bandwidthLoading">
+            <div class="loader align-items-start pt-5">
+                <div class="d-flex justify-content-center pt-5">
+                    <div class="spinner-border text-primary">
+                        <span class="sr-only">{{ language.Loading }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3 mb-4 tab-subscriber-name" >
+            <span class="subscriber-name">{{ subscriberStepperInfo ? language[subscriberStepperInfo] || subscriberStepperInfo
+              : '' }}</span>
+          </div>
+        <section class="stepper-main">
+            <div class="stepper col-12 pl-0">
+                <button title="{{language.Details}}" id="add-details" (click)="updateStepper('add-details')"
+                    class="step step--1"
+                    [ngClass]="[(pages.subscriberSaved && activeStepper != 'add-details') ? 'step-success' : '', (activeStepper== 'add-details') ? 'step-active' : '']">
+                <span>{{language.Details}}</span>
+                </button>
+                <button title="{{language['Network Services']}}" class="step step--1" id="add-services"
+                    [disabled]="!pages.subscriberSaved " (click)="updateStepper('add-services')"
+                    [ngClass]="[(pages.servicesSaved && activeStepper != 'add-services') ? 'step-success' : '', (activeStepper== 'add-services') ? 'step-active' : '']">
+                <span>{{language['Network Services']}}</span>
+                </button>
+                <button title="{{language['Managed Services']}}"
+                    *ngIf="arloEnableentitlement || proAndExpEnableentitlement || productIQEnableentitlement ||  ExperienceIQEnableentitlement || ServifyEnableentitlement || arloUnlimitedentitlement || arloUnlimitedplusentitlement || this.ServifyGoldentitlement || this.ServifySilverentitlement || this.ServifyPlatinumentitlement|| this.smallBizIQentitlement|| this.Bark_Premiumentitlement|| this.Bark_Juniorentitlement||  myCommunityIQEntitlement"
+                    class="step step--3" id="add-edge-suites" [disabled]="!pages.subscriberSaved"
+                    (click)="updateStepper('add-edge-suites')"
+                    [ngClass]="[(pages.edgeSuitesSaved && activeStepper != 'add-edge-suites') ? 'step-success' : '', ( activeStepper== 'add-edge-suites') ? 'step-active' : '']">
+                <span>{{language['Managed Services']}}</span>
+                </button>
+                <button title="{{language.System}}" class="step step--4 " id="add-system"
+                    [disabled]="!pages.subscriberSaved" (click)="updateStepper('add-system')"
+                    [ngClass]="[(pages.systemsSaved && activeStepper != 'add-system') ? 'step-success' : '', ( activeStepper== 'add-system') ? 'step-active' : '']">
+                <span>{{language.System}}</span>
+                </button>
+                <button title="{{language.Summary}}" class="step step--5" id="add-summary"
+                    [disabled]="!pages.subscriberSaved" (click)="updateStepper('add-summary')"
+                    [ngClass]="[(activeStepper== 'add-summary') ? 'step-active' : '']">
+                    <span>{{language.Summary}}</span>
+                </button>
+            </div>
+            <!--New Stepper start -->
+            <!-- <ul class="stepper-ui">
+            <li><button class="step" id="add-details" (click)="updateStepper('add-details')" class="step"
+                    [ngClass]="[(pages.subscriberSaved) ? 'step-done' : '', (!pages.subscriberSaved && activeStepper== 'add-details') ? 'step-current' : '']">
+                    <span>Details</span></button></li>
+            <li><button class="step" id="add-services" [disabled]="!pages.subscriberSaved"
+                    (click)="updateStepper('add-services')"
+                    [ngClass]="[(pages.servicesSaved) ? 'step-done' : '', (!pages.servicesSaved && activeStepper== 'add-services') ? 'step-current' : '']">
+                    <span>Service(s)</span></button></li>
+            <li><button class="step" id="add-edge-suites" [disabled]="!pages.subscriberSaved"
+                    (click)="updateStepper('add-edge-suites')"
+                    [ngClass]="[(pages.edgeSuitesSaved) ? 'step-done' : '', (!pages.edgeSuitesSaved && activeStepper== 'add-edge-suites') ? 'step-current' : '']">
+                    <span>EDGE Suites</span></button></li>
+            <li><button class="step" id="add-system" [disabled]="!pages.subscriberSaved"
+                    (click)="updateStepper('add-system')"
+                    [ngClass]="[(pages.systemsSaved) ? 'step-done' : '', (!pages.systemsSaved && activeStepper== 'add-system') ? 'step-current' : '']">
+                    <span>System</span></button></li>
+            <li><button class="step" id="add-summary" [disabled]="!pages.subscriberSaved"
+                    (click)="updateStepper('add-summary')"
+                    [ngClass]="[(activeStepper== 'add-summary') ? 'step-active' : '']">
+                    <span>Summary</span></button></li>
+            </ul> -->
+            <!--New Stepper end-->
+            <div class="pos-abs-right tab-pos-abs-right">
+                <button *ngIf="btnBack" (click)="prevTab()" type="button" id=""
+                    class="btn-default btn-dft back-arrow mr-2 ng-star-inserted">
+                    <img src="../../../../../assets/img/ic_chevronleft_grey.svg" alt="img here" />
+                    {{language.back}} </button>
+                <button *ngIf="btnSkip" (click)="nextTab()" type="button" id=""
+                    class="btn-default btn-dft btn-overflow-tooltip mr-2 ng-star-inserted" title="{{language['Skip this step']}}">
+                    {{language['Skip this step']}} </button>
+                <button *ngIf="btnSaveContinue" id="" class="btn-default btn-overflow-tooltip primary mr-2" (click)="saveData()" title="{{language['Save & Continue']}}">
+                    {{language['Save & Continue']}}</button>
+                <button *ngIf="false" id="" class="btn-default primary mr-2" (click)="saveAllSystemsData()">
+                    {{ 'saveAllSystemsData ' }}</button>
+                <button *ngIf="btnContinue" (click)="nextTab('system')" id=""
+                    class="btn-default primary">{{language.Continue}}</button>
+                <button *ngIf="activeStepper== 'add-summary'" (click)="closeAddFlow(true)" id=""
+                    class="btn-default primary">{{language.Finish}}</button>
+                <span class="close-icon" id="close-icon" (click)="closeAddFlow()"><img src="assets/img/close-icon.svg"
+                        alt="" /></span>
+            </div>
+        </section>
+
+
+
+        <div class="w-100 alert alert-danger fade show" *ngIf="error">
+            <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+            <button type="button" class="close" (click)="closeAlert()">
+                <span></span>
+            </button>
+            <div class="d-inline-flex" [innerHtml]="language[errorInfo] || errorInfo"></div>
+        </div>
+
+        <div class="w-100 alert alert-success fade show" *ngIf="success">
+            <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+            <button type="button" class="close" (click)="closeAlert()">
+                <span></span>
+            </button>
+            <div class="d-inline-flex" [innerHtml]="language[successInfo] || successInfo "></div>
+        </div>
+        <section *ngIf="dataAvail">
+            <app-add-details [In_Details_Data]="subsSysServiceForm.subscriber" [createdSubscriberId]="createdSubscriberId"
+                (Out_Data_Change)="formDataUpdate( $event, 'subscriber')" (Out_Data_Submit)="saveSubscriber()" [createdSubcriberData]="createdSubcriberData"
+                *ngIf="activeStepper== 'add-details'">
+            </app-add-details>
+            <app-add-edge-suites [arloEntitleEnable]="arloEnableentitlement" [createdSubcriberData]="createdSubcriberData"
+                [ProductIQEntitleEnable]="productIQEnableentitlement" [arloUnlimitedentitlement]="arloUnlimitedentitlement" 
+                [ExpIQEntitleEnable]="ExperienceIQEnableentitlement" [systemInfo]="systemParams" [arloUnlimitedplusentitlement]="arloUnlimitedplusentitlement"
+                [createdSubscriberId]="createdSubscriberId" [ProAndExpIQEntitleEnable]="proAndExpEnableentitlement"  [Bark_Premiumentitlement]="Bark_Premiumentitlement"  [Bark_Juniorentitlement]="Bark_Juniorentitlement" [smallBizIQentitlement]="smallBizIQentitlement" [ServifyPlatinumentitlement]="ServifyPlatinumentitlement" [ServifySilverentitlement]="ServifySilverentitlement" [ServifyGoldentitlement]="ServifyGoldentitlement" [allowSmallBiz]="allowSmallBiz" [deviceData]="deviceData"
+                [subscriberData]="createdSubcriberData" [ServifyEnableentitlement]="ServifyEnableentitlement" (Out_EdgeSuites)="formDataUpdate( $event, 'edgeSuites')"
+                [AllFormData]="syetemsAllData" (allFormData)="allFormData($event)" [formOptions]="formOptions" [devicesList]="devicesList" (out_edge_suits_submit)="saveEdgesuiteData($event)"
+                [EdgeSuites]="subsSysServiceForm.edgeSuites" [subsSysServiceForm]="subsSysServiceForm" *ngIf="activeStepper== 'add-edge-suites'"
+                [IQSuiteDevice]="IQSuiteDevice" [IQSuiteShow]="IQSuiteShow" [systemDetails]="systemDetails" [deviceInfoData]="subsSysServiceForm.systems" [IQ_SuiteEnable]="iqsuitEnable">
+            </app-add-edge-suites>
+            <app-add-services *ngIf="(activeStepper == 'add-services') && systemDataAvail"
+                (Out_Service)="formDataUpdate( $event, 'services')" [AllserviceData]="AllserviceData"
+                [data_plan]="DataPlanitem" [video_plan]="VideoPlanitem" [voice_plan]="VoicePlanitem" 
+                [sys_Service]="defaultServices" [isPRConfiguredOutside]="hideService" (out_servicesubmit)="saveServiceData()" [DialPlanitem]="DialPlanitems"[createdSubscriberId]="createdSubscriberId"
+                [disableService]="disableService" [provisionOntService]='provisionOntService'[serviceData]="serviceData" [rgManagement]="rgManagement">
+            </app-add-services>
+            <app-add-system *ngIf="(activeStepper == 'add-system') && systemDataAvail && bwDataAvail"
+                [disableSystem]="disableSystem" [subscriberData]="createdSubcriberData"
+                [In_Systems_Data]="subsSysServiceForm.systems" [subsSysServiceForm]="subsSysServiceForm" [AllFormData]="syetemsAllData"(Out_Data_Change)="formDataUpdate($event, 'systems')"
+                [DialPlanitem]="DialPlanitems" [formOptions]="formOptions" [continue]="continue" (unSavedData_emit)="continueSave($event)"
+                (Out_Data_Provision)="provisionUpdate($event)" (Out_Default_Data)="updateDefaultSystemData($event)"
+                (disable_service)="disable($event)" [DEFAULT_SYTEMS]="systemFormData" [linkageType]="linkageType">
+            </app-add-system>
+            <app-add-summary *ngIf="activeStepper== 'add-summary'" [sys_summary]="subsSysServiceForm"
+                [system_service]="systemsProvisionData" [subId]="createdSubscriberId"
+                [deviceInformation]="systemssummary">
+            </app-add-summary>
+        </section>
+
+    </div>
+</div>

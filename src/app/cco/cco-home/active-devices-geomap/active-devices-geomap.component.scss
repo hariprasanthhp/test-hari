@@ -1,0 +1,608 @@
+.kbi-menu-wrapper {
+  display: flex;
+  width: 100%;
+}
+
+.kbi-item {
+  flex-grow: 1;
+  border-left: 1px solid #EBEAEF;
+  padding-left: 12px;
+//   width: calc(100% / 6);
+  h3{
+    font-size: 30px !important;
+    color: #0054B2 !important;
+    line-height: 32px !important;
+    font-weight: 300;
+  }
+  span{
+    color: #1A1F22;
+    font-size: 14px;
+    line-height: 16.4px;
+  }
+  .red{
+      color: #FF3600;
+  }
+  .orange{
+
+    color: #FC7235;
+  }
+  .blue{
+      color: #72B4FF;
+
+  }
+  .yellow{
+      color: #F3B426;
+  }
+  .green{
+      color: #82BF00;
+  }
+}
+
+
+.health-pon-menu-item + .health-pon-menu-item {
+  margin-left: 2%;
+}
+.loader-wrapper {
+  position: relative;
+}
+
+.loader-wrapper-info {
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  position: absolute;
+  width: 100%;
+
+  z-index: 100;
+  height: 100%;
+}
+
+.acg-container {
+  display: flex;
+  width: 100%;
+}
+
+::ng-deep .MicrosoftMap .Infobox {
+  display: none;
+  .infobox-actions {
+    height: 25px;
+  }
+}
+
+::ng-deep .InfoboxCustom .customInfobox {
+  cursor: text;
+  padding: 10px;
+  background-color: white;
+  outline: black;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  pointer-events: auto !important;
+
+  .info-title {
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 35px;
+  }
+
+  table {
+    tr {
+      td {
+        a {
+          cursor: pointer !important;
+          text-decoration: underline;
+          color: #007bff;
+        }
+      }
+
+      td:first-child {
+        padding-right: 30px;
+      }
+    }
+  }
+}
+
+::ng-deep a.customInfoboxCloseButton:link,
+a.customInfoboxCloseButton:visited {
+  cursor: pointer !important;
+  color: black;
+  text-decoration: none;
+  position: absolute;
+  top: 0px;
+  right: 10px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+::ng-deep a.customSystemListCloseButton:link,
+a.customSystemListCloseButton:visited {
+  cursor: pointer !important;
+  color: black;
+  text-decoration: none;
+  position: absolute;
+  top: 0px;
+  right: 10px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+::ng-deep .InfoboxCustom .customList {
+  // width: 460px;
+  max-width: 700px;
+  min-width: 420px;
+
+  height: 510px;
+  min-height: 470px;
+  max-height: 510px;
+
+  padding: 10px;
+
+  cursor: text;
+  background-color: white;
+  outline: none;
+  border-radius: 10px;
+  pointer-events: auto !important;
+
+  .search-input {
+    min-height: 38px;
+    max-height: 42px;
+    line-height: inherit;
+    border-radius: 26px;
+    background: #f8f8fa;
+    padding: 0 15px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #646363;
+    border: 1px solid transparent;
+  }
+
+  .clear-search {
+    position: relative;
+    right: 24px;
+  }
+
+  .search-input:active,
+  .search-input:focus {
+    border: 1px solid #0278ff;
+  }
+
+  table {
+    min-width: 415px;
+    max-width: 675px;
+
+    // width: 445px;
+    thead {
+      z-index: 100;
+      background-color: #fff;
+
+      tr {
+        display: block;
+        border-bottom: 2px solid lightgray;
+        margin-bottom: 3px;
+
+        th:nth-child(1) {
+          // padding-left: 11px;
+          width: 160px;
+          min-width: 160px;
+          word-break: break-word;
+        }
+
+        th:nth-child(2) {
+          // padding-left: 11px;
+          width: 140px;
+          min-width: 140px;
+          word-break: break-word;
+        }
+
+        th:nth-child(3) {
+          width: 65px;
+          min-width: 65px;
+        }
+
+        th:nth-child(4) {
+          width: 100px;
+          min-width: 100px;
+        }
+
+        th:nth-child(5) {
+          width: 85px;
+          min-width: 85px;
+        }
+
+        th:nth-child(6) {
+          width: 140px;
+          min-width: 140px;
+        }
+      }
+    }
+
+    // overflow-y: scroll;
+    // overflow-x: auto;
+    // max-height: 490px;
+    // margin: 5px 0 5px 0;
+    #data-available {
+      overflow: auto;
+      display: block;
+      height: 405px;
+      width: 100%;
+
+      tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+
+      tr {
+        td {
+          .same-line {
+            position: relative;
+            padding-left: 12px;
+            span.dot {
+              position: absolute;
+              left: 0;
+              top: 9.5px;
+            }
+          }
+
+          a {
+            cursor: pointer !important;
+            // text-decoration :underline;
+            color: #007bff;
+          }
+        }
+        td:nth-child(1) {
+          width: 160px;
+          min-width: 160px;
+          word-break: break-word;
+        }
+
+        td:nth-child(2) {
+          width: 140px;
+          min-width: 140px;
+          word-break: break-word;
+        }
+
+        td:nth-child(3) {
+          width: 65px;
+          min-width: 65px;
+        }
+
+        td:nth-child(4) {
+          width: 100px;
+          min-width: 100px;
+          word-break: break-word;
+        }
+
+        td:nth-child(5) {
+          width: 85px;
+          min-width: 85px;
+          // text-align: center;
+        }
+
+        td:nth-child(6) {
+          width: 140px;
+          min-width: 140px;
+          word-break: break-word;
+          // text-align: center;
+        }
+      }
+    }
+
+    #no-data-available {
+      display: block;
+      height: 405px;
+      width: 100%;
+
+      tr {
+        .with-ont {
+          min-width: 610px;
+          max-width: 655px;
+        }
+
+        .without-ont {
+          min-width: 495px;
+          max-width: 655px;
+        }
+
+        // td:nth-child(1) {
+        //   min-width: 415px;
+        //   max-width: 575px;
+        // }
+      }
+    }
+  }
+}
+
+.geomap-legends {
+  padding: 10px;
+  width: 220px;
+  position: absolute;
+  bottom: 5px;
+  left: 20px;
+  background-color: #fff;
+  // padding: 10px;
+  // width: 30%;
+  // position: absolute;
+  // bottom: 0px;
+  // margin-top: 10px;
+  // margin-left: 8px;
+  // margin-right: auto;
+  // margin-bottom: 8px;
+  // left: 10px;
+  // right: 10px;
+  // z-index: 9999;
+  // background-color: #ffffff;
+
+  table {
+    width: 100%;
+    outline: 1px solid #00000075;
+    font-size: 12px;
+
+    thead {
+      background-color: #fff;
+
+      tr {
+        th {
+          border: 1px solid #ddd;
+          padding: 5px;
+        }
+      }
+    }
+
+    tbody {
+      tr {
+        td {
+          &:nth-child(2) {
+            border-right: 1px solid #00000075;
+          }
+
+          border: 1px solid #ddd;
+          padding: 0px 5px;
+        }
+      }
+    }
+  }
+}
+
+::ng-deep .dot {
+  height: 8px;
+  width: 8px;
+  border-radius: 50%;
+  display: inline-block;
+
+  &.critical {
+    background-color: #c70000;
+  }
+
+  &.major {
+    background-color: #fc7235;
+  }
+
+  &.minor {
+    background-color: #f3b426;
+  }
+
+  &.no-alarms {
+    background-color: green;
+  }
+
+  &.aggregation {
+    background-color: #008cff;
+  }
+
+  &.collocation {
+    background-color: purple;
+  }
+}
+
+.geo-view-issue {
+  width: 100%;
+  height: 80vh;
+}
+.clear-search-buton {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  span {
+    width: 11.71px;
+    height: 11.71px;
+    background-size: 11.71px;
+  }
+}
+.geomap-view-table {
+  max-height: 350px;
+  overflow-y: auto;
+  margin-top: 1px;
+  border: 1px solid #ddd;
+}
+.geomap-view-table thead tr th:nth-child(2),
+.geomap-view-table tbody tr td:nth-child(2),
+.geomap-view-table thead tr th:nth-child(3),
+.geomap-view-table tbody tr td:nth-child(3),
+.geomap-view-table thead tr th:nth-child(4),
+.geomap-view-table tbody tr td:nth-child(4) {
+  max-width: 100px;
+}
+.geomap-view-table thead tr th:nth-child(5),
+.geomap-view-table tbody tr td:nth-child(5) {
+  max-width: 80px;
+}
+// .geomap-view-table{
+//   table{
+//     thead,tbody tr {display: table;
+//       width: 100%;
+//       table-layout: fixed;
+//     }
+//     tbody {
+//       display: block;
+//       max-height: 300px;
+//       overflow: auto;
+//    }
+//   }
+// }
+
+.hide-close-search {
+  display: none;
+}
+.show-close-search {
+  color: #808080;
+  display: block;
+  position: absolute;
+  right: 40px;
+  font-size: 22px;
+  top: 2px;
+}
+
+.showHideTable {
+  visibility: hidden;
+}
+// .toggle-swtbtn.checkbox.switcher label input + span{
+//   width: 35px;
+//   height: 18px;
+// }
+// .toggle-swtbtn.checkbox.switcher label input + span small{
+//   width: 12px;
+//   height: 12px;
+// }
+// .toggle-swtbtn.checkbox.switcher label input:checked + span small{
+//   margin-left: 2px
+// }
+::ng-deep .ccl-form .ng-select-multiple input {
+  min-height: auto;
+}
+::ng-deep {
+  .custom-model-service .modal-content{padding: 0 !important;}
+  .custom-model-service .modal-dialog{max-width: 67.31% !important;}
+}
+
+.diable-div{
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.cursornallow {
+  cursor: not-allowed
+}
+.btn-refresh {
+  border: none;
+  background: none;
+  outline: none;
+  padding: 0;
+}
+.h-24-btn {
+  height: 24px;
+  line-height: 16px !important;
+  padding: 3px 20px !important;
+  font-size: 14px;
+}
+.ccl-filter-row {
+  background: #F8F8FA;
+  border-top: 1px solid #EBEAEF;
+  border-bottom: 1px solid #EBEAEF; 
+  padding: 13px 0px 22px 0px;
+  .col-item {
+    width: 15%;
+    margin-left: 15px;
+  }
+  .col-item.ccl-form > input{background-color: #ffffff;}
+  .col-item-action{padding-top: 35px;}
+  .btn-link {border: none;background: transparent;margin-top: 5px;}
+  .btn-link:hover {color: #0069d9;text-decoration: none;}
+}
+::ng-deep{
+  .ccl-filter-row .ng-select .ng-select-container { background-color: #fff !important;}
+}
+.ccl-filter-wrapper .col-item{margin-right: 15px;margin-bottom: 15px;}
+.ccl-filter-wrapper .col-item:last-child{margin-right: 0;}
+.flex-g {
+  flex-grow: 1;
+  display: grid;
+  align-items: flex-start;
+}
+.btn-sm-24{min-height: 24px;line-height: normal !important;font-size: 14px;}
+.col-item-action .btn-link{
+  border: transparent;
+  outline: none;
+  background: transparent;
+  color: #0278ff;
+  padding: 0 !important;
+  line-height: 12px !important;
+}
+.col-item-action{padding-top: 33px;}
+.col-item-action button{
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+@media screen and (min-width:1400px){
+  .ccl-filter-row .col-item{width: 11%;}
+}
+
+::ng-deep{
+  .custom-ng-multi{
+    .ng-select-container .ng-value-container .ng-value{
+      position: relative;
+      background-color:#DCECFF !important;
+      padding: 2px 12px 2px 18px;
+      border-radius: 16px !important;
+      font-weight: 600 !important;
+      color: #0054B2 !important;
+      font-size: 12px !important;
+      line-height: 15px;
+      min-height: 19px;
+    }
+     &.ng-select-multiple .ng-select-container .ng-value-container {
+      width: calc(100% - 20px);
+    }
+    .ng-select-container .ng-value-container .ng-value .ng-value-label,
+    .ng-select-container .ng-value-container .ng-value .ng-value-icon.left{
+      padding: 0 !important;
+      border: 0 !important;
+    }
+    .ng-select-container .ng-value-container .ng-value .ng-value-icon.left
+    {left: 6px;top: 2px;position:absolute;}
+  }
+}
+.ng-selected-label{line-height: 18px;max-width: 100%;}
+.ng-value-placeholder{
+  height: 19px;
+  margin-bottom: 5px;
+}
+.ng-selected-label .ng-value{
+  display: inline-block;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 100%;
+}
+input:disabled{
+  cursor: not-allowed;
+}
+
+.hide-modal{
+  display: none;
+}
+.custom-inlne-modal{
+  background-color: #FFFFFF;
+  box-shadow: 0px 5px 15px 0px #80808040;
+  width: 460px;
+  padding: 17px 20px;
+  // margin: 10px 0px;
+  // position: absolute;
+  // top: 10px;
+  // right: 90px;
+  border-radius: 26px;
+  cursor: auto;
+}
+.custom-inlne-modal button.close {
+  // top: 20px;
+  // position: absolute;
+  // right: 20px;
+}
+.custom-inlne-modal .sys-list-kbi{display: flex;
+border-top: 1px solid #cccccc;
+}
+.custom-inlne-modal .sys-info-table tbody td {
+  padding: 2px 0px;
+}
+::ng-deep .custom-size-large{max-width: 530px !important;}
+::ng-deep .custom-size-small{max-width: 360px !important;}

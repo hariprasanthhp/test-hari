@@ -1,0 +1,384 @@
+<!-- This for Campaigns Start -->
+
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 px-0">
+        <div class="loader" *ngIf="loading">
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+              <span class="sr-only">{{ language.Loading }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="campaigns-list-wrapper my-4">
+          <div class="campaigns-list-item" id="CommandIQ-notification-list">
+            <div class="d-flex justify-content-between">
+              <div class="marketing-channels-title-info">
+                <div class="marketing-channels-title">CommandIQ Notification</div>
+                <div class="Expected ccl-mktg-Small-title active-title" *ngIf="!commandIQError">
+                  <!-- <span class="active-dot"></span> -->
+                  {{ language.active }}
+                </div>
+              </div>
+              <div class="marketing-channels-logos">
+                <div class="cm-logo text-right">
+                  <img src="assets/img/calix-Cloud-logo.svg" class="h-40px" alt="" />
+                </div>
+              </div>
+            </div>
+            <div class="ccl-mktg-Small-title error-title" *ngIf="commandIQError">
+              <!-- <span class="active-dot"></span> -->
+              Error! {{commandIQErrorMsg}}.
+            </div>
+            <div class="marketing-channels-sub-title" *ngIf="!commandIQError">
+              {{ mobileNotificationCount }}&nbsp;{{
+              language["Calix segments in this channel"]
+              }}
+            </div>
+            <div class="">
+              <a routerLink="/engagement/channels/command"><button [attr.disabled]="commandIQError ? true : null"
+                  class="textCalix btn-default primary mr-2">
+                  {{ language["view Channel Results"] }}
+                </button></a>
+            </div>
+
+          </div>
+
+          <div class="campaigns-list-item" *ngIf="!validMailchimpToken" id="mailchimp-list">
+            <div class="d-flex justify-content-between">
+              <div class="marketing-channels-title-info">
+                <div class="marketing-channels-title">{{language.Mailchimp}}</div>
+
+                <div class="ccl-mktg-Small-title error-title" *ngIf="mailchimpStatus == 'Connection Error'">
+                  <!-- <span class="active-red-dot"></span> -->
+                  {{ language.connection_error}}
+                </div>
+                <div class="ccl-mktg-Small-title inactive-title"
+                  *ngIf="mailchimpStatus == 'Inactive' || mailchimpStatus == 'Inactif'||mailchimpStatus =='Inactivo'">
+                  <!-- <span class="active-grey-dot"></span> -->
+                  {{ language.InActive}}
+                </div>
+                <div class="ccl-mktg-Small-title error-title" *ngIf="mailchimpError">
+                  <!-- <span class="active-dot"></span> -->
+                  Error! {{mailchimpErrorMsg}}.
+                </div>
+              </div>
+              <div class="marketing-channels-logos">
+                <div class="cm-logo text-right">
+                  <img src="assets/img/Mailchimp_Logo_Vertical_Black.png" class="w-45px" alt="" />
+                </div>
+              </div>
+            </div>
+
+            <div class="">
+              <a routerLink="/engagement/channels/configuration"><button [attr.disabled]="mailchimpError || !hasScope ? true : null"
+                  class="btn-default primary mr-2 textCalix mt-34px">
+                  {{ language.configure }}
+                </button></a>
+            </div>
+          </div>
+
+          <div class="campaigns-list-item" *ngIf="validMailchimpToken" id="mailchimp-list">
+            <div class="d-flex justify-content-between">
+              <div class="marketing-channels-title-info">
+                <div class="marketing-channels-title">{{language.Mailchimp}}</div>
+
+                <div class="ccl-mktg-Small-title active-title" *ngIf="mailchimpStatus == 'Active'">
+                  <!-- <span class="active-dot"></span> -->
+                  {{ language.Active}}
+                </div>
+                <div class="ccl-mktg-Small-title error-title" *ngIf="mailchimpError">
+                  <!-- <span class="active-dot"></span> -->
+                  Error! {{mailchimpErrorMsg}}.
+                </div>
+                <div class="ccl-mktg-Small-title error-title" *ngIf="mailchimpStatus == 'Connection Error'">
+                  <!-- <span class="active-red-dot"></span> -->
+                  {{ mailchimpStatus}}
+                </div>
+                <div class="ccl-mktg-Small-title inactive-title"
+                  *ngIf="mailchimpStatus == 'Inactive' || mailchimpStatus == 'Inactif'|| mailchimpStatus == 'Inactivo'">
+                  <!-- <span class="active-grey-dot"></span> -->
+                  {{ language.InActive}}
+                </div>
+              </div>
+              <div class="marketing-channels-logos">
+                <div class="cm-logo text-right">
+                  <img src="assets/img/Mailchimp_Logo_Vertical_Black.png" class="w-45px" alt="" />
+                </div>
+              </div>
+            </div>
+            <div class="marketing-channels-sub-title">
+              {{ mailchimpNotifCount }}&nbsp;{{
+              language["Calix segments in this channel"]
+              }}
+            </div>
+            <div class="">
+              <a routerLink="/engagement/channels/results">
+                <button class="btn-default primary mr-2 textCalix" [attr.disabled]="mailchimpError ? true : null">
+                  {{ language["view Channel Results"] }}
+                </button></a>
+              <a routerLink="/engagement/channels/configuration">
+                <button class="btn-default btn-dft textCalix" ng-reflect-router-link="#"
+                  [attr.disabled]="mailchimpError || !hasScope ? true : null">
+                  {{ language["Configuration Settings"] }}
+                </button></a>
+            </div>
+
+          </div>
+          <div class="campaigns-list-item" *ngIf="!validFacebookToken">
+            <div class="d-flex justify-content-between">
+              <div class="marketing-channels-title-info">
+                <div class="marketing-channels-title" id="facebook-list">{{language.facebook}}</div>
+
+                <div class="ccl-mktg-Small-title error-title" *ngIf="facebookStatus == 'Connection Error'">
+                  <!-- <span class="active-red-dot"></span> -->
+                  {{ language.connection_error}}
+                </div>
+                <div class="ccl-mktg-Small-title error-title" *ngIf="facebookStatus == 'Failed - Expired'">
+                  <!-- <span class="active-red-dot"></span> -->
+                  {{ facebookStatus}}
+                </div>
+                <div class="ccl-mktg-Small-title inactive-title"
+                  *ngIf="facebookStatus == 'Inactive' || facebookStatus == 'Inactif'|| facebookStatus == 'Inactivo'">
+                  <!-- <span class="active-grey-dot"></span> -->
+                  {{ language.InActive}}
+                </div>
+                <div class="ccl-mktg-Small-title error-title" *ngIf="facebookError">
+                  <!-- <span class="active-dot"></span> -->
+                  Error! {{facebookErrorMsg}}.
+                </div>
+              </div>
+              <div class="marketing-channels-logos">
+                <div class="cm-logo text-right">
+                  <img src="assets/img/cmc-Facebook-logo.png" class="w-50px" alt="" />
+                </div>
+              </div>
+            </div>
+
+            <div class="">
+              <a routerLink="/engagement/channels/facebook"><button [attr.disabled]="facebookError || !hasScope ? true : null"
+                  class="btn-default primary mr-2 textCalix mt-34px">
+                  {{ language.configure }}
+                </button></a>
+            </div>
+          </div>
+          <div class="campaigns-list-item " *ngIf="validFacebookToken" id="facebook-list">
+            <div class="d-flex justify-content-between">
+              <div class="marketing-channels-title-info">
+                <div class="marketing-channels-title">{{ language.facebook }}</div>
+                <div class="ccl-mktg-Small-title active-title">
+                  <!-- <span class="active-dot"></span> -->
+                  {{ language.Active}}
+                </div>
+              </div>
+              <div class="ccl-mktg-Small-title active-title" *ngIf="facebookError">
+                <!-- <span class="active-dot"></span> -->
+                Error! {{facebookErrorMsg}}.
+              </div>
+              <div class="marketing-channels-logos">
+                <div class="cm-logo text-right">
+                  <img src="assets/img/cmc-Facebook-logo.png" class="w-50px" alt="" />
+                </div>
+              </div>
+            </div>
+            <div class="marketing-channels-sub-title">
+              {{ facebookNotifCount }}&nbsp;
+              {{ language["Calix segments in this channel"] }}
+            </div>
+            <div class="">
+              <a routerLink="/engagement/channels/face">
+                <button [attr.disabled]="facebookError ? true : null" class="btn-default primary mr-2 textCalix">
+                  {{ language["view Channel Results"] }}
+                </button></a>
+              <a routerLink="/engagement/channels/facebook">
+                <button [attr.disabled]="facebookError || !hasScope ? true : null" class="btn-default btn-dft textCalix"
+                  ng-reflect-router-link="#">
+                  {{ language["Configuration Settings"] }}
+                </button></a>
+            </div>
+
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="col-md-12 px-0">
+        <div class="campaigns-list-wrapper my-4">
+          <div class="campaigns-list-item w-32" *ngIf="!validHubspotToken" id="HubSpot-list">
+            <div class="d-flex justify-content-between">
+              <div class="marketing-channels-title-info">
+                <div class="marketing-channels-title">{{language.HubSpot}}</div>
+
+                <div class="ccl-mktg-Small-title error-title" *ngIf="hubspotStatus == 'Connection Error'">
+                  <!-- <span class="active-red-dot"></span> -->
+                  {{ language.connection_error}}
+                </div>
+                <div class="ccl-mktg-Small-title inactive-title"
+                  *ngIf="hubspotStatus == 'Inactive' || hubspotStatus == 'Inactif'|| hubspotStatus == 'Inactivo'">
+                  <!-- <span class="active-grey-dot"></span> -->
+                  {{ language.InActive}}
+                </div>
+                <div class="ccl-mktg-Small-title error-title" *ngIf="hubspotError">
+                  <!-- <span class="active-dot"></span> -->
+                  Error! {{hubspotErrorMsg}}.
+                </div>
+              </div>
+              <div class="marketing-channels-logos">
+                <div class="cm-logo text-right">
+                  <img src="assets/img/Hubspot_Logo.png" alt="" class="w-132px" />
+                </div>
+              </div>
+            </div>
+
+            <div class="">
+              <a routerLink="/engagement/channels/hubspot"><button [attr.disabled]="hubspotError || !hasScope ? true : null"
+                  class="btn-default primary mr-2 textCalix mt-34px">
+                  {{ language.configure }}
+                </button></a>
+            </div>
+          </div>
+
+          <div class="campaigns-list-item w-32" *ngIf="validHubspotToken" id="HubSpot-list">
+            <div class="d-flex justify-content-between">
+              <div class="marketing-channels-title-info">
+                <div class="marketing-channels-title">{{language.HubSpot}}</div>
+                <div class="ccl-mktg-Small-title active-title" *ngIf="hubspotStatus == 'Active'">
+                  <!-- <span class="active-dot"></span> -->
+                  {{ language.Active}}
+                </div>
+                <div class="ccl-mktg-Small-title error-title" *ngIf="hubspotStatus == 'Connection Error'">
+                  <!-- <span class="active-red-dot"></span> -->
+                  {{ hubspotStatus}}
+                </div>
+                <div class="ccl-mktg-Small-title inactive-title"
+                  *ngIf="hubspotStatus == 'Inactive'  || hubspotStatus == 'Inactif'|| hubspotStatus == 'Inactivo'">
+                  <!-- <span class="active-grey-dot"></span> -->
+                  {{ language.InActive}}
+                </div>
+                <div class="ccl-mktg-Small-title error-title" *ngIf="hubspotError">
+                  <!-- <span class="active-dot"></span> -->
+                  Error! {{hubspotErrorMsg}}.
+                </div>
+              </div>
+              <div class="marketing-channels-logos">
+                <div class="cm-logo text-right">
+                  <img src="assets/img/Hubspot_Logo.png" class="w-132px" alt="" />
+                </div>
+              </div>
+            </div>
+            <div class="marketing-channels-sub-title">
+              {{ hubspotNotifCount }}&nbsp;{{
+              language["Calix segments in this channel"]
+              }}
+            </div>
+            <div class="">
+              <a routerLink="/engagement/channels/hubspot-result">
+                <button class="btn-default primary mr-2 textCalix" [attr.disabled]="hubspotError ? true : null">
+                  {{ language["view Channel Results"] }}
+                </button></a>
+              <a routerLink="/engagement/channels/hubspot">
+                <button class="btn-default btn-dft textCalix" ng-reflect-router-link="#"
+                  [attr.disabled]="hubspotError || !hasScope? true : null">
+                  {{ language["Configuration Settings"] }}
+                </button></a>
+            </div>
+
+          </div>
+
+          <div class="campaigns-list-item w-32" *ngIf="!validConstantToken" id="Constant-Contact-list">
+            <div class="d-flex justify-content-between">
+              <div class="marketing-channels-title-info">
+                <div class="marketing-channels-title">Constant Contact</div>
+
+                <div class="ccl-mktg-Small-title error-title" *ngIf="constantStatus == 'Connection Error'">
+                  <!-- <span class="active-red-dot"></span> -->
+                  {{ language.connection_error}}
+                </div>
+                <div class="ccl-mktg-Small-title inactive-title"
+                  *ngIf="constantStatus == 'Inactive' || constantStatus == 'Inactif'|| constantStatus == 'Inactivo'">
+                  <!-- <span class="active-grey-dot"></span> -->
+                  {{ language.InActive}}
+                </div>
+                <div class="ccl-mktg-Small-title error-title" *ngIf="constantError">
+                  <!-- <span class="active-dot"></span> -->
+                  Error! {{constantErrorMsg}}.
+                </div>
+              </div>
+              <div class="marketing-channels-logos">
+                <div class="cm-logo text-right">
+                  <img src="assets/img/cmc-constant-contact.svg" alt="" />
+                </div>
+              </div>
+            </div>
+
+            <div class="">
+              <a routerLink="/engagement/channels/constant"><button [attr.disabled]="constantError || !hasScope ? true : null"
+                  class="btn-default primary mr-2 textCalix mt-34px">
+                  {{ language.configure }}
+                </button></a>
+            </div>
+          </div>
+
+          <div class="campaigns-list-item w-32" *ngIf="validConstantToken" id="Constant-Contact-list">
+            <div class="d-flex justify-content-between">
+              <div class="marketing-channels-title-info">
+                <div class="marketing-channels-title">Constant Contact</div>
+                <div class="ccl-mktg-Small-title active-title" *ngIf="constantStatus == 'Active'">
+                  <!-- <span class="active-dot"></span> -->
+                  {{ language.Active}}
+                </div>
+                <div class="ccl-mktg-Small-title error-title" *ngIf="constantStatus == 'Connection Error'">
+                  <!-- <span class="active-red-dot"></span> -->
+                  {{ constantStatus}}
+                </div>
+                <div class="ccl-mktg-Small-title inactive-title"
+                  *ngIf="constantStatus == 'Inactive'  || constantStatus == 'Inactif'||constantStatus == 'Inactivo'">
+                  <!-- <span class="active-grey-dot"></span> -->
+                  {{ language.InActive}}
+                </div>
+                <div class="ccl-mktg-Small-title error-title" *ngIf="constantError">
+                  <!-- <span class="active-dot"></span> -->
+                  Error! {{constantErrorMsg}}.
+                </div>
+              </div>
+              <div class="marketing-channels-logos">
+                <div class="cm-logo text-right">
+                  <img src="assets/img/cmc-constant-contact.svg" alt="" />
+                </div>
+              </div>
+            </div>
+            <div class="marketing-channels-sub-title">
+              {{ constantNotifCount }}&nbsp;{{
+                    language["Calix segments in this channel"]
+                    }}
+            </div>
+            <div class="">
+              <a routerLink="/engagement/channels/constant-result">
+                <button class="btn-default primary mr-2 textCalix" [attr.disabled]="constantError ? true : null">
+                  {{ language["view Channel Results"] }}
+                </button></a>
+              <a routerLink="/engagement/channels/constant">
+                <button class="btn-default btn-dft textCalix" ng-reflect-router-link="#"
+                  [attr.disabled]="constantError || !hasScope  ? true : null" >
+                  {{ language["Configuration Settings"] }}
+                </button></a>
+            </div>
+
+          </div>
+
+
+
+        </div>
+
+
+
+      </div>
+    </div>
+  </div>
+</section>
+<!-- This for Campaigns End -->

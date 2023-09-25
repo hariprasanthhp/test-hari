@@ -1,0 +1,244 @@
+::ng-deep {
+    table.roles-addtable td.dataTables_empty {
+        display: none;
+    }
+}
+.back-link-section a u {
+	font-size: 13px;
+}
+
+.box-of-permission:first-child {
+	border-right: 0.5px solid #dddddd;
+}
+
+.box-of-permission {
+	padding        : 8px;
+	border-top     : 0.5px solid #dddddd;
+	vertical-align : middle;
+	font-size      : 13px !important;
+	// border-left: none;
+	// border-right: none;
+}
+
+.fa-plus-circle {
+	font-size: 18px;
+	color    : #0279FF;
+}
+
+.fa-minus-circle {
+	font-size: 18px;
+	color    : #0279FF;
+}
+
+.checkbox-ui {
+	&::before {
+		content     : '';
+		display     : block;
+		width       : 7px;
+		height      : 0;
+		border      : solid #ffffff;
+		border-width: 0 2px 2px 0;
+		transform   : rotate(0deg);
+		position    : absolute;
+		left        : -14px;
+		top         : 0px !important;
+	}
+}
+
+input[type="checkbox"] {
+	+ {
+		.checkbox-ui {
+			width           : 13px;
+			height          : 13px;
+		// 	// background: #ffffff;
+		// 	// border: 1px solid #b8bcc1;
+		// 	border-radius   : 2px;
+		// 	z-index         : 1;
+		// 	position        : relative;
+		// 	right           : 0px !important;
+		// 	margin-top      : 0px !important;
+		// 	margin-bottom   : 0;
+		// 	min-height      : auto;
+		// 	padding         : 0;
+		// 	display         : inline-block;
+		// 	border          : 1px solid #0279FF;
+		// 	background      : #0279FF;
+		// 	// left         : 0px;
+		// 	top             : 0px !important;
+		}
+	}
+}
+
+a[aria-expanded=true] {
+	.fa-plus-circle {
+		display: none;
+	}
+}
+
+a[aria-expanded=false] {
+	.fa-minus-circle {
+		display: none;
+	}
+}
+
+input {
+	&:disabled {
+		cursor        : not-allowed;
+		pointer-events: all !important;
+	}
+}
+
+.switch {
+	>input[type="checkbox"] {
+		&:disabled {
+			+ {
+				.slider {
+					cursor: not-allowed;
+				}
+			}
+		}
+	}
+}
+
+// @media only screen and (min-width: 1000px) and (max-width: 1025px) {
+// 	input[type="checkbox"] {
+// 		+ {
+// 			.checkbox-ui {
+// 				position: relative;
+// 				right: 0px;
+// 				top: -24px;
+// 			}
+// 		}
+// 	}
+// }
+// @media only screen and (min-width: 600px) and (max-width: 769px) {
+// 	input[type="checkbox"] {
+// 		+ {
+// 			.checkbox-ui {
+// 				position: relative;
+// 				right: 0px;
+// 				top: -24px;
+// 			}
+// 		}
+// 	}
+// }
+@media only screen and (max-width:425px) {
+	.add-user-btn {
+		margin-top: 20px;
+	}
+}
+
+.switch {
+	position: relative;
+	display : inline-block;
+	width   : 40px;
+	height  : 22px;
+}
+
+.switch input {
+	opacity: 0;
+	width  : 0;
+	height : 0;
+}
+
+.slider {
+	position          : absolute;
+	cursor            : pointer;
+	top               : 0;
+	left              : 0;
+	right             : 0;
+	bottom            : 0;
+	background-color  : #ccc;
+	-webkit-transition: .4s;
+	transition        : .4s;
+}
+
+.slider:before {
+	position          : absolute;
+	content           : "";
+	height            : 18px;
+	width             : 18px;
+	left              : 4px;
+	right             : 2px;
+	bottom            : 2px;
+	background-color  : white;
+	-webkit-transition: .4s;
+	transition        : .4s;
+}
+
+input:checked+.slider {
+	background-color: #0279ff;
+}
+
+input:focus+.slider {
+	box-shadow: 0 0 1px #0279ff;
+}
+
+input:checked+.slider:before {
+	-webkit-transform: translateX(16px);
+	-ms-transform    : translateX(16px);
+	transform        : translateX(16px);
+}
+
+/* Rounded sliders */
+.slider.round {
+	border-radius: 18px;
+}
+
+.slider.round:before {
+	border-radius: 50%;
+}
+
+input[type=checkbox] {
+	// width: 18px;
+	// height: 18px;
+	border: 1px solid #ccc !important;
+	cursor: pointer;
+
+	&:disabled {
+		cursor: not-allowed;
+	}
+}
+
+.custom-flex {
+	display        : flex;
+	justify-content: space-between;
+}
+
+.ml-5r {
+	margin-left: 5rem !important;
+}
+
+.emptyRowSwitch {
+	height: 45px;
+}
+
+.noWriteApi {
+	opacity: 0.5;
+}
+input[type=checkbox] + .checkbox-ui {
+    width: 13px !important;
+    height: 13px !important;
+}
+input[type=checkbox] + .check-intermediate{
+	left: 0px !important;
+    margin-top: 2px !important;
+}
+.checkbox-permission 
+{
+position: relative;
+input[type=checkbox]{
+position:absolute;
+margin-top: 3.5px;
+}
+.check-intermediate{
+    position: absolute !important;
+}
+}
+.check-intermediate + span.check-caption {
+	margin-left: 18px;
+}
+
+span#user-all-delete-span {
+    top: 0px !important;
+}

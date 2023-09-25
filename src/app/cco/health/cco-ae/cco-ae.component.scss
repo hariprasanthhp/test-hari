@@ -1,0 +1,257 @@
+@import "../../../../assets/variables.scss";
+
+.cco-pon-report-warpper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: 36px;
+
+    .cco-pon-report-item {
+        flex: 0 32%;
+
+        margin-bottom: 2%;
+        /* (100-32*3)/2 */
+    }
+
+    .cco-pon-report-item+.cco-pon-report-item {}
+}
+
+input.inp-disabled:hover {
+    cursor:not-allowed !important;
+} 
+
+.pon-report-table {
+    width: 100%;
+
+    table {
+        width: 100%;
+
+        thead {
+            tr {
+                border-bottom: 1px solid #cccccc;
+
+
+                th {
+                    padding-bottom: 8px;
+                    padding-left: 12px;
+                    font-weight: 600;
+                    font-size: 16px;
+                    line-height: 14px;
+                    color: #1A1F22;
+                }
+            }
+        }
+
+        tbody {
+            tr {
+
+
+
+                td {
+
+                    padding: 7px 0px 7px 12px;
+                    font-weight: 400;
+                    font-size: 15px;
+                    line-height: 24px;
+                    color: #333333;
+                }
+            }
+
+            tr:hover {
+                background-color: #EDF5FF;
+            }
+
+            tr:nth-child(even) {
+                background-color: #F8F8FA;
+            }
+                                                                                                tr:nth-child(even):hover {
+                                                                                                    background-color: #EDF5FF;
+                                                                                                }
+        }
+    }
+}
+
+.primary {
+    color: #0279FF !important;
+}
+.pon-sub-title {
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 23px;
+}
+
+.mwc-btns {
+    justify-content: flex-end;
+    width: 120px;
+
+    button {
+        &:hover {}
+
+        &.btn-small-24 {
+            width: 24px;
+            height: 24px;
+
+            &.btn-grey {
+                // background-color   : $wgrey;
+                background-position: center;
+                background-repeat: no-repeat;
+
+                &:hover {
+                    // background-color   : $snowgrey;
+                    background-position: center;
+                    background-repeat: no-repeat;
+                }
+
+                &:focus {
+                    // background-color   : $snowgrey;
+                    background-position: center;
+                    background-repeat: no-repeat;
+                }
+            }
+        }
+
+        &.btn-que {
+            margin-right: 15px;
+            background-image: url(~src/assets/img/ic_info_grey.svg);
+
+            &:hover {
+                background-image: url(~src/assets/img/ic_info_grey.svg);
+            }
+
+            &:focus {
+                background-image: url(~src/assets/img/ic_info_grey.svg);
+            }
+        }
+
+        &.btn-dload {
+            margin-right: 6px;
+            background-image: url(~src/assets/img/ic_download_grey.svg);
+
+            &:hover {
+                background-image: url(~src/assets/img/ic_download_grey.svg);
+            }
+
+            &:focus {
+                background-image: url(~src/assets/img/ic_download_grey.svg);
+            }
+        }
+
+        &.btn-expand {
+            margin-right: 6px;
+            background-image: url(~src/assets/img/ic_expand_grey.svg);
+
+            &:hover {
+                background-image: url(~src/assets/img/ic_expand_grey.svg);
+            }
+
+            &:focus {
+                background-image: url(~src/assets/img/ic_expand_grey.svg);
+            }
+        }
+
+        &.btn-expand-inv {
+            margin-right: 6px;
+            background-image: url(~src/assets/img/ic_expand_inverted_grey.svg);
+
+            &:hover {
+                background-image: url(~src/assets/img/ic_expand_inverted_grey.svg);
+            }
+
+            &:focus {
+                background-image: url(~src/assets/img/ic_expand_inverted_grey.svg);
+            }
+        }
+    }
+}
+
+::ng-deep{
+.p-cal-custom .p-inputtext{padding-right: 14px !important;}
+.p-cal-custom .p-button.p-button-icon-only{width: 22px !important;}
+}
+
+.text-plus-icon span{display: none;}
+.text-plus-icon:hover span{display: inline;}
+
+.text-link{
+    color: #0279FF;
+    cursor: pointer;
+    text-decoration: none;
+    a{
+      text-decoration: none;
+    }
+  }
+  button.search-close {
+    border: none;
+    background: transparent;
+    outline: none;
+    position: absolute;
+    right: 23px;
+    top: 3px;
+    img{width: 12px;}
+}
+.mandatory-msg.position-absolute{
+    left: 0;
+    margin-top: 40px;
+}
+
+.chart-gray-subtitle{
+    color: #666666;
+    line-height: 18px;
+    text-align: center;
+    font-family: "Source Sans Pro";
+    font-size: 14px;
+    margin-top: 15px;
+  }
+
+
+  .health-ae-menu-wrapper {
+    display: flex;
+    width  : 100%;
+  }
+  .health-ae-menu-wrapper .health-ae-menu-item h3 {
+    font-size  : 30px !important;
+    color      : #0054B2 !important;
+    line-height: 32px !important;
+    font-weight: 300;
+  }
+  
+  .health-ae-menu-wrapper .health-ae-menu-item .menu-title {
+    color      : #1A1F22;
+    font-size  : 14px;
+    line-height: 16.4px;
+  }
+  .health-ae-menu-item.kbi-item {
+    min-width: 170px;
+  }
+  @media screen and (max-width: 767px) {
+    .health-ae-menu-wrapper {
+      display: block;
+    }
+}
+.kbi-item{padding: 0 12px !important;
+    border-left: 1px solid #EBEAEF !important;
+  }
+  .ic_info{
+    width: 13px;
+    height: 13px;
+  }
+  .pop{
+    padding: 22px 24px 26px 26px;
+    width: 475px;
+    filter: drop-shadow(0px 5px 15px rgba(128, 128, 128, 0.25));
+    fill: #FFF;
+    border-radius: 10px;
+    border: none;
+    transform: translate(-101%, -50%) !important;}
+  .pop .title{
+    color: #000;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 24px;
+  }
+  .dropleft .dropdown-toggle::before{
+    display: none !important;
+  }
+  .pop .close span{
+    background-size: 12px 12px;
+  }

@@ -1,0 +1,78 @@
+.btn-action-view {
+  border-right: 0;
+}
+
+.btn-action-view button {
+  padding: 3px 20px;
+  background: #fff;
+  color: #0279ff;
+  line-height: 16px;
+  height: 24px;
+  font-size: 14px;
+  box-shadow: none;
+  border: 1px solid #0279ff;
+}
+
+.btn-action-view .btn-active {
+  background: #0279ff;
+  color: #ffffff;
+}
+
+.btn-std {
+  border-radius: 12px 0px 0px 12px;
+}
+
+.btn-comp {
+  border-radius: 0px 12px 12px 0px;
+}
+.count-label {
+  background: #f8f8fa;
+  border-radius: 29px;
+  font-size: 14px;
+  padding: 0px 13px;
+  min-width: 131px;
+  min-height: 24px;
+  margin-bottom: 0;
+  line-height: 24px;
+}
+.btn-refresh {
+  border: none;
+  background: none;
+  outline: none;
+  padding: 0;
+}
+.h-24-btn {
+  height: 24px;
+  line-height: 16px !important;
+  padding: 3px 20px !important;
+  font-size: 14px;
+}
+.modal.fade .modal-dialog {
+  border-radius: 26px;
+  max-width: 67.68% !important;
+}
+.col-recom{
+  .subj-text{
+    max-height: 230px;
+    overflow-y: auto;
+  }
+}
+
+.white-space-preline {
+  white-space: pre-line;
+}
+.source-overflow-auto{
+  max-height: 275px;
+  overflow-y: auto;
+}
+.w-75px{
+  width: 75px !important;
+}
+.maxh-overflow-auto{
+  max-height: 250px;
+  overflow: auto;
+} 
+
+.c-auto {cursor: auto !important;}
+.tbl-border-bottom{border-bottom: 1px solid #cccccc;}
+.subscriber-impact-red{color: #C70000;}

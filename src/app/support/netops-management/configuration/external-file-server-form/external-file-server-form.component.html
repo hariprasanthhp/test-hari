@@ -1,0 +1,125 @@
+<div class="w-100 alert alert alert-danger  fade show" *ngIf="showError">
+  <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+  <button type="button" id="hide-error-btn" class="close" (click)="hideError()"><span></span></button>
+  <div class="d-inline-flex" [innerHtml]="errorMsg"></div>
+</div>
+
+<div class="w-100 alert alert alert-success  fade show" *ngIf="showSuccess">
+  <div class="d-inline">
+    <strong>
+      <div class="pl-2 d-inline" [innerHtml]="successMsg"></div>
+    </strong>
+  </div>
+  <div class="d-inline">
+    <button type="button" id="hide-success-btn" class="close" (click)="hideSuccess()"><span></span></button>
+  </div>
+</div>
+
+<div class="loader" *ngIf="loading">
+  <div class="d-flex justify-content-center">
+    <div class="spinner-border text-primary">
+      <span class="sr-only">{{language.Loading}}</span>
+    </div>
+  </div>
+</div>
+
+<!-- <div class="row">
+  <div class="col-md-12">
+
+    <h4 class="mb-4" id="external-file-server-label">{{language.External_File_Server}}</h4>
+
+  </div>
+</div> -->
+<div class="row">
+  <div class="col-md-12 mt-4">
+
+    <form #myForm="ngForm" id="external-file-server-form" (ngSubmit)=" onSubmit()" novalidate
+      class="form-group ccl-form">
+      <div class="form-group row ccl-form required">
+        <label for="name" class="col-sm-3 col-form-label">{{language.Name}}
+          <span class="error">*</span>
+        </label>
+        <div class="col-sm-9" [ngClass]="[((name.errors?.required || name.errors?.pattern || name.errors?.customMin
+           || name.errors?.customMax) && ( myForm.submitted || name.touched ))  ? 'errorMessage' : '']">
+          <input type="text" #name="ngModel" class="form-control" id="name" name="name" customMin="4" customMax="20"
+            [(ngModel)]="externalFileServerObj.name" placeholder="{{language.Name}}" required aria-required="true"
+            (keyup)="formValidate()" aria-describedby="name-error" aria-invalid="true" autocomplete="new-password"
+            pattern="^[a-zA-Z0-9_\s]+$" trimSpace [formValue]="externalFileServerObj">
+          <span *ngIf="( name.touched || myForm.submitted)  &&  name.errors?.required" class="pl-3" id="name-error">
+            {{language.Name_required_validation}}</span>
+          <span *ngIf="( name.touched || myForm.submitted)  &&  name.errors?.pattern" class="pl-3" id="name-error">
+            {{language.Name_required_validation1}}</span>
+          <span *ngIf="( name.touched || myForm.submitted)  &&  (name.errors?.customMin || name.errors?.customMax )"
+            class="pl-3" id="name-error">
+            {{language.Name_required_validation2}}</span>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label">{{language.description}} {{language.optional}}</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="Description" id="description" name="description"
+            [(ngModel)]="externalFileServerObj.description" placeholder="{{language.description}}" trimSpace
+            [formValue]="externalFileServerObj">
+        </div>
+      </div>
+
+
+
+
+      <div class="form-group row ccl-form required">
+        <label for="baseUrl" class="col-sm-3 col-form-label">{{language.URL}}
+          <span class="error">*</span>
+        </label>
+        <div class="col-sm-9"
+          [ngClass]="[((baseUrl.errors?.required || baseUrl.errors?.pattern ) && ( myForm.submitted || baseUrl.touched ))  ? 'errorMessage' : '']">
+          <input type="url" #baseUrl="ngModel" name="baseUrl" id="baseUrl" placeholder="URL" [pattern]="urlPattern"
+            [(ngModel)]="externalFileServerObj.baseUrl" class="form-control" required aria-required="true"
+            aria-describedby="baseUrl-error" aria-invalid="true" autocomplete="new-password" (keyup)="formValidate()"
+            trimSpace [formValue]="externalFileServerObj">
+          <span class="pl-3" *ngIf="( baseUrl.touched || myForm.submitted)  &&  baseUrl.errors?.required"
+            id="baseUrl-error">
+            {{language.File_Validation}}</span>
+          <span class="pl-3" *ngIf="( baseUrl.touched || myForm.submitted)  &&  baseUrl.errors?.pattern"
+            id="baseUrl-error">
+            {{language.File_Validation1}}</span>
+        </div>
+      </div>
+
+
+
+      <div class="form-group row">
+        <label for="userName" class="col-sm-3 col-form-label">{{language.User_Name}}</label>
+        <div class="col-sm-9">
+          <input type="text" autocomplete="new-password" class="form-control" id="userName" name="userName"
+            [(ngModel)]="externalFileServerObj.username" placeholder={{language.Http_Auth_Placeholder}} trimSpace
+            [formValue]="externalFileServerObj">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label">{{language.Password}}</label>
+        <div class="col-sm-9 position-relative">
+          <span class="cursor-pointer" [ngClass]="isPwdVisble ? 'password_hide':'password_view'"
+            (click)="isPwdVisble = !isPwdVisble"></span>
+          <input [type]="isPwdVisble ? 'password':'text'" autocomplete="new-password" class="form-control" id="password"
+            name="password" [(ngModel)]="externalFileServerObj.password"
+            placeholder="{{language['Please enter the Password']}}">
+        </div>
+      </div>
+      <div class="form-group row">
+        <div class="d-inline-flex justify-content-start align-item-center col-md-12">
+          <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group mr-2" role="group" aria-label="First group">
+              <button type="submit" id="submit-btn" [disabled]="disableSubmit"
+                class="btn-default primary px-3">{{language.submit}}</button>
+            </div>
+            <div *ngIf="hasWriteAccess" (click)="gotoExternalFileServer();" class="btn-group mr-2" role="group"
+              aria-label="First group">
+              <button type="submit" id="cancel-btn" class="btn-default transparant">{{language.cancel}}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+  </div>
+</div>

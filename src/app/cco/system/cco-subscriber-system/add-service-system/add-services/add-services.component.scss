@@ -1,0 +1,176 @@
+.title-holder {
+    font-size    : 24px;
+    font-weight  : 300;
+    color        : #1A1F22;
+    border-bottom: 1px solid #cccccc;
+    margin       : 25px 0px;
+
+}
+
+label {
+    font-size  : 16px;
+    font-weight: normal;
+    color      : #1A1F22;
+}
+
+.form-check {
+    label {
+        margin-bottom: 0;
+        font-weight  : normal !important;
+    }
+}
+.system-details-item-full {
+    align-items: flex-start;
+    width      : 99%;
+  }
+.btn-link {
+    font-size  : 16px;
+    font-weight: 400;
+}
+
+span.required {
+    color: #C70000;
+}
+
+.form-group {
+    margin-bottom: 10px;
+}
+
+::ng-deep .ng-clear-wrapper {
+    display: block;
+}
+
+.password {
+    position: relative;
+
+    .see_pass {
+        position: absolute;
+        top     : 43px;
+        right   : 30px;
+    }
+}
+
+.coc-system-detail {
+    .accordion {
+        .card {
+            border: none !important;
+
+
+            .card-header {
+                background: none !important;
+                padding   : 10px 0px !important;
+                border    : none !important;
+            }
+        }
+
+    }
+}
+
+.cco-secondary-title-system {
+    font-weight: 400 !important;
+}
+
+.card-body {
+    flex      : 1 1 auto;
+    min-height: 1px;
+    padding   : 0px 20px !important;
+}
+
+span.ic_down {
+    margin-left: 5px;
+    position   : relative;
+}
+
+.ic_down[aria-expanded="true"],
+.ic_down.start {
+    img {
+        transform        : rotate(-180deg);
+        -webkit-transform: rotate(-180deg);
+    }
+}
+
+.ic_down.collapsed {
+    img {
+        transform        : none !important;
+        -webkit-transform: none !important;
+    }
+}
+
+.accordion {
+    .card-body {
+        padding-bottom: 25px !important;
+        padding-left  : 40px !important;
+    }
+}
+
+
+.icon-btn {
+    border          : none;
+    background-color: transparent;
+    outline         : 0;
+
+    i {
+        color    : #0279ff;
+        font-size: 16px;
+        cursor   : pointer;
+    }
+
+
+    // i.spin-animation {
+    //     //@include animation(spin, 0.5s, ease-in);
+    // }
+}
+
+[aria-expanded="true"] i {
+    -webkit-transform: rotate(180deg);
+    -moz-transform   : rotate(180deg);
+    transform        : rotate(180deg);
+}
+.adshow img {
+    transform: rotate(-180deg);
+    -o-transform: rotate(-180deg);
+}
+.form-control{position: relative;}
+.invalid-feedback-pos{position: relative; right: 210px}
+.top-13{top: 13px;}
+.top-right{top: 12px;right: 28px;}
+.marg-tbl{margin-bottom: 24px; margin-top: 24px; margin-left: 12px;}
+.opacity-4{
+opacity: 0.4;
+}
+.switch-disable {
+    label{cursor: not-allowed;}
+}
+small.error{
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 20px;
+    color: #C70000;
+}
+
+.inline-input.position-relative .see_pass{
+top: 12px;
+}
+.password_view, .password_hide {
+    position: absolute;
+    right: 30px;
+    top: 14px;
+}
+.pwd-field-icon{
+    cursor: pointer;
+    font-weight: normal;
+    top: 45px;
+    right: 15px;
+}
+.btn-link.primary.cursor-pointer{
+    img{margin-left: 9px;}
+}
+.min-h-85{
+    min-height: 85px;
+}
+.check-box-ui{
+    max-width: 13px;
+    max-height: 15px;
+    min-height: 15px;
+    cursor: pointer;
+}

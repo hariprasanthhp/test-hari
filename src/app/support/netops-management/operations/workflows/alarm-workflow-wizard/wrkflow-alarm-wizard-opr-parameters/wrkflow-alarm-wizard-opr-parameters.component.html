@@ -1,0 +1,200 @@
+<div class="w-100 alert alert-danger mt-4 fade show" *ngIf="error">
+
+  <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+  <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+  <button class="btn-default px-3 ok-btn float-right" (click)="closeAlert()" id="wk-opr-err-ok">
+    {{ language.Ok }}
+  </button>
+</div>
+<div class="wizard-form">
+  <form [formGroup]="filtersForm">
+    <span class="net-ops-secondary-title">Filter By Region</span>
+    <div class="w-100 row form-group">
+      <div class="current-issue-menu-item col-12 col-sm-12 col-md-3 col-lg-3">
+        <label for="Name" class="col-form-label select-font">{{language.region}}</label>
+        <div class="custom-selectbox" class="w-100" id="current-issues-interval">
+          <ng-select formControlName="region" [multiple]="true" [items]="regionsDataArray" bindValue="id"
+            bindLabel="name" class="selectboxwidth" [clearable]="false" [searchable]="true"
+            placeholder="{{ language.region }}" (add)="validateRegion($event)" (remove)="loadLocationValue($event)">
+          </ng-select>
+        </div>
+      </div>
+      <div class="current-issue-menu-item col-12 col-sm-12 col-md-3 col-lg-3">
+        <label for="Name" class="col-form-label select-font">{{ language.Location }}</label>
+        <div class="custom-selectbox" class="w-100" id="current-issues-interval">
+          <ng-select formControlName="location" [multiple]="true" [items]="locationDataArray" bindValue="id"
+            bindLabel="name" class="selectboxwidth" placeholder="{{ language.Location }}" [clearable]="false"
+            [searchable]="true" (add)="validateLocation($event)" (remove)="loadSystemValue($event)">
+          </ng-select>
+        </div>
+      </div>
+      <div class="current-issue-menu-item col-12 col-sm-12 col-md-3 col-lg-3">
+        <label for="Name" class="col-form-label select-font">{{ language.System }}</label>
+        <div class="custom-selectbox" class="w-100" id="current-issues-interval">
+          <ng-select formControlName="system" [multiple]="true" [items]="systemDataArray" bindValue="fqn"
+            bindLabel="name" (change)="selectSystem($event)" class="selectboxwidth" placeholder="{{ language.System }}"
+            [clearable]="false" [searchable]="true" (add)="validateSystem($event)">
+          </ng-select>
+        </div>
+      </div>
+    </div>
+    <span class="net-ops-secondary-title">Filter By Count</span>
+    <div class="w-100 form-group">
+      <div
+        [ngClass]="[(filtersForm.get('count') && filtersForm.get('count').errors && filtersForm.get('count').errors.min)  ? 'errorMessage' : '']"
+        class="form-group ccl-form row">
+        <label class="col-2 control-label"> No of Count </label>
+        <div class="col-md-5">
+          <input min="1" customNeg id="wk-count" name="name_input" type="number" formControlName="count"
+            aria-describedby="count-error" placeholder="Enter Number of Count">
+          <em *ngIf="filtersForm.get('count')?.errors?.min">
+            please enter value starting from 1
+          </em>
+        </div>
+      </div>
+      <div
+        [ngClass]="[(filtersForm.get('duration') && filtersForm.get('duration').errors && filtersForm.get('duration').errors.min)  ? 'errorMessage' : '']"
+        class="form-group ccl-form row">
+        <label class="col-2 control-label"> Duration (Seconds) </label>
+        <div class="col-md-5">
+          <input min="0" id="wk-duration_input" name="seconds_input" type="number" formControlName="duration"
+            aria-describedby="duration-error" placeholder="Enter Duration in seconds">
+          <em *ngIf="filtersForm.get('duration')?.errors?.min">
+            please enter value starting from 1
+          </em>
+        </div>
+      </div>
+      <div class="form-group ccl-form row">
+        <label for="startDate" class="col-2 control-label">Start Date</label>
+        <div class="col-md-5">
+          <p-calendar name="startDate" data-toggle="tooltip" data-placement="bottom" title="Start Date" id="startDate"
+            formControlName="startDate" readonlyInput="true" [showIcon]="true" aria-required="true"
+            aria-describedby="startTime-error" [minDate] = "todayDate"  [maxDate]="filtersForm.get('endDate').value"  aria-invalid="true"></p-calendar>
+        </div>
+      </div>
+      <div class="form-group ccl-form row">
+        <label for="endDate" class="col-2 control-label">End Date</label>
+        <div class="col-md-5">
+          <p-calendar name="endDate" data-toggle="tooltip" data-placement="bottom" title="End Date" id="endDate"
+            formControlName="endDate" readonlyInput="true" [showIcon]="true" aria-required="true"
+            aria-describedby="endTime-error" [minDate]="filtersForm.get('startDate').value"  aria-invalid="true"></p-calendar>
+        </div>
+      </div>
+      <div class="form-group ccl-form row" *ngIf="workflowInputData?.selectedCategories == 'No'">
+        <div class="current-issue-menu-item  col-sm-12 col-md-2 col-lg-2">
+          <label for="Name" class="col-form-label select-font">{{language.SelectAlarm}}</label>
+
+        </div>
+        <div class="custom-selectbox" class="col-sm-12 col-md-5 col-lg-5" id="current-issues-interval">
+          <ng-select formControlName="SelectedAlarm" [multiple]="true" [items]="inputAlarms" bindValue="label"
+            bindLabel="label" class="selectboxwidth" [clearable]="false" [searchable]="true"
+            placeholder="{{ language.SelectAlarm }}">
+          </ng-select>
+        </div>
+      </div>
+    </div>
+
+    <span class="net-ops-secondary-title">Filter By Additional Parameters</span>
+    <div class="form-group">
+      <div class="border-bottom my-2" formArrayName="additionalParams"
+        *ngFor="let item of filtersForm.get('additionalParams')['controls']; let ind = index;">
+        <div [formGroupName]="ind">
+          <div class="form-group ccl-form row">
+            <label for="Name" class="col-2 control-label">Select Parameter</label>
+            <div class="custom-selectbox" class="col-md-5" id="current-issues-interval">
+              <ng-select [clearOnBackspace]="true" [multiple]="false" [items]="additionalParameters" bindValue="label" bindLabel="label"
+                (change)="selectAdditionalParam($event,ind)" class="selectboxwidth" placeholder="Select Parameter"
+                [clearable]="true" [searchable]="true" (add)="addAdditionalParam($event)">
+              </ng-select>
+            </div>
+            <div class="add-remove">
+              <img class="pointer mr-3" src="assets/img/Icon_Circle-Plus.svg" (click)="addParams()"
+                *ngIf="(ind == (filtersForm?.value['additionalParams']?.length - 1))" />
+              <img *ngIf="ind !=(filtersForm?.value['additionalParams']?.length - 1)" class="pointer"
+                src="assets/img/ic_minus_sign_circle.svg" (click)="removeAddParams(ind)" />
+            </div>
+          </div>
+          <!-- <div class="form-group ccl-form">
+                <div class="add-remove">
+                    <img
+                        class="pointer mr-3" src="assets/img/Icon_Circle-Plus.svg"
+                        class="not-allow" (click)="addParams()" />
+                    <img class="pointer"
+                        src="assets/img/ic_minus_sign_circle.svg" />
+                </div>
+            </div> -->
+          <div class="row">
+            <div class="form-group col ccl-form col-md-3"
+              *ngIf="selectedAddParams[ind] && selectedAddParams[ind].includes('Service Impacting')">
+              <label class="control-label">Service Impacting  <img class="pointer"
+                src="assets/img/ic_minus_sign_circle.svg" (click)="removeSingleParams(ind,'Service Impacting')"  /></label>
+              <div>
+                <label class="radio-inline col-2">
+                  <input type="radio" class="mr-2" value='Yes' formControlName="ServiceImpacting"
+                    id="ServiceImpacting{{ind}}">
+                  {{language.Yes}}
+                </label>
+                <label class="radio-inline col-2">
+                  <input type="radio" class="mr-2" value='No' formControlName="ServiceImpacting"
+                    id="ServiceImpacting{{ind}}"> {{language.No}}
+                </label>
+              </div>
+              <em *ngIf="filtersForm.get('ServiceImpacting')?.errors?.required">
+                please select a value
+              </em>
+            </div>
+            <div class="form-group col ccl-form col-md-3"
+              *ngIf="selectedAddParams[ind] && selectedAddParams[ind].includes('Service Affecting')">
+              <label class=" control-label">Service Affecting <img class="pointer"
+                src="assets/img/ic_minus_sign_circle.svg" (click)="removeSingleParams(ind,'Service Affecting')" /> </label>
+              <div>
+                <label class="radio-inline col-2">
+                  <input type="radio" class="mr-2" value='Yes' formControlName="ServiceAffecting"
+                    id="ServiceAffecting{{ind}}">
+                  {{language.Yes}}
+                </label>
+                <label class="radio-inline col-2">
+                  <input type="radio" class="mr-2" value='No' formControlName="ServiceAffecting"
+                    id="ServiceAffecting{{ind}}"> {{language.No}}
+                </label>
+              </div>
+              <em *ngIf="filtersForm.get('ServiceAffecting')?.errors?.required">
+                please select a value
+              </em>
+            </div>
+            <div class="form-group col ccl-form col-md-3"
+              *ngIf="selectedAddParams[ind] && selectedAddParams[ind].includes('Severity')">
+              <label for="current-issues-interval" class="col-md-12 select-font">{{ language['Severity'] }}
+                <img class="pointer"
+                  src="assets/img/ic_minus_sign_circle.svg" (click)="removeSingleParams(ind,'Severity')" />
+              </label>
+              <div class="custom-selectbox" id="current-issues-interval">
+                <ng-select [searchable]="false" placeholder="{{ language['Severity'] }}" formControlName="Severity"
+                  (change)="changeSeverity()">
+                  <ng-option value="All">{{ language.All }}</ng-option>
+                  <ng-option value="Critical">{{ language.critical }}</ng-option>
+                  <ng-option value="Major">{{ language.major }}</ng-option>
+                  <ng-option value="Minor">{{ language.minor }}</ng-option>
+                  <ng-option value="Warning">{{language.Warning}}</ng-option>
+                  <ng-option value="Info">{{language.Info}}</ng-option>
+                </ng-select>
+                <em *ngIf="filtersForm.get('Severity')?.errors?.required">
+                  please select a value
+                </em>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--  -->
+    </div>
+    <div class="workflow-next-previous">
+      <button type="button" class="btn-arrow btn-arr-prev btn-grey mr-2" (click)="go_previous()" id="previous">
+        <img src="assets/img/ic_chevronleft_grey.svg"> {{ language.Previous }}
+      </button>
+      <button type="button" (click)="go_next()" class="btn-arrow btn-arr-nxt primary" id="next">
+        {{ language.Next }} <img src="assets/img/ic_chevron-r-w.svg">
+      </button>
+    </div>
+  </form>
+</div>

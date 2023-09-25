@@ -1,0 +1,254 @@
+<div class="container position-relative">
+  <div class="w-100 alert alert-danger fade show" *ngIf="errorMessage">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+    <span>{{errorMessage}}</span>
+    <button type="button" class="close mt-10" (click)="closeAlert()">
+      <span></span>
+    </button>
+  </div>
+  <div class="w-100 alert alert-success fade show" *ngIf="successMessage">
+    <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+    <span>{{successMessage}}</span>
+    <button type="button" class="close mt-10" (click)="closeAlert()">
+      <span></span>
+    </button>
+  </div>
+  <div class="row">
+    <div class="w-100">
+      <div class="ccl-admin-title"  *ngIf="apps.cmcPro">
+        {{language['subscriber-prospect-upload']}}
+      </div>
+      <div class="ccl-admin-title"  *ngIf="!apps.cmcPro">
+        {{language['Subscriber']}}&nbsp;{{language['File']}}&nbsp;{{language['Upload']}}
+      </div>
+      <p>
+        {{language['Upload a subscriber .CSV file by clicking the “Browse” button below. Uploaded files may take up to
+        24
+        hours to be processed and matched with existing records.']}}
+      </p>
+    </div>
+    <div class="w-100 d-flex flex-wrap align-items-center mt-1">
+      <button class="btn-default primary" (click)="openSubscriberUploadModal(SubscriberUploadModal)">{{language['Upload
+        .CSV File']}}
+      </button>
+    </div>
+  </div>
+  <!--end-->
+  <div class="row" [hidden]="loading">
+    <div class="table-filter ">
+      <div class="ccl-form">
+        <div class="d-flex flex-wrap">
+          <div class="search-input position-relative pr-4">
+            <input type="text" placeholder="{{language.Search}}" [(ngModel)]="searchText"
+              (input)="searchName($event.target.value)" />
+            <span class="pos-abs-right" *ngIf="searchText" (click)="clearText()"><img
+                src="../../../../../assets/img/close-icon.svg" /></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--end-->
+    <div class="overflow-auto w-100 mt-3">
+      <table class="zip-code-table table table-hover" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+        <thead>
+          <tr>
+            <th>{{language['Name']}}</th>
+            <th class="sorting_disabled">{{language['Type']}}</th>
+            <th class="sorting_disabled">{{language['Status']}}</th>
+            <th class="sorting_disabled">{{language['Date Added']}}</th>
+            <th class="th-del-action"></th>
+          </tr>
+        </thead>
+        <tbody [ngClass]="!prospectListError ? 'table-row-group': 'd-none'">
+          <tr *ngFor="let item of prospectLisData">
+            <td><a class="primary cursor-pointer text-decoration-none text-break"
+                (click)="goToSubscriber(item)">{{item.listName}}</a></td>
+            <td class="text-capitalize">{{item.listType}}</td>
+            <td class="text-capitalize">{{item.processed?language['Ready']:language['Unprocessed']}}</td>
+            <td>{{item.createdTime | date: "d MMMM, y"}}</td>
+            <td>
+              <div class="action-icons-row text-center">
+                <!-- <a class="primary cursor-pointer" (click)="openSubscriberEditFileNameModal(SubscriberEditFileName)"><i
+                    class="fa fa-pencil"></i></a> -->
+                <a class="primary cursor-pointer"
+                  (click)="openSubscriberDeleteModal(item, SubscriberDeleteModal)"><i class="fa fa-trash-o"></i></a>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+        <tbody [ngClass]="prospectListError ? 'table-row-group': 'd-none'">
+          <tr>
+            <td colspan="5" class="text-center">{{language.nodata}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="center-chart flex mt-60" *ngIf="loading">
+    <div class="spinner-border text-primary mt-60">
+      <span class="sr-only">{{language.Loading}}</span>
+    </div>
+  </div>
+</div>
+<!--Modal-->
+<ng-template #SubscriberUploadModal let-modal>
+  <div class="w-100 py-3">
+    <button type="button" class="close mt-1" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span></span>
+    </button>
+  </div>
+  <div class="px-4">
+    <div id="upload-csv-modal-title" class="ccl-admin-title mb-2">{{language['Upload File']}}</div>
+    <p>{{language['All uploaded files should have 8 columns or fewer,and fewer than 10,000 rows.Street
+      Address1,City,State,ZIP are required(may not be blank).']}}</p>
+    <p>{{language['Please use the column formats shown below:']}}</p>
+    <div class="subscriber-file-title">{{language['File Example']}} </div>
+    <div class="subscriber-file-example-table mb-2">
+      <div class="row">
+        <div class="col-md-12">
+          <table class="table-example w-100">
+            <thead>
+              <tr>
+                <th>{{language['First Name']}}</th>
+                <th>{{language['Last Name']}}</th>
+                <th>{{language['Street Address']}} 1</th>
+                <th>{{language['Street Address']}} 2</th>
+                <th>{{language['City']}}</th>
+                <th>{{language['State']}}</th>
+                <th>Zip</th>
+                <th>{{language["Email(s)"]}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Tom</td>
+                <td>Jones</td>
+                <td>123 East Lane</td>
+                <td>Ap # 6</td>
+                <td>San Jose</td>
+                <td>CA</td>
+                <td>23137</td>
+                <td>tom.j@email.com; tom2@email.com</td>
+              </tr>
+              <tr>
+                <td>Bailey</td>
+                <td>Thompson</td>
+                <td>P.O. Box 132</td>
+                <td>77 Sunny St.</td>
+                <td>Omaha</td>
+                <td>Idaho</td>
+                <td>32140</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Tina</td>
+                <td>Hawkins</td>
+                <td>22-109 Great Avenue</td>
+                <td></td>
+                <td>Chicago</td>
+                <td>IL</td>
+                <td>00011</td>
+                <td>tina@email.com</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="my-3">
+      <button class="btn-default primary file-browse-btn mr-3">
+        {{language['Browse']}}
+        <input type="file" (change)="fileSelected($event, SubscriberFileName)" accept=".csv"
+          title="{{language['no file chosen']}}" />
+      </button>
+      <a *ngIf="apps.cmcPro" (click)="downloadFunction()"
+        class="btn-dft btn-default text-decoration-none py-1 mr-3">
+        {{language['Download Template']}}</a>
+        <a *ngIf="!apps.cmcPro" (click)="downloadFunction()"
+        class="btn-dft btn-default text-decoration-none py-1 mr-3">
+        {{language['Download Template']}}</a>
+      <button class="btn-link primary" (click)="modal.close('Close click')">{{language.Cancel}}</button>
+    </div>
+  </div>
+</ng-template>
+<ng-template #SubscriberFileName let-modal>
+  <div class="w-100 py-3">
+    <button type="button" class="close mt-1" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span></span>
+    </button>
+  </div>
+  <div class="subscriber-alert">
+    <div class="ccl-admin-title mb-4">{{language['fileName']}}</div>
+    <div class="ccl-form mb-2">
+      <label>{{language['Name']}}</label>
+      <input type="text" [(ngModel)]="selectedFileName" minlength="1" maxlength="500" trimSpace (blur)="removeUnwantedSpace('selectedFileName',selectedFileName)"/>
+    </div>
+    <div class="ccl-form mb-2" *ngIf="apps.cmcPro">
+      <label>{{language['Type']}}</label>
+    </div>
+    <div class="ccl-form mb-2" *ngIf="apps.cmcPro">
+      <div class="d-flex justify-content-between">
+        <div class="d-flex flex-align-center">
+          <input type="radio" id="subscriberChecked" [checked]="subscriberChecked"
+            (change)="subscriberSelected($event.target.checked)" />
+          <label class="form-check-label" for="subscriberChecked">
+            {{language['Subscribers']}}
+          </label>
+        </div>
+        <div class="d-flex flex-align-center" *ngIf="apps.cmcPro">
+          <input type="radio" id="prospectChecked" [checked]="prospectChecked"
+            (change)="prospectSelected($event.target.checked)" />
+          <label class="form-check-label" for="prospectChecked">
+            {{language['prospects']}}
+          </label>
+        </div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
+    <div class="mt-4">
+      <button *ngIf="selectedFileName" class="btn-default primary mr-3"
+        (click)='saveFile()'>{{language['Save']}}</button>
+      <button *ngIf="!selectedFileName" class="btn-default primary mr-3" disabled>{{language['Save']}}</button>
+      <button class="btn-link primary" (click)="modal.close('Close click')">{{language.Cancel}}</button>
+    </div>
+  </div>
+</ng-template>
+<ng-template #SubscriberEditFileName let-modal>
+  <div class="w-100 py-3">
+    <button type="button" class="close mt-1" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span></span>
+    </button>
+  </div>
+  <div class="subscriber-alert">
+    <div class="ccl-admin-title mb-4">{{language['fileName']}}</div>
+    <div class="ccl-form mb-2">
+      <label>{{language['Name']}}</label>
+      <input type="text" value="Harbourfront" />
+    </div>
+    <div class="mt-4">
+      <button class="btn-default primary mr-3">{{language['Save Changes']}}</button>
+      <button class="btn-link primary" (click)="modal.close('Close click')">{{language.Cancel}}</button>
+    </div>
+  </div>
+</ng-template>
+<ng-template #SubscriberDeleteModal let-modal>
+  <div class="w-100 py-3">
+    <button type="button" class="close mt-1" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span></span>
+    </button>
+  </div>
+  <div class="subscriber-alert">
+    <div class="d-flex">
+      <div class="warn-icon-min">
+        <img src="../../../assets/img/warning-icon-36px.svg" />
+      </div>
+      <div>
+        <div class="ccl-Secondary-title mb-3">{{language['Are you sure you want to delete']}}{{fileTodelete.listName}}
+        </div>
+        <button class="btn-default primary mr-3" (click)="deleteFile()">{{language.Delete}}</button>
+        <button class="btn-dft btn-default py-1" (click)="modal.close('Close click')">{{language.Cancel}}</button>
+      </div>
+    </div>
+  </div>
+</ng-template>

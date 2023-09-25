@@ -1,0 +1,136 @@
+<div class="subscriber-details" [ngClass]="!fullScreen ? 'd-block' : 'd-none'">
+    <div class="marketing-wizard flex">
+        <div class="mark-wiz-col">
+            <div class="mwc-header flex">
+                <h3 class="chart-title greyaa mb0" id="commandIQChart">{{language.command_status_Chart}}</h3>
+                <div class="mwc-btns flex">
+                    <button id="deviceDownloadSection" class="btn-round btn-small-24 btn-grey btn-dload"
+                        (click)="downloadFunction(language.command_status_Chart)" data-toggle="tooltip"
+                        title="{{language.command_download_tip}}"></button>
+                    <button id="subscriberNewExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+                        (click)="fullScreenExpandFunction(language.command_status_Chart)" data-toggle="tooltip"
+                        title="{{language.command_fullscreen_tip}}"></button>
+                </div>
+            </div>
+
+            <div class="req-text text-center" *ngIf="commandIQStatusError">
+                <div class="loader cmiq-status-align">
+                    {{commandIQStatusErrorMsg}}
+                </div>
+            </div>
+            <div class="text-center" *ngIf="!commandIQStatusDataAvailable && !commandIQStatusError">
+                <div class="h-300-left">
+                    <div class="spinner-border text-primary loader">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <div [ngClass]="commandIQStatusDataAvailable ? 'd-block' : 'd-none'">
+                <div class="mwc-content">
+                    <div class="l-m10">
+                        <div id="command-status-IQ-chart" class="chart-box cmiq-status-iq">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mark-wiz-col">
+            <div class="mwc-header flex">
+                <h3 class="chart-title greyaa mb0" id="revenueEdgeSuitsChart">{{language.revenue_edge_suite_Chart}}</h3>
+                <div class="mwc-btns flex">
+                    <button id="revenueEdgeSuitsDownloadSection" class="btn-round btn-small-24 btn-grey btn-dload"
+                        (click)="downloadFunction(language.revenue_edge_suite_Chart)" data-toggle="tooltip"
+                        title="{{language.revenue_download_tip}}"></button>
+                    <button id="subscriberNewExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+                        (click)="fullScreenExpandFunction(language.revenue_edge_suite_Chart)" data-toggle="tooltip"
+                        title="{{language.revenue_fullscreen_tip}}"></button>
+                </div>
+            </div>
+
+            <div class="req-text text-center" *ngIf="revenueEdgeSuitsError">
+                <div class="loader cmiq-status-align">
+                    {{systemModelErrorMsg}}
+                </div>
+            </div>
+            <div class="text-center" *ngIf="!revenueEdgeSuitsDataAvailable && !revenueEdgeSuitsError">
+                <div class="h-300-left">
+                    <div class="spinner-border text-primary loader">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <div [ngClass]="revenueEdgeSuitsDataAvailable ? 'd-block' : 'd-none'">
+                <div class="mwc-content">
+                    <div class="l-m10">
+                        <div id="revenue-edge-graph-div-system" class="chart-box h-300-left">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mark-wiz-col">
+            <div class="mwc-header flex">
+                <h3 class="chart-title greyaa mb0" id="systemmodel">{{language.system_by_model}}</h3>
+                <div class="mwc-btns flex">
+                    <button id="systemmodelDownloadSection" class="btn-round btn-small-24 btn-grey btn-dload"
+                        (click)="downloadFunction(language.system_by_model)" data-toggle="tooltip"
+                        title="{{language.revenue_download_tip}}"></button>
+                    <button id="systemmodelNewExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+                        (click)="fullScreenExpandFunction(language.system_by_model)" data-toggle="tooltip"
+                        title="{{language.revenue_fullscreen_tip}}"></button>
+                </div>
+            </div>
+
+            <div class="req-text text-center" *ngIf="systemModelError">
+                <div class="loader cmiq-status-align">
+                    {{systemModelErrorMsg}}
+                </div>
+            </div>
+            <div class="text-center" *ngIf="!systemModelDataAvailable && !systemModelError">
+                <div class="h-300-left">
+                    <div class="spinner-border text-primary loader">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <div [ngClass]="systemModelDataAvailable ? 'd-block' : 'd-none'">
+                <div class="mwc-content">
+                    <div class="l-m10">
+                        <div id="systemModel-graph-div-system" class="chart-box h-300-left">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="subscriber-details" [ngClass]="fullScreen ? 'd-block' : 'd-none'">
+    <div class="marketing-wizard flex">
+        <div class="mark-wiz-col brd-btm-snowgrey w-100">
+            <div class="mwc-header flex">
+                <h3 class="chart-title greyaa mb0">{{fullScreenChart}}</h3>
+                <div class="mwc-btns flex">
+                    <button id="subscriberChartDownload" (click)="downloadFunction(fullScreenChart)"
+                        [ngClass]="fullScreenDownload ? 'spinnershow': '' "
+                        class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                        title="{{deviceDownloadContent}}">
+                    </button>
+
+                    <button id="subscriberChartFullViewClose" class="btn-round btn-small-24 btn-grey btn-expand-inv"
+                        (click)="fullScreenCloseFunction()" data-toggle="tooltip" title="{{deviceCloseContent}}">
+                    </button>
+                </div>
+            </div>
+            <div class="col-12" [ngClass]="chartAvailable ? 'd-block' : 'd-none'">
+                <div class="chart-sec">
+                    <div id={{fullScreenChart}} class="chart-box chart-hw"></div>
+                </div>
+            </div>
+            <div class="text-center" *ngIf="!chartAvailable">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

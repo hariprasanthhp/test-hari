@@ -1,0 +1,148 @@
+<div class="position-relative">
+  <div class="loader" *ngIf="loader">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary" role="">
+        <span class="sr-only">{{ language.Loading }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="main-card">
+    <div class="main-card-header text-center pt-3">
+      <div class="row mb-4">
+        <div class="col-md-12">
+          <h6>{{ language.Update }} {{ language.Block_Template }}</h6>
+        </div>
+      </div>
+
+      <div class="modal-footer border-reset">
+        <button class="btn btn-success btn-sm" (click)="view()">
+          {{ language.View }}</button>&nbsp;
+        <button class="btn btn-warning btn-sm" (click)="viewPreview()">
+          {{ language.Preview }}</button>&nbsp;
+        <button class="btn btn-primary btn-sm" (click)="goToBlockPageList()">
+          {{ language.Block_Page_Template }}
+        </button>
+      </div>
+    </div>
+    <div class="row justify-content-md-center">
+      <div class="col-md-8">
+        <div class="alert alert-warning alert-dismissible fade show" id="test" role="alert" *ngIf="showError">
+          <span class="success-img"><img src="./assets/img/error-icon.svg" /></span>
+          <strong>{{ language.Error }}!</strong> {{ errorMsg }}.
+          <button type="button" class="close" (click)="showError = false;" >
+            <span></span>
+          </button>
+        </div>  
+
+        <form>
+          <div class="form-row mb-4">
+            <div class="col-md-4">
+              <label class="label-control"><b>{{ language.Name }}</b> <span class="error">*</span>
+              </label>
+            </div>
+            <div class="col-md-4 ccl-form pr-4">
+              <input id="focusing" type="text" name="name" [(ngModel)]="name" />
+            </div>
+          </div>
+          <div class="form-row mb-4">
+            <div class="col-md-4">
+              <label class="label-control"><b>{{ language.Logo_Bckgrn_Color }}</b>
+              </label>
+            </div>
+            <div class="col-md-8">
+              <input [style.background]="color" [(colorPicker)]="color" />
+            </div>
+          </div>
+          <div class="form-row mb-4">
+            <div class="col-md-4">
+              <label class="label-control"><b>{{ language.Logo_Image }}</b> <span class="error">*</span>
+              </label>
+            </div>
+            <div class="col-md-8">
+              <div id="logo-image-view-div" class="d-inline-block" *ngIf="showLogoImage && logoImageUrl">
+                <img id="logo-image-view" height="100px" width="200px" [src]="logoImageUrl+ '?timestamp=' + timestamp" />
+                <br />
+                <button type="button" class="btn btn-sm btn-light mt-1" id="logo-image-change-btn"
+                  (click)="hideLogoImage()">
+                  {{ language.Change }}
+                </button>
+              </div>
+              <input type="file" name="logo" id="logo" #logo (change)="readURL(logo, 'logo')" *ngIf="!showLogoImage" />
+            </div>
+          </div>
+          <div class="form-row mb-4">
+            <div class="col-md-4">
+              <label class="label-control"><b>{{ language.Body_Font_Color }}</b>
+              </label>
+            </div>
+            <div class="col-md-8">
+              <input [style.background]="bodyFontColor" [(colorPicker)]="bodyFontColor" name="bodyFontColor"
+                id="bodyFontColor" />
+            </div>
+          </div>
+
+          <div class="form-row mb-5">
+            <div class="col-md-4">
+              <label class="label-control"><b>{{ language.Back_Ground_Img }}</b> <span class="error">*</span>
+              </label>
+            </div>
+            <div class="col-md-8">
+              <div id="background-image-view-div" class="d-inline-block" *ngIf="showBGImage && bGImageUrl">
+                <img id="background-image-view" height="100px" width="200px" [src]="bGImageUrl+ '?timestamp=' + timestamp" />
+                <br />
+                <button class="btn btn-sm btn-light mt-1" type="button"
+                  id="background-image-change-btn" (click)="hideBGImage()">
+                  {{ language.Change }}
+                </button>
+              </div>
+              <input type="file" name="body_bg_image" id="body_bg_image" #body_bg_image
+                (change)="readURL(body_bg_image, 'body_bg_image')" *ngIf="!showBGImage" />
+            </div>
+          </div>
+          <div class="form-row mb-5">
+            <div class="col-md-4"></div>
+            <div class="col-md-8">
+              <button type="button" class="btn btn-primary btn-sm" (click)="update()" [disabled]="loader">
+                {{ language.submit }}
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- <ng-template #errorModal let-data let-ref="dialogRef" class="col-md-8">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{ language.Info }}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="close()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>{{ errorMsg }}</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="close()">
+      {{ language.Close }}
+    </button>
+  </div>
+</ng-template> -->
+
+<ng-template #successModal let-data let-ref="dialogRef" class="col-md-8">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{ language.Info }}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="close()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>{{ successMsg }}</p>
+  </div>
+  <div class="modal-footer">
+    <!-- <button type="button" class="btn btn-outline-dark" (click)="close()">
+      {{ language.Close }}
+    </button> -->
+  </div>
+</ng-template>

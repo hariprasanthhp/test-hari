@@ -1,0 +1,45 @@
+.test-container {
+  display  : flex;
+  flex-wrap: wrap;
+  width    : 100%;
+}
+.test-container + .test-container {
+  margin-top: 15px;
+}
+
+.item {
+  // flex-grow: 1;
+  border-left : 3px solid #cdcdcd;
+  padding-left: 20px;
+  width       : 20%;
+
+  h3 {
+    font-size  : 18px;
+    font-weight: 300;
+    line-height: 20px;
+    word-break : break-word;
+    margin-bottom: 0%;
+  }
+}
+
+
+.item+.item {
+  // margin-left: 2%;
+}
+
+
+.system-details-wrapper {
+  display: flex;
+  width  : 100%;
+}
+
+.system-details-item {
+  align-items: flex-start;
+  width      : 32%;
+
+
+}
+
+.system-details-item+.system-details-item {
+  margin-left: 2%;
+}

@@ -1,0 +1,91 @@
+import { environment } from './../../../../../environments/environment';
+
+export const URL = environment.SUPPORT_URL;
+
+export const featureList = URL + '/feature/availability';
+export const getUserId = URL + '/router/onboarded';
+export const addNewProfilewithDevice = URL + '/parentcontrol/add';
+export const deleteProfile = URL + '/parentcontrol/remove';
+export const stationListAll = URL + '/parentcontrol/station/listAll';
+export const profileStaionList = URL + '/parentcontrol/station/list';
+export const updateProfileName = URL + '/parentcontrol/edit';
+export const avatarUpload = URL + '/parentcontrol/avatar/upload';
+export const allUsersSummary = URL + '/parentcontrol/summary';
+export const usersProfileSummary = URL + '/parentcontrol/profile/summary';
+export const profileBlockStatusUpdate = URL + '/parentcontrol/profile/block';
+export const allProfilesBlockStatusUpdate = URL + '/parentcontrol/profile/block/all';
+export const addDeviceProfile = URL + '/parentcontrol/station/add';
+export const deleteDeviceProfile = URL + '/parentcontrol/station/remove';
+export const addWebAddressProfile = URL + '/parentcontrol/web/add';
+export const updateWebAddressProfile = URL + '/parentcontrol/web/set';
+export const listProfileWebUrl = URL + '/parentcontrol/web/list';
+export const removeProfileWebUrl = URL + '/parentcontrol/web/remove';
+export const profilerouterUsageList = URL + '/parentcontrol/usage';
+export const getProfileBedTime = URL + '/parentcontrol/bedtime/multiple';
+export const editProfileBedTime = URL + '/parentcontrol/bedtime/multiple/set';
+export const updateAllBedTimeProfile = URL + '/parentcontrol/bedtime/multiple/setall';
+export const setBedTimeAllDay = URL + '/parentcontrol/bedtime/multiple/set/all';
+export const setBedTieDayEnable = URL + '/parentcontrol/bedtime/multiple/day/set/all';
+export const deleteSpecificBEdTIme = URL + '/parentcontrol/bedtime/multiple/remove';
+export const getProfileAppsList = URL + '/parentcontrol/app/list';
+export const editProfileApp = URL + '/parentcontrol/app/set';
+export const editProfileAppCategory = URL + '/parentcontrol/app/all/set';
+export const updateContentFilter = URL + '/parentcontrol/category/group/set';
+export const getAllCategoryProfile = URL + '/parentcontrol/category/list';
+export const editCategoryProfile = URL + '/parentcontrol/category/set';
+export const getSearchList = URL + '/parentcontrol/app/search';
+export const getSelectedAppList = URL + '/parentcontrol/app';
+export const removeSelectedApp = URL + '/parentcontrol/app/remove';
+export const getSafeSearchStatus = URL + '/parentcontrol/safesearch';
+export const setSafeSearchStatus = URL + '/parentcontrol/safesearch/set';
+export const getYoutubeRestrictionStatus = URL + '/parentcontrol/youtuberestriction';
+export const setYoutubeRestrictionStatus = URL + '/parentcontrol/youtuberestriction/set';
+export const applicationStatus = URL + '/device/app/status';
+export const applicationInstall = URL + '/device/app/install';
+export const applicationUnInstall = URL + '/device/app/uninstall';
+export const applicationEnable = URL + '/app/enablement/enable';
+export const applicationDisabled = URL + '/app/enablement/disable';
+export const getNotification = URL + '/notification/iq';
+export const deleteBedTimeProfileByDayId = URL + '/parentcontrol/bedtime/multiple/day/remove'
+export const deleteAllBedTimeProfile = URL + '/parentcontrol/bedtime/multiple/all/remove'
+export const getDns = URL + '/parentcontrol/dnsoverhttps';
+export const setDns = URL + '/parentcontrol/dnsoverhttps/set';
+export const getIcloud = URL + '/parentcontrol/icloudrelay';
+export const setIcloud = URL + '/parentcontrol/icloudrelay/set';
+
+export const getAllCategory = URL + '/global-restriction/category/list';
+export const getAppList = URL + '/global-restriction/app';
+export const getWebList = URL + '/global-restriction/web/list';
+export const editCategoryMain = URL + '/global-restriction/category/set';
+export const editProfileAppMain = URL + '/global-restriction/app/set';
+export const getSearchListMain = URL + '/global-restriction/app/search';
+export const addWebAddressMain = URL + '/global-restriction/web/add';
+export const removeProfileWebUrlMain = URL + '/global-restriction/web/remove';
+export const removeSelectedAppMain = URL + '/global-restriction/app/remove';
+export const setWebAddressMain = URL + '/global-restriction/web/add';
+export const updateWebAddressMain = URL + '/global-restriction/web/set';
+export const setSafeSearchStatusMain = URL + '/global-restriction/safesearch/set';
+export const getSafeSearchStatusMain = URL + '/global-restriction/safesearch';
+export const setyoutubeStatusMain = URL + '/global-restriction/youtuberestriction/set';
+export const getyoutubeStatusMain = URL + '/global-restriction/youtuberestriction';
+export const updateContentFilterMain = URL + '/global-restriction/category/group/set';
+export const getDnsMain = URL + '/global-restriction/dnsoverhttps';
+export const setDnsMain = URL + '/global-restriction/dnsoverhttps/set';
+export const getIcloudMain = URL + '/global-restriction/icloudrelay';
+export const setIcloudMain = URL + '/global-restriction/icloudrelay/set';
+export const getParentControlCategories = URL + '/system/parentcontrol/categories';
+
+
+// SMb experience IQ Url's
+export const roleProfileListUrl = URL + '/parentcontrol/roleprofile/list';
+export const getResSettingsByIDUrl = URL + '/parentcontrol/roleprofile';
+export const getWebAddressUrl = URL + '/parentcontrol/web/list';
+export const addWebAddressUrl = URL + '/parentcontrol/web/add';
+export const removeWebUrl = URL + '/parentcontrol/web/remove';
+export const getAppListUrl = URL + '/parentcontrol/app';
+export const getSearchListUrl = URL + '/parentcontrol/app/search';
+export const addProfileAppUrl = URL + '/parentcontrol/app/set';
+export const removeSelectedAppUrl = URL + '/parentcontrol/app/remove';
+export const updateRoleProfileUrl = URL + '/parentcontrol/roleprofile/update';
+export const checkProfileListUrl = URL + '/smb/check';
+

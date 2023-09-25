@@ -1,0 +1,385 @@
+<div class="loader" *ngIf="loading">
+  <div class="d-flex justify-content-center">
+    <div class="spinner-border text-primary">
+      <span class="sr-only">{{language.Loading}}</span>
+    </div>
+  </div>
+</div>
+<div class="w-100 alert alert-danger fade show" *ngIf="error">
+  <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+  <button type="button" class="close" (click)="closeAlert()">
+    <span></span>
+  </button>
+  <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+</div>
+
+<div class="w-100 alert alert-success fade show" *ngIf="success">
+  <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+  <button type="button" class="close" (click)="closeAlert()">
+    <span></span>
+  </button>
+  <div class="d-inline-flex" [innerHtml]="language[successInfo] || successInfo"></div>
+</div>
+<div class="container sys-contain px-0">
+  <form [formGroup]="subscriberForm">
+    <div class="row" *ngIf="!hideSwap">
+      <div class="col-12 px-0">
+        <button type="button" class="btn-default primary mt-2" id="swapSystem" (click)="swapSystemWithExisting()">
+          {{ language.Swap_System }}
+        </button>
+      </div>
+
+
+    </div>
+
+    <div class="row">
+      <div class="col-lg-6 col-md-6 col-sm-12 pr-5 pl-0 mpr-0">
+        <div class="cco-secondary-title border-bottom"> {{language.System_Details}} </div>
+        <div class="ccl-form needs-validation">
+          <!-- {{ subscriberForm.value | json }} -->
+          <div class="form-group">
+            <label class="col-form-label"> {{language.FSANSystemid}}</label>
+            <input class="form-control" type="text" placeholder=""
+              (change)="systemchange();requiredFieldChanges();deviceDetails('new');disablechange()" [attr.maxLength]="macAddressLength"
+              formControlName="systemId" [readonly]="systemIdNotEditable"
+              (keypress)="clsAlphaNoOnly($event);maxLength('systemId')" [ngClass]="{'inp-disabled':systemIdNotEditable}"
+              placeholder="{{ language.Enter }}{{
+              language.FSANSystemid }}" (blur)="!systemIdNotEditable"
+              (focus)="!systemIdNotEditable " />
+            <!-- <div *ngIf="submitted && f.systemId.errors" class="invalid-feedback">
+              <div *ngIf="f.systemId.errors.required">systemId is required</div>
+            </div> -->
+            <div class="valid-feedback"></div>
+            <div *ngIf="submitted && !subscriberForm.value.systemId && syetemIdRequired" class="invalid-feedback">
+              <div>{{ language.Add_Sys_Validation1 }}</div>
+            </div>
+            <!-- <p>
+              <small class="sm-text">{{ language.Reg_Id }}&nbsp; &amp; &nbsp;{{
+                language.EXOS
+                }}</small>
+            </p> -->
+            <!-- <sup style="color: red;">{{FsanErrorMsg}}</sup> -->
+          </div>
+          <!-- <div class="form-group">
+          <label class="col-form-label"> {{ language.MAC_Address }}*</label>
+          <input class="form-control" id="address" type="text" placeholder="61:7C:5F:0D:AF:F2" name="address" required
+            [formControlName]="'address'" />
+          <div class="valid-feedback"></div>
+          <div class="invalid-feedback">
+            {{ language.Add_Sys_Validation1 }}
+          </div>
+        </div> -->
+          <!--      <div class="form-group" *ngIf="exosModel">
+            <label class="col-form-label"> {{language.Model}} <span class="error">*</span></label>
+            <div class="custom-selectbox" class="w-100">
+              <ng-select id="deviceModels" class="fd-multi-select" [items]="Modelitems" bindLabel="name"
+                bindValue="value" [multiple]="false" [readonly]="modelnoteditable"
+                [ngStyle]="{'pointer-events': modelnoteditable ? 'none' : 'auto' }"
+                placeholder="{{ language.Device_Model }}" formControlName="modelName"
+                (change)="systemchange();requiredFieldChanges();" [clearable]="false" [searchable]="true"
+                [ngClass]="{ 'is-invalid': submitted && systemModelRquired }" required>
+              </ng-select>
+              <div *ngIf="submitted && systemModelRquired" class="invalid-feedback">
+                <div>{{ language.Add_Sys_Validation1 }}</div>
+              </div>
+            </div>
+            <div class="valid-feedback"></div>
+            <div class="invalid-feedback">
+              {{ language.Add_Sys_Validation1 }}
+            </div>
+          </div>
+          <div class="form-group" *ngIf="!exosModel">
+            <label class="col-form-label"> {{language.Model}} <span class="error">*</span></label>
+            <div class="custom-selectbox" class="w-100">
+              <ng-select id="deviceModels" class="fd-multi-select" [items]="deviceModels" bindLabel="name"
+                bindValue="value" [multiple]="false" [readonly]="modelnoteditable"
+                [ngStyle]="{'pointer-events': modelnoteditable ? 'none' : 'auto' }"
+                placeholder="{{ language.Device_Model }}" formControlName="modelName"
+                (change)="systemchange();requiredFieldChanges();" [clearable]="false" [searchable]="true"
+                [ngClass]="{ 'is-invalid': submitted && systemModelRquired }" required>
+              </ng-select>
+              <div *ngIf="submitted && systemModelRquired" class="invalid-feedback">
+                <div>{{ language.Add_Sys_Validation1 }}</div>
+              </div>
+            </div>
+            <div class="valid-feedback"></div>
+            <div class="invalid-feedback">
+              {{ language.Add_Sys_Validation1 }}
+            </div>
+          </div> -->
+
+          <!-- <div class="ccl-form" formGroupName="staticGroup">
+            <label class="col-form-label"> {{ language.Add_Staticgrps }} </label>
+            <div class="col-12 col-lg-6 pl-0">
+              <div class="form-check form-check-inline">
+                <input type="radio" id="materialInline1" name="static" formControlName="static" [value]="true"
+                  (click)="changeStatic()">
+                <label class="form-check-label mx-2" for="materialInline1">{{ language.Yes }}</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input type="radio" id="materialInline2" name="static" formControlName="static" [value]="false"
+                  (click)="changeStatic()">
+                <label class="form-check-label mx-2" for="materialInline2">{{language.No }}</label>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="form-group" formGroupName="staticGroup" *ngIf="subscriberForm.value.staticGroup.static">
+            <label class="col-form-label"> {{language.Static_Groups}} </label>
+            <div class="custom-selectbox" class="w-100">
+              <ng-select id="deviceDataList" [items]="deviceDataList" bindLabel="name" bindValue="_id" [multiple]="true"
+                placeholder="" formControlName="staticGroupList" (change)="systemchange();" [clearable]="true"
+                [searchable]="true">
+              </ng-select>
+               <div *ngIf="submitted && systemModelRquired" class="invalid-feedback">
+                <div>{{ language.Add_Sys_Validation1 }}</div>
+              </div> 
+            </div>
+
+          </div> -->
+
+        </div>
+        <div class="cco-secondary-title border-bottom mt-4" > {{language['Static Groups']}}</div>
+        <app-add-static-groups  [staticGroups]="staticGroups"  [disableGroup]="!systemIdNotEditable && !subscriberForm.value.systemId" [AllFormData]="syetemsAllData" [deviceDataList]="deviceDataList"
+        (out_static_groups_change)="OnStaticFormData($event)" (out_static_groups_submit)="submitStaticGroups()"
+       ></app-add-static-groups>
+      </div>
+
+      <div class="col-lg-6 col-md-6 col-sm-12 pl-5 mpl-0" formGroupName="subscriber">
+
+        <div class="container sys-contain">
+          <div class="row">
+            <div class="col-md-12 px-0">
+              <div class="cco-secondary-title border-bottom">{{ language.Subscriber_Information }}</div>
+            </div>
+
+
+          </div>
+
+          <div class="row">
+            <div class="w-100 ccl-form needs-validation">
+              <div class="form-group" *ngIf="!subscriberName">
+                <label class="col-form-label"> {{language['Is a subscriber associated with this system']}}? </label>
+                <div class="col-12 col-lg-6 pl-0">
+                  <div class="form-check form-check-inline">
+                    <input type="radio" id="materialInline1" formControlName="subscriberEnable" value="Yes"
+                      (click)="systemchange();" (change)="disablechange()">
+                    <label class="form-check-label mx-2" for="materialInline1">{{ language.Yes }}</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input type="radio" id="materialInline2" formControlName="subscriberEnable" value="No"
+                      (click)="systemchange();" (change)="disablechange()">
+                    <label class="form-check-label mx-2" for="materialInline2">{{language.No }}</label>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group" *ngIf="subscriberForm.value.subscriber.subscriberEnable === 'Yes'">
+                <label class="col-form-label"> {{ language.Subscriber_Location_ID }} <span
+                    class="error">*</span></label>
+                <input class="form-control" trimSpace [formValue]="subscriberForm" id="name" type="text" (change)="systemchange();disablechange();requiredFieldChanges();"
+                  formControlName="subscriberLocationId" placeholder="{{language?.Enter_Subscriber_Location_ID}}"
+                  [ngClass]="{ 'is-invalid': (submitted && !subscriberForm.value.subscriber.subscriberLocationId && !subscriberLocationIdNotRequired) }" />
+                <div class="invalid-feedback border-color"
+                  *ngIf="submitted && !subscriberForm.value.subscriber.subscriberLocationId && !subscriberLocationIdNotRequired">
+                  {{ language.Add_Sys_Validation1 }}
+                </div>
+                <div class="valid-feedback"></div>
+              </div>
+
+              <div class="form-group" *ngIf="subscriberForm.value.subscriber.subscriberEnable === 'Yes'">
+                <label class="col-form-label"> {{ language.name }} <span class="error">*</span></label>
+                <input class="form-control"  trimSpace [formValue]="subscriberForm"  id="Name" type="text" formControlName="name"
+                  (change)="systemchange();requiredFieldChanges();disablechange()" placeholder="{{language?.Enter_First_Last_Names}}"
+                  [ngClass]="{ 'is-invalid': (submitted && !subscriberForm.value.subscriber.name && !nameNotRequired) }" />
+                <div class="invalid-feedback border-color"
+                  *ngIf="submitted && !subscriberForm.value.subscriber.name && !nameNotRequired">
+                  {{ language.Add_Sys_Validation1 }}
+                </div>
+                <div class="valid-feedback"></div>
+              </div>
+
+              <div class="form-group" *ngIf="subscriberForm.value.subscriber.subscriberEnable === 'Yes'">
+                <label class="col-form-label"> {{ language.account }} </label>
+                <input class="form-control"  trimSpace [formValue]="subscriberForm"  id="num" type="text" formControlName="account"
+                  (change)="systemchange();requiredFieldChanges();disablechange()" placeholder="{{language?.Enter_Account}}" />
+                <div class="invalid-feedback border-color">
+                  {{ language.Add_Sys_Validation1 }}
+                </div>
+                <div class="valid-feedback"></div>
+              </div>
+
+              <div class="form-group" *ngIf="subscriberForm.value.subscriber.subscriberEnable === 'Yes'">
+                <label class="col-form-label"> {{ language.serviceaddress }}</label>
+                <input class="form-control"  trimSpace [formValue]="subscriberForm" id="address" type="text" (change)="systemchange();disablechange()"
+                  placeholder="{{language?.Enter_Service_Address}}" formControlName="serviceAddress" />
+                <div class="valid-feedback"></div>
+                <div class="invalid-feedback">
+                  *{{ language.Add_Sys_Validation1 }}
+                </div>
+              </div>
+
+              <div class="form-group" *ngIf="subscriberForm.value.subscriber.subscriberEnable === 'Yes'">
+                <label class="col-form-label"> {{ language.Phone }} </label>
+                <input class="form-control" trimSpace [formValue]="subscriberForm" id="number"  type="text" (keypress)="numberOnly($event)" (change)="systemchange();disablechange()" formControlName="phone"
+                  placeholder="{{language?.Enter_Phone}}" />
+                  <sup class="mandatory-msg pt-1 mt-2 d-inline-block" *ngIf="submitted && subscriberForm.value.subscriber.phone && !phoneNumberValidateFunctionClone(subscriberForm.value.subscriber.phone) ">
+                    {{ language['You have entered an invalid phone No']! }}
+                </sup>
+                <div class="valid-feedback"></div>
+                <div class="invalid-feedback">
+                  *{{ language.Add_Sys_Validation1 }}
+                </div>
+              </div>
+
+              <div class="form-group" *ngIf="subscriberForm.value.subscriber.subscriberEnable === 'Yes'">
+                <label class="col-form-label"> {{ language.Email }} </label>
+                <input class="form-control" trimSpace [formValue]="subscriberForm" #email type="text" id="email" (change)="systemchange();disablechange()" formControlName="email"
+                  placeholder="{{language?.Enter_email}}" (keyup)="emailchange(email.value)" />
+                <div class="valid-feedback"></div>
+                <div class="invalid-feedback">
+                  *{{ language.Add_Sys_Validation1 }}
+                </div>
+                <span class="mandatory-msg">{{language[emailmsg]}}</span>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+
+    </div>
+
+     
+<ng-template #emptyEmailAlert let-modal>
+  <div class="modal-header my-2">
+    <button type="button" class="close custom-close-btn" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span></span>
+    </button>
+  </div>
+  
+  <div class="modal-body">
+    <div class="d-flex">
+    <div class="error-img mr-2">
+      <img src="./assets/img/ic_error-36px.svg" />
+    </div>
+    <!--end-->
+    <div class="custom-alert-content">
+      <h1 class="cco-secondary-title">{{language.empty_email_error_title}}</h1>
+      <p class="mb-0">{{language.empty_email_error}}</p>
+      <div class="w-100 my-3">
+        <button type="button" class="btn-default btn-primary mr-2" id="microErrorOkayBtn" (click)="modal.dismiss()">{{language.Okay}}</button>
+      </div>
+      <!--end-->
+    </div>
+  </div>
+  <!--end-->
+  </div>
+</ng-template>
+  
+    <ng-template #swapSystem let-modal class="col-md-12">
+      <div class="modal-header d-block">
+        <h5 class="modal-title" id="addModal">{{ language.Swap_System }}</h5>
+
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="cancel()">
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+      <div class="modal-body add-device-model">
+        <div class="py-3 alert alert-danger" *ngIf="isModalError">
+          <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+          <button type="button" id="close-error-btn" class="close" data-dismiss="alert" aria-label="Close"
+            (click)="isModalError = !isModalError">
+            <span></span>
+          </button>
+          <div class="d-inline-flex" [innerHtml]="modalWarningMessage"></div>
+        </div>
+        <div class="loader" *ngIf="modalLoader">
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+              <span class="sr-only">{{ language.Loading }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="py-3 warning-msg" *ngIf="swapSysMsg && showWarning">
+          <div class="w-100">
+            <div [innerHtml]="swapSysMsg"></div>
+          </div>
+          <div class="w-100">
+            <div class="btn-con-sec">
+              <button class="btn warn-btn mr-2" id="swapSysMsgCnfrmBtn" (click)="doSwapSystem()">
+                {{ language.Confirm }}
+              </button>
+              <button class="btn warn-btn" (click)="closeSbscrbrMsg()">
+                {{ language.Cancel }}
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="form-group mb-0" *ngIf="showconfirmation">
+          <label class="col-form-label">
+            {{language.FSANSystemid}}
+            <span class="error">*</span>
+          </label>
+          <input class="form-control" #swapExisting type="text" [attr.maxLength]="macAddressLength"
+            formControlName="newSystemId" (change)="swapSystemchange(swapExisting.value)" placeholder="{{ language.Enter }}{{
+              language.FSANSystemid }}" (keypress)="clsAlphaNoOnly($event);maxLength('newSystemId')"
+            [ngClass]="{ 'is-invalid': submitted && !subscriberForm.value.newSystemId  }" />
+          <div *ngIf="submitted && !subscriberForm.value.newSystemId " class="invalid-feedback">
+            <div>{{ language.Add_Sys_Validation1 }}</div>
+          </div>
+        </div>
+        <!-- <div class="form-group ccl-form" *ngIf="showconfirmation">
+          <div class="form-check d-flex align-items-center mb-2 p-0" *ngIf="SSIDbackup">
+            <input id="CopyPrimarySSID" type="checkbox"  [(ngModel)]="isReloadSSID" formControlName="isReloadSSID" class="check w-auto mr-2" (click)="ReloadSSID()">
+            <label for="CopyPrimarySSID" class="m-0 f-s-14px">
+              {{language['Copy Primary Wi-Fi SSIDs to replacement system (844-series RGs only)']}}
+            </label>
+          </div>
+        </div> -->
+        <button type="button" *ngIf="showconfirmation" class="btn-default primary px-3 px-3 mt-4"
+          (click)="confirmWithswapMsg()" [disabled]="!subscriberForm.value.newSystemId">
+          {{ language.Swap }}
+        </button>
+        <button type="button" *ngIf="showconfirmation" class="btn-default btn-dft px-3 px-3 m-2 mt-4" data-dismiss="modal"
+          (click)="cancel()">
+          {{ language.Cancel }}
+        </button>
+      </div>
+    </ng-template>
+  </form>
+</div>
+<ng-template #warningWiFiConfirmation let-modal>
+  <div class="modal-body">
+      <button type="button" class="clx-modal-dismiss" data-dismiss="modal" aria-label="Close"
+          (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true"></span>
+      </button>
+      <div class="modal-body-content">
+          <div class="clx-warning-wrapper">
+              <div class="clx-warning-icon">
+                  <span></span>
+              </div>
+              <div class="clx-warning-content">
+                  <div class="text-break cco-secondary-title mb-3">
+                      {{language['Unable to Apply Wi-Fi Configurations']}}
+                  </div>
+                  <div class="d-flex w-100">
+                      <p class="m-0">{{language['Wi-Fi Configurations msg']}}</p>
+                  </div>
+                  <div class="mt-3">
+                      <button type="button" class="btn-default btn-primary mr-3" (click)="doSwapSystem('true')">
+                          {{language['Continue']}}
+                      </button>
+                      <button type="button" class="btn-default btn-dft" aria-label="Close"
+                          (click)="modal.close('Close click')">
+                          {{language['Cancel']}}
+                      </button>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</ng-template>

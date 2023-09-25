@@ -1,0 +1,340 @@
+<section>
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 p-0">
+                <div class="migration-title">
+                    <div class="title-ellipse"><span title="{{migrationName}}">{{migrationName}}</span></div>
+                    <div class="mx-2" [ngClass]="setStatusClass(GetmigrationStatus?.migrationStatus)"><span
+                            class="dot"></span> {{GetmigrationStatus?.migrationStatus ==='Deleted' ? 'Undo Complete':GetmigrationStatus?.migrationStatus}} </div> <span class="float-right pointer mr-2"> <img
+                            src="../../../../../../assets/img/ic_close-44px.svg" alt="" (click)="Cancel()"></span></div>
+            </div>
+        </div>
+        <div class="row" >
+            <div class="col-md-4 pl-0">
+                <span class="mr-2 cursor-pointer"><img src="../../../../../../assets/img/ic_refresh.svg" alt="" (click)="getallMigSer(true);"></span>
+                {{language['Last updated a few seconds ago']}}
+            </div>
+            <div class="col-md-8 pr-0 text-right" [hidden]="!scope['write']">
+                <button type="button" class="btn-default primary px-3 mr-2" *ngIf="GetmigrationStatus?.migrationStatus =='Ready To Migrate' || GetmigrationStatus?.migrationStatus =='Mapping...' || GetmigrationStatus?.migrationStatus =='Migrating...'" [disabled]="GetmigrationStatus?.migrationStatus =='Mapping...' || GetmigrationStatus?.migrationStatus =='Migrating...'" (click)="startMigration()"> {{language['Start Migration']}} </button>
+                <button type="button" id="#" class="btn-default btn-dft mr-2"  [disabled]="GetmigrationStatus?.migrationStatus =='Mapping...' || GetmigrationStatus?.migrationStatus =='Migrating...'" (click)="ExportMigration()"> {{language['Export']}} </button>
+                <button type="button" id="#" *ngIf="GetmigrationStatus?.migrationStatus =='Complete' || GetmigrationStatus?.migrationStatus =='Aborted' ||GetmigrationStatus?.migrationStatus =='Deleted'||GetmigrationStatus?.migrationStatus =='Failed'" class="btn-default btn-dft mx-2" data-toggle="modal"
+                data-target=".bd-example-modal-lg" (click)="openDeleteJobReportPopup(DeleteJobReportmodal)"> {{language['Delete job report']}} </button>
+                <button type="button" id="#" class="btn-default btn-dft mx-2" data-toggle="modal"
+                    data-target=".bd-example-modal-lg" *ngIf="GetmigrationStatus?.migrationStatus !=='Complete' && GetmigrationStatus?.migrationStatus !=='Aborted'" (click)="openAbortMigrationPopup(AbortMigrationModal)"> {{language['Abort']}}
+                </button>
+               
+                <button type="button" id="#" *ngIf="GetmigrationStatus?.migrationStatus =='Complete'||GetmigrationStatus?.migrationStatus =='Aborted'  " class="btn-default btn-dft mx-2" data-toggle="modal"
+                    data-target=".bd-example-modal-lg" (click)="openUndoMigrationPopup(UndoMigrationmodal)"> {{language['Undo migration']}} </button>
+            </div>
+        </div>
+        <div class="w-100 alert alert-danger fade show my-3 d-flex align-items-start justify-content-around" *ngIf="error">
+            <span class="error-img"><img class="" src="./assets/img/ic_error-36px.svg" /></span>
+            <div class="text-break w-95 pr-2" [innerHtml]="errorInfo"></div>
+            <button type="button" class="close" (click)="closeAlert()">
+                <span></span>
+            </button>
+        </div>  
+        
+        <div class="w-100 alert alert-success fade show my-3" *ngIf="success">
+            <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+            <button type="button" class="close" (click)="success = false">
+                <span></span>
+            </button>
+            <div class="d-inline-flex" [innerHtml]="language[successInfo] || successInfo"></div>
+        </div>
+        <div class="loader" *ngIf="loader">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{ language.Loading }}</span>
+                </div>
+            </div>
+        </div>
+        <section>
+            <div class="row">
+                <div class="col-md-12 p-0">
+    
+    
+                    <div class="migration-collapse">
+                        <span class="pointer" data-toggle="collapse" data-target="#collapseExample" aria-expanded="true"
+                            aria-controls="collapseExample">{{language['Details']}} <img class="mx-1" src="../../../../../assets/img/ic_chevrondown_blue.svg"></span>
+                            
+                    </div>
+    
+                    <div class="migration-collapse collapse show border-0" id="collapseExample">
+                        <div class="card card-body pb-0">
+                            <div class="row">
+                                <div class="col-md-4 pl-0">
+                                    <div class="migration-table">
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th>
+    
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        {{language['Migration Status']}}
+                                                    </td>
+                                                    <td>
+                                                        <span [ngClass]="GetmigrationStatus?.migrationStatus == 'Complete' ? 'green-text':''">
+                                                        {{GetmigrationStatus?.migrationStatus ==='Deleted' ? 'Undo Complete':GetmigrationStatus?.migrationStatus}}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        {{language['Progress']}}
+                                                    </td>
+                                                    <td>
+                                                        {{GetmigrationStatus?.progress ? GetmigrationStatus?.progress:'-'}}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        {{language['Completed']}}
+                                                    </td>
+                                                    <td>
+                                                        {{GetmigrationStatus?.completed ? GetmigrationStatus?.completed:'-'}}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        {{language['Mapping failed']}}
+                                                    </td>
+                                                    <td>
+                                                        <span [ngClass]="GetmigrationStatus?.mappingFailed > 0 ? 'red-text':''">
+                                                            {{GetmigrationStatus?.mappingFailed ?GetmigrationStatus?.mappingFailed:'-'}}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        {{language['Provisioning failed']}}
+                                                    </td>
+                                                    <td>
+                                                        <span [ngClass]="GetmigrationStatus?.provisioningFailed > 0 ? 'red-text':''">
+                                                        {{GetmigrationStatus?.provisioningFailed ? GetmigrationStatus?.provisioningFailed:'-'}}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        {{language['Aborted']}}
+                                                    </td>
+                                                    <td>
+                                                        {{GetmigrationStatus?.aborted ?GetmigrationStatus?.aborted:'-'}}
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="migration-table">
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        {{language['Upload Date']}}
+                                                    </td>
+                                                    <td>
+                                                         {{GetmigrationStatus?.uploadDate ?convertDate(GetmigrationStatus?.uploadDate):'-'}}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        {{language['START_DATE']}}
+                                                    </td>
+                                                    <td>
+                                                        {{GetmigrationStatus?.startDate?convertDate(GetmigrationStatus?.startDate):'-'}}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        {{language['Completion Date']}}
+                                                    </td>
+                                                    <td>
+                                                        {{GetmigrationStatus?.completionDate && GetmigrationStatus?.completionDate!=='-' ? convertDate(GetmigrationStatus?.completionDate):'-'}}
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+      
+<section>
+    <div class="row">
+        <div class="col-md-12 pl-0">
+            <div class="migration-mapping-table" >
+                <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="
+                table table-hover">
+                    <thead>
+                        <tr>
+                            <th class="sorting_disabled">FSAN</th>
+                            <th class="sorting_disabled"> Reg ID</th>
+                            <th class="sorting_disabled">{{language['Subscriber_Location_ID']}}</th>
+                            <th class="sorting_disabled">Interface</th>
+                            <th>{{language['Service Type']}}</th>
+                            <th>{{language['Migration Profile']}}</th>
+                            <th>{{language['Mapping Status']}}</th>
+                            <th>{{language['Provisioning Status']}}</th>
+                            <th>{{language['Matching Service Definition Template']}}</th>
+                            <th>{{language['Static IP']}}</th>
+                            <th>{{language['Netmask']}}</th>
+                            <th>{{language['Gateway']}}</th>
+                            <th>{{language['PPPoE User']}}</th>
+                            <th>{{language['Voice (SIP)']}}</th>
+                            <th>{{language['SIP User']}}</th>
+                            <th>{{language['SIP URI']}}</th>
+                            <th>{{language['Voice (H248)']}}</th>
+                            <th>{{language['H248 Termination ID']}}</th>
+                            <th>Voice (MGCP)</th>
+                            
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let data of GetListData;let i=index">
+                            <td><span class="primary cursor-pointer" (click)="getSubscriber(data?.fsan)">
+                                {{data?.fsan}}</span></td>
+                            <td><a class="cursor-pointer text-decoration-none" [ngClass]="data?.ont_regId ? 'primary cursor-pointer':''" (click)="getSubscriber(data?.fsan)">
+                                {{data?.regId}}</a></td>
+                            <td><span [ngClass]="data?.subscriberLocationId ? 'primary cursor-pointer':''" (click)="getSubscriber(data?.fsan)">
+                                {{data?.subscriberLocationId}}</span></td>
+                            <td>{{data?.interface}}</td>
+                            <td>{{data?.serviceConfig?.serviceType ==='DATA' ? 'Data': data?.serviceConfig?.serviceType==='VIDEO'? 'Video':data?.serviceConfig?.serviceType==='VOICE'?'Voice':''}}</td>
+                            <td>{{data?.migrationProfile}}</td>
+                            <td>
+                                <span [ngClass]="data?.mappingStatus == 'Mapping Failed' ? 'red-text':''">
+                                {{data?.mappingStatus?data?.mappingStatus:''}}</span>
+                                <span class="showhim" [hidden]="data?.mappingStatus !=='Mapping Failed'"><img
+                                src="../../../../../../assets/img/info-icon.svg" alt="" class="ml-1"><div class="showme">{{data?.failureMessage}}</div></span> </td>
+                            <td><span [ngClass]="data?.provisioningStatus == 'Provisioning failed'||data?.provisioningStatus == 'Migration failed' ? 'red-text':''">
+                                {{data?.provisioningStatus}}</span>
+                                <span class="showhim" [hidden]="data?.provisioningStatus !=='Provisioning failed'&&data?.provisioningStatus !== 'Migration failed'"><img
+                                    src="../../../../../../assets/img/info-icon.svg" alt="" class="ml-1"><div class="showme">{{data?.failureMessage}}</div></span>
+                            </td>
+                            <td>
+                                <span (click)="GotoServiceProfile(data?.matchingServiceDefinition)" [ngClass]="data?.matchingServiceDefinition ? 'primary cursor-pointer':''">
+                                {{data?.matchingServiceDefinition}}
+                                </span>
+                            </td>
+                            <td> {{data?.serviceConfig?.staticIp}}</td>
+                            <td> {{data?.serviceConfig?.netmask}} </td>
+                            <td> {{data?.serviceConfig?.gateway}}</td>
+                            <td> {{data?.serviceConfig?.pppoeUsername ?data?.serviceConfig?.pppoeUsername:data?.serviceConfig?.pppoe?.Username}} </td>
+                            <td> {{data?.serviceConfig?.sipProfile}} </td>
+                            <td> {{data?.serviceConfig?.user}} </td>
+                            <td> {{data?.serviceConfig?.uri}} </td>
+                            <td> {{data?.serviceConfig?.h248Profile}}</td>
+                            <td> {{data?.serviceConfig?.terminationId}} </td>
+                            <td> {{data?.serviceConfig?.mgcp}}</td>
+                            <!-- <td> {{data?.serviceConfig?.x000631TdmGw}} </td> -->
+                        </tr>
+                    </tbody>
+                    <tbody *ngIf="GetListData?.length === 0">
+                        <tr>
+                            <td colspan="8" class="no-data-available">{{language['No matching records found']}}
+                            </td>
+                        </tr>
+                    <tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+       
+    </div>
+</section>
+
+
+
+<!-- Undo Migration modal -->
+<ng-template #UndoMigrationmodal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">{{language['Undo migration']}}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="close()">
+                <span aria-hidden="true"></span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p [innerHTML]="language.undotMigrationmsg(migrationName)"></p>
+            <p class="mt-0">{{language['Do you wish to continue?']}}</p>
+            <div class="">
+                <button type="button" class="btn-default primary px-3 mr-2" (click)="undoMigration()"> {{language['Undo migration']}} </button>
+                <button type="button" id="#" class="btn-default btn-dft mr-2" (click)="close()"> {{language['Cancel']}} </button>
+            </div>
+        </div>
+
+    </div>
+</ng-template>
+<!-- Undo Migration modal -->
+
+<!-- Delete job report Modal -->
+<ng-template #DeleteJobReportmodal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">{{language['Delete job report']}}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="close()">
+                <span aria-hidden="true"></span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p [innerHTML]="language.deleteMigrationmsg(migrationName)"></p>
+            <p class="mt-0">{{language['Do you wish to continue?']}}</p>
+
+            <div class="">
+                <button type="button" class="btn-default primary px-3 mr-2" (click)="DeleteMigration()"> {{language['Delete job report']}} </button>
+                <button type="button" id="#" class="btn-default btn-dft mr-2" (click)="close()"> {{language['Cancel']}} </button>
+            </div>
+        </div>
+
+    </div>
+</ng-template>
+
+<!-- Delete job report Modal -->
+
+<!-- Abort migration modal -->
+<ng-template #AbortMigrationModal>
+
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">{{language['Abort Migration']}}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="close()">
+                <span aria-hidden="true"></span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p [innerHTML]="language.abortMigrationmsgfou(migrationName)"></p>
+            <p class="mt-0">{{language['Do you wish to continue?']}}</p>
+
+
+            <div class="mt-3">
+                <button type="button" class="btn-default primary px-3 mr-2" (click)="AbortMigration()"> {{language['Abort Migration']}} </button>
+                <button type="button" id="#" class="btn-default btn-dft mr-2" (click)="close()"> {{language['Cancel']}} </button>
+            </div>
+        </div>
+
+    </div>
+
+</ng-template>
+
+<!-- Abort migration modal -->

@@ -1,0 +1,11 @@
+.disable {
+    pointer-events: none;
+
+}
+
+.cursornallow {
+    cursor: not-allowed
+}
+input:disabled {
+    cursor: no-drop;
+}

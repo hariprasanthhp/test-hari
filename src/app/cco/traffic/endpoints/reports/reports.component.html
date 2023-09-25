@@ -1,0 +1,151 @@
+<div class="col-md-12 mt-4">
+    <div class="loader" *ngIf="Initialloading">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">{{language.Loading}}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="main-div" *ngIf="!Initialloading">
+    <div class="filter-section filter-elemnts pt-2">
+        <div class="filter-wrapper mb-3">
+            <div class="custom-selectbox col-12 ele-wrap col-sm-6 col-md-3 col-lg-3">
+                <label class="filter-label">{{ language.type }} <span class="error">*</span></label>
+                <ng-select id="type" [items]="types" bindLabel="name" bindValue="value"
+                    placeholder="{{ language['None Selected'] }}" [searchable]="false" [(ngModel)]="typeSelected"
+                    [ngModelOptions]="{ standalone: true }" (change)="changeType()">
+                    <ng-template ng-label-tmp let-item="item">
+                        {{language[item.name] || item.name }}
+                    </ng-template>
+                    <ng-template ng-option-tmp let-item="item" let-index="index">
+                        {{language[item.name] || item.name }}
+                    </ng-template>
+                </ng-select>
+            </div>
+            <div *ngIf="pageDetails.showCriteria" class="custom-selectbox col-12 ele-wrap col-sm-6 col-md-3 col-lg-3">
+                <label class="filter-label">{{ language.criteria }}</label>
+                <ng-select id="usage_criteria" [items]="criteria" bindLabel="name" bindValue="value" [multiple]="false"
+                    placeholder="{{ language['None Selected'] }}" [(ngModel)]="criteriaSelected"
+                    [ngModelOptions]="{ standalone: true }" [clearable]="false" [searchable]="false"
+                    (change)="changeCriteria()">
+                </ng-select>
+            </div>
+            <div *ngIf="pageDetails.showMonth" class="custom-selectbox col-12 ele-wrap col-sm-6 col-md-3 col-lg-3">
+                <label class="filter-label">{{ language.month_title }}</label>
+                <ng-select id="month" [items]="month" bindLabel="name" bindValue="value" [multiple]="false"
+                    placeholder="{{ language['None Selected'] }}" [(ngModel)]="monthSelected" (change)="changeFilter()"
+                    [ngModelOptions]="{ standalone: true }" [clearable]="false" [searchable]="false">
+                </ng-select>
+            </div>
+            <div *ngIf="pageDetails.showMonthCount"
+                class="col-6 col-lg-3 col-md-3 col-sm-4 col-xl-3 custom-selectbox ele-wrap">
+                <label class="filter-label">{{ language.Time_Range}}</label>
+                <!-- <input class="" id="monthCount" name="monthCount" type="number" min="1" max="12"
+                    [(ngModel)]="monthCount" (keypress)="validNumber()" /> -->
+                <ng-select id="monthCount" [items]="monthArray" bindLabel="name" bindValue="value" [multiple]="false"
+                    [(ngModel)]="monthCount" [ngModelOptions]="{ standalone: true }" [clearable]="false"
+                    [searchable]="false">
+                </ng-select>
+            </div>
+
+            <div *ngIf="pageDetails.showRate" class="custom-selectbox col-12 ele-wrap col-sm-6 col-md-3 col-lg-3">
+                <label class="filter-label">{{ language.rate }}</label>
+                <ng-select id="rate" [items]="rate" bindLabel="name" bindValue="value" [multiple]="false"
+                    placeholder="{{ language['None Selected'] }}" [(ngModel)]="rateSelected" (change)="changeFilter()"
+                    [ngModelOptions]="{ standalone: true }" [clearable]="false" [searchable]="false">
+                </ng-select>
+            </div>
+            <div *ngIf="pageDetails.showStartDate" class="cal-pick col-12 ele-wrap col-sm-6 col-md-3 col-lg-3">
+                <label class="filter-label">{{ language['From Date'] }}</label>
+                <p-calendar id="start_date" [style]="{ width: '100%', height: '36px' }"
+                    [inputStyle]="{ height: '36px' }" appendTo="body" [autoZIndex]="true"
+                    placeholder="{{ language['Select Date'] }}" [(ngModel)]="startDate" [showIcon]="true"
+                    [ngModelOptions]="{ standalone: true }" (onSelect)="changeDate()" dateFormat="mm-dd-yy"
+                    [maxDate]="maxDate" [minDate]="minDate" (onInput)="changeDate()">
+                </p-calendar>
+            </div>
+            <div *ngIf="pageDetails.showEndDate" class="cal-pick col-12 ele-wrap col-sm-6 col-md-3 col-lg-3">
+                <label class="filter-label">{{ language['To Date'] }}</label>
+                <p-calendar id="end_date" [style]="{ width: '100%', height: '36px' }" [inputStyle]="{ height: '36px' }"
+                    appendTo="body" [autoZIndex]="true" [(ngModel)]="endDate"
+                    placeholder="{{ language['Select Date'] }}" [showIcon]="true" (onSelect)="changeDate()"
+                    [ngModelOptions]="{ standalone: true }" dateFormat="mm-dd-yy" [maxDate]="maxDate"
+                    [minDate]="startDate" (onInput)="changeDate()">
+                </p-calendar>
+            </div>
+            <div *ngIf="pageDetails.showLimit" class="round-corner  col-12 ele-wrap col-sm-6 col-md-3 col-lg-3">
+                <label class="filter-label">{{ language.limit }}</label>
+                <input class="form-control" id="limit" name="limit" type="number" min="3" max="500" [(ngModel)]="limit"
+                    (blur)="changelimit()" />
+            </div>
+            <!-- <div *ngIf="pageDetails.showGroup" class="custom-selectbox col-12 ele-wrap col-sm-6 col-md-3 col-lg-3 w-10">
+                <label class="filter-label">{{ language.group }}</label>
+                <ng-select id="group" [items]="groups" bindLabel="name" bindValue="value" [multiple]="false"
+                    placeholder="{{ language['None Selected'] }}" [(ngModel)]="groupSelected" (change)="changeFilter()"
+                    [ngModelOptions]="{ standalone: true }" [clearable]="false" [searchable]="false">
+                </ng-select>
+            </div> -->
+            <div *ngIf="pageDetails.showDirection" class="custom-selectbox col-12 ele-wrap col-sm-6 col-md-3 col-lg-3">
+                <label class="filter-label">{{ language.direction }}</label>
+                <ng-select id="direction" [items]="directions" bindLabel="name" bindValue="value" [multiple]="false"
+                    placeholder="{{ language['None Selected'] }}" [(ngModel)]="directionSelected"
+                    (change)="changeFilter()" [ngModelOptions]="{ standalone: true }" [clearable]="false"
+                    [searchable]="false">
+                </ng-select>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <button id="filter-submit-btn" class="btn-default primary" type="button" (click)="loadChartData()"
+                [disabled]="service.btnDisabled == true">{{language.run}}</button>
+
+            <button type="button" class="btn-default btn-dft ml-2" (click)="clearFilter()"
+                [disabled]="service.btnDisabled == true">{{ language.Clear_Filters }}
+            </button>
+        </div>
+    </div>
+
+
+    <div class="container" *ngIf="typeSelected == 'rate' && isOneDate">
+        <div class="row mt-2">
+            <div class="col-md-12 px-0">
+                {{language['Time Range (Hours)']}}: {{timeRange}}
+                <ngx-slider [(value)]="startTime" [(highValue)]="endTime" [options]="slideOptions"
+                    (valueChange)="changeTimeRange()">
+                </ngx-slider>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<app-usage #UsageComponent *ngIf="typeSelected == 'usage'"></app-usage>
+<app-rate #RateComponent *ngIf="typeSelected == 'rate'"></app-rate>
+<app-applications #ApplicationsComponent *ngIf="typeSelected == 'applications'"></app-applications>
+<app-application-groups #ApplicationGroupsComponent
+    *ngIf="typeSelected == 'application_groups'"></app-application-groups>
+
+<app-monthly-usage #MonthlyUsageComponent *ngIf="typeSelected == 'monthly_usage'"></app-monthly-usage>
+<app-top-application-traffic #TopApplicationTrafficComponent *ngIf="typeSelected == 'top_application_traffic'">
+</app-top-application-traffic>
+
+<ng-template #showInfoModal let-modal class="col-md-12">
+    <div class="modal-header d-block">
+        <h5 class="modal-title" id="showInfoModal">{{ modalTitle }}</h5>
+
+        <div>
+            {{modalInfo}}
+        </div>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+            (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body add-device-model">
+        <button type="button" class="btn-default primary px-3 px-3" data-dismiss="modal"
+            (click)="modal.close('Save click')">
+            {{ language.Ok }}
+        </button>
+    </div>
+</ng-template>

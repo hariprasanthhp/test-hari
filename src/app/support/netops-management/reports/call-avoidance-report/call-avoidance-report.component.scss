@@ -1,0 +1,74 @@
+.tab-name {
+    font-size: 16px;
+    text-transform: capitalize;
+}
+
+.count-subscriber {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 5px;
+    text-align: center;
+}
+.padding-hit {
+    font-size: 16px;
+    margin-bottom: 0px;
+}
+
+.last-run ,.next-run,.run-count{
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.avoid-table{
+	padding:20px 0px;
+}
+
+
+.dropright .dropdown-toggle::after {
+    display: none;
+}
+
+.right-dropdown.show {
+    background-color: #ffffff !important;
+    border: 1px solid #e6e6e6 !important;
+    box-shadow: 0px 2px 7px 0px rgba(51, 55, 57, 0.3) !important;
+    padding: 20px;
+    min-width: 380px;
+    width: 380px;
+    max-width: 380px;
+}
+
+.avoid-title {
+    font-size: 16px;
+    color: #0b77fa;
+}
+
+a.link {
+    color: rgb(232, 123, 0) !important;
+    text-decoration: underline;
+    display: block;
+    padding: 5px 0px;
+    font-size: 15px;
+}
+// .loader.load
+//   {
+//       position: fixed !important;
+
+//   }
+  .handsyb
+  {
+      cursor: pointer;
+  }
+  .loader{
+    z-index: 1;
+      position: absolute;
+      background-color:#178cd00d;
+      height: 100%;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      top: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+  }

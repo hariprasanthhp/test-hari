@@ -1,0 +1,1110 @@
+<div role="alert" class="alert alert-warning" *ngIf="!hasApplicationAccess">
+  {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} </div>
+
+<div class="loader" *ngIf="loading">
+  <div class="d-flex justify-content-center">
+    <div class="spinner-border text-primary">
+      <span class="sr-only">{{language.Loading}}</span>
+    </div>
+  </div>
+</div>
+<div class="btn-action-view">
+  <button (click)="setMultiple()" class="btn-std"
+    [ngClass]="!isMultiple ? 'btn-active' : ''">{{language.Standard_View}}</button>
+  <button (click)="setMultiple()" class="btn-comp"
+    [ngClass]="isMultiple ? 'btn-active' : ''">{{language.Comparative_View}}</button>
+</div>
+
+<section [hidden]="isMultiple" *ngIf="hasApplicationAccess">
+  <div class="loader" *ngIf="Initialloading">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary">
+        <span class="sr-only">{{language.Loading}}</span>
+      </div>
+    </div>
+  </div>
+  <div class="container pr-0">
+    <div class="w-100 alert alert-warning fade show" *ngIf="showAlert">
+      <div class="d-inline-flex"><span class="warning-img"><img src="./assets/img/warning-icon.svg" /></span></div>
+      <div class="d-inline-flex">{{language['Application Id or Application Group Id is required']}}</div>
+      <button type="button" class="close" (click)="closeAlertRole()"><span></span></button>
+
+    </div>
+    <div class="filter-elemnts">
+      <div class="row">
+        <div class="col-md-12 px-0">
+          <div class="current-issue-menu-container justify-content-start">
+            <div class="current-issue-menu-item col-12 col-xs-12 col-sm-6 col-md-3 col-lg-3">
+              <div class="ccl-form required">
+                <label class="col-form-label"> {{ language.TTimeFrame }} </label>
+                <div class="col-sm-12 p-0">
+                  <ng-select [searchable]="false" placeholder="{{ language.TMinuteWindow }}"
+                    [(ngModel)]="selectedOption" (change)="setWindowLength()">
+                    <ng-option *ngFor="let option of ddoptions" [value]="option.id">{{ language[option.name] ||
+                      option.name }}</ng-option>
+                  </ng-select>
+                  <!-- <div *ngIf="frequency.errors?.required && (myForm.submitted|| frequency.touched)" id="frequency-error">
+                                                                                                                                                                {{language['This field is required']}}
+                                                                                                                                                              </div> -->
+                </div>
+              </div>
+            </div>
+            <div class="current-issue-menu-item col-12 col-xs-12 col-sm-6 col-md-3 col-lg-3">
+              <div class="custom-selectbox"
+                [title]="applicationGroupSelected?.length > 0 ? language['Filtering by Application is not allowed when the Application Group filter is active'] : ''">
+                <label class="col-form-label">{{ language.application }} <span class="error">*</span></label>
+                <div class="col-sm-12 p-0 custom-multiselect-ui">
+                  <ng-select id="application" #applicationSelect [items]="applications" bindLabel="label"
+                    bindValue="value" [multiple]="true" placeholder="{{ language['None Selected'] }}"
+                    [(ngModel)]="applicationsSelected" [ngModelOptions]="{ standalone: true }" [clearable]="true"
+                    [searchable]="false" (change)="changeApplication()" [searchFn]="websocketservice.customAppSearch"
+                    [selectableGroupAsModel]="false" [closeOnSelect]="false" [clearOnBackspace]="false"
+                    (open)="searchInputAppText=''; applicationSelect.maxSelectedItems = 10" [maxSelectedItems]="11"
+                    (close)="applicationSelect.maxSelectedItems = 11" [disabled]="applicationGroupSelected?.length > 0">
+                    <ng-template ng-footer-tmp>
+                      <div class="d-inline-flex w-100 search-box-input mb-2">
+                        <div class="search-box-icon">
+                          <img class="search-icon" src="../../../../../assets/img/ic_search_blue.svg" />
+                        </div>
+                        <input #applicationSearch type="text" placeholder="{{language.Search}}"
+                          (input)="applicationSelect.filter($event.target.value)" [(ngModel)]="searchInputAppText" />
+                        <div class="clear-box ml-auto" *ngIf="applicationSearch.value"
+                          (click)="clearSearch(applicationSearch, applicationSelect)">
+                          <img src="assets/img/close-icon.svg" />
+                        </div>
+                      </div>
+                      <div class="info-text-col w-100">
+                        <label [hidden]="applicationsSelected?.length >= 10">{{language['Select up to 10']}}:</label>
+                        <div class="error" *ngIf="applicationsSelected?.length >= 10"> {{language['Maximum selection of 10 reached']}}
+                        </div>
+                      </div>
+                      
+                    </ng-template>
+                    <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                      <div class="dropdown-item-ch">
+                        <input id="item-{{index}}" class="mr-1" type="checkbox"
+                          [disabled]="applicationsSelected?.length >= 10 && !item$.selected"
+                          [ngModel]="item$.selected" />
+                        <span title="{{item.label}}">{{item.label}}</span>
+                      </div>
+                    </ng-template>
+                    <ng-template ng-multi-label-tmp let-items="items">
+                      <div class="d-inline-flex">
+                        <div class="ng-value" *ngIf="items.length === 1 && items.length !== applications?.length">
+                          <span class="ng-value-icon left" (click)="applicationsSelected = []">x</span>
+                          <span class="ng-value-label">{{items[0]['label']}}</span>
+                        </div>
+                        <div class="ng-value" *ngIf="items.length > 1">
+                          <span class="ng-value-icon left" (click)="applicationsSelected = []">x</span>
+                          <span class="ng-value-label">{{items.length}} applications</span>
+                        </div>
+                        <!-- <div class="ng-value" *ngIf="items.length === applications?.length ">
+                          <span class="ng-value-icon left" (click)="applicationsSelected = []">x</span>
+                          <span class="ng-value-label">{{language['All']}}</span>
+                        </div> -->
+                      </div>
+                    </ng-template>
+                  </ng-select>
+                </div>
+              </div>
+            </div>
+
+            <div class="current-issue-menu-item col-12 col-xs-12 col-sm-6 col-md-3 col-lg-3">
+              <div class="custom-selectbox"
+                [title]="applicationsSelected?.length > 0 ? language['Filtering by Application Group is not allowed when the Application filter is active'] : ''">
+                <label class="col-form-label">{{language['applicationGroup']}} <span class="error">*</span></label>
+                <div class="col-sm-12 p-0 custom-multiselect-ui">
+                  <ng-select id="applicationGroup" #applicationGroupSelect [items]="applicationGroups" bindLabel="name"
+                    bindValue="id" [multiple]="true" placeholder="{{ language['None Selected'] }}"
+                    [(ngModel)]="applicationGroupSelected" [ngModelOptions]="{ standalone: true }" [clearable]="true"
+                    [searchable]="false" (change)="changeApplicationGroup()"
+                    [searchFn]="websocketservice.customAppGroupSearch" [closeOnSelect]="false"
+                    [clearOnBackspace]="false" (open)="searchInputAppGroupText='' ;
+                    applicationGroupSelect.maxSelectedItems=10" [maxSelectedItems]="11"
+                    (close)="applicationGroupSelect.maxSelectedItems = 11"
+                    [disabled]="applicationsSelected?.length > 0">
+                    <ng-template ng-footer-tmp>
+                      <div class="d-inline-flex w-100 search-box-input mb-2">
+                        <div class="search-box-icon">
+                          <img class="search-icon" src="../../../../../assets/img/ic_search_blue.svg" />
+                        </div>
+                        <input #applicationGroupSearch type="text" placeholder="{{language.Search}}"
+                          (input)="applicationGroupSelect.filter($event.target.value)"
+                          [(ngModel)]="searchInputAppGroupText" />
+                        <div class="clear-box ml-auto" *ngIf="applicationGroupSearch.value"
+                          (click)="clearSearch(applicationGroupSearch, applicationGroupSelect)">
+                          <img src="assets/img/close-icon.svg" />
+                        </div>
+                      </div>
+                      <div class="info-text-col w-100">
+                      <label [hidden]="applicationGroupSelected?.length >= 10">{{language['Select up to 10']}}:</label>
+                      <div class="error" *ngIf="applicationGroupSelected?.length >= 10">
+                        {{language['Maximum selection of 10 reached']}}
+                      </div>
+                      </div>
+                    </ng-template>
+                    <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                      <div class="dropdown-item-ch">
+                        <input id="item-{{index}}" class="mr-1" type="checkbox"
+                          [disabled]="applicationGroupSelected?.length >= 10 && !item$.selected"
+                          [ngModel]="item$.selected" />
+                        <span title="{{item.name}}">{{item.name}}</span>
+                      </div>
+                    </ng-template>
+                    <ng-template ng-multi-label-tmp let-items="items">
+                      <div class="d-inline-flex">
+                        <div class="ng-value" *ngIf="items.length === 1 && items.length !== applicationGroups?.length">
+                          <span class="ng-value-icon left" (click)="applicationGroupSelected = []">x</span>
+                          <span class="ng-value-label">{{items[0]['name']}}</span>
+                        </div>
+                        <div class="ng-value" *ngIf="items.length > 1">
+                          <span class="ng-value-icon left" (click)="applicationGroupSelected = []">x</span>
+                          <span class="ng-value-label">{{items.length}} application groups</span>
+                        </div>
+                        <!-- <div class="ng-value" *ngIf="items.length === applicationGroups?.length ">
+                          <span class="ng-value-icon left" (click)="applicationGroupSelected = []">x</span>
+                          <span class="ng-value-label">{{language['All']}}</span>
+                        </div> -->
+                      </div>
+                    </ng-template>
+                  </ng-select>
+                </div>
+              </div>
+            </div>
+
+            <div class="current-issue-menu-item col-12 col-xs-12 col-sm-6 col-md-3 col-lg-3">
+              <div class="custom-selectbox ">
+                <label class="col-form-label">{{ language.location }}</label>
+                <div class="col-sm-12 p-0 custom-multiselect-ui">
+                  <ng-select id="location" #locationSelect [items]="locations" bindLabel="name" bindValue="value"
+                    [multiple]="true" placeholder="{{ language['None Selected'] }}" [(ngModel)]="locationsSelected"
+                    [ngModelOptions]="{ standalone: true }" [clearable]="true" [searchable]="false"
+                    (change)="changeLocation()" groupBy="region" [selectableGroup]="true"
+                    [searchFn]="websocketservice.customLocSearch" [selectableGroupAsModel]="false"
+                    [closeOnSelect]="false" [clearOnBackspace]="false" (open)="searchInputLocText=''">
+                    <ng-template ng-footer-tmp>
+                      <div class="d-inline-flex w-100 search-box-input mb-2">
+                        <div class="search-box-icon">
+                          <img class="search-icon" src="../../../../../assets/img/ic_search_blue.svg" />
+                        </div>
+                        <input #locationSearch type="text" placeholder="{{language.Search}}"
+                          (input)="locationSelect.filter($event.target.value)" [(ngModel)]="searchInputLocText" />
+                        <div class="clear-box ml-auto" *ngIf="locationSearch.value"
+                          (click)="clearSearch(locationSearch, locationSelect)">
+                          <img src="assets/img/close-icon.svg" />
+                        </div>
+                      </div>
+                    </ng-template>
+                    <ng-template ng-header-tmp>
+                      <div class="d-flex w-100 select-all-holder"
+                        *ngIf="searchInputLocText.toLowerCase() == 'all' || searchInputLocText==''">
+                        <input id="item-all-applications" class="select-all-opt" type="checkbox"
+                          [indeterminate]="locationsSelected?.length > 0 && locationsSelected?.length < locations?.length"
+                          [checked]="(locations?.length > 0 && locationsSelected?.length === locations?.length) || locationsSelected?.includes('All')"
+                          (click)="selectAllLocations($event)" />
+                        <label for="item-all-applications" class="cursor-pointer m-0">{{language['All']}}
+                          ({{locations?.length}})</label>
+                      </div>
+                      <!-- <div class="d-flex w-100 ml-1" *ngIf="!locationSearch.value">
+                        <input id="item-all-locations" class="mr-1" type="checkbox"
+                          [indeterminate]="locationsSelected?.length > 0 && locationsSelected?.length < locations?.length"
+                          [checked]="locationsSelected?.length === locations?.length"
+                          (click)="selectAllLocations($event)" />
+                        <label for="item-all-locations" class="cursor-pointer mt-2">{{language['All']}}
+                          ({{locations?.length}})</label>
+                      </div> -->
+                    </ng-template>
+                    <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                      <div class="dropdown-item-gr">
+                        <input id="item-{{index}}" class="mr-1" type="checkbox" [ngModel]="item$.selected"
+                          [indeterminate]="getIndeterminateGroup(item$)" />
+                        <span title="{{item.region}}">{{item.region}}</span>
+                      </div>
+                    </ng-template>
+                    <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                      <div class="dropdown-item-ch">
+                        <input id="item-{{index}}" class="mr-1" type="checkbox" [ngModel]="item$.selected" />
+                        <span title="{{item.name}}">{{item.name}}</span>
+                      </div>
+                    </ng-template>
+                    <ng-template ng-multi-label-tmp let-items="items">
+                      <div class="d-inline-flex">
+                        <div class="ng-value" *ngIf="items.length === 1 && items.length !== locations?.length ">
+                          <span class="ng-value-icon left" (click)="locationsSelected = []">x</span>
+                          <span class="ng-value-label">{{items[0]['name'] || locationsSelected[0]}}</span>
+                        </div>
+                        <div class="ng-value" *ngIf="items.length > 1 && items.length !== locations?.length">
+                          <span class="ng-value-icon left" (click)="locationsSelected = []">x</span>
+                          <span class="ng-value-label">{{items.length}} locations</span>
+                        </div>
+                        <div class="ng-value" *ngIf="items.length === locations?.length ">
+                          <span class="ng-value-icon left" (click)="locationsSelected = []">x</span>
+                          <span class="ng-value-label">{{language['All']}}</span>
+                        </div>
+                      </div>
+                    </ng-template>
+                  </ng-select>
+                </div>
+              </div>
+            </div>
+            <div class="current-issue-menu-item col-12 col-xs-12 col-sm-6 col-md-3 col-lg-3 pr-0">
+              <label class="col-form-label pb-1 mb-2"> {{language['Privacy']}} </label>
+              <div class="d-flex pl-0 mb-2 form-check">
+                <input class="mr-1" id=showSensitive #showSensitive type="checkbox" [(ngModel)]="sensitiveChecked">
+                <label for="showSensitive" class="mb-0 cursor-pointer">
+                  {{language['Show sensitive information']}}</label>
+              </div>
+            </div>
+            <div class="current-issue-menu-item col-12 col-xs-12 col-sm-6 col-md-3 col-lg-3 mt-3">
+              <div class="d-inline-flex">
+                <button type="button" class="btn-default primary mr-2"
+                  (click)="applyFilterOrModal(showSensitive.checked, warningModalConfirmation)">
+                  {{ language.apply }}
+                </button>
+                <button type="button" id="#" class="btn-default btn-dft clear-btn" title="{{ language.Clear_Filters }}"
+                  (click)="clearFilter()">
+                  {{ language.Clear_Filters }}
+                </button>
+
+                <app-filter-presets trafficType="ApplicationStandard" [selectedTimeFrame]="selectedOption"
+                  [selectedApplicationIds]="applicationsSelected ?? []"
+                  [selectedApplicationGroupIds]="applicationGroupSelected ?? []" [selectedLocationIds]="locationsSelected"
+                  [applications]="applications" [applicationGroups]="applicationGroups" [locations]="locations"
+                  [enableSave]="applicationsSelected?.length > 0 || applicationGroupSelected?.length > 0 "
+                  (onSelectFilterPreset)="onSelectFilterPreset($event)">
+                </app-filter-presets>
+              </div>
+            </div>
+
+            <!-- <div class=" multiple pointer"><i class="fa fa-th" (click)="setMultiple();" aria-hidden="true"
+                    title="{{language.Multiple}}"></i>
+              </div> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section [hidden]="!isMultiple">
+  <div class="container pr-0">
+    <!-- <div class="w-100 alert alert-warning fade show" *ngIf="showAlert">
+      <div class="d-inline-flex"><span class="warning-img"><img src="./assets/img/warning-icon.svg" /></span></div>
+      <div class="d-inline-flex">Location Id is required</div>
+
+      <button type="button" class="close" (click)="closeAlertRole()"><span></span></button>
+
+    </div> -->
+    <div class="w-100 alert alert-warning fade show" *ngIf="showAlert">
+      <div class="d-inline-flex"><span class="warning-img"><img src="./assets/img/warning-icon.svg" /></span></div>
+      <div class="d-inline-flex">{{language['Application Id is required']}}</div>
+      <button type="button" class="close" (click)="closeAlertRole()"><span></span></button>
+
+    </div>
+    <div class="filter-elemnts">
+      <div class="row">
+        <div class="col-md-12 col-lg-12 p-0">
+          <div class="current-issue-menu-container">
+            <div class="current-issue-menu-item col-md-12 col-lg-3 ">
+              <div class="ccl-form required">
+                <label class="col-form-label"> {{ language.TTimeFrame }} </label>
+                <div class="col-sm-12 p-0">
+                  <ng-select [searchable]="false" placeholder="{{ language.TMinuteWindow }}"
+                    [(ngModel)]="multipleSelectedOption" (change)="setMultipleWindowLength()">
+                    <ng-option *ngFor="let option of ddoptions" [value]="option.id">{{ language[option.name] ||
+                      option.name }}</ng-option>
+                  </ng-select>
+                  <!-- <div *ngIf="frequency.errors?.required && (myForm.submitted|| frequency.touched)" id="frequency-error">
+                                                                                                                                                                {{language['This field is required']}}
+                                                                                                                                                              </div> -->
+                </div>
+              </div>
+            </div>
+            <div class="current-issue-menu-item col-md-12 col-lg-3 ">
+              <div class="custom-selectbox">
+                <label class="col-form-label">{{ language.application }} <span class="error">*</span></label>
+                <div class="col-sm-12 p-0">
+                  <ng-select id="application" #multipleApplications [items]="multiApplications" bindLabel="label"
+                    bindValue="value" [multiple]="false" placeholder="{{ language['None Selected'] }}"
+                    [maxSelectedItems]="1" [(ngModel)]="multipleApplicationSelected"
+                    [ngModelOptions]="{ standalone: true }" [clearable]="true" [searchable]="false"
+                    (change)="changeMultipleApplication()" [closeOnSelect]="false" (open)="searchInputMultiAppText=''">
+                    <ng-template ng-header-tmp>
+                      <div class="custom-multiselect-ui">
+                        <div class="d-inline-flex w-100 search-box-input mb-2">
+                          <div class="search-box-icon">
+                            <img class="search-icon" src="../../../../../assets/img/ic_search_blue.svg" />
+                          </div>
+                          <input #multiApplicationSearch type="text" placeholder="{{language.Search}}"
+                            (input)="multipleApplications.filter($event.target.value)"
+                            [(ngModel)]="searchInputMultiAppText" />
+                          <div class="clear-box ml-auto" *ngIf="multiApplicationSearch.value"
+                            (click)="clearSearch(multiApplicationSearch, multipleApplications)">
+                            <img src="assets/img/close-icon.svg" />
+                          </div>
+                        </div>
+                      </div>
+                    </ng-template>
+                  </ng-select>
+                </div>
+              </div>
+            </div>
+
+
+            <div class="current-issue-menu-item col-md-12 col-lg-3 ">
+              <div class="custom-selectbox">
+                <label class="col-form-label">{{ language.location }}</label>
+                <div class="col-sm-12 p-0 custom-multiselect-ui">
+                  <ng-select id="location" #multiLocationSelect [items]="multiLocations" bindLabel="name"
+                    bindValue="value" [multiple]="true" placeholder="{{ language['None Selected'] }}"
+                    [(ngModel)]="multipleLocationSelected" [ngModelOptions]="{ standalone: true }" [clearable]="true"
+                    [searchable]="false" (change)="changeMultipleLocation()" [closeOnSelect]="false"
+                    [clearOnBackspace]="false">
+                    <ng-template ng-footer-tmp>
+                      <div class="d-inline-flex w-100 search-box-input mb-2">
+                        <div class="search-box-icon">
+                          <img class="search-icon" src="../../../../../assets/img/ic_search_blue.svg" />
+                        </div>
+                        <input #multiLocationSearch type="text" placeholder="{{language.Search}}"
+                          (input)="multiLocationSelect.filter($event.target.value)" />
+                        <div class="clear-box ml-auto" *ngIf="multiLocationSearch.value"
+                          (click)="clearSearch(multiLocationSearch, multiLocationSelect)">
+                          <img src="assets/img/close-icon.svg" />
+                        </div>
+
+                      </div>
+                    </ng-template>
+                    <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                      <div class="dropdown-item-gr">
+                        <input id="item-{{index}}" class="mr-1" type="checkbox" [ngModel]="item$.selected" />
+                        <span title="{{item.region}}">{{item.region}}</span>
+                      </div>
+                    </ng-template>
+                    <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                      <div class="dropdown-item-ch">
+                        <input id="item-{{index}}" class="mr-1" type="checkbox" [ngModel]="item$.selected" />
+                        <span title="{{item.name}}">{{item.name}}</span>
+                      </div>
+                    </ng-template>
+                    <ng-template ng-multi-label-tmp let-items="items">
+                      <div class="d-inline-flex">
+                        <div class="ng-value" *ngIf="items.length === 1&& items.length !== multiLocations?.length ">
+                          <span class="ng-value-icon left" (click)="clearMultipleLocations()">x</span>
+                          <span class="ng-value-label">{{items[0]['name']}}</span>
+                        </div>
+                        <div class="ng-value" *ngIf="items.length > 1 && items.length !== multiLocations?.length">
+                          <span class="ng-value-icon left" (click)="clearMultipleLocations()">x</span>
+                          <span class="ng-value-label">{{items.length}} locations</span>
+                        </div>
+                        <div class="ng-value" *ngIf="items.length === multiLocations?.length">
+                          <span class="ng-value-icon left" (click)="clearMultipleLocations()">x</span>
+                          <span class="ng-value-label">{{language['All']}}</span>
+                        </div>
+                      </div>
+                    </ng-template>
+                  </ng-select>
+                </div>
+              </div>
+            </div>
+
+            <div class="current-issue-menu-item col-md-12 col-lg-3 ">
+              <div class="custom-selectbox">
+                <label class="col-form-label">{{language.Metric}}</label>
+                <div class="col-sm-12 p-0">
+                  <ng-select id="metric" [items]="metric" bindLabel="name" bindValue="value" [multiple]="false"
+                    placeholder="{{ language['None Selected'] }}" [(ngModel)]="metricSelected"
+                    [ngModelOptions]="{standalone: true}" [clearable]="false" [searchable]="false">
+                    <ng-template ng-label-tmp let-item="item">
+                      {{language[item.name] }}
+                    </ng-template>
+                    <ng-template ng-option-tmp let-item="item" let-index="index">
+                      {{language[item.name] }}
+                    </ng-template>
+                  </ng-select>
+                </div>
+              </div>
+            </div>
+            <div class="current-issue-menu-item col-md-12 col-lg-4 mm-15 mt-3 btns-con">
+              <div class="d-inline-flex">
+                <button type="button" [disabled]="btnDisable" class="btn-default px-3 mr-2"
+                  [ngClass]="!btnDisable ? 'primary':'disabled'" (click)="loadMultipleChart()">
+                  {{ language.apply }}
+                </button>
+
+                <button type="button" id="#" class="btn-default btn-dft" (click)="clearMultipleChart()">
+                  {{ language.Clear_Filters }}
+                </button>
+
+                <div>
+                  <app-filter-presets trafficType="ApplicationComparative" [selectedTimeFrame]="multipleSelectedOption"
+                    [selectedApplicationIds]="[multipleApplicationSelected]"
+                    [selectedLocationIds]="multipleLocationSelected ?? []" [selectedMetric]="metricSelected"
+                    [applications]="multiApplications" [locations]="multiLocations"
+                    [enableSave]="multipleApplicationSelected?.length > 0"
+                    (onSelectFilterPreset)="onSelectFilterPreset($event)">
+                  </app-filter-presets>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- <div class="multiple multiple-r15 pointer"><i class="fa fa-th"
+            (click)="setMultiple();" aria-hidden="true" title="{{language.Single}}"></i>
+        </div> -->
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <!-- <div class="w-100 alert alert-danger  fade show my-3" *ngIf="connectionError">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+      <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+      <div class="d-inline-flex" [innerHtml]="connectionErrorInfo"></div>
+    </div> -->
+    <div class="row my-2" *ngIf="pageAvailable && !isMultiple">
+      <div class="col-md-9 pl-0 text-left">
+        <div class="pl-0">
+
+          <!-- <div class="d-inline-flex primary pointer" data-toggle="modal" (click)="createFaviouteModal()"
+                        data-target="#exampleModalCenter">
+                        <div class="icon-round">
+                          <img src="../../../../../assets/img/ic_star_white.svg" />
+                        </div>
+                      </div> -->
+          <div class="d-inline-flex mx-2 primary pointer" data-toggle="modal" *ngIf="hasWriteAccess"
+            (click)="createRecordingModal()" id="create-record" data-target="#exampleModalCenter-video">
+            <div class="icon-round" data-toggle="tooltip" data-placement="top" title="{{language.Record}}">
+              <img src="../../../../../assets/img/ic_record_white.svg" />
+            </div>
+          </div>
+          <div (click)="goToRecordingList()" id="record-list" class="d-inline-flex primary pointer" placement="bottom">
+            <div class="icon-round" data-toggle="tooltip" data-placement="top" title="{{language.History}}">
+              <img src="../../../../../assets/img/ic_history_white.svg" />
+            </div>
+          </div>
+          <label *ngIf="recordingStatus" id="record-status" class="indcit"><span><img
+                src="../../../../../assets/img/ic_point.svg" /></span>{{language['Record In-Progress']}}</label>
+        </div>
+      </div>
+      <div class="col-md-3 text-right">
+        {{wsDelay}} {{language['minute delay']}}
+      </div>
+    </div>
+    <div class="row my-2" *ngIf="(pageAvailable || multiplePageAvailable) && isMultiple">
+      <div class="col-md-9 pl-0 text-left">
+        <div class="pl-0 ml-3">
+          <div (click)="goToRecordingList()" class="d-inline-flex primary pointer" placement="bottom">
+            <div class="icon-round" data-toggle="tooltip" data-placement="top" title="{{language.History}}">
+              <img src="../../../../../assets/img/ic_history_white.svg" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 text-right">
+        {{wsDelay}} {{language['minute delay']}}
+      </div>
+    </div>
+    <div class="row" [hidden]="fsView || isMultiple" *ngIf="pageAvailable">
+      <div class="col-md-12 col-lg-6 col-xl-6 col-sm-12 px-0">
+        <div id="traffic-application-realtime-rate" class="card m-10" *ngIf="data['maxRate'].length || showRealTime">
+          <div class="" id="ngx-stream-path-chart-rate">
+            <app-stream-chart [chartName]="rate" [yAxixTitle]="rateUnit" [data]="data.maxRate" [time]="data.sendTime"
+              [windowLen]="windowLen" *ngIf="data.maxRate && showRealTime" [history]="cacheRateData"
+              [selectedFilter]="selectedTime" [selectedLocation]="locationsSelected"
+              [selectedApplication]="applicationsSelected" [monitorId]="applicationWSRequestObj.monitorId">
+            </app-stream-chart>
+          </div>
+        </div>
+        <div id="traffic-application-realtime-packet" class="card m-10" *ngIf="data['packet'].length || showRealTime">
+          <div class="" id="ngx-stream-path-chart-packet">
+            <app-stream-chart [chartName]="packet" [yAxixTitle]="packetUnit" [data]="data.packet" [time]="data.sendTime"
+              [windowLen]="windowLen" *ngIf="data.packet && showRealTime" [history]="cachePacketData"
+              [selectedFilter]="selectedTime" [selectedLocation]="locationsSelected"
+              [selectedApplication]="applicationsSelected" [monitorId]="applicationWSRequestObj.monitorId">
+            </app-stream-chart>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-12 col-lg-6 col-xl-6 col-sm-12 pr-0" *ngIf="!fsView">
+        <div id="traffic-application-realtime-tep" class="card m-10 h-auto">
+          <div class="board_head d-flex justify-content-between">
+            <div class="mr-2">
+              <div class="orange-text-wrapper d-inline-block">
+                <p class="orange-text">{{ language.top5Endpoints }}</p>
+              </div>
+              <span class="ml20">{{ language.interval }}: 15 sec</span>
+            </div>
+            <!-- <span><i class="fas fa-info-circle" style="margin-top:10px;"
+                         title="{{language.intervaltooltip}}"></i></span> -->
+            <div>
+              <!-- <div class="btn-group dropleft mr-2">
+                <button type="button" [disabled]="!endpointSensitiveData"
+                  [ngClass]="{'cursornotallow': !endpointSensitiveData}"
+                   class="clx-ellips-toggle dropdown-toggle"
+                  data-toggle="dropdown" aria-expanded="false">
+                  <span>...</span>
+                </button>
+                <ul class="dropdown-menu clx-dropdown-menu">
+                  <li class="dropdown-items">
+                    <a (click)="modalOpener(warningModalConfirmation)">Show sensitive information</a>
+                  </li>
+                  <button type="button" class="dropdown-items">Hide sensitive information</button>
+                </ul>
+              </div> -->
+              <span class="top5-fullscreen pointer btn-round btn-small-24 btn-grey btn-expand" data-toggle="tooltip"
+                title="{{language.lossofpon_fullscreen_tip}}" (click)="fullscreen('TEP')"
+                id="open-fullscreen-top-endpoints">
+                <!-- <i class="fa fa-expand"></i> -->
+              </span>
+            </div>
+          </div>
+          <h5 class="traffic-heading-subtitle"> {{language["Traffic_ Network_Top 5 Endpoints"]}}</h5>
+          <div class="row board_body no-gutters h-210px">
+            <div class="col-md-6 col-12" id="top-endpoints-up-chart-div">
+              <div class="chart-info">
+                <span class="">{{language.upRate}} (<b>{{tEPrcntData.upPercentage}}% </b> {{language.ofTotal}})</span>
+
+                <!-- <span class="">{{ language.upRate }} </span> -->
+              </div>
+              <app-bar-chart id="top-endpoints-up-chart" class="top-endpoints-up-chart"
+                *ngIf="topEndPointUpChartoptions && showRealTime" [chartOptions]="topEndPointUpChartoptions"
+                [type]="'up'" [updateFlag]="updateFlag">
+              </app-bar-chart>
+              <!-- <highcharts-chart  *ngIf="showRealTime" [Highcharts]="Highcharts" [options]="topEndPointUpChartoptions"
+                         [(update)]="updateFlag" style="width: 100%; display: block; height: 200px;">
+                       </highcharts-chart> -->
+            </div>
+            <div class="col-md-6 col-12">
+              <div class="chart-info">
+                <span class="">{{language.downRate}} (<b>{{tEPrcntData.downPercentage}}%</b>
+                  {{language.ofTotal}})</span>
+                <!-- <span class="">{{ language.downRate }} </span> -->
+              </div>
+              <app-bar-chart id="top-endpoints-down-chart" *ngIf="topEndPointDownChartoptions && showRealTime"
+                [chartOptions]="topEndPointDownChartoptions" [type]="'down'" [updateFlag]="updateFlag">
+              </app-bar-chart>
+            </div>
+          </div>
+        </div>
+        <!-- <div id="traffic-application-realtime-tapp" class="card mt-2 m-10" style="height: auto">
+          <div class="board_head">
+            <div class="orange-text-wrapper" style="display: inline-block">
+              <p class="orange-text">{{ language.top5Applications }}</p>
+            </div>
+            <span class="ml20">{{ language.interval }}: 15 sec</span>&nbsp;&nbsp;
+          
+            <span class="top5-fullscreen pointer" (click)="fullscreen('TAPP')" id="open-fullscreen-top-apps">&nbsp; <i
+                class="fa fa-expand"></i></span>
+          </div>
+
+          <div class="row board_body no-gutters" style="height: 210px">
+            <div class="col-md-6 col-12" id="top-apps-up-chart-div">
+              <div class="chart-info">
+              
+                <span class="">{{ language.upRate }} </span>
+              </div>
+              <app-bar-chart id="top-apps-up-chart" *ngIf="topAppsUpChartoptions && showRealTime"
+                [chartOptions]="topAppsUpChartoptions" [type]="'up'" [updateFlag]="updateFlag">
+              </app-bar-chart>
+            </div>
+            <div class="col-md-6 col-12" id="top-apps-down-chart-div">
+              <div class="chart-info">
+               
+                <span class="">{{ language.downRate }}</span>
+              </div>
+              <app-bar-chart id="top-apps-down-chart" *ngIf="topAppsDownChartoptions && showRealTime"
+                [chartOptions]="topAppsDownChartoptions" [type]="'down'" [updateFlag]="updateFlag">
+              </app-bar-chart>
+            </div>
+          </div>
+        </div> -->
+
+        <!-- <div class="card mt-2 m-10" style="height: auto">
+          <div class="board_head">
+            <div class="orange-text-wrapper" style="display: inline-block">
+              <p class="orange-text">{{ language.top5Locations }}</p>
+            </div>
+            <span class="ml20">{{ language.interval }}: 15 sec</span>&nbsp;&nbsp;
+            <span class="top5-fullscreen pointer" (click)="fullscreen('TAPP')" id="open-fullscreen-top-apps">&nbsp; <i
+                class="fa fa-expand"></i></span>
+          </div>
+
+          <div class="card-body row board_body" style="height: 210px">
+            <div class="col-md-6 col-12" id="top-apps-up-chart-div">
+              <div class="chart-info">
+                <span class="">{{ language.upRate }} </span>
+              </div>
+              <app-bar-chart id="top-apps-up-chart" *ngIf="topAppsUpChartoptions && showRealTime"
+                [chartOptions]="topAppsUpChartoptions" [type]="'up'" [updateFlag]="updateFlag">
+              </app-bar-chart>
+            </div>
+            <div class="col-md-6 col-12" id="top-apps-down-chart-div">
+              <div class="chart-info">
+                <span class="">{{ language.downRate }}</span>
+              </div>
+              <app-bar-chart id="top-apps-down-chart" *ngIf="topAppsDownChartoptions && showRealTime"
+                [chartOptions]="topAppsDownChartoptions" [type]="'down'" [updateFlag]="updateFlag">
+              </app-bar-chart>
+            </div>
+          </div>
+        </div> -->
+
+        <div id="traffic-application-realtime-location" class="card mt-2 m-10 h-auto">
+          <div class="board_head">
+            <div class="orange-text-wrapper d-inline-block">
+              <p class="orange-text">{{language.top5Locations}}</p>
+            </div>
+            <span class="ml20">{{language.interval}}: 15 sec</span>&nbsp;&nbsp;
+            <span class="top5-fullscreen pointer btn-round btn-small-24 btn-grey btn-expand" data-toggle="tooltip"
+              title="{{language.lossofpon_fullscreen_tip}}" (click)="fullscreen('TLOC')" id="open-fullscreen-top-Loc">
+              <!-- <i class="fa fa-expand"></i> -->
+            </span>
+          </div>
+          <h5 class="traffic-heading-subtitle"> {{language["Traffic_ Network_Top 5 Locations"]}}</h5>
+
+          <div class="row board_body no-gutters h-210px">
+            <div class="col-md-6 col-6" id="top-loc-up-chart-div">
+              <div class="chart-info">
+                <span class="">{{language.upRate}} (<b>{{tLPrcntData.upPercentage}}%</b>
+                  {{language.ofTotal}})</span>
+                <!-- <span class="">{{ language.upRate }}</span> -->
+              </div>
+              <app-bar-chart id="top-loc-up-chart" *ngIf="topLocationsUpChartoptions && showRealTime"
+                [chartOptions]="topLocationsUpChartoptions" [type]="'up'" [updateFlag]="updateFlag">
+              </app-bar-chart>
+            </div>
+            <div class="col-md-6 col-12" id="top-loc-down-chart-div">
+              <div class="chart-info">
+                <span class="">{{language.downRate}} (<b>{{tLPrcntData.downPercentage}}%</b>
+                  {{language.ofTotal}})</span>
+                <!-- <span class="">{{ language.downRate }}</span> -->
+              </div>
+              <app-bar-chart id="top-loc-down-chart" *ngIf="topLocationsDownChartoptions && showRealTime"
+                [chartOptions]="topLocationsDownChartoptions" [type]="'down'" [updateFlag]="updateFlag">
+              </app-bar-chart>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div [hidden]="!fsView || isMultiple" class="bg-light h-auto" *ngIf="pageAvailable">
+      <div class="row">
+        <div class="col-md-12 col-12">
+          <!-- Top End Point Full Secreen Starts -->
+          <div class="card h-auto" *ngIf="fsChartDetails.topChart == 'TEP'">
+            <div class="board_head">
+              <div class="orange-text-wrapper d-inline-block">
+                <ng-select class="realtime-custom-select" id="usage_criteria" [items]="topLengths" bindLabel="name"
+                  bindValue="value" [multiple]="false" placeholder="" [(ngModel)]="selectedTopLength"
+                  [ngModelOptions]="{ standalone: true }" [clearable]="false" [searchable]="false"
+                  (change)="changeTopLength()">
+                </ng-select>
+              </div>
+              <span class="ml20">{{ language.interval }}: 15 sec</span>
+              <span class="top5-fullscreen pointer expand-icon" (click)="closeFullscreen()" data-toggle="tooltip"
+                title="{{language.lossofpon_fullscreen_close_tip}}" id="close-fullscreen-top-endpoints"> <i
+                  class="fa fa-expand"></i></span>
+            </div>
+            <div class="chart-sub-title"> {{language["Traffic_ Network_Top 5 Endpoints"]}}</div>
+            <div class="row board_body no-gutters">
+              <div class="col-md-6 col-12">
+                <div class="chart-info">
+                  <span class="">{{ language.upRate }} (<b>{{ tEPrcntData.upPercentage }}%</b>
+                    {{ language.ofTotal }})</span>
+                </div>
+                <app-bar-chart id="top-endpoints-up-chart-fullscreen" [chartOptions]="topEndPointUpChartoptions"
+                  [type]="'up'" [updateFlag]="updateFlag" *ngIf="topEndPointUpChartoptions && true">
+                </app-bar-chart>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="chart-info">
+                  <span class="">{{ language.downRate }} (<b>{{ tEPrcntData.downPercentage }}%</b>
+                    {{ language.ofTotal }})</span>
+                </div>
+                <app-bar-chart id="top-endpoints-down-chart-fullscreen" [chartOptions]="topEndPointDownChartoptions"
+                  [type]="'down'" [updateFlag]="updateFlag" *ngIf="topEndPointDownChartoptions && true">
+                </app-bar-chart>
+              </div>
+            </div>
+          </div>
+          <!-- Top End Point Full Secreen Ends -->
+
+          <!-- Top Apps Full Secreen Starts -->
+          <div class="card h-auto" *ngIf="fsChartDetails.topChart == 'TAPP'">
+            <div class="board_head">
+              <div class="orange-text-wrapper d-inline-block">
+                <ng-select class="realtime-custom-select" id="usage_criteria" [items]="topLengths" bindLabel="name"
+                  bindValue="value" [multiple]="false" placeholder="" [(ngModel)]="selectedTopLength"
+                  [ngModelOptions]="{ standalone: true }" [clearable]="false" [searchable]="false"
+                  (change)="changeTopLength()">
+                </ng-select>
+              </div>
+              <span class="ml20">{{ language.interval }}: 15 sec</span>
+              <span class="top5-fullscreen pointer expand-icon" (click)="closeFullscreen()" data-toggle="tooltip"
+                title="{{language.lossofpon_fullscreen_close_tip}}" id="close-fullscreen-top-apps"><i
+                  class="fa fa-expand"></i></span>
+            </div>
+            <div class="chart-sub-title"> {{language["Traffic_ Network_Top 5 Applications"]}}</div>
+            <div class="row board_body no-gutters ">
+              <div class="col-md-6 col-6">
+                <div class="chart-info">
+                  <span class="">{{language.upRate}} (<b>{{tAPrcntData.upPercentage}}%</b>
+                    {{language.ofTotal}})</span>
+                  <!-- <span class="">{{ language.upRate }} </span> -->
+                </div>
+                <app-bar-chart id="top-apps-up-chart-fullscreen" [chartOptions]="topAppsUpChartoptions" [type]="'up'"
+                  [updateFlag]="updateFlag" *ngIf="true">
+                </app-bar-chart>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="chart-info">
+                  <span class="">{{language.downRate}} (<b>{{tAPrcntData.downPercentage}}%</b>
+                    {{language.ofTotal}})</span>
+                  <!-- <span class="">{{ language.downRate }} </span> -->
+                </div>
+                <app-bar-chart id="top-apps-down-chart-fullscreen" [chartOptions]="topAppsDownChartoptions"
+                  [type]="'down'" [updateFlag]="updateFlag" *ngIf="true">
+                </app-bar-chart>
+              </div>
+            </div>
+          </div>
+          <!-- Top Applications Full Secreen Ends -->
+
+          <!-- Top Locations Full Secreen Starts -->
+          <div class="card h-auto" *ngIf="fsChartDetails.topChart == 'TLOC'">
+            <div class="board_head">
+              <div class="orange-text-wrapper d-inline-block">
+                <ng-select class="realtime-custom-select" id="usage_criteria" [items]="topLengths" bindLabel="name"
+                  bindValue="value" [multiple]="false" placeholder="" [(ngModel)]="selectedTopLength"
+                  [ngModelOptions]="{standalone: true}" [clearable]="false" [searchable]="false"
+                  (change)="changeTopLength()">
+                </ng-select>
+              </div>
+              <span class="ml20">{{language.interval}}: 15 sec</span>
+              <span class="top5-fullscreen pointer expand-icon" data-toggle="tooltip"
+                title="{{language.lossofpon_fullscreen_close_tip}}" (click)="closeFullscreen()"><i
+                  class="fa fa-expand"></i></span>
+            </div>
+            <div class="chart-sub-title"> {{language["Traffic_ Network_Top 5 Locations"]}}</div>
+            <div class="row board_body no-gutters">
+              <div class="col-md-6 col-12">
+                <div class="chart-info">
+                  <span class="">{{language.upRate}} (<b>{{tLPrcntData.upPercentage}}%</b>
+                    {{language.ofTotal}})</span>
+                  <!-- <span class="">{{ language.upRate }} </span> -->
+                </div>
+                <app-bar-chart id="top-loc-up-chart-fullscreen" [chartOptions]="topLocationsUpChartoptions"
+                  [type]="'up'" [updateFlag]="updateFlag" *ngIf="topLocationsUpChartoptions && true">
+                </app-bar-chart>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="chart-info">
+                  <span class="">{{language.downRate}} (<b>{{tLPrcntData.downPercentage}}%</b>
+                    {{language.ofTotal}})</span>
+                  <!-- <span class="">{{ language.downRate }} </span> -->
+                </div>
+                <app-bar-chart id="top-loc-down-chart-fullscreen" [chartOptions]="topLocationsDownChartoptions"
+                  [type]="'down'" [updateFlag]="updateFlag" *ngIf="topLocationsDownChartoptions && true">
+                </app-bar-chart>
+              </div>
+            </div>
+          </div>
+          <!-- Top Locations Full Secreen Ends -->
+        </div>
+      </div>
+    </div>
+
+    <div class="row" [hidden]="!isMultiple" *ngIf="multiplePageAvailable">
+      <div class="col-md-4" *ngFor="let item of loadedMultipleChart; let i=index">
+        <app-multiple-chart [Type]="item.Type" [Name]="item.Name" [windowLen]="item.windowLen"
+          [selectedTime]="item.selectedTime" [EventName]="'APP'" [monitorId]="item.monitorId" [Position]="item.Position"
+          [doWSCall]="item.doWSCall" [replay]="item.replay" [startTime]="item.startTime"
+          (valueChange)="clearChartContainer($event)">
+        </app-multiple-chart>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<ng-template #faviouteModal let-modal class="col-md-12 custom-modal">
+  <div class="modal-header d-block">
+    <h5 class="modal-title" id="showInfoModal">{{language.CreateTrafficFavorite}}</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="close()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body add-device-model">
+    <form>
+      <div class="form-group ccl-form text-left">
+        <label for="exampleFormControlInput1">{{language.Name}}</label>
+        <input type="name" class="form-control" id="exampleFormControlInput1" placeholder="{{ language.Name }}">
+      </div>
+    </form>
+
+    <div class="col-md-12 pl-0 text-left mt-3">
+      <button type="submit" class="btn-default primary  px-3" (click)="createFavioute()"> {{language.Confirm}} </button>
+      <button type="button" (click)="close()" class="btn-default transparant px-3 m-2">
+        {{language.Cancel}} </button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #recordingModal let-modal class="col-md-12 custom-modal">
+  <div class="modal-header d-block">
+    <h5 class="modal-title" id="showInfoModal">{{language.CreateTrafficRecording}}</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="close()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="row record-pop">
+    <div class="w-100 alert alert-danger  fade show my-3" *ngIf="error">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+      <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+      <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+    </div>
+  </div>
+  <div class="modal-body add-device-model">
+    <div class="form-group ccl-form">
+      <label for="name">{{language.Name}} <span class="error">*</span></label>
+      <input type="name" class="form-control" id="recording_Name" [(ngModel)]="recordingName"
+        placeholder="{{language.Name}}" (change)="changeName()" autocomplete="off" trimSpace
+        (blur)="removeUnwantedSpace('recordingName',recordingName)">
+      <div *ngIf="!isvalid">
+        <span class="errorMessage">
+          {{language["Please enter the name"]}}
+        </span>
+      </div>
+    </div>
+    <div class="form-group ccl-form">
+      <label for="description">Description</label>
+      <textarea class="form-control" id="description" [(ngModel)]="description"
+        placeholder="{{language['Description']}}.." rows="3" trimSpace
+        (blur)="removeUnwantedSpace('description',description)"></textarea>
+    </div>
+    <div class="">
+      <span class="mr-2"> {{language['Start Time']}} <span class="error">*</span></span>
+    </div>
+    <div class="form-check form-check-inline">
+      <!-- <span class="mr-2"> Start Time</span> -->
+      <label class="form-check-label mr-2" for="inlineRadio1">{{language.Now}}</label>
+      <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" [value]="true"
+        [(ngModel)]="isNow" [checked]="isNow" (change)="changeNowAndLater()" [disabled]="recordingStatus">
+
+    </div>
+    <div class="form-check form-check-inline">
+      <label class="form-check-label mr-2" for="inlineRadio2">{{language.Later}}</label>
+      <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" [value]="false"
+        [(ngModel)]="isNow" (change)="changeNowAndLater()">
+      <p-calendar class="ccl-form" id="start_date" [style]="{ width: '100%', height: '38px' }"
+        [inputStyle]="{ height: '36px' }" appendTo="body" [autoZIndex]="true" placeholder="Date" [(ngModel)]="date"
+        [showIcon]="true" [showTime]="true" [hourFormat]="24" [ngModelOptions]="{ standalone: true }"
+        dateFormat="mm-dd-yy" [disabled]="showDate" [minDate]="minDate">
+      </p-calendar>
+      <label *ngIf="recordingStatus" class="indcit mb-2"><span><img
+            src="../../../../../assets/img/ic_point.svg" /></span>{{language['Record In-Progress']}}</label>
+    </div>
+
+    <div class="form-check pl-0 mt-2">
+      <label class="form-check-label mr-2" for="inlineRadio23">
+        {{language['Record Length']}} <span class="error">*</span>
+      </label>
+      <ng-select [items]="items" bindLabel="name" bindValue="value" [(ngModel)]="selectedDuration"
+        [ngModelOptions]="{ standalone: true }" [clearable]="false" [searchable]="false">
+      </ng-select>
+    </div>
+    <div class="col-md-12 pl-0 text-left mt-3">
+      <button type="submit" class="btn-default primary  px-3" (click)="createRecording()" [disabled]="btnDisabled">
+        {{language.Confirm}} </button>
+      <button type="button" (click)="close()" class="btn-default transparant px-3 m-2">
+        {{language.Cancel}} </button>
+    </div>
+  </div>
+</ng-template>
+<ng-template #warningModalConfirmation let-modal>
+  <div class="modal-body">
+    <button type="button" class="clx-modal-dismiss" data-dismiss="modal" aria-label="Close"
+      (click)="sensitiveModalCancel(modal)">
+      <span aria-hidden="true"></span>
+    </button>
+    <div class="modal-body-content">
+      <div class="clx-warning-wrapper">
+        <div class="clx-warning-icon">
+          <span></span>
+        </div>
+        <div class="clx-warning-content">
+          <div class="text-break cco-secondary-title mb-3">
+            {{language['Identifiable information msg']}}
+          </div>
+          <div class="d-flex w-100">
+            <div class="radio-check mr-2 pt-1">
+              <input type="checkbox" id="checkSensitiveModal" #checkSensitive />
+            </div>
+            <div class="text-break">
+              <label for="checkSensitiveModal">
+                {{language['Access confirm msg']}}
+              </label>
+            </div>
+          </div>
+          <div class="mt-3">
+            <button type="button" class="btn-default btn-primary mr-3" [disabled]="!checkSensitive.checked"
+              (click)="confirmShow()">
+              {{language['Confirm']}}
+            </button>
+            <button type="button" class="btn-default btn-dft" aria-label="Close" (click)="sensitiveModalCancel(modal)">
+              {{language['Cancel']}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<ng-template #modalSaveAsFilter let-modal>
+  <div class="modal-header">
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span></span>
+    </button>
+  </div>
+  <div class="modal-body px-4">
+    <div class="px-3">
+      <div class="ccl-admin-title my-3"> Save as Filter Preset</div>
+      <div class="mb-3 ccl-form">
+        <label>{{language['Name']}} <span class="required-field">*</span></label>
+        <input type="text" placeholder="{{language['Name']}}" />
+      </div>
+      <div class="cco-secondary-title mb-2 pb-2 border-bottom">{{language['parameters']}}</div>
+      <div class="table-parameter pl-3">
+        <table class="w-100">
+          <tbody>
+            <tr>
+              <td>{{language['Timeframe']}}</td>
+              <td>20 minute window</td>
+            </tr>
+            <tr>
+              <td>{{language['Application']}}</td>
+              <td>
+                <ul>
+                  <li>Netflix</li>
+                  <li>Hulu</li>
+                  <li>Disney+</li>
+                  <li>Amazon Prime</li>
+                  <li>HBO Max</li>
+                  <li></li>
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <td>{{language['Location']}}</td>
+              <td>
+                <ul>
+                  <li>SF</li>
+                  <li>LA</li>
+                </ul>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer mt-3 justify-content-start px-4">
+    <button type="button" class="btn btn-default btn-primary ml-3"
+      (click)="modal.save('Save click')">{{language['Save']}}</button>
+    <button type="button" class="btn-default btn-dft ml-2"
+      (click)="modal.close('Close click')">{{language['Cancel']}}</button>
+  </div>
+</ng-template>
+<ng-template #modalViewFilters let-modal>
+  <div class="modal-header">
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span></span>
+    </button>
+  </div>
+  <div class="modal-body px-4">
+    <div class="px-3">
+      <div class="ccl-admin-title my-3">Filter Presets</div>
+      <p class="mb-4">1 of 10 filter presets saved</p>
+      <div class="row">
+        <div class="col-3">
+          <ul class="nav flex-column left-menu tab-view-style">
+            <li class="nav-item">
+              <a class="list-group-item text-decoration-none active">TV streaming</a>
+            </li>
+          </ul>
+        </div>
+        <div class="col-9">
+          <div class="clx-warning-alert mb-3">
+            <div class="clx-warning-wrapper">
+              <div class="clx-warning-icon">
+                <span></span>
+              </div>
+              <div class="clx-warning-content">
+                <div class="text-break cco-secondary-title mb-3">
+                  {{language['Are you sure you want to delete']}} <div><b>TV streaming</b>?</div>
+                </div>
+                <div class="mt-3">
+                  <button type="button" class="btn-default btn-primary mr-3">
+                    {{language['Confirm']}}
+                  </button>
+                  <button type="button" class="btn-default btn-dft">
+                    {{language['Cancel']}}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cco-secondary-title d-flex justify-content-between mb-2 pb-2 border-bottom">
+            {{language['parameters']}}
+            <a class="text-decoration-none primary cursor-pointer">
+              <span class="f-size-16px d-inline-flex align-items-center"><i class="mr-2"><img
+                    src="../../../../../assets/img/ic_delete_trash.svg" /></i>{{language['Delete']}}</span>
+            </a>
+          </div>
+          <div class="table-parameter pl-3 mb-3">
+            <table class="w-100">
+              <tbody>
+                <tr>
+                  <td>{{language['Timeframe']}}</td>
+                  <td>20 minute window</td>
+                </tr>
+                <tr>
+                  <td>{{language['Application']}}</td>
+                  <td>
+                    <ul>
+                      <li>Netflix</li>
+                      <li>Hulu</li>
+                      <li>Disney+</li>
+                      <li>Amazon Prime</li>
+                      <li>HBO Max</li>
+                      <li></li>
+                    </ul>
+                  </td>
+                </tr>
+                <tr>
+                  <td>{{language['Location']}}</td>
+                  <td>
+                    <ul>
+                      <li>SF</li>
+                      <li>LA</li>
+                    </ul>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</ng-template>

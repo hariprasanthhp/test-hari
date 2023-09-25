@@ -1,0 +1,58 @@
+<!-- <div class="alert alert-info margin-top-20" role="alert" *ngIf="servicedisable">
+  <span>{{ language["Services for this system are managed by Operation Cloud"] }}</span>
+</div> -->
+<div class="w-100 alert alert-danger fade show  px-0" *ngIf="error">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+    <button type="button" class="close" (click)="error = false;">
+      <span></span>
+    </button>
+    <div class="d-inline-flex" [innerHtml]="language[errorInfo] || errorInfo "></div>
+  </div>
+<form class="ccl-form needs-validation" [formGroup]="servicetierForm">
+  <!-- *ngIf="!servicedisable" -->
+<div class="col-md-12 col-sm-12 col-lg-4 col-xl-4 pr-0" >
+    <div class="data-plan border-bottom">
+      <div class="left-side-data">
+        <div class="cco-secondary-title">{{language.Video}}</div>
+      </div>
+    </div>
+    <div class="ccl-form mt-4" class="validation-needs" formGroupName="video">
+      <div class="form-group inline-input row">
+        <label class="col-md-12 col-form-label"> {{language.Video_Service}}</label>
+        <div class="col-md-12">
+          <div class="toggle-swtbtn checkbox switcher">
+            <label for="Video">
+              <input type="checkbox" id="Video" (change)="servicetierChange()" formControlName="Enable" required />
+              <span class="enabled_button"><small></small></span>
+            </label>
+          </div>
+        </div>
+      </div>
+     <div class="form-group inline-input row" *ngIf="videoShowAllFields">
+        <label class="col-form-label col-md-12">
+          {{ language.VLAN }}</label>
+        <div class="col-md-12">
+          <input class="form-control" (change)="servicetierChange()" (keyup)="lanValidate('video', 'VlanId');"
+            placeholder="{{ language.VLAN }}" min="0" max="4093" maxlength="4" #name3 type="text"
+            (keypress)="allowNumberOnly($event)" required
+            formControlName="VlanId" />
+         <div *ngIf="!videoFormValidate.VlanId">
+            <div *ngIf="servicetierForm.value.video.VlanId">
+              <span class="mandatory-msg">{{language['Please enter a value less than or equal to 4093']}}.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group inline-input row" *ngIf="videoShowAllFields">
+        <label class="col-form-label col-md-12"> {{ language.Priority_Bits }} </label>
+        <div class="custom-selectbox-opr w-select col-md-12">
+          <div class="w-100">
+            <ng-select id="Priority_Bits" [items]="priorityItems" bindLabel="name" bindValue="value"
+              [multiple]="false" placeholder="{{ language.Priority_Bits }}" formControlName="Pbit"
+              (change)="servicetierChange()" [clearable]="true" [searchable]="false"></ng-select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </form>

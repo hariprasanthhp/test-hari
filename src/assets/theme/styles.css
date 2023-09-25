@@ -1,0 +1,293 @@
+/**
+Basic styles imports
+*/
+.color-red {
+  color: #ff734f !important;
+}
+
+.color-green {
+  color: #82bf00 !important;
+}
+
+.color-grey {
+  color: #cccccc !important;
+}
+
+.color-white {
+  color: #ffffff !important;
+}
+
+.color-calix-grey {
+  color: #9e9e9e !important;
+}
+
+.color-calix-dark {
+  color: #1a1f22 !important;
+}
+
+.color-dark-grey {
+  color: #333333 !important;
+}
+
+h1, .h1 {
+  font-size: 60px !important;
+}
+
+h2, .h2 {
+  font-size: 54px !important;
+}
+
+h3, .h3 {
+  font-size: 48px !important;
+}
+
+h4, .h4 {
+  font-size: 36px !important;
+}
+
+h5, .h5 {
+  font-size: 30px !important;
+}
+
+h6, .h6 {
+  font-size: 24px !important;
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+  font-weight: 700 !important;
+}
+
+.fs13 {
+  font-size: 13px !important;
+}
+
+.fs14 {
+  font-size: 14px !important;
+}
+
+.fs15 {
+  font-size: 15px !important;
+}
+
+.fs16 {
+  font-size: 16px !important;
+}
+
+.fs18 {
+  font-size: 18px !important;
+}
+
+.fs20 {
+  font-size: 20px !important;
+}
+
+/* Huge Screen */
+@media (min-width: 1596px) {
+  .header {
+    height: auto !important;
+    color: #1a1f22;
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    z-index: 1;
+  }
+}
+
+/* Tier 1 */
+@media (max-width: 1595px) {
+  .header {
+    height: auto !important;
+    color: #1a1f22;
+    left: 0px;
+    top: 0px;
+    z-index: 1;
+  }
+}
+
+/* Tier 2 */
+@media (max-width: 1223px) {
+  .header {
+    height: auto !important;
+    color: #1a1f22;
+    left: 0px;
+    top: 0px;
+    z-index: 1;
+  }
+}
+
+/* Tier 3 */
+@media (max-width: 1022px) {
+  .header {
+    height: auto !important;
+    color: #1a1f22;
+  }
+}
+
+/* Mobile Devices */
+@media (max-width: 414px) {
+  .header {
+    color: #1a1f22;
+  }
+}
+
+button.sm-btn {
+  font-size: 11px !important;
+  padding: 0.375rem 1rem !important;
+}
+
+button.md-btn {
+  font-size: 15px !important;
+  padding: 0.375rem 1.5rem !important;
+}
+
+button.lg-btn {
+  font-size: 20px !important;
+  padding: 0.375rem 2rem !important;
+}
+
+.btn {
+  font-weight: unset !important;
+  border-radius: 25px !important;
+  outline-color: unset !important;
+  border: unset !important;
+}
+
+.btn-primary {
+  background-color: #2078fa !important;
+  color: #ffffff !important;
+}
+
+.btn-primary:hover,
+.btn-primary:active,
+.btn-primary.active,
+.open .dropdown-toggle.btn-primary,
+.btn-primary:active:hover,
+.btn-primary.active:hover,
+.btn-primary:focus,
+.btn-primary:active:focus,
+.btn-primary.active:focus {
+  background-color: #324a9b !important;
+  border-color: #324a9b !important;
+  color: #ffffff !important;
+}
+
+button.btn-primary.disabled,
+.btn-primary.disabled:focus,
+.btn-primary.disabled:active:focus,
+.btn-primary.disabled.active:focus {
+  background-color: #c0ddfd !important;
+}
+
+.btn-secondary {
+  background-color: #f8f8fa !important;
+  color: #1a1f22 !important;
+}
+
+.btn-secondary:hover,
+.btn-secondary:active,
+.btn-secondary.active,
+.open .dropdown-toggle.btn-secondary,
+.btn-secondary:active:hover,
+.btn-secondary.active:hover {
+  background-color: #ebeaef !important;
+  border-color: #ebeaef !important;
+  color: #1a1f22 !important;
+}
+
+.btn-secondary:focus,
+.btn-secondary:active:focus,
+.btn-secondary.active:focus {
+  background-color: #ebeaef !important;
+  color: #2078fa !important;
+}
+
+button.btn-secondary.disabled,
+.btn-secondary.disabled:focus,
+.btn-secondary.disabled:active:focus,
+.btn-secondary.disabled.active:focus {
+  background-color: #fcfcfd !important;
+  color: #333333 !important;
+}
+
+button.disabled {
+  cursor: not-allowed !important;
+}
+
+.btn-icon-lg {
+  padding: 8px 15px !important;
+  font-size: 20px !important;
+  border-radius: 25px !important;
+}
+
+.btn-icon-md {
+  padding: 8px 13px !important;
+  font-size: 15px !important;
+  border-radius: 25px !important;
+}
+
+.btn-icon-sm {
+  padding: 6px 10px !important;
+  font-size: 11px !important;
+  border-radius: 25px !important;
+}
+
+input[type="text"], input[type="search"],
+input[type="email"], input[type="password"] {
+  border-radius: 20px !important;
+  border: none !important;
+  outline: none !important;
+  background-color: #f8f8fa !important;
+  padding: 6px 20px !important;
+}
+
+input[type="text"]:hover, input[type="email"]:hover,
+input[type="password"]:hover {
+  border: 2px solid #cccccc !important;
+}
+
+input[type="text"]:active, input[type="text"]:focus,
+input[type="email"]:active, input[type="email"]:focus,
+input[type="password"]:active, input[type="password"]:focus {
+  border: 2px solid #0278ff !important;
+}
+
+input[type="text"].ng-invalid.ng-touched,
+input[type="email"].ng-invalid.ng-touched,
+input[type="password"].ng-invalid.ng-touched {
+  border: 2px solid #ff3600 !important;
+}
+
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+  display: none;
+}
+
+.help-block {
+  display: inline-block !important;
+  margin-left: 20px !important;
+}
+
+.help-block .error {
+  color: #ff3600 !important;
+  font-size: 13px !important;
+}
+
+.autocomplete {
+  width: 100%;
+  display: flex;
+  position: relative;
+}
+
+.autocomplete input:focus, .autocomplete input:active {
+  box-shadow: 0 0px 0px 0 rgba(0, 0, 0, 0.16), 0 0px 5px 0 rgba(0, 0, 0, 0.16) !important;
+}
+
+.autocomplete button {
+  position: absolute !important;
+  right: 0 !important;
+  top: -6px !important;
+  font-size: 20px !important;
+  padding: 9px 15px !important;
+}

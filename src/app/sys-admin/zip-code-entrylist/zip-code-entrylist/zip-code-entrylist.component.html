@@ -1,0 +1,254 @@
+<div class="position-relative">
+<div class="no-data" *ngIf="loading">
+  <div class="spinner-border text-primary">
+    <span class="sr-only">{{language.Loading}}</span>
+  </div>
+</div>
+<div class="w-100 alert alert-danger  fade show" *ngIf="errorShow">
+  <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+  <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+  <div class="d-inline-flex" [innerHtml]="errorMessage"></div>
+</div>
+<div class="w-100 alert alert-danger  fade show" *ngIf="requiredZipcodeNameShow">
+  <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+  <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+  <div class="d-inline-flex" [innerHtml]="requiredZipcodeName"></div>
+</div>
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="w-100 d-flex flex-wrap align-items-center border-bottom-gray pb-3">
+        <div class="ccl-admin-title admin-title-grow text-break">
+          {{selectedListName}}
+        </div>
+        <button class="btn-link primary mr-3" (click)="delModalOpen(selectedListName)">
+          {{language['Delete List']}}
+        </button>
+        <button class="btn-dft btn-default mr-3" (click)="modalOpen(selectedListName)">
+          {{language['Edit Name']}}
+        </button>
+        <button class="btn-default primary mr-4" (click)="addZipcodeToList()">
+          {{language['Add ZIP']}}
+        </button>
+        <button type="button" class="close" (click)="redirectToZipcodeUpload()">
+          <span></span>
+        </button>
+      </div>
+      <div class="table-filter d-flex flex-wrap justify-content-between align-items-center w-100">
+        <div class="ccl-form">
+          <div class="d-flex flex-wrap">
+            <div class="search-input pr-4">
+              <input type="text" placeholder="{{language.Search}}" [(ngModel)]="searchText"
+                (input)="searchName($event.target.value)" />
+              <span class="pos-abs-right" *ngIf="searchText" (click)="clearText()"><img
+                  src="../../../../../assets/img/close-icon.svg" /></span>
+            </div>
+          </div>
+        </div>
+        <div class="del-btn" *ngIf="deleteSelectionButtonShow">
+          <button class="btn-default primary" (click)="deleteEntryListZipcode()">
+            <i class="fa fa-trash-o mr-1"></i> {{language['Delete Selection']}}
+          </button>
+        </div>
+      </div>
+      <!--end-->
+      <div class="overflow-auto w-100 mt-3">
+        <table class="zip-code-table table" datatable [dtOptions]="zipCodeDtOptions" [dtTrigger]="dtTrigger"
+          id="example">
+          <thead>
+            <tr>
+              <th class="w-10 sorting_disabled max-w-36">
+                <div class="form-check">
+                  <input type="checkbox" class="checkbox" (change)="selectAll($event.target.checked)"
+                    [checked]="allChecked" [disabled]="zipCodeDetailLists?.length == 0 || newArray?.length == 0" />
+                </div>
+              </th>
+              <th class="w-20">{{language['ZIP Code']}}</th>
+              <th class="w-30">+4</th>
+              <th class="w-20">{{language['Date Added']}}</th>
+              <th class="w-20">{{language['SERVICE']}}</th>
+              <th class="w-10 th-del-action"></th>
+            </tr>
+          </thead>
+          <tbody [ngClass]="!zipcodeListArrayResultError ? 'table-row-group': 'd-none'">
+            <tr *ngFor="let list of zipCodeDetailLists; let i = index">
+              <td class="max-w-36">
+                <div class="form-check">
+                  <input type="checkbox" (change)="selectedOne($event.target.checked,i)" [(ngModel)]="list.checked" />
+                </div>
+              </td>
+              <td>{{list.zipcode}}</td>
+              <td>{{list.zipPlusFour}}</td>
+              <td>{{traslateDate(list.createdTime)}}</td>
+              <td>{{language[list.hasService] || list.hasService}}</td>
+              <td>
+                <div class="action-icons-row text-center">
+                  <a class="primary cursor-pointer" (click)="editZip(list)"><i class="fa fa-pencil"
+                      title="{{language['edit']}}"></i></a>
+                  <a class="primary cursor-pointer" (click)="deleteEntryListZipcode(list.id)"><i class="fa fa-trash-o"
+                      title="{{language['delete']}}"></i></a>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+          <tbody [ngClass]="zipcodeListArrayResultError ? 'table-row-group': 'd-none'">
+            <tr>
+              <td colspan="9" class="text-center">{{language.nodata}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+<ng-template #addZipModal let-modal>
+  <div class="w-100 py-3">
+    <button type="button" class="close mt-1" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span></span>
+    </button>
+  </div>
+  <div class="px-4">
+    <div class="ccl-admin-title mb-4" id="add-zipcoe-modal-title">{{language['Add ZIP']}}</div>
+    <div class="d-flex w-100">
+      <div class="ccl-form mb-2 min-110px mr-2">
+        <label>{{language['ZIP Code']}}</label>
+        <input type="text" [(ngModel)]="addZipcode" pattern="/^[0-9]+$/gm" maxlength="5" min="0" (input)="onChangeAddZipcode($event.target.value)" id="add-zipcode" 
+        trimSpace (blur)="removeUnwantedSpace('addZipcode',addZipcode)"/>
+      </div>
+      <div class="ccl-form mb-2 min-90px">
+        <label>+4</label>
+        <input type="text" [(ngModel)]="addZipPlusfour" pattern="/^[0-9]+$/gm" maxlength="4" min="0" (input)="onChangeAddZipPlusFour($event.target.value)" id="add-zipplusfour" 
+        trimSpace (blur)="removeUnwantedSpace('addZipPlusfour',addZipPlusfour)"/>
+      </div>
+    </div>
+    <div class="mb-2 w-100">
+      <label class="d-block">{{language['Has Service']}}</label>
+      <div class="form-group d-inline-flex pl-20">
+        <input type="checkbox" class="form-check-input" id="hasServiceCheck2" [(ngModel)]="hasServiceCheck" />
+        <label class="form-check-label" for="hasServiceCheck2">{{ language['Yes'] }}
+        </label>
+      </div>
+    </div>
+    <div *ngIf="zipcodeNameError">
+      <p class="mandatory-msg mb-0">{{language['Zip code should be 5 characters long, only numeric (no special characters)']}}</p>
+  </div>
+  <div *ngIf="zipcodePlusError">
+    <p class="mandatory-msg mb-0">{{language['Zip+4 should be 4 characters long, only numeric (no special characters)']}}</p>
+</div>
+    <div class="mt-3 mb-3">
+      <button class="btn-default primary mr-3" (click)="postZipcodeToList()"
+        [disabled]="!saveButtonShow">{{language['Save']}}</button>
+      <button class="btn-link primary" (click)="modal.close('Close click')">{{language.Cancel}}</button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #delteZipcodes let-modal>
+  <div class="w-100 py-3">
+    <button type="button" class="close mt-1" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span></span>
+    </button>
+  </div>
+  <div class="zipcode-alert">
+    <div class="d-flex">
+      <div class="warn-icon-min">
+        <img src="../../../assets/img/warning-icon-36px.svg" />
+      </div>
+      <div>
+        <div class="ccl-Secondary-title">{{language['Are you sure you want to delete the following ZIP Code(s)?']}}</div>
+        <ul class="my-3 pl-4 pb-4">
+          <li *ngFor="let item of deleteZipcodeZipPlusfour">{{item.zipcode}}{{item.zipPlusFour?'-'+item.zipPlusFour:''}}
+          </li>
+        </ul>
+        <button class="btn-default primary mr-3" (click)="deleteEntryZipcodes()">{{language.Delete}}</button>
+        <button class="btn-dft btn-default" (click)="modal.close('Close click')">{{language.Cancel}}</button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #editZipcodeFilterName let-modal>
+  <div class="w-100 py-3">
+    <button type="button" class="close mt-1" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span></span>
+    </button>
+  </div>
+  <div class="px-4">
+    <div class="ccl-admin-title mb-4" id="edit-zip-modal-title">{{language['ZIP Code Filter Name']}}</div>
+    <div class="ccl-form mb-2">
+      <label>{{language['Name']}}</label>
+      <input type="text" [(ngModel)]="zipcodeName" (input)="onChangeZipcodeFilterName($event.target.value)" 
+      trimSpace (blur)="removeUnwantedSpace('zipcodeName',zipcodeName)"/>
+    </div>
+    <div *ngIf="zipcodeNameError">
+      <p class="mandatory-msg mb-0">{{language['File name must only have alphanumeric characters and spaces']}}</p>
+  </div>
+    <div class="mt-5 mb-3">
+      <button class="btn-default primary mr-3" (click)="updateZipcodeName()"
+        [disabled]="!saveButtonShow || !zipcodeName">{{language['Save Changes']}}</button>
+      <button class="btn-link primary" (click)="modal.close('Close click')">{{language.Cancel}}</button>
+    </div>
+  </div>
+</ng-template>
+<ng-template #deleteZipcodeFilterList let-modal>
+  <div class="w-100 py-3">
+    <button type="button" class="close mt-1" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span></span>
+    </button>
+  </div>
+  <div class="zipcode-alert">
+    <div class="d-flex">
+      <div class="warn-icon-min">
+        <img src="../../../assets/img/warning-icon-36px.svg" />
+      </div>
+      <div>
+        <div class="ccl-Secondary-title mb-3 text-break">{{language['Are you sure you want to delete']}}
+          {{zipcodeName}}?</div>
+        <button class="btn-default primary mr-3" (click)="deleteZipcodeName()">{{language.Delete}}</button>
+        <button class="btn-dft btn-default" (click)="modal.close('Close click')">{{language.Cancel}}</button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<ng-template #editZipModal let-modal>
+  <div class="w-100 py-3">
+    <button type="button" class="close mt-1" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span></span>
+    </button>
+  </div>
+  <div class="px-4">
+    <div class="ccl-admin-title mb-4" id="edit-zip-modal-title">{{language['Edit ZIP']}}</div>
+    <div class="d-flex w-100">
+      <div class="ccl-form mb-2 min-110px mr-2">
+        <label>{{language['ZIP Code']}}</label>
+        <input type="text" [(ngModel)]="entryZipcode" pattern="/^[0-9]+$/gm" maxlength="5" min="0" (input)="onChangeEditZipcode($event.target.value)" id="entry-zipcode"
+        trimSpace (blur)="removeUnwantedSpace('entryZipcode',entryZipcode)"/>
+      </div>
+      <div class="ccl-form mb-2 min-90px">
+        <label>+4</label>
+        <input type="text" [(ngModel)]="entryPlusFour" pattern="/^[0-9]+$/gm" maxlength="4" min="0" (input)="onChangeEditZipPlusFour($event.target.value)" id="entry-zipplusfour"
+        trimSpace (blur)="removeUnwantedSpace('entryPlusFour',entryPlusFour)"/>
+      </div>
+    </div>
+    <div class="mb-2 w-100">
+      <label class="d-block">{{language['Has Service']}}</label>
+      <div class="form-group d-inline-flex pl-20">
+        <input type="checkbox" class="form-check-input" id="hasServiceCheck2" [(ngModel)]="entryHasService" (change)="hasServiceChange($event.target.checked)" />
+        <label class="form-check-label" for="hasServiceCheck2">{{ language['Yes'] }}
+        </label>
+      </div>
+    </div>
+    <div *ngIf="zipcodeNameError">
+      <p class="mandatory-msg mb-0">{{language['Zip code should be 5 characters long, only numeric (no special characters)']}}</p>
+  </div>
+  <div *ngIf="zipcodePlusError">
+    <p class="mandatory-msg mb-0">{{language['Zip+4 should be 4 characters long, only numeric (no special characters)']}}</p>
+</div>
+    <div class="mt-3 mb-3">
+      <button class="btn-default primary mr-3" (click)="updatedEntryZipcode()"
+        [disabled]="!saveButtonShow || !entryZipcode">{{language['Save Changes']}}</button>
+      <button class="btn-link primary" (click)="modal.close('Close click')">{{language.Cancel}}</button>
+    </div>
+  </div>
+</ng-template>

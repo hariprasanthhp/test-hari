@@ -1,0 +1,18 @@
+<section>
+  <div class="row">
+    <div class="col-md-12 ccl-tabs">
+      <ul id="tabs" class="nav nav-tabs">
+        <li class="nav-item">
+          <a routerLink="/cco/operations/cco-subscriber-operations/templates/subscriber-templates" data-toggle="tab"
+            class="nav-link small" routerLinkActive="active"><span class="pl-0" style="padding-left: 0px;">{{
+              language.Subscriber_Template }}</span></a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/cco/operations/cco-subscriber-operations/templates/bandwidth-tiers" data-toggle="tab"
+            class="nav-link small" routerLinkActive="active"><span class="">{{ language.BandWidth_tier }}</span></a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+<router-outlet></router-outlet>

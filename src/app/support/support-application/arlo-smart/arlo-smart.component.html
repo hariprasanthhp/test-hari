@@ -1,0 +1,425 @@
+<section class="position-relative my-3">
+    <div class="w-100 alert alert alert-danger fade show" *ngIf="isError">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+        <button type="button" class="btn-default primary ok float-right" (click)="isError = false">
+            {{language.OK}}
+        </button>
+        <span class="d-inline-flex d-inline-error" [innerHtml]="alertMessage"></span>
+    </div>
+    <div class="w-100 alert warning-msg fade show" *ngIf="warningMsg">
+        <span class="success-img succ-img-w"><img src="./assets/img/warning-icon.svg" /></span>
+        <button type="button" class="close ml-2" (click)="warningMsg = ''">
+            <img src="assets/img/ic_close-44px.svg" />
+        </button>
+        <span>{{ warningMsg }}</span>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <!-- <button type="button" class="btn btn-primary" data-toggle="modal"
+                data-target=".bd-example-modal-lg-escalate" id="arlo-escalate-buton">{{language['Escalate to
+                Arlo']}}</button> -->
+            <button class="btn-default primary" *ngIf="account?.userId" (click)="escalationProcessEditorModal()">
+                {{language['Escalate to Arlo']}}
+            </button>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+
+        <!-- Account Details -->
+        <div class="col-sm-12 col-md-12 col-lg-3 col-xl-3">
+            <div class="loader" *ngIf="accountLoader">
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border text-primary">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between border-bottom mb-2">
+                <div class="cco-secondary-title" id="arlo-account-details">
+                    {{language['Account Details']}}
+                </div>
+                <div class="cco-secondary-title w-24-cursor">
+                    <img class="refresh-icon" (click)="getAccount();" src="assets/img/Refresh-icon.svg">
+                </div>
+            </div>
+            <div class="arlo-smart-table">
+                <table class="table" id="arlo-subs-status">
+                    <thead>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="w-40">{{language['Subscription Status']}}</td>
+                            <td class="w-60" [ngClass]="account.email ? 'highlightGreen' : 'highlightRed'">
+                                {{accountLoader ? '-' : (account.email ? language['Arlo_Subscribed'] : language['Unsubscribed'])}}
+                            </td>
+                        </tr>
+                        <!-- <tr>
+                            <td>Account Number</td>
+                            <td>{{account?.userId || '-'}}</td>
+                        </tr> -->
+                        <tr>
+                            <td class="w-40">{{language['Arlo Account Email']}}</td>
+                            <td class="w-60">{{accountLoader ? '-' : (account?.email || '-')}}</td>
+                        </tr>
+                        <!-- <tr>
+                            <td>{{language['Arlo Smart 4K Plan']}}</td>
+                            <td>{{account["4kCameras"] || '0'}}</td>
+                        </tr> -->
+                        <tr>
+                            <td class="w-40">{{language['Arlo Smart 2K Plan']}}</td>
+                            <td class="w-60">{{accountLoader ? '-' : (account.arloPlan || '-')}}</td>
+                        </tr>
+                        <tr>
+                            <!-- Fix for 31457 -->
+                            <td class="w-40">{{language.Devices}}</td>
+                            <td class="w-60">{{accountLoader ? '-' : devices.length}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Account Details end -->
+
+        <!-- Arlo Cloud Status -->
+        <div class="col-sm-12 col-md-12 col-lg-3 col-xl-3">
+            <div class="loader" *ngIf="healthLoader">
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border text-primary">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between border-bottom mb-2">
+                <div class="cco-secondary-title" id="arlo-arlo-cloud-status">{{language['Arlo Cloud Status']}}</div>
+                <div class="cco-secondary-title  w-24-cursor">
+                    <img class="primary" (click)="getHealth();" src="assets/img/Refresh-icon.svg">
+                </div>
+            </div>
+            <div class="arlo-smart-table">
+                <table class="table" id="arlo-overall-status">
+                    <!-- <thead>
+                        <tr>
+                            <th>Overall Status</th>
+                            <th>Down</th>
+                        </tr>
+                    </thead> -->
+                    <tbody>
+                        <tr>
+                            <td class="border-top-0">{{language['Overall Status']}}</td>
+                            <td [ngClass]="overallStatus ? 'highlightRed' : 'highlightGreen'">
+                                {{healthLoader ? '-' :
+                                (overallStatus && overallStatus <= 4 ? language.DEGRADED : (overallStatus ?
+                                    language['Down'] : language['Up'] ))}} </td>
+                        </tr>
+                        <tr *ngFor="let hlth of health">
+                            <td class="w-50">{{language[hlth.health_name] || hlth.health_name}}</td>
+                            <td class="w-50" [ngClass]="hlth.status ? 'highlightGreen' : 'highlightRed'">
+                                {{healthLoader ? '-' :
+                                (hlth.status ? language['Up'] :language['Down'])}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Arlo Cloud Status end -->
+
+        <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
+            <div class="loader" *ngIf="deviceLoader">
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border text-primary">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between border-bottom mb-2">
+                <div class="cco-secondary-title" id="arlo-device">{{language.Devices}}</div>
+                <!-- <div class="cco-secondary-title" *ngIf="!accountLoader" style="width: 24px; cursor: pointer;">
+                    <img class="primary" (click)="getDevices(account.userId);" src="assets/img/Refresh-icon.svg">
+                </div> -->
+            </div>
+            <div class="arlo-smart-devices-table">
+                <table class="table table-striped" id="arlo-device-tabel">
+                    <thead>
+                        <tr>
+                            <th>{{language.Camera}}</th>
+                            <th>{{language.Model}}</th>
+                            <!-- <th>{{language.Plan}}</th> -->
+                            <th>{{language['Serial Number']}}</th>
+                            <th>{{language['Battery Status']}}</th>
+                            <th>{{language['Device Type']}}</th>
+                            <th>{{language.Last_Updated}}</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let device of devices; let i=index" (click)="viewDeviceDetails(device.macAddress);"
+                            class="cursor-pointer">
+                            <td [ngClass]="{'text-primary':device.hasMacMatched}">{{device.deviceName}}</td>
+                            <td>{{device.modelId}}</td>
+                            <!-- <td>{{device.planId.includes('Elite') ? '4K' : '2K'}}</td> -->
+                            <td>{{device.deviceId}}</td>
+                            <td [ngClass]="device.battery == 'Low' ? 'highlightRed' : ''">{{device.battery}}</td>
+                            <td>{{device.deviceType}}</td>
+                            <td>{{(device.updated || device.created) | date:'MMM dd, y HH:mm'}}</td>
+                            <td>
+                                <div class="cco-secondary-title ref-icon" *ngIf="!accountLoader">
+                                    <img class="primary" (click)="updateDeviceInfo(device.deviceId, i);"
+                                        src="assets/img/Refresh-icon.svg">
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr *ngIf="!devices.length">
+                            <td colspan="7" class="align-center">
+                                {{ language["No Data Available"] }}
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+<!----------------- Escalation Process modal popup ----------------->
+<div class="modal fade bd-example-modal-lg-escalate" id="escalation-process-modal" tabindex="-1" role="dialog"
+    aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="row">
+                <div class="cco-title d-inline-flex">{{language['Escalation Process']}}</div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"></span>
+                </button>
+            </div>
+            <div class="row mt-4">
+                <div class="col-md-6 pl-0">
+                    <div class="cco-secondary-title escalation-process-sub">{{language.Instructions}}</div>
+                    <div class="escalate-list">
+                        <ol>
+                            <li>{{language['Open your preferred email client and paste the following email template']}}
+                            </li>
+                            <li>{{language['Update the subject line with a summary of the issue being experienced']}}
+                            </li>
+                            <li>{{language['Add the requested information to each line in the body of the email']}}
+                            </li>
+                            <li>{{language['Send the email to']}} <a
+                                    href="mailto:calixpartnersupport@arlo.com">calixpartnersupport@arlo.com</a> </li>
+                        </ol>
+                        <ul>
+                            <li>
+                                * {{language['Do not modify this template as it will result in a delay of handling the
+                                escalation.']}}
+                            </li>
+                            <li>
+                                * {{language['All fields are mandatory in order to process the escalation.']}}
+                            </li>
+
+                        </ul>
+
+                    </div>
+                </div>
+                <div class="col-md-6 pr-0">
+                    <div class="cco-secondary-title escalation-process-sub">{{language['Email Template']}}</div>
+                    <div class="">
+                        <span class="blast-grey">{{language.subject}}:</span>
+                    </div>
+                    <div class="" id="arloTemplateSubject">
+                        {{language['Calix Partner Escalation']}}:
+                        {{language.Summary}}: {{"["}}{{language['up to 200 characters']}}{{"]"}}
+                    </div>
+                    <div class="mt-3">
+                        <span class="blast-grey">{{language.Body}}:</span>
+
+                    </div>
+                    <div class="">
+                        <ul id="arloTemplateBody">
+                            <li>{{language['broadband service providor name']}}:
+                            </li>
+                            <li> {{language['Broadband Service Provider Case Number']}}:
+                            </li>
+                            <li> {{language['Broadband Service Provider Support Agent Name']}}:
+                            </li>
+                            <li> {{language['Broadband Service Provider Support Agent Email']}}:
+                            </li>
+                            <li> {{language['Broadband Service Provider Support Agent Phone']}}:
+                            </li>
+                            <br>
+                            <li> {{language['subscriber first name']}}:
+                            </li>
+                            <li> {{language['subscriber last name']}}:
+                            </li>
+                            <li> {{language['Subscriber Email']}}:
+                            </li>
+                            <li> {{language['Subscriber Phone']}}:
+                            </li>
+                            <li> {{language['Subscriber Availability']}}:
+                            </li>
+                            <br>
+                            <li> {{language['subscriber device model number']}}:
+                            </li>
+                            <li> {{language['subscriber device serial number']}}:
+                            </li>
+                            <li>{{language['Subscriber Case Description']}}: </li>
+                        </ul>
+                    </div>
+                    <div class="">
+                        <button type="button" class="btn-default primary" (click)="copyToClipboard()">{{language['Copy
+                            to clipboard']}}</button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!----------------- Escalation Process modal popup ----------------->
+
+<ng-template #escalationProcessEditor let-modal>
+    <div class="loader load" *ngIf="modalLoader">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">{{language.Loading}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 d-flex justify-content-between">
+            <div class="ccl-admin-title mb-2">
+                {{language['Escalation Email']}}
+            </div>
+            <div aria-label="Close" (click)="modal.dismiss('Cross click')">
+                <img class="pointer" src="../../../../assets/img/close-icon.svg" alt="">
+            </div>
+        </div>
+        <div class="col-12 ccl-form">
+            <div class="d-flex w-100 mb-3">
+                <div class="col-auto-width">
+                    <label>{{language['From']}}</label>
+                </div>
+                <div class="col">
+                    <input type="text" class="mail-disable w-100"
+                        [value]="arloMail" disabled="true" />
+                </div>
+            </div>
+            <div class="d-flex w-100 mb-3">
+                <div class="col-auto-width">
+                    <label>{{language['Reply To']}}</label>
+                </div>
+                <div class="col">
+                    <input type="text" placeholder="{{'CSR Email Address'}}" class="w-100" [(ngModel)]="replyTo" trimSpace (blur)="removeUnwantedSpace('replyTo',replyTo)"/>
+                    <small class="highlightRed" *ngIf="mailSubmit && !replyTo">
+                        {{ language["This field is required"] }}.
+                    </small>
+                    <small class="highlightRed" *ngIf="mailSubmit && !patternCheck(replyTo)">
+                        {{ language["Please enter a valid email address"] }}.
+                    </small>
+                </div>
+            </div>
+            <div class="d-flex w-100 mb-3">
+                <div class="col-auto-width">
+                    <label>{{language['Send To']}}</label>
+                </div>
+                <div class="col">
+                    <input type="text" placeholder="{{'Partner Escalation Email Address, CSR Email Address'}}"
+                        class="w-100" [(ngModel)]="sendTo" trimSpace (blur)="removeUnwantedSpace('sendTo',sendTo)"/>
+                    <small class="highlightRed" *ngIf="mailSubmit && !sendTo">
+                        {{ language["This field is required"] }}.
+                    </small>
+                    <small class="highlightRed" *ngIf="mailSubmit && !patternCheck(sendTo)">
+                        {{ language["Please enter a valid email address"] }}.
+                    </small>
+                </div>
+            </div>
+            <div class="d-flex w-100 mb-3">
+                <div class="col-auto-width">
+                    <label>{{language['subject']}}</label>
+                </div>
+                <div class="col">
+                    <input type="text" class="w-100" [(ngModel)]="mailSubject" trimSpace (blur)="removeUnwantedSpace('mailSubject',mailSubject)"/>
+                    <small class="highlightRed" *ngIf="mailSubmit && !mailSubject">
+                        {{ language["This field is required"] }}.
+                    </small>
+                </div>
+            </div>
+        </div>
+        <!--end-->
+        <div class="col-12">
+            <div class="d-flex w-100 border-top">
+                <div class="w-100 mb-3" id="editor-new">
+
+                    <div class="toolbar d-flex w-100 border-none" id="toolbar-toolbar">
+                        <div class="col-auto-width">
+                            <span class="ql-formats">
+                                <button type="button" [ngClass]="{'redoDisablity':!changescount}" class="ql-undo mr-3" value="undo"></button>
+                                <button type="button" class="ql-redo" value="redo"></button>
+                            </span>
+                        </div>
+                        <div class="col">
+                            <span class="ql-format-group">
+                                <span class="ql-formats ql-font-family">
+                                    <select class="ql-font">
+                                        <option value="sans-serif" selected>Sans Serif</option>
+                                        <option value="serif">Serif</option>
+                                        <option value="monospace">Monospace</option>
+                                    </select>
+                                </span>
+                                <span class="ql-formats">
+                                    <select title="Font Size" class="ql-size">
+                                        <option value="12px" selected>12</option>
+                                        <option value="14px">14</option>
+                                        <option value="16px">16</option>
+                                        <option value="18px">18</option>
+                                        <option value="20px">20</option>
+                                        <option value="22px">22</option>
+                                        <option value="24px">24</option>
+                                        <option value="26px">26</option>
+                                        <option value="28px">28</option>
+                                        <option value="36px">36</option>
+                                        <option value="40px">40</option>
+                                    </select>
+                                </span>
+                            </span>
+                            <span class="ql-formats">
+                                <button class="ql-bold" aria-label="Bold"></button>
+                                <button class="ql-italic" aria-label="Italic"></button>
+                                <button class="ql-underline" aria-label="Underline"></button>
+                                <button class="ql-strike" aria-label="Strike"></button>
+                            </span>
+                            <span class="ql-formats">
+                                <button type="button" class="ql-list" aria-label="List" value='ordered'></button>
+                                <button type="button" class="ql-list" aria-label="Bullet" value='bullet'></button>
+                                <!-- <button class="ql-image" type="button"></button> -->
+                            </span>
+                        </div>
+                    </div>
+                    <div class="d-flex w-100">
+                        <div class="col-auto-width pl-2">
+                            <p>{{language['Body']}}</p>
+                        </div>
+                        <div class="col">
+                            <div class="arlo-mail-body">
+                                <div class="border-none capital" id="editor-container" #content>
+                                </div>
+                            </div>
+
+                            <div class="w-100 editor-footer my-3">
+                                <label class="d-inline-flex align-items-center">
+                                    <input type="checkbox" checked="saveCallOutCome" [(ngModel)]="saveCallOutCome" />
+                                    <span class="pl-2">{{language['Save as Call Outcome']}}</span>
+                                </label>
+                                <div class="mt-2">
+                                    <button type="button" class="btn-default primary" (click)="sendEmail()">{{language['Send Email']}}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--end-->
+    </div>
+</ng-template>

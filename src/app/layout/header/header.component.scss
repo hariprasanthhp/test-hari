@@ -1,0 +1,7 @@
+@import '~src/assets/theme/imports/_variables.scss';
+
+a.nav-link:not(.dropdown-toggle){
+    color: $calix-black !important;
+    margin-top: 10px !important;
+}
+

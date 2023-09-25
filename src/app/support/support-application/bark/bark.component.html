@@ -1,0 +1,346 @@
+<!-- Editor bu Quill.js -->
+<section>
+</section>
+<div class="row my-3 position-relative">
+  <div class="w-100 alert alert alert-danger fade show" *ngIf="isError">
+    <span class="error-img error-img-w"><img src="./assets/img/ic_error-36px.svg" /></span>
+    <button type="button" class="btn-default primary ok float-right" (click)="isError = false">
+      {{language.OK}}
+    </button>
+    <span class="d-inline-flex alert-msg-w" [innerHtml]="alertMessage"></span>
+  </div>
+
+  <div class="col-12 mb-4">
+    <!-- <button class="btn-default primary" (click)="escalationProcessModalOpen()">{{language['Escalate to Bark']}}</button> -->
+    <button class="btn-default primary" *ngIf="account?.userId" (click)="escalationProcessEditorModal()">
+      {{language['Escalate to Bark']}}
+    </button>
+  </div>
+
+  <!-- Account Details -->
+  <div class="col-sm-12 col-md-12 col-lg-4 col-xl-4">
+    <div class="loader load" *ngIf="accountDetailsLoading">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{language.Loading}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex justify-content-between border-bottom mb-3">
+      <div class="cco-secondary-title" id="bark-account-details">{{language['Account Details']}}</div>
+      <div class="w-24">
+        <img class="refresh-icon" src="assets/img/Refresh-icon.svg" (click)="getAccount();">
+      </div>
+    </div>
+
+    <div class="bark-table pl-3">
+      <table class="table" id="bark-acc-details">
+        <tbody>
+          <tr>
+            <td>{{language['Subscription Status']}}</td>
+            <td> <span [ngClass]="account.email ? 'highlightGreen' : 'highlightRed'">
+                {{ accountDetailsLoading ? '-' : (account.email ? language['Bark_Subscribed'] :
+                language['Unsubscribed'])}}
+              </span></td>
+            <!--  <td><span class="highlightGreen">{{language.Subscribed}}</span></td> -->
+          </tr>
+          <tr>
+            <td>{{language['Email']}}</td>
+            <td>{{ accountDetailsLoading ? '-' : account?.email?account?.email:'-' || '-'}}</td>
+          </tr>
+          <tr>
+            <td>{{language.Plan}}</td>
+            <!-- <td class="change-case">{{account?.planCode}}</td> -->
+            <td>{{accountDetailsLoading ? '-' : (BarkPlan ? BarkPlan : '-')}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!-- Account Details end -->
+
+  <div class="col-sm-12 col-md-12 col-lg-4 col-xl-4">
+    <div class="loader load" *ngIf="healthDetailsLoading">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{language.Loading}}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-between border-bottom mb-3">
+      <div class="cco-secondary-title" id="bark-account-status">{{language['Bark Status']}}</div>
+      <div class="w-24">
+        <img class="refresh-icon" src="assets/img/Refresh-icon.svg" (click)="getHealth();getBarkAccountSetup(userId)">
+      </div>
+    </div>
+    <div class="bark-table pl-3">
+      <table class="table" id="bark-status">
+        <tbody>
+          <tr>
+            <td>{{language['Overall Status']}}</td>
+
+            <!-- <td><span class="highlightGreen">{{language.Up}}</span></td> -->
+            <!--for red : highlightRed-->
+            <!-- <td ><span class="highlightGreen" ></span></td> -->
+            <td><span [ngClass]="overallStatus ? 'highlightRed' : 'highlightGreen'">
+                {{ healthDetailsLoading ? '-' :
+                (overallStatus && overallStatus <= 4 ? language.DEGRADED : (overallStatus ? language['Down'] :
+                  language['Up'])) }}</span>
+            </td>
+          </tr>
+          <tr>
+            <td>{{language['Account Setup']}}</td>
+            <!-- <td>{{language[hlth.health_name] || hlth.health_name}}</td> -->
+            <!-- <td><span class="highlightGreen">{{language.Complete}}</span></td> -->
+            <!-- <td><span [ngClass]="hlth.status ? 'highlightGreen' : 'highlightRed'">{{hlth.status ?
+                language['Up'] :
+                language['Down']}}</span></td> -->
+            <td><span
+                [ngClass]="accountSetup?.status == 'completed' ? 'highlightGreen' :accountSetup?.status == 'not completed'? 'highlightRed' : '' ">
+                {{ healthDetailsLoading ? '-' : (AccountSetupBark ? language[AccountSetupBark] || AccountSetupBark : '-' || '-')}}
+              </span>
+            </td>
+            <!-- {{account?.email?accountSetup?.status:'-' || '-'}} -->
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<ng-template #escalationProcessModal let-modal>
+  <div class="modal-header justify-content-end">
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <img src="../../../../assets/img/ic_close-44px.svg" />
+    </button>
+  </div>
+  <div class="row">
+    <div class="col-md-12 center-space px-5 pt-2">
+      <div class="modal-body">
+        <div class="w-100">
+          <h5 class="ccl-admin-title" id="EscalationProcess">{{language['Escalation Process']}}</h5>
+        </div>
+        <div class="w-100 mt-4 pl-12">
+          <div class="row">
+            <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+              <div class="w-100">
+                <h5 class="ccl-secondary-title border-bottom" id="EscalationProcess">{{language.Instructions}}</h5>
+              </div>
+              <!--end-->
+              <div class="escalate-list">
+                <ol>
+                  <li>{{language['Open your preferred email client and paste the following email template']}}
+                  </li>
+                  <li>{{language['Update the subject line with a summary of the issue being experienced']}}
+                  </li>
+                  <li>
+                    {{language['Add the requested information to each line in the body of the email']}}
+                  </li>
+                  <li>{{language['Send the email to']}} <a href="mailto:help@bark.us">help@bark.us</a>
+                  </li>
+                </ol>
+                <ul>
+                  <li>
+                    *{{language['Do not modify this template as it will result in a delay of handling the
+                    escalation.']}}
+                  </li>
+                  <li>
+                    *{{language['All fields are mandatory in order to process the escalation.']}}
+                  </li>
+                </ul>
+              </div>
+              <!--end-->
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+              <div class="w-100">
+                <h5 class="ccl-secondary-title border-bottom" id="EmailTemplate">{{language['Email Template']}}</h5>
+              </div>
+              <div class="w-100">
+                <div>
+                  <span class="gray-text">{{language.subject}}:</span>
+                </div>
+                <div id="arloTemplateSubject">
+                  {{language['Calix Partner Escalation']}}
+                </div>
+                <div class="mt-3">
+                  <span class="gray-text">{{language.Body}}:</span>
+                </div>
+                <div>
+                  <ul id="barkTemplateBody">
+                    <li> {{language['Broadband Service Provider Name:']}}
+                    </li>
+                    <li> {{language['Subscribers’ First and Last Name:']}}
+                    </li>
+                    <li> {{language['Subscribers’ Email Address:']}}
+                    </li>
+                    <li> {{language['Short Description of the Problem']}}
+                    </li>
+
+                  </ul>
+                </div>
+                <div>
+                  <button type="button" class="btn-default primary" (click)="copyToClipboard()">{{language['Copy
+                    to clipboard']}}</button>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- //Editor modal -->
+
+<ng-template #escalationProcessEditor let-modal>
+  <div class="loader load" *ngIf="modalLoader">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary">
+        <span class="sr-only">{{language.Loading}}</span>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12 d-flex justify-content-between">
+      <div class="ccl-admin-title mb-2">
+        {{language['Escalation Email']}}
+      </div>
+      <div aria-label="Close" (click)="modal.dismiss('Cross click')"> <img class="pointer"
+          src="../../../../assets/img/close-icon.svg" alt=""></div>
+    </div>
+    <div class="col-12 ccl-form">
+      <div class="d-flex w-100 mb-3">
+        <div class="col-auto-width">
+          <label>{{language['From']}}</label>
+        </div>
+        <div class="col">
+          <input type="text" class="mail-disable w-100"
+            [value]="barkMail" disabled="true" />
+        </div>
+      </div>
+      <div class="d-flex w-100 mb-3">
+        <div class="col-auto-width">
+          <label>{{language['Reply To']}}</label>
+        </div>
+        <div class="col">
+          <input type="text" placeholder="{{'CSR Email Address'}}" class="w-100" [(ngModel)]="replyTo" trimSpace (blur)="removeUnwantedSpace('replyTo',replyTo)"/>
+          <small class="highlightRed" *ngIf="mailSubmit && !replyTo">
+            {{ language["This field is required"] }}.
+          </small>
+          <small class="highlightRed" *ngIf="mailSubmit && !patternCheck(replyTo)">
+            {{ language["Please enter a valid email address"] }}.
+          </small>
+        </div>
+      </div>
+      <div class="d-flex w-100 mb-3">
+        <div class="col-auto-width">
+          <label>{{language['Send To']}}</label>
+        </div>
+        <div class="col">
+          <input type="text" placeholder="{{'Partner Escalation Email Address, CSR Email Address'}}" class="w-100"
+            [(ngModel)]="sendTo" trimSpace (blur)="removeUnwantedSpace('sendTo',sendTo)"/>
+          <small class="highlightRed" *ngIf="mailSubmit && !sendTo">
+            {{ language["This field is required"] }}.
+          </small>
+          <small class="highlightRed" *ngIf="mailSubmit && !patternCheck(sendTo)">
+            {{ language["Please enter a valid email address"] }}.
+          </small>
+        </div>
+      </div>
+      <div class="d-flex w-100 mb-3">
+        <div class="col-auto-width">
+          <label>{{language['subject']}}</label>
+        </div>
+        <div class="col">
+          <input type="text" class="w-100" [(ngModel)]="mailSubject" trimSpace (blur)="removeUnwantedSpace('mailSubject',mailSubject)"/>
+          <small class="highlightRed" *ngIf="mailSubmit && !mailSubject">
+            {{ language["This field is required"] }}.
+          </small>
+        </div>
+      </div>
+    </div>
+    <!--end-->
+    <div class="col-12">
+      <div class="d-flex w-100 border-top">
+        <div class="w-100 mb-3" id="editor-new">
+          <hr class="ma-0">
+          <div class="toolbar d-flex w-100 border-none" id="toolbar-toolbar">
+            <div class="col-auto-width">
+              <span class="ql-formats">
+                <button type="button" [ngClass]="{'redoDisablity':!changescount}" class="ql-undo mr-3" value="undo"></button>
+                <button type="button" class="ql-redo" value="redo"></button>
+              </span>
+            </div>
+            <div class="col">
+              <span class="ql-format-group">
+                <span class="ql-formats ql-font-family">
+                  <select class="ql-font">
+                    <option value="sans-serif" selected>Sans Serif</option>
+                    <option value="serif">Serif</option>
+                    <option value="monospace">Monospace</option>
+                  </select>
+                </span>
+                <span class="ql-formats">
+                  <select title="Font Size" class="ql-size">
+                    <option value="12px" selected>12</option>
+                    <option value="14px">14</option>
+                    <option value="16px">16</option>
+                    <option value="18px">18</option>
+                    <option value="20px">20</option>
+                    <option value="22px">22</option>
+                    <option value="24px">24</option>
+                    <option value="26px">26</option>
+                    <option value="28px">28</option>
+                    <option value="36px">36</option>
+                    <option value="40px">40</option>
+                  </select>
+                </span>
+
+              </span>
+              <span class="ql-formats">
+                <button class="ql-bold" aria-label="Bold"></button>
+                <button class="ql-italic" aria-label="Italic"></button>
+                <button class="ql-underline" aria-label="Underline"></button>
+                <button class="ql-strike" aria-label="Strike"></button>
+              </span>
+              <span class="ql-formats">
+                <button type="button" class="ql-list" aria-label="List" value='ordered'></button>
+                <button type="button" class="ql-list" aria-label="Bullet" value='bullet'></button>
+                <!-- <button class="ql-image" type="button"></button> -->
+              </span>
+            </div>
+          </div>
+          <div class="d-flex w-100">
+            <div class="col-auto-width pl-2">
+              <p>{{language['Body']}}</p>
+            </div>
+            <div class="col">
+              <div class="bark-mail-body">
+                <div class="border-none capital" id="editor-container" #content>
+                </div>
+              </div>
+              <div class="w-100 editor-footer my-3">
+                <label class="d-inline-flex align-items-center">
+                  <input type="checkbox" checked="saveCallOutCome" [(ngModel)]="saveCallOutCome" /> <span
+                    class="pl-2">{{language['Save as Call Outcome']}}</span>
+                </label>
+                <div class="mt-2">
+                  <button type="button" class="btn-default primary" (click)="sendEmail()">{{language['Send Email']}}</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!--end-->
+
+  </div>
+</ng-template>

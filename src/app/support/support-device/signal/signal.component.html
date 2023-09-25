@@ -1,0 +1,17 @@
+<div class="loader" *ngIf="loading">
+  <div class="d-flex justify-content-center">
+    <div class="spinner-border text-primary">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
+</div>
+<div class="w-100 alert alert alert-danger  fade show" *ngIf="error">
+  <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+  <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+  <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+</div>
+<div class="row" style="min-height: 400px;">
+  <div class="col-md-12" id="wifi-signal-chart-container" [ngClass]="!showChart ? 'd-none' : ''">
+    <div id="wifi-signal-chart" style="height: 400px"></div>
+  </div>
+</div>

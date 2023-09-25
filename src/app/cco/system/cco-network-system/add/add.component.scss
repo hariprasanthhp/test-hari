@@ -1,0 +1,80 @@
+.pwd-icon {
+    position: absolute;
+    right: 15px;
+    top: 39px;
+    cursor: pointer;
+}
+
+.mand-field {
+    position: relative;
+
+    .required-field {
+        color: #D9001B;
+        font-size: 20px;
+        position: absolute;
+        top: -4px;
+        right: -11px;
+    }
+}
+
+.control.is-invalid {
+    border-color: #D9001B;
+}
+
+.password-icon {
+    position: absolute;
+    right: 9px;
+    height: 25px;
+    width: 30px;
+    background-color: #f8f8fa;
+    line-height: 35px;
+    text-align: center;
+    top: 35px;
+}
+
+::ng-deep {
+    .cms-update-modal {
+        .modal-content {
+            background-color: #FFF8F5 !important;
+        }
+    }
+}
+.warning-message-info{
+    width: 100%;
+    padding: 8px 0px;
+    display: flex;
+       
+    .icon{
+      width: 7%;
+      display: inline-flex;
+      margin:6px 7px;
+      img {
+        width: 34px;
+        height: 34px;
+      }
+    }
+    .message{
+      width: 90%;
+      .title{
+        font-weight: 400;
+        font-size: 24px;
+        line-height: 30px;
+      }
+      div{
+          margin-bottom: 5px;
+          .btn{
+              padding: 0px !important;
+          }
+
+      }
+      
+    }
+    
+  }
+  .force-header .close{
+    position: relative !important;top: 0 !important;right: 0 !important;
+  }
+  .pos-right{position: absolute; top: 45px;right: 20px;}
+  input.inp-disabled:hover {
+    cursor:not-allowed !important;
+  }

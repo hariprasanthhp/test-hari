@@ -1,0 +1,31 @@
+<div class="flow-config-tab ccl-tabs">
+    <ul class="nav nav-tabs sub-tab">
+        <!-- <li class="nav-item">
+            <a class="nav-link" routerLink='call-home' [routerLinkActive]="['active']">Call Home</a>
+        </li> -->
+        <!-- <li class="nav-item" *ngIf="apps.config">
+            <a class="nav-link" routerLink='cco-admin-configurations'
+                [routerLinkActive]="['active']">{{language['Regions']}}</a>
+        </li>
+
+        <li class="nav-item" *ngIf="apps.config">
+            <a class="nav-link" routerLink='operations-cloud-alarms' [routerLinkActive]="['active']">{{
+                language['Alarms']}} </a>
+        </li>
+        <li class="nav-item" *ngIf="apps.coc">
+            <a class="nav-link" routerLink='network-systems' [routerLinkActive]="['active']">{{language['Network
+                Systems']}}</a>
+        </li>
+        <li class="nav-item" *ngIf="apps.config">
+            <a class="nav-link" routerLink='threshold'
+                [routerLinkActive]="['active']">{{language['Health_Threshold']}}</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" routerLink='service-provisioning' [routerLinkActive]="['active']">{{language['Service
+                Provisioning']}}</a>
+        </li>-->
+    </ul>
+</div>
+<div class="my-2">
+</div>
+<router-outlet (activate)="onActivate($event)"></router-outlet>

@@ -1,0 +1,457 @@
+<section *ngIf="!isNewStatus">
+    <div class="w-100 alert alert alert-danger fade show" *ngIf="isError">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+        <button type="button" class="close" (click)="isError = false">
+            <span></span>
+        </button>
+        <span class="d-inline-flex" style="width: 85%; height: 100%"
+            [innerHtml]="language[errorMessage] || errorMessage"></span>
+    </div>
+
+
+    <div class="w-100 alert alert-success fade show my-3" *ngIf="success">
+        <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+        <button type="button" class="close" (click)="success = false">
+            <span></span>
+        </button>
+        <span [innerHtml]="language[successInfo] || successInfo"></span>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="">
+                <div class="cco-title">{{language['Call Outcome Status Settings']}}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-md-12">
+            <div class="product-title">
+                {{language['Call Outcome Timer']}}
+            </div>
+            <div class="">
+                {{language['Call Outcome Timer Details']}}
+            </div>
+        </div>
+    </div>
+    <div class="row my-4 ">
+        <div class="col-md-2">
+            {{language['Call Outcome Timer']}}
+        </div>
+        <div class="col-md-3">
+            <ng-select [(ngModel)]="selectedTime">
+                <ng-option *ngFor="let sec of timer" [value]="sec.id">{{sec.name}}</ng-option>
+            </ng-select>
+        </div>
+    </div>
+    <button id="Save-Timer" class="btn-default primary" (click)="updateTimer()"> {{language['Save Timer']}}</button>
+
+
+
+
+
+    <div class="row mt-3">
+        <div class="col-md-12">
+            <div class="product-title">
+                {{language['Call Outcome Status']}}
+            </div>
+
+        </div>
+        <div class="col-md-12">
+            <button id="New-Status" *ngIf="calloutcomeWrite" class="btn-default primary" (click)="newStatus(true)">
+                {{language['New Status']}}</button>
+        </div>
+
+    </div>
+
+    <div class="row position-relative" style="margin-top: 50px;">
+
+        <div class="loader" *ngIf="loading">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{ language.Loading }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>{{language.Status}}</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="d-flex justify-content-between" *ngFor="let item of callOutComeStatuses">
+
+                        <td>{{item.name}}</td>
+
+                        <td><span><i *ngIf="calloutcomeWrite" class="fas fa-pencil-alt primary mr-3"
+                                    (click)="editStatus(item,true)" title="{{language.Edit}}"></i></span>
+                            <span><i *ngIf="calloutcomeWrite" class="far fa-trash-alt primary"
+                                    (click)="confirmDelete(deletePopup,item)" title="{{language.Delete}}"></i></span>
+                        </td>
+                    </tr>
+                    <!-- <tr class="d-flex justify-content-between">
+
+                        <td>Escalated</td>
+
+                        <td><span><i class="fas fa-pencil-alt primary mr-3"></i></span> <span><i
+                                    class="far fa-trash-alt primary"></i></span></td>
+                    </tr>
+                    <tr class="d-flex justify-content-between">
+
+                        <td>Account Inquiry</td>
+
+                        <td><span><i class="fas fa-pencil-alt primary mr-3"></i></span> <span><i
+                                    class="far fa-trash-alt primary"></i></span></td>
+                    </tr>
+                    <tr class="d-flex justify-content-between">
+
+                        <td>Truck Roll</td>
+
+                        <td><span><i class="fas fa-pencil-alt primary mr-3"></i></span> <span><i
+                                    class="far fa-trash-alt primary"></i></span></td>
+                    </tr>
+                    <tr class="d-flex justify-content-between">
+
+                        <td>Other</td>
+
+                        <td><span><i class="fas fa-pencil-alt primary mr-3"></i></span> <span><i
+                                    class="far fa-trash-alt primary"></i></span></td>
+                    </tr> -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <ng-template #deletePopup let-modal class="col-md-12">
+        <div>
+            <div class="modal-header">
+                <h5 class="modal-title" id="deletePopup">{{language['Are you sure you want to delete']+' ?'}} </h5>
+                <button type="button" class="close" (click)="modal.close('close')" aria-label="Close">
+                    <span aria-hidden="true"></span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+
+                <button type="button" (click)="modal.close('confirm')" id="removeDeviceConfirm"
+                    class="btn-default primary px-3 mr-3 mt-5">
+                    {{language.Confirm}}
+                </button>
+                <button type="button" (click)="modal.close('close')" id="removeDeviceCancel"
+                    class="btn-default transparant px-3 mr-3 mt-5">
+                    {{language.Cancel}}
+                </button>
+            </div>
+        </div>
+    </ng-template>
+</section>
+
+
+
+
+<!-- 
+<div class="modal fade bd-example-modal-xl" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content" style="padding: 42px 42px;">
+            <a class="close" data-dismiss="modal" (click)="closeRestoreModelPopUp()">
+                <img src="../../../assets/img/close-icon.svg" alt="icon here" />
+            </a>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="cco-title">{{language['Restore Status to Default']}}</div>
+
+                </div>
+                <div class="col-md-12">
+                    {{language['Select all statuses you want to restore to their default selections. Once restored, any
+                    changes you made to the statuses will be lost']}}
+                </div>
+            </div>
+            <div class="row my-4">
+
+
+                <div class="col-md-6" *ngFor="let item of restoreStatuses;let i=index">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" [value]="item.name" name="item.name_{{i}}"
+                            id="item.name_{{i}}" (change)="item.isSelected=!item.isSelected"
+                            [checked]="item.isSelected">
+                        <label class="form-check-label" for="item.name_{{i}}">
+                            {{item.name}}
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="Escalated">
+                        <label class="form-check-label" for="Escalated">
+                            Escalated
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="Account-Inquiry">
+                        <label class="form-check-label" for="Account-Inquiry">
+                            Account Inquiry
+                        </label>
+                    </div>
+
+                </div>
+                <div class="col-md-6">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="item.name" name="item.name_{{i}}" id="item.name_{{i}}">
+                        <label class="form-check-label" for="item.name_{{i}}">
+                            {{item.name}}
+                        </label>
+                    </div>
+                  
+
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <button id="New-Status" class="btn-default primary" style="margin-right: 20px;"
+                        (click)="restoreStatus()" data-dismiss="modal">{{language.Restore}} </button>
+                    <button id="Restore-Status" class="btn-default btn-dft" data-dismiss="modal"
+                        (click)="closeRestoreModelPopUp()"> {{language.Cancel}}
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div> -->
+
+
+
+<!--new Status-->
+<section *ngIf="isNewStatus">
+
+
+    <form (ngSubmit)="saveStatus()" name="saveStatusFrm" id="saveStatusFrm">
+        <div class="d-flex justify-content-between border-bottom">
+            <div class="col-sm-6 pl-0">
+                <h1 class="cco-title">{{addOrUpdateStatus == "AddStatus"? language['New Status']:language['Edit
+                    Status']}}</h1>
+            </div>
+            <div class="col-sm-6 text-right pr-0">
+                <button class="btn-default primary" type="submit"> {{language['Save Status']}}</button>
+                <a class="close ml-3" (click)="newStatus(false)">
+                    <img src="../../../assets/img/close-icon.svg" alt="icon here" />
+                </a>
+            </div>
+        </div>
+        <!--end--->
+        <div class="col-md-12 ccl-form p-0">
+            <div class="w-100 alert alert alert-danger fade show" *ngIf="isError">
+                <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+                <button type="button" class="close" (click)="isError = false">
+                    <span></span>
+                </button>
+                <span class="d-inline-flex" style="width: 85%; height: 100%"
+                    [innerHtml]="language[errorMessage] || errorMessage"></span>
+            </div>
+            <div class="row mt-20">
+
+                <div class="col-md-3">
+                    <label>{{language['Status Name']}} <span class="error">*</span> </label>
+                </div>
+                <div class="col-md-5">
+                    <input class="acs-input" placeholder="{{language['Enter Status Name']}}"
+                        (keypress)="appAlphabetOnly($event)" [(ngModel)]="callOutComeData.statusName" name="statusName"
+                        trimSpace [formValue]="callOutComeData">
+                </div>
+                <div class="col-md-12 mt-20">
+                    <p class="m-0">{{language['Choose if multiple options can be selected as the cause of this status or
+                        if a single option has to be selected']}}.</p>
+                    <p>{{language['You can also create multiple categories with options in each category for quickly
+                        identifying the root cause of status issues']}}.</p>
+                </div>
+            </div>
+            <!--end row-->
+            <div class="row">
+                <div class="col-md-3">
+                    <label>{{language['Status Structure']}}</label>
+                </div>
+                <div class="col-md-9">
+                    <div class="row my-2">
+                        <div class="form-check d-inline-flex">
+                            <input class="form-check-input" type="radio" name="exampleRadios" id="chkSelectOnlyOption"
+                                value="single" [(ngModel)]="callOutComeData.selection" (change)="changeOption($event)">
+                            <label class="form-check-label" for="chkSelectOnlyOption">
+                                {{language['Select Only One Option']}}
+                            </label>
+                        </div>
+                        <div class="form-check d-inline-flex">
+                            <input class="form-check-input" type="radio" name="exampleRadios" id="chkMultipleOptions"
+                                value="multiple" [(ngModel)]="callOutComeData.selection"
+                                (change)="changeOption($event)">
+                            <label class="form-check-label" for="chkMultipleOptions">
+                                {{language['Select Multiple Options']}}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row my-3" style="padding-left: 22px;">
+                        <div class="form-check call-outcome-checkbox w-100">
+                            <input class="form-check-input" type="checkbox"
+                                [(ngModel)]="callOutComeData.enableCheckCategories"
+                                [checked]="callOutComeData.enableCheckCategories" id="defaultCheck1"
+                                name="enableCheckCategories"
+                                (change)="enableCategoriesForStatus($event.target.checked)">
+                            <label class="form-check-label" for="defaultCheck1">
+                                {{language['Check to Enable Categories for Status Options']}}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    {{language['Status Type']}}
+                </div>
+                <div class="col-md-4">
+                    <ng-select [items]="statusTypes" bindLabel="name" bindValue="id" id="ddlStatusType"
+                        name="ddlStatusType" [(ngModel)]="callOutComeData.statusType">
+                    </ng-select>
+                </div>
+            </div>
+            <!--end row-->
+
+
+            <div class="row mt-20">
+                <div class="col-md-6" *ngFor="let data of callOutComeData.categories;let i=index">
+                    <div class="box-syle solid">
+                        <div style="text-align: right;height: 24px;position: absolute;right: 30px;">
+                            <a class="close ml-3" (click)="removeCategory(i)">
+                                <img src="../../../assets/img/close-icon.svg" alt="icon here" />
+                            </a>
+                        </div>
+                        <label *ngIf="callOutComeData.selection=='multiple' && data.statusForCategories"
+                            style="font-size: 15px;">{{language.Category_Name}}</label>
+                        <input type="text" *ngIf="callOutComeData.selection=='multiple' && data.statusForCategories"
+                            class="mb-3" [(ngModel)]="data.categoryName" style="width: 90%;" name="categoryName_{{i}}"
+                            trimSpace [formValue]="data">
+
+                        <div class="options-flex">
+                            <ng-container *ngIf="data.statusForCategories && data.subCategories.length>0">
+                                <div class="op-item" *ngFor="let item of data.subCategories;let j=index">
+                                    <div class="call-outcome-lable">
+                                        <a class="rmv-icon" (click)="remove(data,j,item)">
+                                            <img src="../../../assets/img/close-icon.svg" />
+                                        </a>
+                                        <label class="text-break text-justify text-wrap">{{item}}</label>
+                                    </div>
+                                </div>
+                                <div class="op-item" *ngIf="data.enableSubCategoryName">
+                                    <input type="text" [(ngModel)]="data.subCategoryName" name="subCategoryName"
+                                        (blur)="onBlurEvent(data)" trimSpace [formValue]="data">
+                                </div>
+                            </ng-container>
+                            <ng-container *ngIf="data.statusForCategories && data.subCategories.length==0">
+                                <div class="op-item" *ngIf="data.enableSubCategoryName">
+                                    <input type="text" [(ngModel)]="data.subCategoryName" name="subCategoryName"
+                                        (blur)="onBlurEvent(data)" trimSpace [formValue]="data">
+                                </div>
+                            </ng-container>
+                            <div class="op-item action-btn" *ngIf="data.enableAddDetailsOption">
+                                <a class="primary add-ic" (click)="addDetailsOptions(data)"
+                                    [ngClass]="!data.statusForCategories ? 'disabled' : ''"><span><img
+                                            src="../../../assets/img/ic_add_blue.svg" /></span> {{language['Add Details
+                                    Options']}}</a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-md-6" *ngIf="callOutComeData.selection=='multiple'">
+                    <div class="box-syle box-style-center dashed">
+                        <a class="primary add-ic" (click)="addCategory()"
+                            [ngClass]="!callOutComeData.enableCheckCategories ? 'disabledCategories' : ''"><span><img
+                                    src="../../../assets/img/ic_add_grey.svg" /></span> {{language['Add Category']}}</a>
+
+                    </div>
+                </div>
+
+            </div>
+
+
+
+
+
+        </div>
+
+    </form>
+
+
+
+
+
+</section>
+<!-- <ng-select [(ngModel)]="regionSelected" [items]="tempcategoriesData" bindValue="id" bindLabel="name"
+    class="selectboxwidth" [ngModelOptions]="{standalone: true}" [clearable]="false" [searchable]="true">
+</ng-select> -->
+
+
+<!-- <div class="modal fade bd-example-modal-xl" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content" style="padding: 42px 42px;">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="cco-title">Restore Status to Default</div>
+                </div>
+                <div class="col-md-12">
+                    Select all statuses you want to restore to their default selections.
+                    Once restored, any changes you made to the statuses will be lost
+                </div>
+            </div>
+            <div class="row my-4">
+                <div class="col-md-6">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="Resolved">
+                        <label class="form-check-label" for="Resolved">
+                            Resolved
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="Escalated">
+                        <label class="form-check-label" for="Escalated">
+                            Escalated
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="Account-Inquiry">
+                        <label class="form-check-label" for="Account-Inquiry">
+                            Account Inquiry
+                        </label>
+                    </div>
+
+                </div>
+                <div class="col-md-6">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="Truck-Roll">
+                        <label class="form-check-label" for="Truck-Roll">
+                            Truck Roll
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="Other">
+                        <label class="form-check-label" for="Other">
+                            Other
+                        </label>
+                    </div>
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <button id="New-Status" class="btn-default primary " style="margin-right: 20px;">Restore </button>
+                    <button id="Restore-Status" class="btn-default btn-dft "> Cancel
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div> -->

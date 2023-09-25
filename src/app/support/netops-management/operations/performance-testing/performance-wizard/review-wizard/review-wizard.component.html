@@ -1,0 +1,200 @@
+<div class="w-100 alert alert-danger fade show my-3 d-flex justify-content-between" *ngIf="error">
+  <div class="d-flex pr-3">
+  <span class="error-img Min-w"><img src="./assets/img/ic_error-36px.svg" ></span>
+  <span class="" [innerHtml]="errorInfo"></span></div>
+  <span><button type="button" class="close" (click)="closeAlert()"><span></span></button></span>
+  
+</div>
+
+<div class="w-100 alert alert-success fade show my-3" *ngIf="success">
+  <span class="success-img">
+    <img src="../../../../../assets/img/success-icon.svg">
+  </span>
+  <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+  <div class="d-inline-flex" [innerHtml]="successInfo"></div>
+</div>
+
+<!-- <div class="device-wizard" id="deviceWizard">
+  <h4 class="net-ops-secondary-title per-title m-0">
+    {{ language.Step_5 }} - {{ language.Review }}
+  </h4>
+</div> -->
+<div class="mt-4 performance-review-table  ">
+  <table class="table row-border dataTable hover table-alter">
+    <thead>
+      <tr>
+        <th>{{ language.Name }}</th>
+        <th>{{ language.description }}</th>
+        <!-- <th>Current State</th> -->
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{{ inputData.name }}</td>
+        <td>{{ inputData.description }}</td>
+        <!-- <td>{{inputData.status}}</td> -->
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="review-table performance-review-table">
+  <h3 class="net-ops-secondary-title review-title">
+    {{ language.List_Devices }}
+  </h3>
+  <table class="performance-review-table table row-border hover dataTable table-alter" style="width: 100%">
+    <thead>
+      <tr>
+        <th class="pl-2">{{ language.Systems }}</th>
+      </tr>
+    </thead>
+    <tbody *ngIf="inputData.devices && inputData.devices.length">
+      <tr *ngFor="let item of inputData.devices">
+        <td>{{ item }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div class="review-table performance-review-table overflow-auto">
+  <h3 class="net-ops-secondary-title review-title">{{ language.Test_Server_Details }}</h3>
+  <table class="table row-border dataTable hover table-alter overflow-auto performance-review-table">
+    <thead>
+      <tr>
+        <th *ngIf="inputData.primaryOoklaServerHostname">
+          {{ language.Primary_ser_city }}
+        </th>
+        <th *ngIf="inputData.primaryOoklaServerHostname">
+          {{ language.Primary_ser_host }}
+        </th>
+        <th *ngIf="inputData.primaryOoklaServerHostname">
+          {{ language.Sec_ser_city }}
+        </th>
+        <th *ngIf="inputData.primaryOoklaServerHostname">
+          {{ language.Sec_ser_host }}
+        </th>
+
+        <th *ngIf="inputData.downloadUrl">{{ language.downURL }}</th>
+        <th *ngIf="inputData.downloadUrl">{{ language.uploadURL }}</th>
+        <th *ngIf="inputData.downloadUrl">
+          {{ language.Upload_File_Size_bytes }}
+        </th>
+
+        <th *ngIf="
+            inputData.serviceTierUploadSpeed &&
+            inputData.serviceTierDownloadSpeed
+          ">
+          {{ language.Download_Speed_TIER }}
+        </th>
+        <th *ngIf="
+            inputData.serviceTierUploadSpeed &&
+            inputData.serviceTierDownloadSpeed
+          ">
+          {{ language.Upload_Speed_TIER }}
+        </th>
+        <th *ngIf="
+            inputData.serviceTierUploadSpeed &&
+            inputData.serviceTierDownloadSpeed
+          ">
+          {{ language.Speed_Threshold }}
+        </th>
+        <th *ngIf="
+            inputData.serviceTierUploadSpeed &&
+            inputData.serviceTierDownloadSpeed
+          ">
+          {{ language.Latency_Threshold }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td *ngIf="inputData.primaryOoklaServerHostname">
+          {{ inputData.primaryOoklaServerCityState }}
+        </td>
+        <td *ngIf="inputData.primaryOoklaServerHostname">
+          {{ inputData.primaryOoklaServerHostname }}
+        </td>
+        <td *ngIf="inputData.primaryOoklaServerHostname">
+          {{ inputData.secondaryOoklaServerCityState }}
+        </td>
+        <td *ngIf="inputData.primaryOoklaServerHostname">
+          {{ inputData.secondaryOoklaServerHostname }}
+        </td>
+
+        <td *ngIf="inputData.downloadUrl">{{ inputData.downloadUrl }}</td>
+        <td *ngIf="inputData.downloadUrl">{{ inputData.uploadUrl }}</td>
+        <td *ngIf="inputData.downloadUrl">{{ inputData.uploadFileSize }}</td>
+
+        <td *ngIf="
+            inputData.serviceTierUploadSpeed &&
+            inputData.serviceTierDownloadSpeed
+          ">
+          {{ inputData['serviceTier'] === 'Mbps' ? inputData.serviceTierDownloadSpeed/1000 + ' Mbps':
+          inputData.serviceTierDownloadSpeed + ' Kbps' }}
+        </td>
+        <td *ngIf="
+            inputData.serviceTierUploadSpeed &&
+            inputData.serviceTierDownloadSpeed
+          ">
+          {{ inputData['serviceTier'] === 'Mbps' ? inputData.serviceTierUploadSpeed/1000 + ' Mbps':
+          inputData.serviceTierUploadSpeed + ' Kbps' }}
+        </td>
+        <td *ngIf="
+            inputData.serviceTierUploadSpeed &&
+            inputData.serviceTierDownloadSpeed
+          ">
+          {{ inputData.speedThreshold }} %
+        </td>
+        <td *ngIf="
+            inputData.serviceTierUploadSpeed &&
+            inputData.serviceTierDownloadSpeed
+          ">
+          {{ inputData.latencyThreshold }} ms
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div class="review-table performance-review-table">
+  <h3 class="net-ops-secondary-title review-title">
+    {{ language.Test_Schedule_PT }}
+  </h3>
+  <table class="table row-border dataTable hover table-alter">
+    <thead>
+      <tr>
+        <th>{{ language.Timezone }}</th>
+        <th>{{ language.Start_Date }}</th>
+        <th>{{ language.No_Of_days }}</th>
+        <!-- <th>{{language.No_OStart_Hrf_days}}</th> -->
+        <th>{{ language.start_hour }}</th>
+        <th>{{ language.No_Of_hr }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{{ inputData.timezone }}</td>
+        <td>{{ getDate(inputData.startDate) | date: "MM/dd/yyyy" }}</td>
+        <td>{{ inputData.numberOfDays }}</td>
+        <td>{{ inputData.startHour }}:00</td>
+        <td>{{ inputData.numberOfHours }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="d-inline-flex justify-content-start performance-testing-button">
+  <div>
+    <button type="button" (click)="gotoPrevious()" class="btn-arrow btn-arr-prev btn-grey"
+      id="netops-perftest-review-previous-btn">
+      <img src="assets/img/ic_chevronleft_grey.svg"> {{ language.Previous }}
+    </button>
+  </div>
+  <div>
+    <button type="button" class="btn-default btn-dft mx-2" (click)="reload()" id="netops-perftest-review-cancel-btn">
+      {{ language.cancel }}
+    </button>
+    <button type="button" class="btn-arrow btn-arr-nxt primary" (click)="save()" [disabled]="btnDisabled"
+      id="netops-perftest-review-finish-btn">
+      {{ language.Finish }}<img src="assets/img/ic_chevron-r-w.svg">
+    </button>
+  </div>
+</div>

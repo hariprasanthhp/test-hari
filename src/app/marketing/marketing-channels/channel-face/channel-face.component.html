@@ -1,0 +1,180 @@
+<div class="page-wrapper">
+    <div class="subscriber-details">
+
+        <div class="subs-title">
+            <div class="st-header border-bottom">
+                <div class="sth-left position-relative">
+                    <h2 class="greyaa" id="fb-mark-results">{{language.face_Marketing_Channel_Results}}</h2>
+                    <div class="sth-rht">
+                        <button type="button" class="close command" data-dismiss="modal" aria-label="Close"
+                            (click)="closeModal()">
+                            <span aria-hidden="true"></span>
+                        </button>
+                    </div>
+
+                    <p class="last-update"> {{language.Last_Update}} : {{lastUpdate | date:'short'}}</p>
+                </div>
+
+            </div>
+        </div>
+        <div class=" col-lg-12 col-md-12 col-sm-12 alert alert-warning alert-dismissible fade show" role="alert"
+            *ngIf="facebookError">
+            <span class="success-img"><img src="./assets/img/error-icon.svg" /></span>
+            <div class="d-inline-flex text-left w-75">{{facebookErrorMsg}}.</div>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true" (click)='errorReset()'></span>
+            </button>
+        </div>
+
+        <section>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 ccl-tabs px-0">
+
+                        <div class="tab-content" id="myTabContent">
+                            <div class="tab-pane fade show active" id="campaigns" role="tabpanel"
+                                aria-labelledby="home-tab">
+                                <section>
+                                    <div class="container">
+                                        <div class="row">
+                                            <div class="col-md-12 px-0">
+                                                <div>
+                                                    <div class="time-frame flex-space-between">
+                                                        <div class="col-md-5 d-inline-flex ccl-form p-0">
+                                                            <input class="form-control mr-sm-2" type="text"
+                                                                [(ngModel)]="search_Text_Value" [disabled]="loading"
+                                                                [ngClass]="{'cursor-ban': loading}"
+                                                                placeholder="{{language.Search}}" 
+                                                                (input)="searchName($event.target.value)">
+                                                                <span class="clear-icon" *ngIf="search_Text_Value" (click)="search_Text_Valuefun()"> <img src="assets/img/close-icon.svg">
+                                                                </span>
+                                                        </div>
+                                                        <div class="time-drop" [ngClass]="{'cursor-ban': loading}">
+                                                            <!-- <label> {{language.Timeframe}} </label> -->
+                                                            <ng-select id="typeId" bindLabel="name"
+                                                                [(ngModel)]="activePeriod" bindValue="name"
+                                                                class="selectboxwidth"
+                                                                (ngModelChange)="selectTimeFrame($event)"
+                                                                [disabled]="loading" [items]="timeframes"
+                                                                [clearable]="false">
+                                                            </ng-select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="no-data" *ngIf="loading">
+                                                    <div class="spinner-border text-primary">
+                                                        <span class="sr-only">{{language.Loading}}</span>
+                                                    </div>
+                                                </div>
+                                                <div class="table-responsive camp-table"
+                                                    [ngClass]="{ 'hide-table':  !showDataTable}" id="fb-mark-datatable">
+                                                    <table [dtOptions]="dtOptions" datatable [dtTrigger]="dtTrigger"
+                                                        class="row-border campaign_table_saved">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>{{language.Name}}</th>
+                                                                <th>{{language.Impressions}}</th>
+                                                                <th>{{language.Clicks}}</th>
+                                                                <th>{{language.Unique}}</th>
+                                                                <th>{{language.Reach}}</th>
+                                                                <th>{{language.Spend}}</th>
+                                                                <th>{{language.Cpm}}</th>
+                                                                <th>{{language.Cpc}}</th>
+                                                                <th> {{language.linkclick}}</th>
+                                                                <th>{{language.Frequency}}</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody
+                                                            [ngClass]="!facebookResultsError ? 'table-row-group': 'd-none'">
+                                                            <tr *ngFor="let item of channelResultTable">
+                                                                <td class="w-11">
+                                                                    <div class="content-wrap"
+                                                                        title={{item.campaign_name}}>
+                                                                        <span>{{(item.campaign_name)}}</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td class="w-11">
+                                                                    <div class="content-wrap"
+                                                                        title={{item.impressions}}>
+                                                                        {{item.impressions}}
+                                                                    </div>
+                                                                </td>
+                                                                <td class="w-11">
+                                                                    <div class="content-wrap" title={{item.clicks}}>
+                                                                        {{item.clicks}}
+                                                                    </div>
+
+                                                                </td>
+
+                                                                <td class="w-11">
+                                                                    <div class="nor-wrap" title={{item.unique_clicks}}>
+                                                                        {{item.unique_clicks}}
+                                                                    </div>
+                                                                </td>
+                                                                <td class="w-11" title={{item.reach}}>
+                                                                    <div class="nor-wrap">
+                                                                        {{item.reach}}
+
+                                                                    </div>
+                                                                </td>
+                                                                <td class="w-11">
+                                                                    <div class="nor-wrap" title={{item.spend}}>
+                                                                        {{item.spend}}
+                                                                    </div>
+                                                                </td>
+                                                                <td class="w-11">
+                                                                    <div class="nor-wrap" title={{item.cpm}}>
+                                                                        {{item.cpm}}
+                                                                    </div>
+                                                                </td>
+                                                                <td class="w-11">
+                                                                    <div class="nor-wrap" title={{item.cpc}}>
+                                                                        {{item.cpc}}
+                                                                    </div>
+                                                                </td>
+                                                                <td class="w-11">
+
+                                                                    <div class="nor-wrap" title={{item.linkClicks}}>
+                                                                        {{item.linkClicks}}
+                                                                    </div>
+                                                                </td>
+                                                                <td class="w-11">
+
+                                                                    <div class="nor-wrap" title={{item.frequency}}>
+                                                                        {{item.frequency}}
+                                                                    </div>
+                                                                </td>
+
+                                                            </tr>
+
+                                                        </tbody>
+                                                        <tbody
+                                                            [ngClass]="facebookResultsError ? 'table-row-group': 'd-none'">
+                                                            <tr>
+                                                                <td colspan="9" class="text-center">{{language.nodata}}
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+
+                                                </div>
+                                                <!-- <div class="no-data" [ngClass]="{ 'hide-table':  showDataTable}">
+                                                    <div class="spinner-border text-primary">
+                                                        <span class="sr-only">{{language.Loading}}</span>
+                                                    </div>
+                                                </div> -->
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+</div>

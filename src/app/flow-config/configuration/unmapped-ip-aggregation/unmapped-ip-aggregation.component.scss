@@ -1,0 +1,13 @@
+.switcher{
+input[type="checkbox"]:not(:checked):disabled + span {
+    border-color: #93C5FF;
+    cursor: not-allowed;
+    small{background: #93C5FF;}
+}
+input[type="checkbox"]:checked:disabled + span {
+    background: #93C5FF;
+    border-color: #93C5FF;
+    cursor: not-allowed;
+    small{background: #fff;}
+}
+}

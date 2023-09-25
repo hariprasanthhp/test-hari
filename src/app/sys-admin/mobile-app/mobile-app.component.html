@@ -1,0 +1,19 @@
+<div class="container px-0">
+    <div class="row">
+      <div class="col-12 mobileapp-nav-tab">
+          <ul class="nav">
+          <li class="nav-item">
+            <a class="nav-link" routerLink='commandiq' [ngClass]="(currentPage == 'commandiq-create' || currentPage == 'commandiq-update' || currentPage == 'commandiq') ? 'active':''">{{language['CommandIQ']}}</a>
+          </li>
+          <li class="nav-item" *ngIf="showCommandIqBiz">
+            <a class="nav-link" routerLink='commandWorx' [ngClass]="(currentPage == 'commandWorx'  || currentPage == 'commandWorx-create'
+            || currentPage == 'commandWorx-update') ? 'active':''">{{language['CommandIQ_BIZ']}}</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink='support-information' [ngClass]="(currentPage == 'support-information') ? 'active':''">{{language['Support Information']}}</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <router-outlet></router-outlet>
+</div>

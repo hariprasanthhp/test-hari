@@ -1,0 +1,543 @@
+<div *ngIf="applicationchartDownloadError" class="alert alert-warning alert-dismissible fade show" role="alert">
+    <strong>{{language.Error}}!</strong>{{applicationchartDownloadErrorMsg}}.
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true" (click)='errorReset()'></span>
+    </button>
+</div>
+
+<div class="subscriber-details" [ngClass]="!fullScreen ? 'd-block' : 'd-none'">
+    <div class="marketing-wizard flex">
+        <div class="mark-wiz-col brd-btm-snowgrey">
+            <div class="mwc-header flex">
+                <h3 class="chart-title greyaa mb0" id="UsageByAppln">{{language.Usage_By_Appln}}</h3>
+                <div class="mwc-btns flex">
+                    <button id="usageAppModelOpen" class="d-none btn-round btn-small-24 btn-grey btn-que"
+                        (click)="applicationChartModalOpen(language.Usage_By_Appln)" data-toggle="tooltip"
+                        title="{{language.UsageByApplication_Info}}"></button>
+                    <button id="usageAppDownloadSection" class="btn-round btn-small-24 btn-grey btn-dload"
+                        (click)="downloadFunction(language.Usage_By_Appln)" data-toggle="tooltip"
+                        title="{{language.subs_download_tip}}"></button>
+                    <button id="usageAppExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+                        (click)="fullScreenExpandFunction(language.Usage_By_Appln)" data-toggle="tooltip"
+                        title="{{language.subs_fullscreen_tip}}"></button>
+                </div>
+            </div>
+            <div class="req-text text-center" *ngIf="usageByAppDataError">
+                <div class="loader loader-h">
+                    {{usageByAppDataErrorMsg}}
+                </div>
+            </div>
+            <div class="text-center" *ngIf="!usageByAppDataAvailable && !usageByAppDataError">
+                <div class="height-left-pos">
+                    <div class="spinner-border text-primary loader">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <div [ngClass]="(usageByAppDataAvailable && isusagebydata) ? 'd-block' : 'd-none'">
+                <div class="mwc-content">
+                    <div class="col-md-12 px-0">
+                        <div id="usage-by-app-chart" class="chart-box"></div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="usageByAppDataAvailable && !isusagebydata" class="text-center h-300-pos">
+                {{ language["No Data Available"] }}
+            </div>
+        </div>
+
+        <div class="mark-wiz-col brd-btm-snowgrey">
+            <div class="mwc-header flex">
+                <h3 class="chart-title greyaa mb0" id="TopApplication">{{language.Top_Appln}}</h3>
+                <div class="mwc-btns flex">
+                    <button id="topAppModelOpen" class="d-none btn-round btn-small-24 btn-grey btn-que"
+                        (click)="applicationChartModalOpen(language.Top_Appln)" data-toggle="tooltip"
+                        title="{{language.TopApp_Info}}"></button>
+                    <button id="topAppDownloadSection" class="btn-round btn-small-24 btn-grey btn-dload"
+                        (click)="downloadFunction(language.Top_Appln)" data-toggle="tooltip"
+                        title="{{language.subs_download_tip}}"></button>
+                    <button id="topAppExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+                        (click)="fullScreenExpandFunction(language.Top_Appln)" data-toggle="tooltip"
+                        title="{{language.subs_fullscreen_tip}}"></button>
+                </div>
+            </div>
+            <div class="req-text text-center" *ngIf="topAppDataError">
+                <div class="loader loader-h">
+                    {{topAppDataErrorMsg}}
+                </div>
+            </div>
+            <div class="text-center" *ngIf="!topAppDataAvailable && !topAppDataError">
+                <div class="height-left-pos">
+                    <div class="spinner-border text-primary loader">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <div [ngClass]="topAppDataAvailable ? 'd-block' : 'd-none'">
+                <div class="mwc-content">
+                    <table id="topAppTableData"
+                        class="table-responsive row-border hover table-alter smal  table-striped">
+                        <thead>
+                            <tr>
+                                <th class="greyaa insight-table-font">{{language.Application}}</th>
+                                <th class="text-right greyaa insight-table-font">{{language.Avg_Sub}}</th>
+                                <th class="text-right greyaa insight-table-font">{{language.Percentage}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of topAppDataArray">
+                                <td class="primary insight-table-font">
+                                    <a href="javascript:void(0)"
+                                        (click)="fullScreenExpandFunction(language.Top_Appln,item)">{{item.application}}</a>
+
+                                </td>
+                                <td class="text-right insight-table-font">{{item.average | number}}</td>
+                                <td class="text-right insight-table-font">{{item.percentage}} %</td>
+                            </tr>
+                            <tr *ngIf="topAppDataArray.length === 0">
+                                <td colspan="3" class="text-center"> {{ language["No Data Available"] }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="mark-wiz-col brd-btm-snowgrey">
+            <div class="mwc-header flex">
+                <h3 class="chart-title greyaa mb0" id="TopgamingApplicatins">{{language.Top_gaming_Applicatins}}</h3>
+                <div class="mwc-btns flex">
+                    <button id="topGamingModelOpen" class="d-none btn-round btn-small-24 btn-grey btn-que"
+                        (click)="applicationChartModalOpen(language.Top_gaming_Applicatins)" data-toggle="tooltip"
+                        title="{{language.TopGamingApp_Info}}"></button>
+                    <button id="topGamingDownloadSection" class="btn-round btn-small-24 btn-grey btn-dload"
+                        (click)="downloadFunction(language.Top_gaming_Applicatins)" data-toggle="tooltip"
+                        title="{{language.subs_download_tip}}"></button>
+                    <button id="topGamingExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+                        (click)="fullScreenExpandFunction(language.Top_gaming_Applicatins)" data-toggle="tooltip"
+                        title="{{language.subs_fullscreen_tip}}"></button>
+                </div>
+            </div>
+            <div class="req-text text-center" *ngIf="topGamingAppDataError">
+                <div class="loader loader-h">
+                    {{topGamingAppDataErrorMsg}}
+                </div>
+            </div>
+            <div class="text-center" *ngIf="!topGamingAppDataAvailable && !topGamingAppDataError">
+                <div class="height-left-pos">
+                    <div class="spinner-border text-primary loader">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <div [ngClass]="topGamingAppDataAvailable ? 'd-block' : 'd-none'">
+                <div class="mwc-content">
+                    <table id="topGamingAppTableData"
+                        class="table-responsive row-border hover table-alter smal  table-striped">
+                        <thead>
+                            <tr>
+                                <th class="greyaa insight-table-font">{{language.Application}}</th>
+                                <th class="text-right greyaa insight-table-font">{{language.Avg_Sub}}</th>
+                                <th class="text-right greyaa insight-table-font">{{language.Percentage}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of topGamingAppDataArray">
+                                <td class="primary insight-table-font">
+                                    <a href="javascript:void(0)"
+                                        (click)="fullScreenExpandFunction(language.Top_gaming_Applicatins,item)">{{item.application1}}
+                                    </a>
+
+                                </td>
+                                <td class="text-right insight-table-font">{{item.average | number}}</td>
+                                <td class="text-right insight-table-font">{{item.percentage}} %</td>
+                            </tr>
+                            <tr *ngIf="topGamingAppDataArray.length === 0">
+                                <td colspan="3" class="text-center"> {{ language["No Data Available"] }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="mark-wiz-col brd-btm-snowgrey">
+            <div class="mwc-header flex">
+                <h3 class="chart-title greyaa mb0" id="SocialHeatMap">{{language.SocialHeatMap}}</h3>
+                <div class="mwc-btns flex">
+                    <button id="socialHeatModelOpen" class="d-none btn-round btn-small-24 btn-grey btn-que"
+                        (click)="applicationChartModalOpen(language.SocialHeatMap)" data-toggle="tooltip"
+                        title="{{language.Heat_Map_ShowInfo}}"></button>
+                    <button id="socialHeatDownloadSection" class="btn-round btn-small-24 btn-grey btn-dload"
+                        (click)="downloadFunction(language.SocialHeatMap)" data-toggle="tooltip"
+                        title="{{language.subs_download_tip}}"></button>
+                    <button id="socialHeatExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+                        (click)="fullScreenExpandFunction(language.SocialHeatMap)" data-toggle="tooltip"
+                        title="{{language.subs_fullscreen_tip}}"></button>
+                </div>
+            </div>
+            <!-- <div *ngIf="!isSocialMapData" class="text-center h-300-pos">
+                {{ language["No Data Available"] }}
+            </div> -->
+            <div class="col-sm-6" *ngIf="socialChannels.length > 0">
+                <ng-select [ngClass]="socialChannels ? 'd-block': 'd-none'" [(ngModel)]="socialChannelSelected"
+                    (ngModelChange)="selectSocialChannel($event)" [items]="socialChannels" bindLabel="name"
+                    bindValue="name" class="selectboxwidth" placeholder="socialChannelSelected"
+                    [ngModelOptions]="{standalone: true}" [clearable]="false" [searchable]="true"
+                    [disabled]="!socialHeatMapDataAvailable">
+                </ng-select>
+            </div>
+            <div class="req-text text-center" *ngIf="socialHeatMapDataError && socialHeatMapDataErrorMsg">
+                <div class="loader loader-h">
+                    {{socialHeatMapDataErrorMsg}}
+                </div>
+            </div>
+            <div class="text-center" *ngIf="!socialHeatMapDataAvailable && !socialHeatMapDataError">
+                <div class="height-left-pos">
+                    <div class="spinner-border text-primary loader">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div [ngClass]="(socialHeatMapDataAvailable && isSocialMapData) ? 'd-block' : 'd-none'"
+                id="socialHeatMapChart">
+                <div class="mwc-content">
+                    <div class="col-md-12 p-2 ">
+                        <div id="social-heat-map" class="chart-box h-300px"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- application -->
+<ng-template #applicationChartModal let-modal class="col-md-12">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addModal">{{popup_heading}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form class="custom-form">
+            <div class="form-group ccl-form ">
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>{{language.app_type_popup1}}</p>
+                        <p>{{language.app_type_popup2}}</p>
+                        <ul class="list-block">
+                            <li>{{language.app_type_popup3}}</li>
+                            <li>{{language.app_type_popup4}}</li>
+                            <li>{{language.app_type_popup5}}</li>
+                            <li>{{language.app_type_popup6}}</li>
+
+                            <li class="ml-20px"><span>{{language.app_type_popup7}}</span>
+                                {{language.app_type_popup10}}</li>
+                            <li class="ml-20px"><span>{{language.app_type_popup8}}</span>
+                                {{language.app_type_popup11}}</li>
+                            <li>{{language.app_type_popup9}}</li>
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+            <!-- <button type="button" class="btn-default primary px-3 px-3">{{language.Save}}</button> -->
+            <button type="button" class="btn-default  btn-dft px-3 px-3 m-2" (click)="closeModal()"
+                data-dismiss="modal">{{language.Cancel}}</button>
+        </form>
+    </div>
+</ng-template>
+<!-- top application -->
+<ng-template #applicationTopAppChartModal let-modal class="col-md-12">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addModal">{{popup_heading}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form class="custom-form">
+            <div class="form-group ccl-form ">
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>{{language.top_app_popup1}}</p>
+                        <p>{{language.top_app_popup2}}</p>
+                        <ul class="list-block">
+                            <li>{{language.top_app_popup3}}</li>
+                            <li>{{language.top_app_popup4}}</li>
+                            <li>{{language.top_app_popup5}}</li>
+                            <li class="ml-20px"><span>{{language.top_app_popup6}}</span>
+                                {{language.top_app_popup9}}</li>
+                            <li class="ml-20px"><span>{{language.top_app_popup7}}</span>
+                                {{language.top_app_popup10}}</li>
+                            <li>{{language.top_app_popup8}}</li>
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+            <!-- <button type="button" class="btn-default primary px-3 px-3">{{language.Save}}</button> -->
+            <button type="button" class="btn-default  btn-dft px-3 px-3 m-2" (click)="closeModal()"
+                data-dismiss="modal">{{language.Cancel}}</button>
+        </form>
+    </div>
+</ng-template>
+<!-- gaming application -->
+<ng-template #applicationGamingChartModal let-modal class="col-md-12">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addModal">{{popup_heading}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form class="custom-form">
+            <div class="form-group ccl-form ">
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>{{language.gaming_app_popup1}}</p>
+                        <p>{{language.gaming_app_popup2}}</p>
+                        <ul class="list-block">
+                            <li>{{language.gaming_app_popup3}}</li>
+                            <li>{{language.gaming_app_popup4}}</li>
+                            <li>{{language.gaming_app_popup5}}</li>
+                            <li class="ml-20px"><span>{{language.gaming_app_popup6}}</span>
+                                {{language.gaming_app_popup9}}</li>
+                            <li class="ml-20px"><span>{{language.gaming_app_popup7}}</span>
+                                {{language.gaming_app_popup10}}</li>
+                            <li>{{language.gaming_app_popup8}}</li>
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+            <!-- <button type="button" class="btn-default primary px-3 px-3">{{language.Save}}</button> -->
+            <button type="button" class="btn-default  btn-dft px-3 px-3 m-2" (click)="closeModal()"
+                data-dismiss="modal">{{language.Cancel}}</button>
+        </form>
+    </div>
+</ng-template>
+<!-- heatmap application -->
+<ng-template #applicationSocialChartModal let-modal class="col-md-12">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addModal">{{popup_heading}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form class="custom-form">
+            <div class="form-group ccl-form ">
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>{{language.social_channel_popup1}}</p>
+                        <p>{{language.social_channel_popup2}}</p>
+                        <ul class="list-block">
+                            <li>{{language.social_channel_popup3}}</li>
+                            <li>{{language.social_channel_popup4}}</li>
+                            <li>{{language.social_channel_popup5}}</li>
+
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+            <!-- <button type="button" class="btn-default primary px-3 px-3">{{language.Save}}</button> -->
+            <button type="button" class="btn-default  btn-dft px-3 px-3 m-2" (click)="closeModal()"
+                data-dismiss="modal">{{language.Cancel}}</button>
+        </form>
+    </div>
+</ng-template>
+
+<div class="subscriber-details" [ngClass]="fullScreen ? 'd-block' : 'd-none'">
+    <div class="marketing-wizard flex">
+        <div class="mark-wiz-col brd-btm-snowgrey w-100">
+            <div class="mwc-header flex">
+                <h3 class="chart-title greyaa mb0">{{fullScreenChart}}</h3>
+                <div class="mwc-btns flex">
+                    <button id="applicationChartModalExpand" class="d-none btn-round btn-small-24 btn-grey btn-que"
+                        (click)="applicationChartModalOpen(fullScreenChart)" data-toggle="tooltip"
+                        title="{{applicationFullScreenContent}}"></button>
+                    <button id="applicationChartModalDownlod" *ngIf="getExportMenus.length === 0"
+                        [ngClass]="fullScreenDownload ? 'spinnershow': '' " (click)="downloadFunction(fullScreenChart)"
+                        class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                        title="{{language.subs_download_tip}}"></button>
+                    <!-- EXPORT MENU -->
+                    <div *ngIf="getExportMenus.length > 0" class="dropdown-button" ngbDropdown>
+                        <button data-toggle="tooltip" title="{{language.explort_option}}"
+                            [ngClass]="fullScreenDownload ? 'spinnershow': '' "
+                            class="btn-round btn-small-24 btn-grey btn-dload" id="dropdownPeriod11" ngbDropdownToggle>
+                        </button>
+                        <div ngbDropdownMenu aria-labelledby="dropdownPeriod11">
+                            <button data-toggle="tooltip" title="{{item}}" id="applicationDownload"
+                                (click)="downloadFunction(fullScreenChart,item)" *ngFor="let item of getExportMenus"
+                                ngbDropdownItem class="greyaa">{{item}}
+                            </button>
+                        </div>
+                    </div>
+                    <button id="applicationFullScreenClose" class="btn-round btn-small-24 btn-grey btn-expand-inv"
+                        (click)="fullScreenCloseFunction()" data-toggle="tooltip"
+                        title="{{language.subs_fullscreen_close_tip}}"></button>
+                </div>
+            </div>
+
+            <div class="col-12" [ngClass]="dataAvailable ? 'd-block' : 'd-none'">
+                <table id="applicationTopTable" *ngIf="fullScreenChart == language.Top_Appln"
+                    class="table subscriber-table table-striped showTableDataInChart smal">
+                    <!-- Top Applications -->
+                    <thead>
+                        <tr class="theading">
+                            <th>{{language.application}}</th>
+                            <th class="text-right">{{language.Avg_Sub}}</th>
+                            <th class="text-right">{{language.Percentage}}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="tbodyheading">
+                        <tr *ngFor="let item of topAppDataArray">
+                            <td class="primary insight-table-font">
+                                <a href="javascript:void(0)"
+                                    (click)="fullScreenExpandFunction(language.Top_Appln,item)">{{item.application1}}</a>
+                            </td>
+
+                            <td class="text-right insight-table-font">{{item.average | number}}</td>
+                            <td class="text-right insight-table-font">{{item.percentage}} %</td>
+                        </tr>
+                        <tr *ngIf="topAppDataArray.length === 0">
+                            <td colspan="3" class="text-center"> {{ language["No Data Available"] }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table id="applicationTopGammingTable" *ngIf="fullScreenChart == language.Top_gaming_Applicatins"
+                    class="table subscriber-table table-striped showTableDataInChart smal">
+                    <!-- Top Gaming Applications -->
+                    <thead>
+                        <tr class="theading">
+                            <th>{{language.application}}</th>
+                            <th class="text-right">{{language.Avg_Sub}}</th>
+                            <th class="text-right">{{language.Percentage}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of topGamingAppDataArray">
+                            <td class="primary insight-table-font">
+                                <a href="javascript:void(0)"
+                                    (click)="fullScreenExpandFunction(language.Top_gaming_Applicatins,item)">{{item.application1}}
+                                </a>
+
+                            </td>
+                            <td class="text-right insight-table-font">{{item.average | number}}</td>
+                            <td class="text-right insight-table-font">{{item.percentage}} %</td>
+                        </tr>
+                        <tr *ngIf="topGamingAppDataArray.length === 0">
+                            <td colspan="3" class="text-center"> {{ language["No Data Available"] }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div *ngIf="fullScreenChart == language.SocialHeatMap">
+                    <div *ngIf="!isSocialMapData" class="text-center h-200-pos">
+                        {{ language["No Data Available"] }}
+                    </div>
+                    <div class="col-3" id="applicationTopSocialSelect" *ngIf="socialChannels.length > 0">
+                        <ng-select [(ngModel)]="socialChannelSelected" (ngModelChange)="selectSocialChannel($event)"
+                            [items]="socialChannels" bindLabel="name" bindValue="name" class="selectboxwidth"
+                            placeholder="socialChannelSelected" [ngModelOptions]="{standalone: true}"
+                            [clearable]="false" [searchable]="true">
+                        </ng-select>
+                    </div>
+                    <div class="chart-sec"
+                        [ngClass]="(socialHeatMapDataAvailable && isSocialMapData) ? 'd-block' : 'd-none'">
+                        <div id={{fullScreenChart}} class="chart-box h-400-w"></div>
+                    </div>
+                    <div class="text-center" *ngIf="!socialHeatMapDataAvailable && socialHeatMapDataError">
+                        <div class="height-left-pos">
+                            {{ language["No Data Available"] }}
+
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="fullScreenChart == language.Usage_By_Appln">
+                    <div *ngIf="usageByAppDataAvailable && !isusagebydata" class="text-center h-200-pos">
+                        {{ language["No Data Available"] }}
+                    </div>
+                    <div [ngClass]="(usageByAppDataAvailable && isusagebydata) ? 'd-block' : 'd-none'">
+                        <div class="chart-sec">
+                            <div id={{fullScreenChart}} class="chart-box h-400-w"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center" *ngIf="!dataAvailable">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                </div>
+            </div>
+
+            <div [ngClass]="fullScreenTableAvailable ? 'd-block' : 'd-none'">
+                <div id="tableContentReady">
+                    <h4 class="fullscreen-table-info" *ngIf="appHistoryTableDataArray && clickData">
+                        {{clickData.application1}} {{language.Subscribers}}</h4>
+                    <h4 class="fullscreen-table-info" *ngIf="fullScreenChart == language.Usage_By_Appln && clickData">
+                        {{clickData.tech}}</h4>
+
+                    <div class="table-responsive table-width-overflow"
+                        [ngClass]="!fullScreenTableDataNotAvailable ? 'd-block' : 'd-none'">
+                        <table id="applicationUsageTable"
+                            class="table subscriber-table table-striped showTableDataInChart smal">
+                            <!-- Usage by Application Type -->
+                            <thead *ngIf="fullScreenChart == language.Usage_By_Appln">
+                                <tr>
+                                    <td>{{language.appName}} </td>
+                                    <td class="text-right">{{language.totalUsage}} </td>
+                                    <td class="text-right">{{language.Marketing_Usage}} </td>
+                                    <td class="text-right">{{language.Avg_Sub}}</td>
+                                    <td class="text-right">{{language.Average_Subscribers}}</td>
+                                </tr>
+                            </thead>
+                            <thead *ngIf="appHistoryTableDataArray">
+                                <tr class="theading">
+                                    <th width="33%">{{language.Date}}</th>
+                                    <th width="33%" class="text-right">{{language.User_Count}}</th>
+                                    <th width="33%" class="text-right">{{language.User_Percentage}}</th>
+                                </tr>
+                            </thead>
+
+                            <tbody class="tbodyheading" *ngIf="appHistoryTableDataArray">
+                                <tr *ngFor="let data of appHistoryTableDataArray">
+                                    <td>{{data.date}}</td>
+                                    <td class="text-right">{{data.userCount | number}}</td>
+                                    <td class="text-right">{{data.userPercentage}} %</td>
+                                </tr>
+                            </tbody>
+                            <tbody class="tbodyheading" id="append-table-list">
+                            </tbody>
+                        </table>
+
+                        <!-- LOAD MORE BUTTON SECTION -->
+                        <div class="ccl-center text-center" *ngIf="loadMoreButton">
+                            <button id="applicationLoadMoreTable" [ngClass]="loadingBtn ? 'cursor-ban': ''"
+                                class="btn-default primary btn-dis-inline" (click)='loadMore()'
+                                id="loadMoreBtn">{{loadingBtn ?
+                                language.Loading_text : language.loadmore}}
+                                <div *ngIf="loadingBtn" class="spinner">
+                                    <i class="fa fa-spinner"></i>
+                                </div>
+                            </button>
+
+                        </div>
+                    </div>
+                    <div *ngIf="fullScreenTableDataNotAvailable" id="no-data-available"
+                        class="border-for-no-data text-center">
+                        <span>{{language.nodata}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center" *ngIf="tableLoader">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,193 @@
+.form-control-sm {
+    min-height: 38px !important;
+    max-height: 42px !important;
+    padding: .25rem .5rem;
+    font-size: .875rem;
+    line-height: 1.5;
+    border-radius: 1.2rem !important;
+    background-color: #f8f8fa !important;
+    border: none !important;
+}
+select{
+    border-radius: 20px;
+    // background: #F8F8FA;
+    // background-image: url(assets/img/ic_chevrondown.svg);
+   // background: url(http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png) no-repeat right #f8f8fa10;
+    -webkit-appearance: none;
+    // background-position-x: 100px 5px;
+    background-position: right 17px center;
+}
+input[type="search"]::-webkit-search-cancel-button { display: none }
+.fa-remove:before, .fa-close:before, .fa-times:before {
+    content: "\f00d";
+    color: blue;
+}
+
+.noDropCursor {
+    cursor: no-drop;
+}
+.review-container {
+    border: 1px solid #9E9E9E;
+   margin-top: 40px
+}
+
+.card-header {
+    .ccl-accordion-icon::after {
+        content        : "\f077";
+        font-family    : FontAwesome;
+        font-style     : normal;
+        font-weight    : normal;
+        text-decoration: inherit;
+        font-size      : 18px;
+        padding-right  : 0.5em;
+        position       : absolute;
+        top            : 0px;
+        left           : 50px;
+    }
+
+    &.collapsed {
+        .ccl-accordion-icon::after {
+            transform: scaleY(-1);
+        }
+    }
+}
+
+.support-key-value td {
+    width        : 60.5%;
+    padding-right: 25px;
+}
+
+
+.ccl-accordion-icon label:before {
+    content           : '';
+    -webkit-appearance: none;
+    background-color  : transparent;
+    border            : 2px solid #0079bf;
+    box-shadow        : 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px -15px 10px -12px rgba(0, 0, 0, 0.05);
+    padding           : 10px;
+    display           : inline-block;
+    position          : relative;
+    vertical-align    : middle;
+    cursor            : pointer;
+    margin-right      : 5px;
+}
+
+.ccl-accordion input:checked+label:after {
+    content     : '';
+    display     : block;
+    position    : absolute;
+    top         : 6px;
+    left        : 9px;
+    width       : 6px;
+    height      : 14px;
+    border      : solid #0079bf;
+    border-width: 0 2px 2px 0;
+    transform   : rotate(45deg);
+}
+
+#accordinToggle {
+    .ccl-accordion-icon::after {
+        content        : "\f077";
+        font-family    : FontAwesome;
+        font-style     : normal;
+        font-weight    : normal;
+        text-decoration: inherit;
+        font-size      : 16px;
+    }
+}
+
+#accordinToggle.collapsedAll {
+    .ccl-accordion-icon::after {
+        content        : "\f078";
+        font-family    : FontAwesome;
+        font-style     : normal;
+        font-weight    : normal;
+        text-decoration: inherit;
+        font-size      : 16px;
+    }
+}
+
+.space-list{
+    padding-left: 14px;
+    padding-right: 14px;
+}
+
+button.close {
+    span.close1 {
+     
+        top              : -30px;
+        right            : 0px;
+     
+    }
+  }
+
+  
+
+ .h4, h4 {
+    margin-bottom: 0.8rem;
+    font-weight: 500;
+    line-height: 1.2;
+    margin-top: 0.8rem;
+}
+.pointer{
+    cursor:pointer;
+}
+.auto
+{
+    cursor: auto;
+}
+
+table {
+   // table-layout: fixed;
+}
+
+.close-pointer{ position: relative; top: 0px;right: 30px;}
+.mw-150px{max-width: 150px;}
+.pl-10px{padding-left: 10px;}
+.di-inline-wrap{width: 500px; word-wrap: break-word; display: inline-block}
+.w-73{width: 73%;}
+.ccl-accordion-icon::after{cursor: pointer;}
+.mw-75px{max-width: 75px;};
+th {
+    font-weight: 600 !important;
+}
+.clear-icon {
+    position: relative;
+    top: -2px;
+    right: 29px;
+    width: 12px;
+    cursor: pointer;
+}
+
+.dropdown {
+    .dropdown-menu {
+        left: -100px !important;
+      border-radius     : 16px;
+      box-shadow        : 0px 5px 15px rgba(128, 128, 128, 0.25);
+      -webkit-box-shadow: 0px 5px 15px rgba(128, 128, 128, 0.25);
+      border-color      : rgba(0, 0, 0, .05) !important;
+      min-width         : 143px;
+  
+      button.btn {
+        width        : 100% !important;
+        border-radius: 0px !important;
+        text-align   : left;
+        // padding      : 10px 25px;
+  
+        &:hover {
+          background-color: #EDF5FF !important;
+        }
+      }
+    }
+  }
+  .dropdown-toggle::after {
+    content: none !important;
+  }
+.dropdown-item:focus,
+.dropdown-item:hover {
+  background-color: #EDF5FF !important;
+  color: #1A1F22 !important;
+}
+.min-h-165px{
+    min-height: 165px;
+}

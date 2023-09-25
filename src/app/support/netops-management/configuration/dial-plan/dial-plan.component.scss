@@ -1,0 +1,73 @@
+.overflow-ellipsis {
+    max-width    : 120px;
+    white-space  : nowrap;
+    overflow     : hidden;
+    text-overflow: ellipsis;
+}
+
+:host ::ng-deep table.dataTable td.dataTables_empty {
+    display: none;
+}
+
+.no-data-available {
+    text-align: center;
+}
+
+.alert.alert-success {
+    display: none;
+}
+
+.alert.alert-error {
+    display: none;
+}
+
+.dail-plan-table {
+    tbody {
+        tr {
+            td {
+                font-size    : 15px;
+                font-weight  : 400;
+                color        : #4C4C4C;
+                padding      : 0px 10px 0px 0px;
+                border-top   : 0 !important;
+                border-bottom: 1px solid transparent;
+                line-height  : 38px;
+                word-break   : break-all;
+            }
+        }
+    }
+}
+.modal.fade .modal-dialog {
+    border-radius: 26px;
+    max-width: 35% !important;
+}
+.modal.fade .modal-dialog .modal-content {
+    padding: 40px 32px !important;
+}
+
+.alert .ok-btn {
+    padding  : 5px 5px;
+    min-width: auto;
+  }
+  
+  
+  .alert-danger .ok-btn {
+    background: #721c24;
+  }
+  
+  .alert-success .ok-btn {
+    background: #155724;
+  }
+  .dial-plan-info{
+    font-size: 42px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 53px;
+    letter-spacing: 0em;
+    text-align: left;
+    margin-top: -20px !important;
+  }
+  .overflow-max-h{
+    max-height: 290px;
+    overflow: auto;
+  }

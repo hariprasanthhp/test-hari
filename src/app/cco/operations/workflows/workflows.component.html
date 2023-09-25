@@ -1,0 +1,46 @@
+<div id="netops" class="netops-wrapper flex mt-4">
+  <div class="container-fluid p-0">
+    <div class="row">
+      <div class="col-sm-12 col-md-12 col-lg-2 pr-0 ccl-tabs">
+        <ul
+          id="netops-list-menu"
+          class="nav flex-column left-menu tab-view-style"
+        >
+          <li class="nav-item">
+            <a
+              class="list-group-item list-group-item-action"
+              routerLink="/cco/operations/workflows/groups"
+              id="groups"
+              routerLinkActive="active"
+            >
+              {{ language.Groups }}
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="list-group-item list-group-item-action"
+              id="conFile"
+              routerLink="/cco/operations/workflows/profiles"
+              routerLinkActive="active"
+            >
+              {{ language.Profiles }}
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="list-group-item list-group-item-action"
+              id="ExternalFiles"
+              routerLink="/cco/operations/workflows/workflows-list"
+              routerLinkActive="active"
+            >
+              {{ language.workflows_list }}
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="col-sm-12 col-md-12 col-lg-10 pl-3">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+</div>

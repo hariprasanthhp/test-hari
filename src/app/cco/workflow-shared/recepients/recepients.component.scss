@@ -1,0 +1,269 @@
+.heading-4 {
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 30px;
+    letter-spacing: 0em;
+    text-align: left;
+    border-bottom: 1px solid #CCCCCC;
+    padding-bottom: 5px;
+    margin-bottom: 16px;
+}
+
+.info-text {
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0em;
+    text-align: left;
+
+    b {
+        font-weight: 600 !important;
+    }
+}
+
+.exclusions-container {
+    display: flex;
+    // flex-wrap      : wrap;
+    justify-content: space-between;
+}
+
+.exclusions-item {
+    flex-grow: 1;
+    // height       : 100px;
+    margin-bottom: 3%;
+
+    /* (100-32*3)/2 */
+    .form-group {
+        margin-bottom: 0px;
+    }
+
+    .form-check {
+        width: 80px !important;
+    }
+
+    .p-calendar {
+        width: 80% !important;
+    }
+}
+
+.exclusions-item+.exclusions-item {
+    text-align: center;
+}
+
+.mail-tags {
+    border: 1px solid transparent;
+    background-color: #f8f8fa;
+    min-height: 89px !important;
+    border-radius: 12px 22px 2px 22px;
+
+    ::ng-deep .ng2-tag-input__text-input {
+        border: 1px solid transparent;
+        background-color: #f8f8fa;
+    }
+
+    ::ng-deep .ng2-tag-input--focused {
+        color: #495057;
+        background-color: #fff;
+        border-color: #80bdff;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgb(0 123 255 / 25%);
+        border: none !important;
+    }
+
+    ::ng-deep .ng2-tag-input__text-input:focus {
+        background-color: transparent;
+    }
+
+    ::ng-deep tag {
+        background-color: #ebeaef !important;
+        border-radius: unset !important;
+        margin-left: 10px !important;
+        border-radius: 5px !important;
+    }
+
+    ::ng-deep .ng2-tag-input {
+        border: unset;
+        min-height: 89px !important;
+    }
+}
+
+.schedule-container {
+    display: flex;
+    // flex-wrap      : wrap;
+    // justify-content   : space-between;
+
+    .item+.item {
+        margin-left: 10px;
+    }
+
+    .item {
+        flex: 0 28%;
+        // height       : 100px;
+        margin-bottom: 2%;
+        /* (100-32*3)/2 */
+    }
+}
+
+
+
+.week-container {
+    display: flex;
+    // flex-wrap      : wrap;
+    justify-content: space-between;
+
+    // .day+.day {
+    //     margin-left: 10px;
+
+    // }
+
+    .day {
+        width: 35px;
+        height: 35px;
+        color: #4C4C4C;
+        background-color: #F8F8FA;
+        text-align: center;
+        line-height: 35px;
+        border-radius: 50%;
+        // flex            : 0 28%;
+        // height       : 100px;
+        margin-bottom: 2%;
+        /* (100-32*3)/2 */
+    }
+
+    .select-day {
+        width: 35px;
+        height: 35px;
+        color: #FFFFFF;
+        background-color: #0279FF;
+        text-align: center;
+        line-height: 35px;
+        border-radius: 50%;
+        // flex            : 0 28%;
+        // height       : 100px;
+        margin-bottom: 2%;
+        /* (100-32*3)/2 */
+    }
+
+    .week-circle {
+
+        padding: 4px;
+
+    }
+
+}
+
+
+.month-container {
+    display: flex;
+    // flex-wrap      : wrap;
+    justify-content: space-between;
+
+    .month-info+.month-info {
+        margin-left: 10px;
+    }
+
+    .month-info {
+        flex: 0 28%;
+        // height       : 100px;
+        margin-bottom: 2%;
+        /* (100-32*3)/2 */
+    }
+}
+
+.diable-div {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.timezone {
+    width: 205px;
+}
+
+// .disable-step input::-webkit-outer-spin-button,
+// .disable-step input::-webkit-inner-spin-button {
+//   -webkit-appearance: none;
+//   margin: 0;
+// }
+::ng-deep .p-component::-webkit-input-placeholder {
+    opacity: 0.6;
+}
+
+.custom-paste-input {
+    width: 100%;
+    min-height: 86px;
+    max-height: 100px;
+    line-height: inherit;
+    border-radius: 16px 16px 0 16px !important;
+    background: #f8f8fa;
+    padding: 0px 15px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #646363;
+    border: 1px solid transparent;
+    cursor: text;
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    overflow: auto;
+
+    .custom-paste-list {
+        width: fit-content;
+        height: 29px;
+        padding: 3px 2px 0px 2px;
+        font-size: 14px;
+        background-color: #e4e4e4;
+        border: 1px solid #aaa;
+        border-radius: 4px;
+        cursor: default;
+        margin: 3px;
+
+        .remove-input-btn {
+            color: #7e8c94;
+            float: right;
+            margin-right: 5px;
+            margin-left: 5px;
+            cursor: pointer;
+
+            i {
+                color: #7e8c94;
+            }
+        }
+    }
+
+    input {
+        height: 29px !important;
+        background: #f8f8fa;
+        width: fit-content;
+        border: none;
+
+        &:focus {
+            border: none !important;
+        }
+    }
+
+}
+
+.note-clear {
+    padding: 10px 0 0 16px;
+}
+
+.width-100 {
+    max-width: 110px;
+}
+
+.clear-div {
+    padding-left: 20px;
+}
+
+// .clear-label{
+//     font-weight: bold;
+// }
+.form-check-input {
+    cursor: pointer;
+}
+.privacymodal{
+    padding: 40px 64px;
+}

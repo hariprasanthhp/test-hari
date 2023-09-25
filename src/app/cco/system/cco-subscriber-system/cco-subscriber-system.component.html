@@ -1,0 +1,36 @@
+<section class="my-3" *ngIf="currentPage != 'add-new-system' && currentPage != 'system-details-view'">
+    <div class="container">
+
+    </div>
+</section>
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 px-0">
+                <router-outlet></router-outlet>
+            </div>
+        </div>
+    </div>
+</section>
+
+<ng-template #modalData let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">
+            {{ language.Swap_System }}
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <p>{{ language.FSAN_SN }}/{{ language.macAddress }}/{{ language.RegID }}</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="modal.close('Save click')">
+            {{ language.Swap }}
+        </button>
+        <button type="button" class="btn btn-danger" (click)="modal.close('Save click')">
+            {{ language.Cancel }}
+        </button>
+    </div>
+</ng-template>

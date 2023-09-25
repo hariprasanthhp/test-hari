@@ -1,0 +1,93 @@
+<div class="w-100 position-relative">
+  <div class="loader pt-5 align-items-start" *ngIf="loading">
+    <div class="d-flex align-items-start justify-content-center">
+      <div class="spinner-border text-primary">
+        <span class="sr-only">{{ language.Loading }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="row no-gutters my-3">
+    <div class="d-block d-sm-none ccl-Secondary-title mb-2 col-md-12 border-bottom">{{language['Unassociated Systems']}}
+    </div>
+  </div>
+  <div class="w-100 alert alert alert-danger fade show" *ngIf="error">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+    <button type="button" id="hide-error-btn" class="close" (click)="closeAlert()">
+      <span></span>
+    </button>
+    <div class="d-inline-flex w-auto" [innerHtml]="errorInfo"></div>
+  </div>
+  <div class="col-12 px-0 mb-2">
+    <div class="row my-2">
+      <div class="col-sm-6">
+        <!-- <h4 class="mb-4">{{language['Unassociated Systems']}}</h4> -->
+      </div>
+      <div class="col-sm-6" id="netops_unassdev_search">
+        <div class="d-flex align-items-center">
+          <div class="form-group ccl-form form-inline d-inline-flex position-relative mb-3">
+            <label for="search" class="mr-1">{{language.Filter}}</label>
+            <input (keyup)="search($event.target.value)" (search)="search($event.target.value)"
+              class="ccl-from ccl-search-input" id="" [(ngModel)]="searchtext"
+              oninput="this.value = this.value.replace(/[^0-9A-Za-z:]/g, '').replace(/(\..?)\../g, '$1')"
+              placeholder="{{language.FSAN_Serial_Number}}/{{language.macAddress}}">
+            <button type="button" class="close position-absolute mr-2" 
+             *ngIf="showcloseicon" (click)="closeicon($event.target.value)">
+              <span class="sh-clear-icon"></span>
+            </button>
+            <!-- <span class="pointer" [ngClass]="showcloseicon ? 'show-close-search' : 'hide-close-search'"
+              (click)="closeicon($event.target.value)"> </span> -->
+          </div>
+          <div class="form-group ml-3"  *ngIf="!hideExport">
+            <span id="exportanchor" class="export-btn" (click)="downloadUnassociatedSysReport()">
+              <a href="javascript:void(0)" class="btn-dft btn-default text-decoration-none">{{ language.export }}</a></span>
+          </div>
+        </div>
+       
+        
+      </div>
+    </div>
+    <!-- (click)="closeicon($event.target.value)"   [ngClass]="unassociatedDeviceDataCount === 0 ? 'dataTables_empty':'tableHide'" -->
+    <div [hidden]="tableHide" id="netops_unassdev_table_div" class="overflow-auto">
+      <table datatable [dtOptions]="tableOptions" [dtTrigger]="dtTrigger" class="hover table-alter">
+        <thead>
+          <tr>
+            <th>FSAN/{{language.Serial_Number}}</th>
+            <th>{{language.IP_Address}}</th>
+            <th>{{language.MAC_Address}}</th>
+            <th>{{language.Model}}</th>
+            <th>{{language.Software_Version}}</th>
+            <th>{{language.Previous_Subscriber}}</th>
+            <th>{{language.Discovery_Time}}</th>
+            <th>{{language.Last_Inform_Time}}</th>
+          </tr>
+        </thead>
+
+        <tbody [ngClass]="unassociatedDeviceDataCount === 0 ? 'dataTables_empty':'tableHide'">
+          <tr *ngFor="let data of unassociatedDeviceData">
+            <td><span class="ud-sno" (click)="snRedirection(data)">{{data.serialNumber}}</span></td>
+            <td>{{data.ipAddress}}</td>
+            <td>{{data.macAddress}}</td>
+            <td>{{data.modelName}}</td>
+            <td>{{data.softwareVersion}}</td>
+            <td>{{data.prevSubscriber}}</td>
+            <td><span class="d-none">{{data.createTime}}</span>{{data.createTime?(data.createTime|date:'MM/dd/yyyy,
+              hh:mm:ss a') : 'N/A'}}</td>
+            <td><span
+                class="d-none">{{data.lastInformTime}}</span>{{data.lastInformTime?(data.lastInformTime|date:'MM/dd/yyyy,
+              hh:mm:ss a'):'N/A'}}</td>
+          </tr>
+        </tbody>
+        <tbody *ngIf="unassociatedDeviceDataCount != undefined && unassociatedDeviceDataCount === 0 &&showNoResults">
+          <tr>
+            <td colspan="8" class="no-data-available">{{language['No data available in table']}}
+            </td>
+          </tr>
+        <tbody>
+      </table>
+
+    </div>
+
+
+
+  </div>
+</div>

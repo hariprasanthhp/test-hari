@@ -1,0 +1,758 @@
+<div class="d-flex justify-content-between" *ngIf="hasScopeAccess">
+  <div class="col-md-4 pl-0">
+    <div class="">
+      <a *ngIf="hasWriteAccess && allowAddSystems && !isAxosPage" [routerLink]="addUrl"
+        routerLinkActive="active"><button class="btn-default primary mr-2 my-3" data-toggle="tab">
+          {{language['Add System']}}
+        </button></a>
+    </div>
+  </div>
+  <!-- <div class="text-right" *ngIf="geoMapIssue == 'true'">
+    <span class="span-close-icon" id="close-icon" (click)="closeNetworkSystems()">
+      <img src="assets/img/close-icon.svg"alt="" />
+    </span>
+</div> -->
+</div>
+<div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess">
+  {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} </div>
+
+<section *ngIf="hasScopeAccess">
+  <div class="w-100 alert alert-danger fade show my-3" *ngIf="error">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+    <button type="button" class="close" (click)="closeAlert()">
+      <span></span>
+    </button>
+    <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+  </div>
+  <div class="loader" *ngIf="loading">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary">
+        <span class="sr-only">{{ language.Loading }}</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="mt-2" *ngIf="hasScopeAccess">
+  <form [formGroup]="filtersForm">
+
+    <div class="filter-section filter-elemnts pr-3 pt-2">
+      <div class="filter-wrapper mb-1 row">
+        <!-- <div class="network-systems-filter-container">
+                                  <div class="network-systems-filter">Type </div>
+                                  <div class="network-systems-filter">Region </div>
+                                  <div class="network-systems-filter">Location </div>
+                                  <div class="network-systems-filter">State </div>
+                                  <div class="network-systems-filter">button </div>
+        
+        </div> -->
+        <div class="custom-selectbox">
+          <label class="filter-label col-form-label">{{ language.type }}</label>
+          <ng-select id="type" [items]="types" bindLabel="name" bindValue="value"
+            placeholder="{{language['None Selected']}}" [searchable]="false" formControlName="type">
+          </ng-select>
+        </div>
+
+        <div class="custom-selectbox" id="current-issues-interval" *ngIf="showRegion">
+          <label for="Name" class="col-form-label select-font">{{
+            language.region
+            }}</label>
+          <ng-select [items]="regionsDataArray" bindValue="id" bindLabel="name" formControlName="region"
+            class="selectboxwidth" (add)="loadLocationValue($event)" (remove)="loadLocationValue($event)"
+            (change)="loadLocationValue($event)" [clearable]="false" [searchable]="true"
+            placeholder="{{ language.region }}" id="region">
+          </ng-select>
+        </div>
+
+        <div class="custom-selectbox" id="current-issues-interval" *ngIf="showLocation">
+          <label for="Name" class="col-form-label select-font">{{
+            language.location
+            }}</label>
+          <ng-select [items]="locationDataArray" bindValue="id" bindLabel="name" formControlName="location"
+            class="selectboxwidth" placeholder="{{ language.Location }}" [clearable]="false" [searchable]="true">
+          </ng-select>
+        </div>
+
+        <div class="custom-selectbox state-filter">
+          <label for="Name" class="col-form-label select-font d-block w-100 text-truncate"
+            title="{{language['Address/Coordinate Info']}}">
+            {{language['Address/Coordinate Info']}}
+          </label>
+          <ng-select [items]="geoLocationOptions" bindValue="value" bindLabel="name" formControlName="geoLocationInfo"
+            class="selectboxwidth" placeholder="{{language['Address/Coordinate Info']}}" [clearable]="false"
+            [searchable]="true">
+          </ng-select>
+        </div>
+
+        <!-- <div class="custom-selectbox state-filter">
+          <label for="Name" class="col-form-label select-font">{{ language.State }}</label>
+          <ng-select [items]="states" bindValue="value" bindLabel="name" formControlName="state" class="selectboxwidth"
+            placeholder="{{ language.State }}" [clearable]="false" [searchable]="true">
+          </ng-select>
+        </div> -->
+
+        <div class="custom-selectbox state-filter">
+          <label for="Name" class="col-form-label select-font">{{ language["Connection_Status"] }}</label>
+          <ng-select [items]="communicationStates" bindValue="value" bindLabel="name"
+            formControlName="communicationState" class="selectboxwidth"
+            placeholder="{{ language['Connection_Status'] }}" [clearable]="false" [searchable]="true">
+          </ng-select>
+        </div>
+
+
+        <div class="custom-selectbox state-filter">
+          <label for="Name" class="col-form-label select-font">{{ language["Config Status"] }}</label>
+          <ng-select [items]="states" bindValue="value" bindLabel="name" formControlName="configState"
+            class="selectboxwidth" placeholder="{{ language['Config Status'] }}" [clearable]="false"
+            [searchable]="true">
+          </ng-select>
+        </div>
+
+
+        <div class="custom-selectbox state-filter">
+          <label for="Name" class="col-form-label select-font">{{ language["Alarm Status"] }}</label>
+          <ng-select [items]="states" bindValue="value" bindLabel="name" formControlName="faultState"
+            class="selectboxwidth" placeholder="{{ language['Alarm Status'] }}" [clearable]="false" [searchable]="true">
+          </ng-select>
+        </div>
+
+        <div class="custom-selectbox state-filter">
+          <label for="Name" class="col-form-label select-font">{{ language["IPFIX Status"] }}</label>
+          <ng-select [items]="ipfixStates" bindValue="value" bindLabel="name" formControlName="ipfixState"
+            class="selectboxwidth" placeholder="{{ language['IPFIX Status'] }}" [clearable]="false" [searchable]="true">
+          </ng-select>
+        </div>
+
+
+        <div class="ccl-form custom-selectbox search-box-input state-filter position-relative">
+          <label for="macAddress" class="col-form-label select-font">{{ language["MAC_Address"] }}</label>
+          <input type="text" class="form-control" id="macAddress" formControlName="macAddress" class="selectboxwidth"
+            placeholder="{{ language['MAC_Address'] }}">
+          <div class="errorMessage pos-bottom" *ngIf="formControls?.macAddress?.invalid && submitted">
+            <div>
+              {{language['Invalid MAC Address']}}
+            </div>
+          </div>
+        </div>
+
+        <div class="custom-selectbox min-w24p d-flex align-items-center mb-2">
+          <!-- <label class="filter-label">&nbsp;</label>
+          <button style="margin-top: 40px" id="filter-submit-btn" class="btn-default primary" type="button"
+            (click)="getCount()">
+            {{ language.run }}
+          </button> -->
+
+          <div class="d-inline-flex mt-4 pt-3">
+            <button type="button" class="btn-default primary" title="{{language.run}}" (click)="getCount()">
+              {{ language.run }}
+            </button>
+            <button type="button" class="btn-default btn-dft ml-2 btn-overflow-ellip" title="{{language.Clear_Filters}}"
+              (click)="clearFilter()">
+              {{ language.Clear_Filters }}
+            </button>
+          </div>
+
+        </div>
+
+
+      </div>
+    </div>
+
+
+    <div class="container">
+      <div class="row">
+        <div class="d-inline-flex col-3 ccl-form search-box-input px-0">
+          <input name="search" formControlName="name" id="search" placeholder="{{language['Search System Name']}}" />
+          <span *ngIf="filtersForm.controls['name']?.value" class="search-close" (click)="clearSearch('')"><img
+              src="assets/img/ic_close-44px.svg"> </span>
+        </div>
+      </div>
+
+      <div class="row" *ngIf="showTable">
+        <div class="col-md-12 px-0 overflow-auto network-systems-table">
+          <table class="table table-borderless w-100" datatable [dtOptions]="dtOptions">
+            <thead>
+              <tr>
+                <th class="w-150">{{ language['System'] }}</th>
+                <th class="m-250">{{ language.Region }}/{{language.Location}}</th>
+                <th class="w-190">{{ language["Address/Coordinates"] }}</th>
+                <!-- <th>{{ language.macAddress }}</th>
+                <th>{{ language.Model_Name }}</th> -->
+                <th>{{ language.Software_Version }}</th>
+                <!-- <th>{{ language.Serial_Number }}</th> -->
+                <th>{{ language["Connection_Status"] }}</th>
+                <th class="w-150">{{ language["Config Status"] }}</th>
+                <th class="w-150">{{ language["Alarm Status"] }}</th>
+                <th> {{ language["IPFIX Status"] }}</th>
+                <!-- <th>{{ language["address"] }}</th> -->
+                <th></th>
+                <th></th>
+
+                <th></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of list" id="tr-{{ item.uuid }}">
+                <td class="w-150" id="name-{{ item.uuid }}">
+                  <span class="action-info-u primary p-blue pointer" *ngIf="item.ui_modified_name"
+                    (click)="showDetailedView(item)">{{item.ui_modified_name}}
+                  </span>
+                  <br />{{item?.macAddress}}
+                  <a class="primary p-blue" href="javascript:void(0)">
+                  </a>
+                  <!-- <div class="detials" *ngIf="item?.place">{{ item.place?.ufLocation || '-' }}</div> -->
+                </td>
+                <td class="long-text" id="regionlocation-{{ item.uuid }}">{{ item.regionName }}{{item.locationName?'/':
+                  ''}}{{item.locationName}}</td>
+                <td class="long-text" id="serviceaddress-{{ item.uuid }}"
+                  [innerHTML]="item?.ui_modified_service_address_latlong"></td>
+                <!-- <td id="macAddress-{{ item.uuid }}">{{ item.macAddress }}</td>
+                <td id="deviceModel-{{ item.uuid }}">{{ item.deviceModel }}</td> -->
+                <td id="swVersion-{{ item.uuid }}">{{ item.swVersion }}</td>
+                <!-- <td id="serialNumber-{{ item.uuid }}">{{ item.serialNumber }}</td> -->
+                <td id="communicationState-{{ item.uuid }}">{{ language[item.ui_modified_communication_state] }}</td>
+                <td class="w-150" id="cmSyncFunction-{{ item.uuid }}" [ngClass]="item?.cmFailMsg ? 'cus-pad-right':''">
+                  <div class="d-inline-flex w-100">
+                   {{ language[item.cmSyncStatus] }}
+                    <img *ngIf="item?.cmFailMsg" data-toggle="tooltip" data-placement="top" title="{{item?.cmFailMsg}}"
+                      [ngClass]="{'pointer': item?.cmFailMsg}" src="assets/img/tooltip-icon.svg" />
+                  </div>
+                </td>
+                <td class="w-150" id="fmSyncFunction-{{ item.uuid }}" [ngClass]="item?.fmFailMsg ? 'cus-pad-right':''">
+                  <div class="d-inline-flex w-100" id="fmSyncFunctionStatus">
+                    {{ language[item.fmSyncStatus] }}
+                    <img *ngIf="item?.fmFailMsg" data-toggle="tooltip" data-placement="top" title="{{item?.fmFailMsg}}"
+                      [ngClass]="{'pointer': item?.fmFailMsg}" src="assets/img/tooltip-icon.svg" />
+                  </div>
+                  <div id="alarmForceSync-{{ item.uuid }}"
+                    *ngIf="item.type == 'MGMT_SYSTEM' || (!item?.parentuuid && item?.deviceModel !=='CMS')"
+                    class="text-grey-status">{{ item?.alarmForceSyncStatus}}</div>
+                </td>
+                <td id="ipfixExportConfigurationStatus-{{ item.uuid }}">
+                  {{ language[item.ipfixExportConfigurationStatus] }}
+                </td>
+                <!-- <td>
+                {{ item?.location?.ufLocation }}
+              </td> -->
+                <td id="region-{{ item.uuid }}"></td>
+                <td id="location-{{ item.uuid }}"></td>
+                <td>
+                  <button id="refresh-{{ item.uuid }}" class="icon-btn" (click)="refresh(item.uuid, item)">
+                    <i class="fa fa-refresh primary" aria-hidden="true"></i>
+                  </button>
+                </td>
+                <td>
+                  <div class="dropdown dropleft position-static" *ngIf="hasWriteAccess">
+                    <button class="btn" type="button" data-toggle="dropdown">
+                      ...
+                    </button>
+                    <div>
+                      <ul class="dropdown-menu">
+                        <li *ngIf="hasWriteAccess && (!item?.parentuuid && item?.deviceModel !=='CMS')">
+                          <button class="btn btn-white w-100 text-left" (click)="gotoEdit(item.uuid)">
+                            {{ language['Edit'] }}
+                          </button>
+                        </li>
+                        <li *ngIf="item.type == 'MGMT_SYSTEM' && hasWriteAccess">
+                          <button class="btn btn-white w-100 text-left" (click)="gotoEdit(item.uuid)">
+                            {{language.Edit}}
+                          </button>
+                        </li>
+                        <li *ngIf="hasWriteAccess && (!item?.parentuuid && item?.deviceModel ==='CMS')">
+                          <button class="btn btn-white w-100 text-left" (click)="delete(item.uuid, item.name)">
+                            {{language.Delete}}
+                          </button>
+                        </li>
+                        <li *ngIf="hasWriteAccess && (!item?.parentuuid && item?.deviceModel !=='CMS')">
+                          <button class="btn btn-white w-100 text-left" (click)="delete(item.uuid, item.name)">
+                            {{language.Delete}}
+                          </button>
+                        </li>
+                        <li
+                          *ngIf="item.protocolInfos &&
+                      item.ui_modified_communication_state === 'CONNECTED' && hasWriteAccess &&  (!item?.parentuuid && item?.deviceModel ==='CMS')">
+                          <button class="btn btn-white w-100 text-left" (click)="disconnect(item.uuid, item.name)">
+                            {{language.Disconnect}}
+                          </button>
+                        </li>
+                        <li
+                          *ngIf="item.protocolInfos &&
+                      item.ui_modified_communication_state === 'CONNECTED' && hasWriteAccess && (!item?.parentuuid && item?.deviceModel !=='CMS')">
+                          <button class="btn btn-white w-100 text-left" (click)="disconnect(item.uuid, item.name)">
+                            {{language.Disconnect}}
+                          </button>
+                        </li>
+                        <li
+                          *ngIf="item.protocolInfos &&
+                      item.ui_modified_communication_state === 'DISCONNECTED' && hasWriteAccess && (!item?.parentuuid && item?.deviceModel ==='CMS')">
+                          <button class="btn btn-white w-100 text-left" (click)="connect(item.uuid, item.name)">
+                            {{language.Connect}}
+                          </button>
+                        </li>
+                        <li *ngIf="hasWriteAccess && item.type == 'MGMT_SYSTEM'">
+                          <button class="btn btn-white w-100 text-left" (click)="showProbeStatus(item.uuid)">
+                            {{ language.ProbeStatus }}
+                          </button>
+                        </li>
+                        <!-- EXA FORCE SYNC  -->
+                        <!-- <ng-container *ngIf = "isDev"> -->
+                        <li *ngIf="hasWriteAccess && (item?.parentuuid && item?.deviceModel !== 'CMS')">
+                          <button [disabled] = "item?.disableForceSync" class="btn btn-white w-100 text-left" (click)="forceSync(item)">
+                            {{ language['Force Sync'] }}
+                            <img class="ml-2" *ngIf="item?.disableForceSync" data-toggle="tooltip" data-placement="top" title="{{item?.disableForceSyncMsg}}"
+                            [ngClass]="{'pointer': item?.disableForceSync}" src="assets/img/tooltip-icon.svg" />
+                          </button>
+                        </li>
+                        <!-- CMS FORCE SYNC & AXOS FORCE SYNC -->
+                        <li
+                          *ngIf="(hasWriteAccess && (item.type == 'MGMT_SYSTEM') || (!item?.parentuuid && item?.deviceModel !=='CMS'))">
+                          <div class="d-inline-flex w-100">
+                            <button [disabled] = "item?.disableForceSync" class="btn btn-white w-100 text-left" (click)="forceSyncPopupOpen(item)">
+                              {{ language['Force Sync'] }}
+                              <img class="ml-2" *ngIf="item?.disableForceSync" data-toggle="tooltip" data-placement="top" title="{{item?.disableForceSyncMsg}}"
+                            [ngClass]="{'pointer': item?.disableForceSync}" src="assets/img/tooltip-icon.svg" />
+                            </button>
+                          </div>
+                        </li>
+                        <!-- </ng-container> -->
+                        <!-- <ng-container *ngIf = "!isDev">
+                          <li
+                            *ngIf="hasWriteAccess && (item?.parentuuid || (!item?.parentuuid && item?.deviceModel !=='CMS') || item.type == 'MGMT_SYSTEM')">
+                            <button class="btn btn-white w-100 text-left" (click)="forceSync(item)">
+                              {{ language['Force Sync'] }}
+                            </button>
+                          </li>
+                        </ng-container> -->
+                        <li
+                          *ngIf="item?.ipfixExportConfigurationStatus !== 'UNSUPPORTED' && ((item?.parentuuid && item?.deviceModel !=='CMS') || (!item?.parentuuid && item?.deviceModel !=='CMS'))">
+                          <button class="btn btn-white w-100 text-left" [disabled]="item.ui_modified_communication_state === 'DISCONNECTED'"
+                            (click)="enableDisableIpfix(item, item?.ipfixExportConfigurationStatus === 'CONFIGURED' ? 'disabled': 'enabled')">
+                            {{item?.ipfixExportConfigurationStatus === 'CONFIGURED' ? language['Disable IPFIX']: language['Enable IPFIX']}}
+                          </button>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+
+            <tbody *ngIf="list.length === 0">
+              <tr>
+                <td colspan="10" class="no-data-available">{{language['No data available in
+                  table']}}
+                </td>
+              </tr>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </form>
+</section>
+<ng-template #showProbeStatusModal let-data let-ref="dialogRef">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{ language.ProbeStatus }}</h4>
+    <!-- <button type="button" class="close" aria-label="Close" (click)="close()">
+      <span aria-hidden="true"></span>
+    </button> -->
+  </div>
+  <div class="modal-body">
+    <p *ngIf="isProbeStatus">
+      {{ language.Status }} : {{ probeStatus }}
+      <!-- <b>{{ deleteName }}</b> ? -->
+    </p>
+    <p *ngIf="!isProbeStatus">
+      {{ language[probeStatus] || probeStatus }}
+      <!-- <b>{{ deleteName }}</b> ? -->
+    </p>
+    <div class="showhim d-flex" *ngIf="probeStatusData?.probeversion">
+      <p class="pointer">{{ language['Probe Version'] }} : {{
+        probeStatusData?.probeversion }}</p>
+      <div class="showme" *ngIf="probeStatusData?.probeversion === 'UNAVAILABLE'">{{ language['Please upgrade cms-probe
+        to version MBCMSPROBEVERSION22.3 or above to get probe version'] }}</div>
+    </div>
+
+    <p *ngIf="probeStatusUpdatedTime">
+      {{ language.Time }} : {{ probeStatusUpdatedTime | date: "MM/dd/yyyy, hh:mm a"}}
+    </p>
+  </div>
+  <div class="modal-footer px-0">
+    <button type="button" class="btn-default btn-dft btn-close ml-0" (click)="close()">
+      {{ language.Close }}
+    </button>
+    <!-- <button type="button" class="btn btn-primary" (click)="doDelete()" style="margin-left: 3px">
+      {{ language.Yes }}
+    </button> -->
+  </div>
+</ng-template>
+<ng-template #deleteModal let-data let-ref="dialogRef">
+  <div class="w-100 alert alert-danger fade show my-3" *ngIf="deleteError">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+    <button type="button" class="close" (click)="closeAlert()">
+      <span></span>
+    </button>
+    <div class="d-inline-flex" [innerHtml]="deleteError"></div>
+  </div>
+  <div class="modal-header">
+    <!-- <h4 class="modal-title" id="modal-basic-title">{{ language.Delete }}</h4> -->
+    <button type="button" class="close" aria-label="Close" (click)="close()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="d-flex mt-3 pt-2 px-3">
+    <div class="custom-alert-icon pr-4">
+      <img src="../../../../../assets/img/warning-icon-36px.svg" />
+    </div>
+    <div>
+      <div class="modal-body">
+        <div class="m-title mb-0">
+          {{ language["Are you sure you want to delete the System"] }} <br>
+          <div class="modal-delete-info"><b>{{ deleteName }}</b>?</div>
+        </div>
+      </div>
+      <!--end body-->
+      <div class="modal-footer justify-content-start px-0">
+        <button type="button" class="btn btn-primary py-0 ml-0" (click)="doDelete()">
+          {{ language.deleteDevice }}
+        </button>
+        <button type="button" class="btn-default btn-dft ml-3 py-1" (click)="close()">
+          {{ language.cancel }}
+        </button>
+      </div>
+    </div>
+    <!--end footer-->
+  </div>
+</ng-template>
+
+
+<ng-template #deleteSuccessModal let-data let-ref="dialogRef">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{ language.Delete }}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="close()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>{{ language["Deleted Successfully"] }}</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="close()">
+      {{ language.Close }}
+    </button>
+  </div>
+</ng-template>
+
+
+<ng-template #disconnectModal let-data let-ref="dialogRef">
+  <div class="w-100 alert alert-danger fade show my-3" *ngIf="errors['disconnect'].error">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+    <button type="button" class="close" (click)="closeAlert()">
+      <span></span>
+    </button>
+    <div class="d-inline-flex" [innerHtml]="errors['disconnect'].message"></div>
+  </div>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{language.Disconnect}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="close()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body" *ngIf="!errors['disconnect'].message">
+    <p>
+      {{language['Are you sure you want to Disconnect the System']}}
+      <b>{{ disconnectName }}</b>?
+    </p>
+
+    <div class="loader" *ngIf="isDisconnectInprogress">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="modal-footer pl-0" *ngIf="!isDisconnectInprogress">
+    <button type="button" class="btn btn-primary mr-2" (click)="doDisconnect()">
+      {{ language.Yes }}
+    </button>
+    <button type="button" class="btn-default btn-dft" (click)="close()">
+      {{ language.No }}
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #disconnectSuccessModal let-data let-ref="dialogRef">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{language.Disconnect}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="close()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>{{language['Disconnected Successfully']}}</p>
+  </div>
+  <div class="modal-footer px-0">
+    <button type="button" class="btn-default btn-dft" (click)="close()">
+      {{ language.Close }}
+    </button>
+  </div>
+</ng-template>
+
+<!--Connect-->
+
+<ng-template #connectModal let-data let-ref="dialogRef">
+  <div class="w-100 alert alert-danger fade show my-3" *ngIf="errors['connect'].error">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+    <button type="button" class="close" (click)="closeAlert()">
+      <span></span>
+    </button>
+    <div class="d-inline-flex" [innerHtml]="errors['connect'].message"></div>
+  </div>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{language.Connect}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="close()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="loader" *ngIf="modalLoader">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="">
+      {{language['Are you sure you want to Connect the System']}} <b> {{ connectName }}</b>?
+      <!-- <div class="modal-delete-info"><b> {{ connectName }}</b> ?</div> -->
+    </div>
+  </div>
+  <div class="modal-footer px-0">
+    <button type="button" class="btn-default btn-primary mr-2 ml-0" (click)="doConnect()" [disabled]="modalLoader">
+      {{ language.Yes }}
+    </button>
+    <button type="button" class="btn-default btn-dft py-1" (click)="close()">
+      {{ language.No }}
+    </button>
+  </div>
+</ng-template>
+<ng-template #connectingModal let-data let-ref="dialogRef">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{language.Connect}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="close()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body mh-90">
+    <div class="loader" *ngIf="modalLoader">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+    <p class="mt-4">
+      {{language.Connecting}}....
+    </p>
+  </div>
+  <div class="modal-footer">
+  </div>
+</ng-template>
+
+<ng-template #connectSuccessModal let-data let-ref="dialogRef">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{language.Connect}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="close()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="loader" *ngIf="modalLoader">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+    <p>{{message}}</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="close()">
+      {{ language.Close }}
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #forceSyncModal let-data let-ref="dialogRef">
+  <div class="w-100 alert d-flex alert-danger fade show my-3" *ngIf="errors['forceSync'].error">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+    <button type="button" class="close" (click)="closeAlert()">
+      <!-- <span></span> -->
+    </button>
+    <div class="d-inline-flex" [innerHtml]="errors['forceSync'].message"></div>
+  </div>
+  <div class="modal-header force-header">
+    <!-- <h4 class="modal-title" id="modal-basic-title">{{ language['Force Sync'] }}</h4> -->
+    <button type="button" class="close" aria-label="Close" (click)="close()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body" *ngIf="!errors['forceSync'].message">
+    <div class="warning-message-info">
+      <div class="icon">
+        <img src="./assets/img/ic_warning-36px.svg" />
+      </div>
+      <div class="message">
+        <div class="w-100 title" id="modal-basic-title">
+          {{ forceSyncType ? (language[forceSyncType] + " " + language['Force Sync']) : language['Force Sync'] }}
+        </div>
+        <div class="w-100">{{forceSyncWarnMessage}}
+        </div>
+
+        <div class="mt-3" *ngIf="!isForceSyncInprogress">
+          <button type="button" class="btn btn-primary  mr-3" (click)="doForceSync()">
+            {{ language.Yes }}
+          </button>
+          <button type="button" class="btn-default btn-dft" (click)="close()">
+            {{ language.No }}
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="loader" *ngIf="isForceSyncInprogress">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #forceSyncSuccessModal let-data let-ref="dialogRef">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{ language['Force Sync'] }}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="close()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>{{language[forceSyncMsg] || forceSyncMsg}}</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="close()">
+      {{ language.Close }}
+    </button>
+  </div>
+</ng-template>
+<ng-template #devicesAlarmforceSyncPopup>
+  <div class="w-100 alert d-flex alert-danger fade show my-3" *ngIf="errors['forceSync'].error">
+    <span class="error-img error-img-forcesync"><img src="./assets/img/ic_error-36px.svg" /></span>
+    <button type="button" class="close" (click)="closeAlert()">
+      <!-- <span></span> -->
+    </button>
+    <div class="d-inline-flex" [innerHtml]="errors['forceSync'].message"></div>
+  </div>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{ language['Force Sync'] }}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="close()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="force-sync-list">
+      <ul>
+        <ng-container *ngFor="let fs of forceSyncOptions">
+          <li>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="forceSyncAlarms" [(ngModel)]="selectedForceSync"
+                id="{{fs.value}}" [disabled]="fs['disabled']" value="{{fs.value}}">
+              <label class="form-check-label" for="{{ fs.value }}">
+                {{ language[fs['name']] || fs['name'] }}
+              </label>
+            </div>
+          </li>
+        </ng-container>
+      </ul>
+    </div>
+    <div class="loader" *ngIf="isForceSyncInprogress">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="d-inline-flex mt-2" *ngIf="!isForceSyncInprogress">
+      <button type="button" class="btn-default primary" (click)="deviceAlarmForceSync()"> {{language['Force Sync']}}
+      </button>
+      <button type="button" class="btn-default btn-dft ml-2 btn-overflow-ellip" (click)="close()">
+        {{language['Cancel']}} </button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #enableDisableIpfixModal let-data let-ref="dialogRef">
+  <div class="w-100 alert d-flex alert-danger fade show my-3" *ngIf="errors['enableDisableIpfix'].error">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+    <button type="button" class="close" (click)="closeAlert()">
+      <!-- <span></span> -->
+    </button>
+    <div class="d-inline-flex" [innerHtml]="errors['enableDisableIpfix'].message"></div>
+  </div>
+  <div class="modal-header force-header">
+
+    <button type="button" class="close" aria-label="Close" (click)="close()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body" *ngIf="!errors['enableDisableIpfix'].message">
+    <div class="warning-message-info">
+      <div class="icon">
+        <img src="./assets/img/ic_warning-36px.svg" />
+      </div>
+      <div class="message">
+        <h4 class="w-100 title" id="modal-basic-title">{{ipfixStatusMsg == 'enabled' ? language['Enable IPFIX'] : language['Disable IPFIX']}}</h4>
+        <div class="w-100">{{enableDisableIpfixWarnMessage}}
+        </div>
+
+        <div class="mt-3" *ngIf="!enableDisableIpfixInprogress">
+          <button type="button" class="btn btn-primary  mr-3" (click)="doEnableDisableIpfix()">
+            {{ language.Yes }}
+          </button>
+          <button type="button" class="btn-default btn-dft" (click)="close()">
+            {{ language.No }}
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="loader" *ngIf="enableDisableIpfixInprogress">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #enableDisableIpfixSuccessModal let-data let-ref="dialogRef">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{ipfixStatusMsg == 'enabled' ? language['Enable IPFIX'] : language['Disable IPFIX']}}
+    </h4>
+    <button type="button" class="close" aria-label="Close" (click)="close()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>{{ipfixStatusMsg == 'enabled' ? (language['IPFIX Enabled Successfully'] || 'IPFIX Enabled Successfully') :
+      (language['IPFIX Disabled Successfully'] || 'IPFIX Disabled Successfully')}}</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="close()">
+      {{ language.Close }}
+    </button>
+  </div>
+</ng-template>

@@ -1,0 +1,33 @@
+<div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess"> Access denied due to RBAC. Please consult
+    your
+    Organization Administrator
+    for access.
+</div>
+<div class="col-md-12 mt-4" *ngIf="pageAvailable && hasScopeAccess">
+    <div class="w-100 alert alert-danger  fade show my-3" *ngIf="error">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+        <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+        <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+    </div>
+    <div class="" style="height:auto;">
+        <div class=" fa-chart-wrapper chart-min-h" id="fa-chart-wrapper">
+            <div class="loader" *ngIf="loading">
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border text-primary">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="chart-sec" [ngClass]="!loading ? 'd-block' : 'd-none'">
+                <div class="fa-chart-container mt-5 ">
+                    <div class="fa-chart-container">
+                        <div id="container-up" [ngStyle]="{'height': '450px' }"></div>
+                    </div>
+                    <div class="fa-chart-container">
+                        <div id="container-down"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,177 @@
+.f-weight-300 {
+  font-weight: 300;
+}
+
+.show-sysinfo-table {
+  td {
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 24px;
+    color: #4c4c4c;
+    padding: 0px 10px 0px 0px;
+  }
+
+  tbody tr:first-child {
+    td {
+      border-top: 0;
+    }
+  }
+}
+.refresh-icon img {
+  width: 24px;
+  cursor: pointer;
+}
+
+@mixin animation-name($name) {
+  animation-name: $name;
+  -webkit-animation-name: $name;
+  -moz-animation-name: $name;
+  -ms-animation-name: $name;
+}
+
+@mixin animation-duration($duration) {
+  animation-duration: $duration;
+  -webkit-animation-duration: $duration;
+  -moz-animation-duration: $duration;
+  -ms-animation-duration: $duration;
+}
+
+@mixin animation-timing-function($func) {
+  animation-timing-function: $func;
+  -webkit-animation-timing-function: $func;
+  -moz-animation-timing-function: $func;
+  -ms-animation-timing-function: $func;
+}
+
+@mixin animation($name, $duration, $timing-func) {
+  @include animation-name($name);
+  @include animation-duration($duration);
+  @include animation-timing-function($timing-func);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.icon-btn {
+  border: none;
+  background-color: transparent;
+  outline: 0;
+
+  i {
+    color: #0279ff;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .spin-animation {
+    @include animation(spin, 0.5s, ease-in);
+  }
+}
+.icon-btn-inline {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  cursor: pointer;
+}
+.tbl-common {
+  table-layout: fixed;
+  width: 100%;
+}
+table.tbl-common tbody tr td,
+table.tbl-common thead tr th {
+  padding-left: 10px;
+  padding-right: 0px !important;
+}
+.table-card-row:nth-child(even) td tr.table-header-row {
+  background-color: #f8f8fa;
+}
+.expandable-row {
+  transition: ease all 200ms;
+}
+.table-header-selected {
+  background-color: #edf5ff !important;
+  transition: ease all 200ms;
+}
+.cardex-down {
+  margin-left: 6px;
+}
+.cardex-down:not(.cardex-up) {
+  img {
+    transform: rotate(180deg);
+  }
+}
+.table-container {
+  background-color: #ffffff;
+  overflow: auto;
+}
+.table-container .table td {
+  padding: 0 10px 0 0 !important;
+  line-height: 24px;
+}
+
+.table-container thead td {
+  border-bottom: 1px solid #ebeaef;
+}
+.mr-12 {
+  margin-right: 12px;
+}
+.pl-20 {
+  padding-left: 20px;
+}
+.border-bottom-gray {
+  border-bottom: 2px solid #cccccc;
+}
+.border-bottom {
+  border-bottom-color: #cccccc !important;
+}
+.controller-table .min-w40 {
+  min-width: 134px;
+}
+.green-text {
+  color: #507500;
+}
+.red-text {
+  color: #e51a1a;
+}
+a.text-list.cursor-pointer {
+  color: #0279ff;
+}
+.no-data-available {
+  text-align: center;
+}
+.min-width-100 {
+  min-width: 100px;
+}
+
+.cursornallow {
+  pointer-events: none;
+}
+.pointer-auto{
+    pointer-events: auto !important;
+}
+.table-wrapper > .tbl-common.dataTable{border-bottom: 1px solid #cccccc;}
+.min-width-70{min-width: 70px;}
+.table-custom-header{margin-bottom: 0 !important;border-bottom: 0 !important;
+  table-layout: fixed;
+}
+.table-custom-header th{border-bottom: 0;}
+.table.tbl-common div.header{
+  padding-left: 10px;
+  padding-bottom: 14px;
+  padding-bottom: 8px;
+}
+.width-20{
+  width: 20%;
+}
+.width-30{width: 30%;}
+.width-10{
+  width: 10%;
+}
+
+.hide-container{
+  display: none;
+}

@@ -1,0 +1,33 @@
+<div class="wizard-start" id="wizardStart">
+
+</div>
+<div class="wizard-form">
+    <form id="wk-start-form">
+        <div class="form-group ccl-form row">
+            <label class="col-2 control-label">{{language.Name}}</label>
+            <div class="col-10">
+                <input id="wk-name_input" name="name_input" type="text" [(ngModel)]='workflowInputData.name' required=""
+                    aria-required="true" aria-describedby="name_input-error" placeholder={{language.Name}}>
+                <div *ngIf="saveClicked && !workflowInputData.name" id="name_input-error" class="errorMessage">
+                    <small>
+                        {{language.Enter_A_Value}}
+                    </small>
+                </div>
+            </div>
+        </div>
+        <div class="form-group ccl-form row">
+            <label class="col-2 control-label">{{language.Description}}
+                <small> {{language.optional}} </small></label>
+            <div class="col-10">
+                <input id="wk-decription_input" name="description" type="text"
+                    [(ngModel)]='workflowInputData.description' placeholder={{language.Description}}>
+            </div>
+        </div>
+        <div class="workflow-next-previous">
+            <button type="button" class="btn-arrow btn-arr-prev btn-grey mr-2" disabled id="previous"><img
+                    src="assets/img/ic_chevronleft_grey.svg"> {{language.Previous}} </button>
+            <button type="button" class="btn-arrow btn-arr-nxt primary " (click)='go_next()' id="next">{{language.Next}}
+                <img src="assets/img/ic_chevron-r-w.svg"></button>
+        </div>
+    </form>
+</div>

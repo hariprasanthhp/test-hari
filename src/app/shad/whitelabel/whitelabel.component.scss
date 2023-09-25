@@ -1,0 +1,56 @@
+
+@import "~src/assets/variables";
+.label-link {
+    margin-bottom: 15px;
+	  a {
+	    display: flex;
+	    justify-content: flex-end;
+	    text-decoration: underline!important;
+	    font-weight: 600;
+	    cursor: pointer;
+	    &:hover{
+	    	color: $primary;
+	    }
+	}
+}
+.app-info {
+	thead {
+		tr {
+	    	background: #F8F8FA;
+		}
+	}
+}
+.link{
+	text-decoration: underline!important;
+	cursor: pointer;
+	color:$greyaa;
+	&:hover{
+		color: $primary;
+	}
+}
+
+.w-10{
+	width: 10%;
+}
+
+.w-15{
+	width: 15%;
+}
+
+.w-30{
+	width: 30%;
+}
+.nodata{
+	text-align: center;
+	font-size: 16px;
+}
+
+
+.box {
+	float: left;
+	height: 15px;
+	width: 15px;
+	padding: 10px;
+	border: 1px solid black;
+	clear: both;
+  }

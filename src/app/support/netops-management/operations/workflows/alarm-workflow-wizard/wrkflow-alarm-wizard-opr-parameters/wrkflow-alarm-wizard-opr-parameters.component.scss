@@ -1,0 +1,179 @@
+/*toggle style*/
+// colors
+$blue    : #269bff;
+$bg-light: #f2f2f2;
+$bg-med  : #eee;
+
+// the magic
+div.checkbox.switcher,
+div.radio.switcher {
+  float: right;
+
+  label {
+    padding: 0;
+    cursor: pointer;
+
+    * {
+      vertical-align: middle;
+    }
+
+    input {
+      display: none;
+
+      &+span {
+        position     : relative;
+        display      : inline-block;
+        width        : 45px;
+        height       : 25px;
+        background   : #ffffff;
+        border       : 1px solid #0279ff;
+        border-radius: 50px;
+        transition   : all 0.3s ease-in-out;
+        padding      : 5px;
+
+        small {
+          position     : absolute;
+          display      : block;
+          width        : 20px;
+          height       : 19px;
+          background   : #0279ff;
+          border-radius: 50%;
+          transition   : all 0.3s ease-in-out;
+          left         : 2px;
+          top          : 2px;
+        }
+      }
+
+      &:checked+span {
+        background  : $blue;
+        border-color: $blue;
+
+        small {
+          left      : 50%;
+          background: #ffffff;
+        }
+      }
+    }
+  }
+}
+
+$btn-color      : #2078fa;
+$btn-hover-color: #1454b2;
+$btn-disabled   : #c0ddfd;
+
+$btn-sec-color      : #f8f8fa;
+$btn-sec-hover-color: #ebeaef;
+$btn-sec-disabled   : #fcfcfd;
+
+@mixin shadow {
+  box-shadow: 0 0px 0px 0 rgba(0, 0, 0, 0.16), 0 0px 5px 0 rgba(0, 0, 0, 0.16) !important
+}
+
+form {
+  width: 100%;
+}
+
+.f-w-600 {
+  font-weight: 600;
+}
+
+[type=radio]:checked,
+[type=radio]:not(:checked) {
+  position: relative !important;
+  left    : unset !important;
+  cursor  : pointer;
+}
+
+// .dropdown {
+//     width: 100%;
+//     padding: 5px 15px;
+//     border: none;
+//     background: transparent;
+//     outline: none;
+//     -moz-appearance: none;
+//     -webkit-appearance: none;
+//     position: relative;
+//     background: url(http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png) no-repeat right;
+//     background-position:
+//     calc(100% - 11px) calc(1em + -6px), calc(100% - 16px) calc(1em + 2px), 100% 0;
+//   background-size:
+//     15px 15px,
+//     15px 15px,
+//     2.5em 2.5em;
+//     line-height: 1.5em;
+//     border: 1px solid #ced4da;
+//     border-radius: 3px;
+
+//   }
+
+//   .dropdown:active {
+//       @include shadow;
+//       border-radius: 25px 25px 0 0 !important;
+//   }
+
+//   select * {
+//       background: #ffffff !important;
+//       outline: none !important;
+//       border: none !important;
+//       color: #495057;
+//       line-height: 1.5em;
+//       :hover {
+//           background-color: #e5e5e5 !important;
+//           outline: none !important;
+//           border: none !important;
+//       }
+//   }
+
+
+// select{
+//     width: 100%;
+//     border: 1px solid #dadada;
+//     height: 34px;
+//     padding: 0 10px;
+//     border-radius: 26px;
+// }
+.pr-46 {
+  padding-right: 46px;
+}
+
+.br-26 {
+  border-radius: 26px;
+}
+
+.new-profile-table {
+  margin: 10px 0px;
+}
+
+
+
+.profile-table {
+  margin: 10px 0px;
+}
+
+// .ng-dropdown-panel{
+//       width: 96%;
+//       left: 15px;
+// }
+
+.delete-org-btn i:hover {
+  color: red
+}
+
+
+.custom-selectbox-opr .ng-dropdown-panel {
+  z-index: 1;
+
+  width         : 100%;
+  padding-top   : 10px;
+  padding-bottom: 10px;
+  border-radius : 10px !important;
+  min-height    : auto;
+  max-height    : 260px;
+  overflow-y    : auto;
+  font-size     : 14px;
+  transition    : 0.5s ease;
+}
+
+.errorMessage {
+  padding-left: 0px !important;
+}

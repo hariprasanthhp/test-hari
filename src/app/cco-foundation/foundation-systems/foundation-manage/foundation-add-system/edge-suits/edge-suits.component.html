@@ -1,0 +1,1423 @@
+<div class="loader" *ngIf="loading">
+  <div class="d-flex justify-content-center">
+    <div class="spinner-border text-primary">
+      <span class="sr-only">{{language.Loading}}</span>
+    </div>
+  </div>
+</div>
+<div class="w-100 alert alert-danger fade show" *ngIf="error">
+  <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+  <button type="button" class="close" (click)="closeAlert()">
+    <span></span>
+  </button>
+  <div class="d-inline-flex" [innerHtml]="language[errorInfo] || errorInfo"></div>
+</div>
+
+<div class="w-100 alert alert-success fade show" *ngIf="success">
+  <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+  <button type="button" class="close" (click)="closeAlert()">
+    <span></span>
+  </button>
+  <div class="d-inline-flex" [innerHtml]="language[successInfo] || successInfo"></div>
+</div>
+<form [formGroup]="edgeSuitsForm" class="ccl-form" autocomplete="disabled" (ngSubmit)="saveSystem()"
+  class="needs-validation">
+  <div class="row my-4">
+    <div class="col-md-6 pl-0"
+      *ngIf="(IQ_SuiteEnable && (ProAndExpIQEntitleEnable || ProductIQEntitleEnable || ExpIQEntitleEnable)) || myCommunityIQEntitlement || ((IQ_SuiteEnable) && smallBizIQentitlement &&(!opMode || opMode === 'RG' ) && AllFormData?.systemId)">
+      <div class="accordion" id="accordionExample1">
+        <div *ngIf="IQ_SuiteEnable && (ProAndExpIQEntitleEnable || ProductIQEntitleEnable || ExpIQEntitleEnable) ">
+          <div class="card" formGroupName="protectIQ"
+            *ngIf="IQ_SuiteEnable && (ProductIQEntitleEnable || ProAndExpIQEntitleEnable) && !hidePlan">
+            <div class="accordion-title pointer" id="headingOne1">
+              <div class="" type="" data-toggle="collapse" data-target="#collapseProtectIQ" aria-expanded="false"
+                aria-controls="collapseProtectIQ">
+                <div class="d-flex justify-content-between">
+                  <div class="d-inline-flex"> <span class="mr-2 edge"><img
+                        src="../../../../../../assets/img/ic_chevronright.svg" /></span> {{language["Protect_IQ"]}}
+                  </div>
+                  <div class="d-inline-flex enabled-disabled align-items-end"
+                    [ngClass]=" { 'toggleDisabled' : !edgeSuitsForm.value.protectIQ.subscribed  }">
+                    <span class="pr-np1">{{edgeSuitsForm.value.protectIQ.subscribed ? language.Subscribed:language.Unsubscribed}},</span><span
+                      class="d-inline-flex enabled-disabled align-items-end"
+                      [ngClass]=" { 'toggleDisabled' : !edgeSuitsForm.value.protectIQ.enabled  }">
+                      {{edgeSuitsForm.value.protectIQ.enabled ? language.enabled:language.Disabled}}</span> </div>
+                </div>
+
+              </div>
+            </div>
+
+            <div id="collapseProtectIQ" class="collapse" aria-labelledby="headingOne1" data-parent="#accordionExample1">
+              <div class="content-body">
+                <div class="Protect-iq-table experienceiq-setting-info">
+
+                  <div class="col-12 col-lg-12 pl-1 mb-2">
+                    <div class="form-check form-check-inline">
+                      <input type="radio" id="materialInline1" formControlName="subscribed" [value]="true" [attr.disabled]="PIQEIQDisable ? '' : null"
+                        (change)="formValueChanges()">
+                      <label class="form-check-label" for="materialInline1">{{ language.Subscribed }}</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input type="radio" id="materialInline2" formControlName="subscribed" [value]="false" [attr.disabled]="PIQEIQDisable ? '' : null"
+                        (change)="formValueChanges()">
+                      <label class="form-check-label" for="materialInline2">{{language.Unsubscribed }}</label>
+                    </div>
+                  </div>
+                  <!-- <div class="col-12 col-lg-12 pl-1 mt-3 font-weight-bold">Service</div> -->
+                  <div class="col-12 col-lg-12 pl-1">
+                    <div class="form-check form-check-inline mr-32px">
+                      <input type="radio" id="protectIQEnabledRadio" [attr.disabled]="(protectIQDisabled || proExpDisable) ? '' : null"
+                        formControlName="enabled" [value]="true" (change)="formValueChanges()">
+                      <input *ngIf="false" type="checkbox" id="protectIQAgent" formControlName="agentConnected"
+                        [checked]="edgeSuitsForm.value.protectIQ?.agentConnected">
+                      <label class="form-check-label" for="protectIQEnabledRadio">{{ language.enabled }}</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input type="radio" id="protectIQDisabledRadio" [attr.disabled]="(protectIQDisabled || proExpDisable)? '' : null"
+                        formControlName="enabled" [value]="false" (change)="formValueChanges()">
+                      <label class="form-check-label" for="protectIQDisabledRadio">{{language.Disabled }}</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card" formGroupName="experienceIQ"
+            *ngIf="IQ_SuiteEnable && (ExpIQEntitleEnable || ProAndExpIQEntitleEnable) && !hidePlan">
+            <div class="accordion-title pointer" id="ExperienceIQheading">
+              <div class="" type="" data-toggle="collapse" data-target="#collapseExperienceIQ" aria-expanded="false"
+                aria-controls="collapseExperienceIQ">
+                <div class="d-flex justify-content-between">
+                  <div class="d-inline-flex"> <span class="mr-2 edge"><img
+                        src="../../../../../../assets/img/ic_chevronright.svg" /></span> {{language["experienceIQ"]}}
+                  </div>
+                  <div class="d-inline-flex enabled-disabled align-items-end"
+                   >
+                    <span class="pr-np1" [ngClass]=" { 'toggleDisabled' : !edgeSuitsForm.value.experienceIQ.subscribed  }">
+                      {{edgeSuitsForm.value.experienceIQ.subscribed ?
+                        language.Subscribed:language.Unsubscribed}},
+                    </span>
+                  <span
+                      [ngClass]=" { 'toggleDisabled' : !edgeSuitsForm.value.experienceIQ.enabled  }">{{edgeSuitsForm.value.experienceIQ.enabled
+                      ? language.enabled:language.Disabled}}</span> </div>
+                </div>
+
+
+              </div>
+            </div>
+
+            <div id="collapseExperienceIQ" class="collapse" aria-labelledby="ExperienceIQheading"
+              data-parent="#accordionExample">
+              <div class="content-body">
+                <div class="Protect-iq-table experienceiq-setting-info">
+                  <!-- <div class="col-12 col-lg-12 pl-1 font-weight-bold">Subscription</div> -->
+                  <div class="col-12 col-lg-12 pl-1 mb-2">
+                    <div class="form-check form-check-inline">
+                      <input type="radio" id="materialInline3" formControlName="subscribed" [value]="true"  [attr.disabled]="PIQEIQDisable ? '' : null"
+                        (change)="formValueChanges();">
+                      <label class="form-check-label" for="materialInline3">{{ language.Subscribed }}</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input type="radio" id="materialInline4" formControlName="subscribed" [value]="false"  [attr.disabled]="PIQEIQDisable ? '' : null"
+                        (change)="formValueChanges()">
+                      <label class="form-check-label" for="materialInline4">{{language.Unsubscribed }}</label>
+                    </div>
+                  </div>
+                  <!-- <div class="col-12 col-lg-12 pl-1 mt-3 font-weight-bold">Service</div> -->
+                  <div class="col-12 col-lg-12 pl-1">
+                    <div class="form-check form-check-inline mr-32px">
+                      <input type="radio" id="experianceIQEnabledRadio"
+                        [attr.disabled]="(experianceIQDisabled || proExpDisable)? '' : null" formControlName="enabled" [value]="true"
+                        (change)="formValueChanges()">
+                      <input *ngIf="false" type="checkbox" id="experianceIQAgent" formControlName="agentConnected"
+                        [checked]="edgeSuitsForm.value.experienceIQ?.agentConnected">
+                      <label class="form-check-label" for="experianceIQEnabledRadio">{{ language.enabled }}</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input type="radio" id="experianceIQDisabledRadio"
+                        [attr.disabled]="(experianceIQDisabled || proExpDisable) ? '' : null" formControlName="enabled"
+                        (change)="formValueChanges()" [value]="false">
+                      <label class="form-check-label" for="experianceIQDisabledRadio">{{language.Disabled }}</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          *ngIf="!ProAndExpIQEntitleEnable && !ProductIQEntitleEnable && !ExpIQEntitleEnable && !myCommunityIQEntitlement && !smallBizIQentitlement">
+          <div class="alert alert-info margin-top-20" role="alert">
+            <span>{{language['There is no entitlement of IQ suites']}} </span>
+          </div>
+        </div>
+        <!--  -->
+        <div class="card" formGroupName="myCommunityIQ" *ngIf="myCommunityIQEntitlement">
+          <div class="accordion-title pointer" id="headingOne">
+            <div class="" type="" id="collapseMyCommunityIQToggle" data-toggle="collapse" data-target="#collapseMyCommunityIQ" aria-expanded="false"
+              aria-controls="collapseMyCommunityIQ">
+              <div class="d-flex justify-content-between">
+                <div class="d-inline-flex text-over-ellipse"> <span class="mr-2 edge"><img
+                      src="../../../../../../assets/img/ic_chevronright.svg" /></span>
+                  <span title="{{language['myCommunityIQ']}}" class="capt">{{language["myCommunityIQ"]}}</span>
+                </div>
+                <div class="d-inline-flex enabled-disabled align-items-end smart-state">
+                  <span
+                    [ngClass]=" { 'toggleDisabled' : !edgeSuitsForm.value.myCommunityIQ.subscriber.enable,'bold-label' :edgeSuitsForm.value.myCommunityIQ.subscriber.enable}">
+                    {{edgeSuitsForm.value.myCommunityIQ.subscriber.enable ?
+                    language.Subscribed:AllFormData?.subscriber?.subscriberLocationId?language.Unsubscribed:''}}{{IQ_SuiteEnable &&(edgeSuitsForm.value.myCommunityIQ.subscriber.enable
+                    || AllFormData?.subscriber?.subscriberLocationId) &&
+                    ((edgeSuitsForm.value.myCommunityIQ.passpoint?.enable && rgStatusMsg) ||
+                    (!edgeSuitsForm.value.myCommunityIQ.passpoint?.enable && AllFormData?.systemId)) ? ','
+                    :''}}<span class="pr-np1" *ngIf="IQ_SuiteEnable &&((edgeSuitsForm.value.myCommunityIQ.subscriber.enable
+                    || AllFormData?.subscriber?.subscriberLocationId) &&
+                    ((edgeSuitsForm.value.myCommunityIQ.passpoint?.enable && rgStatusMsg) ||
+                    (!edgeSuitsForm.value.myCommunityIQ.passpoint?.enable && AllFormData?.systemId)))"></span></span><span
+                    [ngClass]=" { 'bold-label' : (edgeSuitsForm.value.myCommunityIQ.passpoint?.enable &&
+                    rgStatusMsg),'toggleDisabled' :(!edgeSuitsForm.value.myCommunityIQ.passpoint?.enable)}" class="pr-np1">
+                    <span class="pr-np1" *ngIf="IQ_SuiteEnable &&((!(edgeSuitsForm.value.myCommunityIQ.passpoint?.enable &&
+                    rgStatusMsg) && (edgeSuitsForm.value.myCommunityIQ.passpoint?.enable &&
+                    !rgStatusMsg) && (edgeSuitsForm.value.myCommunityIQ.subscriber.enable || AllFormData?.subscriber?.subscriberLocationId ) ))">,</span>{{(edgeSuitsForm.value.myCommunityIQ.passpoint?.enable &&
+                    rgStatusMsg) ? language[rgStatusMsg]:(edgeSuitsForm.value.myCommunityIQ.passpoint?.enable &&
+                    !rgStatusMsg) ? '-':IQ_SuiteEnable &&(!opMode || opMode === 'RG') && AllFormData?.systemId ? language.Unsubscribed
+                    :''}}{{IQ_SuiteEnable && AllFormData?.systemId ? ',':''}}</span><span *ngIf="IQ_SuiteEnable && (!opMode || opMode === 'RG') && AllFormData?.systemId"
+                    [ngClass]="{'eduroam-status':edgeSuitsForm.value.myCommunityIQ?.eduroam?.enable,'eduroam-status-disabled':!(edgeSuitsForm.value.myCommunityIQ?.eduroam?.enable)}"> {{(eduroamStatusMsg === 'Enable in progress' ||eduroamStatusMsg === 'Disable in progress')? language["Eduroam"]:''}} {{(edgeSuitsForm.value.myCommunityIQ?.eduroam?.enable && eduroamStatusMsg) ? language[eduroamStatusMsg]:edgeSuitsForm.value.myCommunityIQ?.eduroam?.enable && !eduroamStatusMsg ? '-':language['Disabled']}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="collapseMyCommunityIQ" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+            <div class="content-body">
+              <div class="warning-msg row" *ngIf="bspInfermationSubmitted=='notSubmitted'">
+                <span class="error-img col-1 px-0"><img src="./assets/img/warning-icon.svg" /></span>
+                <div class="col-10"> {{language['myCommunityIQ_Provider_is_needed']}} </div>
+                <button type="button" class="close col-1" (click)="bspInfermationSubmitted = 'closed'">
+                  <span></span>
+                </button>
+              </div>
+              <div class="warning-msg row" *ngIf="noEmailAlert">
+                <span class="error-img col-1 px-0"><img src="./assets/img/warning-icon.svg" /></span>
+                <div class="col-10"> {{language["myCommunityIQ_Membership_address"]}} </div>
+                <button type="button" class="close col-1" (click)="noEmailAlert = false">
+                  <span></span>
+                </button>
+              </div>
+              <div class="mt-2" formGroupName="subscriber" *ngIf="AllFormData?.subscriber?.subscriberLocationId">
+                <!-- <form [formGroup]="subscriberForm"> -->
+                <div class="my-2 font-weight-bold">{{language.Subscriber_Membership}}</div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" formControlName="enable" id="Subscribed"
+                    [attr.disabled]="(!AllFormData?.subscriber?.email || (  ( bspInfermationSubmitted=='notSubmitted' || bspInfermationSubmitted == 'closed') || bspInfermationSubmitted == 'closed'))? '' : null"
+                    [value]="true" (change)="formValueChanges();">
+                  <label class="form-check-label" for="Subscribed">{{language.Subscribed}}</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio"
+                    [attr.disabled]="(!AllFormData?.subscriber?.email ||  ( bspInfermationSubmitted=='notSubmitted' || bspInfermationSubmitted == 'closed'))? '' : null"
+                    formControlName="enable" id="Unsubscribed" [value]="false" (change)="formValueChanges();">
+                  <label class="form-check-label" for="Unsubscribed">{{language.Unsubscribed}}</label>
+                </div>
+                <div class="d-flex align-items-end justify-content-between my-2"
+                  *ngIf="myCommunityControl?.value?.subscriber?.enable">
+                  <div class="select-community">
+                    <label class="mb-2 form-check-label" for="Community">{{language.Available_Community}}
+                      <span class="error">*</span>
+                    </label>
+                    <ng-select [items]="SubscriberCommunityArr" [multiple]="true" *ngIf="refresh"
+                      [readonly]="(!AllFormData?.subscriber?.email ||  ( bspInfermationSubmitted=='notSubmitted' || bspInfermationSubmitted == 'closed'))"
+                      formControlName="communitiesDuplicate" bindLabel="communityName" bindValue="id"
+                      (change)="formValueChanges()">
+                    </ng-select>
+                    <!-- [maxSelectedItems]="calculateMaximumSelect('subscriber')" -->
+                    <div *ngIf="(submitted && myCommunityControl?.value?.subscriber?.enable) && !myCommunityControl?.value?.subscriber?.communities?.length">
+                      <span class="mandatory-msg"> {{language["Please_select_community"]}} </span>
+                    </div>
+                    <div
+                      *ngIf="(((subscriberMembershipList?.length)?subscriberMembershipList.length:0) + ((myCommunityControl?.value?.subscriber?.communitiesDuplicate?.length)?myCommunityControl.value.subscriber.communitiesDuplicate.length:0)) > 8 ">
+                      <small class="required-field mandatory-msg"> {{language["The_max_number_of_allowed_communities_is_10"]}}
+                      </small>
+                    </div>
+                  </div>
+                  <button type="button" class="btn-default primary" id="nonrg"
+                    [disabled]="(!AllFormData?.subscriber?.email) || (!myCommunityControl.value?.subscriber?.communitiesDuplicate?.length) ||  ( bspInfermationSubmitted=='notSubmitted' || bspInfermationSubmitted == 'closed') || (((subscriberMembershipList?.length)?subscriberMembershipList.length:0) + ((myCommunityControl?.value?.subscriber?.communitiesDuplicate?.length)?myCommunityControl.value.subscriber.communitiesDuplicate.length:0)) > 8 "
+                    (click)="addCommunity()">
+                    {{language.Add_to_Membership}}</button>
+                </div>
+                <!-- </form> -->
+              </div>
+
+
+              <div class="myCommunity-table" *ngIf="myCommunityControl?.value?.subscriber?.enable">
+                <div class="microsites-table mt-2">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>{{language.Community_Memberships}}</th>
+                        <th>{{language.Action}}</th>
+
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of subscriberMembershipList">
+                        <td>{{item.communityName}} </td>
+                        <td class="actions">
+
+                          <i class="fas fa-trash-alt p-1 primary pointer ml-2" title="{{language.Delete}}"
+                            (click)="openCommunityDeleteModal(item,deleteModal,'subscriber')"></i>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- //*ngIf="deviceInfo?.opMode == 'RG'"  -->
+              <div class="" formGroupName="passpoint" *ngIf="IQ_SuiteEnable &&(!opMode || opMode === 'RG') && AllFormData?.systemId">
+                <div class="mb-2 font-weight-bold">{{language.System_Membership}}</div>
+                <div class="warning-msg row" *ngIf="!showPasspointNAAlert">
+                  <span class="error-img col-1 px-0"><img src="./assets/img/warning-icon.svg" /></span>
+                  <div class="col-10"> {{passpointNAReason}}
+                  </div>
+                  <button type="button" class="close col-1" (click)="cancel()">
+                    <span></span>
+                  </button>
+                </div>
+                <div *ngIf="enableStatus && !hideStatus" [class]="rgStatusClass">
+                  <div class="icon">
+                    <img [src]="rgStatusImg">
+                  </div>
+                  <div class="message flex-column align-items-start">
+                    {{language[rgStatusMsg]}}
+                    <div *ngIf="rgStatus == 'failed'" >{{errorStatusRg}}</div>
+                  </div>
+                  <div *ngIf="enableRefresh" class="refresh">
+                    <span class="cursor-pointer primary mt-4" (click)="refreshRGstatus()"><i
+                        class="fas fa-sync"></i></span>
+                  </div>
+                  <div *ngIf="!enableRefresh" class="close" (click)="enableStatus = false">
+                    <img src="../.../../../../../../../assets/img/ic_close-44px.svg">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="form-check mb-2">
+                    <input class="form-check-input" formControlName="enable"
+                      [attr.disabled]="(enableRefresh ||  ( bspInfermationSubmitted=='notSubmitted' || bspInfermationSubmitted == 'closed') || !commIqEnable)?'':null"
+                      type="checkbox" value="" id="defaultCheck1" (change)="formValueChanges();communityEdit();addValidationForHotspotConfiguration($event)" [ngClass]="{'inp-disabled':(enableRefresh ||  ( bspInfermationSubmitted=='notSubmitted' || bspInfermationSubmitted == 'closed') || !commIqEnable)}">
+                    <label class="form-check-label cursor-pointer" for="defaultCheck1">
+                      {{language.Activate_Hotspot}}
+                    </label>
+                  </div>
+
+                </div>
+
+                <div class="d-flex align-items-end justify-content-between my-2"
+                  *ngIf="myCommunityControl?.get('passpoint')?.value?.enable">
+                  <div class="select-community">
+                    <label class="mb-2 form-check-label" for="Community">{{language.Available_Community}}
+                    </label>
+                    <ng-select [items]="rgCommunityArr"
+                      [readonly]="(enableRefresh ||  ( bspInfermationSubmitted=='notSubmitted' || bspInfermationSubmitted == 'closed') || !commIqEnable)"
+                      (change)="formValueChanges();" *ngIf="RGrefresh" [multiple]="true" bindLabel="communityName"
+                      bindValue="id" formControlName="communitiesDuplicate">
+                    </ng-select>
+                    <!-- <div *ngIf="passpointError">
+                    [maxSelectedItems]="calculateMaximumSelect('passpoint')"
+                    <small style="color: red">{{language["Please_select_community"]}} </small>
+                  </div> -->
+                    <div
+                      *ngIf="(((rgMembershipList?.length)?rgMembershipList.length:0) + ((myCommunityControl.get('passpoint')?.value.communitiesDuplicate?.length)?myCommunityControl.get('passpoint').value.communitiesDuplicate.length:0))>16">
+                      <small class="required-field"> {{language["The_max_number_of_allowed_communities_is_16"]}}
+                      </small>
+                    </div>
+                  </div>
+
+
+
+                  <button type="button" class="btn-default primary" id="rg" (click)="addRGCommunity()"
+                    [disabled]="(!myCommunityControl.get('passpoint')?.value.communitiesDuplicate?.length ||  ( bspInfermationSubmitted=='notSubmitted' || bspInfermationSubmitted == 'closed') || !commIqEnable || (((rgMembershipList?.length)?rgMembershipList.length:0) + ((myCommunityControl.get('passpoint')?.value.communitiesDuplicate?.length)?myCommunityControl.get('passpoint').value.communitiesDuplicate.length:0))>16)">
+                    {{language.Add_to_Membership}} </button>
+                </div>
+                <!-- </form> -->
+                <div class="myCommunity-table" *ngIf="myCommunityControl?.get('passpoint')?.value?.enable">
+                  <div class="microsites-table mt-2">
+                    <table class="table">
+                      <thead>
+                        <tr>
+
+
+                          <th>{{language.Community_Memberships}}</th>
+                          <th>{{language.Action}}</th>
+
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let item of rgMembershipList">
+                          <td>{{item.communityName}} </td>
+                          <td class="actions" *ngIf="this.AllFormData.edgeSuites?.myCommunityIQ?.passpoint?.communities && this.AllFormData.edgeSuites?.myCommunityIQ?.passpoint?.communities?.length !==0">
+
+                            <i class="fas fa-trash-alt p-1 primary pointer ml-2" title="{{language.Delete}}"
+                              (click)="openCommunityDeleteModal(item,removeCommunityModal,'rg')"></i>
+                          </td>
+                          <td class="actions" *ngIf="!this.AllFormData.edgeSuites?.myCommunityIQ?.passpoint?.communities || this.AllFormData.edgeSuites.myCommunityIQ?.passpoint?.communities?.length === 0">
+
+                            <i class="fas fa-trash-alt p-1 primary pointer ml-2" title="{{language.Delete}}"
+                              (click)="openCommunityDeleteModal(item,deleteModal,'rg')"></i>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="row" *ngIf="IQ_SuiteEnable && (!opMode || opMode === 'RG') && AllFormData?.systemId">
+                  <div class="col-md-12">
+                    <div class="eduroam-title"> {{language["Eduroam"]}} </div>
+                    <div *ngIf="enableeduroamStatus" [class]="eduroamStatusClass">
+                      <div class="icon">
+                        <img [src]="eduroamStatusImg">
+                      </div>
+                      
+                      <div class="message flex-column align-items-start">
+                        {{language[eduroamStatusMsg]}}
+                        <div *ngIf="eduroamStatus == 'failed'" >{{errorStatusEdurom}}</div>
+                      </div>
+                      <div *ngIf="enableeduroamRefresh" class="refresh">
+                        <span class="cursor-pointer primary mt-4" (click)="refreshRGstatus()"><i
+                            class="fas fa-sync"></i></span>
+                      </div>
+                      <div *ngIf="!enableeduroamRefresh" class="close" (click)="enableeduroamStatus = false">
+                        <img src="../.../../../../../../../assets/img/ic_close-44px.svg">
+                      </div>
+                    </div>
+                    <div class="form-group" formGroupName="eduroam">
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" formControlName="enable" type="radio" id="inlineRadio1"  (change)="formValueChanges();"
+                          [attr.disabled]="(enableeduroamRefresh ||  ( bspInfermationSubmitted=='notSubmitted' || bspInfermationSubmitted == 'closed') || !commIqEnable)?'':null"
+                          (click)="addValidatiorEduroamGroup();addAndRemoveNetworkGroupValidation()" [value]="true">
+                        <label class="form-check-label" for="inlineRadio1"> {{language['Enabled']}} </label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" formControlName="enable"
+                        [attr.disabled]="(enableeduroamRefresh ||  ( bspInfermationSubmitted=='notSubmitted' || bspInfermationSubmitted == 'closed') || !commIqEnable)?'':null"
+                          type="radio" id="inlineRadio2"  (change)="formValueChanges();"
+                          (click)="removeValidatiorEduroamGroup();addAndRemoveNetworkGroupValidation();" [value]="false">
+                        <label class="form-check-label" for="inlineRadio2"> {{language["Disabled"]}} </label>
+                      </div>
+
+                    </div>
+
+                    <div class="" *ngIf="edgeSuitsForm?.value?.myCommunityIQ?.eduroam?.enable">
+                      <!-- <form> -->
+                      <div formGroupName="eduroam">
+                        <div class="form-group">
+                          <label for="Primary-RADIUS"> {{language["Primary RADIUS Server (FQDN or IP Address, and Port)"]}} <span
+                              class="error">*</span>
+                          </label>
+                          <input type="text" class="form-control" maxlength="255" formControlName="primaryServer"
+                          [attr.disabled]="(enableeduroamRefresh ||  ( bspInfermationSubmitted=='notSubmitted' || bspInfermationSubmitted == 'closed') || !commIqEnable)?'':null"  (change)="formValueChanges();"
+                            (keypress)="addValidatorForprimaryServer()" id="Primary-RADIUS" (keyup)="radiousServerShoudNotMatchValidation('primaryRadious')" autocomplete="off"
+                            placeholder="{{language['sample-primary-radius:port']}}" trimSpace [formValue]="edgeSuitsForm">
+                          <div *ngIf="myCommunityControl.get('eduroam')?.get('primaryServer')?.errors"
+                            class="invalid-feedback d-block">
+                            <small
+                              *ngIf="submitted && myCommunityControl.get('eduroam')?.get('primaryServer')?.errors?.required"
+                              class="c-red mandatory-msg">{{language['This field is required']}}</small>
+                            <small
+                              *ngIf="(myCommunityControl.get('eduroam')?.get('primaryServer')?.touched||myCommunityControl.get('eduroam')?.get('primaryServer')?.dirty) && myCommunityControl.get('eduroam')?.get('primaryServer')?.errors?.pattern"
+                              class="c-red  mandatory-msg">{{language['You have entered an invalid RADIUS Server']}}</small>
+                          </div>
+                          <div  class="invalid-feedback d-block" *ngIf="showRadiousError && showUnder == 'primaryRadious'">
+                            <small class="c-red  mandatory-msg">{{language['Primary Server And Secondary Server Should Not Be
+                              Same']}}</small>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="Secondary-RADIUS"> {{language["Secondary RADIUS Server (FQDN or IP Address, and Port)"]}}
+                          </label>
+                          <input class="form-control" type="text" formControlName="secondaryServer" id="Secondary-RADIUS" maxlength="255" 
+                          [attr.disabled]="(enableeduroamRefresh ||  ( bspInfermationSubmitted=='notSubmitted' || bspInfermationSubmitted == 'closed') || !commIqEnable)?'':null"  (change)="formValueChanges();"
+                            autocomplete="off" (keypress)="addValidatorForSecondaryServer()"  (keyup)="addValidatorForSecondaryServer();radiousServerShoudNotMatchValidation('secondaryRadious')" placeholder="{{language['sample-secondary-radius:port']}}"
+                            trimSpace [formValue]="edgeSuitsForm">
+                          <div *ngIf="myCommunityControl.get('eduroam')?.get('secondaryServer')?.errors"
+                            class="invalid-feedback d-block">
+                            <small
+                              *ngIf="(myCommunityControl.get('eduroam')?.get('secondaryServer')?.touched || myCommunityControl.get('eduroam')?.get('secondaryServer')?.dirty) && myCommunityControl.get('eduroam')?.get('secondaryServer')?.errors?.pattern"
+                              class="c-red mandatory-msg">{{language['You have entered an invalid RADIUS Server']}}</small>
+                          </div>
+
+                          <div  class="invalid-feedback d-block" *ngIf="showRadiousError && showUnder == 'secondaryRadious'">
+                            <small class="c-red mandatory-msg">{{language['Primary Server And Secondary Server Should Not Be
+                              Same']}}</small>
+                          </div>
+                        </div>
+
+                        <div class="form-group relative-pos">
+                          <label for="Secret"> {{language['secret']}} <span class="error">*</span></label>
+                          <input [type]="secretEyeIcon?'text':'password'" class="form-control pr-35px"
+                          [attr.disabled]="(enableeduroamRefresh ||  ( bspInfermationSubmitted=='notSubmitted' || bspInfermationSubmitted == 'closed') || !commIqEnable)?'':null" maxlength="63"   (change)="formValueChanges();"
+                            formControlName="secret" id="Secret" placeholder="" autocomplete="new-password">
+                          <span class="pointer"> <i id="togglePassword"
+                              (click)="secretEyeIcon = !secretEyeIcon" autocomplete="off"
+                              [ngClass]="secretEyeIcon ?'password_view' : 'password_hide'"
+                              class="m-left-1 far "></i> </span>
+                          <div *ngIf="submitted && myCommunityControl.get('eduroam')?.get('secret')?.errors?.required"
+                            class="invalid-feedback d-block">
+                            <small class="c-red mandatory-msg">{{language['This field is required']}}</small>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- <button type="button" id="addMicrosite"   class="btn-default primary px-3 mr-3">
+                        {{language['Configure
+                        Eduroam']}}</button> -->
+
+                    </div>
+                    <div
+                      *ngIf="myCommunityControl?.get('passpoint')?.value?.enable || myCommunityControl?.get('eduroam')?.value?.enable">
+                      <div class="eduroam-title mt-4"> {{language['Hotspot Traffic Configuration']}} </div>
+                      <!-- <div class="form-check mb-2" 
+                          *ngIf="myCommunityControl?.get('passpoint')?.value?.enable">
+                          <input class="form-check-input" type="checkbox"
+                            [attr.disabled]="(enableRefresh ||  ( bspInfermationSubmitted=='notSubmitted' || bspInfermationSubmitted == 'closed') || !commIqEnable)?'':null"
+                            formControlName="prioritizeTraffic" value="" id="defaultCheck2" (change)="formValueChanges()">
+                          <label class="form-check-label" for="defaultCheck2">
+                            {{language["This Hotspot has Residential and Passpoint Users"]}}
+                          </label>
+                        </div>     -->
+                      <div formGroupName="network">
+                        <div class="text-secondary mb-2">
+                          {{language["Passpont_Traffic_Configuration"]}} <span class="error">*</span>
+                        </div>
+                        <ng-select *ngIf="lowerVersion == 'lowerVersion'" id="Priority_Bits" [items]="passpointItemdev"
+                          bindLabel="name" bindValue="value" [multiple]="false" placeholder="" formControlName="type"
+                          (change)="formValueChanges();refreshValues();"
+                          (ngModelChange)="addAndRemoveNetworkGroupValidation()" [clearable]="true" [searchable]="true">
+                        </ng-select>
+                        <ng-select *ngIf="lowerVersion !== 'lowerVersion'" id="Priority_Bits" [items]="passpointItem"
+                          bindLabel="name" bindValue="value" [multiple]="false" placeholder="" formControlName="type"
+                          (change)="formValueChanges();refreshValues();"
+                          (ngModelChange)="addAndRemoveNetworkGroupValidation()" [clearable]="true" [searchable]="true">
+                        </ng-select>
+                        <div *ngIf="submitted && myCommunityControl?.get('network')?.get('type')?.errors?.required"
+                          class="invalid-feedback d-block">
+                          <small class="c-red mandatory-msg">{{language['This field is required']}}</small>
+                        </div>
+                        <div
+                          *ngIf="myCommunityControl.get('network')?.value.type == 'Bridge' || myCommunityControl.get('network')?.value.type == 'Policy_Route'">
+                          <div class="col-md-12 px-0 mb-0 form-group ccl-form vlan-input">
+                            <label class="col-form-label">{{language.VLAN_ID}} <span class="error">*</span> </label>
+                            <input type="text" formControlName="vlanId" (paste)="preventPastingWrongValues($event)"
+                              [attr.disabled]="(enableRefresh ||  ( bspInfermationSubmitted=='notSubmitted' || bspInfermationSubmitted == 'closed') || !commIqEnable)?'':null"
+                              (keyup)="lanValidate('vlanId');" (keypress)=allowNumberOnly($event); min="1" max="4093"
+                              maxlength="4" (change)="formValueChanges()" class="form-control"
+                              [ngClass]="{'is-invalid':!myCommunityIQ.vlanId && !myCommunityControl.get('network')?.value.vlanId}" trimSpace [formValue]="edgeSuitsForm"/>
+                            <div>
+                              <div *ngIf="!myCommunityIQ.vlanId">
+                                <small class="required-field mandatory-msg"> {{language["Please_enter_value_between_1_4093"]}}
+                                </small>
+                              </div>
+                              <div
+                                *ngIf="submitted && (myCommunityIQ.vlanId && !edgeSuitsForm.value.myCommunityIQ?.network?.vlanId)"
+                                class="invalid-feedback d-block">
+                                <small class="c-red mandatory-msg">{{language['This field is required']}}</small>
+                              </div>
+
+                            </div>
+                          </div>
+                          <div class="col-md-12 px-0 mb-0 form-group ccl-form ipAddressFamily-input"
+                            *ngIf="myCommunityControl.get('network')?.value.type == 'Policy_Route'">
+                            <label class="col-form-label">{{language['IP Version']}} <span
+                                class="error">*</span></label>
+                            <ng-select [searchable]="false" placeholder="" formControlName="protocol"
+                              id="ipAddressFamily1" (change)="formValueChanges(); ">
+                              <ng-option value="ipv4">{{language.ipv4}} </ng-option>
+                              <!-- <ng-option value="ipv6">{{language.ipv6}}</ng-option>
+                              <ng-option value="dual_stack">{{language['IPv4+IPv6 Dual Stack']}}</ng-option> -->
+                            </ng-select>
+                            <div *ngIf="submitted && !edgeSuitsForm.value.myCommunityIQ?.network?.protocol"
+                              class="invalid-feedback d-block">
+                              <small class="c-red mandatory-msg">{{language['This field is required']}}</small>
+                            </div>
+                          </div>
+                        </div>
+
+                      </div>
+                      <form [formGroup]="edgeSuitsForm">
+                        <div class="form-check my-2" formGroupName="myCommunityIQ">
+                          <input class="form-check-input" type="checkbox"
+                            [attr.disabled]="(enableRefresh ||  ( bspInfermationSubmitted=='notSubmitted' || bspInfermationSubmitted == 'closed') || !commIqEnable)?'':null"
+                            formControlName="prioritizeTraffic" value="" id="defaultCheck2"
+                            (change)="formValueChanges()">
+                          <label class="form-check-label cursor-pointer" for="defaultCheck2">
+                            {{language["This hotspot has residential and SmartTown Wi-Fi users"]}}
+                          </label>
+                        </div>
+                      </form>
+
+                      <!-- </form> -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card" formGroupName="smallBizIQ"
+          *ngIf="(IQ_SuiteEnable) && smallBizIQentitlement &&(!opMode || opMode === 'RG') && AllFormData?.systemId && !hidePlan && !hideSmartbiz">
+          <div class="accordion-title pointer" id="headingOne">
+            <div class="" type="" id="collapseSmallBizIQToggle" data-toggle="collapse" data-target="#collapseSmallBizIQ" aria-expanded="false"
+              aria-controls="collapseSmallBizIQ">
+              <div class="d-flex justify-content-between">
+                <div class="d-inline-flex"> <span class="mr-2 edge"><img
+                      src="../../../../../../assets/img/ic_chevronright.svg" /></span> {{language["SmartBiz"]}} </div>
+                <div class="d-inline-flex enabled-disabled align-items-end"
+                  [ngClass]=" { 'toggleDisabled' : !edgeSuitsForm.value.smallBizIQ?.enable }"><span class="pr-np1">
+                  {{edgeSuitsForm.value.smallBizIQ?.enable ? language.Subscribed:language.Unsubscribed}}{{(!opMode
+                  ||(opMode && (opMode == 'RG'))) && allowSmallBiz && sbIStatus?',':''}}</span><span
+                    [ngClass]="{ 'bold-label' : sbIStatus}">{{(!opMode ||(opMode && (opMode == 'RG' ))) && allowSmallBiz &&
+                    sbIStatus ? language[sbIStatus]:''}}</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div id="collapseSmallBizIQ" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+            <div class="content-body">
+              <div class="warning-msg row" *ngIf="showsmbNAAlert">
+                <span class="error-img col-1 px-0"><img src="./assets/img/warning-icon.svg" /></span>
+                <div class="col-10">  {{smbNAReason}}
+                </div>
+                <button type="button" class="close col-1" (click)="closeSmb()">
+                  <span></span>
+                </button>
+              </div>
+              <div *ngIf="(!opMode ||(opMode && (opMode == 'RG'))) && allowSmallBiz && enablesmallBizStatus && !hidesmbStatus"
+                [class]="sbIStatusClass">
+                <div class="icon">
+                  <img [src]="sbIStatusImg">
+                </div>
+                <div class="message flex-column align-items-start">
+                  <div>{{language[sbIStatusMsg]}}</div>
+                  <div *ngIf="sbIstatus == 'failed'" >{{errorStatus}}</div>
+                </div>
+
+                <div *ngIf="enablesmallBiz" class="refresh">
+                  <span class="cursor-pointer primary mt-4" (click)="refreshSmallBiz()"><i
+                      class="fas fa-sync"></i></span>
+                </div>
+                <div *ngIf="!enablesmallBiz" class="close" (click)="enablesmallBizStatus = false">
+                  <img src="../.../../../../../../../assets/img/ic_close-44px.svg">
+                </div>
+
+              </div>
+              <div class="mt-2">
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" formControlName="enable"  id="SubscribedIQ"
+                    [attr.disabled]="((opMode && opMode !== 'RG') || !allowSmallBiz ||enablesmallBiz || !smbEnable)? '' : null" [value]="true"
+                    (change)="formValueChanges();smallBizEdit()">
+                  <label class="form-check-label" for="SubscribedIQ">{{language.Subscribed}}</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" 
+                    [attr.disabled]="((opMode && opMode !== 'RG') || !allowSmallBiz || enablesmallBiz|| !smbEnable)? '' : null"
+                    formControlName="enable" id="UnsubscribedIQ" [value]="false"
+                    (change)="formValueChanges();smallBizEdit()">
+                  <label class="form-check-label" for="UnsubscribedIQ">{{language.Unsubscribed}}</label>
+                </div>
+                <!-- </form> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 pr-0">
+      <div class="card" *ngIf=" arloEntitleEnable || arloUnlimitedentitlement || arloUnlimitedplusentitlement">
+        <div class="accordion-title pointer" id="headingOne">
+          <div class="" type="" id="collapseArloSecureToggle" data-toggle="collapse" data-target="#collapseArloSecure" aria-expanded="false"
+            aria-controls="collapseArloSecure">
+            <div class="d-flex justify-content-between">
+              <div class="d-inline-flex"> <span class="mr-2 edge"><img
+                    src="../../../../../../assets/img/ic_chevronright.svg" /></span> {{language["Arlo_Secure"]}} </div>
+              <div class="d-inline-flex enabled-disabled align-items-end"
+                [ngClass]=" { 'toggleDisabled' : !edgeSuitsForm.value.arloSmart.enabled }">
+                {{edgeSuitsForm.value.arloSmart.enabled ? language.Subscribed:language.Unsubscribed}}</div>
+            </div>
+
+
+          </div>
+        </div>
+
+        <div id="collapseArloSecure" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+          <div class="content-body">
+            <div class="warning-msg" *ngIf="warningArlomessage">
+              <span class="error-img"><img src="./assets/img/warning-icon.svg" /></span>
+              <span> {{language['All Arlo data would be removed. Are you sure want to delete Arlo data?']}}</span>
+              <div class="btn-con-sec float-right">
+                <button class="btn warn-btn mr-2" id="deletePFBtn" (click)="RemoveArlo()">
+                  {{ language.Confirm }}
+                </button>
+                <button class="btn warn-btn" id="cancel-btn" (click)="cancelDelete()">
+                  {{ language.Cancel }}
+                </button>
+              </div>
+            </div>
+            <!-- <div class="warning-msg" *ngIf="showArloEnablingError">
+              <span class="error-img"><img src="./assets/img/warning-icon.svg" /></span>
+              <span> {{language['Please save this page to remove old Arlo Email.']}}</span>
+            </div> -->
+            <div formGroupName="arloSmart"
+              *ngIf=" arloEntitleEnable || arloUnlimitedentitlement || arloUnlimitedplusentitlement">
+              <div class="col-md-12 my-2 px-0">
+                <div class="ccl-form">
+                  <input class="dis-none" type="checkbox" id="arloSmartEnabled" formControlName="enabled" />
+                  <p *ngIf="!arloEnabled">
+                    <button type="button" class="add-btn mt-2 btn-default" id="one" (click)="arloEnableDisable()"
+                      [disabled]="!showArlo">
+                      {{language.Add_Service}}
+                    </button>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div formGroupName="arloSmart"
+              *ngIf="arloEnabled && (arloEntitleEnable || arloUnlimitedentitlement || arloUnlimitedplusentitlement)">
+              <div class="col-md-12 px-0">
+                <div class="ccl-form">
+                  <div class="ccl-form">
+                    <label class="col-form-label">{{ language.emailAddess }} <span class="error">*</span></label>
+                    <input class="form-control" #name type="text" formControlName="email"
+                      (change)="Emailchange(name.value, 'arlo')" placeholder="{{ language.emailAddess }}"
+                      [ngClass]=" { 'is-invalid' : submitted && !edgeSuitsForm.value.arloSmart.email}" trimSpace [formValue]="edgeSuitsForm"/>
+                    <div *ngIf="edgeSuitsForm.value.arloSmart.email">
+                      <small class="c-red mandatory-msg">{{language[emailmsgarlo]}}</small>
+                    </div>
+                    <div *ngIf="submitted && !edgeSuitsForm.value.arloSmart.email">
+                      <small class="c-red mandatory-msg">{{language['This field is required']}}</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div *ngIf=" (arloEntitleEnable|| arloUnlimitedentitlement || arloUnlimitedplusentitlement) && arloEnabled">
+              <div class="col-md-12 mb-3" formGroupName="arloSmart">
+                <div class="row">
+                  <div class="col-md-12 p-0 mt-2">
+                    <div class="col-form-label bold-label"> {{language['Plan(s)']}}
+                      <span class="error">*</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="row align-items-center" *ngIf="arloEntitleEnable">
+                  <div class="form-check form-check-inline">
+                    <input type="radio" id="ArloInlin1" name="plan"
+                      (change)="EnableDisable2K();planChange('PARTNER_REGULAR');"
+                      value="{{CAUser ? 'PARTNER_REGULAR_CANADA':'PARTNER_REGULAR'}}" formControlName="plan">
+                    <label class="form-check-label" for="ArloInlin1">{{language['Arlo Secure - up to']}}</label>
+                  </div>
+                  <div class="ccl-form form-check-inline w-80px">
+                    <input type="number" class="w-80px" maxlength="2" min="1" max="50" class="check-inn" required
+                      (change)="formValueChanges(); change2K();" (keypress)="allowNumberOnly2kCamera($event)"
+                      (keyup)="cameraValidate( '2kCameras')"
+                      oninput="(this.value) = (this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1'))"
+                      formControlName="2kCameras"
+                      [readonly]="(!edgeSuitsForm.value.arloSmart.plan.includes('PARTNER_REGULAR'))?'':null" />
+                  </div>
+                  <div class="form-check-inline">
+                    <label class="mb-0">{{language.Cameras}}</label>
+                  </div>
+                  <div *ngIf="edgeSuitsForm.value.arloSmart['2kCameras'] > 50">
+                    <small class="c-red mandatory-msg">{{language['Please enter a value less than or equal to 50.'] }}</small>
+                  </div>
+                  <div *ngIf="arlo2kplanError">
+                    <small class="c-red mandatory-msg">
+                      {{language['Please enter a 2K Camera plan value greater than or equal to onboarded 2K Cameras']}}
+                    </small>
+                  </div>
+                </div>
+                <div class="row my-3" *ngIf="arloUnlimitedentitlement">
+                  <div class="form-check form-check-inline">
+                    <input type="radio" id="ArloInlin2" (change)="planChange('PARTNER_UNLIMITED');"
+                      value="{{CAUser ? 'PARTNER_UNLIMITED_CANADA':'PARTNER_UNLIMITED'}}" name="plan"
+                      formControlName="plan">
+                    <label class="form-check-label" for="ArloInlin2">{{language['Arlo Secure Unlimited']}}</label>
+                  </div>
+                </div>
+                <div class="row mb-0" *ngIf="!HOSTDATA && arloUnlimitedplusentitlement">
+                  <div class="form-check form-check-inline">
+                    <input type="radio" id="ArloInlin3" (change)="planChange('PARTNER_UNLIMITED_PLUS');"
+                      value="{{CAUser ? 'PARTNER_UNLIMITED_PLUS_CANADA':'PARTNER_UNLIMITED_PLUS'}}" name="plan"
+                      formControlName="plan">
+                    <label class="form-check-label" for="ArloInlin3">{{language['Arlo Secure Unlimited Plus']}}</label>
+                  </div>
+                </div>
+                <div *ngIf="submitted && arloEnabled && !edgeSuitsForm.value.arloSmart.plan">
+                  <small class="c-red mandatory-msg">
+                    {{language['Arlo Secure Plan is required']}}</small>
+                </div>
+              </div>
+              <div class="col-lg-12 col-md-12 col-sm-12 pl-0">
+                <div class="row">
+                  <div class="col-md-12 cco-secondary-title">{{language["Cameras"]}}</div>
+                </div>
+                <div class="row loader-wrapper">
+                  <div class="loader-wrapper-info" *ngIf="arloLoading">
+                    <div class="loader">
+                      <div class="d-flex justify-content-center">
+                        <div class="spinner-border text-primary">
+                          <span class="sr-only">{{ language.Loading }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-12 cco-system-edge-table overflow-auto m-h-150" [hidden]="!tableDataAvailable">
+                    <table *ngIf="tableDataAvailable" #table1 id="twoKPlanData" class="row-border hover table-alter"
+                      datatable [dtOptions]="dtOptions">
+                      <thead>
+                        <tr>
+                          <th>{{ language.Camera }}</th>
+                          <th>{{ language.Type }}</th>
+                          <th>{{ language.Serial_Number }}</th>
+                          <th>{{ language.Model_Number }}</th>
+                          <th class="w-140px"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr id="{{item.deviceId}}" *ngFor="let item of twoKPlanData;let i=index;">
+                          <td class="white-nowrap">
+                            {{item.deviceName ? item.deviceName : ''}}
+                          </td>
+                          <td>{{item.deviceType ? item.deviceType : ''}}</td>
+                          <td>{{item.deviceId ? item.deviceId : ''}}</td>
+                          <td>
+                            {{item.modelId ? item.modelId : ''}}
+                          </td>
+                          <td class="remove-display">
+                            <span class="remove"><span class="btn-default btn-dft"
+                                (click)="RemoveArloData(item)">{{language.Remove}}</span>
+                            </span>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                </div>
+
+              </div>
+
+              <div class="col-md-12 p-0" *ngIf="arloEnabled">
+                <button type="button" class="add-btn mt-3 btn-default" (click)="cancelArloSecure()">{{language['Cancel
+                  Service']}}</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card" formGroupName="bark" *ngIf=" (Bark_Premiumentitlement || Bark_Juniorentitlement)">
+        <div class="accordion-title pointer" id="headingOne">
+          <div class="" type="" data-toggle="collapse" id="collapseBarkToggle" data-target="#collapseBark" aria-expanded="false"
+            aria-controls="collapseBark">
+            <div class="d-flex justify-content-between">
+              <div class="d-inline-flex"> <span class="mr-2 edge"><img
+                    src="../../../../../../assets/img/ic_chevronright.svg" /></span> {{language["Bark"]}} </div>
+              <div class="d-inline-flex enabled-disabled align-items-end"
+                [ngClass]=" { 'toggleDisabled' : !edgeSuitsForm.value.bark.enable}">{{edgeSuitsForm.value.bark.enable ?
+                language.Subscribed:language.Unsubscribed}}</div>
+            </div>
+
+          </div>
+        </div>
+
+        <div id="collapseBark" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+          <div class="content-body">
+            <div class="ccl-form">
+              <input class="dis-none" type="checkbox" id="bark12" formControlName="enable" />
+              <p *ngIf="!BarkEnable">
+                <button type="button" class="add-btn mt-3 btn-default" [disabled]="!showArlo"
+                  (click)="BarkEnableDisable()">
+                  {{language.Add_Service}}
+                </button>
+              </p>
+            </div>
+
+            <div class="ccl-form" *ngIf="edgeSuitsForm.value.bark.enable && BarkEnable">
+              <label class="col-form-label">{{language['Email Address']}} <span class="error">*</span></label>
+              <input type="text" formControlName="email" (change)="formValueChanges()"
+                (keyup)="Emailchange(nameemail.value ,'bark');" #nameemail placeholder="{{language['Email Address']}}"
+                [ngClass]=" { 'is-invalid' : submitted && !edgeSuitsForm.value.bark.email  }" trimSpace [formValue]="edgeSuitsForm"/>
+              <div>
+                <small class="c-red mandatory-msg">{{language[emailbarkmsg]}}</small>
+              </div>
+              <div *ngIf="submitted && !edgeSuitsForm.value.bark.email">
+                <small class="c-red mandatory-msg">{{language['This field is required']}}</small>
+              </div>
+            </div>
+            <div class="mt-2" *ngIf="edgeSuitsForm.value.bark.enable && BarkEnable">
+              <label class="col-form-label"> {{language["Plan(s)"]}}<span class="error">*</span> </label>
+              <!-- <div class="form-check">
+                <input class="form-check-input" type="radio"  id="Freeminum_Montly"
+                  value="Freeminum_Montly" formControlName="planCode" (change)="formValueChanges();" checked>
+                <label class="form-check-label" for="Freeminum_Montly">
+                  {{language["Freeminum_Montly"]}}
+                </label>
+              </div> -->
+              <div class="form-check" *ngIf="Bark_Premiumentitlement">
+                <input class="form-check-input" type="radio" id="Premium_Monthly" value="bark_premium"
+                  formControlName="planCode" (change)="formValueChanges();">
+                <label class="form-check-label" for="Premium_Monthly">
+                  {{language["Premium_Monthly"]}}
+                </label>
+              </div>
+              <!-- <div class="form-check">
+                <input class="form-check-input" type="radio"  id="Premium_Annual"
+                  value="Premium_Annual" formControlName="planCode" (change)="formValueChanges();">
+                <label class="form-check-label" for="Premium_Annual">
+                  {{language["Premium_Annual"]}}
+                </label>
+              </div> -->
+              <div class="form-check" *ngIf="Bark_Juniorentitlement">
+                <input class="form-check-input" type="radio" id="Junior_Monthly" value="bark_junior"
+                  formControlName="planCode" (change)="formValueChanges();">
+                <label class="form-check-label" for="Junior_Monthly">
+                  {{language["Junior_Monthly"]}}
+                </label>
+              </div>
+              <div *ngIf="submitted &&  !edgeSuitsForm.value.bark.planCode">
+                <small class="c-red mandatory-msg">{{language['Bark Plan is required']}}</small>
+              </div>
+              <!-- <div class="form-check">
+                <input class="form-check-input" type="radio"  id="Junior_Annual"
+                  value="Junior_Annual" formControlName="planCode" (change)="formValueChanges();">
+                <label class="form-check-label" for="Junior_Annual">
+                  {{language["Junior_Annual"]}}
+                </label>
+              </div> -->
+            </div>
+            <div class="col-md-12 p-0" *ngIf="BarkEnable">
+              <button type="button" class="add-btn mt-3 btn-default" (click)="cancelBarkService()">{{language['Cancel
+                Service']}}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card" formGroupName="servifyCare"
+        *ngIf="ServifyEnableentitlement || ServifyPlatinumentitlement || ServifySilverentitlement || ServifyGoldentitlement">
+        <div class="accordion-title pointer" id="headingOne">
+          <div class="" type="" id="collapseServifyCareToggle" data-toggle="collapse" data-target="#collapseServifyCare" aria-expanded="false"
+            aria-controls="collapseServifyCare">
+            <div class="d-flex justify-content-between">
+              <div class="d-inline-flex"> <span class="mr-2 edge"><img
+                    src="../../../../../../assets/img/ic_chevronright.svg" /></span> {{language["ServifyCare"]}} </div>
+              <div class="d-inline-flex servify-care-state">
+                <div *ngIf="status?.status === 'accepted' && enablePlan && !AllFormData?.edgeSuites?.servifyCare?.cancelDate" class="active-but w-100"><span
+                    class="dot"></span> {{language['Service plan change Complete']}}</div>
+                <div *ngIf="status?.status === 'accepted' && !enablePlan && !AllFormData?.edgeSuites?.servifyCare?.cancelDate" class="active-but w-100"><span
+                    class="dot"></span>{{language['Service plan change Accepted']}} </div>
+                <div *ngIf="status?.status === 'requested' && !AllFormData?.edgeSuites?.servifyCare?.cancelDate" class="draft-but w-100"><span class="dot"></span>
+                  {{language['Service plan change Requested']}}</div>
+                <div *ngIf="status?.status === 'denied' && !AllFormData?.edgeSuites?.servifyCare?.cancelDate" class="error-but w-100"><span
+                    class="dot"></span>{{language['Service plan change Denied']}}</div>
+              </div>
+              <div class="d-inline-flex enabled-disabled align-items-end"
+                [ngClass]=" { 'toggleDisabled' : !subscribedStatus}">
+                {{subscribedStatus ? language.Subscribed:language.Unsubscribed}}</div>
+            </div>
+
+          </div>
+        </div>
+
+        <div id="collapseServifyCare" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+          <div class="content-body">
+            <div class="ccl-form">
+              <input class="dis-none" type="checkbox" id="servify" formControlName="enabled" />
+              <p *ngIf="!servifyenabled">
+                <button type="button" class="add-btn mt-3 btn-default" (click)="servifyEnableDisable()"
+                  [disabled]="!showArlo">
+                  {{language.Add_Service}}
+                </button>
+              </p>
+            </div>
+            <!-- <div class="col-md-12 p-0" *ngIf="!servifyenabled">
+              <input style="display: none;" type="checkbox" id="servify" formControlName="enabled" />
+              <button class="add-btn mt-3 btn-default" (click)="servifyEnableDisable()">Add Service</button>
+            </div> -->
+            <div class="ccl-form" *ngIf="servifyenabled">
+              <label class="col-form-label bold-label"> {{ language.Service_Plan }}
+                <span class="error">*</span>
+              </label>
+              <div class="col-md-12 px-0">
+                <div class="form-check form-check-inline" *ngIf="ServifyPlatinumentitlement">
+                  <input type="radio" id="ServifyInline1" value="SERVIFYCAREPLATINUM" name="planCode"
+                    formControlName="planCode" (change)="formValueChanges()"
+                    [attr.disabled]="(status?.status  === 'requested' || !enablePlan || AllFormData?.edgeSuites?.servifyCare?.cancelDate) ? '' : null"
+                    [ngClass]="{'inp-disabled':AllFormData?.edgeSuites?.servifyCare?.cancelDate}">
+
+                  <label class="form-check-label" for="ServifyInline1">{{language.Platinum}}</label>
+                </div>
+                <div class="form-check form-check-inline" *ngIf="ServifyGoldentitlement">
+                  <input type="radio" id="ServifyInline2" value="SERVIFYCAREGOLD" name="planCode"
+                    formControlName="planCode" (change)="formValueChanges()"
+                    [attr.disabled]="(status?.status  === 'requested' || !enablePlan ||AllFormData?.edgeSuites?.servifyCare?.cancelDate) ? '' : null"
+                    [ngClass]="{'inp-disabled':AllFormData?.edgeSuites?.servifyCare?.cancelDate}">
+                  <label class="form-check-label" for="ServifyInline2">{{language.Gold}}</label>
+                </div>
+                <div class="form-check form-check-inline" *ngIf="ServifySilverentitlement">
+                  <input type="radio" id="ServifyInline3" value="SERVIFYCARESILVER" formControlName="planCode"
+                    name="planCode" (change)="formValueChanges()"
+                    [attr.disabled]="(status?.status  === 'requested' || !enablePlan ||AllFormData?.edgeSuites?.servifyCare?.cancelDate) ? '' : null"
+                    [ngClass]="{'inp-disabled':AllFormData?.edgeSuites?.servifyCare?.cancelDate}">
+                  <label class="form-check-label" for="ServifyInline3">{{language.Silver}}</label>
+                </div>
+                <div class="form-check form-check-inline" *ngIf="ServifyEnableentitlement">
+                  <input type="radio" id="ServifyInline4" value="SERVIFYCAREBRONZE" formControlName="planCode"
+                    name="planCode" (change)="formValueChanges()"
+                    [attr.disabled]="(status?.status  === 'requested' || !enablePlan || AllFormData?.edgeSuites?.servifyCare?.cancelDate) ? '' : null"
+                    [ngClass]="{'inp-disabled':AllFormData?.edgeSuites?.servifyCare?.cancelDate}">
+                  <label class="form-check-label" for="ServifyInline4">{{language.Bronze}}</label>
+                </div>
+                <div *ngIf="submitted && servifyenabled && !edgeSuitsForm.value.servifyCare.planCode">
+                  <small class="c-red mandatory-msg">
+                    {{language['Service Plan is required']}}</small>
+                </div>
+              </div>
+              <div *ngIf="status && !AllFormData?.edgeSuites?.servifyCare?.cancelDate">
+                <p [innerHtml]="language.servifyplan(NewPlanCode(status?.newPlanCode),formatDate(status?.requested))">
+                </p>
+                <p *ngIf="status?.status === 'requested' && !AllFormData?.edgeSuites?.servifyCare?.cancelDate">{{language['The changeover is expected to take place on']}}
+                  <span class="bold">{{formatDate(status?.effective)}}</span>
+                </p>
+                <p class="c-red" *ngIf="status?.status === 'denied'&& !AllFormData?.edgeSuites?.servifyCare?.cancelDate">{{status?.message}}</p>
+                <p *ngIf="status?.status === 'accepted' && !!AllFormData?.edgeSuites?.servifyCare?.cancelDate">{{status?.effective ? language[status?.message]
+                  ||status?.message : ''}}{{status?.effective
+                  ?',':''}} {{status?.effective ?language['it will be effective on'] :''}} <span
+                    class="bold">{{status?.effective ? formatDate(status?.effective) :''}}</span></p>
+
+              </div>
+              <div>
+                <p *ngIf="AllFormData?.edgeSuites?.servifyCare?.cancelDate">{{language["This subscriber's service was
+                  cancelled on"]}} <span
+                    class="bold">{{formatDate(AllFormData?.edgeSuites?.servifyCare?.cancelDate | date)}}.</span></p>
+
+              </div>
+              <!--end radio-->
+              <div class="col-md-12 contact-info mt-3 px-0">
+                <div class="col-form-label bold-label">{{language['Contact Information']}}</div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <label class="col-form-label">{{language['First Name']}} <span class="error">*</span></label>
+                    <input type="text" formControlName="firstName" [readonly]="servifyDisable"
+                      placeholder="{{language['First Name']}}" (change)="formValueChanges()"
+                      [ngClass]="{'inp-disabled':servifyDisable}" trimSpace [formValue]="edgeSuitsForm"/>
+                    <div *ngIf="submitted && !edgeSuitsForm.value.servifyCare.firstName">
+                      <small class="c-red mandatory-msg">{{language['This field is required']}}</small>
+                    </div>
+                  </div>
+                  <div class="col-md-12">
+                    <label class="col-form-label">{{language['Last Name']}} <span class="error">*</span></label>
+                    <input type="text" formControlName="lastName" [readonly]="servifyDisable"
+                      placeholder="{{language['Last Name']}}" (change)="formValueChanges()"
+                      [ngClass]="{'inp-disabled':servifyDisable}" trimSpace [formValue]="edgeSuitsForm"/>
+                    <div *ngIf="submitted && !edgeSuitsForm.value.servifyCare.lastName">
+                      <small class="c-red mandatory-msg">{{language['This field is required']}}</small>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <label class="col-form-label">{{language['Email Address']}} <span class="error">*</span></label>
+                    <input type="text" formControlName="email" (change)="formValueChanges()"
+                      (keyup)="Emailchange(name.value ,'servify');" #name [readonly]="servifyDisable"
+                      placeholder="{{language['Email Address']}}" [ngClass]="{'inp-disabled':servifyDisable}" trimSpace [formValue]="edgeSuitsForm"/>
+                    <div>
+                      <small class="c-red mandatory-msg">{{language[emailmsg]}}</small>
+                    </div>
+                    <div *ngIf="submitted && !edgeSuitsForm.value.servifyCare.email">
+                      <small class="c-red mandatory-msg">{{language['This field is required']}}</small>
+                    </div>
+                  </div>
+                </div>
+                <!-- <div class="row">
+                  <div class="col-md-6">
+                    <label class="col-form-label">{{language['Phone Number']}} <span class="error">*</span></label>
+                    <input type="text" formControlName="mobile" (change)="formValueChanges()"
+                      [ngClass]=" { 'is-invalid' : submitted && !edgeSuitsForm.value.servifyCare.mobile  }"
+                      oninput="(this.value) = (this.value.replace(/[^0-9.]/g, '').replace(/(\..?)\../g, '$1'));" />
+                    <div *ngIf="submitted && !edgeSuitsForm.value.servifyCare.mobile" >
+                      <small style="color: red">{{language['This field is required']}}</small>
+                    </div>
+                  </div>
+                </div> -->
+              </div>
+              <!--end contact information-->
+              <div class="col-md-12 physical-address mt-3 px-0">
+                <div class="col-form-label bold-label">{{language['Physical Address']}}</div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <label class="col-form-label">{{language['Street Address']}} <span class="error">*</span></label>
+                    <input type="text" formControlName="address" (change)="formValueChanges()"
+                      [readonly]="servifyDisable" placeholder="{{language['Street Address']}} "
+                      [ngClass]="{'inp-disabled':servifyDisable}" trimSpace [formValue]="edgeSuitsForm"/>
+                    <div *ngIf="submitted && !edgeSuitsForm.value.servifyCare.address">
+                      <small class="c-red mandatory-msg">{{language['This field is required']}}</small>
+                    </div>
+                  </div>
+                  <!-- <div class="col-md-5">
+                    <label class="col-form-label">{{language['Apt, suite, etc']}}.</label>
+                    <input type="text" />
+                  </div> -->
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <label class="col-form-label">{{language['City / Province']}} <span class="error">*</span></label>
+                    <input type="text" formControlName="city" (change)="formValueChanges()" [readonly]="servifyDisable"
+                      placeholder="{{language['City / Province']}}" [ngClass]="{'inp-disabled':servifyDisable}" trimSpace [formValue]="edgeSuitsForm"/>
+                    <div *ngIf="submitted && !edgeSuitsForm.value.servifyCare.city">
+                      <small class="c-red mandatory-msg">{{language['This field is required']}}</small>
+                    </div>
+                  </div>
+                  <div class="col-md-12" [ngClass]="{ 'btn-notallowed': servifyDisable }">
+                    <label class="col-form-label">{{language.State}} <span class="error">*</span></label>
+                    <ng-select id="Priority_Bits" [items]="stateItem" bindLabel="name" bindValue="value"
+                      [multiple]="false" [placeholder]="language.State" formControlName="state"
+                      (change)="formValueChanges()" [ngClass]="{'disableDropDown':servifyDisable}" [clearable]="true"
+                      [searchable]="true" [readonly]="servifyDisable">
+                    </ng-select>
+                    <div *ngIf="submitted && !edgeSuitsForm.value.servifyCare.state">
+                      <small class="c-red mandatory-msg">{{language['This field is required']}}</small>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <label class="col-form-label">{{language['ZIP / Postal Code']}} <span class="error">*</span></label>
+                    <input formControlName="postal" (change)="formValueChanges()" #value
+                      (keyup)="allowOnlyNumbers(value.value)" oninput="(value) = (value.replace(/[^0-9]/g, ''));"
+                      [readonly]="servifyDisable" maxlength="{{HOSTDATA? '6' : '5'}}"
+                      [ngClass]="{'inp-disabled':servifyDisable}" placeholder="{{language['ZIP / Postal Code']}}" trimSpace [formValue]="edgeSuitsForm"/>
+                    <div *ngIf="!HOSTDATA">
+                      <small class="c-red mandatory-msg">{{language[zipMsg]}}</small>
+                    </div>
+                    <div *ngIf="HOSTDATA">
+                      <small class="c-red mandatory-msg">{{PostalMsg}}</small>
+                    </div>
+                    <div *ngIf="submitted && !edgeSuitsForm.value.servifyCare.postal">
+                      <small class="c-red mandatory-msg">{{language['This field is required']}}</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!--end physical address-->
+            </div>
+            <div class="col-md-12 p-0" *ngIf="servifyenabled">
+              <button type="button" [disabled]="AllFormData?.edgeSuites?.servifyCare?.cancelDate"
+                class="add-btn mt-3 btn-default" (click)="cancelServify()">{{language['Cancel
+                Service']}}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</form>
+
+<ng-template #removeCommunityModal let-modal>
+  <div class="modal-body">
+    <div class="w-100 alert-box">
+      <button
+        class="close"
+        aria-label="Close"
+        (click)="modal.dismiss('Cross click')"
+      >
+        <span></span>
+      </button>
+      <div class="box-content">
+        <div class="icon">
+          <img
+            src="../../../../assets/img/ic_warning-36px.svg"
+            alt="icon here"
+          />
+        </div>
+        <div class="content">
+          <h3>{{language['Remove Community']}}</h3>
+          <p>
+            {{language['You are about to remove a community from a system or systems, which will prevent community members from connecting to Wi-FI on those system(s).']}} 
+          </p>
+          <p class="mt-2">{{language['Are you sure you want to remove this community?']}}</p>
+          <div class="w-100 mt-4 pt-2">
+            <button
+              type="button" (click)="DeleteMicrosite(modal)"
+              id="temoveCommunityBtn"
+              class="btn-default primary mr-3"
+            >
+              {{language["Remove Community"]}}
+            </button>
+            <button
+              type="button"
+              id="canceltRemoveCommunityBtn"
+              class="btn-default btn-dft"
+              aria-label="Close"
+              (click)="modal.dismiss('Cross click')"
+            >
+              {{ language.Cancel }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<ng-template #removeCameraModal let-modal class="col-md-12">
+  <div class="modal-header d-block">
+    <h5 class="modal-title" id="addModal">{{ language['Remove Camera'] }}</h5>
+
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="w-100 alert alert-danger fade show" *ngIf="arloError">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+      <button type="button" class="close" (click)="closeAlert()">
+        <span></span>
+      </button>
+      <div class="d-inline-flex" [innerHtml]="language[arloErrorInfo] || arloErrorInfo"></div>
+    </div>
+    <div class="py-3 alert alert-danger" *ngIf="isModalError">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+      <button type="button" id="close-error-btn" class="close" data-dismiss="alert" aria-label="Close"
+        (click)="isModalError = !isModalError">
+        <span></span>
+      </button>
+      <div class="d-inline-flex" [innerHtml]="modalWarningMessage"></div>
+    </div>
+
+    <div class="loader" *ngIf="arloLoading">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="py-3 warning-msg" *ngIf="showwarning">
+      <div class="w-100">
+        <div [innerHtml]="removeConfirmMsg"></div>
+      </div>
+      <div class="w-100">
+        <div class="btn-con-sec">
+          <button class="btn warn-btn mr-2" id="confirmDelete" (click)="confirmDelete()">
+            {{ language.Confirm }}
+          </button>
+          <button class="btn warn-btn" (click)="closeConfirmMsg()">
+            {{ language.Cancel }}
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="ccl-form my-2">
+      <div class="del-dev">
+        {{ language['Are you sure you want to remove Camera?']}}
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn-default primary px-3 px-3" (click)="showConfirmMsg()">
+      {{language.Remove}}
+    </button>
+    <button type="button" class="btn-default btn-dft px-3 px-3 m-2" data-dismiss="modal"
+      (click)="modal.close('Save click')">
+      {{ language.Cancel }}
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #cancelServifyModal let-modal class="col-md-12">
+  <div class="modal-header d-block">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="row">
+    <div class="col-md-10 center-space">
+      <div class="modal-body">
+        <div class="w-100 alert alert-danger fade show" *ngIf="error">
+          <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+          <button type="button" class="close" (click)="closeAlert()">
+            <span></span>
+          </button>
+          <div class="d-inline-flex" [innerHtml]="language[errorInfo] || errorInfo"></div>
+        </div>
+
+        <div class="loader" *ngIf="cancelloading">
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+              <span class="sr-only">{{ language.Loading }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <h5 class="modal-title">{{language['Cancel Servify Care']}}?</h5>
+          </div>
+          <div class="col-md-12">
+            <p class="mt-2 mb-0">{{language['Please provide a cancellation reason']}} <span class="imp">*</span></p>
+            <div class="form-check-cus">
+              <div class="form-check">
+                <input class="form-check-input mr-2" type="radio" name="cancelServifyRadG1" [(ngModel)]="cancelcode"
+                  id="canReasS1" value="JUST_TRYING" />
+              <label class="form-check-label" for="canReasS1" >{{language['The subscriber just wanted to try it']}}</label>  
+              </div>
+              <div class="form-check">
+                <input class="form-check-input mr-2" type="radio" name="cancelServifyRadG1" [(ngModel)]="cancelcode"
+                  id="canReasS2" value="TOO_EXPENSIVE" />
+                  <label class="form-check-label" for="canReasS2" >  {{language['It’s too expensive for the subscriber']}}</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input mr-2" type="radio" name="cancelServifyRadG1" [(ngModel)]="cancelcode"
+                  id="canReasS3" value="DNT_WNT" />
+                  <label class="form-check-label" for="canReasS3" >{{language['The coverage doesn’t suite the subscriber’s needs']}}</label>
+              </div>
+
+              <div class="form-check">
+                <input class="form-check-input mr-2" type="radio" name="cancelServifyRadG1" [(ngModel)]="cancelcode"
+                  id="canReasS4" value="NON_PAYMENT" />
+                  <label class="form-check-label" for="canReasS4" > {{language['Non-payment of plan fee']}}</label>
+              </div>
+              <div *ngIf="submittedcancelcode && !cancelcode">
+                <small class="c-red mandatory-msg">
+                  {{language['Service Plan cancellation reason is required']}}</small>
+              </div>
+            </div>
+            <p class="mt-4">{{language.servifyCareDeleteConfirmationMessage}}.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer justify-content-start pt-1 pl-0">
+        <button class="btn-default primary mr-3" (click)="Cancelservify()">
+          {{language['Cancel Servify Care']}}
+        </button>
+        <button type="button" class="btn-default btn-dft" data-dismiss="modal" (click)="modal.dismiss('Cross click')">
+          {{language.Cancel}}
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<!--cancelBarkModal-->
+<ng-template #cancelBarkModal let-modal class="col-md-12">
+  <div class="modal-header d-block">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="row">
+    <div class="col-md-12 center-space">
+      <div class="modal-body">
+        <div class="w-100 alert alert-danger fade show" *ngIf="error">
+          <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+          <button type="button" class="close" (click)="closeAlert()">
+            <span></span>
+          </button>
+          <div class="d-inline-flex" [innerHtml]="language[errorInfo] || errorInfo"></div>
+        </div>
+
+        <div class="loader" *ngIf="cancelloading">
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+              <span class="sr-only">{{ language.Loading }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <h5 class="modal-title">{{language['Cancel Bark']}}</h5>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <p>{{language.barkConfirmationMsg}}.</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer justify-content-start pt-1 pl-0">
+        <button class="btn-default primary mr-3" (click)="CancelBark()">
+          {{language['Yes, Cancel Bark']}}
+        </button>
+        <button type="button" class="btn-default btn-dft" data-dismiss="modal" (click)="modal.dismiss('Cross click')">
+          {{language.Cancel}}
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #cancelArloSecureModal let-modal class="col-md-12">
+  <div class="modal-header d-block">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="row">
+    <div class="col-md-12 center-space">
+      <div class="modal-body">
+        <div class="w-100 alert alert-danger fade show" *ngIf="error">
+          <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+          <button type="button" class="close" (click)="closeAlert()">
+            <span></span>
+          </button>
+          <div class="d-inline-flex" [innerHtml]="language[errorInfo] || errorInfo"></div>
+        </div>
+
+        <div class="loader" *ngIf="cancelloading">
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+              <span class="sr-only">{{ language.Loading }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <h5 class="modal-title">{{language['Cancel Arlo Secure']}}?</h5>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <p>{{language.arloSecureCancelConfirmationMessage}}.</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer justify-content-start pt-1 pl-0">
+        <button class="btn-default primary mr-3" (click)="Cancelarlo()">
+          {{language['Yes, Cancel Arlo Secure']}}
+        </button>
+        <button type="button" class="btn-default btn-dft" data-dismiss="modal" (click)="modal.dismiss('Cross click')">
+          {{language.Cancel}}
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<!-- delete modal -->
+<ng-template #deleteModal let-modal let-ref="dialogRef">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title"> {{language["Delete_Communities"]}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    {{language["community_Delete_Msg"]}}
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn-default primary px-3 mr-2" data-dismiss="modal" (click)="DeleteMicrosite(modal)">
+      {{language["yes"]}} </button>
+    <button type="button" class="btn-default btn-dft px-3" data-dismiss="modal"
+      (click)="modal.dismiss()">{{language["no"]}} </button>
+  </div>
+</ng-template>

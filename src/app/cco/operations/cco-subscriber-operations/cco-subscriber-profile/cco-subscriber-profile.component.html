@@ -1,0 +1,645 @@
+<div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess">
+  {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} </div>
+
+<section *ngIf="hasScopeAccess">
+  <div class="container" [hidden]="showDetails">
+
+    <div class="loader load" *ngIf="loading">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{language.Loading}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="py-3 warning-msg" *ngIf="deletedata">
+      <span class="error-img"><img src="./assets/img/warning-icon.svg"></span>
+      <span class="di-inline-wrap">
+        {{ language["Are you sure you want to delete"] }}
+        <b>{{ modalInfo }}</b>?
+      </span>
+      <div class="btn-con-sec float-right">
+
+        <button class="btn-default btn-primary mr-2" id="deletePFBtn" [disabled]="btnDisabled"
+          (click)="Deletesubscriber()">
+          {{ language.Confirm}}
+        </button>
+        <button class="btn-default btn-dft py-1 " (click)="closeModal()"> {{ language.Cancel}}</button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="w-100 alert alert-danger  fade show my-3" *ngIf="error">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+        <button type="button" class="close" (click)=" error = false"><span></span></button>
+        <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+      </div>
+
+      <div class="w-100 alert alert-success fade show my-3" *ngIf="success">
+        <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+        <button type="button" class="close" (click)="success = false"><span></span></button>
+        <div [innerHtml]="successInfo"></div>
+      </div>
+    </div>
+
+    <!-- <div class="row">
+        <div class="cco-secondary-title border-bottom w-100">
+            Service Template
+        </div>
+    </div> -->
+    <div class=" d-flex justify-content-start align-items-center" *ngIf="scope['write']">
+      <button type="button" [ngClass]="{ noDropCursor: orgAdmin }" [disabled]="orgAdmin" id="add" (click)="gotoAddSP();"
+        class="btn-default primary px-3 mt-3">
+        {{language["Add Profile"]}}
+      </button> <span class="pl-3" *ngIf="orgAdmin">{{language['Enable ONT and Service Provisioning to add profile']}}
+      </span>
+    </div>
+    <div class=" d-flex justify-content-end mt-3">
+      <div class="form-group ccl-form form-inline d-inline-flex">
+        <label class="pr-1" for="search">{{language.Filter}}</label>
+        <input type="search" [(ngModel)]="searchtext" (keyup)="search($event.target.value)"
+          (search)="search($event.target.value)" class="ccl-from w-73" id="data-filter-input" placeholder="{{ language['Topology_Search'] }}">
+        <span class="pointer close-pointer clear-icon" [ngClass]="showcloseicon ? '' : ''"
+          (click)="closeicon($event.target.value)"><img *ngIf="searchtext" src="../../../assets/img/close-icon.svg"
+            alt=""></span>
+      </div>
+    </div>
+    <div class="col-md-12 px-0 overflow-autovmin-h-165px">
+      <table id="subscriber-template" width="100%" class="row-border hover table-alter" datatable
+        [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+        <thead>
+          <tr>
+            <th>{{language.Name}}</th>
+            <th>{{language.Decription}}</th>
+            <th>{{language.Type}}</th>
+
+            <!-- <th>{{ language["Subscriber Template"] }}</th>
+            <th>{{ language["BandWidth tier"] }}</th>
+            <th>{{ language["Action Tag"] }}</th> -->
+            <th class="mw-75px" [hidden]="!scope['write']">{{language.action}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let list of subscriberList">
+            <td class="cursor-pointer" (click)="showdetails(list)">{{list.name?list.name:"--"}} </td>
+            <td class="cursor-pointer" (click)="showdetails(list)">{{list.description?list.description:" "}}</td>
+            <td class="cursor-pointer" (click)="showdetails(list)">{{list.type?language[list.type]:"--"}} </td>
+
+            <!-- <td>{{list["serviceTemplateName"]?list["serviceTemplateName"]:""}}</td>
+            <td>{{list["tierName"]?list["tierName"]:""}}</td>
+            <td>{{list.tagAction?list.tagAction:""}}</td> -->
+            
+            <td class="actions white-space-nowrap" [hidden]="!scope['write']">
+              <div class="dropdown">
+                <div class="dropdown-toggle cursor-pointer" id="dropdownMenuButton" data-toggle="dropdown"
+                  aria-haspopup="true" aria-expanded="false">
+                  ...
+                </div>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                  <a *ngIf="list.type == 'Service Definition Template(Voice)' || list.type == 'Service Definition Template(Data)' || list.type == 'Service Definition Template(Video)'" 
+                  (click)="serviceProvisioned(list.name)" class="dropdown-item cursor-pointer">View Provisioned Subscribers</a>
+                  <a class="dropdown-item cursor-pointer" (click)="copysubscriber(list.name,list.type)">{{language['Copy']}}</a>
+                  <a class="dropdown-item cursor-pointer" (click)="editsubscriber(list.name,list.type)">{{language['Edit']}}</a>
+                  <a class="dropdown-item cursor-pointer" (click)="delete(list)" *ngIf="list?.name !== 'COC_VOICE_BW_TIER_DEFAULT'">{{language.Delete}}</a>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="profile-review-wizard" *ngIf="showDetails">
+    <div class="col-md-12 mt-3"><button type="button" class="close" (click)="showTable()"><span
+          class="close1"></span></button></div>
+    <div class="review-container pb-4">
+      <span class="net-ops-secondary-title ml-3">{{ language.Profile }}</span>
+      <hr class="my-2" />
+
+      <div class="loader" *ngIf="loading">
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border text-primary">
+            <span class="sr-only">{{ language.Loading }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="container">
+        <div class="row">
+          <label class="col-md-7 pr-3">{{ language.Name }} </label>
+          <div class="col-md-3 word-brk">{{detail.name?detail.name:"--"}}</div>
+        </div>
+        <hr class="my-3" />
+        <div class="row">
+          <label class="col-md-7 pr-3">{{language.Decription}}</label>
+          <div class="col-md-3 word-brk">{{detail.description?detail.description:"--"}}</div>
+        </div>
+      </div>
+      <div class="row my-4">
+        <!--  <div class="pl-3 ml-3 mb-2 net-ops-secondary-title accordinToggle collapsedAll text-right" id="accordinToggle">
+          {{ language.Categories
+          }}
+          <span class="col-md-1 pl-1 ccl-accordion-icon text-right"></span> 
+        </div>-->
+        <div class="col-md-12">
+          <div class="accordion" id="accordionExample">
+            <div class="card">
+              <div class="card-header" id="headingOne" data-toggle="collapse" [attr.href]="'#collapseOne'"
+                data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                <div class="row mb-0">
+                  <div class="col-md-11 text-left pl-10px">
+                    <span>{{detail.type? language[detail.type]:"--"}}</span><span *ngIf="detail.type != 'Subscriber Template' && detail.type != 'Subscriber Template(Data)'
+            && detail.type != 'Subscriber Template(Voice)' && detail.type != 'Subscriber Template(Video)'">{{(
+                      detail.type !=
+                      "Service Profile(Data)"
+                      && detail.type !=
+                      "Service Profile(Voice)" && detail.type !=
+                      "Service Profile(Video)" && detail.type != 'Service Definition Template(Data)' && detail.type !=
+                      'Service Definition Template(Voice)' && detail.type != 'Service Definition Template(Video)') ? " "
+                      +language.Profile : ""}}</span>
+                  </div>
+                  <div class="col-md-1 ccl-accordion-icon text-right"></div>
+                </div>
+
+              </div>
+
+              <div id="collapseOne" class="accordion-collaps collapse show" aria-labelledby="headingOne"
+                data-parent="#accordionExample">
+                <div class="card-body">
+                  <div class="row space-list" *ngIf="detail.type == 'Oui Match List'">
+                    <div class="support-key-value">
+                      <table class="">
+                        <tr>
+                          <td>{{language['Oui List Values']}}</td>
+                          <td>{{detail.ouiListValues?detail.ouiListValues.join(', '):"--"}}</td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div class="row space-list" *ngIf="detail.type == 'Multicast VLAN'">
+                    <div class="support-key-value">
+                      <table class="">
+                        <tr>
+                          <td>{{language["Total Number of MVR VLAN(s)"]}}</td>
+                          <td>{{detail.vlans?detail.vlans?.length:"--"}}</td>
+                        </tr>
+                      </table>
+
+                      <div class="support-key-value" *ngFor="let item of detail.vlans; let i = index;">
+                        <table class="">
+                          <tr>
+                            <td>{{language[MVRIdText[i]]}}</td>
+                            <td>{{item.vlanId?item.vlanId:"--"}}</td>
+                          </tr>
+                          <tr>
+                            <td>{{language[MVRRangeText[i]]}}</td>
+                            <td>{{item.ranges?item.ranges?.length:"--"}}</td>
+                          </tr>
+                        </table>
+                        <div *ngFor="let ranges of item.ranges; let j = index;">
+                          <table class="">
+                            <tr>
+                              <td>
+                                {{language[MulticastvlanRangestarttext[i][j]]}}
+                              </td>
+                              <td>
+                                {{ranges.start?ranges.start:"--"}}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                {{language[MulticastvlanRangeendtext[i][j]]}}
+                              </td>
+                              <td>
+                                {{ranges.end?ranges.end:"--"}}
+                              </td>
+                            </tr>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row space-list" *ngIf="detail.type =='Multicast Range'">
+                    <div class="support-key-value">
+                      <table class="">
+                        <tr>
+                          <td>{{language['Total Number of Multicast Range Filters']}}</td>
+                          <td>{{detail.filters?detail.filters.length:"--"}}</td>
+                        </tr>
+                      </table>
+                      <table *ngFor="let item of detail.filters; let i = index;">
+                        <tr>
+                          <td>{{language[MulticastRangetext[i][0]]}}</td>
+                          <td>{{item.start?item.start:"--"}}</td>
+                        </tr>
+                        <tr>
+                          <td>{{language[MulticastRangetext[i][1]]}}</td>
+                          <td>{{item.end?item.end:"--"}}</td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                  <div class="row space-list"
+                    *ngIf="detail.type == 'Service Definition'||detail.type == 'Service Definition Template(Voice)' || detail.type == 'Service Definition Template(Data)'||detail.type == 'Service Definition Template(Video)'">
+                    <div class="support-key-value">
+                      <table class="">
+                        <tr>
+                          <td>{{language["Service Profile"]}}</td>
+                          <td class="pointer" (click)="openModel('Subscriber Template',detail.serviceTemplateName)">
+                            {{detail.serviceTemplateName?detail.serviceTemplateName:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="isCOC">
+                          <td>{{language["bandWidth_profile"]}}</td>
+                          <td [ngClass]="detail.tierName ? 'pointer' : 'auto'"
+                            (click)="detail.tierName ?openModel('Bandwidth Tier',detail.tierName) : '' ">
+                            {{detail.tierName?detail.tierName:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="Showprofile">
+                          <td>{{language["Oui Match List Profile"]}}</td>
+                          <td [ngClass]="detail.ouiMatchListName ? 'pointer' : 'auto'"
+                            (click)="detail.ouiMatchListName ? openModel('Oui Match List',detail.ouiMatchListName):''">
+                            {{detail.ouiMatchListName?detail.ouiMatchListName:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="Showprofile">
+                          <td>{{language["Multicast Range Profile"]}}</td>
+                          <td [ngClass]="detail.multicastRangeName ? 'pointer' : 'auto'"
+                            (click)="detail.multicastRangeName ? openModel('Multicast Range',detail.multicastRangeName):''">
+                            {{detail.multicastRangeName?detail.multicastRangeName:"--"}}</td>
+                        </tr>
+                        <!-- <tr *ngIf="Showprofile">
+                          <td>{{language["Multicast VLAN Profile"]}}</td>
+                          <td [ngClass]="detail.multicastVlanName ? 'pointer' : 'auto'"
+                            (click)="detail.multicastVlanName ?openModel('Multicast VLAN',detail.multicastVlanName):''">
+                            {{detail.multicastVlanName?detail.multicastVlanName:"--"}}</td>
+                        </tr> -->
+                      </table>
+                    </div>
+                  </div>
+
+                  <div class="row space-list" *ngIf="detail.type == 'Bandwidth Tier'">
+                    <div class="support-key-value">
+                      <table class="">
+                        <tr>
+                          <td>{{language.Upstream_PIR}} (Mbps) </td>
+                          <td>{{detail.upstreamPir || detail.upstreamPir==0?convert_kbps_to(detail.upstreamPir):"--"}}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>{{language.Downstream_PIR}} (Mbps)</td>
+                          <td>
+                            {{detail.downstreamPir||detail.downstreamPir==0?convert_kbps_to(detail.downstreamPir):"--"}}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>{{language.Upstream_CIR}} (Mbps)</td>
+                          <td>{{detail.upstreamCir || detail.upstreamCir == 0?convert_kbps_to(detail.upstreamCir):"--"}}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>{{language.Downstream_CIR}} (Mbps)</td>
+                          <td>{{detail.downstreamCir ||detail.downstreamCir==0
+                            ?convert_kbps_to(detail.downstreamCir):"--"}}</td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div class="row space-list" *ngIf="detail.type == 'Subscriber Template' || detail.type == 'Service Profile(Data)'
+                || detail.type == 'Service Profile(Voice)' || detail.type == 'Service Profile(Video)'">
+                    <div class="support-key-value">
+                      <h4 *ngIf="isCOC">{{language['Common Parameters']}}</h4>
+                      <table>
+                        <tr>
+                          <td> {{language["SERVICE"]}}</td>
+                          <td>{{detail.serviceType ? detail.serviceType :"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.acsJsonb">
+                          <td>{{language['CE Tagging']}} </td>
+                          <td>{{ detail?.acsJsonb?.VlanTagAction == true ?
+                            'Tagged':'Untagged'}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.ceVlan > 0">
+                          <td> {{language["Ce-Vlan"]}}</td>
+                          <td>{{detail.ceVlan?detail.ceVlan:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail.type == 'Service Profile(Voice)'">
+                          <td> {{language["Service Type"]}}</td>
+                          <td>{{detail.Type =='X_000631_TDMGW'?'TDM GW':detail.Type?detail.Type:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail.type == 'Service Profile(Video)'">
+                          <td> {{language["Maximum # of Multicast Streams"]}}</td>
+                          <td>{{detail?.X_000631_MaxStreams===0?
+                            0:detail?.X_000631_MaxStreams?detail?.X_000631_MaxStreams:"--"}}</td>
+                        </tr>
+                      </table>
+
+                      <div *ngIf="addProfileObj?.buildProfile?.reviewPageCategoryList?.length > 0 && detail?.acsJsonb ">
+                        <div *ngIf="isCOC">
+                          <h4>{{language['RG Parameters']}}</h4>
+                        </div>
+
+                        <div *ngFor="let category of addProfileObj.buildProfile.reviewPageCategoryList;
+                        let i = index">
+                          <table class="">
+                            <tbody>
+                              <tr *ngFor="let item of category.selectedCategory">
+                                <td *ngIf="
+                        (category.parameterValues[item.name] ||
+                          category.parameterValues[item.name] === false ||
+                          category.parameterValues[item.name] === 0) &&
+                        category.buildCategoryFormData[item.displayName] !==
+                          '' &&
+                        item.name !== 'AdvancedSettings'&&
+                        item.name !== 'Type' && item.name !== 'X_000631_MaxStreams' &&category.buildCategoryFormData[item.displayName] && 
+                        item.displayName != 'CE Tagging'
+                       ">
+                                  {{ language[item.displayName] || item.displayName }}
+                                </td>
+                                <td *ngIf="
+                        (category.parameterValues[item.name] ||
+                          category.parameterValues[item.name] === false ||
+                          category.parameterValues[item.name] === 0) &&
+                        category.buildCategoryFormData[item.displayName] !==
+                          '' &&
+                        item.name !== 'AdvancedSettings'&&
+                        item.name !== 'Type' && item.name !== 'X_000631_MaxStreams' && category.buildCategoryFormData[item.displayName]&& 
+                        item.displayName != 'CE Tagging'
+                       ">
+                                  {{ category.buildCategoryFormData[item.displayName] }}
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                      <div *ngIf="isCOC">
+                        <h4>{{language['ONT & Integrated ONT/RG Parameters']}}</h4>
+                      </div>
+                      <table *ngIf="isCOC">
+                        <tr *ngIf="detail?.acsJsonb">
+                          <td> {{language['VLAN Type']}}</td>
+                          <td>{{detail?.acsJsonb?.vlanType?detail?.acsJsonb?.vlanType:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.acsJsonb?.vlanType ==='Global'">
+                          <td> {{language['Global VLAN Service Attribute']}}</td>
+                          <td>{{detail?.globalVlan?detail?.globalVlan:"--"}}</td>
+                        </tr>
+                        <tr>
+                          <td> {{language["Vlans"]}}</td>
+                          <td>{{detail.vlans?.length !==0 ?detail.vlans.join(', '):"--"}}</td>
+                        </tr>
+                        <tr>
+                          <td> {{language["Vlan Mode"]}}</td>
+                          <td>{{detail.vlanMode?detail.vlanMode:"--"}}</td>
+                        </tr>
+                        <tr>
+                          <td> {{language["Subscribers Per Vlan"]}}</td>
+                          <td>
+                            {{detail.subscribersPerVlan===0?0:detail.subscribersPerVlan?detail.subscribersPerVlan:"--"}}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td> {{language["Primary DNS"]}}</td>
+                          <td>{{detail.primaryDnsServer?detail.primaryDnsServer:"--"}}</td>
+                        </tr>
+                        <tr>
+                          <td> {{language["Secondary DNS"]}}</td>
+                          <td>{{detail.secondaryDnsServer?detail.secondaryDnsServer:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail.serviceType == 'VOICE' && this.voiceService ==='H.248'">
+                          <td> {{language["Primary H248 GW Controller (voice)"]}}</td>
+                          <td>{{detail.h248Profile?detail.h248Profile:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail.serviceType == 'VOICE' && this.voiceService ==='SIP'">
+                          <td> {{language["SIP Proxy Server Address"]}}</td>
+                          <td>{{detail.sipProfile?detail.sipProfile:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail.serviceType == 'VOICE' && this.voiceService ==='SIP'">
+                          <td> {{language["Dial Plan"]}}</td>
+                          <td>{{detail.dialPlan?detail.dialPlan:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail.serviceType == 'VIDEO'">
+                          <td> {{language["Multicast Profile"]}}</td>
+                          <td>{{detail.multicastProfile?detail.multicastProfile:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail.serviceType == 'VIDEO'">
+                          <td> {{language["igmp Profile"]}}</td>
+                          <td>{{detail.igmpProfile?detail.igmpProfile:"--"}}</td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<ng-template #showInfoModal let-modal class="col-md-12">
+  <div class="modal-header mt-3 d-block">
+    <h5 class="modal-title text-break" id="showInfoModal">{{ modalTitle }}</h5>
+
+    <div>
+      <div *ngIf="modalInfo == 'Error'">
+        {{errorInfo}}
+      </div>
+      <div *ngIf="modalInfo== 'Oui Match List'">
+        <div class="form-group ccl-form row">
+          <label class="col-4 control-label">{{language['Oui List Values']}}</label>
+          <div class="col-7">{{detail1.ouiListValues?detail1.ouiListValues.join(', '):"--"}}</div>
+        </div>
+      </div>
+      <div *ngIf="modalInfo == 'Multicast VLAN'">
+        <div class="form-group ccl-form row">
+          <label class="col-4 control-label">{{language['Total Number of MVR VLAN(s)']}}</label>
+          <div class="col-7">{{detail1.vlans?detail1.vlans?.length:"--"}}</div>
+        </div>
+        <div *ngFor="let item of detail1.vlans; let i = index;">
+          <div class="form-group ccl-form row">
+            <label class="col-4 control-label">{{language[MVRIdText[i]]}}</label>
+            <div class="col-7">{{item.vlanId?item.vlanId:"--"}}</div>
+          </div>
+          <div class="form-group ccl-form row">
+            <label class="col-4 control-label">{{language[MVRRangeText[i]]}}</label>
+            <div class="col-7">{{item.ranges?item.ranges?.length:"--"}}</div>
+          </div>
+          <div *ngFor="let ranges of item.ranges; let j = index;">
+            <div class="form-group ccl-form row">
+              <label class="col-4 control-label"> {{language[MulticastvlanRangestarttext[i][j]]}}</label>
+              <div class="col-7">{{ranges.start?ranges.start:"--"}}</div>
+            </div>
+            <div class="form-group ccl-form row">
+              <label class="col-4 control-label"> {{language[MulticastvlanRangeendtext[i][j]]}}</label>
+              <div class="col-7">{{ranges.end?ranges.end:"--"}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="modalInfo =='Multicast Range'">
+        <div class="form-group ccl-form row">
+          <label class="col-4 control-label">{{language['Total Number of Multicast Range Filters']}}</label>
+          <div class="col-7">{{detail1.filters?detail1.filters.length:"--"}}</div>
+        </div>
+        <div *ngFor="let item of detail1.filters; let i = index;">
+          <div class="form-group ccl-form row">
+            <label class="col-4 control-label">{{language[MulticastRangetext[i][0]]}}</label>
+            <div class="col-7">{{item.start?item.start:"--"}}</div>
+          </div>
+          <div class="form-group ccl-form row">
+            <label class="col-4 control-label">{{language[MulticastRangetext[i][1]]}}</label>
+            <div class="col-7">{{item.end?item.end:"--"}}</div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="modalInfo == 'Bandwidth Tier'">
+        <div class="form-group ccl-form row">
+          <label class="col-4 control-label">{{language.Upstream_PIR}} (Mbps) </label>
+          <div class="col-7">{{detail1.upstreamPir || detail1.upstreamPir==0? convert_kbps_to(detail1.upstreamPir)
+            :"--"}}</div>
+        </div>
+        <div class="form-group ccl-form row">
+          <label class="col-4 control-label">{{language.Downstream_PIR}} (Mbps)</label>
+          <div class="col-7">{{detail1.downstreamPir||detail1.downstreamPir==0?
+            convert_kbps_to(detail1.downstreamPir):"--"}}</div>
+        </div>
+        <div class="form-group ccl-form row">
+          <label class="col-4 control-label">{{language.Upstream_CIR}} (Mbps) </label>
+          <div class="col-7">{{detail1.upstreamCir || detail1.upstreamCir == 0?
+            convert_kbps_to(detail1.upstreamCir):"--"}}</div>
+        </div>
+        <div class="form-group ccl-form row">
+          <label class="col-4 control-label">{{language.Downstream_CIR}} (Mbps) </label>
+          <div class="col-7">{{detail1.downstreamCir ||detail1.downstreamCir==0 ?
+            convert_kbps_to(detail1.downstreamCir):"--"}}</div>
+        </div>
+      </div>
+      <div *ngIf="modalInfo == 'Service Profile'">
+        <h4 *ngIf="isCOC">{{language['Common Parameters']}}</h4>
+        <div class="form-group ccl-form row">
+          <label class="col-4 control-label">{{language["SERVICE"]}}</label>
+          <div class="col-7">{{detail1.serviceType ? detail1.serviceType:"--"}}</div>
+        </div>
+        <div class="form-group ccl-form row" *ngIf="detail1?.acsJsonb">
+          <label class="col-4 control-label">{{language['CE Tagging']}} </label>
+          <div class="col-7">{{ detail1?.acsJsonb?.VlanTagAction == true ?
+            'Tagged':'Untagged'}}</div>
+        </div>
+        <div class="form-group ccl-form row" *ngIf="detail1?.ceVlan > 0">
+          <label class="col-4 control-label">{{language["Ce-Vlan"]}} </label>
+          <div class="col-7">{{detail1.ceVlan?detail1.ceVlan:"--"}}</div>
+        </div>
+        <div class="form-group ccl-form row" *ngIf="detail1?.acsJsonb?.Type && detail.serviceType == 'VOICE'">
+          <label class="col-4 control-label">{{language["Service Type"]}}</label>
+          <div class="col-7">{{detail1?.acsJsonb?.Type =='X_000631_TDMGW'?'TDM
+            GW':detail1?.acsJsonb?.Type?detail1?.acsJsonb?.Type:"--"}}</div>
+        </div>
+        <div class="form-group ccl-form row" *ngIf="detail.serviceType == 'VIDEO'">
+          <label class="col-4 control-label">{{language["Maximum # of Multicast Streams"]}}</label>
+          <div class="col-7">{{detail1?.acsJsonb?.X_000631_MaxStreams ===0?
+            '0':detail1?.acsJsonb?.X_000631_MaxStreams?detail1?.acsJsonb?.X_000631_MaxStreams:"--"}}</div>
+        </div>
+        <div *ngIf="addProfileObj?.buildProfile?.reviewPageCategoryList?.length > 0 && detail1?.acsJsonb ">
+          <h4 *ngIf="isCOC">{{language['RG Parameters']}}</h4>
+          <div *ngFor="let category of addProfileObj.buildProfile.reviewPageCategoryList;
+                    let i = index">
+
+            <div *ngFor="let item of category.selectedCategory">
+              <div class="form-group ccl-form row" *ngIf="
+                                    (category.parameterValues[item.name] ||
+                                      category.parameterValues[item.name] === false ||
+                                      category.parameterValues[item.name] === 0) &&
+                                    category.buildCategoryFormData[item.displayName] !==
+                                      '' &&
+                                    item.name !== 'AdvancedSettings'&&
+                                    item.name !== 'Type' && item.name !== 'X_000631_MaxStreams' && category.buildCategoryFormData[item.displayName] && item.displayName != 'CE Tagging'
+                                  ">
+
+                <label class="col-4 control-label">{{ item.displayName }}</label>
+                <div class="col-7">{{ category.buildCategoryFormData[item.displayName] }}</div>
+
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+        <div *ngIf="isCOC">
+          <h4>{{language['ONT & Integrated ONT/RG Parameters']}}</h4>
+          <div class="form-group ccl-form row">
+            <label class="col-4 control-label">{{language['VLAN Type']}}</label>
+            <div class="col-7">{{detail1?.acsJsonb?.vlanType?detail1?.acsJsonb?.vlanType:"--"}}</div>
+          </div>
+          <div class="form-group ccl-form row" *ngIf="detail1?.acsJsonb?.vlanType ==='Global'">
+            <label class="col-4 control-label">{{language['Global VLAN Service Attribute']}}</label>
+            <div class="col-7">{{detail1?.globalVlan?detail1?.globalVlan:"--"}}</div>
+          </div>
+          <div class="form-group ccl-form row">
+            <label class="col-4 control-label">{{language["Vlans"]}}</label>
+            <div class="col-7">{{detail1.vlans?.length !==0 ?detail1.vlans.join(', '):"--"}}</div>
+          </div>
+          <div class="form-group ccl-form row">
+            <label class="col-4 control-label">{{language["Vlan Mode"]}}</label>
+            <div class="col-7">{{detail1.vlanMode?detail1.vlanMode:"--"}}</div>
+          </div>
+          <div class="form-group ccl-form row">
+            <label class="col-4 control-label">{{language["Subscribers Per Vlan"]}}</label>
+            <div class="col-7">{{detail1.subscribersPerVlan===0?0
+              :detail1.subscribersPerVlan?detail1.subscribersPerVlan:"--"}}</div>
+          </div>
+          <div *ngIf="detail1.serviceType">
+            <div class="form-group ccl-form row">
+              <label class="col-4 control-label">{{language["Primary DNS"]}}</label>
+              <div class="col-7">{{detail1.primaryDnsServer?detail1.primaryDnsServer:"--"}}</div>
+            </div>
+            <div class="form-group ccl-form row">
+              <label class="col-4 control-label">{{language["Secondary DNS"]}}</label>
+              <div class="col-7">{{detail1.secondaryDnsServer?detail1.secondaryDnsServer:"--"}}</div>
+            </div>
+          </div>
+          <div *ngIf="detail1.serviceType == 'VOICE'">
+            <div class="form-group ccl-form row"
+              *ngIf="detail.serviceType == 'VOICE' && (this.voiceService ==='H.248' || this.Type==='H.248')">
+              <label class="col-4 control-label">{{language["Primary H248 GW Controller (voice)"]}}</label>
+              <div class="col-7">{{detail1.h248Profile?detail1.h248Profile:"--"}}</div>
+            </div>
+            <div class="form-group ccl-form row" *ngIf="detail.serviceType == 'VOICE' && (this.voiceService ==='SIP')">
+              <label class="col-4 control-label">{{language["SIP Proxy Server Address"]}}</label>
+              <div class="col-7">{{detail1.sipProfile?detail1.sipProfile:"--"}}</div>
+            </div>
+            <div class="form-group ccl-form row" *ngIf="detail.serviceType == 'VOICE' && (this.voiceService ==='SIP')">
+              <label class="col-4 control-label">{{language["Dial Plan"]}}</label>
+              <div class="col-7">{{detail1.dialPlan?detail1.dialPlan:"--"}}</div>
+            </div>
+          </div>
+
+          <div *ngIf="detail1.serviceType == 'VIDEO'">
+            <div class="form-group ccl-form row">
+              <label class="col-4 control-label">{{language["Multicast Profile"]}}</label>
+              <div class="col-7">{{detail1.multicastProfile?detail1.multicastProfile:"--"}}</div>
+            </div>
+            <div class="form-group ccl-form row">
+              <label class="col-4 control-label">{{language["igmp Profile"]}}</label>
+              <div class="col-7">{{detail1.igmpProfile?detail1.igmpProfile:"--"}}</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+
+    </div>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <!-- <div class="modal-body add-device-model">
+    <button type="button" class="btn-default primary px-3 px-3" data-dismiss="modal"
+      (click)="modal.close('Save click')">
+      {{ language.Close }}
+    </button>
+  </div> -->
+</ng-template>

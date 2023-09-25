@@ -1,0 +1,11 @@
+.mobileapp-nav-tab .nav {
+    border-bottom: 2px solid #CCCCCC;
+    .nav-link{color: #1A1F22;font-size: 18px;font-weight: 300;cursor: pointer;}
+    .nav-link.active {
+        color: #0279FF;
+        font-weight: 400;
+        margin-bottom: -2px;
+        border-bottom: 2px solid #0279FF;
+    }
+    .nav-link:hover{color: #0279FF;}
+}

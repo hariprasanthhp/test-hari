@@ -1,0 +1,66 @@
+@import '../../../../../assets/variables';
+
+.table thead th {
+  border       : none !important;
+  border-bottom: 2px solid #dee2e6 !important;
+}
+
+.collapsedata {
+  margin-left: 10px;
+}
+
+.alert {
+  display  : none;
+  // margin: 2%;
+}
+
+.form-control.is-valid,
+.form-control.is-invalid {
+  background-image: none;
+  padding-right   : inherit;
+}
+
+:host ::ng-deep .dataTables_empty {
+  display: none;
+}
+
+.alert-warning {
+  line-height: 1.5;
+  padding    : 5px 10px;
+  margin     : 10px 0px;
+}
+
+.warnbtn {
+  float  : right;
+  margin : -5px 10px;
+  padding: 3px 5px;
+
+}
+
+.modal.fade .modal-dialog .modal-content {
+  padding: 40px !important;
+}
+
+.sub-title {
+
+  font-size     : 42px;
+  font-style    : normal;
+  font-weight   : 300;
+  line-height   : 53px;
+  letter-spacing: 0em;
+  text-align    : left;
+
+}
+
+.sub-close {
+  position: absolute;
+  right   : 30px;
+  top     : 20px;
+  cursor  : pointer;
+}
+.del-action-icon{color:#0279ff;
+&:hover{
+  color: #0054b2;
+}
+}
+.modal-cus-pad{padding:16px !important; border-radius: 26px !important;}

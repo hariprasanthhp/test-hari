@@ -1,0 +1,61 @@
+@import '../add-role/add-role.component.scss';
+::ng-deep {
+    table.roles-datatable td.dataTables_empty {
+        display: none;
+    }
+}
+.user-all {
+    input[type="checkbox"] {
+        + {
+            .checkbox-ui {
+                width        : 13px;
+                height       : 13px;
+            //     // background: #ffffff;
+            //     // border: 1px solid #b8bcc1;
+            //     border-radius: 2px;
+            //     z-index      : 1;
+            //     position     : relative;
+            //     right        : 0px !important;
+            //     margin-top   : 0px !important;
+            //     margin-bottom: 0;
+            //     min-height   : auto;
+            //     padding      : 0;
+            //     display      : inline-block;
+            //     border       : 1px solid #0279FF;
+            //     background   : #0279FF;
+            //     left         : -13px;
+            //     // top          : 0px !important;
+            }
+        }
+    }
+}
+
+.noWriteApi {
+	opacity: 0.5;
+}
+input[type=checkbox] + .check-intermediate{
+	left: 0px !important;
+    margin-top: 2px !important;
+}
+
+.checkbox-permission 
+{
+position: relative;
+input[type=checkbox]{
+position:absolute;
+}
+.check-intermediate{
+    position: absolute !important;
+}
+}
+.check-intermediate + span.check-caption {
+        margin-left: 18px;
+}
+.custom-check-permission{
+    .check-intermediate + span.check-caption {
+        margin-left: 8px;
+}
+}
+span#user-all-delete-span {
+    top: 0px !important;
+}

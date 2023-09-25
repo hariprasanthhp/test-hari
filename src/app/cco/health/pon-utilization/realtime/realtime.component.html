@@ -1,0 +1,345 @@
+<div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess">
+  {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}}
+</div>
+
+<div class="container px-0" id="pon-Real-Time-filter" *ngIf="hasScopeAccess">
+  <div class="filter-elemnts">
+    <div class="row mb-1">
+      <div class="col-12 col-md-12 p-0">
+        <div class="current-issue-menu-container">
+          <div class="current-issue-menu-item mt-4 col-12 col-sm-6 col-md-3 col-lg-3">
+            <label for="Name" class="col-form-label select-font"> {{ language.TTimeFrame }}</label>
+            <div class="custom-selectbox" class="w-100" id="current-issues-interval">
+              <ng-select [searchable]="false" placeholder="{{ language.interval }}" [(ngModel)]="selectedOption">
+                <ng-option *ngFor="let option of ddoptions" [value]="option.id">{{ language[option.name] }}</ng-option>
+              </ng-select>
+            </div>
+          </div>
+          <div class="current-issue-menu-item mt-4 col-12 col-sm-6 col-md-3 col-lg-3">
+            <label for="Name" class="col-form-label select-font">{{language.region}} </label>
+            <div class="custom-selectbox" class="w-100" id="current-issues-region">
+              <ng-select [(ngModel)]="regionSelected" [items]="regionsDataArray" bindValue="id" bindLabel="name"
+                class="selectboxwidth" [ngModelOptions]="{standalone: true}" (ngModelChange)="loadLocationValue($event)"
+                [clearable]="false" [searchable]="true" placeholder="{{ language.region }}">
+                <ng-template ng-label-tmp let-item="item">
+                  <div class="text-truncate" title="{{item.name ? item.name : item}}">{{item.name ? item.name : item}}
+                  </div>
+                </ng-template>
+                <ng-template ng-option-tmp let-item="item">
+                  <div class="text-truncate" title="{{item.name ? item.name : item}}">{{item.name ? item.name : item}}
+                  </div>
+                </ng-template>
+              </ng-select>
+            </div>
+          </div>
+          <div class="current-issue-menu-item mt-4 col-12 col-sm-6 col-md-3 col-lg-3">
+            <label for="Name" class="col-form-label select-font">{{ language.Location }} </label>
+            <div class="custom-selectbox" class="w-100" id="current-issues-location">
+              <ng-select [(ngModel)]="locationSelected" [items]="locationDataArray" bindValue="id" bindLabel="name"
+                (ngModelChange)="loadSystemValue($event)" class="selectboxwidth" placeholder="{{ language.Location }}"
+                [ngModelOptions]="{standalone: true}" [clearable]="false" [searchable]="true">
+                <ng-template ng-label-tmp let-item="item">
+                  <div class="text-truncate" title="{{item.name ? item.name : item}}">{{item.name ? item.name : item}}
+                  </div>
+                </ng-template>
+                <ng-template ng-option-tmp let-item="item">
+                  <div class="text-truncate" title="{{item.name ? item.name : item}}">{{item.name ? item.name : item}}
+                  </div>
+                </ng-template>
+              </ng-select>
+            </div>
+          </div>
+          <div class="current-issue-menu-item mt-4 col-12 col-sm-6 col-md-3 col-lg-3">
+            <label for="Name" class="col-form-label select-font">{{ language.System }}</label>
+            <div class="custom-selectbox w-100" id="current-issues-System">
+              <ng-select [(ngModel)]="systemSelected" [items]="systemDataArray" bindValue="uuid" bindLabel="name"
+                (ngModelChange)="selectSystem($event)" class="selectboxwidth" placeholder="{{ language.System }}"
+                [ngModelOptions]="{standalone: true}" [clearable]="false" [searchable]="true">
+                <ng-template ng-label-tmp let-item="item">
+                  <div class="text-truncate" title="{{item.name ? item.name : item}}">{{item.name ? item.name : item}}
+                  </div>
+                </ng-template>
+                <ng-template ng-option-tmp let-item="item">
+                  <div class="text-truncate" title="{{item.name ? item.name : item}}">{{item.name ? item.name : item}}
+                  </div>
+                </ng-template>
+              </ng-select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-12 text-left mt-4">
+        <div class="d-inline-flex mr-3">
+          <button type="button" class="btn-default primary" (click)="applyFilter()">
+            {{ language.apply }}
+          </button>
+        </div>
+
+        <div class="d-inline-flex">
+          <button type="button" id="#" class="btn-default btn-dft" (click)="clearFilter()">
+            {{ language.Clear_Filters }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="w-100 alert alert-danger fade show" *ngIf="errorMessage">
+  <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+  <span>{{errorMessage}}</span>
+  <button type="button" class="close mt-10" (click)="closeAlert()">
+    <span></span>
+  </button>
+</div>
+<div class="row" *ngIf="hasScopeAccess">
+  <div class="loader" *ngIf="loading">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary">
+        <span class="sr-only">{{language.Loading}}</span>
+      </div>
+    </div>
+  </div>
+</div>
+<section class="mt-3" *ngIf="hasScopeAccess">
+  <div class="container">
+    <!-- <div class="w-100 alert alert-danger  fade show my-3" *ngIf="connectionError">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+      <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+      <div class="d-inline-flex" [innerHtml]="connectionErrorInfo"></div>
+    </div> -->
+    <div class="row" [hidden]="fsView">
+      <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6" id="pon-Real-Time-Downstream-Capacity">
+        <div class="cco-secondary-title border-bottom text-sm-ellipse">
+          <div class="overflw-title" title="{{ language.Top_PON_Ports_by_Downstream_Capacity }}">
+            {{ language.Top_PON_Ports_by_Downstream_Capacity }}
+          </div>
+          <span class="top5-fullscreen pointer pull-right expand-icon" data-toggle="tooltip"
+            title="{{language.lossofpon_fullscreen_tip}}" (click)="fullscreen('TPP_DOWN')" id="open-fullscreen-tppdown">
+            <!-- <i class="fa fa-expand"></i> -->
+            <!-- <button class="btn-round btn-small-24 btn-grey btn-expand"></button> -->
+          </span>
+        </div>
+        <h5 class="heading-subtitle my-2"> {{language["Health_Real Time_Top PON ports"]}}</h5>
+        <div class="cco-health-table overflow-auto">
+
+          <!-- <table datatable [dtOptions]="tableOptions" [dtTrigger]="dtTrigger"
+            class="table table-alter row-border hover" style="width:100%"> -->
+          <table class="table table-hover table-striped w-100">
+            <thead>
+              <tr>
+                <th>{{ language.System }}</th>
+                <th>{{ language.Pon_Port }}</th>
+                <th>{{ language.region }}/{{ language.Location }}</th>
+                <th class="sorting-th-custom sorting-th-alt">{{ language.Value }}</th>
+                <th>%{{language.HUtilization}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let downstream of TPPDownStreamData;let i = index">
+                <td>{{downstream.system }}</td>
+                <td>{{downstream.ifName}}</td>
+                <td>{{downstream.region}}/{{downstream.location}}</td>
+                <td>{{bitsToSize(downstream.value, false)}}</td>
+                <td>{{calculateDownPercentage(downstream)}}
+                  <div class="test">
+                    <span class="mx-2">
+                      <i (click)="ponPortsChart(downstream, 'shrinkView')" class="primary fas fa-plus"></i>
+                    </span>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="TPPDownStreamData.length == 0" class="text-center">
+                <td colspan="5">{{language["No data available"]}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6" id="pon-Real-Time-Upstream-Capacity">
+        <div class="cco-secondary-title border-bottom text-sm-ellipse">
+          <div class="overflw-title" title="{{ language.Top_PON_Ports_by_Upstream_Capacity }}">
+            {{ language.Top_PON_Ports_by_Upstream_Capacity }}
+          </div>
+
+          <span class="top5-fullscreen pointer pull-right expand-icon" data-toggle="tooltip"
+            title="{{language.lossofpon_fullscreen_tip}}" (click)="fullscreen('TPP_UP')" id="open-fullscreen-tpp-up">
+            <!-- <i class="fa fa-expand"></i> -->
+            <!-- <button class="btn-round btn-small-24 btn-grey btn-expand"></button> -->
+          </span>
+        </div>
+        <h5 class="heading-subtitle my-2"> {{language["Health_Real Time_Top PON ports"]}}</h5>
+
+        <!-- <table datatable [dtOptions]="tableOptions" [dtTrigger]="dtTrigger"
+          class="table table-alter  row-border hover" style="width:100%"> -->
+        <div class="cco-health-table overflow-auto">
+          <table class="table table table-hover table-striped w-100">
+            <thead>
+              <tr>
+                <th>{{ language.System }}</th>
+                <th>{{ language.Pon_Port }}</th>
+                <th>{{ language.region }}/{{ language.Location }}</th>
+                <th class="sorting-th-custom sorting-th-alt">{{ language.Value }}</th>
+                <th>%{{language.HUtilization}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let upstream of TPPUpStreamData;let i = index">
+                <td>{{upstream.system}}</td>
+                <td>{{upstream.ifName}}</td>
+                <td>{{upstream.region}}/{{upstream.location}}</td>
+                <td>{{bitsToSize(upstream.value, false)}}</td>
+                <td>{{calculateUpPercentage(upstream)}}
+                  <div class="test">
+                    <span class="mx-2">
+                      <i (click)="ponPortsChart(upstream, 'shrinkView')" class="primary fas fa-plus"></i>
+                    </span>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="TPPUpStreamData.length == 0" class="text-center">
+                <td colspan="5">{{language["No data available"]}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+    <div [hidden]="!fsView" class="bg-light h-auto">
+      <div class="row">
+        <div class="col-md-12 col-12">
+          <div class="card h-auto">
+            <div class="board_head">
+              <div class="row">
+                <div class="col-sm-12 col-md-12 col-lg-3 col-xl-3">
+                  <div class="orange-text-wrapper mt-2 pl-2">
+                    <ng-select class="realtime-custom-select" id="usage_criteria" [items]="topLengths" bindLabel="name"
+                      bindValue="value" [multiple]="false" placeholder="" [(ngModel)]="selectedTopLength"
+                      [ngModelOptions]="{ standalone: true }" [clearable]="false" [searchable]="false"
+                      (change)="changeTopLength()">
+                      <ng-template ng-label-tmp let-item="item">
+                        {{language[item.name] }}
+                      </ng-template>
+                      <ng-template ng-option-tmp let-item="item" let-index="index">
+                        {{language[item.name] }}
+                      </ng-template>
+                    </ng-select>
+
+                  </div>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-9 col-xl-9">
+                  <div class="cco-secondary-title mx-1">
+                    <span *ngIf="fsName == 'TPP_UP'">{{ language.Top_PON_Ports_by_Upstream_Capacity }}</span>
+                    <span *ngIf="fsName == 'TPP_DOWN'">{{ language.Top_PON_Ports_by_Downstream_Capacity }}</span>
+                    <span class="top5-fullscreen pointer pull-right mr-3 expand-inverted-icon mt-2"
+                      (click)="closeFullscreen()" data-toggle="tooltip"
+                      title="{{language.lossofpon_fullscreen_close_tip}}" id="close-fullscreen-top-endpoints">
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-body row board_body no-gutters overflow-auto cco-health-table">
+              <table class="table table-striped row-border hover w-100">
+                <thead>
+                  <tr>
+                    <th>{{ language.System }}</th>
+                    <th>{{ language.Pon_Port }}</th>
+                    <th>{{ language.region }}</th>
+                    <th>{{ language.Location }}</th>
+                    <th class="sorting-th-custom sorting-th-alt">{{ language.Value }}</th>
+                    <th>% {{language.HUtilization}}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let stream of TPPStreamData; let i = index">
+                    <td>{{stream.system}}</td>
+                    <td>{{stream.ifName}} </td>
+                    <td>{{stream.region}}</td>
+                    <td>{{stream.location}}</td>
+                    <td>{{bitsToSize(stream.value, false)}}</td>
+                    <td>{{ fsName == "TPP_UP" ? calculateUpPercentage(stream) : calculateDownPercentage(stream) }}
+                      <div class="test">
+                        <span class="mx-2">
+                          <i (click)="ponPortsChart(stream, 'expandedView')" class="primary fas fa-plus"></i>
+                        </span>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr *ngIf="TPPStreamData.length == 0" class="text-center">
+                    <td colspan="6">{{language["No data available"]}} </td>
+                  </tr>
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row" [hidden]="fsView">
+      <div class="col-md-12 mt-2">
+        <div class="cco-secondary-title border-bottom">
+          <!-- {{ language.Rate }} -->
+        </div>
+        <div class="w-100">
+          <h5 class="heading-subtitle my-2">{{language["HealthPONRealtimeRateDelay"]}}</h5>
+        </div>
+        <div class="d-flex justify-content-between md-block">
+          <div class="col-12 col-md-12 pr-0 pl-0 col-lg-6 mpb-3">
+            <div id="health-network-realtime-rate" class="card m-10" *ngIf="data['maxRate'].length || showRealTime">
+              <div class="" id="ngx-stream-path-chart-rate">
+                <app-stream-chart [chartName]="language.RATE" [yAxixTitle]="rateUnit" [data]="data.maxRate"
+                  [time]="data.sendTime" [windowLen]="windowLen" *ngIf="data.maxRate && showRealTime"
+                  [selectedFilter]="selectedTime" [selectedRegion]="selectedRegion"
+                  [selectedLocation]="selectedLocation" [selectedSystem]="selectedSystem" [history]="cacheRateData">
+                </app-stream-chart>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-12 pr-0 col-lg-6">
+            <div id="health-network-realtime-packet" class="card m-10" *ngIf="data['packet'].length || showRealTime">
+              <div class="" id="ngx-stream-path-chart-packet">
+                <app-stream-chart [chartName]="language.PACKET" [yAxixTitle]="packetUnit" [data]="data.packet"
+                  [time]="data.sendTime" [windowLen]="windowLen" *ngIf="data.packet && showRealTime"
+                  [selectedFilter]="selectedTime" [selectedRegion]="selectedRegion"
+                  [selectedLocation]="selectedLocation" [selectedSystem]="selectedSystem" [history]="cachePacketData">
+                </app-stream-chart>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-5">
+      <div class="col-md-12" *ngFor="let item of ponPortsChartList; let i=index">
+        <ng-container *ngIf="fsView ? item.viewType == 'expandedView' : item.viewType == 'shrinkView'">
+          <app-ponport-chart [windowLen]="item.windowLen" [selectedTime]="selectedTime" [monitorId]="item.monitorId"
+            [Position]="item.Position" [region]="item.region" [location]="item.location" [system]="item.system"
+            [ponPorts]="item.port" [IsDuplicate]="item.IsDuplicate" [startTime]="item.startTime" [replay]="item.replay"
+            [locationUuid]="item.locationUuid" [regionUuid]="item.regionUuid" [systemUuid]="item.systemUuid"
+            (valueChange)="clearChartContainer($event)">
+          </app-ponport-chart>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</section>
+
+<ng-template #showInfoModal let-modal class="col-md-12">
+  <div class="modal-header d-block">
+    <h5 class="modal-title" id="showInfoModal">{{ modalTitle }}</h5>
+
+    <div>
+      {{modalInfo}}
+    </div>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="close()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body add-device-model">
+    <button type="button" class="btn-default primary px-3 px-3" data-dismiss="modal" (click)="close()">
+      {{ language.Ok }}
+    </button>
+  </div>
+</ng-template>

@@ -1,0 +1,159 @@
+<section>
+    <div class="loader" *ngIf="loader">
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border text-primary">
+            <span class="sr-only">{{language.Loading}}</span>
+          </div>
+        </div>
+      </div>
+      <div class="w-100 alert alert-danger  fade show my-3" *ngIf="errorInfo">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+        <button type="button" class="close" (click)="errorInfo = ''"><span></span></button>
+        <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+    </div>
+    <div class="container" *ngIf="!loader">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="confirm-user-title-info d-flex justify-content-between align-items-end">
+                    <div class="confirm-user-title">{{language['Confirm Users']}} </div>
+                    <div class="">
+                        <button type="button" class="btn-default btn-dft py-1 md-btn ml-1 mr-3" (click)="this.submissionStatus == 'in progress' ? openStopUserPopup(StopUserModal) : goBack()" data-toggle="modal" data-target=".bd-example-modal-lg" [disabled]="this.submissionStatus == 'stop'">{{(this.submissionStatus == 'in progress'||this.submissionStatus == 'stop') ? language['Stop'] : language['Cancel']}} </button>
+                        <button id="cancel-add-role" [disabled]="!userList.length || this.submissionStatus == 'in progress' || errorInAllLines" class="btn-default primary" (click)="(this.submissionStatus == 'success' || this.submissionStatus == 'stop') ? goBack() : saveUsers(true)"> {{this.submissionStatus == 'in progress' ? (language['Adding Users'] + '...'): (this.submissionStatus == 'success' || this.submissionStatus == 'stop') ? language['Done'] : language['Confirm']}} </button>
+                    </div>
+                </div>
+
+                <div class="confirm-user-warning-info" *ngIf="missingvalues.length">
+                    <div class="warning-info-icon">
+                        <img src="../../../../assets/img/warning-icon.svg" alt="">
+                    </div>
+                    <div class="warning-info-content">
+                        <h5>{{language['Errors found in User Records CSV']}}</h5>
+                        {{language['Please correct the errors and re-upload the CSV file']}}
+
+                        <p class="primary pointer" (click)="openErrorsFoundModal(ErrorsFoundModal)">{{language['View']}} {{missingvalues.length + apiErrors.length }} {{language['errors']}}</p>
+                    </div>
+                </div>
+                <!------------------ progress-box ------------------>
+
+                
+                <div class="confirm-user-progress-box" *ngIf="submissionStatus === 'in progress'">
+                    <div class="progress-box-icon">
+                        <img src="../../../../assets/img/ic_progress-circle.svg" alt="">
+                    </div>
+                    <div class="progress-info-content">
+                        {{language['Adding users to the communities specified in the CSV']}}... {{getRoundedValue(savedSubscribersCount/userList.length*100)}}% {{language['complete']}}
+                    </div>
+                </div>
+                <!------------------ progress-box ------------------>
+
+                <!-------------------- success box-------------------->
+                <div class="confirm-user-success-box" *ngIf="submissionStatus === 'success'">
+                    <div class="success-box-icon">
+                        <img src="../../../../assets/img/ic_success-circle-outline.svg" alt="">
+                    </div>
+                    <div class="success-info-content">
+                        {{language['Users successfully added to the communities specified in the CSV']}}.
+                    </div>
+                </div>
+                <!-------------------- success box-------------------->
+
+                <div class="confirm-user-warning-info" *ngIf="submissionStatus === 'stop'">
+                    <div class="warning-info-icon">
+                        <img src="../../../../assets/img/warning-icon.svg" alt="">
+                    </div>
+                    <div class="warning-info-content">
+                        {{language['The process for adding users to the communities has been stopped']}}.
+                    </div>
+                </div>
+
+                <p>
+                    {{language['Access will be granted and a welcome email will be sent to the following users']}}:
+                </p>
+
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="confirm-user-list">
+                    <table  datatable [dtOptions]="dtOptions">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>{{language['First Name']}}</th>
+                                <th>{{language['Last_Name']}}</th>
+                                <th class="email-with text-break">{{language['Email']}}</th>
+                                <th>{{language['Bsp_Microsite_Name']}}</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let user of userList;let i=index">
+                                <td ><img [hidden]="((errorFound(user,i) && !statusIconInfo[i]) || (submissionStatus == 'stop' && i ===savedSubscribersCount))" src="../../../../assets/img/{{ statusIconInfo[i] == 'success' ? 'ic_test-success': statusIconInfo[i] == 'inprogress' ? 'ic_progress-circle': 'warning-icon'}}.svg"></td>
+                                <td>{{user.firstName}}</td>
+                                <td>{{user.lastName}}</td>
+                                <td>{{user.email}}</td>
+                                <td><span *ngFor="let community of user.community;let j=index">{{community.communityName}}{{(user.community.length-1) !== j ? ', ' :''}}</span></td>
+                            </tr>
+                           
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- errors-found-Modal -->
+<ng-template #ErrorsFoundModal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">{{missingvalues.length}} {{language['errors found']}}</h3>
+            <button type="button" (click)="close()" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true"></span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p>{{language['Correct the following errors and re-upload the CSV file']}}:</p>
+            <ul>
+                <li class="list-styled-bullet" *ngFor="let error of missingvalues" [innerHTML]="error"></li>
+            </ul>
+        </div>
+
+    </div>
+
+    
+</ng-template>
+
+<!-- errors-found-Modal -->
+
+<ng-template #StopUserModal>
+    <div class="modal-content">
+        <div class="modal-header">
+            
+            <button type="button" (click)="close()" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true"></span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="d-flex w-100 align-items-start">
+                <div class="w-10 mr-2">
+<img src="../../../../assets/img/ic_warning-36px.svg" alt="">
+                </div>
+                <div class="w-90 ml-2">
+                    <div class="stop-user-sub-title">{{language['Stop adding users']}}?</div>
+                    <p>{{language['Only users that have successfully been added will be granted access']}}.</p>
+                    <div class="">
+                        <button id="" class="btn-default primary" (click)="this.submissionStatus = 'stop';close()"> {{language['Yes, stop adding users']}} </button>
+                        <button type="button" class="btn-default btn-dft py-1 md-btn ml-1 mr-3" (click)="close()">{{language['Cancel']}} </button>
+                    </div>
+                </div>
+
+            </div>
+            
+        </div>
+        
+    </div>
+
+</ng-template>

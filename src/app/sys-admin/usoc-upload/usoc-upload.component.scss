@@ -1,0 +1,103 @@
+.usoc-title {
+    font-weight: 300;
+    font-size: 42px;
+    line-height: 53px;
+}
+
+// .form-control-file {
+//     border-radius: 16px;
+//     padding: 5px;
+//     min-width: 86px;
+//     text-align: center;
+//     font-size: 16px;
+//     font-weight: 400;
+//     color: #fff;
+//     box-shadow: 3px 3px 6px #00000026;
+//     border: 0;
+// }
+
+// [type="file"] {
+//     /* Style the color of the message that says 'No file chosen' */
+//     color: #878787;
+// }
+
+// [type="file"]::-webkit-file-upload-button {
+
+//     background: #0279FF;
+//     box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.15);
+//     border-radius: 16px;
+//     border: 2px solid #0279FF;
+//     color: #fff;
+//     cursor: pointer;
+//     font-size: 12px;
+//     outline: none;
+//     padding: 5px 20px;
+//     text-transform: uppercase;
+//     transition: all 1s ease;
+// }
+
+// [type="file"]::-webkit-file-upload-button:hover {
+//     background: #0279FF;
+//     border: 2px solid #0279FF;
+//     color: #fff;
+// }
+input.inp-disabled:hover {
+    cursor:not-allowed !important;
+  }
+.usoc-upload-button {
+    position: relative;
+
+    input {
+
+        position: absolute;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+
+    }
+        &:focus {
+            outline: none !important;
+        }
+}
+.card {
+    border: none;
+}
+
+.btn-link:hover {
+    text-decoration: none;
+}
+
+// .csv-header {
+//     [aria-expanded="true"] {
+
+//         transform: rotate(45deg);
+
+//     }
+// }
+
+.btn-link {
+
+    span {
+        margin-left: 5px;
+    }
+}
+
+[aria-expanded="true"] {
+    span {
+        img {
+            transform: rotate(180deg);
+        }
+    }
+}
+.csv-data-list {
+    ul {
+        padding-left: 26px;
+
+        li {
+            list-style: disc;
+        }
+    }
+}

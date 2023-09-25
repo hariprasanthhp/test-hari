@@ -1,0 +1,282 @@
+<!-- <app-profile></app-profile> -->
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <h4>Experience IQ</h4>
+        </div>
+    </div>
+    <div class=" row my-4">
+        <div class="col-md-12 text-right px-0">
+            <button type="button" class="btn-default primary px-3">Add Profile
+                <i class="fa fa-plus mx-1" aria-hidden="true"></i></button>
+        </div>
+    </div>
+</div>
+
+<!-- Experience IQ -->
+<div class="" *ngIf="isExperienceIQ; else notExperienceIQ">
+    <div class="row my-3">
+        <div class="col-md-6 text-left px-0">
+            <button type="button" class="btn-default primary px-3">{{language.Disconnected_All}}</button>
+        </div>
+        <div class="col-md-6 text-right px-0">
+            <button type="button" class="btn-default primary px-3"
+                (click)="isExperienceIQ = false">{{language.Add_Profile}}
+                <i class="fa fa-plus mx-1" aria-hidden="true"></i></button>
+        </div>
+    </div>
+    <div class="row border mb-2">
+        <div class="col-md-12 pr-2 text-right">
+            <i class="fa fa-times primary" aria-hidden="true"></i>
+        </div>
+
+
+        <div class="col-md-2 col-sm-2 text-center">
+            <div class="">
+                <img src="./assets/img/avatar2.svg" class="red">
+            </div>
+            <div class="">
+                Darik
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-3">
+            <div class="col-md-12 px-0 support-key-value">
+                <table class="">
+                    <tbody>
+                        <tr>
+                            <th scope="row">{{language.Status}} :</th>
+                            <td>Connected</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">{{language.Systems}} :</th>
+                            <td>06</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">{{language.Usage}} :</th>
+                            <td>8Hours</td>
+                        </tr>
+
+
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-8 col-sm-7">
+            <div class="row">
+                <div class="profile-card">
+                    <div class="card card-shadow">
+                        <div class="card-body" (click)="navigateTabs('devices')">
+                            <div class="float-right ccl-no">6</div>
+                            <div class="text-center primary" style="font-size: 30px;">
+                                <i class="fa fa-mobile" aria-hidden="true"></i>
+                            </div>
+                            <div class="text-center">
+                                {{language.Systems}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-card">
+                    <div class="card card-shadow">
+                        <div class="card-body" (click)="navigateTabs('filters')">
+                            <div class="text-center primary" style="font-size: 30px;">
+                                <i class="fa fa-filter" aria-hidden="true"></i>
+                            </div>
+                            <div class="text-center">
+                                {{language.Filters}}
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-card">
+                    <div class="card card-shadow">
+                        <div class="card-body" (click)="navigateTabs('notification')">
+                            <div class="text-center primary" style="font-size: 30px;">
+                                <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+                            </div>
+                            <div class="text-center">
+                                {{language.Notificationns}}
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-card">
+                    <div class="card card-shadow">
+                        <div class="card-body" (click)="navigateTabs('timelimit')">
+                            <div class="text-center primary" style="font-size: 30px;">
+                                <i class="fa fa-clock-o" aria-hidden="true"></i>
+                            </div>
+                            <div class="text-center">
+                                {{language.Time_Limits}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-card">
+                    <div class="card card-shadow">
+                        <div class="card-body" (click)="navigateTabs('usage')">
+                            <div class="text-center primary" style="font-size: 30px;">
+                                <i class="fa fa-pie-chart" aria-hidden="true"></i>
+                            </div>
+                            <div class="text-center">
+                                {{language.Usage}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-------------------------- New Profile -------------------------->
+<ng-template #notExperienceIQ>
+    <div class="container my-4">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <h4>{{language.New_Profile}}</h4>
+            </div>
+        </div>
+        <div class="row my-4">
+            <div class="col-md-12 text-center">
+                <img src="./assets/img/avatar2.svg" class="red">
+            </div>
+        </div>
+    </div>
+    <!-------------------------- New Profile End -------------------------->
+    <!-------------------------- New Profile End -------------------------->
+    <div class="row justify-content-md-center">
+        <div class="col-md-3 text-center">
+            <div class="ccl-form my-3">
+                <input type="text" class="" placeholder="Username" aria-label="Enter Your Profile Name"
+                    aria-describedby="basic-addon1">
+            </div>
+        </div>
+    </div>
+    <div class="row my-3">
+        <div class="col-md-12 px-0">
+            <h4>{{language.AddDeviceProfile}}:</h4>
+        </div>
+    </div>
+    <div class="row my-4">
+        <div class="col-md-4 px-0">
+            <div class="row">
+                <div class="col-md-6 px-0 text-left">
+                    <h5 class="m-0">Realme</h5>
+                    <span>7c:6b:9c:23:0b:0b</span>
+                </div>
+                <div class="col-md-4 text-right">
+                    <form>
+                        <div class="ccl-form-group">
+                            <input type="checkbox" id="Realme">
+                            <label for="Realme"></label>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-4 ">
+            <div class="row">
+                <div class="col-md-6 text-left">
+                    <h5 class="m-0">IphoneX</h5>
+                    <span>7c:6b:9c:23:0b:0b</span>
+                </div>
+                <div class="col-md-4 text-right">
+                    <form>
+                        <div class="ccl-form-group">
+                            <input type="checkbox" id="IphoneX">
+                            <label for="IphoneX"></label>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-4 px-0">
+            <div class="row">
+                <div class="col-md-6 text-left">
+                    <h5 class="m-0">Oppo</h5>
+                    <span>7c:6b:9c:23:0b:0b</span>
+                </div>
+                <div class="col-md-4 text-right">
+                    <form>
+                        <div class="ccl-form-group">
+                            <input type="checkbox" id="html">
+                            <label for="html"></label>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="row my-4">
+        <div class="col-md-4 px-0">
+            <div class="row">
+                <div class="col-md-6 px-0 text-left">
+                    <h5 class="m-0">Realme</h5>
+                    <span>7c:6b:9c:23:0b:0b</span>
+                </div>
+                <div class="col-md-4 text-right">
+                    <form>
+                        <div class="ccl-form-group">
+                            <input type="checkbox" id="Realme">
+                            <label for="Realme"></label>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-4 ">
+            <div class="row">
+                <div class="col-md-6 text-left">
+                    <h5 class="m-0">IphoneX</h5>
+                    <span>7c:6b:9c:23:0b:0b</span>
+                </div>
+                <div class="col-md-4 text-right">
+                    <form>
+                        <div class="ccl-form-group">
+                            <input type="checkbox" id="IphoneX">
+                            <label for="IphoneX"></label>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-4 px-0">
+            <div class="row">
+                <div class="col-md-6 text-left">
+                    <h5 class="m-0">Oppo</h5>
+                    <span>7c:6b:9c:23:0b:0b</span>
+                </div>
+                <div class="col-md-4 text-right">
+                    <form>
+                        <div class="ccl-form-group">
+                            <input type="checkbox" id="html">
+                            <label for="html"></label>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row justify-content-md-center my-3">
+        <div class="col-md-3 text-center">
+            <button type="button" class="btn-default primary px-3"
+                (click)="isExperienceIQ = true; submitprofile();">{{language.Submit}}</button>
+        </div>
+
+    </div>
+</ng-template>

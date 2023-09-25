@@ -1,0 +1,42 @@
+.run-btn {
+    background-color: #6c757d !important;
+    color: #fff !important;
+}
+
+.run-btn-active {
+    background-color: #0173BC !important;
+    color: #fff !important;
+}
+
+label {
+    font-weight: normal !important;
+}
+
+
+.filter-wrapper {
+    min-width: 300px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+  }
+  .filter-wrapper > div {
+    margin-right: 20px;
+    min-width: 120px;
+  }
+
+.custom-btn{
+    background-color: #0173BC;
+    border: 1px solid #44367D;
+    color: #FFFFFF;
+    font-weight: bold;
+    min-width: 82px;
+    height: 2.4em;
+    padding: 0 15px;
+    border-radius: 20px;
+    font-size: 14px;
+}
+.custom-btn:disabled{
+    background-color: #6a6b6f;
+    border: 1px solid #44367D;
+}
+

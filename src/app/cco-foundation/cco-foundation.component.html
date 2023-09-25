@@ -1,0 +1,17 @@
+<div class="page-wrapper" [hidden]="!tosAgreed">
+    <div class="maximus">
+        <app-foundation-header></app-foundation-header>
+        <div class="alert alert-warning" role="alert" [hidden]="hideFoundation">
+            {{
+            language[
+            "Access denied due to RBAC. Please consult your Organization Administrator for access."
+            ]
+            }}
+        </div>
+
+        <router-outlet [hidden]="!hideFoundation"></router-outlet>
+    </div>
+</div>
+
+
+<app-foundation-footer [hidden]="!tosAgreed"></app-foundation-footer>

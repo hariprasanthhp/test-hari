@@ -1,0 +1,313 @@
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 px-0">
+        <div class="cco-secondary-title">CXNK09212969</div>
+      </div>
+      <div class="col-md-4 text-right" *ngFor="let item of systemdatas">
+        <button type="submit" class="mr-3 btn-default btn-dft" (click)="edit({SN: item.s_id})">
+          {{ language.Edit }}
+        </button>
+        <span class="close-icon" (click)="closeDetail()"><img _ngcontent-nwm-c172="" src="assets/img/close-icon.svg"
+            alt="" /></span>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="test-container">
+        <div class="item">
+          <span class="cco-list-label"> {{ language.SERVICE_PLAN }}</span>
+          <div class="d-flex align-content-around flex-wrap">
+            <h3>{{ language.Five_G_Business_Plus }}</h3>
+          </div>
+        </div>
+        <div class="item">
+          <span class="cco-list-label">{{ language.SYSTEM_MODEL }}</span>
+          <div class="d-flex align-content-around flex-wrap">
+            <h3>U4</h3>
+          </div>
+        </div>
+        <div class="item">
+          <span class="cco-list-label">DATA</span>
+          <div class="d-flex align-content-around flex-wrap">
+            <h3>Enabled</h3>
+          </div>
+        </div>
+        <div class="item">
+          <span class="cco-list-label">VOICE</span>
+          <div class="d-flex align-content-around flex-wrap">
+            <h3>{{ language.Enabled }}</h3>
+          </div>
+        </div>
+        <div class="item">
+          <span class="cco-list-label">VIDEO </span>
+          <div class="d-flex align-content-around flex-wrap">
+            <h3>{{ language.Disabled }}</h3>
+          </div>
+        </div>
+        <div class="item">
+          <span class="cco-list-label">{{ language.SYSTEM_STATUS }} </span>
+          <div class="d-flex align-content-around flex-wrap">
+            <h3>Name</h3>
+          </div>
+        </div>
+        <div class="item">
+          <span class="cco-list-label">{{ language.WI_FI_RADIO }} </span>
+          <div class="d-flex align-content-around flex-wrap">
+            <h3>{{ language.SS_On }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="system-details-wrapper mt-3">
+        <div class="system-details-item">
+          <div class="cco-secondary-title border-bottom">
+            {{ language.System_Details }}
+          </div>
+          <div class="col-md-12 pl-0 support-key-value">
+            <table id="" class="">
+              <tbody>
+                <tr>
+                  <td>FSAN</td>
+                  <td>KH921924</td>
+                </tr>
+                <tr>
+                  <td>MAC Adderss</td>
+                  <td>E7:3F:2B:10:9A:EF</td>
+                </tr>
+
+                <tr>
+                  <td>System Name</td>
+                  <td>Less_router</td>
+                </tr>
+                <tr>
+                  <td>Satus</td>
+                  <td>Active</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="system-details-item">
+          <div class="cco-secondary-title border-bottom">
+            {{ language.Subscriber_Information }}
+          </div>
+          <div class="col-md-12 pl-0 support-key-value">
+            <table id="" class="">
+              <tbody>
+                <tr>
+                  <td>Name</td>
+                  <td>Counrtney Lee</td>
+                </tr>
+                <tr>
+                  <td>Account Number</td>
+                  <td>Courtney</td>
+                </tr>
+
+                <tr>
+                  <td>Email</td>
+                  <td>john.doe@example.com</td>
+                </tr>
+                <tr>
+                  <td>Location ID</td>
+                  <td>11152501:123 Main St</td>
+                </tr>
+                <tr>
+                  <td>Service Address</td>
+                  <td>123 Main St, San Jose, CA USA</td>
+                </tr>
+                <tr>
+                  <td>Phone</td>
+                  <td>101-234-6673</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="system-details-item">
+          <div class="cco-secondary-title border-bottom">
+            Revenue Edge Suites
+          </div>
+          <div class="col-md-12 pl-0 support-key-value">
+            <table id="" class="">
+              <tbody>
+                <tr>
+                  <td>ProtectIQ</td>
+                  <td>Enabled</td>
+                </tr>
+                <tr>
+                  <td>ExperienceIQ</td>
+                  <td>Disabled</td>
+                </tr>
+
+                <tr>
+                  <td>System Name</td>
+                  <td>Less_router</td>
+                </tr>
+                <tr>
+                  <td>Arlo Smart </td>
+                  <td>Enabled</td>
+                </tr>
+                <tr>
+                  <th scope="row">2K Plan </th>
+                  <td>5Cameras</td>
+                </tr>
+                <tr>
+                  <td>4K Plan </td>
+                  <td>2Cameras</td>
+                </tr>
+                <tr>
+                  <td>Servify Care </td>
+                  <td>Enabled</td>
+                </tr>
+                <tr>
+                  <td>Plan </td>
+                  <td>Tier 2</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="system-details-wrapper mt-3">
+        <div class="system-details-item">
+          <div class="cco-secondary-title border-bottom">
+            Data
+          </div>
+          <div class="col-md-12 pl-0 support-key-value">
+            <div class="form-group inline-input w-100 m-0">
+              <label class="col-form-label"> Data Service</label>
+              <div class="d-inline-flex mx-2">
+                <div class="toggle-swtbtn checkbox switcher">
+                  <label>
+                    <input type="checkbox" name="backgroundSiteScan" id="backgroundSiteScanCheckBox" required />
+                    <span><small></small></span>
+
+                  </label>
+                </div>
+              </div>
+            </div>
+            <table id="" class="">
+              <tbody>
+                <!-- <tr>
+                  <th scope="row">Service Profile</th>
+                  <td>Selected Profile</td>
+                </tr> -->
+                <tr>
+                  <td>PPPoE UserName</td>
+                  <td>john.doe@example.com</td>
+                </tr>
+
+                <tr>
+                  <td>PPPoE Pssword</td>
+                  <td>12345678</td>
+                </tr>
+                <tr>
+                  <td>VLAN</td>
+                  <td>500</td>
+                </tr>
+                <tr>
+                  <td>Priority (P-Bits)</td>
+                  <td>1-bit</td>
+                </tr>
+                <tr>
+                  <td>Bandwidth Profile</td>
+                  <td>3</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="system-details-item">
+          <div class="cco-secondary-title border-bottom">
+            Video
+          </div>
+          <div class="col-md-12 pl-0 support-key-value">
+            <div class="form-group inline-input w-100 m-0">
+              <label class="col-form-label"> Video Service</label>
+              <div class="d-inline-flex mx-2">
+                <div class="toggle-swtbtn checkbox switcher">
+                  <label>
+                    <input type="checkbox" name="backgroundSiteScan" id="backgroundSiteScanCheckBox" required />
+                    <span><small></small></span>
+
+                  </label>
+                </div>
+              </div>
+            </div>
+            <table id="" class="">
+              <tbody>
+                <!-- <tr>
+                  <th scope="row">Service Profile</th>
+                  <td>Selected Profile</td>
+                </tr> -->
+                <tr>
+                  <td>VLAN</td>
+                  <td>100</td>
+                </tr>
+
+                <tr>
+                  <td>Priority(P-Bits)</td>
+                  <td>2-bit</td>
+                </tr>
+                <tr>
+                  <td>Addressing Type</td>
+                  <td>2</td>
+                </tr>
+                <!-- <tr>
+                  <th scope="row">Bandwidth Profile</th>
+                  <td></td>
+                </tr> -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="system-details-item">
+          <div class="cco-secondary-title border-bottom">
+            Voice
+          </div>
+          <div class="col-md-12 pl-0 support-key-value">
+            <div class="form-group inline-input w-100 m-0">
+              <label class="col-form-label"> Voice Service</label>
+              <div class="d-inline-flex mx-2">
+                <div class="toggle-swtbtn checkbox switcher">
+                  <label>
+                    <input type="checkbox" name="backgroundSiteScan" id="backgroundSiteScanCheckBox" required />
+                    <span><small></small></span>
+
+                  </label>
+                </div>
+              </div>
+            </div>
+            <table id="" class="">
+              <tbody>
+                <!-- <tr>
+                  <th scope="row">Service Profile</th>
+                  <td>Selected Profile</td>
+                </tr> -->
+                <tr>
+                  <td>Service Type</td>
+                  <td>SIP</td>
+                </tr>
+
+                <tr>
+                  <td>T.38 FAX Relay</td>
+                  <td>Enabled</td>
+                </tr>
+                <tr>
+                  <td>Dial Plan</td>
+                  <td>3</td>
+                </tr>
+                <tr>
+                  <td>Adressing Type</td>
+                  <td>3</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

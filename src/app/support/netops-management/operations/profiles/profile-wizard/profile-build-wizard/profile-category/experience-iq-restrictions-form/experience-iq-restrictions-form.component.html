@@ -1,0 +1,281 @@
+<div class="loader" *ngIf="loading">
+	<div class="d-flex justify-content-center">
+		<div class="spinner-border text-primary">
+			<span class="sr-only">{{ language.Loading }}</span>
+		</div>
+	</div>
+</div>
+<div *ngIf="!loading && categoriesList.length" class="row" id="restrictions" role="tab" aria-labelledby="restrictions">
+	<div class="col-md-12">
+		<p>
+			*{{language['All restrictions set here will apply to any device not in a profile and new devices connecting to the network']}}.
+		</p>
+	</div>
+	<div class="col-md-12 mb-2">
+		<label class="cco-secondary-title border-bottom w-100 pb-2" id="rest-content-label">
+			{{language['Content']}}
+		</label>
+	</div>
+
+	<!--end title-->
+	<div class="col-md-12 mb-2">
+		<div class="row">
+			<div class="col-sm-12 col-md-9 col-lg-9 col-xl-9">
+				<p>
+					{{language['Restrict access to specific content']}}.
+				</p>
+			</div>
+		</div>
+	</div>
+
+	<form [formGroup]="form">
+		<div formGroupName="experienceIqForm">
+
+			<!-- Pre set restrictions -->
+			<div [formArray]="categoriesFormArray" class="toggles-switch col-lg-12 row">
+				<div class="toggle-swtbtn checkbox switcher col-lg-3"
+					*ngFor="let categoryFormGroup of categoriesFormArray.controls">
+					<label [formGroup]="categoryFormGroup" [for]="categoryFormGroup.value.id">
+						<input type="checkbox" formControlName="block" [id]="categoryFormGroup.value.id" />
+						<span><small></small></span>
+						{{ language[categoryFormGroup.value.name] || categoryFormGroup.value.name }}
+					</label>
+				</div>
+			</div>
+			<!-- Pre set restrictions end -->
+
+			<div class="col-12">
+				<div class="row">
+					<div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+						<div class="border-bottom mb-2 mt-3">
+							<label class="cco-secondary-title w-100" id="rest-applicat-label">
+								{{language.Applications}}
+							</label>
+						</div>
+						<p class="mb-1">
+							{{language['Manage access to applications added here']}}.
+						</p>
+
+						<!-- youtube field-->
+						<div formGroupName="youtube" class="row">
+							<div class="col-12 toggles-switch">
+								<div class="toggle-swtbtn checkbox switcher">
+									<label>
+										<input formControlName="enable" type="checkbox" name="enable" id="Youtube" />
+										<span class="mr-1"><small></small></span>
+										{{language.YouTube}}
+									</label>
+								</div>
+							</div>
+						</div>
+						<!-- youtube field end-->
+
+						<!-- Enable if Custom App List is required -->
+						<!-- App List -->
+						<!-- <div class="row">
+							<div class="col-sm-12 col-md-7 col-lg-7 col-xl-7 ccl-form mb-0 position-relative">
+								<ng-template #rt let-r="result" let-t="term">
+									<ng-container *ngIf="r.id != 4626">
+										<img [src]="r.iconUrl" class="mr-1 w-20p" />
+										<ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
+									</ng-container>
+								</ng-template>
+								<input id="typeahead-basic" type="text" formControlName="app"
+									typeahead-no-results="noResults" class="ccl-form form-control"
+									[resultFormatter]="appformatter"
+									[resultTemplate]="rt" [inputFormatter]="appformatter" [ngbTypeahead]="searchAppMain"
+									placeholder="{{language['Search the application']}}" (selectItem)="addApp($event)"
+									(keyup)="typeaheadbasickeyup($event)" />
+								<span><small></small></span>
+								<small *ngIf="searching" class="form-text text-muted">
+									{{language.searching}}...
+								</small>
+								<div class="invalid-feedback" *ngIf="searchFailed">
+									{{language['Sorry, suggestions could not be loaded.']}}
+								</div>
+							</div>
+							<div class="col-12">
+								<span class="small req-text" *ngIf="gloObj.restAppExist">
+									{{language['Selected Application already exists']}}
+								</span>
+							</div>
+							<div class="col-12">
+								<button class="btn-default btn-dft py-0 color-grey-rgb" *ngIf="isError"
+									[disabled]="true">
+									{{language['noresults']}}
+								</button>
+							</div>
+
+							<div class="col-12"
+								*ngFor="let appFormGroup of appListFormArray.controls; let appFormGroupIndex = index;">
+								<div [formGroup]="appFormGroup">
+									<div class="d-flex justify-content-between align-items-center my-3">
+										<div class="align-items-center">
+											<span class="mr-2">
+												<img src="{{ appFormGroup.value.iconUrl }}" />
+											</span>
+											<label class="font-weight-600 mb-0">{{ appFormGroup.value.name }}</label>
+										</div>
+										<div class="">
+											<button class="btn-default btn-dft app-delete"
+												(click)="openDeleteModal(deleteModal, 'app', appFormGroupIndex); setDeleteWebApp('app', appFormGroup.value.id);">
+												{{language.Delete}}
+											</button>
+										</div>
+									</div>
+									<div class="form-check-inline mb-2">
+										<input class="form-check-input mr-2" type="radio" formControlName="block"
+											[value]="true" />
+										{{language.Block}}
+									</div>
+									<div class="form-check-inline mb-2">
+										<input class="form-check-input mr-2" type="radio" formControlName="block"
+											[value]="false" />
+										{{language['Always Allow']}}
+									</div>
+								</div>
+							</div>
+						</div> -->
+						<!-- App List end -->
+
+					</div>
+
+					<div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+						<div class="border-bottom mb-2 mt-3">
+							<label class="cco-secondary-title w-100" id="rest-websites-label">
+								{{language.Websites}}
+							</label>
+						</div>
+						<p class="mb-1">
+							{{language['Manage access to websites added here']}}.
+						</p>
+
+						<!-- safe search field-->
+						<div formGroupName="safesearch" class="row">
+							<div class="col-12 toggles-switch">
+								<div class="toggle-swtbtn checkbox switcher">
+									<label>
+										<input type="checkbox" name="SafeSearch" id="SafeSearch"
+											formControlName="enable" />
+										<span class="mr-1"><small></small></span>
+										{{language['Safe Search']}}
+									</label>
+								</div>
+							</div>
+						</div>
+						<!-- safe search field end-->
+
+						<!-- DNS field-->
+						<!-- *ngIf="availableFor22a2" -->
+						<div formGroupName="dnsoverhttps" class="row">
+							<div class="col-12 toggles-switch">
+								<div class="toggle-swtbtn checkbox switcher">
+									<label>
+										<input type="checkbox" name="dnsName" id="dnsId" formControlName="enable" />
+										<span class="mr-1"><small></small></span>
+										{{language['dnsOverHttp']}}
+									</label>
+								</div>
+							</div>
+						</div>
+						<!-- DNS field end-->
+
+						<!-- Icloud field-->
+						<!-- *ngIf="availableFor22a2" -->
+						<div formGroupName="icloudrelay" class="row">
+							<div class="col-12 toggles-switch">
+								<div class="toggle-swtbtn checkbox switcher">
+									<label>
+										<input type="checkbox" name="icloudName" id="icloudId"
+											formControlName="enable" />
+										<span class="mr-1"><small></small></span>
+										{{language['iCloudRelay']}}
+									</label>
+								</div>
+							</div>
+						</div>
+						<!-- Icloud field end-->
+
+						<div class="row">
+							<div class="col-sm-12 col-md-8 col-lg-8 col-xl-8 ccl-form mb-3">
+								<input class="form-control mr-sm-2 m-h30" formControlName="website"
+									placeholder="{{language['www.website.com']}}"
+									(keyup)="gloObj.isValidWebsite = true; gloObj.urlExist = false" />
+								<span class="errorMessage small req-text" *ngIf="!gloObj.isValidWebsite">
+									{{language['Please enter a valid URL.']}}
+									<br>
+								</span>
+								<span class="errorMessage small req-text" *ngIf="gloObj.urlExist">
+									{{language['Entered URL already exists']}}
+								</span>
+							</div>
+
+							<div class="col-sm-12 col-md-4 col-lg-4 col-xl-4 pt-1 pl-0 mb-3 text-right">
+								<button class="btn-default btn-dft py-0" id="AddWebsite" [disabled]="!website.value"
+									(click)="addWebsite()">
+									{{language['Add Website']}}
+								</button>
+							</div>
+
+							<div class="col-12"
+								*ngFor="let webFormGroup of webListFormArray.controls; let webFormGroupIndex=index;">
+								<div [formGroup]="webFormGroup">
+									<div class="d-flex justify-content-between align-items-center my-3">
+										<div class="align-items-center">
+											<label class="font-weight-600 mb-0">{{ webFormGroup.value.webUrl }}</label>
+										</div>
+										<div class="">
+											<button class="btn-default btn-dft app-delete"
+												(click)="openDeleteModal(deleteModal, 'web', webFormGroupIndex); setDeleteWebApp('web', webFormGroup.value.id);">
+												{{language.Delete}}
+											</button>
+										</div>
+									</div>
+
+									<div class="form-check-inline mb-2">
+										<input class="form-check-input mr-2" type="radio" formControlName="block"
+											[value]="true" />
+										{{language.Block}}
+									</div>
+									<div class="form-check-inline mb-2">
+										<input class="form-check-input mr-2" type="radio" formControlName="block"
+											[value]="false" />
+										{{language['Always Allow']}}
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
+
+
+<ng-template #deleteModal let-modal ariaLabelledBy="modal-edit-title">
+	<div class="modal-header">
+		<h5 class="modal-title" id="addModal">{{language.Delete}}</h5>
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+			<span aria-hidden="true"></span>
+		</button>
+	</div>
+	<div class="modal-body">
+		<div class="ccl-form mx-3 num-input">
+			{{language['Are you sure you want to delete'].trim()}}?
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button *ngIf="selectedWebIndex != null" type="button" (click)="deleteWebsite(); closeModal()"
+			class="btn btn-primary" data-dismiss="modal">
+			{{language.Delete}}
+		</button>
+		<!-- <button *ngIf="selectedAppIndex != null" type="button" (click)="deleteApp(); closeModal()"
+			class="btn btn-primary" data-dismiss="modal">
+			{{language.Delete}}
+		</button> -->
+		<button type="button" (click)="closeModal()" class="btn-default btn-dft" data-dismiss="modal">
+			{{language.Cancel}}
+		</button>
+	</div>
+</ng-template>

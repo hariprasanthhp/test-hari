@@ -1,0 +1,203 @@
+<div class="loader load" *ngIf="loading">
+    <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+            <span class="sr-only">{{language.Loading}}</span>
+        </div>
+    </div>
+</div>
+
+<div class="w-100 alert warning-msg fade show" *ngIf="subAvailable">
+    <span class="success-img" style="width: 40px;float: left;height: 100%;"><img
+            src="./assets/img/warning-icon.svg" /></span>
+    <button type="button" class="close ml-2" (click)="subAvailable = false">
+        <img src="assets/img/ic_close-44px.svg" />
+    </button>
+    <span>Subscriber searched is not available</span>
+</div>
+<div class="w-100 alert warning-msg fade show" *ngIf="isError">
+    <span class="success-img float-none pr-2" style="width: 40px;float: left;height: 100%;"><img
+            src="./assets/img/warning-icon.svg" /></span>
+    <button type="button" class="close ml-2 mr-1" (click)="isError = false">
+        <img src="assets/img/ic_close-44px.svg" />
+    </button>
+    <div class="d-inline-flex" [innerHtml]="alertMessage"></div>
+</div>
+<!--------------------Insights start -------------------->
+<div class="row">
+    <div class="res-tab"
+        [ngClass]="(hasCco && (impacts?.impactedSubscriber || impacts?.impactedPon || impacts?.impactedOnt)) ? 'col-md-8' : 'col-md-12'">
+        <div class="row" *ngIf="ssoService.getCscType() !== 'DME'" style="margin-bottom: 24px;">
+            <div class="col-md-12">
+                <div class="heading-title border-bottom" id="csc-home-insights">{{language.Insights}} </div>
+            </div>
+            <div class="col-md-12">
+                <div class="test-container">
+                    <!-- <div class="item">
+                        <span>Active Subscribers</span>
+                        <div class="d-flex">
+                            <h3>{{insight?.subsVal || 0}}</h3>
+
+                            <span class="sub-menu-list-icon">
+                                <div [ngClass]="insight?.subsState ? 'gly-rotate-90' : 'gly-rotate-45'"></div>
+                                <span>{{insight?.subsPerc || 0}}%</span>
+                            </span>
+                        </div>
+                    </div> -->
+                    <div class="item" id="csc-active-rgs">
+                        <span>{{language.Active_rgs}}</span>
+                        <div class="d-flex">
+                            <h3>{{insight?.RGsVal || 0}}</h3>
+
+                            <span class="sub-menu-list-icon">
+                                <div *ngIf="(insight.RGsVal != 0 ) && (insight.RGsPerc != 0 )"
+                                    [ngClass]="insight?.RGsState ? 'gly-rotate-90' : 'gly-rotate-45'"></div>
+
+                                <span>{{insight?.RGsPerc || 0}}%</span>
+                            </span>
+                        </div>
+                        <div class="past-hours"> {{language.Past_24_hours}}</div>
+                    </div>
+                    <div class="item" id="csc-system-reboots">
+                        <span>{{language['System Reboots']}} </span>
+                        <div class="d-flex">
+                            <h3>{{insight?.sysRebootVal || 0}}</h3>
+
+                            <span class="sub-menu-list-icon"
+                                [ngClass]="insight?.sysRebootState ? 'redText' : 'greenText'">
+                                <div *ngIf="(insight.sysRebootVal != 0 ) && (insight.sysRebootPerc != 0 )"
+                                    [ngClass]="insight?.sysRebootState ? 'gly-rotate-90_reversed' : 'gly-rotate-45_reversed'">
+                                </div>
+                                <span>{{insight?.sysRebootPerc || 0}}%</span>
+                            </span>
+
+                        </div>
+                        <div class="past-hours"> {{language.Past_24_hours}}</div>
+                    </div>
+                    <!-- <div class="item">
+                        <span>Subscriber with Bad Speed Test Results</span>
+                        <div class="d-flex align-content-around flex-wrap">
+                            <h3>{{insight?.STFailureVal || 0}}</h3>
+
+                            <span class="sub-menu-list-icon"
+                                [ngClass]="insight?.STFailureState ? 'redText' : 'greenText'">
+                                <div *ngIf="(insight.STFailurePerc || 0) != 0"
+                                    [ngClass]="insight?.STFailureState ? 'gly-rotate-90_reversed' : 'gly-rotate-45_reversed'">
+                                </div>
+                                <span>{{insight?.STFailurePerc || 0}}%</span>
+                            </span>
+                        </div>
+                        <div class="past-hours"> Past 24 hours</div>
+                    </div> -->
+
+                </div>
+            </div>
+        </div>
+        <!--------------------Insights end -------------------->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="home-wrapper flex" *ngIf="ssoService.getCscType() !== 'DME'">
+                    <div class="w-100">
+
+                        <div class="home-subscriber-row table-data-no" *ngIf="scopeFlag.search">
+                            <h2 class="heading-title border-bottom" id="csc-recent-subscribers">
+                                {{language.Recent_Subscribers}}</h2>
+                            <div class=" home-table">
+                                <table class="table table-borderless " id="recentListTable" datatable
+                                    [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+                                    <thead class="border-bottom">
+                                        <tr>
+                                            <th>{{language.Account}}</th>
+                                            <!-- <th style="width: 25%;">{{language.Id}}</th> -->
+                                            <th>{{language.Name}}</th>
+                                            <th>{{language.Service_address}}</th>
+                                            <th>{{language.Phone_No}}</th>
+                                            <th (click)="lastContactSort()">{{language.Last_contact }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let list of subscriberList" class="border-bottom cursor-pointer"
+                                            (click)="subscriberViewWithSearchApi(list.subscriberId, list.subscriberAccount, list.subscriberName)">
+                                            <td>{{list.subscriberAccount?list.subscriberAccount:' '}}</td>
+                                            <!-- <td style="width: 25%;">{{list.subscriberId?list.subscriberId: ' '}}</td> -->
+                                            <td>{{list.subscriberName?list.subscriberName:' '}}</td>
+                                            <td>{{list.serviceAddress?list.serviceAddress:" "}}</td>
+                                            <td>{{list.phone}}</td>
+                                            <td>{{list.lastContact ? (timeConvertor(list.lastContact))
+                                                :''}}
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end col-md-8 -->
+    <div *ngIf="hasCco && (impacts?.impactedSubscriber || impacts?.impactedPon || impacts?.impactedOnt)"
+        class="col-md-4 res-tab p-0">
+        <div class="col-md-12">
+            <div class="heading-title border-bottom" id="csc-home-alerts">{{language.Alerts}}</div>
+        </div>
+        <div class="col-md-12 alert-box mt-15">
+            <div class="pos d-none">
+                <a><img src="../../../assets/img/close-icon.svg" alt="icon here" /></a>
+            </div>
+            <div class="alert alert-warning" style="min-height : 0px">
+                <div class="icon">
+                    <img src="../../../assets/img/ic_warning-36px.svg" style="width: 48px;" alt="icon here" />
+                </div>
+                <div class="content">
+                    <h3>{{language['Service Disruption']}}</h3>
+                    <p *ngIf="hasScopeAccess" class="pointer primary" style="margin-top: 0px;"
+                        (click)="navigateToCCOAlerts()">
+                        {{impacts?.impactedSubscriber ||
+                        0}}{{language['Subscribers impacted']}}</p>
+                    <p *ngIf="!hasScopeAccess" style="margin-top: 0px;">
+                        {{impacts?.impactedSubscriber ||
+                        0}}{{language['Subscribers impacted']}}</p>
+                    <ul>
+                        <li>{{impacts?.impactedPon || 0}} {{language['PON impacted']}}</li>
+                        <li>{{impacts?.impactedOnt || 0}} {{language['ONT impacted']}}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!--<div class="home-right">
+
+            <div class="customer-service resources-faq">
+                <div class="cs-tit flex">
+                    <h2 class="title-second flex">{{language.Resources_faqs}} <a href="javascript:void(0)"
+                            class="formlabels primary">{{language.Ask_calix}}</a> </h2>
+                    <button class="btn-round info-round"> <img src="assets/img/ic_info_grey.svg"> </button>
+                </div>
+                <div class="res-faq">
+                    <div class="resfaq-row flex">
+                        <div class="rf-img"> <img src="assets/img/rf-img1.jpg"> </div>
+                        <h4 class="listdata $greyaa">{{language.Calix_Training_Video}}: “Lorem Ipsum Dollar”</h4>
+                    </div>
+                    <div class="resfaq-row flex">
+                        <div class="rf-img"> <img src="assets/img/rf-img2.jpg"> </div>
+                        <h4 class="listdata $greyaa">{{language.Calix_Trending_Posts}}</h4>
+                    </div>
+                    <div class="resfaq-row flex">
+                        <div class="rf-img"> <img src="assets/img/rf-img3.jpg"> </div>
+                        <h4 class="listdata $greyaa">{{language.Training_video_added}}</h4>
+                    </div>
+                    <div class="resfaq-row flex">
+                        <div class="rf-img"> <img src="assets/img/rf-img4.jpg"> </div>
+                        <h4 class="listdata $greyaa">{{language.Webinar_Available}}</h4>
+                    </div>
+                    <div class="resfaq-row flex">
+                        <div class="rf-img"> <img src="assets/img/rf-img5.jpg"> </div>
+                        <h4 class="listdata $greyaa">Lorem ipsum deul seuter dolar</h4>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+    </div>
+</div>

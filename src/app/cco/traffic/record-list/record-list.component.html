@@ -1,0 +1,163 @@
+<div class="row">
+    <div class="col-md-12">
+        <div class="home-wrapper flex">
+            <div class="w-100">
+                <div class="mwc-header flex w-100 border-bottom mb-2">
+                    <h2 class="heading-title"> {{language['Traffic Recording']}}</h2>
+                    <div class="mwc-btns flex align-items-center">
+                        <button type="button" class="close m-2" aria-label="Close" (click)="goBack()">
+                            <span aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="w-100 alert alert-danger  fade show my-3" *ngIf="error">
+                        <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+                        <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+                        <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+                    </div>
+                    <div class="w-100 alert alert-success fade show" *ngIf="success">
+                        <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+                        <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+                        <div class="d-inline-flex" [innerHtml]="successInfo"></div>
+                    </div>
+                </div>
+
+                <div class="row flex justify-content-end mt-3">
+                    <div class="col-md-2 col-sm-4 ccl-form">
+                        <ng-select id="durations" [items]="durations" bindLabel="name" bindValue="value"
+                            [multiple]="false" placeholder="{{ language['None Selected'] }}"
+                            [(ngModel)]="durationSelected" [ngModelOptions]="{ standalone: true }" [clearable]="false"
+                            [searchable]="false" (change)="changeFilter()">
+                            <ng-template ng-label-tmp let-item="item">
+                                {{language[item.name] || item.name }}
+                            </ng-template>
+                            <ng-template ng-option-tmp let-item="item" let-index="index">
+                                {{language[item.name] || item.name}}
+                            </ng-template>
+                        </ng-select>
+                    </div>
+                    <div class="col-md-3 col-sm-4 ccl-form">
+                        <input class="form-control mr-sm-2" type="search" placeholder="{{language['Search here']}}"
+                            aria-label="Search" [(ngModel)]="searchText" (keyup)="searchByCharacters($event);" />
+                        <button class="add-search-icon" (click)="performSearch()" [disabled]="loading">
+                            <img src="assets/img/ic_search_white.svg" class="search-icon primary">
+                        </button>
+                    </div>
+                </div>
+                <div class="loader load" *ngIf="loading">
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border text-primary">
+                            <span class="sr-only">{{language.Loading}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive home-table mt-3" *ngIf="showTable">
+                    <table class="table w-100" id="recordingList" datatable [dtOptions]="dtOptions">
+                        <thead class="border-bottom">
+                            <tr>
+                                <th class="w-15">{{language.Name}}</th>
+                                <th class="w-15">{{language.timerecording}}</th>
+                                <th class="w-7">{{language.length}}</th>
+                                <th class="w-8">{{language.Status}}</th>
+                                <th class="w-5">{{language.Type}}</th>
+                                <th class="w-8">{{language.Trigger}}</th>
+                                <th class="w-12">{{language.Creator}}</th>
+                                <th class="w-20">{{language.Description}}</th>
+                                <th class="w-10">{{language.Action}}</th>
+                            </tr>
+                        </thead>
+                        <tbody *ngIf="recordData?.length != 0">
+                            <tr id="{{item.id}}" *ngFor="let item of recordData">
+                                <td>{{item.name ? item.name : ''}}</td>
+                                <td>{{item.startTime ? (item.startTime | date: 'yyyy-MM-dd HH:mm:ss' ) : ''}}</td>
+                                <td>{{item.length ? convertSecondsToTime(item.length) : '' }}</td>
+                                <td><span *ngIf="item.status == 'Recording' || item.status == 'recording'"
+                                        class="fas fa-video-camera rec-icon"></span> {{item.status ? item.status :'' }}
+                                </td>
+                                <td>{{item.monitorType ? item.monitorType : '' }}</td>
+                                <td>{{item.trigger ? item.trigger : '' }}</td>
+                                <td>{{item.userName ? item.userName : '' }}</td>
+                                <td>{{item.description ? item.description : '' }}</td>
+                                <td class="text-nowrap">
+                                    <a (click)="deleteConfirmation(item)" class="action-icon mr-1"
+                                        title="{{language.Delete}}"
+                                        *ngIf="(item.status !== 'Recording' && item.status !== 'recording') && item?.hasWriteAccess == true">
+                                        <span class="fa fa-trash primary pl-1"></span></a>
+                                    <a href="javascript:void(0)" (click)="gotoRecordView(item)"
+                                        *ngIf="item.status == 'Completed' || item.status == 'Stopped' || item.status == 'completed' || item.status == 'stopped'"
+                                        class="action-icon ml-1" title="{{language.Play}}">
+                                        <span class="fa fa-play-circle primary"></span> {{language.Play}}
+                                    </a>
+                                    <a (click)="stopRecordConfirm(item)"
+                                        *ngIf="(item.status == 'Recording' || item.status == 'recording') && item?.hasWriteAccess == true"
+                                        class="action-icon ml-1" title="{{language.Stop}}">
+                                        <span class="fa fa-stop-circle primary"></span> {{language.Stop}}
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody
+                            *ngIf="(!recordData?.length || (tableCount != undefined && tableCount == 0) || (filterCount != undefined && filterCount == 0))">
+                            <tr>
+                                <td colspan="9" class="no-data-available text-center">{{language['No data available in table']}}
+                                </td>
+                            </tr>
+                        <tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<ng-template #deleteModal let-data let-ref="dialogRef">
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{ language.Delete }}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="close()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <p>
+            {{language['Are you sure you want to delete this recording']}}?
+        </p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary mr-2" (click)="deleteRecording()" [disabled]="btnDisabled">
+            {{ language.Yes }}
+        </button>
+        <button type="button" class="btn-default btn-dft" (click)="close()">
+            {{ language.No }}
+        </button>
+    </div>
+</ng-template>
+
+
+<ng-template #stopModal let-data let-ref="dialogRef">
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{language['Stop Recording']}}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="close()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="w-100 alert alert-danger  fade show my-3" *ngIf="stopError">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+        <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+        <div class="d-inline-flex" [innerHtml]="stopErrorInfo"></div>
+    </div>
+    <div class="modal-body">
+        <p>
+            {{language['Are you sure you want to stop this recording']}}?
+        </p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary mr-2" (click)="stopRecording()" [disabled]="btnDisabled">
+            {{ language.Yes }}
+        </button>
+        <button type="button" class="btn-default btn-dft" (click)="close()">
+            {{ language.No }}
+        </button>
+    </div>
+</ng-template>

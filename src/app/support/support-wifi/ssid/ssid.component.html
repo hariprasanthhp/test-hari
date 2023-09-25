@@ -1,0 +1,1087 @@
+<div id="ssid-container" class="container loader-wrapper">
+
+  <div class="loader-wrapper-info" *ngIf="loading">
+    <div class="loader">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div *ngIf="showList && hasWriteAccess" class="col-md-4 mt-2 mb-2 float-right">
+      <ng-select id="serialNumberList" name="serialNumberList" data-toggle="tooltip" data-placement="bottom"
+        title="Select Serial-Number List to Update" (change)="deviceDataNumberChanged($event)"
+        [(ngModel)]="serialNumber" [items]="deviceList" placeholder="Select Serial Number" bindLabel="name"
+        bindValue="id" [searchable]="false" [clearable]="false">
+      </ng-select>
+    </div>
+  </div>
+  <div class="w-100 alert alert alert-danger fade show" *ngIf="showError">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+    <button type="button" class="close" (click)="hideError()">
+      <span></span>
+    </button>
+    <div class="d-inline-flex" [innerHtml]="errorMsg"></div>
+  </div>
+  <!-- <div class="alert alert-success alert-dismissible fade show" role="alert" *ngIf="showSuccess">
+    <strong>success!</strong> {{successMsg}}.
+    <button type="button" class="close" id="hide-success-btn" data-dismiss="alert" aria-label="Close" (click)="hideSuccess()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div> -->
+  <div class="row">
+    <span class="cursor-pointer primary" id="ssidRefresh" (click)="fetchSSIDManagerList(true,false);">
+      <i class="fas fa-sync refreshicon"></i>
+    </span>
+  </div>
+  <!------------------------------ New SSID Options ------------------------------>
+  <!-- <div class="row">
+
+    <button id="addssid" class="btn-default primary ng-star-inserted mr-3">Add SSID
+    </button>
+    <button id="callOutcomeBtnId" class="btn-default btn-dft mr-3 ng-star-inserted"> Refresh
+      List </button>
+    <div class="custom-selectbox mr-3" id="current-issues-interval">
+      <ng-select [searchable]="false" placeholder="All Type">
+        <ng-option value="7"> All Type</ng-option>
+        <ng-option value="30">primary</ng-option>
+      </ng-select>
+
+    </div>
+    <div class="mr-3">
+      <div ng-reflect-ng-class="toggle-swtbtn checkbox switche " class="toggle-swtbtn checkbox switcher mr-2">
+        <label for="selfHealCheckbox">
+          <input type="checkbox" id="selfHealCheckbox" ng-reflect-model="true" ng-reflect-is-disabled="false"
+            class="ng-untouched ng-pristine ng-valid">
+          <span>
+            <small></small></span></label>
+      </div>
+      Show Operator SSIDs
+    </div>
+  </div> -->
+  <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg">Large
+    modal</button> -->
+
+
+  <!------------------------------ New SSID Options  End------------------------------>
+  <div class="mb-5" id="SSID_Manager_Table">
+    <div class="row">
+      <div class="col-md-12 ccl-tables px-0 ssid-table">
+        <table id="wifi-ssid-table" class="table device-detail table-borderless">
+          <thead>
+            <tr class="heading">
+              <th scope="col">{{ language.Name }}</th>
+              <th scope="col">{{ language.Service }}</th>
+              <th scope="col">{{ language.Broadcasting }}</th>
+              <th scope="col">{{ language.Security }}</th>
+              <th scope="col">{{ language.Encryption }}</th>
+              <th scope="col">{{ language.Passphrase }}</th>
+              <th scope="col">{{ language.Frequency_Band }}</th>
+            </tr>
+          </thead>
+          <!-- <hr style=" margin-right: -900px; "> -->
+          <tbody>
+            <tr [ngClass]="!ssid.Enable ? 'service-off' : ''" id="ssid.SSID"
+              *ngFor="let ssid of ssidObject; let i = index">
+              <td>
+                <div>{{ ssid.SSID }}</div>
+              </td>
+              <td>
+                <div>{{ ssid.Enable | booleanConverter: language }}</div>
+              </td>
+              <td>
+                <div>
+                  {{ ssid.SSIDAdvertisementEnabled | booleanConverter: language}}
+                </div>
+              </td>
+              <td>
+                <div>
+                  {{ ssid.BeaconType | beaconTypeConverter: security: language }}
+                </div>
+              </td>
+              <td>
+                <ng-container
+                  *ngIf="ssid.BeaconType != 'Basic' && ssid.BeaconType != 'open'  && ssid.BeaconType != 'Security Off'">
+                  {{ ssid | wpaEncryptionConverter: metaData.properties:security }}
+                </ng-container>
+              </td>
+
+              <!-- <td>
+                <div *ngIf="ssid.password != null && ssid.password != ''">
+                  <input id="password" type="password" [type]="temparray.indexOf(i) > -1 ? 'text' : 'password'"
+                    name="password" #password="ngModel" [ngModel]="ssid.password" disabled />
+                  <span class="togg-icon" (click)="toggleTablepassword(i)">
+                    <i *ngIf="!(temparray.indexOf(i) > -1) " class="fa fa-eye-slash" aria-hidden="true"></i>
+                    <i *ngIf="temparray.indexOf(i) > -1 " class="fa fa-eye" aria-hidden="true"></i>
+                  </span>
+                </div>
+              </td> -->
+
+
+
+
+
+
+              <!-- OLD Change -->
+
+              <td>
+                <div
+                  *ngIf="(ssid.BeaconType != 'Basic' && ssid.BeaconType != 'Security Off' && ssid.BeaconType != 'open') && ssid.Enable">
+                  <div class="row" *ngIf="togglePasswordTable[i]; else elseBlock">
+                    <div *ngIf="
+                    ssid.PRConfig && ssid.PRConfig.KeyPassphrase;
+                        else KeyPassphraseBlock
+                      ">
+                      {{ ssid.PRConfig.KeyPassphrase }}
+                      <span>&nbsp;</span>
+                      <i class="far fa-eye" (click)="hidePrimaryPassword(i)" id="togglePassword"></i>
+                    </div>
+                    <ng-template #KeyPassphraseBlock>
+                      <div *ngIf="
+                      ssid.KeyPassphrase;
+                      else NoPassphraseBlock
+                      ">
+                        {{ ssid.KeyPassphrase }}
+                        <span>&nbsp;</span>
+                        <i class="far fa-eye" (click)="hidePrimaryPassword(i)" id="togglePassword"></i>
+                      </div>
+                    </ng-template>
+                    <ng-template #NoPassphraseBlock>
+                      {{ language.Not_set_Support_Cloud }}
+                      <span>&nbsp;&nbsp;</span>
+                      <i class="far fa-eye" (click)="hidePrimaryPassword(i)" id="togglePassword"></i>
+                    </ng-template>
+                  </div>
+                  <ng-template #elseBlock>
+                    <div *ngIf="
+                    ssid.PRConfig && ssid.PRConfig.KeyPassphrase;
+                        else passNoViewBlock
+                      ">
+                      *********
+                      <span>&nbsp;</span>
+                      <i class="far fa-eye-slash" (click)="showPrimaryPassword(i,ssid)" *ngIf="hasPassPhraseAccess"
+                        id="togglePassword"></i>
+                    </div>
+                    <ng-template #passNoViewBlock>
+                      <div>
+                        *********
+                        <span>&nbsp;</span>
+                        <i class="far fa-eye-slash" (click)="showPrimaryPassword(i,ssid)" *ngIf="hasPassPhraseAccess"
+                          id="togglePassword"></i>
+                      </div>
+                    </ng-template>
+                  </ng-template>
+                </div>
+              </td>
+
+              <!-- END -->
+
+
+              <!-- <td>
+                <div *ngIf="(ssid.BeaconType != 'Basic' && ssid.BeaconType != 'Security Off' && ssid.BeaconType != 'open') && ssid.Enable">
+                  <div class="row" *ngIf="togglePasswordTable[i]; else elseBlock">
+                    <div *ngIf="
+                        ssid.PRConfig && ssid.PRConfig.KeyPassphrase;
+                        else KeyPassphraseBlock
+                      ">
+                      {{ ssid.PRConfig.KeyPassphrase }}
+                      <span>&nbsp;</span>
+                      <i class="far fa-eye" (click)="toggleTablepassword(i)" id="togglePassword"></i>
+                    </div>
+                    <ng-template #KeyPassphraseBlock>
+                      <div *ngIf="
+                         ssid.KeyPassphrase;
+                        else NoPassphraseBlock
+                      ">
+                        {{ ssid.KeyPassphrase }}
+                        <span>&nbsp;</span>
+                        <i class="far fa-eye" (click)="toggleTablepassword(i)" id="togglePassword"></i>
+                      </div>
+                    </ng-template>
+                    <ng-template #NoPassphraseBlock>
+                      {{ language.Not_set_Support_Cloud }}
+                      <span>&nbsp;&nbsp;</span>
+                      <i class="far fa-eye" (click)="toggleTablepassword(i)" id="togglePassword"></i>
+                    </ng-template>
+                  </div>
+                  <ng-template #elseBlock>
+                    <div *ngIf="
+                        ssid.PRConfig && ssid.PRConfig.KeyPassphrase;
+                        else passNoViewBlock
+                      ">
+                      *********
+                      <span>&nbsp;</span>
+                      <i class="far fa-eye-slash" (click)="toggleTablepassword(i)" id="togglePassword"></i>
+                    </div>
+                    <ng-template #passNoViewBlock>
+                      <div>
+                        *********
+                        <span>&nbsp;</span>
+                        <i class="far fa-eye-slash" (click)="toggleTablepassword(i)" id="togglePassword"></i>
+                      </div>
+                    </ng-template>
+                  </ng-template>
+                </div>
+              </td> -->
+              <td class="position-relative">
+                <div class="">
+                  <div>{{ ssid.freqBand }}</div>
+                  <div *ngIf="hasSSIDEdit && !bSmb" class="skip-sec align-self-center">
+                    <button type="button" (click)="editSSID(ssid)" id="edit-ssid-btn"
+                      class="btn-default primary skip-btn">
+                      {{ language.Edit }}
+                    </button>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+          <tbody *ngIf="!ssidListCount && ssidObject.length == 0">
+            <tr>
+              <td colspan="7" class="no-data-available">{{language['No data available in table']}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modals -->
+<ng-template #editModal let-data id="ssid-edit-modal" class="" let-ref="dialogRef">
+  <div class="modal-header">
+    <h4 class="modal-title mx-3" id="ssid-modal-title">
+      <!-- {{ language.SSID_Manager }} -->
+      {{language['Edit SSID']}}
+    </h4>
+    <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body pl-2 pr-2">
+    <div class="alert alert-note alert-dismissible fade show" role="alert">
+      <div class="row">
+        <div class="d-inline-block al-note-inline">
+          <span class="warning-img"><img src="./assets/img/ic_info.svg" /></span>
+        </div>
+        <div class="d-inline-block al-note-text">
+          <strong>{{ language.Note }}</strong> <br />
+          <p>{{ dialogErrorMsg }}</p>
+        </div>
+      </div>
+
+
+
+
+    </div>
+    <form #myForm="ngForm" id="ssid-edit-form" (ngSubmit)="myForm.form.valid && updateSsidManager()" novalidate
+      class="form-group ccl-form">
+      <div class="row row-margin-25">
+        <div class="col-md-4">
+          <div class="ccl-Secondary-title border-bottom"> {{language.Details}} </div>
+
+          <div class="form-group row ccl-form">
+            <label class="col-12 col-form-label" for="frequency">{{
+              language.Frequency_Band
+              }}</label>
+            <div class="col-12">
+              <input class="form-control" id="frequencyBand" type="text" name="frequencyBand"
+                [ngModel]="ssidObjectForm.freqBand" disabled (ngModelChange)="ssidObjectForm.id = $event" />
+            </div>
+          </div>
+
+          <div class="form-group row ccl-form required">
+            <label for="name" class="col-12 col-form-label">{{
+              language.Name
+              }}<span class="error">*</span></label>
+            <div class="col-12" [ngClass]="[
+                                              (name.errors?.required ||
+                                                name.errors?.customUniqueName ||
+                                                name.errors?.customMax ||
+                                                name.errors?.customPattern) &&
+                                              (myForm.submitted || name.touched)
+                                                ? 'errorMessage'
+                                                : ''
+                                            ]">
+              <input class="form-control" id="name" #name="ngModel" type="text" name="name"
+                [customPattern]="ssidNamePattern" [disabled]="!selectedMetaObj.SSID" [customUniqueName]="allSsidNames"
+                [customMax]="32" [(ngModel)]="ssidObjectForm.SSID" required aria-required="true"
+                aria-describedby="name-error" aria-invalid="true" autocomplete="new-password" />
+              <em *ngIf="(name.touched || myForm.submitted) && name.errors?.required" id="name-error">
+                {{ language["This field is required"] }}</em>
+              <em *ngIf="
+                                                (name.touched || myForm.submitted) && name.errors?.customPattern
+                                              " id="name-error">
+
+                {{ language[namePatternError] }}
+              </em>
+              <em *ngIf="
+                                                (name.touched || myForm.submitted) &&
+                                                name.errors?.customUniqueName
+                                              " id="name-error">
+                {{ language.SSID_Unique_alert }}
+              </em>
+              <em *ngIf="(name.touched || myForm.submitted) && name.errors?.customMax" id="name-error">
+                {{ language.New_Profile_Validation5 }} 32
+                {{ language.Characters }}..
+              </em>
+
+              <em *ngIf="
+                                                ssidObjectForm.PRConfig &&
+                                                ssidObjectForm.PRConfig.SSID != ssidObjectForm.SSID
+                                              " id="name-error">
+                <div class="name-text-color">
+                  {{language['This field was changed outside of Service Cloud']}}
+                </div>
+              </em>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="ccl-Secondary-title border-bottom"> {{language.Security}} </div>
+          <div class="form-group row ccl-form required">
+            <label class="col-12 col-form-label" for="Security">{{
+              language.Security
+              }}</label>
+            <div class="col-12">
+              <ng-select [searchable]="false" [disabled]="!selectedMetaObj?.BeaconType" id="Security" name="BeaconType"
+                [items]="editedSecurity" bindLabel="name" bindValue="id" [clearable]="false"
+                (change)="onSecurityChange($event)" [(ngModel)]="ssidObjectForm.BeaconType">
+                <ng-template ng-label-tmp let-item="item">
+                  {{ item.name | customReplace:'\/':'-'}}
+                </ng-template>
+                <ng-template ng-option-tmp let-item="item">
+                  {{ item.name | customReplace:'\/':'-'}}
+                </ng-template>
+              </ng-select>
+              <!-- <em *ngIf="
+                      ssidObjectForm.PRConfig &&
+                      ssidObjectForm.PRConfig.BeaconType != ssidObjectForm.BeaconType
+                    " id="name-error">
+                    This field was changed outside of Service Cloud</em> -->
+            </div>
+          </div>
+          <div *ngIf="
+                  ssidObjectForm.BeaconType != 'Basic' &&
+                  ssidObjectForm.BeaconType != 'None'  && ssidObjectForm.BeaconType != 'open'
+                ">
+            <div class="form-group row ccl-form required">
+              <label class="col-12 col-form-label" for="Encryption">{{
+                language.Encryption
+                }}</label>
+              <div class="col-12">
+                <ng-select [searchable]="false" id="Encryption" name="Encryption" [items]="encryption" bindLabel="name"
+                  bindValue="id" [clearable]="false" [disabled]="!selectedMetaObj?.WPAEncryptionModes"
+                  (change)="onEncryptionChange($event,ssidObjectForm.BeaconType)" [(ngModel)]="selectedEncryption">
+                </ng-select>
+              </div>
+            </div>
+            <div class="form-group row ccl-form required">
+              <label for="KeyPassphrase" class="col-12 col-form-label">{{
+                language.Passphrase
+                }}</label>
+              <div *ngIf="
+                      ssidObjectForm.PRConfig && ssidObjectForm.PRConfig.KeyPassphrase;
+                      else keyPhrase
+                    " class="col-12 pos-icon-r" [ngClass]="[
+                      (KeyPassphrase.errors?.customMin ||
+                        KeyPassphrase.errors?.customWhiteSpace ||
+                        KeyPassphrase.errors?.customMax ||
+                        KeyPassphrase.errors?.isASCII ||
+                        KeyPassphrase.errors?.required) &&
+                      (myForm.submitted || KeyPassphrase.touched)
+                        ? 'errorMessage'
+                        : ''
+                    ]">
+                <input class="form-control" id="KeyPassphrase" [type]="showPassPhraseOldModel ? 'text' : 'password'"
+                  name="KeyPassphrase" [(ngModel)]="ssidObjectForm.PRConfig.KeyPassphrase"
+                  (keyup)="onKeyPhraseChange($event)" placeholder="Not set in Service Cloud" [customMin]="8"
+                  [customMax]="63" isASCII customWhiteSpace #KeyPassphrase="ngModel"
+                  aria-describedby="KeyPassphrase-error" autocomplete="new-password"
+                  [disabled]="!selectedMetaObj?.KeyPassphrase" />
+
+                <!--<span class="togg-icon" (click)="passWordEditOldModel()" style="right:25px">
+                      <img *ngIf="!showPassPhraseOldModel" src="../../../../assets/img/ic_hide.svg" alt="icon here" />
+                      <img *ngIf="showPassPhraseOldModel" src="../../../../assets/img/ic_view_blue.svg" alt="icon here" />
+                    </span>-->
+
+                <em *ngIf="
+                        (KeyPassphrase.errors?.required) &&
+                        (myForm.submitted || KeyPassphrase.touched)" id="KeyPassphrase-error">
+                  {{ language.PassphraseRequired }}
+                </em>
+                <em *ngIf="
+                        (KeyPassphrase.errors?.customMin ||
+                          KeyPassphrase.errors?.customMax) &&
+                        (myForm.submitted || KeyPassphrase.touched)
+                      " id="KeyPassphrase-error">
+                  {{ language.Number_Hint_8_63 }}
+                </em>
+                <em *ngIf="
+                        KeyPassphrase.errors?.isASCII &&
+                        (myForm.submitted || KeyPassphrase.touched)
+                      " id="KeyPassphrase-isASCII-error">
+                  {{ language.ASCII_warning }}
+                </em>
+                <em *ngIf="
+                        KeyPassphrase.errors?.customWhiteSpace &&
+                        (myForm.submitted || KeyPassphrase.touched)
+                      " id="KeyPassphrase-customWhiteSpace-error">
+                  {{ language.Passphrase_warning }}
+                </em>
+              </div>
+              <div class="col-12"
+                *ngIf="ssidObjectForm.PRConfig && ssidObjectForm.PRConfig.KeyPassphrase && viewpasspharsevisible && hasPassPhraseAccess">
+                <a class="primary primary-link" (click)="passWordEditOldModel(ssidObjectForm)">{{language['View
+                  Passphrase']}}</a>
+              </div>
+              <ng-template #keyPhrase>
+                <div class="col-12 pos-icon-r" [ngClass]="[
+                        (KeyPassphrase.errors?.customMin ||
+                          KeyPassphrase.errors?.customWhiteSpace ||
+                          KeyPassphrase.errors?.customMax ||
+                          KeyPassphrase.errors?.isASCII||
+                          KeyPassphrase.errors?.required) &&
+                        (myForm.submitted || KeyPassphrase.touched)
+                          ? 'errorMessage'
+                          : ''
+                      ]">
+                  <input class="form-control" id="KeyPassphrasedit"
+                    [type]="showPassPhraseOldModel ? 'text' : 'password'" name="KeyPassphrase"
+                    [(ngModel)]="ssidObjectForm.KeyPassphrase" (keyup)="onKeyPhraseChange($event)"
+                    placeholder="Not set in Service Cloud" [customMin]="8" [customMax]="63" isASCII customWhiteSpace
+                    #KeyPassphrase="ngModel" aria-describedby="KeyPassphrase-error" autocomplete="new-password"
+                    [disabled]="!selectedMetaObj?.KeyPassphrase" />
+                  <!--<span class="togg-icon" (click)="passWordEditOldModel()" style="right:25px">
+                        <img *ngIf="!showPassPhraseOldModel" src="../../../../assets/img/ic_hide.svg" alt="icon here" />
+                        <img *ngIf="showPassPhraseOldModel" src="../../../../assets/img/ic_view_blue.svg" alt="icon here" />
+                      </span>-->
+
+
+                  <em *ngIf="
+                        (KeyPassphrase.errors?.required) &&
+                        (myForm.submitted || KeyPassphrase.touched)" id="KeyPassphrase-error">
+                    {{ language.PassphraseRequired }}
+                  </em>
+                  <em *ngIf="
+                          (KeyPassphrase.errors?.customMin ||
+                            KeyPassphrase.errors?.customMax) &&
+                          (myForm.submitted || KeyPassphrase.touched)
+                        " id="KeyPassphrase-error">
+                    {{ language.Number_Hint_8_63 }}
+                  </em>
+                  <em *ngIf="
+                          KeyPassphrase.errors?.isASCII &&
+                          (myForm.submitted || KeyPassphrase.touched)
+                        " id="KeyPassphrase-isASCII-error">
+                    Please input an ASCII string.
+                  </em>
+                  <em *ngIf="
+                          KeyPassphrase.errors?.customWhiteSpace &&
+                          (myForm.submitted || KeyPassphrase.touched)
+                        " id="KeyPassphrase-customWhiteSpace-error">
+                    {{ language.Passphrase_warning }}
+                  </em>
+                </div>
+                <div class="col-12"
+                  *ngIf="ssidObjectForm.KeyPassphrase &&  viewpasspharsevisible && hasPassPhraseAccess">
+                  <a class="primary primary-link" (click)="passWordEditOldModel(ssidObjectForm)">{{language['View
+                    Passphrase']}}</a>
+                </div>
+
+              </ng-template>
+            </div>
+            <!-- <div *ngIf="selectedMetaObj.KeyPassphrase" class="row p-0">
+                  <div class="col-12 mb-4">
+                    {{ language.Show_Passphrase }}
+                  </div>
+                  <div class="col-12">
+                    <div class="checkbox switcher">
+                      <label for="toggleCheckbox">
+                        <input type="checkbox" id="toggleCheckbox" name="toggleCheckbox" [(ngModel)]="showPassPhrase"
+                          [checked]="showPassPhrase" />
+                        <span><small></small></span>
+                      </label>
+                    </div>
+                  </div>
+                </div> -->
+          </div>
+          <!--end-->
+        </div>
+        <div class="col-md-4">
+          <div class="ccl-Secondary-title border-bottom"> {{language.TOptions}} </div>
+          <div *ngIf="
+                          selectedMetaObj.Enable == true || selectedMetaObj.Enable == false
+                        " class="row p-0">
+            <div class="col-12 mb-2">{{ language.Service }}</div>
+            <div class="col-12">
+              <div [ngClass]="[!selectedMetaObj?.Enable?'checkbox switcher-disabled':'checkbox switcher']">
+                <label for="serviceCheckbox">
+                  <input type="checkbox" id="serviceCheckbox" [disabled]="!selectedMetaObj?.Enable" name="ServiceEnable"
+                    [(ngModel)]="ssidObjectForm.Enable" [checked]="ssidObjectForm.Enable" />
+                  <span><small></small></span>
+                </label>
+              </div>
+              <em *ngIf="
+                              ssidObjectForm.PRConfig &&
+                              ssidObjectForm.PRConfig.Enable != ssidObjectForm.Enable
+                            " id="name-error">
+                {{language['This field was changed outside of Service Cloud']}}</em>
+            </div>
+          </div>
+          <div class="row p-0">
+            <div class="col-12 mb-2 ">{{ language.Broadcasting }}</div>
+            <div class="col-12">
+              <div
+                [ngClass]="[!selectedMetaObj?.SSIDAdvertisementEnabled?'checkbox switcher-disabled':'checkbox switcher']">
+                <label for="SSIDAdvertisementEnabled">
+                  <input type="checkbox" name="AdvertisementEnabled" id="SSIDAdvertisementEnabled"
+                    [(ngModel)]="ssidObjectForm.SSIDAdvertisementEnabled"
+                    [disabled]="!selectedMetaObj?.SSIDAdvertisementEnabled"
+                    [checked]="ssidObjectForm.SSIDAdvertisementEnabled" />
+                  <span><small></small></span>
+                </label>
+              </div>
+              <em *ngIf="
+                              ssidObjectForm.PRConfig &&
+                              ssidObjectForm.PRConfig.SSIDAdvertisementEnabled !=
+                                ssidObjectForm.SSIDAdvertisementEnabled
+                            " id="name-error">
+                {{language['This field was changed outside of Service Cloud']}}</em>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 px-0 mb-3" *ngIf="editaccesspasspharsepopup">
+          <div class="d-flex w-100 flex-wrap warning-alert">
+            <div class="icon-warn-24">
+              <img src="../../../../assets/img/warning-icon.svg" />
+            </div>
+            <div class="width-calc">
+              <div class="warn-title">
+                <!--{{language.Ask_the_subscriber_msg}}-->{{language.SSIDpopupmessage}}
+              </div>
+
+              <div class="form-group ccl-form" *ngIf="freetextedit">
+
+                <textarea class="form-control round-textarea textarea-box" id="exampleFormControlTextarea1"
+                  [(ngModel)]="ssidfreetextedit" [ngModelOptions]="{ standalone: true }"
+                  placeholder="{{language['Enter any comments (Optional)']}}"></textarea>
+              </div>
+
+              <div class="table-responisve">
+                <!--<table class="table table-borderless ssid-warn-table">
+                        <thead>
+                          <tr>
+                            <th>{{language.Account}}</th>
+                            <th>{{language.Phone_No}}</th>
+                            <th>{{language.Email}}</th>
+                            <th>{{language.address}}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>{{subscriberaccount}}</td>
+                            <!--secondary edit pop-up-->
+                <!--      <td>{{subscriberphone}}</td>
+                            <td>{{subscriberemail}}</td>
+                            <td>{{subscriberaddress}} </td>
+                          </tr>
+                        </tbody>
+                      </table>-->
+                <div>
+                  <div class="form-check">
+                    <input type="checkbox" class="form-check-input check-input-inline" [(ngModel)]="checksubvalidate"
+                      [ngModelOptions]="{ standalone: true }" (change)="checksubvalidatechange()" />
+                    <span>{{language.subscriber_verifi_msg}}</span>
+                  </div>
+                </div>
+                <!--end-->
+                <div class="w-100 mt-2 warn-action-buttons">
+                  <button class="btn-default btn-primary mr-3" type="button" [disabled]="accessPassphrasenable"
+                    id="accessPassphrase" (click)="accesspopupedit(ssidObjectForm)">{{language['Access
+                    Passphrase']}}</button>
+                  <button class="btn-default btn-dft"
+                    (click)="editaccesspasspharsepopupclose()">{{language.cancel}}</button>
+                </div>
+                <!--end-->
+              </div>
+            </div>
+            <!--end-->
+          </div>
+        </div>
+        <div class="col-12 px-0 mb-3" *ngIf="editpasspharsealertpopup">
+          <div class="d-flex w-100 flex-wrap warning-alert">
+            <button type="button" class="close" (click)="editpasspharsealertpopupclose()">
+              <span></span>
+            </button>
+            <div class="icon-warn-48">
+              <img src="../../../../assets/img/warning-icon-36px.svg" />
+            </div>
+            <div>
+              <div class="ccl-Secondary-title mb-0 pb-0">
+                {{language['You don’t have permission to view the passphrase']}}
+              </div>
+              <p class="mb-0">{{language['Talk to your administrator for access']}}.</p>
+            </div>
+            <!--end-->
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer float-left p-0">
+        <button type="submit" *ngIf="hasSSIDEdit" id="submit-btn" class="btn-default primary px-3" data-dismiss="modal"
+          [disabled]="myForm.pristine">
+          {{ language.submit }}
+        </button>
+        <button type="button" id="cancel-btn" class="btn-default primary px-3" data-dismiss="modal"
+          (click)="closeModal()">
+          {{ language.Cancel }}
+        </button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+<!-- Modals -->
+
+<!-- New edit popup -->
+<ng-template #editModal_1 let-data id="ssid-edit-modalold-primary" let-ref="dialogRef">
+  <div class="modal-header">
+    <h4 class="modal-title mx-3" id="ssid-modal-title">
+      {{ language.SSID_Manager }}
+    </h4>
+    <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body pl-2 pr-2">
+    <div class="alert alert-note alert-dismissible fade show" role="alert">
+      <div class="row">
+        <div class="d-inline-block al-note-inline">
+          <span class="warning-img"><img src="./assets/img/ic_info.svg" /></span>
+        </div>
+        <div class="d-inline-block al-note-text">
+          <strong>{{ language.Note }}</strong> <br />
+          <p>{{ dialogErrorMsg }}</p>
+        </div>
+      </div>
+    </div>
+
+
+    <form #myForm="ngForm" id="ssid-edit-formold" (ngSubmit)="myForm.form.valid && updateSsidManager()"
+      class="form-group ccl-form">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="ccl-Secondary-title border-bottom">
+            {{language.Details}}
+          </div>
+          <div class="">
+            <!-- <div class="form-group row ccl-form">
+              <label class="col-12 col-form-label" for="frequency">Network Type</label>
+              <div class="col-12">
+                <input id="ssid" required="" maxlength="32" name="ssid" class="form-control" ng-reflect-name="ssid"
+                  [(ngModel)]="SSIDNetworkType" disabled placeholder="Name">
+              </div>
+            </div> -->
+            <div *ngIf="selectedMetaObj.SSID" class="form-group row ccl-form required mb-0">
+              <label for="name" class="col-12 col-form-label">{{
+                language.Name
+                }}<span class="error">*</span></label>
+              <div class="col-12"
+                [ngClass]="[(name.errors?.required || name.errors?.customUniqueName || name.errors?.customMax || name.errors?.customPattern) && (myForm.submitted || name.touched) ? 'errorMessage' : '']">
+                <input class="form-control" id="name" #name="ngModel" type="text" name="name"
+                  [customPattern]="ssidNamePattern" [disabled]="!selectedMetaObj.SSID" [customUniqueName]="allSsidNames"
+                  [customMax]="32" [(ngModel)]="ssidObjectForm.SSID" required aria-required="true"
+                  aria-describedby="name-error" aria-invalid="true" autocomplete="new-password" />
+                <em *ngIf="ssidObjectForm.PRConfig && ssidObjectForm.PRConfig.SSID != ssidObjectForm.SSID"
+                  id="name-error">
+                  {{language['This field was changed outside of Service Cloud']}}</em><br>
+                <em *ngIf="(name.touched || myForm.submitted) && name.errors?.required" id="name-error">
+                  {{ language["This field is required"] }}</em>
+                <em *ngIf="(name.touched || myForm.submitted) && name.errors?.customPattern" id="name-error">
+                  {{ namePatternError }}
+                </em>
+                <em *ngIf="(name.touched || myForm.submitted) && name.errors?.customUniqueName" id="name-error">
+                  {{ language.SSID_Unique_alert }}
+                </em>
+                <em *ngIf="(name.touched || myForm.submitted) && name.errors?.customMax" id="name-error">
+                  {{ language.New_Profile_Validation5 }} 32
+                  {{ language.Characters }}..
+                </em>
+              </div>
+            </div>
+            <!-- Primary 2.4 and  5 GHZ Bands For Unified Primary  -->
+
+            <div class="form-group" *ngIf="ssidObjectForm.isUnifiedPrimary">
+              <span class="mb-2">{{language['Frequency Bands']}}</span>
+
+              <div class="form-check p-0 mt-2">
+                <input type="checkbox" class="cus-check" id="band24editduplicate" disabled="true" checked />
+                <label class="mx-2" for="band24editduplicate">2.4 GHz</label>
+              </div>
+              <div class="form-check p-0">
+                <input type="checkbox" class="cus-check" id="band5editduplicate" disabled="true" checked />
+                <label class="mx-2" for="band5editduplicate">
+                  5 GHz</label>
+              </div>
+              <div class="form-check p-0">
+                <input type="checkbox" class="cus-check" id="band6editduplicate" disabled="true" checked />
+                <label class="mx-2" for="band6editduplicate">
+                  6 GHz</label>
+              </div>
+
+            </div>
+
+            <!-- Primary 2.4 and  5 GHZ Bands not Unified Primary  -->
+            <!-- <div class="form-group" *ngIf="SSIDNetworkType == 'Primary' && !ssidObjectForm.isUnifiedPrimary">
+              <span class="mb-2">{{language['Frequency Bands']}}</span>
+
+              <div class="form-check p-0 mt-2">
+                <input type="checkbox" id="band24editduplicate" [disabled]="disabled_two_fourSSIDFrequenyBands"
+                  name="band24editduplicate" [(ngModel)]="two_fourSSIDFrequenyBands"
+                  (change)="selectPrimaryBands($event)"
+                  style="width: 16px; max-height: 16px;display: inline-table;min-height: 16px; " />
+                <label class="mx-2" for="band24editduplicate">2.4 GHz</label>
+              </div>
+              <div class="form-check p-0">
+                <input type="checkbox" id="band5editduplicate" name="band5editduplicate"
+                  [(ngModel)]="five_gSSIDFrequenyBands" (change)="selectPrimaryBands($event)"
+                  [disabled]="disabled_five_gSSIDFrequenyBands"
+                  style="width: 16px;max-height: 16px;display: inline-table;min-height: 16px;" />
+                <label class="mx-2" for="band5editduplicate">
+                  5 GHz</label>
+              </div>
+              <div class="form-check p-0">
+                <input type="checkbox" id="band6editduplicate" name="band6editduplicate"
+                  [(ngModel)]="six_gSSIDFrequenyBands" (change)="selectPrimaryBands($event)"
+                  [disabled]="disabled_six_gSSIDFrequenyBands"
+                  style="width: 16px;max-height: 16px;display: inline-table;min-height: 16px;" />
+                <label class="mx-2" for="band6editduplicate">
+                  6 GHz</label>
+              </div>
+
+            </div> -->
+            <!-- Primary 2.4 and  5 GHZ Bands for Operatopr  -->
+
+            <div class="form-group">
+              <span class="mb-2">{{language['Frequency Bands']}}</span>
+
+              <div class="form-check p-0 mt-2" *ngIf="ssidObjectForm.freqBand=='2.4GHz'">
+                <input type="checkbox" class="cus-check" id="band24editduplicate" disabled="true" checked />
+                <label class="mx-2" for="band24editduplicate">2.4 GHz</label>
+              </div>
+              <div class="form-check p-0" *ngIf="ssidObjectForm.freqBand=='5GHz'">
+                <input type="checkbox" class="cus-check" id="band5editduplicate" disabled="true" checked />
+                <label class="mx-2" for="band5editduplicate">
+                  5 GHz</label>
+              </div>
+              <div class="form-check p-0" *ngIf="ssidObjectForm.freqBand=='6GHz'">
+                <input type="checkbox" class="cus-check" id="band6editduplicate" disabled="true" checked />
+                <label class="mx-2" for="band6editduplicate">
+                  6 GHz</label>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="ccl-Secondary-title border-bottom">
+            {{language.Security}}
+          </div>
+          <div class="">
+            <div *ngIf="selectedMetaObj.BeaconType" class="form-group row ccl-form required">
+              <label class="col-12 col-form-label" for="Security">{{
+                language.Security
+                }}</label>
+              <div class="col-12">
+                <ng-select [searchable]="false" [disabled]="!selectedMetaObj?.BeaconType" id="Security"
+                  name="BeaconType" [items]="editedSecurity" bindLabel="name" bindValue="id" [clearable]="false"
+                  (change)="onSecurityChange($event)" [(ngModel)]="ssidObjectForm.BeaconType">
+                  <ng-template ng-label-tmp let-item="item">
+                    {{ item.name | customReplace:'\/':'-'}}
+                  </ng-template>
+                  <ng-template ng-option-tmp let-item="item">
+                    {{ item.name | customReplace:'\/':'-'}}
+                  </ng-template>
+                </ng-select>
+
+              </div>
+            </div>
+            <div *ngIf="
+                              ssidObjectForm.BeaconType != 'Basic' &&
+                              ssidObjectForm.BeaconType != 'None'
+                            ">
+              <div *ngIf="
+                                selectedMetaObj.WPAEncryptionModes ||
+                                selectedMetaObj.BasicEncryptionModes ||
+                                selectedMetaObj.IEEE11iEncryptionModes
+                              " class="form-group row ccl-form required">
+                <label class="col-12 col-form-label" for="Encryption">{{
+                  language.Encryption
+                  }}</label>
+                <div class="col-12">
+                  <ng-select [searchable]="false" id="Encryption" name="Encryption" [items]="encryption"
+                    bindLabel="name" bindValue="id" [clearable]="false"
+                    [disabled]="!selectedMetaObj?.WPAEncryptionModes"
+                    (change)="onEncryptionChange($event,ssidObjectForm.BeaconType)" [(ngModel)]="selectedEncryption">
+                  </ng-select>
+                </div>
+              </div>
+              <div *ngIf="selectedMetaObj.KeyPassphrase" class="form-group row ccl-form required">
+                <label for="KeyPassphrase" class="col-12 col-form-label">{{
+                  language.Passphrase
+                  }}</label>
+                <div *ngIf="
+                                  ssidObjectForm.PRConfig && ssidObjectForm.PRConfig.KeyPassphrase;
+                                  else keyPhrase
+                                " class="col-12 pos-icon-r" [ngClass]="[
+                                  (KeyPassphrase.errors?.customMin ||
+                                    KeyPassphrase.errors?.customWhiteSpace ||
+                                    KeyPassphrase.errors?.customMax ||
+                                    KeyPassphrase.errors?.isASCII ||
+                                    KeyPassphrase.errors?.required) &&
+                                  (myForm.submitted || KeyPassphrase.touched)
+                                    ? 'errorMessage'
+                                    : ''
+                                ]">
+                  <input class="form-control" id="KeyPassphrase" [type]="showPassPhraseOldModel ? 'text' : 'password'"
+                    name="KeyPassphrase" [(ngModel)]="ssidObjectForm.PRConfig.KeyPassphrase"
+                    (keyup)="onKeyPhraseChange($event)" placeholder="Not set in Service Cloud" [customMin]="8"
+                    [customMax]="63" isASCII customWhiteSpace #KeyPassphrase="ngModel"
+                    aria-describedby="KeyPassphrase-error" autocomplete="new-password"
+                    [disabled]="!selectedMetaObj?.KeyPassphrase" />
+
+                  <span class="togg-icon togg-right" (click)="passWordEditOldModel(ssidObjectForm)">
+                    <!-- <i *ngIf="!show" class="fa fa-eye-slash" aria-hidden="true"></i>
+                                      <i *ngIf="show" class="fa fa-eye" aria-hidden="true"></i> -->
+                    <img *ngIf="!showPassPhraseOldModel && hasPassPhraseAccess" src="../../../../assets/img/ic_hide.svg"
+                      alt="icon here" />
+                    <img *ngIf="showPassPhraseOldModel && hasPassPhraseAccess"
+                      src="../../../../assets/img/ic_view_blue.svg" alt="icon here" />
+                  </span>
+
+                  <em *ngIf="
+                                    (KeyPassphrase.errors?.required) &&
+                                    (myForm.submitted || KeyPassphrase.touched)" id="KeyPassphrase-error">
+                    {{ language.PassphraseRequired }}
+                  </em>
+                  <em *ngIf="
+                                    (KeyPassphrase.errors?.customMin ||
+                                      KeyPassphrase.errors?.customMax) &&
+                                    (myForm.submitted || KeyPassphrase.touched)
+                                  " id="KeyPassphrase-error">
+                    {{ language.Number_Hint_8_63 }}
+                  </em>
+                  <em *ngIf="
+                                    KeyPassphrase.errors?.isASCII &&
+                                    (myForm.submitted || KeyPassphrase.touched)
+                                  " id="KeyPassphrase-isASCII-error">
+                    {{ language.ASCII_warning }}
+                  </em>
+                  <em *ngIf="
+                                    KeyPassphrase.errors?.customWhiteSpace &&
+                                    (myForm.submitted || KeyPassphrase.touched)
+                                  " id="KeyPassphrase-customWhiteSpace-error">
+                    {{ language.Passphrase_warning }}
+                  </em>
+                </div>
+                <ng-template #keyPhrase>
+                  <div class="col-12 pos-icon-r" [ngClass]="[
+                                    (KeyPassphrase.errors?.customMin ||
+                                      KeyPassphrase.errors?.customWhiteSpace ||
+                                      KeyPassphrase.errors?.customMax ||
+                                      KeyPassphrase.errors?.isASCII||
+                                      KeyPassphrase.errors?.required) &&
+                                    (myForm.submitted || KeyPassphrase.touched)
+                                      ? 'errorMessage'
+                                      : ''
+                                  ]">
+                    <input class="form-control" id="KeyPassphrase" [type]="showPassPhraseOldModel ? 'text' : 'password'"
+                      name="KeyPassphrase" [(ngModel)]="ssidObjectForm.KeyPassphrase"
+                      (keyup)="onKeyPhraseChange($event)" placeholder="Not set in Service Cloud" [customMin]="8"
+                      [customMax]="63" isASCII customWhiteSpace #KeyPassphrase="ngModel"
+                      aria-describedby="KeyPassphrase-error" autocomplete="new-password"
+                      [disabled]="!selectedMetaObj?.KeyPassphrase" />
+
+
+                    <span class="togg-icon togg-right" (click)="passWordEditOldModel(ssidObjectForm)">
+                      <!-- <i *ngIf="!show" class="fa fa-eye-slash" aria-hidden="true"></i>
+                                        <i *ngIf="show" class="fa fa-eye" aria-hidden="true"></i> -->
+                      <img *ngIf="!showPassPhraseOldModel && hasPassPhraseAccess"
+                        src="../../../../assets/img/ic_hide.svg" alt="icon here" />
+                      <img *ngIf="showPassPhraseOldModel && hasPassPhraseAccess"
+                        src="../../../../assets/img/ic_view_blue.svg" alt="icon here" />
+                    </span>
+
+
+
+                    <em *ngIf="
+                                    (KeyPassphrase.errors?.required) &&
+                                    (myForm.submitted || KeyPassphrase.touched)" id="KeyPassphrase-error">
+                      {{ language.PassphraseRequired }}
+                    </em>
+                    <em *ngIf="
+                                      (KeyPassphrase.errors?.customMin ||
+                                        KeyPassphrase.errors?.customMax) &&
+                                      (myForm.submitted || KeyPassphrase.touched)
+                                    " id="KeyPassphrase-error">
+                      {{ language.Number_Hint_8_63 }}
+                    </em>
+                    <em *ngIf="
+                                      KeyPassphrase.errors?.isASCII &&
+                                      (myForm.submitted || KeyPassphrase.touched)
+                                    " id="KeyPassphrase-isASCII-error">
+                      {{language.ASCII_warning}}.
+                    </em>
+                    <em *ngIf="
+                                      KeyPassphrase.errors?.customWhiteSpace &&
+                                      (myForm.submitted || KeyPassphrase.touched)
+                                    " id="KeyPassphrase-customWhiteSpace-error">
+                      {{ language.Passphrase_warning }}
+                    </em>
+                  </div>
+                </ng-template>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+        <div class="col-md-4">
+          <div class="ccl-Secondary-title border-bottom">
+            {{language.TOptions}}
+          </div>
+          <div class="">
+            <div *ngIf="selectedMetaObj.Enable == true || selectedMetaObj.Enable == false" class="row p-0">
+              <div class="col-12 mb-2">{{ language.Service }}</div>
+              <div class="col-12">
+                <div [ngClass]="[!selectedMetaObj?.Enable?'checkbox switcher-disabled':'checkbox switcher']">
+                  <label for="serviceCheckbox">
+                    <input type="checkbox" id="serviceCheckbox" [disabled]="!selectedMetaObj?.Enable"
+                      name="ServiceEnable" [(ngModel)]="ssidObjectForm.Enable" [checked]="ssidObjectForm.Enable" />
+                    <span><small></small></span>
+                  </label>
+                </div>
+                <em *ngIf="ssidObjectForm.PRConfig && ssidObjectForm.PRConfig.Enable != ssidObjectForm.Enable"
+                  id="name-error">
+                  {{language['This field was changed outside of Service Cloud']}}</em>
+              </div>
+            </div>
+            <div *ngIf="selectedMetaObj.SSIDAdvertisementEnabled" class="row p-0">
+              <div class="col-12 mb-2">{{ language.Broadcasting }}</div>
+              <div class="col-12">
+                <div class="checkbox switcher">
+                  <label for="SSIDAdvertisementEnabled">
+                    <input type="checkbox" name="AdvertisementEnabled" id="SSIDAdvertisementEnabled"
+                      [(ngModel)]="ssidObjectForm.SSIDAdvertisementEnabled"
+                      [disabled]="!selectedMetaObj?.SSIDAdvertisementEnabled"
+                      [checked]="ssidObjectForm.SSIDAdvertisementEnabled" />
+                    <span><small></small></span>
+                  </label>
+                </div>
+                <em
+                  *ngIf="ssidObjectForm.PRConfig && ssidObjectForm.PRConfig.SSIDAdvertisementEnabled != ssidObjectForm.SSIDAdvertisementEnabled"
+                  id="name-error">
+                  {{language['This field was changed outside of Service Cloud']}}</em>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div class="modal-footer float-left p-0">
+        <button type="submit" *ngIf="hasSSIDEdit" id="submit-btn" class="btn-default primary px-3" data-dismiss="modal"
+          [disabled]="myForm.invalid">
+          {{ language.submit }}
+        </button>
+        <button type="button" id="cancel-btn" class="btn-default primary px-3" data-dismiss="modal"
+          (click)="closeModal()">
+          {{ language.cancel }}
+        </button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+<!--Modal-->
+<ng-template #passphraseVerifyWarnModal let-modal>
+  <div class="w-100 warning-alert warning-alert-modal" *ngIf="listpasspharseaccesspopup">
+    <div class="d-flex w-100 flex-wrap">
+      <div class="icon-warn-24">
+        <img src="../../../../assets/img/warning-icon.svg" />
+      </div>
+      <div class="width-calc">
+        <div class="warn-title">
+          <!--{{language.Ask_the_subscriber_msg}}-->{{language.SSIDpopupmessage}}
+        </div>
+
+        <div class="form-group ccl-form " *ngIf="freetextssidlist">
+
+          <textarea class="form-control round-textarea textarea-box" id="exampleFormControlTextarea1"
+            [(ngModel)]="ssidfreetextlist" [ngModelOptions]="{ standalone: true }"
+            placeholder="{{language['Enter any comments (Optional)']}}"></textarea>
+        </div>
+
+
+        <div class="table-responisve">
+          <!-- <table class="table table-borderless ssid-warn-table">
+            <thead>
+              <tr>
+                <th>{{language.Account}}</th>
+                <th>{{language.Phone_No}}</th>
+                <th>{{language.Email}}</th>
+                <th>{{language.address}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{subscriberaccount}}</td>
+                <!--passphrase listview pop-up-->
+          <!--     <td>{{subscriberphone}}</td>
+                <td>{{subscriberemail}}</td>
+                <td>{{subscriberaddress}} </td>
+              </tr>
+            </tbody>
+          </table>-->
+          <div>
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input check-input-inline" [(ngModel)]="checksubvalidate"
+                [ngModelOptions]="{ standalone: true }" (change)="checksubvalidatechange()" />
+              <span>{{language.subscriber_verifi_msg}}</span>
+            </div>
+          </div>
+          <!--end-->
+          <div class="w-100 mt-2 warn-action-buttons">
+            <button class="btn-default btn-primary mr-3" type="button" id="listAccessPassphrase"
+              [disabled]="accessPassphrasenable" (click)="accesspopuplist()">{{language['Access
+              Passphrase']}}</button>
+            <button class="btn-default btn-dft" id="listAccessPassphraseCancel"
+              (click)="cancelpopuplist()">{{language.cancel}}</button>
+          </div>
+          <!--end-->
+        </div>
+      </div>
+      <!--end-->
+    </div>
+  </div>
+  <div class="col-12 px-0 mb-3" *ngIf="listpasspharsealertpopup">
+    <div class="d-flex w-100 flex-wrap warning-alert">
+      <button type="button" class="close" (click)="listpasspharsealertpopupclose()">
+        <span></span>
+      </button>
+      <div class="icon-warn-48">
+        <img src="../../../../assets/img/warning-icon-36px.svg" />
+      </div>
+      <div>
+        <div class="ccl-Secondary-title mb-0 pb-0">
+          {{language['You don’t have permission to view the passphrase']}}
+        </div>
+        <p class="mb-0">{{language['Talk to your administrator for access']}}.</p>
+      </div>
+      <!--end-->
+    </div>
+  </div>
+  <!--end-->
+
+</ng-template>

@@ -1,0 +1,155 @@
+.ignorewhitespace {
+  white-space: nowrap;
+  font-weight: bold;
+}
+
+tr.hide-table-padding td {
+  padding: 0;
+}
+
+.expand-button {
+  position: relative;
+}
+
+.accordion-toggle .expand-button:after {
+  position : absolute;
+  left     : .75rem;
+  top      : 50%;
+  transform: translate(0, -50%);
+  content  : '-';
+}
+
+.accordion-toggle.collapsed .expand-button:after {
+  content: '+';
+}
+
+::ng-deep .p-calendar-w-btn .p-datepicker-trigger {
+  max-height: 38px;
+  ;
+}
+
+:host ::ng-deep .dataTables_empty {
+  display: none;
+}
+
+.p-calendar {
+  width: 100% !important;
+}
+
+.no-data-available {
+  text-align: center;
+}
+
+.errorMsg {
+  color: #C70000;
+
+  input {
+    border: 1px solid #C70000;
+  }
+
+}
+
+input[readonly] {
+  cursor: not-allowed !important;
+}
+
+
+// .table-striped>tbody>tr:nth-child(odd)>td,
+// .table-striped>tbody>tr:nth-child(odd)>th {
+//   background-color: none !important;
+// }
+
+table.dataTable tbody tr:nth-child(even) {
+  background-color: #ffffff !important;
+}
+
+.input-close {
+  position: absolute;
+  top     : 4px;
+  right   : 30px;
+  width   : 11px;
+  cursor  : pointer;
+}
+
+.dropdown-close {
+  position: absolute;
+  top     : 4px;
+  right   : 50px;
+  width   : 11px;
+  cursor  : pointer;
+}
+
+
+.title {
+  border-bottom : 1px solid #CCCCCC;
+  padding-bottom: 9px;
+  margin-bottom : 12px;
+  color         : #1A1F22;
+  font-size     : 24px;
+  font-style    : normal;
+  font-weight   : 400;
+  line-height   : 30px;
+  letter-spacing: 0em;
+  text-align    : left;
+}
+// colors
+$blue    : #269bff;
+$bg-light: #f2f2f2;
+$bg-med  : #eee;
+div.checkbox.switcher,
+div.radio.switcher {
+  float: right;
+
+  label {
+    padding: 0;
+    * {
+      vertical-align: middle;
+    }
+    
+
+    input {
+      display: none;
+
+      &+span {
+        position     : relative;
+        display      : inline-block;
+        width        : 45px;
+        height       : 25px;
+        background   : #ffffff;
+        border       : 1px solid #0279ff;
+        border-radius: 50px;
+        transition   : all 0.3s ease-in-out;
+        padding      : 5px;
+        cursor: pointer;
+        small {
+          position     : absolute;
+          display      : block;
+          width        : 20px;
+          height       : 19px;
+          background   : #0279ff;
+          border-radius: 50%;
+          transition   : all 0.3s ease-in-out;
+          left         : 2px;
+          top          : 2px;
+        }
+      }
+
+      &:checked+span {
+        background  : $blue;
+        border-color: $blue;
+
+        small {
+          left      : 50%;
+          background: #ffffff;
+        }
+      }
+    }
+  }
+}
+
+.opacity-50 {
+  opacity: 0.5
+}
+.dropdown-toggle[aria-expanded="true"]{
+&::after{transform: rotate(180deg);-webkit-transform: rotate(180deg);}
+}

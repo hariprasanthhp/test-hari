@@ -1,0 +1,248 @@
+@import "~src/assets/variables";
+@import "font-awesome";
+// samu css start
+
+.dash-drop {
+  cursor: pointer;
+}
+
+.dash-drop.dropdown-toggle::after {
+  display: none;
+}
+
+.mod-page ul {
+  display    : flex;
+  align-items: center;
+}
+
+.mod-page ul li {
+  width     : 33.3%;
+  text-align: center;
+  display   : flex;
+  cursor    : pointer;
+}
+
+.mod-li img {
+  width : 50%;
+  height: auto;
+}
+
+.mod-li p {
+  font-size     : 14px;
+  letter-spacing: 0.5px;
+  margin-bottom : 0px;
+}
+
+.admin-profile {
+  cursor: pointer;
+}
+
+.admin-profile .mod-page {
+  padding: 0px;
+}
+
+.mod-about.dropdown-button.show .dropdown-menu.show {
+  top           : 0px !important;
+  left          : auto !important;
+  width         : 250px;
+  border-radius : 20px;
+  z-index       : 111111;
+  padding-top   : 20px;
+  box-shadow    : 0 5px 15px rgba(0, 0, 0, 0.13);
+  border        : 0;
+  padding-bottom: 20px;
+  right         : 0px;
+}
+
+.mod-page {
+  padding: 10px;
+}
+
+.mod-page h6 {
+  font-size     : 16px;
+  font-weight   : 600;
+  word-break    : break-all;
+  margin-bottom : 15px;
+  text-transform: capitalize;
+  line-height   : 20px;
+}
+
+.mod-about.dropdown-button.show .dropdown-menu.show {
+  width    : 300px;
+  max-width: 300px;
+
+}
+
+
+.mod-page .admin-prf {
+  margin : 10px 0px;
+  cursor : pointer;
+  padding: 0px 20px;
+}
+
+.mod-page .admin-prf:last-child {
+  margin-bottom: 0px;
+}
+
+.mod-page .admin-prf:hover a {
+  color          : $primary;
+  text-decoration: none;
+  transition     : 0.5s ease;
+}
+
+.mod-page .admin-prf:hover svg,
+.mod-page .admin-prf:hover svg,
+.mod-page .admin-prf:hover .key-icon svg circle,
+.mod-page .admin-prf:hover .key-icon svg line {
+  fill: $primary !important;
+}
+
+span.admin-prf-icon {
+  padding-right: 10px;
+}
+
+
+.admin-prf a {
+  margin-left: 0px !important;
+}
+
+.admin-prf a:hover {
+  text-decoration: none;
+}
+
+.data-para {
+  margin     : 5px 0px 12px;
+  font-weight: 500;
+}
+
+.inner-data {
+  font-size  : 15px;
+  font-weight: 600;
+  line-height: 20px;
+  word-break : break-word;
+  padding    : 0px 20px;
+}
+
+.inner-data p {
+  font-weight: 500;
+  margin-top : 10px;
+  font-size  : 14px;
+  line-height: 20px;
+}
+
+// samu css end
+
+
+//sathish
+.decor-none {
+  text-decoration: none;
+}
+
+.lang-menu {
+  position: relative;
+
+  .lang-sub-menu {
+    position        : absolute;
+    left            : -174px;
+    display         : none;
+    background-color: #ffffff;
+    box-shadow      : 0 5px 15px rgba(0, 0, 0, 0.13);
+    width           : 60%;
+    padding         : 10px;
+    align-items     : start;
+    border-radius   : 20px;
+    top             : 0;
+    z-index         : 1;
+
+    li {
+      width         : 100%;
+      padding-right : 15px;
+      padding-bottom: 10px;
+      display       : block;
+      text-align    : right;
+
+      a {
+        color: #4C4C4C;
+      }
+
+      a:hover {
+        color: #007bff;
+      }
+    }
+
+  }
+
+  &:hover {
+    .lang-sub-menu {
+      display: block;
+
+
+    }
+  }
+}
+
+.lannotActive {
+  color: #4C4C4C !important;
+}
+
+.sub-active {
+  color: #007bff !important;
+
+}
+
+.pr-18 {
+  padding-right: 18px !important;
+}
+
+.orange {
+  color: orange !important;
+}
+
+.orange-admin::after {
+
+  color: #ff8066 !important;
+
+}
+
+//Mobile Responsive
+@media screen and (max-width: 767px) {
+  .mod-about.dropdown-button.show .dropdown-menu.show {
+    width     : 220px !important;
+    max-width : 300px;
+    text-align: right;
+  }
+}
+
+.profile-title {
+  font-weight: 400;
+  font-size  : 24px;
+  line-height: 34.18px;
+  text-align : center;
+  font-style : normal;
+  color      : #0279FF;
+}
+
+// .profile-title::after {
+//   background-image: url(assets/img/Icon_Chevron-Down.svg);
+// }
+
+.admin-profile a:hover {
+  text-decoration: none;
+}
+
+// .dropdown-toggle::after {
+//   content: none !important;
+
+// }
+.admin-profile .dropdown-toggle::after{
+  display: none;
+}
+.admin-profile {
+  .profile-title img{
+   margin-left: 5px; 
+  }
+  *{
+    user-select: none;
+    -webkit-user-select: none;
+  }
+}

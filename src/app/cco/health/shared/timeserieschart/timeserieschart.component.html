@@ -1,0 +1,183 @@
+<div class="subscriber-trends-wrapper my-2" id={{divid}} *ngIf="singletimeseries">
+    <div class="w-100">
+        <div class="d-flex justify-content-between border-bottom"
+            *ngIf="csc || (this.page != 'ae' || this.charttype == 'ae_General')">
+            <div class="">
+                <div class="chrat-secondary-title" id="app-timeseries-title"
+                    *ngIf="(!interface || interface =='All') && !system">
+                    {{language[timeseriesname] || timeseriesname }}
+                </div>
+                <div class="chrat-secondary-title" id="app-timeseries-title"
+                    *ngIf="(!interface || interface =='All')&& system">
+                    {{timeseriesname}}<span>({{system}})</span>
+                </div>
+                <div class="chrat-secondary-title" id="app-timeseries-title" *ngIf="interface && interface !=='All'">
+                    {{timeseriesname}}<span>({{interface}}{{system? ',':''}} {{system}})</span>
+                </div>
+            </div>
+            <div class="mwc-btns row align-items-center">
+                <!-- <button id="UtilizationRateExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+            (click)="fullScreenExpandFunction('timeseriesname','timeseries','UtilizationChart', timeseriesData)"
+            data-toggle="tooltip"></button> -->
+                <button type="button" class="close m-2" aria-label="Close" (click)="closeChart()" *ngIf="isCOC">
+                    <span aria-hidden="true"></span>
+                </button>
+            </div>
+        </div>
+        <div class="img my-2">
+            <div class="d-flex position-relative" *ngIf="this.page != 'ae' || this.charttype == 'ae_General'">
+                <div class="current-issue-menu-item mr-2">
+                    <label for="Name" class="col-form-label select-font">{{ language['START_DATE'] }}</label>
+                    <div class="ccl-form col-filter">
+                        <p-calendar id="start_date" [style]="{ width: '100%', height: '38px' }"
+                            [inputStyle]="{ height: '36px' }" appendTo="body" [autoZIndex]="true"
+                            [selectOtherMonths]="true" placeholder="{{ language['START_DATE'] }}"
+                            [(ngModel)]="lowFromDate" [showIcon]="true" [ngModelOptions]="{ standalone: true }"
+                            (onSelect)="changeDate()" dateFormat="mm-dd-yy" [maxDate]="maxForStartDate"
+                            [minDate]="minDateForCse">
+                        </p-calendar>
+                    </div>
+                </div>
+                <div class="current-issue-menu-item mr-2">
+                    <label for="Name" class="col-form-label select-font">{{ language['END_DATE'] }}</label>
+                    <div class="ccl-form col-filter">
+                        <p-calendar id="start_date" [style]="{ width: '100%', height: '38px' }"
+                            [inputStyle]="{ height: '36px' }" appendTo="body" [autoZIndex]="true"
+                            [selectOtherMonths]="true" placeholder="{{ language['END_DATE'] }}" [(ngModel)]="lowToDate"
+                            [showIcon]="true" [ngModelOptions]="{ standalone: true }" (onSelect)="changeDate()"
+                            dateFormat="mm-dd-yy" [maxDate]="maxDate" [minDate]="lowFromDate">
+                        </p-calendar>
+                    </div>
+                </div>
+                <div class="mt-40px">
+                    <div class="d-inline-flex mr-3">
+                        <button type="button" class="btn-default primary px-3" (click)="lowapplyfilter()">
+                            {{ language.apply }}
+                        </button>
+                    </div>
+                </div>
+                <button type="button" class="close right-close-button" aria-label="Close"
+                    *ngIf="this.page == 'ae' && this.charttype != 'ae_General' " (click)="closeChart()">
+                    <span aria-hidden="true"></span>
+                </button>
+            </div>
+            <div class="w-100 alert alert-danger  fade show my-3" *ngIf="timeseriesDatamsg">
+                <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+                <button type="button" class="close" (click)="timeseriesDatamsg = ''"><span></span></button>
+                <div class="d-inline-flex" [innerHtml]="timeseriesDatamsg"></div>
+            </div>
+            <div class="mt-3" *ngIf="Timeseriesloader">
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border text-primary">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <!-- [ngClass]="!Timeseriesloader ? 'd-block' : 'd-none'" -->
+            <div class="mwc-content">
+                <div class="col-md-12 p-2" [ngClass]="!Timeseriesloader && !timeseriesDatamsg? 'd-block' : 'd-none'">
+                    <!-- <highcharts-chart [Highcharts]="highcharts" [options]="Data" [callbackFunction]="chartCallback"
+                        id="custom-mirrot-chart" style="width: 100%; display: block;">
+                    </highcharts-chart> -->
+                    <div id={{chartnameid}} class="chart-box" style="height: 350px; width: 100%"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="subscriber-trends-wrapper" id={{divid}} *ngIf="doubleTimeseries">
+    <div class="w-100">
+        <div class="d-flex justify-content-between border-bottom">
+            <div class="">
+                <div class="cco-secondary-title">
+                    <!-- {{language[timeseriesnameBip] || timeseriesnameBip}} -->
+                </div>
+            </div>
+            <div class="mwc-btns row align-items-center">
+                <!-- <button id="UtilizationRateExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+            (click)="fullScreenExpandFunction('timeseriesname','timeseries','UtilizationChart', timeseriesData)"
+            data-toggle="tooltip"></button> -->
+                <!-- <button type="button" class="close m-2" aria-label="Close" (click)="closeChartBip()">
+                    <span aria-hidden="true"></span>
+                </button> -->
+            </div>
+        </div>
+        <div class="img my-2">
+            <div class="d-flex">
+                <div class="current-issue-menu-item mr-2">
+                    <label for="Name" class="col-form-label select-font">{{ language['START_DATE'] }}</label>
+                    <div class="ccl-form col-filter">
+                        <p-calendar id="start_date1" [style]="{ width: '100%', height: '38px' }"
+                            [inputStyle]="{ height: '36px' }" appendTo="body" [autoZIndex]="true"
+                            placeholder="{{ language['START_DATE'] }}" [(ngModel)]="lowFromDateBIP" [showIcon]="true"
+                            [ngModelOptions]="{ standalone: true }" (onSelect)="changeDateForBIP()"
+                            dateFormat="mm-dd-yy" [maxDate]="maxForStartDate" [minDate]="minDateForCse">
+                        </p-calendar>
+                    </div>
+                </div>
+                <div class="current-issue-menu-item mr-2">
+                    <label for="Name" class="col-form-label select-font">{{ language['END_DATE'] }}</label>
+                    <div class="ccl-form col-filter">
+                        <p-calendar id="start_date1" [style]="{ width: '100%', height: '38px' }"
+                            [inputStyle]="{ height: '36px' }" appendTo="body" [autoZIndex]="true"
+                            placeholder="{{ language['END_DATE'] }}" [(ngModel)]="lowToDateBIP" [showIcon]="true"
+                            [ngModelOptions]="{ standalone: true }" (onSelect)="changeDateForBIP()"
+                            dateFormat="mm-dd-yy" [maxDate]="maxDate" [minDate]="lowFromDateBIP">
+                        </p-calendar>
+                    </div>
+                </div>
+                <div class="mt-40px">
+                    <div class="d-inline-flex mr-3">
+                        <button type="button" class="btn-default primary px-3" (click)="lowapplyfilterForBIP()">
+                            {{ language.apply }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="w-100 alert alert-danger  fade show my-3" *ngIf="timeseriesDatamsg1">
+                <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+                <button type="button" class="close" (click)="timeseriesDatamsg1 = ''"><span></span></button>
+                <div class="d-inline-flex" [innerHtml]="timeseriesDatamsg1"></div>
+            </div>
+            <div class="mt-3" *ngIf="TimeseriesloaderBIP">
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border text-primary">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <!-- [ngClass]="!Timeseriesloader ? 'd-block' : 'd-none'" -->
+            <div class="mwc-content">
+                <div class="col-md-12 p-2"
+                    [ngClass]="!TimeseriesloaderBIP && !timeseriesDatamsg1? 'd-block' : 'd-none'">
+                    <!-- <highcharts-chart [Highcharts]="highcharts" [options]="Data" [callbackFunction]="chartCallback"
+                        id="custom-mirrot-chart" style="width: 100%; display: block;">
+                    </highcharts-chart> -->
+                    <div id={{bipchartnameid}} class="chart-box" style="height: 350px; width: 100%"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<ng-template #showInfoModal let-modal class="col-md-12">
+    <div class="modal-header d-block">
+        <h5 class="modal-title" id="showInfoModal">{{ language[modalTitle] }}</h5>
+
+        <div>
+            {{language[modalInfo]}}
+        </div>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+            (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body add-device-model">
+        <button type="button" class="btn-default primary px-3 px-3" data-dismiss="modal"
+            (click)="modal.close('Save click')">
+            {{ language.Ok }}
+        </button>
+    </div>
+</ng-template>

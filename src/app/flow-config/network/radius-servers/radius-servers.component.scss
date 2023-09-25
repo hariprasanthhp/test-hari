@@ -1,0 +1,39 @@
+.see_pass {
+    right: 30px;
+    vertical-align: text-bottom;
+    position: absolute;
+    height: 36px;
+    line-height: 34px;
+    cursor: pointer;
+}
+
+.eye-icon {
+    cursor: pointer;
+}
+
+.secret-div {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+.modal-scrll {
+    overflow-y: auto;
+    max-height: 400px;
+}
+.mxw-200{white-space: nowrap;}
+.action-button{white-space: nowrap;width: 10% !important;}
+.editable-td{font-size:13px}
+.edit-text{width:150px}
+.pwd-icon{
+    top: 0px;
+    right: 0;
+    position: relative;
+    left: 4px;
+}
+.pwd-icon.password_hide{
+    top: 5px;
+}
+.paswoard-icon{
+    right: 25px;
+    top: 13px;
+}

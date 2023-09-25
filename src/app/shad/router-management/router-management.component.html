@@ -1,0 +1,678 @@
+<!-- <div class="container mb-5">
+  <div class="row">
+    <div class="col-md-12">
+      Loading
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12 text-center my-2 my-3">
+      <h4>Router Management </h4>
+    </div>
+  </div>
+  <div class="row justify-content-md-center m-0">
+    <div class="col-md-7 text-center">
+      <div class="input-group mb-3">
+        <input type="text" class="form-control font-13" placeholder="Search by MAC Address" name="id" [(ngModel)]="id"
+          (keydown)="keyDownFunction($event)">
+        <div class="input-group-append">
+          <button type="button" class="btn btn-success font-13" (click)="search()">
+            Search
+            <span class="btn-label pl-1">
+              <i class="fa fa-search"></i>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <h5>Table here </h5>
+    </div>
+  </div>
+  <div class="row pb-3 border-bottom">
+    <div class="col-md-12">
+      <h5>Service Permission here</h5>
+    </div>
+    <div class="col-md-12">
+      <div class="row">
+        <div class="col-md-3 ">
+          ExperienceIQ here
+        </div>
+        <div class="col-md-3">
+          ProtectIQ here
+        </div>
+        <div class="col-md-3">
+          Samsung Smartthings here
+        </div>
+        <div class="col-md-3">
+          Smart Home Agent here
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row justify-content-end">
+    <div class="col-md-12 text-right">
+      Edit Button
+    </div>
+  </div>
+  <div class="row justify-content-end">
+    <div class="col-md-12 text-right">
+      Cancel & submit Button
+    </div>
+  </div>
+  <div class="row pb-3 border-bottom">
+    <div class="col-md-12">
+      <h5>Installed Service here</h5>
+    </div>
+    <div class="col-md-12">
+      <div class="row">
+        <div class="col-md-3 ">
+          ExperienceIQ here
+        </div>
+        <div class="col-md-3">
+          ProtectIQ here
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+  <div class="row pb-3 border-bottom">
+    <div class="col-md-12">
+      <h5>Install Service here</h5>
+    </div>
+    <div class="col-md-12">
+      <div class="row">
+
+
+        <div class="col-md-3">
+          Samsung Smartthings here
+        </div>
+        <div class="col-md-3">
+          Smart Home Agent here
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row justify-content-end">
+    <div class="col-md-12 text-right">
+      Edit Button
+    </div>
+  </div>
+  <div class="row justify-content-end">
+    <div class="col-md-12 text-right">
+      dropdown & submit Button
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      Router Map here
+    </div>
+    <div class="col-md-12">
+      <div class="row">
+        <div class="">image 1</div>
+        <div class="">image 2</div>
+        <div class="">image 3</div>
+        <div class="">image 4</div>
+        <div class="">image 5</div>
+        <div class="">image 6</div>
+        <div class="">image 7</div>
+      </div>
+    </div>
+  </div>
+
+</div> -->
+
+
+
+
+<!-------------------------------- OLD Content Start -------------------------------->
+<div class="container mb-5" [hidden]="!language">
+  <div class="loader" *ngIf="loader">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary" role="">
+        <span class="sr-only">Loading...</span>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12 text-center my-2 my-3">
+      <h4>{{language.Router_Management}} </h4>
+    </div>
+  </div>
+  <div class="row justify-content-md-center m-0">
+    <div class="col-md-7  pt-3">
+      <div class="ccl-form mb-3">
+        <input type="text" class="font-13" placeholder={{language.Search_MAC_Address}} name="id" [(ngModel)]="id"
+          (keydown)="keyDownFunction($event)">
+        <div class="router-search-icon input-group-append">
+          <button type="button" class="btn btn-success font-13" (click)="search()">
+            {{language.Search_route}}
+            <span class="btn-label pl-1">
+              <i class="fa fa-search"></i>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div *ngIf="searched">
+    <div class="row">
+      <div class="col-md-12">
+        <table id="router-user-info" class="table table-bordered text-center table-always100"
+          *ngIf="routerData && routerData['userData']">
+          <thead>
+            <tr>
+              <th>{{language.Name}}</th>
+              <th>{{language.Email}}</th>
+              <th>{{language.Country}}</th>
+              <th>{{language.State}}</th>
+              <th>{{language.City}}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{ routerData['userData']['name'] }}</td>
+              <td>{{ routerData['userData']['email'] }}</td>
+              <td>{{ routerData['userData']['country'] }}</td>
+              <td>{{ routerData['userData']['state'] }}</td>
+              <td>{{ routerData['userData']['city'] }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div *ngIf="routerData && routerData['routerDataLoaded'] && !hideApplicationsList">
+      <div [ngClass]=" editMode ? 'edit-bg1' : 'edit-bg'">
+        <form #serviceForm>
+          <div class="row mb-2 border-bottom-grey">
+            <label class="col-md-4 label-control"><b>{{language.Service_Permission}}</b></label>
+            <div class="col-md-8" *ngIf="routerData && routerData['containerInputs']">
+              <div class="row">
+                <div class="form-check col-md-4" *ngFor="let obj of routerData['containerInputs']">
+                  <input class="form-check-input" type="checkbox" value="{{obj.value}}" [checked]="obj.checked"
+                    name="containersSelected[]" (change)="selectService($event, obj.value)"
+                    [disabled]="!editMode || obj.disabled">
+                  <label class="form-check-label">{{obj.name}}</label>
+                </div>
+
+
+              </div>
+
+
+            </div>
+          </div>
+          <div class="row justify-content-end ">
+            <div *ngIf="!editMode" class="col-md-4 text-right pr-0">
+              <button type="button" class="btn btn-primary" (click)="editFunction()"
+                id="edit-service-permission">{{language.Edit}}
+              </button>
+            </div>
+          </div>
+          <div class="row justify-content-end">
+            <div *ngIf='editMode && allowServicePer' class="col-md-4 text-right pr-0">
+              <button id="cancel-service-permission" type="button" class="btn  btn-outline-secondary mx-3"
+                (click)="cancel()">{{language.Cancel}}
+              </button>
+              <button id="save-service-permission" type="button" class="btn btn-success"
+                (click)="submit()">{{language.submit}}
+              </button>
+            </div>
+          </div>
+
+
+        </form>
+      </div>
+    </div>
+    <div id="empty_applications_list_by_mac_div" *ngIf="hideApplicationsList">
+      <div class="row">
+        <div class="col-md-12 bg-empty-col">
+
+          <h6 class="text-center">{{language.Appln_not_found}}</h6>
+        </div>
+      </div>
+
+    </div>
+    <div *ngIf="appdata && appdata['appDataLoaded'] && !hideApplicationsList">
+      <div class="row" id="install-service-block">
+        <div class="col-md-12">
+          <div class="row" id="installed-services-main-div">
+            <div class="col-md-2">
+              <label class="label-control" class="text-left"><b>{{language.Installed_Service}}</b></label>
+            </div>
+
+            <div class="col-md-10 row" id="installed-services-list-div" *ngIf="appdata && appdata['installedAppsArr']">
+              <div *ngIf="appdata && appdata['installedAppsArr'] && !appdata['installedAppsArr'].length">
+                {{language.No_Applnfound}}</div>
+              <div class="form-check col-md-4" *ngFor="let app of appdata['installedAppsArr']">
+                <input class="form-check-input" type="checkbox" name="installed[]" disabled checked>
+                <label class="form-check-label">{{app}}</label>
+              </div>
+
+            </div>
+          </div>
+
+
+          <div class="row" id="installed-status-main-div"
+            *ngIf="appdata && appdata['pendingData'] && appdata['showPendingStatus']">
+            <div class="col-md-4">
+              <label class="d-inline-flex label-control mr-3 text-left">
+                <b>{{language.Install_Status}}</b>
+              </label>
+              <div class="d-inline-flex" id="install-status-div">
+                {{appdata['pendingData']['status']}}
+              </div>
+            </div>
+            <div class="col-md-8">
+              <label class="d-inline-flex label-control mr-3"><b>{{language.Install_Status_Details}}
+                  {{appdata['pendingData']['name']}}</b></label>
+              <div class="d-inline-flex" id="install-status-detail-div">
+                {{appdata['pendingData']['desc']}}
+              </div>
+            </div>
+          </div>
+
+
+
+          <div class="row" id="readytoinstall-services-main-div">
+            <div class="col-md-2">
+              <label class="label-control text-left"><b>{{language.Install_Service}}</b></label>
+            </div>
+            <div class="col-md-10 row" id="readytoinstall-services-list-div"
+              *ngIf="appdata && appdata['readyToInstallApps']">
+              <div *ngIf="appdata && appdata['readyToInstallApps'] && !appdata['readyToInstallApps'].length">
+                {{language.No_Applnfound}}</div>
+              <div class="form-check col-md-4" *ngFor="let app of appdata['readyToInstallApps']">
+                <input class="form-check-input ready-to-form-check-input" type="checkbox" value="{{app.value}}"
+                  name="readytoinstall[]" (click)="checkAllowApp($event);" [disabled]="refreshApps">
+                <label class="form-check-label">{{app.name}}</label>
+              </div>
+
+            </div>
+          </div>
+
+
+
+        </div>
+
+
+      </div>
+      <div class="row justify-content-end form-group">
+        <label class="col-md-2 label-control" for="projectinput1">&nbsp;</label>
+        <div class="col-md-2 px-0 text-right">
+          <select *ngIf="routerData && routerData['routers']" class="form-control select2" id="selectedRouterId"
+            (change)="changeRouterMac($event.target.value);">
+            <option *ngFor="let router of routerData['routers']; let i = index" value="{{router.routerId}}">
+              {{router.name}}</option>
+          </select>
+        </div>
+        <div class="col-md-1 text-right" *ngIf="allowInstall">
+          <button type="button" id="new-router-id-status-submit" class="btn btn-success"
+            [disabled]="refreshApps || (appdata && appdata['readyToInstallApps'] && !appdata['readyToInstallApps'].length)"
+            (click)="installApplication()">{{language.submit}}</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="routerData && routerData['routerDataLoaded']">
+      <div class="card col-md-12">
+        <div class="card-title card-title-alt">
+          {{language.Router_Map}}
+        </div>
+        <div class="card-body router-sec card-body-flex" id="append-routers"
+          *ngIf="routerData && routerData['routerDisplayData']">
+
+          <div class="router-net p-0">
+            <img class="router-world" src="assets/images/router_internet.png">
+          </div>
+
+
+          <div class="router-list" *ngFor="let router of routerData['routerDisplayData']; let i = index">
+            <img class="router-arrowtype" src="{{router.arrowType}}">
+            <div *ngIf="i" class="router-container cursor-pointer" (click)="loadRemoveRouterModal(router);"
+              id="router-{{router.routerId}}" (contextmenu)="updateFrimwareForSatellite($event, router)">
+              <img id="routerMac-{{router.routerMac}}" class="router-greenimage" src="{{router.routerImage}}">
+              <div id="" class="router-name text-center">
+                {{router.name}}<br>{{router.modelNumber}}
+              </div>
+            </div>
+
+            <div *ngIf="!i" class="router-container cursor-pointer" (click)="loadRemoveRouterModal(router);"
+              id="router-{{router.routerId}}">
+              <img id="routerMac-{{router.routerMac}}" class="router-redimage" src="{{router.routerImage}}">
+              <div class="router-name text-center">
+                {{router.name}}<br>{{router.modelNumber}}</div>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--modal -->
+
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>{{language.Sch_Job_Det}}</h5>
+
+
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+      <div class="modal-body horizontal-scroll">
+
+        <table class="table table-bordered text-center ">
+          <thead>
+            <tr>
+              <th>{{language.MAC}}</th>
+              <th>{{language.Status}}</th>
+              <th>{{language.Message}}</th>
+              <th>{{language.Completed_On}}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>cc:be:59:e0:41:44</td>
+              <td>Success</td>
+              <td>Rebooted</td>
+              <td>3/5/2020, 3:01:46 PM</td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" data-dismiss="modal" class="btn btn-outline-secondary">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<ng-template #removeRouterModal let-data let-ref="dialogRef">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{language.Remove_Router}} - {{removeRouterData.name}}
+      {{removeRouterData.modelNumber}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="close()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="p-2 border-bot-gray">
+      <tr>
+        <th class="w-150px">{{language.MAC_Address}}</th>
+        <td> &nbsp; &nbsp;: </td>
+        <td> &nbsp; &nbsp;{{removeRouterData.routerMac}}</td>
+      </tr><br>
+      <tr>
+        <th class="w-150px">{{language.Model}}</th>
+        <td> &nbsp; &nbsp;: </td>
+        <td> &nbsp; &nbsp;{{removeRouterData.modelNumber}}</td>
+      </tr><br>
+      <tr>
+        <th class="w-150px">{{language.Type}}</th>
+        <td> &nbsp; &nbsp;: </td>
+        <td> &nbsp; &nbsp;{{removeRouterData.type}}</td>
+      </tr><br>
+      <tr>
+        <th class="w-150px">{{language.Status}}</th>
+        <td> &nbsp; &nbsp;: </td>
+        <td> &nbsp; &nbsp;{{removeRouterData.status}}</td>
+      </tr>
+
+
+    </div>
+    <p>{{routerRemoveText}}</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="close();"> {{language.Close}} </button>
+    <button *ngIf="allowInstall" type="button" class="btn btn-success ml-2" (click)="loadRemoveRouterInfoModal();">
+      {{language.Remove}}</button>
+  </div>
+</ng-template>
+
+
+<ng-template #removeRouterInfoModal let-data let-ref="dialogRef">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{language.Remove_Router}} - {{removeRouterData.name}}
+      {{removeRouterData.modelNumber}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="close()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>{{language['The router will do a factory reset and clean all configuration information']}}.</p>
+  </div>
+  <div class="modal-footer">
+
+    <button type="button" class="btn btn-outline-dark" (click)="close();"> {{language.Cancel}} </button>
+    <button type="button" class="btn btn-success ml-2" (click)="loadRemoveRouterConfirmModal();">
+      {{language.Okay}}
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #removeRouterConfirmModal let-data let-ref="dialogRef">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{language.Remove_Router}} - {{removeRouterData.name}}
+      {{removeRouterData.modelNumber}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="close()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>{{language.Remove_routerMsg}}?</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="close();"> {{language.No}} </button>
+    <button type="button" class="btn btn-success ml-2" (click)="removeRouter();"
+      [disabled]="disableRemoveRouterBtn">{{language.Yes}}</button>
+  </div>
+</ng-template>
+
+<ng-template #removeRouterSuccessModal let-data let-ref="dialogRef">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{language.Remove_Router}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="searchAfterRemoveRouterClose()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>{{language.Router_removesucMsg}}</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="searchAfterRemoveRouterClose();">{{language.Close}}
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #firmwareUpdateRouterModal let-data let-ref="dialogRef">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{language.Firmware_Update}} - {{updateRouterData.name}}
+      {{updateRouterData.modelNumber}}</h4>
+    <button type="button" class="close" aria-label="Close">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="p-2 border-bot-gray">
+      <tr>
+        <th class="w-150px">{{language.MAC_Address}}</th>
+        <td> &nbsp; &nbsp;: </td>
+        <td> &nbsp; &nbsp;{{updateRouterData ? updateRouterData.routerMac : '-'}}</td>
+      </tr><br>
+      <tr>
+        <th class="w-150px">{{language.Firmware_Version}}</th>
+        <td> &nbsp; &nbsp;: </td>
+        <td> &nbsp; &nbsp;{{updateRouterData ? updateRouterData.firmwareVersion : '-'}}</td>
+      </tr><br>
+      <tr>
+        <th class="w-150px">{{routerData['parentRouter'].name}} {{routerData['parentRouter'].modelNumber}}
+          {{language.Firmware_Version}}</th>
+        <td> &nbsp; &nbsp;: </td>
+        <td> &nbsp; &nbsp;{{routerData['parentRouter'].firmwareVersion}}</td>
+      </tr><br>
+      <tr>
+        <p>{{language['Firmware version shall be updated to']}} {{routerData['parentRouter'].name}}
+          {{routerData['parentRouter'].modelNumber}} {{language.Firmware_Version}}</p>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="close();">{{language.Close}}</button>
+    <button type="button" class="btn btn-success ml-2" (click)="confirmUpdateFirmwareVersion();">
+      {{language.Update}}</button>
+  </div>
+</ng-template>
+
+<ng-template #notremoveRouterInfoModal let-data let-ref="dialogRef">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{language.Info}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="close()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>{{language.RemovSat_Msg}}.</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="close();"> {{language.Close}} </button>
+  </div>
+</ng-template>
+
+<ng-template #confirmfirmwareUpdateRouterModal let-data let-ref="dialogRef">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{language.Firmware_Update}} - {{updateRouterData.name}}
+      {{updateRouterData.modelNumber}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="close()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>{{language.Firm_Update_Alert}} <b>{{updateRouterData.name}}
+        {{updateRouterData.modelNumber}}</b> >?</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="close();">{{language.Close}} </button>
+    <button type="button" class="btn btn-primary ml-2" (click)="updateFirmwareVersion();">
+      {{language.Update}}</button>
+  </div>
+</ng-template>
+
+<ng-template #errorfirmwareUpdateRouterModal let-data let-ref="dialogRef">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{language.Error_map}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="close()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>{{language['The latest firmware has not been loaded on the server']}}.</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="close();">{{language.Close}} </button>
+  </div>
+</ng-template>
+
+<ng-template #successfirmwareUpdateRouterModal let-data let-ref="dialogRef">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{language.Info}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="close()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>{{language.Firm_Updated_Suc}}</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="close();">{{language.Close}} </button>
+  </div>
+</ng-template>
+
+<ng-template #servicePermissionModal let-data let-ref="dialogRef">
+
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{language.Info}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="close()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>{{language.Serv_Updated_Suc}}</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="close();">{{language.Close}} </button>
+  </div>
+
+</ng-template>
+
+
+<ng-template #macErrorModal let-data let-ref="dialogRef">
+
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{macErrorHeader}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="close()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>{{macErrorBody}}</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="close();">{{language.Close}} </button>
+  </div>
+</ng-template>
+
+<ng-template #servicePermissionErrorModal let-data let-ref="dialogRef">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{language.Service_Permission}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="close()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>{{language.Pls_Giveserv_msg}}</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="close();">{{language.Close}}</button>
+  </div>
+</ng-template>
+
+
+
+
+
+
+
+
+
+<!-- <ng-template #content let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Hi there!</h4>
+        <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <p>Hello, World!</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Save</button>
+    </div>
+</ng-template>
+
+<button class="btn btn-lg btn-outline-primary" (click)="open()">Launch demo modal</button> -->
+
+
+<!-------------------------------- OLD Content End-------------------------------->

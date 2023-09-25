@@ -1,0 +1,117 @@
+<div class="row">
+  <div class="col-md-6">
+    <div class="row mr-3">
+      <div class="col-md-12 border-bottom px-0">
+        <div class="user-name.mb-0 ccl-Secondary-title" id="deviceDetails">{{language.Device_Details}}</div>
+      </div>
+      <div class="col-md-12 support-key-value px-0">
+        <table class="" id="Device-Details-list">
+          <tbody>
+            <tr>
+              <th scope="row">{{language.status}}</th>
+              <td [ngClass]="index.Status == 'offline' ? 'offlineDevice' : 'onlineDevice'">{{index.Status !=
+                undefined?index.Status:'--'}} </td>
+
+            </tr>
+            <tr>
+              <th scope="row">{{language.IP_Address}}</th>
+              <td>{{index.IPAddress != undefined?index.IPAddress:'--'}}</td>
+            </tr>
+            <tr>
+              <th scope="row">{{language.Address_Source}}</th>
+              <td *ngIf="index['Address-source'] == 'dhcp'">{{index["Address-source"]!=
+                undefined?index["Address-source"].toUpperCase():'--'}}</td>
+              <td class="text-transform-cap" *ngIf="index['Address-source'] != 'dhcp'">
+                {{index["Address-source"]!=
+                undefined?index["Address-source"]:'--'}}</td>
+            </tr>
+            <tr>
+              <th scope="row">{{language.MAC_Address}}</th>
+              <td>{{index.MACAddress != undefined ? (index.MACAddress ? index.MACAddress : station_mac_addr) : '--'}}</td>
+            </tr>
+            <tr>
+              <th scope="row">{{language.Model}}</th>
+              <td>{{index.Model != undefined && index.Model !=''&& index.Model !=' ' && index.Model
+                !="Unknown"?index.Model:' -- '}}</td>
+            </tr>
+            <tr>
+              <th scope="row">{{language.Manufacturer}}</th>
+              <td>{{index.Manufacture!= undefined && index.Manufacture !='' && index.Manufacture !=' ' &&
+                index.Manufacture !="Unknown"?index.Manufacture:'--'}}</td>
+            </tr>
+            <tr>
+              <th scope="row">{{language.Code_Version}}</th>
+              <td>{{index["Code-version"]!= undefined && index["Code-version"] !="" && index["Code-version"] !=" " &&
+                index["Code-version"] !="Unknown"?index["Code-version"]:'--'}}</td>
+            </tr>
+            <tr>
+              <th scope="row">{{language.Lease_Time_Remaining}}</th>
+              <td>{{remainingdate!= undefined?remainingdate:'--'}}</td>
+            </tr>
+
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!-- updated Connection to language.Connectivity_Status -->
+  <div class="col-md-6">
+    <div class="row ml-3">
+      <div class="col-md-12 border-bottom  px-0">
+        <div class="user-name.mb-0 ccl-Secondary-title" id="Connectivity-Status">
+          {{language.Connection?language.Connection:
+          language.Connectivity_Status}}</div>
+      </div>
+      <div class="col-md-12 support-key-value px-0">
+        <table class="" id="Device-Details-Connection">
+          <tbody>
+            <tr>
+              <th scope="row">{{language.Connection_Type}}</th>
+              <td>{{index["Connection-type"]!= undefined?index["Connection-type"]:'--'}} </td>
+
+            </tr>
+            <tr *ngIf="index['Connection-type']!='LAN'">
+              <th scope="row">{{language.SSID}}</th>
+              <td>{{index.SSID!= undefined?index.SSID:'--'}} </td>
+            </tr>
+            <tr *ngIf="index['Connection-type']!='LAN'">
+              <th scope="row">{{language.Mode}}</th>
+              <td>{{index.Mode != undefined && index.Mode!="" ?"802."+index.Mode:'--'}}
+                <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title='{{language["Issue_Reason4"]}}'>
+                  <span *ngIf="totalsymbol(index.MACAddress,'rmode') == 'rmode'"><img
+                      src="assets/img/outline-warning-orange.svg"></span></span>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">{{language.Access_Point}}</th>
+              <td>
+                <span>{{selectedDevice?.AccessPointHostName || ''}}</span>
+                <span *ngIf="selectedDevice?.AccessPoint"> (</span>
+                <span *ngIf="selectedDevice?.AccessPoint">{{selectedDevice.AccessPoint}}</span>
+                <span *ngIf="selectedDevice?.AccessPoint">) </span>
+                {{selectedDevice?.AccessPointSerialNumber != undefined ? selectedDevice?.AccessPointSerialNumber
+                :'--'}}
+              </td>
+            </tr>
+            <tr *ngIf="index['Connection-type']!='LAN'">
+              <th scope="row">{{language.Band}}</th>
+              <td>{{index.Band != undefined?index.Band +"GHz":'--'}}</td>
+            </tr>
+            <tr *ngIf="index['Connection-type']!='LAN'">
+              <th scope="row">{{language.Channel}}</th>
+              <td>{{index["Channel-number"] != undefined ? index["Channel-number"]: "--"}}</td>
+            </tr>
+            <!-- <tr>
+              <th scope="row">{{language.E2E_PHY_Rate}}</th>
+              <td>{{index["E2E-phy-rate"]!= undefined?index["E2E-phy-rate"]:'--'}}</td>
+            </tr> -->
+
+
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>

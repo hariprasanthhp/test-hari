@@ -1,0 +1,42 @@
+.btn-link {
+    font-size  : 16px;
+    font-weight: 400;
+    cursor     : pointer;
+}
+
+.not-allow {
+    cursor: not-allowed !important;
+}
+
+.add-remove {
+    padding-top: 37px;
+    text-align : left;
+}
+.add {
+    text-align : left;
+}
+input.inp-disabled:hover {
+    cursor:not-allowed !important;
+  }
+ 
+
+.text-color{
+color:#B926F0;
+}
+.pt-35{padding-top: 35px;}
+.pl-20{padding-left: 20px;}
+.warning-alert {
+    display: flex;
+  
+    .warning-alert-icon {
+      width: 10%;
+  
+    }
+  
+    .warning-alert-message {
+      width: 90%;
+    }
+  }
+  .cursor-pointer{
+    cursor: pointer !important;
+  }

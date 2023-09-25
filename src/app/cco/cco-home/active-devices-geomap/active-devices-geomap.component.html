@@ -1,0 +1,508 @@
+<div class="loader-wrapper">
+    <section class="my-3">
+        <div class="container">
+            <div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess"> {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} </div>
+            <div class="row">
+                <div class="kbi-menu-wrapper" *ngIf="hasScopeAccess">
+                    <div class="kbi-item" id="active-devices">
+                        <span class="menu-title">{{language['Active Systems']}}</span>
+                        <div class="d-flex align-content-around flex-wrap">
+                            <span class="stats-value">{{totalActiveSystems?.toLocaleString()}}</span>
+                            <!-- <h3>{{mapData && mapData.length ? mapData.length : 0}}</h3> -->
+                        </div>
+                        <!-- <div class="past-hours"> {{language.Past_24_hours}}</div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <form [formGroup]="filtersForm">
+        <section class="pb-2 px-3 mt-4" *ngIf="hasScopeAccess">
+            <div class="row ccl-filter-row px-2">
+                <div class="d-flex flex-wrap w-100">
+                <div class="col-item ccl-form" id="current-issues-region">
+                    <label>{{language['Region']}} </label>
+                    <ng-select formControlName="region" class="custom-ng-multi" [multiple]="true" [items]="regionsDataArray" bindValue="id"
+                        bindLabel="name" class="selectboxwidth custom-ng-multi" [clearable]="false" [searchable]="true"
+                        placeholder="{{ language.region }}" (add)="validateRegion($event)"
+                        (remove)="loadLocationValue($event)" #regionNgSelect>
+                        
+                        <ng-template ng-multi-label-tmp let-items="items" let-index="index" let-clear="clear">
+                            <div class="ng-selected-label" *ngIf="items.length == regionsDataArray?.length">
+                                <div class="ng-value-placeholder">
+                                    <span class="ng-value">
+                                        {{language['all']}}
+                                        <span class="ng-value-icon left cursor-pointer" (click)="regionNgSelect.handleClearClick()" aria-hidden="true">×</span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="ng-selected-label" *ngIf="items.length == 1 && items.length !== regionsDataArray?.length">
+                                <div class="ng-value-placeholder" *ngFor="let item of items">
+                                    <span class="ng-value" title="{{item.name}}">
+                                        {{item.name ? item.name:item}}
+                                        <span class="ng-value-icon left cursor-pointer" (click)="clear(item)" aria-hidden="true">×</span>
+                                    </span>
+                                </div>
+                            </div>
+                        <div class="ng-selected-label" *ngIf="items.length > 1 && items.length !== regionsDataArray?.length">
+                            <div class="ng-value-placeholder" *ngFor="let item of items">
+                                <span class="ng-value" title="{{item.name}}">
+                                    {{item.name ? item.name:item}}
+                                    <span class="ng-value-icon left cursor-pointer" (click)="clear(item)" aria-hidden="true">×</span>
+                                </span>
+                            </div>
+                        </div>
+                        
+                      </ng-template>
+                        <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                            <span title="{{item.name ? item.name:item}}">{{item.name ? item.name:item}}</span>
+                        </ng-template>
+                    </ng-select>
+                </div>
+                <div class="col-item ccl-form" id="current-issues-location">
+                    <label>{{language['Location']}} </label>
+                    <ng-select formControlName="location" [multiple]="true" [items]="locationDataArray" bindValue="id"
+                        bindLabel="name" class="selectboxwidth custom-ng-multi" placeholder="{{ language.Location }}"
+                        [clearable]="false" [searchable]="true" (add)="validateLocation($event)"
+                        (remove)="loadSystemValue($event)" #locationNgSelect>
+                        <ng-template ng-multi-label-tmp let-items="items" let-index="index" let-clear="clear">
+                            <div class="ng-selected-label" *ngIf="items.length == locationDataArray?.length">
+                                <div class="ng-value-placeholder">
+                                    <span class="ng-value">
+                                        {{language['all']}}
+                                        <span class="ng-value-icon left cursor-pointer" (click)="locationNgSelect.handleClearClick();loadSystemValue($event)" aria-hidden="true">×</span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="ng-selected-label" *ngIf="items.length == 1 && items.length !== locationDataArray?.length">
+                                <div class="ng-value-placeholder" *ngFor="let item of items">
+                                    <span class="ng-value" title="{{item.name}}">
+                                        {{item.name ? item.name:item}}
+                                        <span class="ng-value-icon left cursor-pointer" (click)="clear(item)" aria-hidden="true">×</span>
+                                    </span>
+                                </div>
+                            </div>
+                        <div class="ng-selected-label" *ngIf="items.length > 1 && items.length !== locationDataArray?.length">
+                            <div class="ng-value-placeholder" *ngFor="let item of items">
+                                <span class="ng-value" title="{{item.name}}">
+                                    {{item.name ? item.name:item}}
+                                    <span class="ng-value-icon left cursor-pointer" (click)="clear(item)" aria-hidden="true">×</span>
+                                </span>
+                            </div>
+                        </div>
+                        
+                      </ng-template>
+                        <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                            <span title="{{item.name ? item.name:item}}">{{item.name ? item.name:item}}</span>
+                        </ng-template>
+                    </ng-select>
+                </div>
+                <div class="col-item ccl-form" id="current-issues-system">
+                    <label>{{language['System']}} </label>
+                    <ng-select formControlName="system" [multiple]="true" [items]="systemDataArray" bindValue="uuid"
+                        bindLabel="name" (change)="selectSystem($event)" class="selectboxwidth custom-ng-multi"
+                        placeholder="{{ language.System }}" [clearable]="false" [searchable]="true"
+                        (add)="validateSystem($event)" (remove)="validateSystem($event)" #systemNgSelect>
+                        <ng-template ng-multi-label-tmp let-items="items" let-index="index" let-clear="clear">
+                            <div class="ng-selected-label" *ngIf="items.length == systemDataArray?.length">
+                                <div class="ng-value-placeholder">
+                                    <span class="ng-value">
+                                        {{language['all']}}
+                                        <span class="ng-value-icon left cursor-pointer" (click)="systemNgSelect.handleClearClick();validateSystem($event)" aria-hidden="true">×</span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="ng-selected-label" *ngIf="items.length == 1 && items.length !== systemDataArray?.length">
+                                <div class="ng-value-placeholder" *ngFor="let item of items">
+                                    <span class="ng-value" title="{{item.name}}">
+                                        {{item.name ? item.name:item}}
+                                        <span class="ng-value-icon left cursor-pointer" (click)="clear(item)" aria-hidden="true">×</span>
+                                    </span>
+                                </div>
+                            </div>
+                        <div class="ng-selected-label" *ngIf="items.length > 1 && items.length !== systemDataArray?.length">
+                            <div class="ng-value-placeholder" *ngFor="let item of items">
+                                <span class="ng-value" title="{{item.name}}">
+                                    {{item.name ? item.name:item}}
+                                    <span class="ng-value-icon left cursor-pointer" (click)="clear(item)" aria-hidden="true">×</span>
+                                </span>
+                            </div>
+                        </div>
+                        
+                      </ng-template>
+                        <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                            <span title="{{item.name ? item.name:item}}">{{item.name ? item.name:item}}</span>
+                        </ng-template>
+                    </ng-select>
+                </div>
+                <div class="col-item ccl-form" id="current-issues-system-type">
+                    <label>{{language['System Type'] || 'System Type'}} </label>
+                    <ng-select [searchable]="false" formControlName="device_type" [multiple]="false"
+                        (change)="onAlarmGroupChange($event, 'docChange')" [clearable]="false">
+                        <ng-option value="ALL">{{ language.All }}</ng-option>
+                        <ng-option value="ONT">ONT</ng-option>
+                        <ng-option value="OLT">OLT</ng-option>
+                    </ng-select>
+                </div>
+                <div class="col-item ccl-form" id="current-issues-alert-type">
+                    <label>Alert Type</label>
+                    <ng-select formControlName="alertType" [items]="alertTypes" bindValue="id"
+                        bindLabel="name" class="selectboxwidth" [clearable]="false" [searchable]="false"
+                        placeholder="{{ language['Alert Type'] || 'Alert Type' }}" (change)="onSelectAlertTypes($event)">
+                        <!-- (remove)="loadModelValues($event)" -->
+                    </ng-select>
+                    <!-- <ng-select [searchable]="false" formControlName="alert_type" [clearable]="false">
+                        <ng-option value="System_Alarms">System Alarms</ng-option>
+                        <ng-option value="Transform_Alarms"><span title="Transform Alarms">Transform Alarms</span></ng-option>
+                        <ng-option value="Health_Alerts">Health Alerts</ng-option>
+                        <ng-option value="Cloud_Connectivity">Cloud Connectivity</ng-option>
+                    </ng-select> -->
+                </div>
+                <div class="col-item ccl-form" id="current-issues-system-type">
+                    <label>{{language['Model_Name'] || 'Model_Name'}} </label>
+
+                    <multi-select-dropdown [cItems]="modelNames" [cSelectedItems] = "filtersForm?.controls['modelNames']?.value" [cBindValue]="'value'" [cBindLabel]="'label'" [cClearable]="false" [cSearchable]="true" 
+                    [cName]="'Models'" [cShowCountOfItems] = "showCountOfItems" [cPlaceHolder]="'Model_Name'" [cShowSelectAll]="true" (cSelectChange)="setModelNames($event)" (cBlurChange)="setModelNamesOnBlur($event)">
+                    </multi-select-dropdown>
+
+                    <!-- <ng-select formControlName="modelNames" [multiple]="true" [items]="modelNames" bindValue="value"
+                        bindLabel="label" class="selectboxwidth" [clearable]="false" [searchable]="true"
+                        placeholder="{{ language['Model Name'] || 'Model Name' }}" (add)="setModelNames($event)"
+                        (remove)="loadModelValues($event)">
+                    </ng-select> -->
+
+                    <!-- <ng-select id="models" formControlName="modelNames" #modelSelect [items]="modelNames" bindLabel="label"
+                    bindValue="value" [multiple]="true" placeholder="{{ language['None Selected'] }}" [clearable]="true"
+                    [searchable]="false" (change)="changeModels()" groupBy="groupName" [selectableGroup]="true"
+                    [searchFn]="websocketservice.customAppSearch" [selectableGroupAsModel]="false"
+                    [closeOnSelect]="false" [clearOnBackspace]="false">
+                    <ng-template ng-footer-tmp>
+                      <div class="d-inline-flex w-100 search-box-input mb-2">
+                        <div class="search-box-icon">
+                          <img class="search-icon" src="../../../../../assets/img/ic_search_blue.svg" />
+                        </div>
+                        <input #modelsSearch formControlName="searchInputText" type="text" placeholder="{{language.Search}}"
+                          (input)="modelSelect.filter($event.target.value)"/>
+                        <div class="clear-box ml-auto" *ngIf="modelsSearch.value"
+                          (click)="clearSearch(modelsSearch, modelSelect)">
+                          <img src="assets/img/close-icon.svg" />
+                        </div>
+                      </div>
+                    </ng-template>
+                    <ng-template ng-header-tmp>
+                      <div class="d-flex w-100 select-all-holder"
+                        *ngIf="filtersForm?.controls['searchInputText']
+                        ?.value.toLowerCase() == 'all' || filtersForm?.controls['searchInputText']
+                        ?.value==''">
+                        <input id="item-all-modelNames" class="select-all-opt" type="checkbox"
+                          [indeterminate]="filtersForm?.controls['modelNames']
+                          ?.value?.length > 0 && filtersForm?.controls['modelNames']
+                          ?.value?.length < modelNames?.length"
+                          [checked]="filtersForm?.controls['modelNames']
+                          ?.value?.length === modelNames?.length"
+                          (click)="selectAllModels($event)" />
+                        <label for="item-all-modelNames" class="cursor-pointer m-0">{{language['All']}}
+                          ({{modelNames?.length}})</label>
+                      </div>
+                    </ng-template>
+                    <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+                      <div class="dropdown-item-gr">
+                        <input id="item-{{index}}" class="mr-1" type="checkbox"
+                          [indeterminate]="getIndeterminateGroup(item$)" [ngModelOptions]="{standalone: true}" [ngModel]="item$.selected" />
+                        <span title="{{item.groupName}}">{{item.groupName}}</span>
+                      </div>
+                    </ng-template>
+                    <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                      <div class="dropdown-item-ch">
+                        <input id="item-{{index}}" class="mr-1" type="checkbox" [ngModelOptions]="{standalone: true}" [ngModel]="item$.selected" />
+                        <span title="{{item.label}}">{{item.label}}</span>
+                      </div>
+                    </ng-template>
+                    <ng-template ng-multi-label-tmp let-items="items">
+                      <div class="d-inline-flex">
+                        <div class="ng-value" *ngIf="items.length === 1 && items.length !== modelNames?.length">
+                          <span class="ng-value-icon left" (click)="setModelsSelected()">x</span>
+                          <span class="ng-value-label">{{items[0]['label']}}</span>
+                        </div>
+                        <div class="ng-value" *ngIf="items.length > 1 && items.length !== modelNames?.length">
+                          <span class="ng-value-icon left" (click)="setModelsSelected()">x</span>
+                          <span class="ng-value-label">{{items.length}} model</span>
+                        </div>
+                        <div class="ng-value" *ngIf="items.length === modelNames?.length ">
+                          <span class="ng-value-icon left" (click)="setModelsSelected()">x</span>
+                          <span class="ng-value-label">{{language['All']}}</span>
+                        </div>
+                      </div>
+                    </ng-template>
+                  </ng-select> -->
+                </div>
+                <div class="col-item ccl-form" id="current-issues-region" *ngIf="showFSAN">
+                    <label>{{language['Vendor ID'] || 'Vendor ID'}} </label>
+                    <ng-select formControlName="vendorId" [items]="vendorNames" bindValue="value"
+                        bindLabel="name" class="selectboxwidth" [clearable]="false" [searchable]="false"
+                        placeholder="{{ language['Vendor ID'] || 'Vendor ID' }}" (change)="onSelectVendor($event)"
+                        (remove)="loadModelValues($event)">
+                    </ng-select>
+                </div>
+                <div class="col-item ccl-form position-relative" id="current-issues-system-type" *ngIf="showFSAN">
+                    <label>{{ language['FSAN']}} </label>
+                    <input [disabled] = "tempSelectedAlertType == 'Cloud Connectivity' || tempSelectedAlertType == 'Transform Alarms'" class="form-control" formControlName="fsan_serialno" type="text"
+                        placeholder="{{ language['FSAN'] }}" (keypress)="removespecialcharacter($event)" maxlength="12" />
+                    <p class="mandatory-msg mb-0" *ngIf="!fsanvalid">{{language['Invalid FSAN']}}</p>
+                </div>
+                <div class="col-item-action">
+                    <div class="d-flex w-100 align-items-start pl-3">
+                        <button class="btn-default btn-primary py-0 mr-2" (click)="generateParams()" title="{{language['apply']}}">
+                            <span>{{language['apply']}}</span>
+                        </button>
+                        <button class="btn-link primary mt-2" (click)="clearFilter()" title="{{language['TClearFilter']}}">
+                            <span>{{language['TClearFilter']}}</span>
+                        </button>
+                </div>
+            </div>
+                <!-- <div class="flex-g2 col-item-action">
+                    <div class="d-flex w-100 justify-content-end align-items-center h-100 pt-3">
+                        <button class="btn-default btn-primary btn-sm-24 py-0 mr-2" (click)="generateParams()" title="{{language['apply']}}">
+                            <span>{{language['apply']}}</span>
+                        </button>
+                        <button class="btn-link btn-over-ellipse btn-sm-24 primary" (click)="clearFilter()" title="{{language['TClearFilter']}}">
+                            <span>{{language['TClearFilter']}}</span>
+                        </button>
+                </div> -->
+            </div>
+            </div>
+        </section>
+        <section class="row" *ngIf="hasScopeAccess">
+            <div class="col-md-12 mt-3">
+                <div class="row">
+                    <div class="col-8">
+                        <div class="toggle-swtbtn checkbox switcher d-inline-flex mb-3 mr-3" [ngClass] = "{'cursornallow' : selectedAlertTypes != 'All Alerts'}">
+                            <div [ngClass] = "{'diable-div' : selectedAlertTypes != 'All Alerts'}">
+                                <label for="ActivehideHealthySystems">
+                                    <input type="checkbox" id="ActivehideHealthySystems" formControlName="showAllSystems" value = "true"/>
+                                    <span><small></small></span>
+                                </label>
+                                <label for="ActivehideHealthySystems" class="ml-3 c-auto">{{ language['Hide Healthy Systems']
+                                    }}</label>
+                            </div>
+                        </div>
+                        <!-- <div class="toggle-swtbtn checkbox switcher d-inline-flex mb-3" [ngClass] = "{'cursornallow' : filtersForm?.controls['device_type']
+                        ?.value == 'OLT'}">
+                            <div [ngClass] = "{'diable-div' : filtersForm?.controls['device_type']?.value == 'OLT'}">
+                                <label for="ActivehideOntOutage">
+                                    <input type="checkbox" id="ActivehideOntOutage" formControlName="showOntNetOutage" value = "false"/>
+                                    <span><small></small></span>
+                                </label>
+                                <label for="ActivehideOntOutage" class="ml-3 c-auto">{{ language['Show Only ONT Internet Outage'] }} </label>
+                            </div>
+                        </div> -->
+                    </div>
+                    <div class="col-4 text-right">
+                        <button class="btn-refresh mr-3 mb-3" (click)="refreshGeomap()"
+                                title="{{language.Refresh}}">
+                                <img src="../../../../../../assets/img/ic_refresh.svg" />
+                        </button>
+                        <button class="btn-default btn-dft h-24-btn mb-3 mr-3" (click)="gotoRealtime()" [disabled] = "selectedAlertTypes == 'All Alerts'">
+                            {{ selectedAlertTypes + " View" }}
+                        </button>
+                        <!-- <button class="btn-default btn-dft h-24-btn mb-3" (click)="gotoRealtime()">
+                            {{language['Real Time Alarms View']}}
+                        </button> -->
+                    </div>
+                </div>
+                
+                
+            </div>
+        </section>
+    </form>
+    <div class="loader-wrapper-info" *ngIf="loading && hasScopeAccess">
+        <div class="loader">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary" role="">
+                    <span class="sr-only">{{ language.Loading }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="w-100 alert alert-danger fade show my-3" *ngIf="error">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+        <button type="button" class="close" (click)="closeAlert()">
+            <span></span>
+        </button>
+        <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+    </div>
+    <div id="geoViewIssue" class="geo-view-issue"></div>
+    <div class="geomap-legends" *ngIf="hasScopeAccess">
+        <table>
+            <tbody>
+                <tr>
+                    <td>
+                        <!-- {{language['Circle']}} -->
+                        <img src="assets/images/geomap-icons/circle.svg" alt="">
+                    </td>
+                    <td>{{language['ONT']}}</td>
+                    <td>
+                        <span class="dot critical"></span>
+                        <!-- {{language['Red']}} -->
+
+                        <!-- <img src="assets/images/geomap-icons/square-solid-red.svg" alt=""> -->
+                    </td>
+                    <td>{{language['critical']}} </td>
+
+                </tr>
+                <tr>
+                    <td>
+                        <!-- {{language['Square']}} -->
+                        <img src="assets/images/geomap-icons/square.svg" alt="">
+                    </td>
+                    <td>{{language['OLT']}}</td>
+                    <td>
+                        <span class="dot major"></span>
+                        <!-- {{language['Amber']}} -->
+
+                        <!-- <img src="assets/images/geomap-icons/square-solid-amber.svg" alt=""> -->
+                    </td>
+                    <td>{{language['major']}} </td>
+
+                </tr>
+                <tr>
+                    <td>
+                        <!-- Not supported in R22.4 -->
+                        <!-- <img src="assets/images/geomap-icons/diamond.svg" alt=""> -->
+                    </td>
+                    <td>
+                        <!-- Not supported in R22.4 -->
+                        <!-- {{language['ASM']}} -->
+                    </td>
+                    <td>
+                        <span class="dot minor"></span>
+                        <!-- {{language['Yellow']}} -->
+
+                        <!-- <img src="assets/images/geomap-icons/square-solid-yellow.svg" alt=""> -->
+                    </td>
+                    <td>{{language['minor']}}</td>
+
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <span class="dot no-alarms"></span>
+                        <!-- {{language['Green']}} -->
+
+                        <!-- <img src="assets/images/geomap-icons/square-solid-green.svg" alt=""> -->
+                    </td>
+                    <td>{{language['No alarms']}}</td>
+
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <span class="dot aggregation"></span>
+                        <!-- {{language['Blue']}} -->
+
+                        <!-- <img src="assets/images/geomap-icons/square-solid-blue.svg" alt=""> -->
+                    </td>
+                    <td>{{language['System aggregation']}}</td>
+
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <span class="dot collocation"></span>
+                        <!-- {{language['Blue']}} -->
+
+                        <!-- <img src="assets/images/geomap-icons/square-solid-blue.svg" alt=""> -->
+                    </td>
+                    <td>{{language['System colocation']}}</td>
+
+                </tr>
+            </tbody>
+        </table>
+
+
+    </div>
+   <!-- // for 4 kbi - custom-size-large -->
+   <section #systemInfo class="hide-modal">
+    <div class="custom-inlne-modal hide-modal" [ngClass] = "{'custom-size-large' : systemInfoData['NoOfAlerts'] == 4, 'custom-size-small' : systemInfoData['NoOfAlerts'] <= 2}" *ngIf = "systemInfoData">
+        <div class="mb-1">
+            <div class="cco-secondary-title text-primary"> <a class="cursor-pointer text-decoration-none" id ='clickdeviceName'>{{systemInfoData['deviceName']}}</a> </div>
+        </div>
+    
+        <div>
+        <div class="row">
+            <div class="col-12 mb-1" *ngIf = "systemInfoData['outage'] == 'True'">
+            <div class="alert alert-warning mb-0">
+                <div class="d-flex pt-1">
+                <div class="col-auto">
+                    <img src="../../../../../assets/img/warning-icon.svg" width="24px" height="24px"/>
+                    </div>
+                    <div class="col pl-2">
+                    <p class="mb-0">Service  Disruption Detected</p>
+                    <p class="mb-1">Cause: <a class="cursor-pointer text-decoration-none" id="clickOutageAlarmName"><span class="text-primary pl-1">{{systemInfoData['outageAlarmName']}}</span></a> </p>
+                    </div>
+                </div>
+                
+            </div>
+            </div>
+            <div class="col-12 mb-1">
+            <table class="table table-borderless sys-info-table w-100">
+                <tbody>
+                <tr>
+                <td>{{language['Region/Location']}}</td>
+                <td>{{(systemInfoData['deviceRegion'] && systemInfoData['deviceRegion']['region_name'] ? systemInfoData['deviceRegion']['region_name'] : '-') + "/" + (systemInfoData['deviceLocation'] && systemInfoData['deviceLocation']['networkgroup_name'] ? systemInfoData['deviceLocation']['networkgroup_name'] : '-')}}</td>
+                </tr>
+                <tr>
+                <td>{{language['System Type']}}</td>
+                <td>{{systemInfoData['deviceType']}}</td>
+                </tr>
+                <tr>
+                <td>{{language['Model_Name']}}</td>
+                <td>{{systemInfoData['deviceModel']}}</td>
+                </tr>
+                <tr *ngIf = "systemInfoData['deviceType'] == 'ONT'">
+                <td>{{language['Subscriber_Name']}}</td>
+                <td>{{systemInfoData['subscriberName']}}</td>
+                </tr>
+                </tbody>
+            </table>
+            </div>
+            <div class="col-12 mb-1" *ngIf = "systemInfoData['NoOfAlerts'] > 0">
+            <div class="sys-list-kbi pt-1">
+            <div class="col-auto border-left" *ngIf = "systemInfoData['systemAlarmCount'] > 0">
+                <span class="menu-title">System Alarms</span>
+                <div class="d-flex align-content-around flex-wrap">
+                <span class="stats-value"><a class="cursor-pointer text-decoration-none" id="clickNoOfSystemAlarms">{{systemInfoData['systemAlarmCount']}}</a></span>
+                </div>
+            </div>
+            <div class="col-auto border-left" *ngIf = "systemInfoData['transformedAlarmCount'] > 0">
+                <span class="menu-title">Transform Alarms</span>
+                <div class="d-flex align-content-around flex-wrap">
+                <span class="stats-value"><a class="cursor-pointer text-decoration-none" id="clickNoOfTransformedAlarms">{{systemInfoData['transformedAlarmCount']}}</a></span>
+                </div>
+            </div>
+            <div class="col-auto border-left" *ngIf = "systemInfoData['cloudHealthCount'] > 0">
+                <span class="menu-title">Health Alerts</span>
+                <div class="d-flex align-content-around flex-wrap">
+                <span class="stats-value"><a class="cursor-pointer text-decoration-none" id="clickNoOfcloudHealthAlarms">{{systemInfoData['cloudHealthCount']}}</a></span>
+                </div>
+            </div>
+            <div class="col-auto border-left" *ngIf = "systemInfoData['cloudConnectivityCount'] > 0">
+                <span class="menu-title">Cloud Connectivity</span>
+                <div class="d-flex align-content-around flex-wrap">
+                <span class="stats-value"><a class="cursor-pointer text-decoration-none" id="clickNoOfCloudConnectivityAlarms">{{systemInfoData['cloudConnectivityCount']}}</a></span>
+                </div>
+            </div>
+            </div>
+            
+            </div>
+        </div>
+        </div>
+    </div>
+   </section>
+</div>
+<app-system-list #systemList *ngIf = "(canShowSystemList || canShowAlertTypeList) && hasScopeAccess" [systemInfoData]="systemListData"
+        (hideInfoBox)="hideToolbox($event)"></app-system-list>

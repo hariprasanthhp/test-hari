@@ -1,0 +1,64 @@
+<!-- <div class="topology-sec">
+    <img height="90%" width="90%" src="./assets/images/Topology-min.png">
+</div> -->
+<app-subscriber-menu [issues]="issueData" [responseFromIssuse]="apiCallDone" (apiCallDone)="responseFromStatus($event)">
+</app-subscriber-menu>
+<div class="row">
+
+  <div class="col-12">
+    <div class="loader load" *ngIf="loading">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{language.Loading}}</span>
+        </div>
+      </div>
+    </div>
+
+    <section class="m-2">
+      <div class="row ">
+        <div class="col-md-12 ccl-tabs">
+
+          <ul id="tabs" class="nav nav-tabs">
+            <li class="nav-item"><a routerLink="/support/overview/issues" (Click)="$event.preventDefault()"
+                data-toggle="tab" class="nav-link small" routerLinkActive="active">
+                <span class="big-text">{{language.Issues}}</span></a>
+            </li>
+
+            <li class="nav-item">
+              <a routerLink="/support/overview/topology" data-toggle="tab" class="nav-link small"
+                routerLinkActive="active">
+                <span class="big-text">{{language.Topology}}</span>
+              </a>
+            </li>
+          </ul>
+          <div id="tabsContent" class="tab-content">
+            <div id="issue" class="tab-pane fade active show">
+              <div class="row pb-2">
+
+              </div>
+            </div>
+            <div id="topology" class="tab-pane fade">
+              <div class="row pb-2">
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div class="row">
+      <div class="col-md-12">
+        <div id="myDiagramDiv1" style="width: 100%; height: 800px"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-6">
+        <div id="myDiagramDiv2" style="width: 100%; height: 300px"></div>
+      </div>
+    </div>
+  </div>
+
+
+
+</div>

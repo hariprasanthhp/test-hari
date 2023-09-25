@@ -1,0 +1,63 @@
+.subnet-select-div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    ng-select {
+            width: 50%;
+    }
+    input {
+        margin-left: 10px;
+    }
+}
+.modal-scrll {
+    overflow-y: auto;
+    max-height: 400px;
+}
+.ccl-form{
+input:disabled{
+    cursor: not-allowed;
+}
+}
+.table-alter {
+    tbody {
+        tr {
+            td {
+                word-break: break-all;
+            }
+        }
+    }
+}
+
+.no-data-available {
+    text-align: center;
+}
+
+.ccl-fc-table-icon{
+    span{
+        .disabled{
+            .fa-pencil-alt {
+                color: #8C8C8C !important;
+                cursor: not-allowed;
+            }
+        }
+    }
+}
+.ng-select-250{
+    text-align: left; width: 250px;
+}
+.w-250px{width: 250px;}
+.w-200px{width: 200px;}
+.ng-select-mapped {
+    text-align: left;
+    min-width: 30%;
+}
+.th-action{white-space: nowrap;max-width: 200px !important;}
+.min-w-160px{min-width: 160px;}
+.editable-td{font-size:13px}
+.upload-btn-wrapper {
+    overflow: inherit !important;
+}
+.list-two {
+    list-style-type: disc;
+    margin-left: 30px;
+}

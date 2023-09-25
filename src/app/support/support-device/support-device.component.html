@@ -1,0 +1,465 @@
+<app-subscriber-menu (device)="onDeviceClick()" [count]="DeviceCount" (DeviceCallDone)="responseFromStatus($event)"
+  [responseFromIssuse]="apiCallDone" [sendingCountfromdevice]="deviceCountDone"></app-subscriber-menu>
+<div >
+  <div class="loader load" *ngIf="loading">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary">
+        <span class="sr-only">{{language.Loading}}</span>
+      </div>
+    </div>
+  </div>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert" *ngIf="error">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+    <strong>Error!</strong> {{ErrorMsg}}
+    <button type="button" class="close" (click)="error!=error" data-dismiss="alert" aria-label="Close"
+      id="Call_Success_Alert">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+
+  <div *ngIf="isDeviceTable" class="row d-flex align-items-center">
+    <div class="col-lg-12 col-md-12 col-sm-12 mb-0">
+      <span class="ccl-Secondary-title d-block border-bottom" id="client-device"> {{language.Client_device}} </span>
+      <span class="refreshicon-pos" id="refreshicon" (click)="getAllDevices('refresh')">
+        <i class="fas fa-sync refreshicon"></i>
+        <!-- <img src="../../../assets/img/ic_refresh.svg" /> -->
+      </span>
+    </div>
+    <div class="d-flex flex-wrap w-100 cus-select-height-24 justify-content-end pt-2">
+      <div class="custom-selectbox" class="col-lg-2 col-xl-2 col-md-12 col-sm-12 mb-3" id="Device-sort-by-status">
+        <!-- <label>{{language.Status}}</label> -->
+        <ng-select [(ngModel)]="offline" (change)="sort(true)" [searchable]="false">
+          <ng-option value="All">{{language['Online and Offline Devices']}}</ng-option>
+          <ng-option value="Online">{{language.Online}}</ng-option>
+          <ng-option value="Offline">{{language.Offline}}</ng-option>
+        </ng-select>
+      </div>
+      <div class="custom-selectbox" class="col-lg-2 col-xl-2 col-md-12 col-sm-12 mb-3" id="Device-sort-by-connection">
+        <!-- <label>{{language.Connection}}</label> -->
+        <ng-select [(ngModel)]="connection" (change)="sort(true)" [searchable]="false">
+          <ng-option value="All">{{language['Any Band']}}</ng-option>
+          <ng-option *ngFor="let list of Connectionlist" [value]="list">{{list}}
+          </ng-option>
+        </ng-select>
+      </div>
+      <div class="custom-selectbox" class="col-lg-2 col-xl-2 col-md-12 col-sm-12 mb-3" id="Device-sort-by-SSID">
+        <!-- <label>SSID</label> -->
+        <ng-select [(ngModel)]="ssidDrop" (change)="sort(true)" [searchable]="false">
+          <!-- <ng-option *ngFor="let list of order" [value]="list.value">{{list.name}}
+  </ng-option> -->
+          <ng-option value="All">{{language['All SSIDs']}}</ng-option>
+          <ng-option *ngFor="let list of ssid" [value]="list">{{list}}
+          </ng-option>
+        </ng-select>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="container-fluid mb-3" [hidden]="!isDeviceTable">
+    <!-- if the isDeviceTable == true only the table will be render..
+    in feature if you need to add condition put it inside the [hidden] = '!isDeviceTable; add your condition here'.... -->
+    <div class="">
+      <div class="col-md-12 ccl-tables px-0 device-table table-responsive">
+        <table [ngClass]="{table : ssoAuthService.getCscType() !== 'DME'}" 
+        datatable [dtOptions]="tableOptions" [dtTrigger]="dtTrigger" class="table-borderless"
+          id="DeviceListTable">
+          <thead class="border-bottom detailheading">
+            <tr class="align-middle">
+              <th class="width-1 disable-sort-th" colspan="1" id="deviceHeader" (click)="custom_sort('device', 'deviceHeader')">
+                {{language.device}}
+                <span class="C_sorting" *ngIf="sortedColumn !== 'deviceHeader'"></span>
+              </th>
+              <th></th>
+              <th id="ConnectionHeader" (click)="custom_sort('Connection', 'ConnectionHeader')">
+                <!-- {{language.Connection?language.Connection:'Connection'}} -->
+                {{language.Band?language.Band:'Band'}}
+                <span class="C_sorting" *ngIf="sortedColumn !== 'ConnectionHeader'"></span>
+              </th>
+              <th id="Access_PointHeader" (click)="custom_sort('Access_Point', 'Access_PointHeader')">
+                {{language.Access_Point}}
+                <span class="C_sorting" *ngIf="sortedColumn !== 'Access_PointHeader'"></span>
+              </th>
+              <th id="SSIDHeader" (click)="custom_sort('SSID', 'SSIDHeader')">
+                {{language.SSID}}
+                <span class="C_sorting" *ngIf="sortedColumn !== 'SSIDHeader'"></span>
+              </th>
+              <th id="ModeHeader" (click)="custom_sort('Mode', 'ModeHeader')">
+                {{language.Mode}}
+                <span class="C_sorting" *ngIf="sortedColumn !== 'ModeHeader'"></span>
+              </th>
+              <th *ngIf="showClientEfficiency =='WifiScore'" id="WiFi_ScoreHeader" (click)="custom_sort('WiFi_Score', 'WiFi_ScoreHeader')">
+                {{language.WiFi_Score}}
+                <span class="C_sorting" *ngIf="sortedColumn !== 'WiFi_ScoreHeader'"></span>
+              </th>
+              <th id="Signal_StrengthHeader" (click)="custom_sort('Signal_Strength', 'Signal_StrengthHeader')">
+                {{language.Signal_Strength}} (SNR)
+                <span class="C_sorting" *ngIf="sortedColumn !== 'Signal_StrengthHeader'"></span>
+              </th>
+              <th *ngIf="showClientEfficiency == 'ClientEfficiencyScore'" id="pendoEfficiencyScore" class="EfficiencyHeader"
+                (click)="custom_sort('Efficiency Score', 'EfficiencyHeader')">
+                {{language['Efficiency Score']}}
+                <span class="C_sorting" *ngIf="sortedColumn !== 'EfficiencyHeader'"></span>
+              </th>
+              <th id="Pkts_DroppedHeader" (click)="custom_sort('Pkts_Dropped', 'Pkts_DroppedHeader')">
+                {{language.Pkts_Dropped}}
+                <span class="C_sorting" *ngIf="sortedColumn !== 'Pkts_DroppedHeader'"></span>
+              </th>
+              <th id="dsUsPhyRateHeader" (click)="custom_sort('dsUsPhyRate', 'dsUsPhyRateHeader')">
+                {{language.dsUsPhyRate}}
+                <span class="C_sorting" *ngIf="sortedColumn !== 'dsUsPhyRateHeader'"></span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="onLoadTime" class="divice-table-info">
+              <div class="loader" *ngIf="onLoadTime">
+                <div class="d-flex justify-content-center">
+                  <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                  </div>
+                </div>
+              </div>
+            </tr>
+            <!-- [ngStyle]="{'color': (device.Status === 'online') ? 'grey' :'black'}" style="pointer-events: none;" -->
+            <!-- 'blockclick':device.Status === 'offline', -->
+            <tr *ngFor="let device of deviceList; let i=index;"
+              (click)="ssoAuthService.getCscType() !== 'DME' && deviceSelected(i)"
+              [ngClass]="{'device-text1' : device.Status === 'offline'}">
+              <td>
+                <span class="client-devices ml-2">
+                  <img height="30px" width="30px" [src]='iconimage(device["Client-type"],device.Status)' alt="warning">
+                </span>
+              </td>
+
+
+              <td class="device-col" [ngClass]="{'device-text1' : device.Status === 'offline'}">
+
+                <span>{{device.HostName? device.HostName :hostNameState
+                  }}</span>{{deviceStatus(device.Status)}}<br /><span class="device-col" [ngClass]="{'device-textoff':device.Status === 'offline',
+            'device-text' :device.Status === 'online'}"
+                  class="greyText small-text">{{device.IPAddress}}&nbsp;&nbsp;&nbsp;&nbsp;{{device.MACAddress}}</span>
+              </td>
+              <!-- [innerHTML]="totalsymbol(device.AccessPointSerialNumber)" -->
+              <td>{{device.Connection != undefined ?device.Connection:'--'}}
+
+                <!-- <div [innerHTML]="totalsymbol(device.AccessPointSerialNumber,i)"></div> -->
+              </td>
+              <td>
+                <p class="mb-0"><span>{{device?.AccessPointHostName || ''}}</span><span *ngIf="device?.AccessPoint">
+                    (</span><span *ngIf="device?.AccessPoint">{{device.AccessPoint}}</span><span
+                    *ngIf="device?.AccessPoint">)</span></p>
+                <p class="greyText small-text mb-0">{{device?.AccessPointSerialNumber != undefined
+                  ? device?.AccessPointSerialNumber
+                  :'--'}}</p>
+              </td>
+              <td>{{device.SSID != undefined?device.SSID:'--'}}</td>
+              <td>{{device.Mode != undefined && device.Mode!="" ?"802."+device.Mode:'--'}}
+                <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title='{{language["Issue_Reason4"]}}'>
+                  <span *ngIf="totalsymbol(device.MACAddress,'rmode') == 'rmode'"><img
+                      src="assets/img/outline-warning-orange.svg"></span>
+                </span>
+                <!-- <span
+              *ngIf="IserialNumber !=' ' && rmode == true && device.MACAddress == ImacAddress"><img
+                  src="assets/img/outline-warning-orange.svg"></span> -->
+
+              </td>
+              <td *ngIf="showClientEfficiency =='WifiScore'">{{device["Wifi-score"]!=undefined?device["Wifi-score"]:'--'}}</td>
+              <td>
+                <span
+                  *ngIf='device["Signal-strength"] != undefined && device["Signal-strength"] || device["Signal-strength"] == 0 '>
+                  <span class="d-inline-block" tabindex="0" data-toggle="tooltip"
+                    title='{{device["Signal-strength"] != undefined || device["Signal-strength"] == 0?language.Signal_Strength+": ":""}}{{device["Signal-strength"] != undefined || device["Signal-strength"] == 0?device["Signal-strength"]+"dBm":"--"}}'>
+                    <img [src]='SignalStrength(device["Signal-strength"],device.Status)' alt="warning" class="w-25">
+                  </span>
+                  <span class="SSRwarningicon" tabindex="0" data-toggle="tooltip" title='{{language["Issue_Reason2"]}}'>
+                    <span *ngIf="totalsymbol(device.MACAddress,'ssR') == 'ssR'"><img
+                        src="assets/img/outline-warning-orange.svg"></span>
+                  </span>
+                  <span>({{ (device?.SNR || device?.SNR == 0) ? (device?.SNR + ' dB') : '-' }})</span>
+                  <!-- <span class="d-inline-block" tabindex="0" data-toggle="tooltip"
+                  title='{{device["Signal-strength"] != undefined?language.Signal_Strength+": ":""}}{{device["Signal-strength"] != undefined?device["Signal-strength"]+"dBm":"--"}}'>
+                  <span *ngIf='device["Signal-strength"] != undefined && device["Signal-strength"]'><img
+                      [src]='SignalStrength(device["Signal-strength"])' alt="warning" style="width: 25%;"> &nbsp;
+                    <!-- <span *ngIf="IserialNumber !=' ' && REDICON == true && device.MACAddress == ImacAddress"><img
+                  src="assets/img/outline-warning-orange.svg"></span> -->
+                  <!-- <span *ngIf="totalsymbol(device.MACAddress,'ssR') == 'ssR'"><img
+                        src="assets/img/outline-warning-orange.svg"></span>
+                  </span>
+                </span> -->
+
+                </span><span
+                  *ngIf='device["Signal-strength"] == undefined || !device["Signal-strength"] && device["Signal-strength"] != 0'>--</span>
+
+                <!-- <span *ngIf="Aissuewarning > Aissusecount "><img
+                  src="assets/img/outline-warning-orange.svg"></span>{{device["Signal-strength"] != undefined?device["Signal-strength"]+"dBm":'--'}} -->
+              </td>
+
+              <td *ngIf="showClientEfficiency == 'ClientEfficiencyScore'"> {{((device['Client-efficiency-score'] >0
+                ))? ((device['Client-efficiency-score'] *
+                100).toFixed(2) + '%') : ((device['Client-efficiency-score']) < 0 ) ? ((0 * 100).toFixed(2) + '%' ):
+                  ((device['Client-efficiency-score'])==0 ) ? ((0 * 100).toFixed(2) + '%' ) : '--' }} <span
+                  class="d-inline-block" tabindex="0" data-toggle="tooltip" title='{{language["Issue_Reason3"]}}'>
+                  <span *ngIf="totalsymbol(device.MACAddress,'LES') == 'LES'"><img
+                      src=" assets/img/outline-error-red.svg"></span>
+                  </span>
+              </td>
+
+              <td>{{device["DS-packet-drops"]!= undefined?device["DS-packet-drops"]:'--'}}</td>
+              <td>
+                <!-- BytesConvert(device["DS-phy-rate"] || 0) start CCL-28548-->
+                <span class="arrow-img-d arrow-space">
+                  {{ device["DS-phy-rate"] != undefined || device["DS-phy-rate"] == 0 ?kbpsTO(device["DS-phy-rate"],
+                  true, false) : '--' }}
+                  <span *ngIf="device['DS-phy-rate'] || device['DS-phy-rate'] == 0" class="">{{device['DS-phy-rate'] ||
+                    device['DS-phy-rate'] == 0?
+                    kbpsTO(device['DS-phy-rate'], false,
+                    true) + 'bps' : 'Kbps'}}
+                  </span>
+                </span>
+                <span class="p-1">/</span>
+                <span class="arrow-img-u arrow-space">
+                  {{ device["US-phy-rate"] != undefined || device["US-phy-rate"] == 0 ?kbpsTO(device["US-phy-rate"],
+                  true, false) : '--' }} <span *ngIf="device['US-phy-rate'] || device['US-phy-rate'] == 0"
+                    class="">{{device["US-phy-rate"]|| device["US-phy-rate"]== 0?
+                    kbpsTO(device["US-phy-rate"], false,
+                    true) + 'bps' : 'Kbps'}}</span>
+                </span> <!-- end CCL-28548-->
+                <span class="d-inline-block" tabindex="0" data-toggle="tooltip"
+                  title='{{language["Issue_Reason_new4"]}}'>
+                  <span *ngIf="totalsymbol(device.MACAddress,'dhyRW') == 'dhyRW'"><img
+                      src=" assets/img/outline-error-red.svg"></span>
+                </span>
+                <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title='{{language["Issue_Reason3"]}}'>
+                  <span *ngIf="totalsymbol(device.MACAddress,'LES') == 'LES' && !showClientEfficiency"><img
+                      src=" assets/img/outline-error-red.svg"></span>
+                </span>
+              </td>
+            </tr>
+            <tr *ngIf="message">
+              <td colspan="9" align="center">{{message}}</td>
+            </tr>
+            <tr *ngIf="showNoData && deviceList.length <= 0 && datacopy.length <= 0">
+              <td colspan="9" align="center">{{language['No Data Available']}}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="loader" *ngIf="!devicePageLoaded">
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+              <span class="sr-only">{{language.Loading}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="container my-4" *ngIf="!isDeviceTable" id="DeviceDetails">
+
+    <div class="row device-name-details border-bottom px-0">
+      <div class="dev-dtil w-100">
+        <span class="close-icon cursor-pointer float-right">
+          <img class="pointer" aria-hidden="true" (click)="isDeviceTable = true;historyclose()"
+            id="Device-Details-close-icon" src="assets/img/ic_close-44px.svg">
+
+        </span>
+        <div class="ccl-Secondary-title user-name.mb-0" id="support-username-title">
+
+          <img height="30px" width="30px" [src]='iconimage(icon,status)' alt="warning">
+          &nbsp;
+          <!-- <span>{{hostNameState}}</span> -->
+          <span>{{deviceDetail["HostName"]?deviceDetail.HostName: hostNameState}}</span>&nbsp; &nbsp;
+          {{deviceDetail.Manufacture && deviceDetail.Model ? deviceDetail.Manufacture != 'Unknown' || deviceDetail.Model
+          !="Unknown"?"(":" ":" "}} {{deviceDetail.Manufacture
+          ?deviceDetail.Manufacture!='undefined' && deviceDetail.Manufacture != 'Unknown'? deviceDetail.Manufacture+"
+          ":'':"" }} {{deviceDetail.Manufacture && deviceDetail.Model && deviceDetail.Manufacture != 'Unknown' &&
+          deviceDetail.Model
+          !="Unknown" ? "-" : ''}} {{deviceDetail.Model!='undefined' && deviceDetail.Model !="Unknown" ?
+          deviceDetail?.Model:'
+          '}}{{deviceDetail?.Manufacture && deviceDetail.Model ?deviceDetail.Manufacture != 'Unknown' ||
+          deviceDetail.Model !="Unknown"?")":"":""}}
+        </div>
+        <p class="dev-para"></p>
+
+      </div>
+
+    </div>
+
+    <div class="row">
+      <div class="col-md-12 ccl-wifi-table my-1 px-0 device-satelite-table">
+        <table class="table table-borderless detailheading table-lay-fixed" *ngIf="Lan!= 'LAN'">
+          <thead>
+            <tr align="left">
+              <th *ngIf="!showClientEfficiency">{{language.WiFi_Score}}</th>
+              <th>{{language.Signal_Strength}}</th>
+              <th>{{language.SNR}}</th>
+              <th *ngIf="showClientEfficiency">{{ language.Client_efficiency }}</th>
+              <!-- <th scope="col">{{language.Airtime_Usage}}</th> -->
+              <th>{{language.DS_PHY_Rate}}</th>
+              <th>{{language.US_PHY_Rate}}</th>
+              <th>{{language.Dropped_Packets}}</th>
+              <th>{{language.Re_Transmitted_Packets}}</th>
+
+            </tr>
+          </thead>
+          <tbody>
+            <tr align="left">
+              <th *ngIf="!showClientEfficiency">{{deviceDetail["Wifi-score"]!=undefined ||
+                deviceDetail["Wifi-score"]==0?deviceDetail["Wifi-score"]:"--"}}</th>
+              <th class="f-size-30">
+                <span
+                  *ngIf='deviceDetail["Signal-strength"] != undefined && deviceDetail["Signal-strength"] == 0||deviceDetail["Signal-strength"]'>
+                  <span class="d-inline-block" tabindex="0" data-toggle="tooltip"
+                    title='{{deviceDetail["Signal-strength"] != undefined || deviceDetail["Signal-strength"] == 0?language.Signal_Strength+": ":""}}{{deviceDetail["Signal-strength"] != undefined || deviceDetail["Signal-strength"] == 0?deviceDetail["Signal-strength"]+"dBm":"--"}}'>
+                    <img [src]='SignalStrength(deviceDetail["Signal-strength"],deviceDetail.Status)' alt="warning"
+                      class="w-25">
+                  </span>
+                  <span class="SSRwarningicon" tabindex="0" data-toggle="tooltip" title='{{language["Issue_Reason2"]}}'>
+                    <span *ngIf="totalsymbol(deviceDetail.MACAddress,'ssR') == 'ssR'"><img
+                        src="assets/img/outline-warning-orange.svg"></span>
+                  </span>
+                </span>
+                <!-- {{deviceDetail["Signal-strength"]!=undefined?deviceDetail["Signal-strength"]:'--'}}<span
+                class="small-text">{{deviceDetail["Signal-strength"]?' dBm':""}}</span> -->
+                <!-- <span class="d-inline-block" tabindex="0" data-toggle="tooltip"
+                title='{{deviceDetail["Signal-strength"] != undefined?language.Signal_Strength+": ":""}}{{deviceDetail["Signal-strength"]!=undefined?deviceDetail["Signal-strength"]+"dBm":"--"}}'>
+                <span *ngIf='deviceDetail["Signal-strength"] != undefined && deviceDetail["Signal-strength"]'><img
+                    [src]='SignalStrength(deviceDetail["Signal-strength"])' alt="warning" style="width: 25%;"> &nbsp;
+                  <span *ngIf="totalsymbol(deviceDetail.MACAddress,'ssR') == 'ssR'"><img
+                      src="assets/img/outline-warning-orange.svg"></span></span>
+              </span> -->
+                <span
+                  *ngIf='deviceDetail["Signal-strength"] == undefined || !deviceDetail["Signal-strength"] && deviceDetail["Signal-strength"] != 0'>--</span>
+
+              </th>
+              <th>{{deviceDetail["SNR"]!=undefined || deviceDetail["SNR"] == 0?snr(deviceDetail["SNR"]):'--'}}<span
+                  class="small-text">{{deviceDetail["SNR"] || deviceDetail["SNR"] == 0?" dB":""}}</span></th>
+              <th *ngIf="showClientEfficiency">{{((deviceDetail['Client-efficiency-score'] >0
+                ))? ((deviceDetail['Client-efficiency-score'] *
+                100).toFixed(2) + '%') : ((deviceDetail['Client-efficiency-score']) < 0 ) ? ((0 * 100).toFixed(2) + '%'
+                  ): ((deviceDetail['Client-efficiency-score'])==0 ) ? ((0 * 100).toFixed(2) + '%' ) : '--' }} <span
+                  class="d-inline-block" tabindex="0" data-toggle="tooltip" title='{{language["Issue_Reason3"]}}'>
+                  <span *ngIf="totalsymbol(deviceDetail.MACAddress,'LES') == 'LES'"><img
+                      src="assets/img/outline-error-red.svg"></span>
+                  </span>
+              </th>
+              <!-- <th>{{deviceDetail["Airtime-usage"]!=undefined?deviceDetail["Airtime-usage"]+"%":"--"}} </th> -->
+              <th>{{deviceDetail['DS-phy-rate'] || deviceDetail['DS-phy-rate'] == 0 ?
+                kbpsTO(deviceDetail['DS-phy-rate'], true, false) : '--'}}
+                <span *ngIf="deviceDetail['DS-phy-rate']|| deviceDetail['DS-phy-rate'] == 0 "
+                  class="small-text">{{deviceDetail['DS-phy-rate'] || deviceDetail['DS-phy-rate'] == 0 ?
+                  kbpsTO(deviceDetail['DS-phy-rate'], false,
+                  true) + 'bps' : 'Kbps'}}</span>
+                <span class="d-inline-block" tabindex="0" data-toggle="tooltip"
+                  title='{{language["Issue_Reason_new4"]}}'>
+                  <span *ngIf="totalsymbol(deviceDetail.MACAddress,'dhyRW') == 'dhyRW'"><img
+                      src="assets/img/outline-error-red.svg"></span>
+                </span>
+                <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title='{{language["Issue_Reason3"]}}'>
+                  <span *ngIf="totalsymbol(deviceDetail.MACAddress,'LES') == 'LES' && !showClientEfficiency"><img
+                      src=" assets/img/outline-error-red.svg"></span>
+                </span>
+                <!-- <span *ngIf="IserialNumber !=' ' && dhyRW == true "><img src="assets/img/outline-error-red.svg"></span> -->
+
+              </th>
+              <th>{{deviceDetail['US-phy-rate'] || deviceDetail['US-phy-rate'] == 0 ?
+                kbpsTO(deviceDetail['US-phy-rate'], true, false) : '--'}}
+                <span *ngIf="deviceDetail['US-phy-rate'] || deviceDetail['US-phy-rate'] == 0"
+                  class="small-text">{{deviceDetail['US-phy-rate'] || deviceDetail['US-phy-rate'] == 0?
+                  kbpsTO(deviceDetail['US-phy-rate'], false,
+                  true) + 'bps' : 'Kbps'}}</span>
+              </th>
+              <th>{{deviceDetail['DS-packet-drops']!=undefined?deviceDetail['DS-packet-drops']:'--'}} </th>
+              <th>{{deviceDetail["DS-retx-packets"]!=undefined?deviceDetail["DS-retx-packets"]:'--'}} </th>
+            </tr>
+
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="col-md-12 px-0 ccl-tabs">
+        <ul id="tabs" class="nav nav-tabs">
+          <!--   [ngClass]=" disabletab ? 'li-disable' : 'li-active' " -->
+          <li (click)='tabVisible = 1;' class="ccl-Secondary-title nav-item"><a data-toggle="tab"
+              [ngClass]="(tabVisible == 1)?'px-0 nav-link active small':'px-0 nav-link small'" id="dd-device-details">
+              {{language.Device_Details}}</a> </li>&nbsp;&nbsp;
+          <li (click)='tabVisible = 2;' class="ccl-Secondary-title nav-item" *ngIf="Lanconnect"><a data-toggle="tab"
+              [ngClass]="(tabVisible == 2)?'nav-link active small':'nav-link small'" id="dd-PHY-rate">
+              {{language.Signal_Strength_PHY_Rate}}</a> </li>&nbsp;
+
+          <li (click)='tabVisible = 3;' class="ccl-Secondary-title nav-item" *ngIf="txrxtabcheck"><a data-toggle="tab"
+              [ngClass]="(tabVisible == 3)?'nav-link active small':'nav-link small'" id="dd-txRX-Bytes">
+              {{language.TX_RX_Bytes}}</a>
+          </li>&nbsp;
+          <li (click)='tabVisible = 4;' class="ccl-Secondary-title nav-item" *ngIf="showSteering"><a data-toggle="tab"
+              [ngClass]="(tabVisible == 4)?'nav-link active small':'nav-link small'" id="dd-steering-logs">
+              {{language.Steering_Logs}}</a>
+          </li>
+          <li *ngIf="showQOE && Lan != 'LAN'" (click)='tabVisible = 5;' class="ccl-Secondary-title nav-item">
+            <a data-toggle="tab" [ngClass]="(tabVisible == 5)?'nav-link active small':'nav-link small'"
+              id="dd-efficiency">
+              {{language.Efficiency}}
+            </a>
+          </li>
+        </ul>
+
+        <div id="tabsContent" class="tab-content">
+          <div id="issue" class="tab-pane fade active show">
+            <div class="row pb-2">
+
+            </div>
+          </div>
+          <div id="topology" class="tab-pane fade">
+            <div class="row pb-2">
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- <div class="row">
+  <div class="col-md-12 px-0">
+    <div class="flow-config-sub-tab">
+
+      <ul class="nav">
+        <li class="nav-item">
+          <a class="nav-link" href="#">Device Details </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="#">Signal Strength & PHY</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="#">TX RX Bytes</a>
+        </li>
+
+
+
+      </ul>
+    </div>
+  </div>
+</div> -->
+    <app-device *ngIf="tabVisible == 1" [index]="deviceDetail" [selectedDevice]="selectedDevice"
+      [currentTime]="currentTime" [rmode]="rmode"></app-device>
+    <!-- <app-signal *ngIf="tabVisible == 2" [orgId]="orgId" [fsan]="selectedDeviceFSAN"
+  [routerData]="selectedDevice"></app-signal>  -->
+    <!--  <app-txrx *ngIf="tabVisible == 3"></app-txrx> -->
+    <app-signal-strength *ngIf="tabVisible == 2" [orgId]="orgId" [fsan]="selectedDeviceFSAN"
+      [routerData]="selectedDevice" [RGRouter]="RGData" [showSteeringLog]="true" [showCharts]="true">
+    </app-signal-strength>
+    <app-tx-rx *ngIf="tabVisible == 3" [orgId]="orgId" [fsan]="selectedDeviceFSAN" [routerData]="selectedDevice">
+    </app-tx-rx>
+    <app-signal-strength *ngIf="tabVisible == 4" [orgId]="orgId" [fsan]="selectedDeviceFSAN"
+      [routerData]="selectedDevice" [RGRouter]="RGData" [showSteeringLog]="true" [showCharts]="false">
+    </app-signal-strength>
+
+    <app-efficiency *ngIf="tabVisible == 5" [index]="deviceDetail">
+    </app-efficiency>
+
+  </div>
+</div>

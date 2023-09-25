@@ -1,0 +1,18 @@
+.overriden-input-remove {
+    position: absolute;
+    white-space: nowrap;
+    right: 30px;
+    padding: 0px 8px 0px 0px;
+    cursor: pointer;
+    img {
+        width: 60%;
+        padding-bottom: 3px;
+    }
+}
+.org-detail-status {
+    width: 150px !important;
+}
+
+.hiddenCol {
+    width: 0px !important;
+}

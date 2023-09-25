@@ -1,0 +1,299 @@
+<section>
+  <div class="container">
+    <div class="row mb-3">
+      <div class="col-md-7 pl-0">
+        <div class="current-issue-menu-container">
+          <div class="custom-selectbox mr-2" id="current-issues-interval">
+            <ng-select
+              [searchable]="false"
+              placeholder="{{ language['Date Range'] }}"
+            >
+              <ng-option value="5">{{ language.startDate }} </ng-option>
+              <ng-option value="10">{{ language.enddate }}</ng-option>
+            </ng-select>
+            <!--<span *ngIf=testForm.get('testName').errors?.required?>Please fill this field</span>
+                    <div *ngIf="frequency.errors?.required && (myForm.submitted|| frequency.touched)" id="frequency-error">
+                    {{language['This field is required']}}
+                  </div> -->
+          </div>
+          <div class="custom-selectbox mx-2" id="current-issues-region">
+            <ng-select [searchable]="false" placeholder="{{ language.region }}">
+              <ng-option value="ALLIANCE">{{ language.ALLIANCE }} </ng-option>
+            </ng-select>
+            <!-- <div *ngIf="frequency.errors?.required && (myForm.submitted|| frequency.touched)" id="frequency-error">
+                                            {{language['This field is required']}}
+                                          </div> -->
+          </div>
+          <div class="custom-selectbox mx-2" id="current-issues-location">
+            <ng-select
+              [searchable]="false"
+              placeholder="{{ language.location }}"
+            >
+              <ng-option value="ALLIANCE">{{ language.ALLIANCE }} </ng-option>
+            </ng-select>
+            <!-- <div *ngIf="frequency.errors?.required && (myForm.submitted|| frequency.touched)" id="frequency-error">
+                                                                    {{language['This field is required']}}
+                                                                  </div> -->
+          </div>
+          <div class="custom-selectbox mx-2" id="current-issues-System">
+            <ng-select
+              [searchable]="false"
+              placeholder="{{ language.System }}"
+              (change)="change()"
+            >
+              <ng-option value="C-Valley-West-002"
+                >{{ language["C-Valley-West-002"] }}
+              </ng-option>
+            </ng-select>
+            <!-- <div *ngIf="frequency.errors?.required && (myForm.submitted|| frequency.touched)" id="frequency-error">
+                                                                                            {{language['This field is required']}}
+                                                                                          </div> -->
+          </div>
+        </div>
+      </div>
+      <div class="col-md-5 pr-0 text-right" style="margin-top: 20px">
+        <div class="d-inline-flex mr-3">
+          <button type="button" class="btn-default primary px-3">
+            {{ language.apply }}
+          </button>
+        </div>
+
+        <div class="d-inline-flex">
+          <button type="button" id="#" class="btn-default btn-dft">
+            {{ language.Clear_Filters }}
+          </button>
+          <!-- <span class="undo-icon"><i class="fa fa-video-camera" aria-hidden="true"></i></span>
+          <span class="undo-icon"><i class="fa fa-clock-o" aria-hidden="true"></i></span>
+          <span class="undo-icon"><i class="fa fa-bars" aria-hidden="true"></i></span> -->
+        </div>
+      </div>
+    </div>
+    <section class="my-3">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12 px-0">
+            {{ language.days }}
+            <ngx-slider [(value)]="value" [options]="options"></ngx-slider>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div class="container">
+      <div class="row" [ngClass]="!fullScreen ? 'd-block' : 'd-none'">
+        <div class="subscriber-trends-wrapper my-4">
+          <div class="subscriber-trends-item">
+            <div class="d-flex justify-content-between border-bottom">
+              <div class="">
+                <div class="cco-secondary-title">
+                  {{ ["PON Port Courts"] }}
+                </div>
+              </div>
+              <div class="mwc-btns flex align-items-center">
+                <button
+                  id="PortCourtDownloadSection"
+                  class="btn-round btn-small-24 btn-grey btn-dload"
+                  (click)="downloadFunction('PON Port Courts', '#PortCourt')"
+                  data-toggle="tooltip"
+                ></button>
+                <button
+                  id="PortCourtExpandSection"
+                  class="btn-round btn-small-24 btn-grey btn-expand"
+                  (click)="fullScreenExpandFunction('PON Port Courts')"
+                  data-toggle="tooltip"
+                ></button>
+              </div>
+            </div>
+            <div class="">
+              <div
+                id="PortCourtAdvanceChart"
+                class="chart-box"
+                style="height: 250px; width: 300px"
+              ></div>
+            </div>
+          </div>
+
+          <div class="subscriber-trends-item">
+            <div class="d-flex justify-content-between border-bottom">
+              <div class="">
+                <div class="cco-secondary-title">
+                  {{ language.HPacketDropped }}
+                </div>
+              </div>
+              <div class="mwc-btns flex align-items-center">
+                <button
+                  id="PacketDroppedDownloadSection"
+                  class="btn-round btn-small-24 btn-grey btn-dload"
+                  (click)="
+                    downloadFunction(language.HPacketDropped, '#PacketDropped')
+                  "
+                  data-toggle="tooltip"
+                ></button>
+                <button
+                  id="PacketDroppedExpandSection"
+                  class="btn-round btn-small-24 btn-grey btn-expand"
+                  (click)="fullScreenExpandFunction(language.HPacketDropped)"
+                  data-toggle="tooltip"
+                ></button>
+              </div>
+            </div>
+
+            <div class="">
+              <div
+                id="PacketDroppedAdvanceChart"
+                class="chart-box"
+                style="height: 250px; width: 300px"
+              ></div>
+            </div>
+          </div>
+          <div class="subscriber-trends-item">
+            <div class="d-flex justify-content-between border-bottom">
+              <div class="">
+                <div class="cco-secondary-title">
+                  {{ language.HBIPErrorRate }}
+                </div>
+              </div>
+              <div class="mwc-btns flex align-items-center">
+                <button
+                  id="BIPErrorRateDownloadSection"
+                  class="btn-round btn-small-24 btn-grey btn-dload"
+                  (click)="
+                    downloadFunction(language.HBIPErrorRate, '#BIPErrorRate')
+                  "
+                  data-toggle="tooltip"
+                ></button>
+                <button
+                  id="BIPErrorRateExpandSection"
+                  class="btn-round btn-small-24 btn-grey btn-expand"
+                  (click)="fullScreenExpandFunction(language.HBIPErrorRate)"
+                  data-toggle="tooltip"
+                ></button>
+              </div>
+            </div>
+
+            <div class="">
+              <div
+                id="BIPErrorRateAdvanceChart"
+                class="chart-box"
+                style="height: 250px; width: 300px"
+              ></div>
+            </div>
+          </div>
+        </div>
+        <div class="subscriber-trends-wrapper my-2" *ngIf="showUtilization">
+          <div class="subscriber-trends-item">
+            <div class="d-flex justify-content-between border-bottom">
+              <div class="">
+                <div class="cco-secondary-title">
+                  {{ language.HUtilization }}
+                </div>
+              </div>
+              <div class="mwc-btns flex align-items-center">
+                <button
+                  id="UtilizationDownloadSection"
+                  class="btn-round btn-small-24 btn-grey btn-dload"
+                  (click)="
+                    downloadFunction(language.HUtilization, '#Utilization')
+                  "
+                  data-toggle="tooltip"
+                ></button>
+                <button
+                  id="UtilizatioinExpandSection"
+                  class="btn-round btn-small-24 btn-grey btn-expand"
+                  (click)="fullScreenExpandFunction(language.HUtilization)"
+                  data-toggle="tooltip"
+                ></button>
+              </div>
+            </div>
+
+            <div class="">
+              <div
+                id="UtilizationAdvanceChart"
+                class="chart-box"
+                style="height: 250px; width: 300px"
+              ></div>
+            </div>
+          </div>
+          <div class="subscriber-trends-item">
+            <div class="d-flex justify-content-between border-bottom">
+              <div class="">
+                <div class="cco-secondary-title">
+                  {{ language.HPacketDropped }}
+                </div>
+              </div>
+              <div class="mwc-btns flex align-items-center">
+                <button
+                  id="PacketDroppedDownloadSection"
+                  class="btn-round btn-small-24 btn-grey btn-dload"
+                  (click)="
+                    downloadFunction(language.HPacketDropped, '#PacketDropped')
+                  "
+                  data-toggle="tooltip"
+                ></button>
+                <button
+                  id="PacketDroppedExpandSection"
+                  class="btn-round btn-small-24 btn-grey btn-expand"
+                  (click)="fullScreenExpandFunction(language.HPacketDropped)"
+                  data-toggle="tooltip"
+                ></button>
+              </div>
+            </div>
+
+            <div class="">
+              <div
+                id="PacketDroppedPonAdvanceChart"
+                class="chart-box"
+                style="height: 250px; width: 300px"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row" [ngClass]="fullScreen ? 'd-block' : 'd-none'">
+        <div class="subscriber-trends-wrapper my-4">
+          <div class="subscriber-trends-item">
+            <div class="d-flex justify-content-between border-bottom">
+              <div class="">
+                <h5 *ngIf="language.HUtilization === fullScreenChartName">
+                  {{ language.HUtilization }}
+                </h5>
+                <h5 *ngIf="language.HPacketDropped === fullScreenChartName">
+                  #{{ language.HPacketDropped }}
+                </h5>
+                <h5 *ngIf="language.HBIPErrorRate === fullScreenChartName">
+                  {{ language.HBIPErrorRate }}
+                </h5>
+                <h5 *ngIf="'PON Port Courts' === fullScreenChartName">
+                  {{ language["PON Port Courts"] }}
+                </h5>
+              </div>
+              <div class="mwc-btns flex">
+                <button
+                  id="fullScreenChartDownloadSection"
+                  class="btn-round btn-small-24 btn-grey btn-dload"
+                  (click)="
+                    downloadFunction(fullScreenChartName, '#fullScreenChart')
+                  "
+                  data-toggle="tooltip"
+                ></button>
+                <button
+                  id="fullScreenChartExpandSection"
+                  class="btn-round btn-small-24 btn-grey btn-expand-inv"
+                  (click)="fullScreenInvertFunction()"
+                  data-toggle="tooltip"
+                ></button>
+              </div>
+            </div>
+
+            <div class="ml-3 mr-3">
+              <div
+                id="fullScreenAdvanceChart"
+                class="chart-box"
+                style="height: 450px; width: 900px"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

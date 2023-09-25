@@ -1,0 +1,63 @@
+<section class="loader-wrapper">
+  <div class="loader-wrapper-info" *ngIf="loading">
+    <div class="loader">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{language.Loading}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="w-100 alert alert alert-danger  fade show" *ngIf="error">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+    <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+    <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+  </div>
+  <div class="row my-3">
+    <div class="col-md-12 col-lg-3 col-xl-3" id="signal-strength-period-filter">
+      <span class="small-text">{{language.period}}</span>
+      <div class="dropdown">
+        <ng-select [items]="periods" bindLabel="label" bindValue="value" [multiple]="false" placeholder=""
+          [(ngModel)]="periodSelected" (click)="dropDownchange()" [ngModelOptions]="{standalone: true}"
+          [clearable]="false" [searchable]="false">
+        </ng-select>
+      </div>
+    </div>
+    <div class="col-md-2 d-flex align-items-end smy-2">
+      <button class="btn-default primary" (click)="loadChart();"
+        id="signal-strength-filter-btn">{{language.Load}}</button>
+    </div>
+  </div>
+  <section class="time-frame-section mb-3 p-0 mh-100" *ngIf="periodSelected == 2">
+    <div class="loader-wrapper-info" *ngIf="loading">
+      <div class="loader">
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border text-primary">
+            <span class="sr-only">{{ language.Loading }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- <div class="multi-point-slider" *ngIf="showIntervalSlider">
+      <ngx-slider [(value)]="selectedInterval" (userChangeEnd)="sliderEvent()" [options]="timeIntervalOptions">
+      </ngx-slider>
+      <span class="left-most-slider-time"><label> {{ leftSliderTime}}</label></span>
+      <span class="right-most-slider-time"><label>{{ rightSliderTime}}</label></span>
+  </div> -->
+    <div class="multi-point-slider" *ngIf="showIntervalSlider">
+      <ngx-slider [(value)]="selectedInterval" (userChangeEnd)="sliderEvent()" [options]="timeIntervalOptions">
+      </ngx-slider>
+      <span class="left-most-slider-time"><label> {{ leftSliderTime}}</label></span>
+      <span class="right-most-slider-time"><label>{{ rightSliderTime}}</label></span>
+    </div>
+  </section>
+  <div class="row mh-400">
+    <div class="col-md-12" id="wifi-txrx-chart-container" [ngClass]="!showChart ? 'd-none' : ''">
+      <div id="wifi-txrx-chart" class="h-400"></div>
+    </div>
+    <div class="col-md-12" *ngIf="noChartDataAvailable">
+      <div class="h-400"> {{language['No chart Data Available'] }}</div>
+    </div>
+  </div>
+</section>

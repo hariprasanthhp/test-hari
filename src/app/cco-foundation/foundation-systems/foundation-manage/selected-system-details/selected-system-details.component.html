@@ -1,0 +1,862 @@
+<section *ngIf="language">
+  <div class="loader"
+    *ngIf="loading || getlistloder || deviceDataGETLoading || serviceListLoader || arloLoading || CommandIqLoader || micrositeLoader">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary">
+        <span class="sr-only">{{language.Loading}}</span>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="w-100 alert warning-msg fade show" [hidden]="!(multipleRegId && multipleRegId.length > 1)">
+      <span class="success-img success-img-res"><img src="./assets/img/warning-icon.svg" /></span>
+      <button type="button" class="close ml-2" (click)="multipleRegId = []">
+        <img src="assets/img/ic_close-44px.svg" />
+      </button>
+      <span>{{ language.multipleRegInfo }}{{regID}}{{ language.multipleRegInfo2 }}{{
+        regFsan() }}{{language.multipleRegInfo3 }}
+      </span>
+    </div>
+    <div class="w-100 alert alert-danger fade show" [hidden]="!error">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+      <button type="button" class="close" (click)="closeAlert()">
+        <span></span>
+      </button>
+      <div class="d-inline-flex" innerHtml="{{(errorInfo !== 'No BSP Provider Found.')?errorInfo:language['No_BSP_Provider_Found']}}"></div>
+    </div>
+
+    <div class="w-100 alert alert-success fade show" [hidden]="!success">
+      <div class="d-flex justify-content-between align-items-start">
+        <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+        <div [innerHtml]="successInfo" class="w-90 mt-1"></div>
+        <button type="button" class="close" (click)="closeAlert()">
+          <span></span>
+        </button>
+      </div>
+     
+      
+    </div>
+    <div class="row mt-2 mb-30">
+      <div class="col-md-8 px-0">
+        <div class='cco-title'>
+          {{system}}
+        </div>
+      </div>
+      <div class="col-md-4 text-right">
+        <button *ngIf="hasWrite" type="button" class="mr-3 btn-default primary" [disabled]="editdisable"
+          (click)="goToSystemEdit()">{{language.Edit}}</button>
+        <span class="close-icon" id="close-icon" (click)="closeAddEdit()"><img src="assets/img/close-icon.svg"
+            alt="" /></span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 px-0">
+        <div class="cco-secondary-title-system border-bottom">
+          {{language.Insights}}
+        </div>
+      </div>
+    </div>
+    <div class="row mb-40">
+
+      <div class="test-container">
+        <div class="item">
+          <span class="cco-list-label">{{language.Model}}</span>
+          <div class="d-flex align-content-around flex-wrap">
+            <h3>{{modelName ? modelName : '-'}}</h3>
+          </div>
+        </div>
+        <div  class="item" >
+          <span class="cco-list-label">{{language.Data}}</span>
+          <div *ngIf="legacyView || (!subscriberLocationId && systemId) " class="d-flex align-content-around flex-wrap">
+            <h3>{{dEnable ? language[dEnable] || dEnable : '-'}}</h3>
+          </div>
+          <div *ngIf="subscriberLocationId  && !legacyView " class="d-flex align-content-around flex-wrap">
+            <h3>{{dataServicee2e ? language.enabled : language.Disabled}}</h3>
+          </div>
+        </div>
+        <div  class="item" >
+          <span class="cco-list-label">{{language.Voice}}</span>
+          <div *ngIf="legacyView || (!subscriberLocationId && systemId)" class="d-flex align-content-around flex-wrap">
+            <h3>{{viEnable ? language[viEnable] || viEnable : '-'}}</h3>
+          </div>
+          <div *ngIf="subscriberLocationId  && !legacyView " class="d-flex align-content-around flex-wrap">
+            <h3>{{voiceServicee2e ? language.enabled : language.Disabled}}</h3>
+          </div>
+        </div>
+        <div  class="item">
+          <span class="cco-list-label">{{language.Video}} </span>
+          <div *ngIf="legacyView || (!subscriberLocationId && systemId) "class="d-flex ali  gn-content-around flex-wrap">
+            <h3>{{vEnable ? language[vEnable] || vEnable : '-'}}</h3>
+          </div>
+          <div *ngIf="subscriberLocationId  && !legacyView " class="d-flex ali  gn-content-around flex-wrap">
+            <h3>{{videoServicee2e ? language.enabled : language.Disabled}}</h3>
+          </div>
+        </div>
+        <div class="item">
+          <span class="cco-list-label">{{ language.System_Status }} </span>
+          <div class="d-flex align-content-around flex-wrap">
+            <h3>{{ status ? language[status] || status : '-' }}</h3>
+          </div>
+        </div>
+    
+        <div class="item" [hidden]="!showRadioSummary">
+          <span class="cco-list-label">{{ language.twoPointfour_GHZ_WI_FI_RADIO }}
+          </span>
+          <div class="d-flex align-content-around flex-wrap">
+            <h3>{{radioEnable2Hz? language[radioEnable2Hz] || radioEnable2Hz :'-'}}</h3>
+          </div>
+        </div>
+        <div class="item" [hidden]="!showRadioSummary">
+          <span class="cco-list-label">
+            {{ language.Five_GHZ_WI_FI_RADIO }}
+          </span>
+          <div class="d-flex align-content-around flex-wrap">
+            <h3>{{ radioEnable5Hz? language[radioEnable5Hz] : '-'}}</h3>
+          </div>
+        </div>
+        <div class="item" [hidden]="!showRadioSummary">
+          <span class="cco-list-label">
+            {{ language.Six_GHZ_WI_FI_RADIO }}
+          </span>
+          <div class="d-flex align-content-around flex-wrap">
+            <h3>{{ radioEnable6Hz? language[radioEnable6Hz] : '-'}}</h3>
+          </div>
+        </div>
+        <div class="item ciq-email-col">
+          <span class="cco-list-label">
+            {{(this.CommandIqData?.commandIQ?.referrer === "SMBIQ" ||(!this.CommandIqData?.commandIQ?.email && bSmbMode )) ? language['CommandWorx Email']:language['CommandIQ Email']}}
+          </span>
+          <div class="d-flex align-content-around flex-wrap">
+            <h3>{{commandIQEmail ? showPrimaryEmail(commandIQEmail) : '-'}}</h3>
+          </div>
+          <div class="d-flex align-content-around flex-wrap">
+            <h3>{{commandIQSecondEmail ? commandIQSecondEmail : ''}}</h3>
+          </div>
+        </div>
+        <div class="item">
+          <span class="cco-list-label">
+            {{(this.CommandIqData?.commandIQ?.referrer === "SMBIQ" ||(!this.CommandIqData?.commandIQ?.email && bSmbMode )) ? language['CommandWorx Status']:language.CommandIQStatus}}
+          </span>
+          <div class="d-flex align-content-around flex-wrap">
+            <h3>{{ commandIQstatus? language[commandIQstatus] || commandIQstatus : '-'}}</h3>
+          </div>
+        </div>
+       
+      </div>
+    </div>
+      <div class="row">
+      <div class="d-flex justify-content-between w-100">
+        <div class="flex-left mb-40">
+          <div class="cco-secondary-title-system border-bottom">{{language['System Details']}}
+            <!--  -->
+          </div>
+          <div class="col-md-12 px-0 support-key-value">
+            <table id="" class="sys-detail-table">
+              <tbody>
+                <tr>
+                  <td>{{language.FSAN_Serial_Number}}</td>
+                  <td>
+                    <a>
+                      {{serialNumber ? serialNumber: checkRegIdAndMac(systemId) ? '-':systemId }} 
+                      <span [hidden]="!opMode">
+                        {{opModedisplay}}
+                      </span> <br/>
+                      {{showSwapInProgress?.replacingBy}} <span *ngIf="showSwapInProgress" class="suspended-but ml-2"><i class="dot mr-1"></i> {{language['Swap in Progress']}}</span>
+                    </a>
+
+                  </td>
+                </tr>
+                <tr>
+                  <td>{{ language.macAddress}}</td>
+                  <td>{{macAddress ? macAddress : checkMackAddress(systemId) ? systemId : '-'}}</td>
+                </tr>
+
+                <!-- <tr>
+                  <th scope="row">{{ language.System_Name}}</th>
+                  <td>-</td>
+                </tr> -->
+                <tr>
+                  <td>{{ language.Status}}</td>
+                  <td>{{ status ? language[status] ||status : '-' }}</td>
+                </tr>
+                <tr>
+                  <td>{{ language['IPv4 Address']}}</td>
+                  <td>
+                    {{
+                    checkIpAddress(
+                    ipAddress,
+                    "v4"
+                    ) ||
+                    checkIpAddress(
+                    ipV6SitePrefix,
+                    "v4"
+                    ) ||
+                    "-"
+                    }}
+                  </td>
+                </tr>
+                <tr>
+                  <td>{{ language['IPv6 Address']}}</td>
+                  <td>
+                    {{
+                    checkIpAddress(
+                    ipAddress,
+                    "v6"
+                    ) ||
+                    checkIpAddress(
+                    ipV6SitePrefix,
+                    "v6"
+                    ) ||
+                    "-"
+                    }}
+                  </td>
+                </tr>
+                <tr *ngIf="deviceData?.opMode !== 'WAP'">
+                  <td>{{ language.RegID}}</td>
+                  <td>{{ registrationId ? registrationId : checkRegId(systemId) ? systemId : '-' }}</td>
+                </tr>
+                <tr>
+                  <td>{{ language.Software_Version}}</td>
+                  <td>{{ deviceData?.softwareVersion ? deviceData?.softwareVersion : '-' }}</td>
+                </tr>
+                <tr>
+                  <td>{{ language.Hardware_Serial_Number}}</td>
+                  <td>{{ deviceData?.hardwareSerialNumber ? deviceData?.hardwareSerialNumber : '-' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+         <div class="flex-right mb-40">
+          <div class="cco-secondary-title-system border-bottom">
+            {{language['Subscriber Information']}}
+          </div>
+          <div class="col-md-12 px-0 support-key-value">
+            <table id="" class="table-lay-fixed">
+              <tbody>
+                <tr>
+                  <td>{{language.Name}}</td>
+                  <td>{{name ? name : '-'}}</td>
+                </tr>
+                <tr>
+                  <td>{{language.account}}</td>
+                  <td>{{account ? account : '-'}}</td>
+                </tr>
+
+                <tr>
+                  <td>{{language.Email}}</td>
+                  <td class="text-ellipse" title="{{email ? email : '-'}}">{{email ? email : '-'}}</td>
+                </tr>
+                <tr>
+                  <td>{{language.Location_ID}}</td>
+                  <td>{{subscriberLocationId ? subscriberLocationId : '-'}}</td>
+                </tr>
+                <tr>
+                  <td>{{language.Service_address}}</td>
+                  <td>{{serviceAddress ? serviceAddress : '-'}}</td>
+                </tr>
+                <tr>
+                  <td>{{language.Phone}}</td>
+                  <td>{{phone ? phone : '-'}}</td>
+                </tr>
+                <!-- <tr>
+                  <td> {{(this.CommandIqData?.commandIQ?.referrer === "SMBIQ" ||(!this.CommandIqData?.commandIQ?.email && bSmbMode )) ? language.CommandWorx:language.CommandIQ}}</td>
+                  <td>{{commandIQEmail ? showPrimaryEmail(commandIQEmail) : '-'}}</td>
+                </tr> -->
+                <!-- <tr *ngIf="commandIQSecondEmail">
+                  <td></td>
+                  <td>{{commandIQSecondEmail ? commandIQSecondEmail : ''}}</td>
+                </tr> -->
+                <!-- <tr>
+                  <td>{{language.CommandIQStatus}}</td>
+                  <td>{{commandIQstatus? language[commandIQstatus] || commandIQstatus : '-'}}</td>
+                </tr> -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+       
+        
+        <!-- <div class="system-details-item">
+          <div class="cco-secondary-title-system border-bottom"
+            *ngIf=" arloEnableentitlement || arloUnlimitedentitlement || arloUnlimitedplusentitlement || Bark_Premiumentitlement || Bark_Juniorentitlement || ServifyEnableentitlement || this.ServifyGoldentitlement || this.ServifySilverentitlement || this.ServifyPlatinumentitlement">
+            {{language['Managed Services']}} </div>
+          <div class="eco-system-table">
+            <table>
+              <table class="table">
+                <tbody>
+                  <tr class="m12" *ngIf="(arloEnableentitlement || arloUnlimitedentitlement|| arloUnlimitedplusentitlement)">
+                    <td class="eco-title">{{language.Arlo}}</td>
+                    <td>{{arloEmail ? language['Subscribed'] : language['Unsubscribed']}}</td>
+        
+                  </tr>
+                  <tr *ngIf="(arloEnableentitlement || arloUnlimitedentitlement|| arloUnlimitedplusentitlement)" >
+                    <td>{{language.Plan}}</td>
+                    <td>{{(arloSmart?.plan ==='PARTNER_UNLIMITED'|| arloSmart?.plan ==='PARTNER_UNLIMITED_CANADA')? 'Unlimited' : ( arloSmart?.plan
+                      ==='PARTNER_UNLIMITED_PLUS' || arloSmart?.plan
+                      ==='PARTNER_UNLIMITED_PLUS_CANADA' )? 'Unlimited Plus':(arloSmart?.plan ==='PARTNER_REGULAR' || arloSmart?.plan ==='PARTNER_REGULAR_CANADA') ? arloSmart['2kCameras']:
+                      '-'}}  {{(arloSmart?.plan ==='PARTNER_REGULAR' || arloSmart?.plan ==='PARTNER_REGULAR_CANADA') ? language['Cameras']:''}}<span [hidden]="!onboard2kcamera">({{onboard2kcamera ? onboard2kcamera : ''}})</span></td>
+                  </tr>
+                  <tr *ngIf="(arloEnableentitlement || arloUnlimitedentitlement|| arloUnlimitedplusentitlement)">
+                    <td> {{language['Account Email']}} </td>
+                    <td>{{arloEmail ? arloEmail : '-'}}</td>
+        
+                  </tr>
+                  <tr class="m12" *ngIf="Bark_Premiumentitlement || Bark_Juniorentitlement">
+                    <td class="eco-title">{{language['Bark']}}</td>
+                    <td>{{BarkPlan ? language['Subscribed'] : language['Unsubscribed']}}</td>
+                  </tr>
+                  <tr *ngIf="Bark_Premiumentitlement || Bark_Juniorentitlement">
+                    <td>{{language.Plan}}</td>
+                    <td>{{bark?.planCode === 'bark_premium' ? language.Premium_Monthly : this.bark?.planCode === 'bark_junior' ? this.language.Junior_Monthly: '-'}}</td>
+                  </tr>
+                  <tr *ngIf="Bark_Premiumentitlement || Bark_Juniorentitlement">
+                    <td>{{language.Email}}</td>
+                    <td>{{BarkEmail ? BarkEmail : '-'}}</td>
+                  </tr>
+                  <tr class="m12"  *ngIf="ServifyEnableentitlement || this.ServifyGoldentitlement || this.ServifySilverentitlement || this.ServifyPlatinumentitlement">
+                    <td class="eco-title">{{language.Servify}}</td>
+                    <td>{{subscribedStatus ? language['Subscribed'] : language['Unsubscribed']}}</td>
+                  </tr>
+                  <tr *ngIf="ServifyEnableentitlement || this.ServifyGoldentitlement || this.ServifySilverentitlement || this.ServifyPlatinumentitlement">
+                    <td>{{language.Plan}}</td>
+                    <td>{{planCode ? planCode : '-'}}</td>
+                  </tr>
+                  <tr *ngIf="ServifyEnableentitlement || this.ServifyGoldentitlement || this.ServifySilverentitlement || this.ServifyPlatinumentitlement">
+                    <td>{{language['Account Email']}}</td>
+                    <td>{{servifyemail ? servifyemail : '-'}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </table>
+          </div>
+        </div> -->
+      </div>
+     <!-- // -->
+     
+     
+      <div class="d-flex justify-content-between w-100">
+       
+        <div class="flex-left">
+          <div class="row">
+            <div class="col-12 mb-40">
+              <div class="cco-secondary-title-system border-bottom">{{language.Data}} <small>{{dataServiceLabel ?
+                  '(' + dataServiceLabel + ')' : ''}}</small><a class="redo" *ngIf="retryEnableData" type="button" (click)="redoServiceProvision()">{{language['Retry']}}</a></div>
+              <div class="form-group inline-input w-100 m-0">
+                <!-- <label class="col-form-label"> Data Service</label>
+                <div class="d-inline-flex mx-2">
+                  <div class="toggle-swtbtn checkbox switcher">
+                    <label>
+                      <input type="checkbox" name="backgroundSiteScan" id="backgroundSiteScanCheckBox" required />
+                      <span><small></small></span>
+    
+                    </label>
+                  </div>
+                </div> -->
+              </div>
+              <div class="col-md-12 px-0 pl-3 support-key-value">
+                <table id="" class="">
+                  <tbody>
+                    <tr *ngIf="legacyView || (!subscriberLocationId && systemId)  ">
+                      <th scope="row">{{language.Data_Service}}</th>
+                      <td>{{language[dEnable]}}</td>
+                    </tr>
+                    <tr *ngIf="subscriberLocationId  && !legacyView " >
+                      <th scope="row">{{language.Data_Service}}</th>
+                      <td>{{dataServicee2e ? language.enabled : language.Disabled}}</td>
+                    </tr>
+                    
+                    <tr>
+                      <th scope="row">{{language.PPPoE_Username}}</th>
+                      <td>{{pppoeUN ? pppoeUN : userNamee2e ? userNamee2e : pppoeUsername ? pppoeUsername : '-'}}</td>
+                    </tr>
+    
+                    <!-- <tr>
+                      <th scope="row">{{language.PPPoE_Password}}</th>
+                      <td>{{pppoePW ? pppoePW : '-'}}</td>
+                    </tr> -->
+                    <tr *ngIf="legacyView || (!subscriberLocationId && systemId) ">
+                      <th scope="row">{{language.VLAN}}</th>
+                      <td>{{dVLanId ? dVLanId : '-' }}</td>
+                    </tr>
+                    <tr *ngIf="subscriberLocationId  && !legacyView ">
+                      <th scope="row">{{language["VLAN (CE-VLAN)"]}}</th>
+                      <td>{{datacevlane2e === -1 ? 'Untagged':datacevlane2e ? datacevlane2e : '-'}}
+                      </td>
+                  </tr>
+                  <tr *ngIf="subscriberLocationId  && !legacyView ">
+                    <th scope="row">{{language["Notes"]}}</th>
+                    <td>{{dataDescription}}</td>
+                  </tr>
+                    <tr *ngIf="subscriberLocationId  && !legacyView  ">
+                      <th scope="row">{{language.Status}}
+                          <button  *ngIf="dataService?.usoc || datausoc" id="refresh-data"
+                              class="icon-btn" (click)="getServicesStatus()">
+                              <i class="fa fa-refresh primary" aria-hidden="true"></i>
+                          </button>
+                      </th>
+                      <td>
+                          <span class="position-relative d-inline-block">
+                              {{datasvcStatus ? datasvcStatus:'-'}}
+                              <span class="tr-expand position-relative" *ngIf=" dataService?.subSvcState"
+                                  data-target="#collapseErrData1" data-toggle="collapse">
+                                  <img src="../../../../../assets/img/ic_chevrondown_blue.svg"
+                                      alt="icon here">
+                              </span>
+                          </span>
+                      </td>
+                  </tr>
+                  <tr class="collapse" id="collapseErrData1" aria-expanded="false">
+                      <th>{{language.Details}}</th>
+                      <td>{{dataErrorDetails}}</td>
+                  </tr>
+                    <tr *ngIf="legacyView || (!subscriberLocationId && systemId)">
+                      <th scope="row">{{language.Priority_Bits}}</th>
+                      <td>{{dPbit ? dPbit : '-'}}</td>
+                    </tr>
+                    <tr *ngIf="subscriberLocationId  && !legacyView ">
+                      <td>{{language['Static IP Address']}}</td>
+                      <td>{{staticIpAddress ? staticIpAddress : staticIpAddresse2e ? staticIpAddresse2e :'-'}}
+                      </td>
+                  </tr>
+                  <tr *ngIf="subscriberLocationId  && !legacyView  ">
+                      <td>{{language.Netmask}}</td>
+                      <td>{{Netmask ? Netmask : netMaske2e ? netMaske2e :'-'}}
+                      </td>
+                  </tr>
+                  <tr *ngIf="subscriberLocationId  && !legacyView  ">
+                      <td>{{language.Gateway}}</td>
+                      <td>{{staticGateway ? staticGateway : gateWaye2e ? gateWaye2e :'-'}}
+                      </td>
+                  </tr>
+                    
+                    
+                    <!-- <tr>
+                      <th scope="row">Bandwidth Profile</th>
+                      <td>{{dVLanId}}</td>
+                    </tr> -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="col-12 mb-40" *ngIf="(!this.deviceData?.modelName || this.deviceData?.modelName !=='GPR2032H')">
+              <div class="cco-secondary-title-system border-bottom">{{language.Voice}} <small>{{voiceServiceLabel ?
+                  '(' + voiceServiceLabel + ')' : ''}}</small><a class="redo" *ngIf="retryEnableVoice" type="button" (click)="redoServiceProvisionVoice()">{{language['Retry']}}</a></div>
+              <div class="form-group inline-input w-100 m-0">
+                <!-- <label class="col-form-label"> Voice Service</label>
+                <div class="d-inline-flex mx-2">
+                  <div class="toggle-swtbtn checkbox switcher">
+                    <label>
+                      <input type="checkbox" name="backgroundSiteScan" id="backgroundSiteScanCheckBox" required />
+                      <span><small></small></span>
+    
+                    </label>
+                  </div>
+                </div> -->
+              </div>
+              <div class="col-md-12 px-0 pl-3 support-key-value">
+                <table id="" class="">
+                  <tbody>
+                    <tr *ngIf="legacyView || (!subscriberLocationId && systemId)">
+                      <th scope="row">{{language.Voice_Service}}</th>
+                      <td>{{language[viEnable]}}</td>
+                    </tr>
+                    <tr *ngIf="subscriberLocationId  && !legacyView ">
+                      <th scope="row">{{language.Voice_Service}}</th>
+                      <td>{{voiceServicee2e ? language.enabled : language.Disabled}}</td>
+                      
+                    </tr>
+                    <tr *ngIf="legacyView || (!subscriberLocationId && systemId) ">
+                      <th scope="row">{{language.Service_Type}}</th>
+                      <td>{{viServiceType ? viServiceType :'-'}}</td>
+                    </tr>
+                    <tr *ngIf="subscriberLocationId  && !legacyView ">
+                      <th scope="row">{{language.Service_Type}}</th>
+                      <td>{{voiceServiceType ? voiceServiceType : voiceServiceTypee2e ? voiceServiceTypee2e : '-'}}</td>
+                    </tr>
+                    <ng-container *ngIf="subscriberLocationId  && !legacyView ">
+                    <tr *ngFor="let item of VoiceService2" >
+                      <td colspan="2" class="px-0">
+                          <table class="nested-table">
+                              <tr>
+                                  <td class="eco-title">{{language.Interface}}</td>
+                                  <td>{{item.name}}
+                                      <!-- <span *ngIf="item.name.includes('L') && (isAutomaticallyCreatedData && isAutomaticallyCreatedData?.interface )">, {{isAutomaticallyCreatedData?.interface ? isAutomaticallyCreatedData?.interface:''}}</span> -->
+                                  </td>
+                              </tr>
+                              <tr *ngIf="item.sipUsername">
+                                  <td class="pl-12">
+                                      {{language.User_Name}}
+                                  </td>
+                                  <td>
+                                      {{item.sipUsername}}
+                                  </td>
+                              </tr>
+                              <tr *ngIf="item.sipUri">
+                                  <td class="pl-12">
+                                      {{language.Voice_URI}}
+                                  </td>
+                                  <td>
+                                      {{item.sipUri}}
+                                  </td>
+                              </tr>
+                              <!-- <tr *ngIf="item.terminationId">
+                                  <td class="pl-12">
+                                      {{language.Termination_ID}}
+                                  </td>
+                                  <td>
+                                      {{item.terminationId}}
+                                  </td>
+                              </tr> -->
+                          </table>
+                      </td>
+                  </tr>
+                </ng-container>
+                
+    
+                    <tr *ngIf="!voiceSerTypeLegacy && legacyView || (!subscriberLocationId && systemId) ">
+                      <th scope="row">{{language.T38Fax}}</th>
+                      <td>{{viFaxT38 ? language[viFaxT38] || viFaxT38 : '-'}}</td>
+                    </tr>
+                    <tr *ngIf="!voiceSerTypeE2E && subscriberLocationId  && !legacyView ">
+                      <th scope="row">{{language.T38Fax}}</th>
+                      <td>{{faxRelaye2e ? language.enabled : language.Disabled }}</td>
+                    </tr>
+                    <tr *ngIf="!voiceSerTypeLegacy && legacyView || (!subscriberLocationId && systemId)">
+                      <th scope="row">{{language.Dial_Plan}}</th>
+                      <td>{{videodialplan ? videodialplan : '-'}}</td>
+                    </tr>
+                    <!-- *ngIf="legacyView || (!subscriberLocationId && systemId) " -->
+                    <!-- <tr *ngIf="subscriberLocationId  && !legacyView ">
+                      <th scope="row">{{language.Dial_Plan}}</th>
+                      <td>{{dialPlane2e ? dialPlane2e : '-'}}</td>
+                    </tr> -->
+                    <tr *ngIf="subscriberLocationId  && !legacyView ">
+                      <th scope="row">{{language["VLAN (CE-VLAN)"]}}</th>
+                      <td>{{voicecevlane2e ? voicecevlane2e : '-'}}
+                      </td>
+                  </tr>
+                  <tr *ngIf="subscriberLocationId  && !legacyView ">
+                    <th scope="row">{{language["Notes"]}}</th>
+                    <td>{{voiceDescription}}</td>
+                  </tr>
+                    <!-- <tr>
+                      <th scope="row">Adressing Type</th>
+                      <td>{{protectIQ}}</td>
+                    </tr> -->
+                    <tr *ngIf="subscriberLocationId  && !legacyView  ">
+                      <th>{{language.Status}}
+                          <button *ngIf="voiceServicesStatus?.usoc || voiceusoc" id="refresh-voice"
+                              class="icon-btn" (click)="getServicesStatus()">
+                              <i class="fa fa-refresh primary" aria-hidden="true"></i>
+                          </button>
+                      </th>
+                      <td>
+                          <span class="position-relative d-inline-block">
+                              
+                              {{voicesvcStatus ? voicesvcStatus:(isAutomaticallyCreatedData && (isAutomaticallyCreatedData.ontIdentification && isAutomaticallyCreatedData.subSvcState))?',':'-'}} <span *ngIf="isAutomaticallyCreatedData && (isAutomaticallyCreatedData.ontIdentification && isAutomaticallyCreatedData.subSvcState)"> {{voicesvcStatus ? ',':'-'}} {{isAutomaticallyCreatedData.ontIdentification + ': ' + isAutomaticallyCreatedData.subSvcState}}</span>
+                              <span class="tr-expand position-relative" *ngIf="voiceServicesStatus?.subSvcState"
+                                  data-target="#collapseErrVoi1" data-toggle="collapse">
+                                  <img src="../../../../../assets/img/ic_chevrondown_blue.svg"
+                                      alt="icon here">
+                              </span>
+                          </span>
+                      </td>
+                  </tr>
+                  <tr class="collapse" id="collapseErrVoi1" aria-expanded="false">
+                      <td>{{language.Details}}</td>
+                      <td>{{voiceErrorDetails}} <span *ngIf="isAutomaticallyCreatedData && isAutomaticallyCreatedData.errorDetails">{{voiceErrorDetails?',':''}} {{isAutomaticallyCreatedData.ontIdentification +': '+isAutomaticallyCreatedData.errorDetails}}</span>
+                      </td>
+                  </tr>
+                  <tr *ngIf="subscriberLocationId  && !legacyView ">
+                    <td class="eco-title">{{language['RG IP Addressing']}}</td>
+                </tr>
+                  <tr *ngIf="subscriberLocationId  && !legacyView ">
+                  <td class="pl-12">{{language['Static IP Address']}}</td>
+                  <td>{{servicesData?.voice?.staticIpConfigurations[0]?.staticIpAddress ? servicesData?.voice?.staticIpConfigurations[0]?.staticIpAddress :'-'}}
+                  </td>
+              </tr>
+              <tr *ngIf="subscriberLocationId  && !legacyView " >
+                  <td class="pl-12">{{ language.Subnet_Mask }} </td>
+                  <td>{{servicesData?.voice?.staticIpConfigurations[0]?.staticNetmask ? servicesData?.voice?.staticIpConfigurations[0]?.staticNetmask :'-'}}
+                  </td>
+              </tr>
+              <tr *ngIf="subscriberLocationId  && !legacyView ">
+                  <td class="pl-12">{{ language.Default_Gateway }}</td>
+                  <td>{{servicesData?.voice?.staticIpConfigurations[0]?.staticGateway
+                      ? servicesData?.voice?.staticIpConfigurations[0]?.staticGateway
+                      :'-'}}
+                  </td>
+              </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="col-12 mb-40">
+              <div class="cco-secondary-title-system border-bottom">{{language.Video}} <small>{{videoServiceLabel ?
+                  '(' + videoServiceLabel + ')' : ''}}</small><a class="redo" *ngIf="retryEnableVideo" type="button" (click)="redoServiceProvisionVideo()">{{language['Retry']}}</a></div>
+              <div class="form-group inline-input w-100 m-0">
+                <!-- <label class="col-form-label"> Video Service</label>
+                <div class="d-inline-flex mx-2">
+                  <div class="toggle-swtbtn checkbox switcher">
+                    <label>
+                      <input type="checkbox" name="backgroundSiteScan" id="backgroundSiteScanCheckBox" required />
+                      <span><small></small></span>
+    
+                    </label>
+                  </div>
+                </div> -->
+              </div>
+              <div class="col-md-12 px-0 pl-3 support-key-value">
+                <table id="" class="">
+                  <tbody>
+                    <tr *ngIf="legacyView || (!subscriberLocationId && systemId)">
+                      <th scope="row">{{language.Video_Service}}</th>
+                      <td>{{language[vEnable]}}</td>
+                    </tr>
+                    <tr *ngIf="subscriberLocationId  && !legacyView ">
+                      <th scope="row">{{language.Video_Service}}</th>
+                      <td>{{videoServicee2e ? language.enabled : language.Disabled}}</td>
+                    </tr>
+                    <tr *ngIf="legacyView || (!subscriberLocationId && systemId) ">
+                      <th scope="row">{{language.VLAN}}</th>
+                      <td>{{vVLanId ? vVLanId : '-'}}</td>
+                    </tr>
+                    <tr *ngIf="subscriberLocationId  && !legacyView ">
+                      <th scope="row">{{language["VLAN (CE-VLAN)"]}}</th>
+                      <td>{{videocevlane2e ? videocevlane2e : '-'}}
+                      </td>
+                  </tr>
+                  <tr *ngIf="subscriberLocationId  && !legacyView ">
+                    <th scope="row">{{language["Notes"]}}</th>
+                    <td>{{videoDescription}}</td>
+                  </tr>
+    
+                    <tr>
+                      <th scope="row">{{language.Priority_Bits}}</th>
+                      <td>{{vPbit ? vPbit : '-'}}</td>
+                    </tr>
+                    <tr *ngIf="subscriberLocationId  && !legacyView ">
+                      <th>{{language.Status}}
+                          <button  *ngIf="videoServicesStatus?.usoc || videousoc" id="refresh-video"
+                              class="icon-btn" (click)="getServicesStatus()">
+                              <i class="fa fa-refresh primary" aria-hidden="true"></i>
+                          </button>
+                      </th>
+                      <td><span class="position-relative d-inline-block">
+                          {{videosvcStatus ? videosvcStatus:'-'}}
+                              <span class="tr-expand position-relative" *ngIf="videoServicesStatus?.subSvcState"
+                                  data-target="#collapseErrVid1" data-toggle="collapse">
+                                  <img src="../../../../../assets/img/ic_chevrondown_blue.svg"
+                                      alt="icon here">
+                              </span>
+                          </span>
+                      </td>
+                  </tr>
+                  <tr class="collapse" id="collapseErrVid1" aria-expanded="false">
+                      <td>{{language.Details}}</td>
+                      <td>{{videoErrorDetails}}</td>
+                  </tr>
+                    <!-- <tr>
+                      <th scope="row">Location ID</th>
+                      <td>{{protectIQ}}</td>
+                    </tr> -->
+                    <!-- <tr>
+                      <th scope="row">{{language.Bandwidth_Profile}}</th>
+                      <td>{{vBwProfile}}</td>
+                    </tr> -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="flex-right" [hidden]="(!hidesubonly && hideserviceinfo) || !((iqsuitEnable && ((productIQEnableentitlement || proAndExpEnableentitlement || ExperienceIQEnableentitlement || proAndExpEnableentitlement))) || myCommunityIqEntitlement || smallBizIQentitlement || arloEnableentitlement || arloUnlimitedentitlement || arloUnlimitedplusentitlement || Bark_Premiumentitlement || Bark_Juniorentitlement || ServifyEnableentitlement || this.ServifyGoldentitlement || this.ServifySilverentitlement || this.ServifyPlatinumentitlement)">
+          <div class="w-100  mb-40 m-alt">
+            <div class="cco-secondary-title-system border-bottom">
+              {{language['Managed Services']}}
+            </div>
+            <div class="edge-suites-table">
+              <table id="" class="table">
+                <tbody>
+                  <tr class="m12" *ngIf="iqsuitEnable && (productIQEnableentitlement || proAndExpEnableentitlement)">
+                    <td class="eco-title">{{language.ProtectIQ}}</td>
+                    <td>{{proIq ? language[proIq] || proIq : '-'}}</td>
+                  </tr>
+                  <tr  class="m12" *ngIf="iqsuitEnable && (ExperienceIQEnableentitlement || proAndExpEnableentitlement)">
+                    <td class="eco-title">{{language.Experience_IQ}}</td>
+                    <td>{{expIq ? language[expIq] || expIq : '-'}}</td>
+                  </tr>
+                  <tr class="m12" *ngIf="myCommunityIqEntitlement">
+                    <td class="eco-title">{{language["myCommunityIQ"]}}</td>
+                  </tr>
+                  <tr *ngIf="subId && myCommunityIqEntitlement">
+                    <td><span class="pl-12 semibold-text">{{language['Subscriber_Membership']}}</span></td>
+                    <td>{{mycommunityIq ? mycommunityIq : '-'}}</td>
+                    
+                  </tr>
+                  <tr  *ngIf="subId && myCommunityIqEntitlement">
+                    <td colspan="2" class="w-100">
+                      <div class="d-flex">
+                          <div class="w-50 pl-24 no-wrap text-over-ell"  title="{{language['Subscriber Communities']}}">
+                              {{language['Subscriber Communities']}}
+                          </div>
+                      <div class="w-50">
+                          <span
+                            *ngIf="(!communityIq?.subscriber?.communities?.length || !communityArr.length); else subscriberCommunityList">-</span>
+                            <ng-template #subscriberCommunityList>
+                              <div *ngIf="communityIq?.subscriber?.communities?.length > 1">
+                              <span data-toggle="collapse" class="collapsible-el" data-target="#collapseSubsCommunitiesCCO">
+                                  {{communityIq?.subscriber?.communities?.length}} {{language['Communities']}}
+                                  <img src="../../../../../../assets/img/ic_chevrondown_blue.svg"/>
+                              </span>
+                              </div>
+                                <div id="collapseSubsCommunitiesCCO" 
+                                [ngClass]="communityIq?.subscriber?.communities?.length == 1 ? '':'collapse collapsible-content'">
+                                <p class="mb-0"
+                                    *ngFor="let communitiesItem of communityIq?.subscriber?.communities;let i=index">
+                                    {{showMicroSiteName(communitiesItem.micrositeId)}}</p>
+                                </div>
+                            </ng-template>
+                          
+                      </div>
+                  </div>
+                  </td>
+                    <!-- <td>{{language['Subscriber Communities']}}</td>
+                    <td>
+                      <span
+                        *ngIf="(!communityIq?.subscriber?.communities?.length || !communityArr.length); else subscriberCommunityList">-</span>
+                      <ng-template #subscriberCommunityList>
+                        <p class="pr-1 pl-2 mb-0"
+                          *ngFor="let communitiesItem of communityIq?.subscriber?.communities;let i=index">
+                          {{showMicroSiteName(communitiesItem.micrositeId)}}</p>
+                      </ng-template>
+                    </td> -->
+                  </tr>
+                  <tr *ngIf="this.sN && iqsuitEnable && myCommunityIqEntitlement">
+                    <td><span class="semibold-text pl-12">{{language['System_Membership']}}</span></td>
+                    <td>{{RGHotspot ? RGHotspot : '-'}}
+                    </td>
+                  </tr>
+                  <tr *ngIf=" this.sN && iqsuitEnable && myCommunityIqEntitlement">
+                    <td colspan="2" class="w-100">
+                      <div class="d-flex">
+                          <div class="w-50 pl-24 no-wrap text-over-ell"  title="{{language['System Communities']}}">
+                              {{language['System Communities']}}
+                          </div>
+                      <div class="w-50">
+                          <span
+                            *ngIf="(!communityIq?.passpoint?.communities?.length || !communityArr.length); else passpointCommunityList">-</span>
+                            <ng-template #passpointCommunityList>
+                              <div *ngIf="communityIq?.passpoint?.communities?.length > 1">
+                                  <span data-toggle="collapse" class="collapsible-el" data-target="#collapseSysCommunitiesCCO">
+                                      {{communityIq?.passpoint?.communities?.length}} {{language['Communities']}}
+                                      <img src="../../../../../../assets/img/ic_chevrondown_blue.svg"/>
+                                  </span>
+                              </div>
+                                
+                                <div id="collapseSysCommunitiesCCO" 
+                                [ngClass]="communityIq?.passpoint?.communities?.length == 1 ? '':'collapse collapsible-content'" 
+                                *ngIf="communityIq?.passpoint?.communities?.length">
+                                  <p class="mb-0"
+                                  *ngFor="let communitiesItem of communityIq?.passpoint?.communities;let i=index">
+                                  {{showMicroSiteName(communitiesItem.micrositeId)}}</p> 
+                                </div>
+                            </ng-template>
+                          
+                      </div>
+                  </div>
+                  </td>
+                    <!-- <td>{{language['System Communities']}}</td>
+                    <td>
+                      <span
+                        *ngIf="(!communityIq?.passpoint?.communities?.length || !communityArr.length); else passpointCommunityList">-</span>
+                      <ng-template #passpointCommunityList>
+                        <p class="pl-2 pr-1 mb-0"
+                          *ngFor="let communitiesItem of communityIq?.passpoint?.communities;let i=index">
+                          {{showMicroSiteName(communitiesItem.micrositeId)}}</p>
+                      </ng-template>
+                    </td> -->
+                  </tr>
+                  <tr *ngIf="this.sN && iqsuitEnable && myCommunityIqEntitlement">
+                    <td><span class="semibold-text pl-12">{{language["Eduroam"]}}</span></td>
+                    <td>{{Eduroam ? Eduroam : '-'}}
+                    </td>
+                  </tr> 
+                  <tr  *ngIf="this.sN && iqsuitEnable && myCommunityIqEntitlement">
+                    <td class="pl-12">{{language["Passpont_Traffic_Configuration"]}}</td>
+                    <td>{{network? network:'-'}}</td>
+                    
+                  </tr>
+                  <tr *ngIf="this.sN && iqsuitEnable && myCommunityIqEntitlement">
+                    <td class="pl-12">{{language.VLAN_ID}}</td>
+                    <td>{{vlanId ? vlanId : '-'}}
+                    </td>
+                  </tr>
+                  <tr *ngIf="this.sN && iqsuitEnable && myCommunityIqEntitlement">
+                    <td class="pl-12">{{language['Traffic Prioritized']}}</td>
+                    <td>{{communityIq?.passpoint?.prioritizeTraffic && ((communityIq?.passpoint?.enable && this.rgStatus !== "failed") || (communityIq?.eduroam?.enable && this.communityIq?.eduroam?.status?.result!=='failed')) ? language["Yes"] : !communityIq?.passpoint?.enable ? '-' :language["No"] }}
+                    </td>
+                  </tr> 
+                  <tr class="m12" *ngIf="this.sN && iqsuitEnable && smallBizIQentitlement">
+                    <td class="eco-title">{{language["SmartBiz"]}}</td>
+                    <td>{{SmallBizIQ ? language[SmallBizIQ] || SmallBizIQ : '-'}}</td>
+                  </tr>
+                  <tr class="m12" *ngIf="(arloEnableentitlement || arloUnlimitedentitlement|| arloUnlimitedplusentitlement)">
+                    <td class="eco-title">{{language.Arlo}}</td>
+                    <td>{{arloEmail ? language['Subscribed'] : language['Unsubscribed']}}</td>
+        
+                  </tr>
+                  <tr *ngIf="(arloEnableentitlement || arloUnlimitedentitlement|| arloUnlimitedplusentitlement)" >
+                    <td class="pl-12">{{language.Plan}}</td>
+                    <td>{{(arloSmart?.plan ==='PARTNER_UNLIMITED'|| arloSmart?.plan ==='PARTNER_UNLIMITED_CANADA')? 'Unlimited' : ( arloSmart?.plan
+                      ==='PARTNER_UNLIMITED_PLUS' || arloSmart?.plan
+                      ==='PARTNER_UNLIMITED_PLUS_CANADA' )? 'Unlimited Plus':(arloSmart?.plan ==='PARTNER_REGULAR' || arloSmart?.plan ==='PARTNER_REGULAR_CANADA') ? arloSmart['2kCameras']:
+                      '-'}}  {{(arloSmart?.plan ==='PARTNER_REGULAR' || arloSmart?.plan ==='PARTNER_REGULAR_CANADA') ? language['Cameras']:''}}<span [hidden]="!onboard2kcamera">({{onboard2kcamera ? onboard2kcamera : ''}})</span></td>
+                  </tr>
+                  <tr *ngIf="(arloEnableentitlement || arloUnlimitedentitlement|| arloUnlimitedplusentitlement)">
+                    <td class="pl-12"> {{language['Account Email']}} </td>
+                    <td>{{arloEmail ? arloEmail : '-'}}</td>
+        
+                  </tr>
+                  <tr class="m12" *ngIf="Bark_Premiumentitlement || Bark_Juniorentitlement">
+                    <td class="eco-title">{{language['Bark']}}</td>
+                    <td>{{BarkPlan ? language['Subscribed'] : language['Unsubscribed']}}</td>
+                  </tr>
+                  <tr *ngIf="Bark_Premiumentitlement || Bark_Juniorentitlement">
+                    <td class="pl-12">{{language.Plan}}</td>
+                    <td>{{bark?.planCode === 'bark_premium' ? language.Premium_Monthly : this.bark?.planCode === 'bark_junior' ? this.language.Junior_Monthly: '-'}}</td>
+                  </tr>
+                  <tr *ngIf="Bark_Premiumentitlement || Bark_Juniorentitlement">
+                    <td class="pl-12">{{language["Email"]}}</td>
+                    <td>{{BarkEmail ? BarkEmail : '-'}}</td>
+                  </tr>
+                  <tr class="m12"  *ngIf="ServifyEnableentitlement || this.ServifyGoldentitlement || this.ServifySilverentitlement || this.ServifyPlatinumentitlement">
+                    <td class="eco-title">{{language.Servify}}</td>
+                    <td>{{subscribedStatus ? language['Subscribed'] : language['Unsubscribed']}}</td>
+                  </tr>
+                  <tr *ngIf="ServifyEnableentitlement || this.ServifyGoldentitlement || this.ServifySilverentitlement || this.ServifyPlatinumentitlement">
+                    <td class="pl-12">{{language.Plan}}</td>
+                    <td>{{planCode ? planCode : '-'}}</td>
+                  </tr>
+                  <tr *ngIf="ServifyEnableentitlement || this.ServifyGoldentitlement || this.ServifySilverentitlement || this.ServifyPlatinumentitlement">
+                    <td class="pl-12">{{language['Account Email']}}</td>
+                    <td>{{servifyemail ? servifyemail : '-'}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="system-details-wrapper mb-40" [hidden]="hideserviceinfo" *ngIf="isPRConfiguredOutside && !liveSystem">
+        <div class="system-details-item-full">
+          <div class="alert alert-info margin-top-20" role="alert">
+            <span>{{ language["Services for this system are managed by Operation Cloud"] }}</span>
+          </div>
+        </div>
+      </div> -->
+      </div>
+  </div>
+</section>

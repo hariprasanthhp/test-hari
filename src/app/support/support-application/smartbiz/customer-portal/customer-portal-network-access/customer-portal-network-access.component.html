@@ -1,0 +1,172 @@
+<div id="network-access">
+    <div class="row ccl-form">
+        <div class="col-md-4">
+            <div class="mb-2">
+                <label>
+                    {{ language['Network Access'] }}
+                </label>
+                <ng-select name="networkAccessType" [(ngModel)]="networkAccessType" [items]="networkAccess"
+                    (change)="networkChange();" [searchable]="false" value="id" bindLabel="label" bindValue="id">
+                </ng-select>
+            </div>
+        </div>
+    </div>
+
+    <div class="row ccl-form" *ngIf="networkAccessType == 'Everyday'">
+        <div class="captive-time mb-2 col-md-3">
+            <div for="startTime">
+                {{ language['Start Time'] }}
+            </div>
+            <div class="captive-time-item position-relative">
+                <p-calendar id="startTime" name="startTime" [(ngModel)]="newSchedule.startTime" [showIcon]="true"
+                    (ngModelChange)="calcualteStopTime()" (onClose)="addSchedule(false);" [hourFormat]="12"
+                    timeOnly="true" showTime="true" [readonlyInput]="true">
+                </p-calendar>
+            </div>
+        </div>
+
+        <div class="captive-time mb-2 col-md-3">
+            <div for="stopTime">
+                {{ language['End Time'] }}
+            </div>
+            <div class="captive-time-item position-relative">
+                <p-calendar id="stopTime" name="stopTime" [(ngModel)]="newSchedule.stopTime" [showIcon]="true"
+                    (onClose)="addSchedule(false)" [minDate]="calcualteStopTime('get')" [maxDate]="maxDate"
+                    [hourFormat]="12" timeOnly="true" showTime="true" [readonlyInput]="true">
+                </p-calendar>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <button type="button" class="btn-default primary btn-sm-primary mt-2" *ngIf="networkAccessType == 'Custom'"
+            (click)="openAddScheduleModal()">
+            + {{ language['Add Network Access Hours'] }}
+        </button>
+    </div>
+
+    <div class="row" *ngIf="networkAccessType == 'Custom'">
+        <div class="captive-hours-table">
+            <table>
+                <thead>
+                    <th>{{ language['Day'] }}</th>
+                    <th>{{ language['Network Access Hours'] }}</th>
+                    <th></th>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let row of formattedSchedules; let dayIndex = index">
+                        <td>{{ row.label }}</td>
+                        <td>
+                            <div *ngIf="row.timeRanges">
+                                <p *ngFor="let timeRange of row.timeRanges">
+                                    {{ getTimeString(timeRange) }}
+                                </p>
+                            </div>
+                            <p *ngIf="!row.timeRanges.length">{{ language['No Limit'] }}</p>
+                        </td>
+                        <td>
+                            <div class="captive-hours-delete"
+                                *ngFor="let timeRange of row.timeRanges, let networkAccessIndex = index;">
+                                <img src="../../../../assets/img/net-delete.svg" class="net-delete pointer"
+                                    [title]="language.Delete"
+                                    (click)="deleteNetworkAccess(row.id, networkAccessIndex);">
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<ng-template #addScheduleModal let-modal>
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" (click)="modal.close('cancel')"></span>
+        </button>
+    </div>
+    <div class="modal-body ccl-form">
+        <h2 class="title">
+            {{ language['Network Access Hours'] }}
+        </h2>
+
+        <div class="w-100 d-flex alert alert-danger fade show" *ngIf="errorMessage">
+            <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+            <div class="d-inline-flex w-75" [innerHtml]="errorMessage"></div>
+            <button type="button" class="close" (click)="errorMessage = ''">
+                <span></span>
+            </button>
+
+        </div>
+
+        <div class="mb-2" *ngIf="networkAccessType == 'Custom'">
+            <label>
+                {{ language['Select Day(s)'] }}
+                <span class="error">*</span>
+            </label>
+            <ng-select [items]="days" bindLabel="label" bindValue="id" name="selectedDays"
+                [(ngModel)]="newSchedule.selectedDays" (change)='validateDays()' [multiple]="true"
+                [closeOnSelect]="false" [searchable]="false">
+            </ng-select>
+            <div *ngIf="formSubmitted && !newSchedule.selectedDays.length" class="error">
+                {{language['Please select a day']}}
+            </div>
+        </div>
+
+        <div ng-reflect-ng-class="toggle-swtbtn checkbox switche" class="toggle-swtbtn checkbox switcher mr-2">
+            <label for="enabled">
+                <input type="checkbox" name="enabled" id="enabled" [(ngModel)]="newSchedule.enabled"
+                    (ngModelChange)="disabledNetworkAccess()" class="ng-untouched ng-pristine ng-valid ng-dirty">
+                <span class="mr-2"><small></small></span>
+                <span *ngIf="newSchedule.enabled">{{ language['Enabled'] }}</span>
+                <span *ngIf="!newSchedule.enabled">{{ language['Disabled'] }}</span>
+            </label>
+        </div>
+
+        <div class="row" *ngIf="newSchedule.enabled">
+            <div class="captive-time mb-2 col-md-6" *ngIf="networkAccessType != 'Always'">
+                <div for="startTime">
+                    {{ language['Start Time'] }}
+                </div>
+                <div class="captive-time-item position-relative">
+                    <p-calendar id="startTime" name="startTime" [(ngModel)]="newSchedule.startTime" [showIcon]="true"
+                        (ngModelChange)="calcualteStopTime(); validateDays();" [hourFormat]="12" timeOnly="true"
+                        showTime="true" [readonlyInput]="true">
+                    </p-calendar>
+                </div>
+            </div>
+
+            <div class="captive-time mb-2 col-md-6" *ngIf="networkAccessType != 'Always'">
+                <div for="stopTime">
+                    {{ language['End Time'] }}
+                </div>
+                <div class="captive-time-item position-relative">
+                    <p-calendar id="stopTime" name="stopTime" [(ngModel)]="newSchedule.stopTime" [showIcon]="true"
+                        (ngModelChange)="validateDays()" [minDate]="calcualteStopTime('get')" [maxDate]="maxDate"
+                        [hourFormat]="12" timeOnly="true" showTime="true" [readonlyInput]="true">
+                    </p-calendar>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="duplicateTimeRangeError" class="error mb-2">
+            {{ language['The selected date and time is already Added'] }}
+        </div>
+
+        <div>
+            <button type="button" id="add" class="btn-default primary px-3 mr-3 mt-5" (click)="addSchedule(true)"
+                [disabled]="disableAddButton || (formSubmitted && networkAccessType == 'Custom' && !this.newSchedule.selectedDays.length)">
+                {{ language['Save Access Hours'] }}
+            </button>
+            <button type="button" *ngIf="networkAccessType == 'Custom' && newSchedule.enabled" id="add-another"
+                class="btn-default default btn-dft px-3 mr-3 mt-5" (click)="addSchedule(false)"
+                [disabled]="disableAddButton || (formSubmitted && networkAccessType == 'Custom' && !this.newSchedule.selectedDays.length)">
+                {{ language['Save & Add Another'] }}
+            </button>
+            <a id="cancel" class="primary" (click)="modal.close('cancel')">
+                {{ language.cancel }}
+            </a>
+        </div>
+
+    </div>
+</ng-template>

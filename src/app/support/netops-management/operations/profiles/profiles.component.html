@@ -1,0 +1,113 @@
+<div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess">
+  {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} </div>
+<div id="profiles" class="tab-pane" *ngIf="hasScopeAccess">
+  <div *ngIf="errorMsg" class="w-100 alert alert-danger fade show ng-star-inserted">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+    <button type="button" (click)="onCloseError()" class="close">
+      <span></span>
+    </button>
+    <div class="d-inline-flex" [innerHtml]="errorMsg"></div>
+  </div>
+
+  <div class="py-3 warning-msg" *ngIf="deleteProfileData">
+    <span class="error-img"><img src="./assets/img/warning-icon.svg" /></span>
+    <div class="d-inline-flex text-break">{{ language["Are you sure you want to
+      delete"] }}
+      {{ language.The_Profile }}<b class="pl-1">"{{ modalInfo }}"</b> ?</div>
+    <div class="btn-con-sec float-right">
+      <button class="btn-default btn-primary px-3 mr-2" id="deletePFBtn" (click)="confirmDeleteSecleted()">
+        {{ language.Confirm }}
+      </button>
+      <button class="btn-default btn-dft py-1" (click)="closeModal()">
+        {{ language.Cancel }}
+      </button>
+    </div>
+  </div>
+  <div class="d-block my-3 d-sm-none ccl-Secondary-title mb-2 col-md-12 border-bottom">Profile</div>
+  <div class="w-100 position-relative">
+    <div class="loader pt-5 align-items-start" *ngIf="loading">
+      <div class="d-flex align-items-start justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <!-- <div class="col-md-5">
+        <h4 id="netops-profile-title">{{language.Profiles}}</h4>
+      </div> -->
+      <div class="col-md-7 text-left my-3">
+        <button *ngIf="hasWriteAccess" type="button" id="addProfile" class="btn-default primary px-3"
+          (click)="onAddProfile()">
+          {{ language.Add_Profile }}
+        </button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="netops-profile-list" id="netops-profile-list-table">
+          <table id="profile-list-table" datatable [dtOptions]="tableOptions" class="row-border hover table-alter">
+            <thead>
+              <tr>
+                <th class="profile-name">{{ language.Name }}</th>
+                <th class="profile-description">{{ language.description }}</th>
+                <th class="profile-type">{{ language.Type }}</th>
+                <th class="profile-edit-delete"></th>
+              </tr>
+            </thead>
+            <tbody *ngIf="profileTableData?.length > 0">
+              <tr id="{{ item._id }}" class="cursor-pointer"
+                *ngFor="let item of profileTableData; let profileIndex = index">
+                <td (click)="showOverView(item)">
+                  {{ item.name ? item.name : "" }}
+                </td>
+                <td (click)="showOverView(item)">
+                  {{ item.description ? item.description : "" }}
+                </td>
+                <td *ngIf="item?.configurations?.length === 1" (click)="showOverView(item)">
+                  {{ item.configurations ? language[item.configurations[0].category] || item.configurations[0].category
+                  :
+                  "" }}
+                </td>
+                <td *ngIf="item?.configurations?.length === 2" (click)="showOverView(item)">
+                  <!-- {{ item.configurations[0].category }} and
+                  {{ item.configurations[1].category }} -->
+
+                  {{ language[item.configurations[0].category] || item.configurations[0].category }} {{language.and}}
+                  {{ language[item.configurations[1].category] || item.configurations[1].category }}
+                </td>
+                <td *ngIf="item?.configurations?.length > 2" (click)="showOverView(item)">
+                  <!-- {{ item.configurations[0].category }} and
+                  {{ item.configurations.length - 1 }} more categories -->
+
+                  {{ language[item.configurations[0].category] || item.configurations[0].category}} {{language.and}}
+                  {{ item.configurations.length - 1 }} {{language['more categories']}}
+                </td>
+                <td>
+                  <div class="d-flex ml-2" *ngIf="hasWriteAccess">
+                    <a href="javascript:void(0)" id="editProfile-{{ item._id }}" (click)="editProfile(item)"
+                      title="{{ language.Edit }}"><i class="cursor-pointer mx-2 fa fa-pencil"
+                        aria-hidden="true"></i></a>
+                    <a href="javascript:void(0)" id="deleteProfile-{{ item._id }}" class="px-2 cursor-pointer"
+                      title="{{ language.delete }}" (click)="deleteProfile(item)"><i class="fa fa-trash-o"
+                        aria-hidden="true"></i></a>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+            <tbody *ngIf="profileTableData?.length === 0 && !loading">
+              <tr>
+                <td colspan="5" class="no-data-available">
+                  {{ language["No data available in table"] }}
+                </td>
+              </tr>
+            </tbody>
+
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

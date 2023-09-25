@@ -1,0 +1,1 @@
+export const ALARMS_KPI = { "alarm": { "cleared": { "critical": 0, "major": 0, "minor": 0, "warning": 0, "info": 0 }, "raised": { "critical": 5940, "major": 6803, "minor": 127, "warning": 5884, "info": 5884 } }, "event": null }

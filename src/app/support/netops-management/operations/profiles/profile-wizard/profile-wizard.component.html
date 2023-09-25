@@ -1,0 +1,131 @@
+<div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess"> 
+  {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} </div>
+<div class="loader" *ngIf="loading && hasScopeAccess">
+  <div class="d-flex justify-content-center">
+    <div class="spinner-border text-primary">
+      <span class="sr-only">{{ language.Loading }}</span>
+    </div>
+  </div>
+</div>
+<div class="row" *ngIf="hasScopeAccess">
+  <div class="col-md-12 my-3"><button type="button" class="close" (click)="close()"><span></span></button></div>
+
+  <div class="col-md-12">
+    <div *ngIf="!showOverViewPage" class="profile-wizard" id="profileWizard">
+      <!-- <span class="net-ops-secondary-title" id="addProfile">{{
+        language.Wizard
+        }}</span> -->
+      <section class="stepper-main mb-3">
+        <!-- <div class="stepper col-12 px-0">
+          <div class="step--{{ i + 1 }}" *ngFor="let tab of addProfileTab; let i = index" (click)="onTabChange(i)"
+            [ngClass]="{
+              'step-success':
+                (this.addProfileObj.start.name &&
+                  tab === 'Start' &&
+                  activeTab !== tab &&
+                  !addProfileObj.buildProfile.isStepperClicked) ||
+                (this.addProfileObj.buildProfile.categoryList.length > 0 &&
+                  tab === 'Build Profile' &&
+                  activeTab !== tab &&
+                  !addProfileObj.buildProfile.isStepperClicked),
+              'step-active': activeTab === tab
+            }">
+            {{ language[tab] }}
+          </div>
+        </div> -->
+        <!--new stepper-->
+
+        <ul class="stepper-ui">
+          <!-- <li *ngFor="let tab of addProfileTab; let i = index">
+            <button title="{{ language[tab] }}" (click)="onTabChange(i)" [disabled]="tab!='Start'  && activeTab !== tab" [ngClass]="{
+                'step-done':
+                  (this.addProfileObj.start.name &&
+                    tab === 'Start' &&
+                    activeTab !== tab &&
+                    !addProfileObj.buildProfile.isStepperClicked) ||
+                  (this.addProfileObj.buildProfile.categoryList.length > 0 &&
+                    tab === 'Build Profile' &&
+                    activeTab !== tab &&
+                    !addProfileObj.buildProfile.isStepperClicked),
+                'step-current': activeTab === tab
+              }">
+              <span>{{ language[tab] }}</span></button>
+          </li> -->
+
+
+
+
+          <li>
+            <button title="{{ language.Start }}" (click)="onTabChange(0)" [ngClass]="{'step-current': activeTab === 'Start',
+             'step-done':
+            (this.addProfileObj.start.name &&
+              activeTab !== 'Start' &&
+              !addProfileObj.buildProfile.isStepperClicked)}">
+              <span>{{ language.Start }}</span></button>
+          </li>
+          <li>
+
+            <button title="{{language.Build_Profile}}" (click)="onTabChange(1)"
+              [disabled]="(!this.addProfileObj.start.name || this.addProfileObj.buildProfile.categoryList.length ===0)"
+              [ngClass]="{'step-current': activeTab === 'Build Profile',
+            'step-done':
+            (this.addProfileObj.start.name && this.addProfileObj.buildProfile.categoryList.length > 0 &&
+              activeTab !== 'Build Profile' &&
+              !addProfileObj.buildProfile.isStepperClicked)}">
+              <span>{{language.Build_Profile}}</span></button>
+          </li>
+          <li>
+            <button title="{{language.Review}}" (click)="onTabChange(2)"
+              [disabled]="(!this.addProfileObj.start.name || this.addProfileObj.buildProfile.categoryList.length===0)"
+              [ngClass]="{'step-current': activeTab === 'Review'}">
+              <span>{{language.Review}}</span></button>
+          </li>
+        </ul>
+
+        <!--new stepper end-->
+        <div style="position: absolute; right: 0px; top: 0px;">
+          <!--<button type="button" id="previousbtn" class="btn-arrow btn-arr-prev btn-grey mr-2"
+            [disabled]="selectedTabIndex === 0" [ngClass]="{ primary: selectedTabIndex !== 0 }"
+            (click)="onTabChange(selectedTabIndex - 1)">-->
+          <button type="button" id="previousbtn" class="btn-arrow btn-arr-prev btn-grey mr-2"
+            [disabled]="selectedTabIndex === 0" (click)="onTabChange(selectedTabIndex - 1)">
+            <img src="assets/img/ic_chevronleft_grey.svg"> {{ language.Previous }}
+          </button>
+          <button type="button" id="nextbtn" class="btn-default btn-arr-nxt primary mr-2 nxt-btn"
+            *ngIf="selectedTabIndex + 1 !== addProfileTab?.length" (click)="onTabChange(selectedTabIndex + 1)">
+            {{ language.Next }} <img src="assets/img/ic_chevron-r-w.svg">
+          </button>
+          <button type="button" id="finishbtn" class="btn-default primary px-3"
+            *ngIf="selectedTabIndex + 1 === addProfileTab?.length" (click)="onSave()">
+            {{ language.Finish }}
+          </button>
+        </div>
+      </section>
+      <div *ngIf="errorMsg" class="w-100 alert alert-danger fade show ng-star-inserted">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+        <button type="button" (click)="onCloseError()" class="close">
+          <span></span>
+        </button>
+        <div class="d-inline-flex" [innerHtml]="language[errorMsg] || errorMsg"></div>
+      </div>
+      <app-profile-start-wizard [addProfileObj]="addProfileObj" *ngIf="activeTab === 'Start'">
+      </app-profile-start-wizard>
+      <app-profile-build-wizard [buildProfileObj]="addProfileObj.buildProfile" (CerrorMsg)="errorMsg=$event"
+        *ngIf="activeTab === 'Build Profile'">
+      </app-profile-build-wizard>
+      <app-profile-review-wizard [isOverViewPage]="false" [addProfileObj]="addProfileObj"
+        *ngIf="activeTab === 'Review'">
+      </app-profile-review-wizard>
+
+
+    </div>
+  </div>
+</div>
+
+<!-- <a *ngIf="showOverViewPage" class="flex-end back-to pointer mb-2" (click)="profilesBack();">
+  <span id="netops-back-to-perf-test-btn" style="margin-left: 5px"><i class="fa fa-angle-left"></i> {{
+    language.Back_Profiles }}
+  </span>
+</a> -->
+<app-profile-review-wizard *ngIf="showOverViewPage" [isOverViewPage]="true" [addProfileObj]="addProfileObj">
+</app-profile-review-wizard>

@@ -1,0 +1,53 @@
+<div id="device-groups" class="tab-pane">
+    <button type="button" class="btn-default primary px-3 float-right"><a
+            routerLink="/support/netops-management/netop-profiles-new" (Click)="$event.preventDefault()"
+            routerLinkActive="active">{{language.New_Profile}}</a></button>
+    <h4 class="mb-4">{{language.Profiles}}</h4>
+    <div class="table-responsive">
+        <table datatable class="row-border hover table-alter">
+            <thead>
+                <tr>
+                    <th>{{language.Name}}</th>
+                    <th>{{language.description}}</th>
+                    <th>{{language.Type}}</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Susan Jordan</td>
+                    <td></td>
+                    <td>Dynamic</td>
+                    <td><a data-toggle="modal" class="col-1" data-target="#editModal" href="#"><i
+                                class="fa fa-pencil-square" aria-hidden="true"></i></a>
+                        <a href="#"><i class="fa fa-trash-o col-1" aria-hidden="true"></i></a></td>
+                </tr>
+                <tr>
+                    <td>All 884E</td>
+                    <td></td>
+                    <td>Dynamic</td>
+                    <td><a data-toggle="modal" class="col-1" data-target="#editModal" href="#"><i
+                                class="fa fa-pencil-square" aria-hidden="true"></i></a>
+                        <a href="#"><i class="fa fa-trash-o col-1" aria-hidden="true"></i></a></td>
+                </tr>
+                <tr>
+                    <td>Dummy NOC ROLE</td>
+                    <td></td>
+                    <td>Static</td>
+                    <td><a data-toggle="modal" class="col-1" data-target="#editModal" href="#"><i
+                                class="fa fa-pencil-square" aria-hidden="true"></i></a>
+                        <a href="#"><i class="fa fa-trash-o col-1" aria-hidden="true"></i></a></td>
+                </tr>
+                <tr>
+                    <td>Nolan Ryan</td>
+                    <td></td>
+                    <td>Static</td>
+                    <td><a data-toggle="modal" class="col-1" data-target="#editModal" href="#"><i
+                                class="fa fa-pencil-square" aria-hidden="true"></i></a>
+                        <a href="#"><i class="fa fa-trash-o col-1" aria-hidden="true"></i></a></td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+</div>

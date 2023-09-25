@@ -1,0 +1,18 @@
+.line-h-20px{
+    line-height: 20px;
+}
+.form{
+    padding: 30px;
+}
+.box{
+    background-color: #FFFFFF;
+    border-radius: 24px;
+     box-shadow: 2px 3px 43px -12px #4D4D4D26;
+     border: 1px solid #EBEAEF;
+}
+input:read-only {
+    // cursor: no-drop;
+}
+.inp-disabled::ng-deep  * {
+    cursor: no-drop !important;
+ }

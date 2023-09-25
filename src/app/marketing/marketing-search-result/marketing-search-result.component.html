@@ -1,0 +1,131 @@
+<div class="subscriber-details">
+    <div class="loader" *ngIf="loader">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">{{language.Loading}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="alert alert-warning alert-dismissible fade show" role="alert" *ngIf="campaignListError">
+        <span class="success-img"><img src="./assets/img/error-icon.svg" /></span>
+        <div class="d-inline-flex w-75 text-left"> {{campaignListErrorMsg}}.</div>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true" (click)='errorReset()'></span>
+        </button>
+    </div>
+    <div class="subs-title">
+        <div class="st-header flex">
+            <div class="sth-left">
+                <!-- <h2 class="greyaa" style="font-size: 30px;">{{subscriberCount +
+                    campaignCount}} Results for <b>{{searchName}}</b></h2> -->
+
+                <h4 class="title flex" id="filterCountId">{{ (showFilterCount) ? filterCount : (count + campaignCount) |
+                    number }}
+                    {{(count <= 1 || filterCount <=1) ? language.Result : language.Result1}}
+                    {{ searchName ? 'for' : '' }} &nbsp; <b>
+                        {{searchName}} </b>
+                </h4>
+            </div>
+        </div>
+        <!--header-->
+    </div>
+    <!--title-->
+    <div class="tabs-wrapper">
+        <div class="tabs flex">
+            <!-- <a href="javascript:void(0)" class="active" [routerLink]="['/subscriber-segments']">Recommended</a> -->
+            <a href="javascript:void(0)" class="min-w-220" [ngClass]="{'active': activeTab=='subscribers'}"
+                (click)="tab_Recom_Seg_Camp('subscribers')">{{language.Subscribers}}<span
+                    class="badge badge-pill badge-primary badge-icon">{{count | number}}</span></a>
+            <!-- <a href="javascript:void(0)" [ngClass]="{'active': segment}"
+                (click)="tab_Recom_Seg_Camp('segment')">{{language.Segments}}<span
+                    class="badge badge-pill badge-primary badge-icon">21</span></a> -->
+            <a href="javascript:void(0)" class="min-w-220" [ngClass]="{'active':activeTab=='campaigns'}"
+                (click)="tab_Recom_Seg_Camp('campaigns')">{{language.Campaigns}}<span
+                    class="badge badge-pill badge-primary badge-icon">{{campaignCount | number}}</span></a>
+        </div>
+
+        <div class="table-responsive">
+            <div [ngClass]="activeTab == 'subscribers' ? 'd-block' : 'd-none'">
+                <table id="subscriber-table" datatable [dtOptions]="dtOptions"   class="row-border w-100">
+                    <thead>
+                        <tr>
+                            <th>{{language.Name}}</th>
+                            <th>{{language.Phone}}</th>
+                            <th>{{language.address}}</th>
+                        </tr>
+                    </thead>
+                    <tbody [ngClass]="marketingSubscriberSearchTableShow ? 'table-row-group': 'd-none'">
+                        <tr *ngFor="let item of marketingSubscriberSearchTable">
+                            <td class="content-wrap" (click)="subscriberInsights(item.subscriberId)"><span
+                                    class=" campaign-link" title={{item.name}}>{{item?.name !== undefined ? item.name : '-'}}</span></td>
+                            <td>{{item?.phone !== undefined ? item.phone : '-'}}</td>
+                            <td>{{item?.serviceAddress !== undefined ? item.serviceAddress : '-'}}</td>
+                        </tr>
+
+                    </tbody>
+                    <tbody [ngClass]="!marketingSubscriberSearchTableShow ? 'table-row-group': 'd-none'">
+                        <tr>
+                            <td colspan="5" class="text-center">{{language.nodata}}</td>
+                        </tr>
+                    </tbody>
+
+                </table>
+            </div>
+            <div *ngIf="showExcessError" class="mt-2">
+                <p class="req-text text-small"> {{language.searchError}}</p>
+            </div>
+
+
+            <!-- <table *ngIf="segment" datatable class="row-border" [dtOptions]="dtOptions">
+                <thead>
+                    <tr>
+                        <th>{{language.Name}}</th>
+                        <th>{{language.Type}}</th>
+                        <th>{{language.Filters}}</th>
+                        <th>{{language.Subscribers}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of table_Segement_Array">
+                        <td>{{item.name}}</td>
+                        <td>{{item.type}}</td>
+                        <td>{{item.filter}}</td>
+                        <td>{{item.Subs}}</td>
+                    </tr>
+
+                </tbody>
+            </table> -->
+            <div [ngClass]="activeTab == 'campaigns' ? 'd-block' : 'd-none'">
+                <app-campaign-results [ngClass]="marketingCampaignSearchTable ? 'd-block' : 'd-none'" [totalCounts]="campaignRes">
+                </app-campaign-results>
+                <div class=" col-lg-12 col-md-12 col-sm-12 alert alert-warning alert-dismissible fade show" role="alert"
+                *ngIf="alertError">
+                <span class="success-img"><img src="./assets/img/error-icon.svg" /></span>
+                <div class="d-inline-flex text-left w-75">{{alertMessage}}.</div>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true" (click)='errorReset()'></span>
+                </button>
+               </div>
+                <div class="text-center" *ngIf="loaderCampaign">
+                    <div class="pos-text">
+                        <div class="spinner-border text-primary loader">
+                            <span class="sr-only">{{language.Loading}}</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+            </div>
+
+
+        </div>
+        <!-- <div class="no-data border-for-no-data text-center" *ngIf="marketingSubscriberSearchTableError">
+            <span>{{language.nodata}}</span>
+        </div> -->
+
+        <!-- <div class="no-data border-for-no-data text-center" *ngIf="marketingCampaignSearchTableError">
+            <span>{{language.nodata}}</span>
+        </div> -->
+
+    </div>
+</div>

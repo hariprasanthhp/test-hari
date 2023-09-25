@@ -1,0 +1,22 @@
+<div role="alert" class="alert alert-warning" *ngIf="!hasPageAccess">
+    {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} </div>
+
+<section [hidden]="!hasPageAccess">
+    <div class="container mp-0">
+        <div class="row mm-0">
+            <div class="col-12 col-md-2 pl-0 mpr-0" *ngIf="hasPageAccess">
+                <ul id="netops-list-menu" class="nav flex-column left-menu tab-view-style mbr-none">
+                    <li class="nav-item">
+                        <a class="list-group-item list-group-item-action" routerLink="/cco/services/orchestration"
+                            routerLinkActive="active">L2
+                            VPN</a>
+                    </li>
+
+                </ul>
+            </div>
+            <div class="col-12 col-md-10 padl mp-0 mmt-3 pr-0 position-relative" [hidden]="!hasPageAccess">
+                <router-outlet></router-outlet>
+            </div>
+        </div>
+    </div>
+</section>

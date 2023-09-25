@@ -1,0 +1,437 @@
+<div class="container position-relative">
+    <div class="loader" *ngIf="loading || allDataLoading || filterLoading">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">{{language.Loading}}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row py-4" *ngIf="buttonVisible">
+        <div class="col-md-9">
+            <div class=" d-flex">
+                <div>
+                    <button id="create-btn" class="btn-default primary mx-2"
+                        (click)="showCreate()">{{language.create}}</button>
+                </div>
+                <div>
+                    <button id="export-btn" class="btn-default primary px-2 mx-2"
+                        (click)="export()">{{language.exportAssigned}}</button>
+                </div>
+                <div class="upload-btn-wrapper">
+                    <button class="btn-default primary mx-2 px-2"
+                        (click)="fullImportUpload()">{{language.fullImportAssigned}}</button>
+                    <input type="file" accept=".csv" id="fullImportUpload" style="display:none" #importFullInput
+                        (change)="fullImport($event, true)" />
+                </div>
+                <div class="upload-btn-wrapper">
+                    <label for="inc-import"
+                        class="btn-default primary mx-2 cursor-pointer">{{language.incrementalImportAssigned}}
+                    </label>
+                    <input type="file" id="inc-import" accept=".csv" (change)="fullImport($event, false)"
+                        style="display:none" #importInput />
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3 align-self-end d-none">
+            <div class="ccl-form">
+                <input type="search" name="searchbox" class="input-sm" placeholder="">
+                <button class="serach-but btn-default primary btn-icon-md inline">
+                    <i class="fa fa-search" aria-hidden="true"></i></button>
+            </div>
+        </div>
+    </div>
+    <section *ngIf="createView">
+        <div class="row my-3 py-3">
+            <div class="col-md-12">
+                <form>
+                    <div class="row form-inline">
+                        <div class="form-group mb-2 col-md-2 align-self-start">
+                            <label for="staticEmail2" class="">{{language.ip}} <span class="error">*</span></label>
+                        </div>
+                        <div class="ccl-form mx-sm-3 mb-2 align-self-end">
+                            <ng-select class="ng-select-250" [items]="subnetVersions" [multiple]="false" placeholder=""
+                                [(ngModel)]="subnetVersionsSelected" [ngModelOptions]="{standalone: true}"
+                                [clearable]="false" [searchable]="false" (change)=subnetVerChoose()>
+                            </ng-select>
+                        </div>
+                    </div>
+                    <div class="row form-inline">
+                        <div class="form-group mb-2 col-md-2 align-self-start">
+                            <label for="staticEmail2" class="">{{language.ipv4}}</label>
+                        </div>
+                        <div class="ccl-form mx-sm-3 mb-2 align-self-end">
+                            <label for="inputPassword2" class="sr-only"></label>
+                            <input type="text" name="newSubnetV4" class="w-250px" placeholder="" [(ngModel)]="newIpv4"
+                                [disabled]="subnetVersionsSelected == 'IP-V6'"
+                                trimSpace (blur)="removeUnwantedSpace('newIpv4',newIpv4)">
+                        </div>
+                    </div>
+                    <div class="row form-inline">
+                        <div class="form-group mb-2 col-md-2 align-self-start">
+                            <label for="staticEmail2" class="">{{language.ipv6}}</label>
+                        </div>
+                        <div class="ccl-form mx-sm-3 mb-2 align-self-end">
+                            <label for="inputPassword2" class="sr-only"></label>
+                            <input type="text" name="newSubnetV6" class="w-250px" placeholder="" [(ngModel)]="newIpv6"
+                                [disabled]="subnetVersionsSelected == 'IP-V4'" 
+                                trimSpace (blur)="removeUnwantedSpace('newIpv6',newIpv6)">
+                        </div>
+                    </div>
+                    <div class="row form-inline">
+                        <div class="form-group mb-2 col-md-2 align-self-start">
+                            <label for="staticEmail2" class="">{{language.name}} <span class="error">*</span></label>
+                        </div>
+                        <div class="ccl-form mx-sm-3 mb-2 align-self-end">
+                            <label for="inputPassword2" class="sr-only"></label>
+                            <input type="text" id="createName" class="w-250px" placeholder="" name="createName"
+                                [(ngModel)]="createName" trimSpace (blur)="removeUnwantedSpace('createName',createName)">
+                        </div>
+                    </div>
+
+                    <div class="row form-inline my-3">
+                        <div class="form-group mb-2 col-md-2">
+                            <label for="staticEmail2" class="sr-only"></label>
+                        </div>
+                        <button type="submit" id="submit-btn" class="btn-default btn-primary mx-4"
+                            (click)="submit()">{{language.submit}}</button>
+                        <button type="submit" id="cancel-btn" class="btn-default btn-dft py-1 ml-2"
+                            (click)="hideCreate()">{{language.Cancel}}</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section *ngIf="tablePreview">
+        <div class="row" *ngIf="tablePreview">
+            <div class="col-md-12 ccl-admin-table">
+                <table id="example" datatable [dtOptions]="importTableOptions" class="row-border hover table-alter">
+                    <thead>
+                        <tr>
+                            <th>{{language.action}}</th>
+                            <th>{{language.name}}</th>
+                            <th>{{language.ip}}</th>
+                            <th>{{language.old}} {{language.ip}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr id="{{item.id}}" *ngFor="let item of importTableData">
+                            <td>{{item.action}}</td>
+                            <td>{{item.name ? item.name : ''}}</td>
+                            <td>{{item.ipAddress ? item.ipAddress : ''}}</td>
+                            <td>{{item.ipAddress_old ? item.ipAddress_old : ''}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row my-4">
+            <div class="col-md-8 offset-md-4">
+                <button class="btn-default primary px-3 mx-3" [disabled]="!enableImportSubmit"
+                    (click)="importSubmit(false)">{{language.submit}}</button>
+                <button class="btn-default btn-dft py-1 px-3" (click)="closeImport()">{{language.Cancel}}</button>
+            </div>
+        </div>
+    </section>
+
+    <div class="row justify-content-end my-2">
+        <div class="col-md-12 pr-0">
+            <div class="ccl-form d-flex text-right justify-content-end">
+                <!-- <ng-container *ngIf="!isDev">
+                    <label class="col-form-label mr-4">{{language['Search By']}}</label>
+                    <ng-select style="text-align: left; min-width: 80%;" [items]="filters" [multiple]="false"
+                        placeholder="" [(ngModel)]="filterBy" [ngModelOptions]="{standalone: true}" [clearable]="false"
+                        [searchable]="false" (change)="changeFilter()">
+                    </ng-select>
+                </ng-container> -->
+                <!-- <ng-container *ngIf="isDev"> -->
+                <label class="col-form-label mr-4">{{language['Mapped By']}}</label>
+                <ng-select class="ng-select-mapped" [items]="filtersDev" [multiple]="false" placeholder=""
+                    [(ngModel)]="filterByDev" [ngModelOptions]="{standalone: true}" [clearable]="false"
+                    [searchable]="false" (change)="changeFilter()">
+                </ng-select>
+                <!-- </ng-container> -->
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 ccl-admin-table" *ngIf="showTable">
+            <table id="management-table" width="100%" datatable [dtOptions]="dtOptions"
+                class="row-border hover table-alter">
+                <thead>
+                    <tr>
+                        <th class="th-action">
+                            <div class="ccl-fc-table-icon">
+                                <div [hidden]="editOnValue" class="d-flex align-items-center">
+                                    <input [hidden]="editOnValue" type="checkbox" class="" value=""
+                                        id="selectDeselectAll" (change)="selectDeselectAll($event.target.checked)"
+                                        [disabled]="managementData?.length == 0">
+                                    <span [hidden]="editOnValue" class="checkbox-ui" id="selectDeselectAll-span"
+                                        (click)="showAllInnerCheckBox($event)" style="display: none;"></span>
+                                </div>
+                                <div [hidden]="editOnValue" class="text-center justify-content-center">
+                                    <button id="delete-selected-btn" (click)="deleteAllSelected()"
+                                        class="btn-default primary px-2 mx-2"
+                                        [disabled]="!managementData?.length || !deleteIds?.length">
+                                        <i class="far fa-trash-alt"></i> {{language.selected}}
+                                    </button>
+                                </div>
+                            </div>
+                        </th>
+                        <th class="w-250px">{{language.name}}</th>
+                        <th class="min-w-160px">{{language.ip}}</th>
+                        <!-- <th>{{language.subnetIpv4}}</th>
+                        <th>{{language.subnetIpv6}}</th> -->
+                        <th class="w-200px">{{language.namerule}}</th>
+                        <th class="w-200px">{{ language['Aggregated Groups'] }}</th>
+
+                    </tr>
+                </thead>
+                <tbody *ngIf="managementData?.length != 0">
+                    <tr id="{{item.id}}" *ngFor="let item of managementData">
+                        <td class="th-action">
+                            <div *ngIf="editOnValue != item.id" class="editable-td text-center">
+                                <div class="ccl-fc-table-icon">
+                                    <span class="pr-2">
+                                        <div (click)="edit(item)" id="edit-btn" class="primary"
+                                            [ngClass]="item['assignedName'] ? '' : 'disabled'"
+                                            title="{{language['Edit']}}">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </div>
+                                    </span>
+                                    <span class="pr-2">
+                                        <input type="checkbox" value="{{item.id}}" name="delete_id_{{item.id}}"
+                                            class="delete_id_{{item.id}}" (click)="getDeleteIds($event, item);"
+                                            title="{{language['Select']}}">
+                                    </span>
+                                    <span class="pr-2">
+                                        <div (click)="delete(item)" id="delete-btn" class="primary "
+                                            title="{{language['Delete']}}">
+                                            <i class="far fa-trash-alt"></i>
+                                        </div>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div *ngIf="editOnValue == item.id"
+                                class="save-cancel-btn-group d-flex justify-content-center">
+                                <div class="ccl-fc-table-icon">
+                                    <span class="pr-1">
+                                        <div (click)="updateSave(item.id)" id="save-btn" class="primary mx-3 ">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                    </span>
+                                    <span class="pr-1">
+                                        <div (click)="updateCancel()" id="cancel-btn" class="primary">
+                                            <i class="fas fa-times"></i>
+                                        </div>
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            {{item.name ? item.name : ''}}
+                            <div *ngIf="editOnValue != item.id && 0">
+                                <!-- <a class="url-link" style="cursor: pointer;text-decoration: underline;color:#3276B1;"
+                              (click)="gotoSubsDashboard(item)">{{item.name ? item.name : ''}}</a> -->
+                                {{item.name ? item.name : ''}}
+                            </div>
+                            <div class="ccl-form" *ngIf="editOnValue == item.id  && 0">
+                                <input type="text" name="editName" [(ngModel)]="editName"
+                                    [ngModelOptions]="{standalone: true}">
+                            </div>
+                        </td>
+                        <td>
+                            <!-- {{item.ipAddress ? item.ipAddress : ''}} -->
+                            <div *ngIf="editOnValue != item.id">
+                                {{item.ipAddress ? item.ipAddress : ''}}
+                            </div>
+                            <!-- <div *ngIf="editOnValue == item.id">
+                            <input type="text" [(ngModel)]="editIPAddress" [ngModelOptions]="{standalone: true}">
+                          </div> -->
+                            <div *ngIf="editOnValue == item.id" class="ccl-form subnet-select-div">
+                                <ng-select class="select-custom-top text-left" [items]="subnetVersions"
+                                    [multiple]="false" placeholder="" [(ngModel)]="editIPVersionsSelected"
+                                    [ngModelOptions]="{standalone: true}" [clearable]="false" [searchable]="false"
+                                    appendTo="body">
+                                </ng-select>
+                                <input class="subnet-edit-input" type="text" [(ngModel)]="editIPAddress"
+                                    [ngModelOptions]="{standalone: true}" trimSpacetrimSpace (blur)="removeUnwantedSpace('editIPAddress',editIPAddress)">
+                            </div>
+                        </td>
+                        <td class="w-200px">
+                            <div>
+                                {{item.ipAddress ? (item.mappedBy ? item.mappedBy : '') : ''}}
+                            </div>
+                        </td>
+                        <td class="w-200px">
+                            {{isAggregatedGroupAvail(item) ? language['Yes'] : language['No']}}
+                            <span *ngIf="isAggregatedGroupAvail(item)" class="remove"><span
+                                    class="btn-default btn-dft cursor-pointer"
+                                    (click)="openAggregatedGroupsModal(item)">{{language.show ? language.show :
+                                    'Show'}}</span>
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+                <tbody
+                    *ngIf="(!managementData?.length || (tableCount != undefined && tableCount == 0) || (filterCount != undefined && filterCount == 0)) && !filterLoading ">
+                    <tr>
+                        <td colspan="5" class="no-data-available">{{filterAndSearchFlag ? language['No matching records
+                            found'] : language['No data available in table']}}</td>
+                    </tr>
+                <tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modals -->
+<ng-template #infoModal let-data let-ref="dialogRef">
+
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{infoTitle}}</h4>
+        <button type="button" class="close" aria-label="Close"
+            (click)="closeModal(); editOnValue = undefined; getTableCount(true)">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body modal-scrll">
+        <p class="f-size-16px">{{invalidImportEndPoint.length ? language['Note']+' - '+language['No endpoints imported']
+            : ''}}</p>
+        <div class="w-100">
+            <p class="f-size-16px">{{infoBody}}</p>
+            <ul class="list-two" *ngIf="invalidImportEndPoint.length">
+                <li class="text-break" *ngFor="let endPoint of invalidImportEndPoint">{{endPoint.name}}</li>
+            </ul>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn-default primary px-3" data-dismiss="modal"
+            (click)="closeModal(); editOnValue = undefined; getTableCount(true)">{{language['Okay']}}</button>
+    </div>
+</ng-template>
+
+<ng-template #deleteModal let-data let-ref="dialogRef">
+
+    <ng-container>
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">{{infoTitle}}</h4>
+            <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+                <span aria-hidden="true"></span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <table class="w-100">
+                <tr>
+                    <td>{{ (deleteData && deleteData.name) ? deleteData.name : ''}}</td>
+                    <td>{{ (deleteData && deleteData.ipAddress) ? deleteData.ipAddress : ''}}</td>
+                    <td>{{ (deleteData && deleteData.mappedBy) ? deleteData.mappedBy : ''}}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-default primary px-3" data-dismiss="modal"
+                (click)="closeModal();confirmDelete()">{{language['Okay']}}</button>
+            <button type="button" class="btn-default btn-dft py-1 px-3" data-dismiss="modal"
+                (click)="closeModal()">{{language['Cancel']}}</button>
+        </div>
+    </ng-container>
+
+</ng-template>
+
+<ng-template #multiDeleteModal let-data let-ref="dialogRef">
+
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{infoTitle}}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body modal-scrll">
+        <table class="w-100">
+            <tr *ngFor="let deleteData of endpointIps; let i = index">
+                <td>{{deleteEndpoints[i].name ? deleteEndpoints[i].name : ''}}</td>
+                <td>{{deleteData ? deleteData : ''}}</td>
+                <td>{{deleteEndpoints[i].mappedBy ? deleteEndpoints[i].mappedBy : ''}}</td>
+            </tr>
+        </table>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn-default primary px-3" data-dismiss="modal"
+            (click)="closeModal();confirmDeleteSecleted();">{{language['Okay']}}</button>
+        <button type="button" class="btn-default btn-dft py-1 px-3" data-dismiss="modal"
+            (click)="closeModal()">{{language['Cancel']}}</button>
+    </div>
+</ng-template>
+
+<ng-template #importModal let-data let-ref="dialogRef">
+
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{infoTitle}}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <table [innerHtml]="infoBody"></table>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn-default primary px-3" data-dismiss="modal"
+            (click)="proceedImport()">{{language['Okay']}}</button>
+        <button type="button" class="btn-default btn-dft py-1 px-3" data-dismiss="modal"
+            (click)="closeModal()">{{language['Cancel']}}</button>
+    </div>
+</ng-template>
+<ng-template #aggGroupsModal let-data let-ref="dialogRef">
+
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{infoTitle}}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body loader-wrapper">
+        <div class="loader-wrapper-info" *ngIf="aggregatedGroupsLoading">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="sr-only"></span>
+                </div>
+            </div>
+        </div>
+        <div class="py-3 alert alert-danger" *ngIf="aggError">
+            <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+            <button type="button" id="close-error-btn" class="close" data-dismiss="alert" aria-label="Close"
+                (click)="aggError = !aggError">
+                <span></span>
+            </button>
+            <div class="d-inline-flex" [innerHtml]="aggErrorInfo"></div>
+        </div>
+        <table *ngIf="aggreDataAvail" datatable [dtOptions]="aggTableOptions" width="100%"
+            class="row-border hover table-alter">
+            <thead>
+                <tr>
+                    <th class="w-250px">{{language.name}}</th>
+                    <th>{{language.ip}}</th>
+                    <th class="w-250px">{{language.mapped}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of aggregatedGroups">
+                    <td class="w-250px">{{item.name ? item.name : ''}}</td>
+                    <td>{{item.ipAddress ? item.ipAddress : ''}}</td>
+                    <td class="w-250px">{{item.ipAddress ? (item.mappedBy ? item.mappedBy : '') : ''}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn-default primary px-3" data-dismiss="modal"
+            (click)="closeModal()">{{language['Close']}}</button>
+    </div>
+</ng-template>
+<!-- Modals -->

@@ -1,0 +1,159 @@
+<div class="page-wrapper">
+  <div class="subscriber-details">
+
+    <div class="subs-title">
+      <div class="st-header border-bottom">
+        <div class="sth-left position-relative">
+          <h2 class="greyaa" id="HubSpot-mark-results">{{language.HubSpot_Marketing_Channel_Results}}</h2>
+          <div class="sth-rht flex">
+            <button type="button" class="close command" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+              <span aria-hidden="true"></span>
+            </button>
+          </div>
+
+          <p class="last-update"> {{language.Last_Update}} : {{lastUpdate | date:'short'}}</p>
+        </div>
+
+      </div>
+      <div class=" col-lg-12 col-md-12 col-sm-12 alert alert-warning alert-dismissible fade show" role="alert"
+        *ngIf="mailchimpError">
+        <span class="success-img"><img src="./assets/img/error-icon.svg" /></span>
+        <div class="d-inline-flex text-left w-75">{{mailchimpErrorMsg}}.</div>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true" (click)='errorReset()'></span>
+        </button>
+      </div>
+      <section>
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12 ccl-tabs px-0">
+
+              <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="campaigns" role="tabpanel" aria-labelledby="home-tab">
+                  <section>
+                    <div class="container">
+                      <div class="row">
+                        <div class="col-md-12 px-0">
+                          <div>
+                            <div class="time-frame d-flex justify-content-between mb-3">
+                              <div class="col-md-4 d-inline-flex ccl-form p-0">
+                                <input class="form-control mr-sm-2" type="text" [(ngModel)]="search_Text_Value" placeholder="{{language.Search}}"
+                                  [disabled]="loading" [ngClass]="{'cursor-ban': loading}"
+                                  (input)="searchName($event.target.value)">
+                                  <span class="clear-icon" *ngIf="search_Text_Value" (click)="search_Text_Valuefun()"> <img
+                                      src="assets/img/close-icon.svg"></span>
+                              </div>
+                              <div class="time-drop" [ngClass]="{'cursor-ban': loading}">
+                                <!-- <label> {{language.Timeframe}} </label> -->
+                                <ng-select id="typeId" bindLabel="name"[disabled]="loading" [(ngModel)]="activePeriod" bindValue="name"
+                                  class="selectboxwidth" (ngModelChange)="selectTimeFrame($event)" [items]="timeframes"
+                                  [clearable]="false">
+                                </ng-select>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="no-data" *ngIf="loading">
+                            <div class="spinner-border text-primary">
+                              <span class="sr-only">{{language.Loading}}</span>
+                            </div>
+                          </div>
+                          <div class="table-responsive camp-table" id="HubSpot-datatable"
+                            [ngClass]="{ 'hide-table':  !showDataTable}">
+                            <table [dtOptions]="dtOptions" datatable [dtTrigger]="dtTrigger"
+                              class="row-border campaign_table_saved">
+                              <thead>
+                                <tr>
+                                  <th>{{language.Name}}</th>
+                                  <!-- <th>{{language.Type}}</th>
+                                <th>{{language.SEGMENT}}</th>
+                                <th>{{language.Segment_Size}}</th> -->
+                                  <th>{{language.sent}}</th>
+                                  <th>{{language.delivered}}</th>
+                                  <th>{{language.Opened}}</th>
+                                  <th>{{language.processed}}</th>
+                                  <!-- <th>{{language.Unsubscribed}}</th> -->
+                                </tr>
+                              </thead>
+                              <tbody [ngClass]="!hubspotResultsError ? 'table-row-group': 'd-none'">
+                                <tr *ngFor="let item of channelResultTable">
+                                  <td class="w-11">
+                                    <div class="content-wrap" title={{item.campaign_name}}>
+                                      <span>{{(item.campaign_name)}}</span>
+                                    </div>
+                                  </td>
+                                  <td class="w-11">
+                                    <div class="content-wrap" title={{item.notificationsSent}}>
+                                      {{item.notificationsSent}}
+                                    </div>
+                                  </td>
+                                  <!-- <td class="w-11">
+                                  <span class="d-none">{{getTimestamp(item.sendTime)}}</span>
+                                  <div class="nor-wrap" title={{item.sendTime}}>
+                                    {{item.sendTime | date:'MMM d, y' }}
+                                  </div>
+                                </td> -->
+                                  <!-- <td class="w-11">
+                                  <span class="d-none">{{getTimestamp(item.sendTime)}}</span>
+                                  <div class="nor-wrap" title={{item.sendTime}}>
+                                    {{item.sendTime | date:'MMM d, y' }}
+                                  </div>
+                                </td> -->
+
+                                  <td class="w-11">
+                                    <div class="nor-wrap" title={{item.notificationsDelivered}}>
+                                      {{item.notificationsDelivered}}
+                                    </div>
+                                  </td>
+                                  <td class="w-11">
+                                    <div class="nor-wrap" title={{item.notificationsOpened}}>
+                                      {{item.notificationsOpened}}
+                                    </div>
+                                  </td>
+                                  <td class="w-11" title={{item.notificationsProcessed}}>
+                                    <div class="nor-wrap">
+                                      {{item.notificationsProcessed}}
+                                    </div>
+                                  </td>
+                                  <!--  <td class="w-11">
+                                  <div class="nor-wrap" title={{item.notificationsBounced}}>
+                                    {{item.notificationsBounced}}
+                                  </div>
+                                </td>
+                                <td class="w-11">
+                                  <div class="nor-wrap" title={{item.unsubscribed}}>
+                                    {{item.unsubscribed}}
+                                  </div>
+                                </td> -->
+
+                                </tr>
+
+                              </tbody>
+                              <tbody [ngClass]="hubspotResultsError ? 'table-row-group': 'd-none'">
+                                <tr>
+                                  <td colspan="9" class="text-center">{{language.nodata}}
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+
+                          </div>
+                          <!-- <div class="no-data" [ngClass]="{ 'hide-table':  showDataTable}">
+                            <div class="spinner-border text-primary">
+                              <span class="sr-only">{{language.Loading}}</span>
+                            </div>
+                          </div> -->
+
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>

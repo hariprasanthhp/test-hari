@@ -1,0 +1,57 @@
+<div class="row">
+    <div class="loader" *ngIf="loading">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">{{language.Loading}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="w-100 alert alert-danger  fade show" *ngIf="error">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+        <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+        <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+    </div>
+
+    <div class="col-md-12">
+        <div class="sub-imp-title d-flex justify-content-between">
+            <div class="">{{language['selectAnOrganization']}}</div>
+
+        </div>
+
+    </div>
+    <div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess">
+        {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}}
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="col-md-3 smy-2 ccl-form mt-4 position-relative px-0">
+            <input id="search-org" placeholder="{{language['Search Orgs']}}" [formControl]="searchOrg" class="ccl-input">
+            <i *ngIf="searchOrg?.value" class="search-close fas fa-times" (click)="clearSearchInp()"></i>
+        </div>
+        <div class="sub-imp-table" *ngIf="showTable">
+            <table class="table table-borderless w-100" datatable [dtOptions]="dtOptions">
+                <thead>
+                    <tr>
+                        <th>{{ language.Name }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let org of orgsList">
+                        <td (click)="gotoFederatedAcccess(org.grantor_org_id);" class="pointer blue">
+                            {{org.grantor_org_name}}
+                        </td>
+                    </tr>
+                </tbody>
+
+                <tbody *ngIf="(orgsList?.length == 0 || count === 0 || filterCount === 0)">
+                    <tr>
+                        <td colspan="5" class="no-data-available">{{language['No matching records found']}}</td>
+                    </tr>
+                <tbody>
+
+            </table>
+        </div>
+    </div>
+
+</div>

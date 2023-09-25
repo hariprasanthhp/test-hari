@@ -1,0 +1,95 @@
+<div class="maximus ">
+    <div class="container">
+        <div class="row justify-content-between navbar-light bg-white align-items-center header-wapper mt-4">
+            <div class="col-md-4">
+                <img class="white-logo-image-box logo-img" id="logo-customimage-view"
+                    [ngStyle]="{'visibility':(micrositeDetails?.defaultLogo || micrositeDetails?.logo)?'visible':'hidden'}"
+                    
+                    src="{{micrositeDetails?.defaultLogo ? micrositeDetails?.defaultLogo :micrositeDetails?.logo ? micrositeDetails?.logo: './assets/img/empty_gary.svg'}}">
+            </div>
+            <div class="col-md-4 fs-5 cd-title"
+                [ngStyle]="{'color': micrositeDetails?.defaultPrimaryColor ? micrositeDetails?.defaultPrimaryColor:micrositeDetails?.primaryColor? micrositeDetails?.primaryColor :'#0279ff'}">
+                {{micrositeDetails?.communityDesc ? micrositeDetails?.communityDesc: 'Community Description'}}</div>
+        </div>
+    </div>
+</div>
+<div class="row instal-info mx-0"
+    [ngStyle]="{'background-color': micrositeDetails?.defaultPrimaryColor ? micrositeDetails?.defaultPrimaryColor:micrositeDetails?.primaryColor? micrositeDetails?.primaryColor :'#0279ff'}">
+    <div class="col-md-12 text-center py-2 f-size-18"> {{ language.Browser_msg(OS,browser) }}</div>
+</div>
+<div class="container py-0 py-sm-5 content">
+    <div class="row">
+        <div class="col col-md-7 mx-auto px-3 px-5 py-2 bg-white">
+            <!-- <div class="dropdown">
+                <button class="btn-lang dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" (mouseenter)="mouseEnterDropdown()" (mouseleave)="mouseLeavedropdown()"
+                    [ngStyle]="{'color': micrositeDetails?.defaultSecondaryColor ? micrositeDetails?.defaultSecondaryColor:micrositeDetails?.secondaryColor ? micrositeDetails?.secondaryColor:'#CCCCCC','border-color': (micrositeDetails?.defaultSecondaryColor) ? (micrositeDetails?.defaultSecondaryColor):((micrositeDetails?.secondaryColor)?(micrositeDetails?.secondaryColor):'')}"
+                    aria-haspopup="true" aria-expanded="false">
+                    {{selectedLanguage}}
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                    <button class="dropdown-item" type="button"
+                        [ngStyle]="{'color': (selectedLanguage == 'English')? 'white':'black','background-color' : (selectedLanguage == 'English')?((micrositeDetails?.defaultSecondaryColor)?micrositeDetails?.defaultSecondaryColor:micrositeDetails?.secondaryColor):'white' }" (click)="selectItem('English')">English</button>
+                    <button class="dropdown-item" type="button"
+                    [ngStyle]="{'color': (selectedLanguage == 'Spanish')? 'white':'black','background-color' : (selectedLanguage == 'Spanish')?((micrositeDetails?.defaultSecondaryColor)?micrositeDetails?.defaultSecondaryColor:micrositeDetails?.secondaryColor):'white' }" (click)="selectItem('Spanish')">Spanish</button>
+
+                </div>
+            </div> -->
+
+            <h4 class="mt-4 fw-600 text-center">{{language['Download_Install_Your_Passpoint']}}</h4>
+            <p class="text-center fs-sm text-muted">
+                <span class="mb-3">{{language['Click the button below to install your profile.']}}</span>
+                <br>
+                <br>
+                <span>{{language['Get_your_passpoint_profile_installed']}}</span>
+            </p>
+            <div class="mx-auto video-box">
+                <video  width="450" height="450" controls>
+                    <source type="video/mp3" src="">
+                </video>
+                
+            </div>
+            <div class="mt-3 py-1 text-center">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                    <label class="form-check-label" for="flexCheckDefault">
+                        {{language['I accept the']}} <span class="primary pointer">{{language["Terms and Conditions"]}}</span>
+                        
+                    </label>
+                </div>
+                <br>
+                <button id="install-profile" class="btn-default primary fs-sm"
+                    [ngStyle]="{'background-color': micrositeDetails?.defaultPrimaryColor ? micrositeDetails?.defaultPrimaryColor:micrositeDetails?.primaryColor? micrositeDetails?.primaryColor:'#0279ff'}"> {{language["Install Profile"]}}</button>
+            </div>
+
+
+            <div id="windowsInstructions" class="pt-4">
+                <hr>
+                <h4 class="text-center mb-4">
+                    {{language['Windows Installation Instructions']}}
+                </h4>
+                <div class="list-content">
+                    <ol class="fw-500 instructions">
+                        <li class="my-3 step-text">{{language['install_Passpoint_profile_Windows']}}
+                        </li>
+                        <li class="my-3 step-text">
+                            <span [innerHTML]="language['microsite_preview_install_profile']"> </span>
+                            
+                           
+                        </li>
+<li class="my-3 step-text"><span [innerHTML]="language['Windows_Settings_Click_Open']"></span>
+</li>
+<li class="my-3 step-text"><span [innerHTML]="language['After_the_download_completes']"></span> 
+</li>
+
+<li class="my-3 step-text"><span [innerHTML]="language['Wi-Fi_network_Click_add']"></span>  </li>
+<li class="my-3 step-text"><span [innerHTML]="language['Your_profile_should_now_be_installed']"></span>  </li>
+<li class="my-3 step-text"> <span [innerHTML]="language['Your_device_will_now_automatically_connect']"></span> </li>
+
+                    </ol>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>

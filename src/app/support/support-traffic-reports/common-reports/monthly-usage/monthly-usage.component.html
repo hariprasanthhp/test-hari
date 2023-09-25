@@ -1,0 +1,18 @@
+<div class="col-md-12 mt-4" *ngIf="pageAvailable">
+    <div class="" style="height:auto;">
+        <div class="row fa-chart-wrapper chart-min-h" id="fa-chart-wrapper">
+            <div class="loader" *ngIf="loading">
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border text-primary">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
+            </div>
+            <div class="chart-sec" [ngClass]="!loading ? 'd-block' : 'd-none'">
+                <div class="fa-chart-container mt-5 ">
+                    <div id="container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

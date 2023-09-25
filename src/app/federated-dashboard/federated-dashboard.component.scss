@@ -1,0 +1,17 @@
+.blue {
+    color: blue !important;
+}
+
+.search-close {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    color: #cdcdcd;
+    cursor: pointer;
+}
+
+::ng-deep {
+    table.dataTable td.dataTables_empty {
+        display: none;
+    }
+}

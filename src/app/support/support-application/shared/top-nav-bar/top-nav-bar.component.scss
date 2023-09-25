@@ -1,0 +1,26 @@
+#tabs {
+    margin-bottom: 24px !important;
+}
+.top-nav-border{
+    border-bottom: 1px solid #cccccc !important;
+    width: fit-content;
+}
+.nav-tabs a{
+    padding-bottom: 5px;
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 21px;
+}
+.nav-tabs a.nav-link{
+    margin-bottom: 1px;
+    border-bottom: 2px solid transparent;
+}
+.nav-tabs a.nav-link.active{
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    border-bottom: 2px solid #0279ff !important;
+}
+.nav-tabs a.nav-link:hover{
+    margin-bottom: 1px !important;
+    border-bottom: 2px solid #0279ff !important;
+}

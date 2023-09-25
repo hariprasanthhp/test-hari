@@ -1,0 +1,47 @@
+<div role="alert" class="alert alert-warning" *ngIf="!hasPageAccess">
+  {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} </div>
+<section *ngIf="hasPageAccess">
+  <div class="container">
+    <div class="row">
+      <div class="cco-title">{{ language.Health }}</div>
+    </div>
+  </div>
+</section>
+<section>
+  <div class="container my-3">
+    <div class="row" *ngIf="hasPageAccess">
+      <div class="col-md-12 px-0">
+        <div class="ccl-tabs">
+          <ul id="tabs" class="nav nav-tabs">
+            <li class="nav-item" id="health-pon" *ngIf="menus['pon']">
+              <a routerLink="/cco/health/pon-utilization" class="nav-link small" id="configuration"
+                routerLinkActive="active" data-toggle="tab" class="nav-link">{{ language.PON
+                }}</a>
+            </li>
+            <li class="nav-item" id="health-uplink" *ngIf="menus['ethernet']">
+              <a routerLink="/cco/health/uplink" class="nav-link small" id="configuration" routerLinkActive="active"
+                data-toggle="tab" class="nav-link">{{ language.Ethernet }}</a>
+            </li>
+            <li class="nav-item" id="health-ont" *ngIf="menus['ont']">
+              <a routerLink="/cco/health/ont" class="nav-link small" id="configuration" routerLinkActive="active"
+                data-toggle="tab" class="nav-link">{{ language.ONT }}</a>
+            </li>
+            <li class="nav-item" id="health-ae" *ngIf="menus['ae']">
+              <a routerLink="/cco/health/ae" class="nav-link small" id="configuration" routerLinkActive="active"
+                data-toggle="tab" class="nav-link">{{ language.ae }}</a>
+            </li>
+            <li class="nav-item" id="health-dsl" >
+              <a routerLink="/cco/health/dsl" class="nav-link small" id="configuration" routerLinkActive="active"
+                data-toggle="tab" class="nav-link">DSL</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="row" [hidden]="!hasPageAccess">
+      <div class="col-md-12 px-0">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+</section>

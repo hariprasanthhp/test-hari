@@ -1,0 +1,146 @@
+.skipped-devices {
+    padding: 0px 10px;
+    width: 100%;
+
+    table {
+        width: 100%;
+    }
+}
+
+.detail-list tbody th {
+    font-weight: 500;
+    padding: 0px;
+}
+
+.detail-list-table tbody tr {
+    border-bottom: 1px solid #EBEAEF;
+    line-height: 24px;
+    padding: 0px 10px;
+}
+
+.detail-list-table tbody tr td {
+    padding: 0px 10px;
+}
+
+.detail-list-table tbody tr th {
+    padding: 0px 10px;
+}
+
+.detail-list tbody th p {
+    font-weight: 500;
+    margin-bottom: 0px;
+}
+
+.detail-list thead th h5 {
+    font-weight: 600;
+}
+
+.skip-device thead {
+    border-bottom: 1px solid #ddd;
+}
+
+.protect-iq-accordion {
+    width: 100%;
+}
+
+.protect-iq-accordion .card {
+    border: none;
+
+    .card-header {
+        background: #fff;
+        box-shadow: none;
+        border: none;
+    }
+}
+
+.accordion .card-header:after {
+    font-family: 'FontAwesome';
+    content: "\f068";
+    float: right;
+}
+
+.accordion .card-header.collapsed:after {
+    /* symbol for "collapsed" panels */
+    content: "\f067";
+}
+
+.device-info {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.plus-minus-toggle {
+    border: 2px solid #000;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 2px;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.lap-icon {
+    margin: 0px 10px;
+    width: 3%;
+}
+
+.skipped-devices-table {
+    margin: 10px 0px;
+
+    tbody {
+
+        tr {
+            padding: 10px 0px;
+
+            th {
+                padding: 5px 0px;
+                vertical-align: unset !important;
+            }
+
+            td {
+                padding: 5px 0px;
+            }
+        }
+    }
+}
+
+.device-detail tr:hover {
+    background-color: #f2f2f2;
+}
+
+.device-detail tr .skip-sec {
+    visibility: hidden;
+    opacity: 0;
+    transition: all .3s;
+}
+
+.device-detail tr:hover .skip-sec {
+    visibility: visible;
+    opacity: 1;
+    transition: all .3s;
+}
+
+.device-detail.table-borderless th,
+.device-detail.table-borderless td {
+    padding: 15px 0px;
+}
+
+.device-detail.table-borderless th {
+    padding-left: 70px;
+}
+
+.table-borderless th,
+td {
+    padding-top: 15px;
+}
+
+.dropdown-toggle::after {
+    display: none;
+}
+
+.wrn-msg {
+    width: 85%;
+}

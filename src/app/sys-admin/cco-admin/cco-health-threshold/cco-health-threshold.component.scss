@@ -1,0 +1,61 @@
+.threshold-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.threshold-item {
+    flex: 0 32%;
+    height: 100px;
+    margin-bottom: 2%;
+    /* (100-32*3)/2 */
+}
+
+.threshold-description {
+    margin: 24px 0px;
+}
+
+.threshold-set-default-but {
+    margin-bottom: 1rem;
+}
+
+.threshold-title {
+    margin-top: 20px;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 23px;
+}
+
+.clsoe-icon-pos {
+    position: absolute;
+    right: 15px;
+}
+
+.thresholds-warpper {
+    width: 100%;
+    display: flex;
+
+    .thresholds-item {
+
+        p {
+            margin-bottom: 8px;
+            
+            font-size: 16px;
+            line-height: 23px;
+            padding-top: 7px;
+        }
+
+        span img {
+            cursor: pointer;
+        }
+    }
+}
+.cursor-ban {
+ color: black !important;
+ cursor: no-drop;
+}
+.primary-reset {
+    color: #0279ff;
+    cursor: pointer;
+}

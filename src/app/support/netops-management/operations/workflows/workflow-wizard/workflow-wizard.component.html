@@ -1,0 +1,107 @@
+<div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess"> 
+    {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} </div>
+
+<div class="row loader-wrapper" *ngIf="hasScopeAccess">
+    <div class="loader-wrapper-info" *ngIf="micrositeLoader">
+        <div class="loader">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary" role="">
+                    <span class="sr-only">{{language.Loading}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+
+    <div class="col-md-12">
+        <div class="workflow-wizard" id="workflowWizard">
+            <div class="row justify-content-end">
+
+                <div class="col-md-1 mb-3">
+                    <button type="button" class="close mt-2" aria-label="Close" (click)="closeWorkflow()">
+                        <span aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+            <!-- New Stepper Start -->
+            <section>
+                <ul class="stepper-ui">
+                    <li><button title="{{language.Start}}" class="step"
+                            [ngClass]="{'step-current': activeTab === 'Start'}" (click)="setActiveTab('Start');"
+                            id="wk-start">
+                            <span>{{language.Start}}</span></button></li>
+                    <li><button title="{{language['System Groups']}}" class="step"
+                            (click)="setActiveTab('Select Device Groups'); "
+                            [ngClass]="{'step-current': activeTab === 'Select Device Groups'}"
+                            [disabled]='!workflowInputData.groups?.length' id="wk-device">
+                            <span>{{language['System Groups']}}</span></button></li>
+                    <li><button title="{{language['Operation Parameters']}}" class="step"
+                            (click)="setActiveTab('Select Operation Parameters'); "
+                            [ngClass]="{'step-current': activeTab === 'Select Operation Parameters'}"
+                            [disabled]='!workflowInputData.groups?.length' id="wk-opr">
+                            <span>{{language['Operation Parameters']}}</span></button></li>
+                    <li><button title="{{language['Schedule Parameters']}}" class="step"
+                            (click)="setActiveTab('Select Schedule Parameters'); "
+                            [ngClass]="{'step-current': activeTab === 'Select Schedule Parameters'}"
+                            [disabled]='!workflowInputData.actions?.length' id="wk-schedule">
+                            <span>{{language['Schedule Parameters']}}</span></button></li>
+                    <li><button title="{{language.Review}}" class="step" (click)="setActiveTab('Review'); "
+                            [ngClass]="{'step-current': activeTab === 'Review'}"
+                            [disabled]='!workflowInputData.actions?.length' id="wk-review">
+                            <span>{{language.Review}}</span></button></li>
+                </ul>
+            </section>
+
+            <!-- New Stepper End -->
+            <!--  <section class="stepper-main">
+                <div class="stepper col-12 pl-0">
+                    <button class="step step--1 " (click)="setActiveTab('Start'); "
+                        [ngClass]="{'step-active': activeTab === 'Start'}" id="wk-start">
+                        {{language.Start}}</button>
+                    <button class="step step--2 " *ngIf="!router.url.includes('official-workflow-wizard')"
+                        (click)="setActiveTab('Select Device Groups'); "
+                        [ngClass]="{'step-active': activeTab === 'Select Device Groups'}"
+                        [disabled]='!workflowInputData.name' id="wk-device">{{language['System Groups']}}
+                    </button>
+                    <button class="step step--3 " (click)="setActiveTab('Select Operation Parameters'); "
+                        [ngClass]="{'step-active': activeTab === 'Select Operation Parameters'}"
+                        [disabled]='!workflowInputData.groups.length' id="wk-opr">{{language['Operation Parameters']}}
+                    </button>
+                    <button class="step step--4 " (click)="setActiveTab('Select Schedule Parameters'); "
+                        [ngClass]="{'step-active': activeTab === 'Select Schedule Parameters'}"
+                        [disabled]='!workflowInputData.actions.length' id="wk-schedule">{{language['Schedule
+                        Parameters']}}
+                    </button>
+                    <button class="step step--5 " (click)="setActiveTab('Review'); "
+                        [ngClass]="{'step-active': activeTab === 'Review'}"
+                        [disabled]='!workflowInputData.actions.length' id="wk-review">{{language.Review}}</button>
+                </div>
+            </section> -->
+            <div class="w-100 alert alert-danger mt-4 fade show flex-space-between" *ngIf="error">
+                <span class="success-img"><img src="./assets/img/error-icon.svg" /></span>
+                <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+                <button class="btn-default primary px-3 ok-btn" (click)="closeAlert()" id='wk-err-ok'>
+                    {{language.Okay}}
+                </button>
+            </div>
+            <app-start-wizard *ngIf="activeTab === 'Start'" [workflowInputData]='workflowInputData'
+                (activeTab)='getCurrentTab($event)' (workflowdata)='getStartData($event)'>
+            </app-start-wizard>
+            <app-select-device-wizard *ngIf="activeTab === 'Select Device Groups'"
+                [workflowInputData]='workflowInputData' (activeTab)='getCurrentTab($event)'
+                (workflowDeviceData)='getDeviceData($event)'>
+            </app-select-device-wizard>
+            <app-wrkflow-wizard-opr-parameters  *ngIf="activeTab === 'Select Operation Parameters'"
+                [workflowInputData]='workflowInputData' [editWorkflow]='editWorkFlow' [isNewwrkflw]="isNewwrkflw"
+                (activeTab)='getCurrentTab($event)' (workflowOprData)='getOptData($event)'>
+            </app-wrkflow-wizard-opr-parameters>
+            <app-wrkflow-wizard-schedule-parameters *ngIf="activeTab === 'Select Schedule Parameters'"
+                [workflowInputData]='workflowInputData' (activeTab)='getCurrentTab($event)'
+                (workflowOprData)=getScheduleData($event)>
+            </app-wrkflow-wizard-schedule-parameters>
+            <app-workflow-wizard-review *ngIf="activeTab === 'Review'"  [workflowInputData]='workflowInputData' [invalidDta]="invalidDta"
+                (activeTab)='getCurrentTab($event)' (submitWorkflow)=submitWorkflow($event)>
+            </app-workflow-wizard-review>
+        </div>
+    </div>
+</div>

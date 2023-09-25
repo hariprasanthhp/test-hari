@@ -1,0 +1,196 @@
+<div class="row">
+  <div class="col-md-12 px-0 mb-3">
+    <div class="cco-secondary-title border-bottom">
+      {{ language["ONT Age Out"] }}
+    </div>
+  </div>
+</div>
+<div class="row">
+  <!-- <div class="col-lg-6 col-md-6 col-sm-12">
+        <h4 class="min-title">Self_Healing</h4>
+        <div class="toggle-swtbtn checkbox switcher">
+            <label for="backgroundSiteScanCheckBox">
+                <input type="checkbox" name="backgroundSiteScan" id="backgroundSiteScanCheckBox" />
+                <span><small></small></span>
+                Enable
+            </label>
+        </div>
+    </div> -->
+  <!-- <div class="col-lg-12 col-md-12 col-sm-12 mb-3 mt-3">
+        <h4 class="min-title">Stale_Device_Purge</h4>
+        <div class="toggle-swtbtn checkbox switcher">
+            <label for="backgroundSiteScanCheckBox">
+                <input type="checkbox" name="backgroundSiteScan" id="backgroundSiteScanCheckBox" />
+                <span><small></small></span>
+                Enable
+            </label>
+        </div>
+    </div> -->
+
+  <div class="col-lg-6 col-md-6 col-sm-12 pb-3">
+    <div class="toggle-swtbtn checkbox switcher">
+      <label for="backgroundSiteScanCheckBox">
+        <input
+          type="checkbox"
+          name="backgroundSiteScan"
+          id="backgroundSiteScanCheckBoxb"
+        />
+        <span><small></small></span>
+        {{ language.Enable }}
+      </label>
+    </div>
+    <form>
+      <div class="form-group ccl-form">
+        <label class="col-form-label">{{ language.Name }}* </label>
+        <input
+          class="form-control"
+          id="name"
+          type="text"
+          name="name"
+          placeholder="{{ language['Device_Purge'] }}"
+        />
+        <!-- <div class="errorMessage">
+                  This field is required
+              </div> -->
+      </div>
+      <div class="form-group ccl-form">
+        <label class="col-form-label"> {{ language.Description }} </label>
+
+        <textarea class="form-control"> </textarea>
+        <!-- <div class="errorMessage">
+                  This field is required
+              </div> -->
+      </div>
+      <div class="form-group ccl-form">
+        <label class="col-form-label">
+          {{ language.Days_of_Inactivity }}*
+        </label>
+        <input
+          class="form-control"
+          id="number"
+          type="number"
+          name="number"
+          placeholder="30"
+        />
+        <!-- <div class="errorMessage">
+                  This field is required
+              </div> -->
+      </div>
+      <div class="form-group ccl-form required">
+        <label class="col-form-label"> {{ language.Frequency }}*</label>
+        <div class="col-sm-12 p-0">
+          <select
+            class="ccl-form form-control form-control-sm"
+            placeholder="Weekly"
+          >
+            <option>{{ language.Weekly }}</option>
+            <option>{{ language.Monthly }}</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group ccl-form required">
+        <label class="col-form-label">{{ language.Day_of_the_Week }} *</label>
+        <div class="col-sm-12 p-0">
+          <select
+            class="ccl-form form-control form-control-sm"
+            placeholder="Weekly "
+          >
+            <option>{{ language.Weekly }}</option>
+            <option>{{ language.Monthly }}</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group ccl-form required">
+        <label class="col-form-label">{{ language.Time_Zone }}* </label>
+        <div class="col-sm-12 p-0">
+          <select
+            class="ccl-form form-control form-control-sm"
+            placeholder="Etc/GMT+12 "
+          >
+            <option>Etc/GMT+12</option>
+            <option>Etc/GMT+12</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group ccl-form required">
+        <label class="col-form-label"
+          >{{ language["Include Associated Devices"] }}*
+        </label>
+        <div class="col-sm-12 p-0">
+          <div class="form-check d-inline-flex">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="exampleRadios"
+              id="exampleRadios2"
+              value="option2"
+            />
+            <label class="form-check-label" for="exampleRadios2">
+              {{ language.No }}
+            </label>
+          </div>
+          <div class="form-check d-inline-flex">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="exampleRadios"
+              id="exampleRadios2"
+              value="option2"
+            />
+            <label class="form-check-label" for="exampleRadios2">
+              {{ language.Yes }}
+            </label>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="col-lg-6 col-md-6 col-sm-12">
+    <div class="table-responsive table-data-no pb-0">
+      <h4 class="f-size-16px f-w-600">{{ language.Execution_Logs }}</h4>
+      <table class="row-border smal mb-0 dataTable table home-table">
+        <thead>
+          <tr>
+            <th>{{ language.Time }}</th>
+            <th>{{ language.Successful }}</th>
+            <th>{{ language.Failed }}</th>
+            <th>{{ language.Details }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span> 10/16/2019 1:20 AM </span></td>
+            <td>--</td>
+            <td>--</td>
+            <td>--</td>
+          </tr>
+          <tr>
+            <td><span> 10/16/2019 1:20 AM </span></td>
+            <td>--</td>
+            <td>--</td>
+            <td>--</td>
+          </tr>
+          <tr>
+            <td><span> 10/16/2019 1:20 AM </span></td>
+            <td>--</td>
+            <td>--</td>
+            <td>--</td>
+          </tr>
+          <tr>
+            <td><span> 10/16/2019 1:20 AM </span></td>
+            <td>--</td>
+            <td>--</td>
+            <td>--</td>
+          </tr>
+          <tr>
+            <td><span> 10/16/2019 1:20 AM </span></td>
+            <td>--</td>
+            <td>--</td>
+            <td>--</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,173 @@
+<section>
+    <div class="container">
+        <div class="loader load" *ngIf="loading">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="w-100 alert alert-danger fade show my-3" *ngIf="error">
+                <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+                <button type="button" class="close" (click)="error = false"><span></span></button>
+                <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+            </div>
+
+            <div class="w-100 alert alert-success fade show my-3" *ngIf="success">
+                <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+                <button type="button" class="close" (click)="success = false"><span></span></button>
+                <div class="d-inline-flex" [innerHtml]="successInfo"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12 pr-5">
+
+                <form class="ccl-form mt-4 needs-validation" [formGroup]="SubscriberForm" (ngSubmit)="onSubmit()">
+                    <div class="form-group inline-input">
+                        <label class="col-form-label">{{language.Name}}</label>
+                        <input class="form-control" id="name" type="text" name="name" formControlName="Name" />
+                        <div *ngIf="(submitted && SubscriberForm.controls.Name.errors) || SubscriberForm.controls.Name.touched"
+                            class="errorMessage">
+                            <span *ngIf="SubscriberForm.controls.Name.errors?.required">
+                                Please enter a name
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group inline-input">
+                        <label class="col-form-label"> {{language["Service_Type"]}} </label>
+                        <select class="ccl-form form-control form-control-sm" formControlName="Servicetype"
+                            (change)="servicetypechanged($event.target.value)">
+                            <option value="DATA">{{ language.Data }}</option>
+                            <option value="VOICE">{{ language.Voice }}</option>
+                            <option value="VIDEO">{{ language.Videos }}</option>
+                        </select>
+                        <div *ngIf="(submitted && SubscriberForm.controls.Servicetype.errors) || SubscriberForm.controls.Servicetype.touched"
+                            class="errorMessage">
+                            <span *ngIf="SubscriberForm.controls.Servicetype.errors?.required">
+                                This value is invalid
+                            </span>
+                        </div>
+
+                    </div>
+                    <div class="form-group inline-input">
+                        <label class="col-form-label">{{language["Ce-Vlan"]}}</label>
+                        <input class="form-control" id="ceVlan" type="number" name="Name" formControlName="CeVlan" />
+                        <div *ngIf="(submitted && SubscriberForm.controls.CeVlan.errors) || SubscriberForm.controls.CeVlan.touched"
+                            class="errorMessage">
+                            <span *ngIf="SubscriberForm.controls.CeVlan.errors?.required">
+                                This value is invalid
+                            </span>
+                        </div>
+
+                    </div>
+                    <div class="form-group inline-input">
+                        <label class="col-form-label">{{language["Vlans"]}}</label>
+                        <input class="form-control" id="vlans" type="text" name="name" formControlName="Vlans" />
+                        <div *ngIf="(submitted && SubscriberForm.controls.Vlans.errors) || SubscriberForm.controls.Vlans.touched"
+                            class="errorMessage">
+                            <span *ngIf="SubscriberForm.controls.Vlans.errors?.required">
+                                This value is invalid
+                            </span>
+                            <span *ngIf="SubscriberForm.controls.Vlans.errors?.pattern">
+                                Invalid Vlans, multiple Vlans Should be seperated by ",", No space
+                            </span>
+                        </div>
+
+                    </div>
+                    <div class="form-group inline-input">
+                        <label class="col-form-label">{{language["Vlan Mode"]}}</label>
+                        <select class="ccl-form form-control form-control-sm" placeholder="Vlan Mode"
+                            formControlName="VlanMode">
+                            <option value="ONE2ONE">1:1</option>
+                            <option value="N2ONE">N:1</option>
+
+                        </select>
+                        <div *ngIf="(submitted && SubscriberForm.controls.VlanMode.errors) || SubscriberForm.controls.VlanMode.touched"
+                            class="errorMessage">
+                            <span *ngIf="SubscriberForm.controls.VlanMode.errors?.required">
+                                This value is invalid
+                            </span>
+                        </div>
+
+
+                    </div>
+                    <div class="form-group inline-input">
+                        <label class="col-form-label">{{language["Subscribers Per Vlan"]}}</label>
+                        <input class="form-control" id="subscriberpervlan" type="text"
+                            formControlName="SubscribersPerVlan" style="position: relative;" />
+                        <div *ngIf="(submitted && SubscriberForm.controls.SubscribersPerVlan.errors) || SubscriberForm.controls.SubscribersPerVlan.touched"
+                            class="errorMessage">
+                            <span *ngIf="SubscriberForm.controls.SubscribersPerVlan.errors?.required">
+                                This value is invalid
+                            </span>
+                        </div>
+
+                    </div>
+                    <div class="form-group inline-input" *ngIf="voicetype">
+                        <label class="col-form-label">{{language["Primary H248 GW Controller (voice)"]}}</label>
+                        <input class="form-control" id="primarycontroller" type="text"
+                            formControlName="priH248GwController" style="position: relative;" />
+                        <div *ngIf="(submitted && SubscriberForm.controls.priH248GwController.errors) || SubscriberForm.controls.priH248GwController.touched"
+                            class="errorMessage">
+                            <span *ngIf="SubscriberForm.controls.priH248GwController.errors?.required">
+                                This value is invalid
+                            </span>
+                        </div>
+
+                    </div>
+
+                    <div class="form-group inline-input" *ngIf="voicetype">
+                        <label class="col-form-label">{{language["Secondary H248 GW Controller (voice)"]}}</label>
+                        <input class="form-control" id="seccontroller" type="text" formControlName="secH248GwController"
+                            style="position: relative;" />
+                        <div *ngIf="(submitted && SubscriberForm.controls.secH248GwController.errors) || SubscriberForm.controls.secH248GwController.touched"
+                            class="errorMessage">
+                            <span *ngIf="SubscriberForm.controls.secH248GwController.errors?.required">
+                                This value is invalid
+                            </span>
+                        </div>
+
+                    </div>
+                    <div class="form-group inline-input" *ngIf="voicetype">
+                        <label class="col-form-label">{{language["SIP Proxy Server Address"]}} </label>
+                        <input class="form-control" id="sipaddress" type="text" formControlName="sipProxyServerAddress"
+                            style="position: relative;" />
+                        <div *ngIf="(submitted && SubscriberForm.controls.sipProxyServerAddress.errors) || SubscriberForm.controls.sipProxyServerAddress.touched"
+                            class="errorMessage">
+                            <span *ngIf="SubscriberForm.controls.sipProxyServerAddress.errors?.required">
+                                This value is invalid
+                            </span>
+                        </div>
+
+                    </div>
+                    <div class="form-group inline-input" *ngIf="videotype">
+                        <label class="col-form-label">{{language["Multicast Profile"]}} </label>
+                        <input class="form-control" id="multicastprofile" type="text" name="s_name"
+                            formControlName="multicastProfile" style="position: relative;" />
+
+                        <div *ngIf="(submitted && SubscriberForm.controls.multicastProfile.errors) || SubscriberForm.controls.multicastProfile.touched"
+                            class="errorMessage">
+                            <span *ngIf="SubscriberForm.controls.multicastProfile.errors?.required">
+                                This value is invalid
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group inline-input">
+                        <span class="col-lg-12">
+                            <button type="submit" class="btn-default primary px-3 my-3">{{edit ==
+                                true?language.Update:language.save}}</button>
+                        </span>
+                        <!--// [disabled]="!SubscriberForm.valid" -->
+
+
+                        <button type="submit" class="my-2 mr-3 btn-default btn-dft" (click)="goToList()">Cancel</button>
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</section>

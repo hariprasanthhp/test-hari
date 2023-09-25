@@ -1,0 +1,63 @@
+<div class="conatiner position-relative">
+    <div class="loader" *ngIf="loader">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">{{language.Loading}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="w-100 alert alert-danger  fade show" *ngIf="error">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+        <button type="button" class="close" (click)="closeAlert()"><span></span>
+        </button>
+        <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+    </div>
+
+    <div class="w-100 alert alert-success fade show" *ngIf="success">
+        <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+        <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+        <div [innerHtml]="successInfo"></div>
+    </div>
+    <div class="row my-3">
+        <div class="col-md-8">
+            <div class="ccl-title">{{language.searchUsersToDeactivate}} </div>
+        </div>
+        <div class="col-md-4 px-0 text-right">
+            <div class="text-right"><a class="back-text" id="backto-user-list" (click)=goToUserList();><i
+                        class="fa fa-angle-left mr-1" aria-hidden="true"></i>
+                    {{language.backToUsersList}} </a></div>
+        </div>
+    </div>
+    <div class="row my-3">
+        <div class="col-md-6">
+            <form>
+                <div class="form-group">
+                    <label for="exampleFormControlSelect1">{{language.user}}<span class="req-text">*</span></label>
+                    <ng-select id="usermail" [items]="usermail" bindLabel="username" placeholder=""
+                        [(ngModel)]="usermailSelected" [ngModelOptions]="{standalone: true}" [searchable]="true"
+                        notFoundText="{{noResultsFound}}" [clearable]="false">
+                    </ng-select>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-6 pr-0">
+            <form>
+                <div class="form-group">
+                    <label for="exampleFormControlSelect1">{{language.reason}}<span class="req-text">*</span></label>
+                    <ng-select id="reasons" [items]="reason" bindLabel="name" bindValue="value" placeholder=""
+                        [(ngModel)]="reasonSelected" [ngModelOptions]="{standalone: true}" [searchable]="false"
+                        [clearable]="false">
+                    </ng-select>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row my-3">
+        <div class="col-md-10 offset-md-2 px-0 text-right">
+            <button id="submit-deactivate" class="btn-default primary mr-2"
+                (click)="save()">{{language.saveEnregistrer}}</button>
+            <button id="cancel-deactivate" class="btn-default btn-dft py-1"
+            (click)="cancel()">{{language.Cancel}}</button>
+        </div>
+    </div>
+</div>

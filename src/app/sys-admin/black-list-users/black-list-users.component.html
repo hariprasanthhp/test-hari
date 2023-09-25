@@ -1,0 +1,118 @@
+<div class="container position-relative">
+    <div class="loader" *ngIf="!dataAvailable">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">{{language.Loading}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="w-100 alert alert-danger  fade show" *ngIf="error">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+        <button type="button" class="close" (click)="closeAlert()">
+            <span></span> </button>
+        <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+    </div>
+
+    <div class="w-100 alert alert-success fade show" *ngIf="success">
+        <span class="success-img d-inline-flex"><img src="./assets/img/success-icon.svg" /></span>
+        <div class="d-inline-flex" [innerHtml]="successInfo"></div>
+        <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+
+    </div>
+    <div class="row">
+        <div class="ccl-admin-title">{{language.deactivatedUsers}} </div>
+
+    </div>
+    <div class="row justify-content-end">
+
+        <div class="col-md-12 pr-0">
+            <div class="text-right flat-right">
+                <div class="row justify-content-end">
+
+                    <div class="col-md-8 ccl-form">
+                        <div class="d-inline" *ngIf="selectedUsers.length != 0">
+                            <button id="reactivate-user-btn" class="btn-default primary px-3"
+                                (click)="reActivate()">{{language.reactivate}}</button>
+                        </div>
+
+                        <button class="btn-default primary px-3 ml-3" id="deactivate-user-btn"
+                            (click)="deactivateUser()">{{language.searchUsersToDeactivate}}</button>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="ccl-form">
+                            <input id="search-deactivated-user" type="text" class="input-sm"
+                                (keyup)="search($event.target.value)" placeholder="{{language.searchUsers}}"
+                                (search)="search($event.target.value)">
+                                <span class="clear-icon text-right" (click)="clearSearch()" *ngIf="searchString"> <img src="../../../assets/img/close-icon.svg" alt=""></span>
+                            <!-- <button class="serach-but btn btn-primary btn-icon-md inline"><i class="fa fa-search"
+                                                                aria-hidden="true"></i></button> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="">
+
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col" *ngIf="dataAvailable">
+            <table id="deactivated-users-table" width="100%" datatable [dtOptions]="tableOptions"
+                class="row-border hover table-alter">
+                <thead class="">
+                    <tr>
+                        <th class="checkbox-column">
+                            <input type="checkbox" class="mainChk" value="" id="selectDeselectAll"
+                                (change)="selectDeselectAll($event.target.checked)"
+                                [disabled]="blacklistTableData.length == 0 || newArray.length == 0">
+                            <span class="checkbox-ui" id="selectDeselectAll-span" (click)="showAllUserCheckBox($event)"
+                                style="display: none;"></span>
+                        </th>
+                        <th (click)="showNoDataAvailable()">{{language.userName}}</th>
+                        <th (click)="showNoDataAvailable()">{{language.deactivatedBy}}</th>
+                        <th (click)="showNoDataAvailable()">{{language.reason}}</th>
+                        <th (click)="showNoDataAvailable()" class="deactivated">{{language.deactivatedDate}}</th>
+                    </tr>
+                </thead>
+                <tbody *ngIf="dataAvailable">
+                    <tr *ngFor="let item of blacklistTableData; let i = index">
+                        <td class="checkbox-column">
+                            <input type="checkbox" class=" activate_user_{{item.username}}" id="{{item.username}}"
+                                name="activate_user_{{item.username}}" value=""
+                                (change)="levelOneChange(item,$event.target.checked,i)">
+                        </td>
+                        <td>{{item.username}}</td>
+                        <td>{{item.deletedBy}}</td>
+                        <td>{{language[item.reasonText]}}</td>
+                        <td>{{changeDate(item.time)}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- Modals -->
+<ng-template #deleteModal let-data let-ref="dialogRef">
+
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{modalTitle}}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        {{ language['Are you sure you want to reactivate']}}?<br>
+        ({{modalInfo}})
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn-default primary px-3" data-dismiss="modal"
+            (click)="confirmDeleteSecleted()">{{language.yes}}</button>
+            <button type="button" class="btn-default btn-dft py-1 px-3" data-dismiss="modal"
+            (click)="closeModal()">{{language.no}}</button>
+    </div>
+</ng-template>
+<!-- Modals -->

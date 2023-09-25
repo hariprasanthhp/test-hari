@@ -1,0 +1,143 @@
+.current-issues-table {
+    width: 100%;
+}
+
+.current-issues-table table {
+    width: 100%;
+}
+
+.current-issues-table table {
+    width: 100%;
+}
+
+.current-issues-table table thead {
+    font-size: 14px;
+}
+
+.current-issues-table table tbody {
+    font-size: 14px;
+}
+
+.cco-pointer {
+    cursor: pointer;
+}
+
+table thead th {
+    /* vertical-align: bottom; */
+    border-bottom: 1px solid #dee2e6;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+
+.run-btn {
+    background-color: #6c757d !important;
+    color: #fff !important;
+}
+
+.run-btn-active {
+    background-color: #0173BC !important;
+    color: #fff !important;
+}
+
+label {
+    font-weight: normal !important;
+}
+
+
+.filter-wrapper {
+    min-width: 300px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+}
+
+.filter-wrapper>div {
+
+    min-width: 120px;
+}
+
+.custom-btn {
+    background-color: #0173BC;
+    border: 1px solid #44367D;
+    color: #FFFFFF;
+    font-weight: bold;
+    min-width: 82px;
+    height: 2.4em;
+    padding: 0 15px;
+    border-radius: 20px;
+    font-size: 14px;
+}
+
+.custom-btn:disabled {
+    background-color: #6a6b6f;
+    border: 1px solid #44367D;
+}
+
+:host ::ng-deep table.dataTable td.dataTables_empty {
+    display: none;
+}
+
+.substep-title {
+    font-size: 12px;
+    line-height: 22px;
+    font-weight: 300;
+    margin-bottom: 5px;
+}
+
+// .test span.p-calendar {
+
+//     width: 100% !important;
+// }
+// .first-discovered {
+//     p-calendar {
+//         width: 100% !important;
+//     }
+// }
+.first-discovered .p-calendar {
+    width: 100%;
+}
+
+.first-discovered .p-calendar .p-datepicker {
+    min-width: inherit;
+    width: auto;
+    max-width: 200px;
+}
+
+.spinnershow {
+    background-image: url(~src/assets/img/spinnersmall.svg) !important;
+}
+
+::ng-deep {
+    .p-calendar-w-btn .p-inputtext {
+        padding-right: 0 !important;
+    }
+
+    .p-button.p-button-icon-only {
+        max-width: 24px;
+        padding-left: 0 !important;
+        padding-right: 9px !important;
+    }
+}
+
+.filter-elemnts {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+}
+
+small {
+    color: #C70000;
+
+    //padding: 20px;
+    &.vald-tag {
+        position: absolute;
+        bottom: -20px;
+        padding-left: 10px;
+    }
+}
+.current-issue-item-w{
+    min-width: 120px;position: relative;
+}
+.mw-120{
+    min-width: 120px;
+}

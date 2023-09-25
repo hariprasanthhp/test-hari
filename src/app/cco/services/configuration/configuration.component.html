@@ -1,0 +1,54 @@
+<div role="alert" class="alert alert-warning" *ngIf="!hasPageAccess">
+    {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} </div>
+
+<section [hidden]="!hasPageAccess">
+    <div class="container mp-0">
+        <div class="row mm-0">
+            <div class="col-12 col-md-2 pl-0 mpr-0" [ngClass]="isToggleSidebar ? 'd-none' : 'd-block'"
+                *ngIf="hasPageAccess">
+                <ul id="netops-list-menu" class="nav flex-column left-menu tab-view-style mbr-none">
+                    <li class="nav-item" *ngIf="menus['ontconfigurations']">
+                        <a class="list-group-item list-group-item-action text-capitalize"
+                            routerLink="/cco/services/configuration/ONT-configurations"
+                            routerLinkActive="active">{{language['ONT configurations']}}</a>
+                    </li>
+                    <li class="nav-item" *ngIf="menus['externalfileserver']">
+                        <a class="list-group-item list-group-item-action"
+                            routerLink="/cco/services/configuration/external-file-server-list" routerLinkActive="active"
+                            [ngClass]="[
+                            router.url.includes('external-file-server-list') ||
+                            router.url.includes('external-file-server-form')
+                              ? 'active'
+                              : ''
+                          ]">{{language['External_File_server']}}</a>
+                    </li>
+                    <li class="nav-item" *ngIf="menus['secureonboarding']">
+                        <a class="list-group-item list-group-item-action"
+                            routerLink="/cco/services/configuration/secure-onboarding" routerLinkActive="active">
+                            {{language['Secure Onboarding']}}
+                        </a>
+                    </li>
+                    <li class="nav-item" *ngIf="menus['stalesystempurge']">
+                        <a class="list-group-item list-group-item-action"
+                            routerLink="/cco/services/configuration/stale-system-purge" routerLinkActive="active">
+                            {{language['Stale System Purge']}}</a>
+                    </li>
+                    <li class="nav-item" *ngIf="menus['subnetconfiguration']">
+                        <a class="list-group-item list-group-item-action"
+                            routerLink="/cco/services/configuration/subnet-configuration"
+                            routerLinkActive="active">{{language['Subnet Configuration']}}</a>
+                    </li>
+                    <li class="nav-item" *ngIf="menus['speedtest'] && (this.sso.getEntitlementsArr().indexOf('118') > -1)">
+                        <a class="list-group-item list-group-item-action"
+                            routerLink="/cco/services/configuration/speed-test" routerLinkActive="active">{{language['Speed Test']}}</a>
+                    </li>
+
+                </ul>
+            </div>
+            <div class="col-12 col-md-10 padl mp-0 mmt-3 pr-0 position-relative"
+                [ngClass]="isToggleSidebar ? 'col-12 col-md-12 px-0' : ''" [hidden]="!hasPageAccess">
+                <router-outlet></router-outlet>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,66 @@
+.success{
+	color:#2ecc71;
+}
+
+.failed{
+	color: #C70000;
+}
+
+.inprogress{
+	color:#009ee8;
+}
+
+.pending{
+	color:#ff9900;
+}
+
+.with-filter-tr td {
+    padding: 5px;
+    vertical-align: middle;
+}
+
+.back-to{
+	color: green;
+}
+
+//.status-title{
+	// text-transform:capitalize;
+	
+	// font-size: 18px;
+//}
+
+span.serial_a a {
+    color: #007bff !important;
+    cursor: pointer;
+}
+
+span.serial_a:hover {
+    text-decoration: underline !important;
+}
+
+.failed-msg p{
+	margin-bottom: 0px;
+}
+
+.scroll-table{
+	overflow-x: auto;
+}
+.scroll-table .failed-table{
+	width: 1660px!important;
+}
+
+
+.failed-msg {
+    white-space: normal;
+}
+:host ::ng-deep .dataTables_empty {
+    display: none;
+  }
+
+  .no-data-available {
+    text-align: center;
+  }
+  table.dataTable thead tr th{
+      width: fit-content !important;
+  }
+  .max-w-300px{max-width: 300px;}

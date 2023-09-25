@@ -1,0 +1,492 @@
+@import "~src/assets/variables";
+
+.subscriber-details {
+	justify-content: space-between;
+	align-items    : flex-start;
+	padding-top    : 20px;
+
+	.subs-title {
+		// margin-bottom: 15px;
+
+		.st-header {
+			justify-content   : space-between;
+			align-items       : center;
+			// margin-bottom  : 20px;
+
+			.sth-left {
+				padding-right: 20px;
+
+				h2 {
+					font-size    : 42px;
+					font-weight  : 300;
+					line-height  : 53px;
+					margin-bottom: 0;
+					color        : #1A1F22 !important;
+				}
+
+				p {
+					margin-bottom: 0;
+					font-size    : 22px;
+					font-weight  : 300;
+					line-height  : 28px;
+				}
+			}
+
+		}
+
+	}
+
+	// campaigns css start
+
+
+	.camp-group {
+		display  : flex;
+		flex-wrap: wrap;
+		width    : 50% !important;
+		flex     : 0 0 52% !important;
+	}
+
+	.btn-default {
+		// min-width:165px;
+	}
+
+	.campaign-link {
+		cursor: pointer;
+		color : $primary;
+
+	}
+
+	.campaign_drop {
+		padding      : 0px;
+		min-width    : auto;
+		width        : auto;
+		border-radius: 3px;
+		z-index      : 1;
+		left         : 0px !important;
+		transform    : translate(0px, 58px);
+		position     : absolute;
+		will-change  : transform;
+		top          : 0px !important;
+	}
+
+	.camp-about {
+		display           : flex;
+		align-items       : flex-end;
+		// justify-content: space-between;
+		flex-wrap         : wrap;
+		margin-bottom     : 20px;
+		width             : 50%;
+		float             : right;
+		;
+
+		.camp-group {
+			display  : flex;
+			flex-wrap: wrap;
+			width    : 40%;
+			flex     : 0 0 40%;
+
+			.transparant {
+				color  : $greyaa;
+				padding: 5px 15px;
+			}
+
+			.sth-rht {
+				margin-right: 10px;
+			}
+
+			.toggle-btn {
+				min-width: auto;
+				padding  : 0px 10px;
+				cursor   : pointer;
+
+				&:hover svg g {
+					fill: $primary;
+				}
+			}
+
+		}
+
+		.camp-dropdown {
+
+			align-items: flex-end;
+
+			.advance {
+				color          : $primary;
+				font-size      : 14px;
+				text-decoration: none;
+
+				:hover {
+					text-decoration: none;
+				}
+			}
+		}
+	}
+
+	.table-data-no.camp-table {
+		.w-11 {
+			width: 11%;
+		}
+
+		thead {
+			vertical-align: bottom;
+
+			tr {
+				th {
+					vertical-align: middle;
+				}
+			}
+
+			.dropdown-button button {
+				width: auto;
+			}
+		}
+
+		tbody {
+			tr {
+
+				cursor: pointer;
+
+				&:nth-child(even),
+				&:hover {
+					background-color: #f8f8fa;
+				}
+
+				td {
+					&:last-child {
+
+						text-align: center;
+					}
+				}
+			}
+		}
+
+		.nor-wrap {
+			white-space  : nowrap;
+			overflow     : hidden;
+			text-overflow: ellipsis;
+			width        : auto;
+			max-width    : 120px;
+		}
+
+		.down-arrow-icon {
+			width              : 28px;
+			height             : 28px;
+			border-radius      : 50%;
+			justify-content    : center;
+			align-items        : center;
+			display            : flex;
+			background-image   : url(~src/assets/img/ic_chevrondown-sec-grey.svg);
+			background-position: center;
+			background-repeat  : no-repeat;
+		}
+	}
+
+	.select-font {
+		font-size: 12px;
+	}
+
+	.hide-table {
+		display: none;
+	}
+
+	// ::ng-deep table.dataTable td.dataTables_empty {
+	// 	display: none;
+	// }
+
+	//common css start
+
+	.view-button,
+	.view-data .dot-drop {
+		visibility: hidden;
+		opacity   : 0;
+	}
+
+	table.dataTable tbody tr:hover .view-button,
+	table.dataTable tbody tr:hover .view-data .dot-drop {
+		visibility: visible;
+		opacity   : 1;
+	}
+
+	.view-data {
+		display        : flex;
+		justify-content: space-between;
+		align-items    : center;
+
+		svg {
+			width    : 15px;
+			transform: rotate(90deg);
+			fill     : #4a4a4a;
+		}
+
+		button {
+			width: auto;
+		}
+
+		.dropdown-button.show .dropdown-menu.show {
+			// background: #f2f2f2;
+			top          : 0px !important;
+			right        : 0px !important;
+			left         : auto !important;
+			padding      : 0px;
+			min-width    : auto;
+			width        : auto;
+			border-radius: 3px;
+			// border: 2px solid rgba(121, 121, 121, 1);
+			z-index      : 1;
+
+			button {
+				padding: 8px 30px;
+			}
+		}
+
+	}
+
+
+	.lg-content-wrap {
+		white-space  : nowrap;
+		overflow     : hidden;
+		text-overflow: ellipsis;
+		min-width    : auto;
+		max-width    : 180px;
+	}
+
+	.text-center {
+		text-align: center;
+	}
+
+	.text-right {
+		text-align   : right;
+		padding-right: 20px;
+	}
+
+}
+
+th.text-right.action-tab.sorting,
+.action-tab.sorting_desc,
+.action-tab.sorting_asc {
+	background-image: none;
+}
+
+
+.subscriber-details .tabs-wrapper .tabs a {
+	min-width  : 192px;
+	text-align : center;
+	line-height: 40px;
+	font-size  : 28px;
+	font-weight: 300;
+	color      : #4C4C4C;
+	padding    : 15px 10px;
+	position   : relative;
+}
+
+.subscriber-details .tabs-wrapper .tabs a.active {
+	font-weight: 400;
+}
+
+.subscriber-details .tabs-wrapper .tabs a:hover {
+	text-decoration: none;
+}
+
+.subscriber-details .tabs-wrapper .tabs a.active::after {
+	content   : "";
+	position  : absolute;
+	bottom    : -1px;
+	left      : 0;
+	width     : 100%;
+	background: #0279ff;
+	height    : 2px;
+}
+
+.right-side {
+	width          : 50%;
+	margin-left    : auto;
+	justify-content: flex-end;
+}
+
+.right-side .inline-flex-drop .ng-select {
+	min-width: 150px;
+}
+
+
+
+// common css end
+@media (max-width: 1080px) {
+	table.dataTable thead tr th {
+		font-size: 14px;
+	}
+}
+
+@media (max-width: 1024px) {
+	.camp-table {
+		overflow-x: auto;
+	}
+
+	// table.dataTable{
+	// 	width: 1280px;
+	// }
+}
+
+@media (max-width: 991px) {
+	.camp-about {
+		.camp-group {
+			width: 100%;
+			flex : 0 0 100%;
+		}
+
+		.camp-dropdown {
+			justify-content: flex-end;
+			width          : 100%;
+			flex           : 0 0 100%;
+		}
+
+	}
+}
+
+@media (max-width: 425px) {
+	.btn-default {
+		font-size: 14px;
+	}
+
+	.camp-about .camp-group .transparant {
+		padding: 5px;
+	}
+
+	.camp-about .camp-dropdown .advance {
+		width      : 100%;
+		text-align : right;
+		padding-top: 10px;
+	}
+
+	.camp-about .camp-dropdown {
+		justify-content: flex-start;
+	}
+
+	.camp-about .camp-dropdown .dropdown-button button {
+		width: 130px;
+	}
+}
+
+.border-for-no-data {
+	vertical-align: middle;
+	padding       : 10px;
+
+}
+
+.campaign_table_saved .content-wrap span {
+		display:inline-block;
+    width:200px;
+    white-space: nowrap;
+    overflow:hidden !important;
+    text-overflow: ellipsis;
+}
+
+
+
+
+
+.dataTables_wrapper {
+	display: none;
+}
+
+.dataTables_wrapper .dataTables_filter {
+	display: none;
+}
+
+.time-frame {
+	margin-top: 24px;
+}
+
+.time-drop {
+	display    : flex;
+	align-items: center;
+}
+
+.time-drop label {
+	margin-bottom: 0px;
+	margin-right : 10px;
+}
+
+.time-drop ng-select#typeId {
+	min-width: 150px;
+}
+
+.subscriber-details .tabs-wrapper .tabs a {
+	min-width  : 192px;
+	text-align : center;
+	line-height: 40px;
+	font-size  : 28px;
+	font-weight: 300;
+	color      : #4C4C4C;
+	padding    : 15px 10px;
+	position   : relative;
+}
+
+.subscriber-details .tabs-wrapper .tabs a.active {
+	font-weight: 400;
+}
+
+.subscriber-details .tabs-wrapper .tabs a:hover {
+	text-decoration: none;
+}
+
+.subscriber-details .tabs-wrapper .tabs a.active::after {
+	content   : "";
+	position  : absolute;
+	bottom    : -1px;
+	left      : 0;
+	width     : 100%;
+	background: #0279ff;
+	height    : 2px;
+}
+
+.command {
+	width            : 18px;
+	height           : 18px;
+	position         : absolute;
+	/* top           : 10px; */
+	right            : 5px;
+	z-index          : 1111111;
+	background-repeat: no-repeat;
+	display          : block;
+	float            : right;
+    bottom: 10px;
+}
+
+// .search-box-icon {
+// 	width           : 42px;
+// 	height          : 40px;
+// 	background-color: #0279ff;
+// 	padding         : 10px;
+// 	border-radius   : 25px;
+// }
+.add-search-icon {
+	width           : 42px;
+	height          : 38px;
+	background-color: #0279ff;
+	padding         : 8px;
+	border-radius   : 25px;
+	position        : relative;
+	right           : 49px;
+}
+
+.last-update {
+	font-size     : 18px !important;
+	font-style    : normal !important;
+	font-weight   : 400 !important;
+	line-height   : 23px !important;
+	letter-spacing: 0em !important;
+	text-align    : left !important;
+	color         : #808080 !important;
+	margin-bottom : 12px !important;
+}
+
+table.dataTable thead tr th {
+	line-height: 20px !important;
+}
+.clear-icon {
+	position: relative;
+	right: 40px;
+	top: 6px;
+	cursor: pointer;
+	width: 12px;
+}

@@ -1,0 +1,97 @@
+<div class="loader" *ngIf="loading">
+    <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+            <span class="sr-only">{{language['Loading']}}</span>
+        </div>
+    </div>
+</div>
+
+<div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess">
+    {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}}
+</div>
+
+<section>
+    <div class="container">
+        <div class="w-100 alert alert-danger  fade show my-3" *ngIf="error">
+            <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+            <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+            <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 px-0" *ngIf="isCcoReports">
+                <div class="cco-secondary-title">
+                    {{language['Unmapped IPs']}}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="test-container">
+                <div class="item" id="mapped-discovered-count">
+                    <span class="stats-label">{{language["Mapped Discovered Count"]}}</span>
+                    <div class="d-flex align-content-around flex-wrap">
+                        <span class="stats-value">{{discoveredCount}}</span>
+                    </div>
+                </div>
+                <div class="item" id="unmapped-solicited-count">
+                    <span class="stats-label">{{language["Unmapped Solicited"]}}</span>
+                    <div class="d-flex align-content-around flex-wrap">
+                        <span class="stats-value">{{solicitedCount}} ({{solicitedPercentage}}%)</span>
+                    </div>
+                </div>
+                <div class="item" id="unmapped-unsolicited-count">
+                    <span class="stats-label">{{language["Unmapped Unsolicited"]}}</span>
+                    <div class="d-flex align-content-around flex-wrap">
+                        <span class="stats-value">{{unsolicitedCount}} ({{unsolicitedPercentage}}%)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-end">
+            <div class="col-md-2 text-right">
+                <button type="button" id="export" class="btn-default btn-dft" (click)="export()">
+                    {{ language.Export }}
+                    <span *ngIf="exportLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 px-0" *ngIf="showTable">
+                <div class="row my-3 min-h-65">
+                    <div class="col">
+                        <table *ngIf="tableCountAvailable" id="unmapped_IPs" width="100%" datatable
+                            [dtOptions]="dtOptions" class="row-border hover table-alter">
+                            <thead>
+                                <tr>
+                                    <th>{{language.IP_Address}}</th>
+                                    <th>{{language.Created_On}}</th>
+                                    <th>{{language.Updated_On}}</th>
+                                    <th>{{language["Solicited"]}}</th>
+                                </tr>
+                            </thead>
+                            <tbody *ngIf="unmappedIPsData?.length != 0">
+                                <tr id="{{item.id}}" *ngFor="let item of unmappedIPsData">
+                                    <td>
+                                        {{item.ipAddress ? item.ipAddress : ''}}
+                                    </td>
+                                    <td> {{convertToDateTime(item.createTime)}}
+                                    </td>
+                                    <td> {{convertToDateTime(item.updateTime)}}
+                                    </td>
+                                    <td> {{item.isSource ? item.isSource : 'No'}}
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody *ngIf="unmappedIPsData.length === 0">
+                                <tr>
+                                    <td colspan="2" class="no-data-available">{{language['No data available in
+                                        table']}}
+                                    </td>
+                                </tr>
+                            <tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

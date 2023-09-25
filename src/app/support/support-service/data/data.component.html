@@ -1,0 +1,1376 @@
+<div class="row">
+  <div class="col-12">
+    <div class="data-loader" *ngIf="loader">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <button type="button" class="btn-default primary px-3 smy-2 md-btn blue-btn mr-2" data-toggle="dropdown"
+          *ngIf="scopesFlag.runSpeedTestWrite && ssoService.getCscType() !== 'DME' && (CalixTR143Ondemand || StandardTr143 || CalixUDPOndemand);else ooklaRunSpeedTest">
+          <span class="pr-1">{{ language.Run_Speed_Test }}</span> <span *ngIf="runSpeedTest"
+            class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+          <div class="dropdown dropleft position-static">
+            <ul class="dropdown-menu">
+              <li *ngIf="CalixTR143Ondemand || StandardTr143">
+                <button class="btn btn-white w-100 text-left"
+                  (click)="popUpFor = 'TCP';openOutModal(runspeedtestTcp_Udp)">
+                  {{language['TCP System Test'] || 'TCP System Test' }}
+                </button>
+              </li>
+              <li *ngIf="CalixUDPOndemand">
+                <button class="btn btn-white w-100 text-left"
+                  (click)="popUpFor = 'UDP';openOutModal(runspeedtestTcp_Udp)">
+                  {{language['UDP System Test'] || 'UDP System Test' }}
+                </button>
+              </li>
+              <li>
+                <button *ngIf="(OoklaOndemand || OoklaPrivateOndemand)" class="btn btn-white w-100 text-left"
+                  (click)="speedTest();isSpeedTestAvail() && openOutModal(runspeedtest);" id="serviceDataSpeedTest">
+                  {{language['Ookla Test'] || 'Ookla Test' }}
+                </button>
+              </li>
+            </ul>
+          </div>
+        </button>
+        <ng-template #ooklaRunSpeedTest>
+          <button type="button" class="btn-default primary px-3 smy-2 md-btn blue-btn mr-2"
+            *ngIf="(scopesFlag.runSpeedTestWrite && ssoService.getCscType() !== 'DME') && (OoklaOndemand || OoklaPrivateOndemand)"
+            (click)="speedTest();isSpeedTestAvail() && openOutModal(runspeedtest);" id="serviceDataSpeedTest">
+            <span class="pr-1">{{ language.Run_Speed_Test }}</span> <span *ngIf="runSpeedTest"
+              class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+          </button>
+        </ng-template>
+        <!-- *ngIf="ssoService.getCscType() !== 'DME' && scopesFlag.runSpeedTestWrite"-->
+        <button type="button" class="btn-default smy-2 primary px-3 md-btn blue-btn mr-2"
+          *ngIf="scopesFlag.runSpeedTestWrite" (click)="openOutModal(runlatencytest)" id="serviceDataLatencyTest">
+          <span class="pr-1">{{ language.Run_Latency_Test }}</span><span *ngIf="runLatencyTest"
+            class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+        </button>
+        <button *ngIf="!downSpeedCheck() && speedtestSupported && scopesFlag.runSpeedTestWrite &&
+          ssoService.getCscType() !== 'DME' && objectExistence(metaData?.SpeedTest)" type="button"
+          class="btn-default btn-dft smy-2 px-3 mr-2" (click)="resetBaseline()" id="resetBaseline">
+          {{language['Reset Speed Test Baseline']}}
+        </button>
+        <button type="button" class="btn-default btn-dft smy-2 px-3" (click)="gotoTraffic()"
+          id="serviceDataTrafficReport" *ngIf="
+          scopesFlag.trafficReportsRead && ssoService.getCscType() !== 'DME'
+        " [disabled]="disableTrafficReport">
+          {{ language.Traffic_Reports }}
+        </button>
+        <span class="cursor-pointer primary mx-3" id="serviceDataRefresh"
+          (click)="loadChart(true, 'refresh');getAllSubsServicesData()">
+          <i class="fas fa-sync refreshicon"></i>
+        </span>
+
+        <!-- <button type="button" class="btn-default btn-dft px-3 ml-3"
+        >{{language.Refresh}} </button> -->
+
+        <!--<div *ngIf="deviceInfo.length > 1" class="col-md-4 float-right ">
+    <ng-select id="serialNumberList" name="serialNumberList" data-toggle="tooltip" data-placement="bottom"
+      title="Select Serial-Number List to Update" (change)="loadChart()" [(ngModel)]="serialNumberSelected"
+      [items]="deviceInfo" placeholder="Select Serial Number" bindLabel="serialNumber" bindValue="serialNumber"
+      [searchable]="false" [clearable]="false">
+    </ng-select>
+  </div>-->
+      </div>
+    </div>
+    <!--<div class="w-100 alert alert alert-success  fade show mt-2" *ngIf="isSuccess">
+    <button type="button" class="close" (click)="isSuccess = false;">&times;</button>
+    {{language.Operation_Successful}}
+  </div>-->
+    <div class="w-100 alert alert alert-danger fade show" *ngIf="isError">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+      <button type="button" class="close" (click)="isError = false">
+        <span></span>
+      </button>
+      <div class="d-inline-flex" [innerHtml]="language[alertMessage] || alertMessage"></div>
+    </div>
+    <div class="w-100 alert warning-msg fade show" *ngIf="isSTAvailable">
+      <span class="success-img"><img class="mr-1" src="./assets/img/warning-icon.svg" /></span>
+      <button type="button" class="close ml-2" (click)="isSTAvailable = false">
+        <img src="assets/img/ic_close-44px.svg" />
+      </button>
+      <span>{{language["On-demand Speed Test using public Ookla Servers isn't available for this country"]}}</span>
+    </div>
+
+    <!-- <div class="container mb-5">
+<div class="row">
+  <div class="col-md-6 mr-3">
+    <div class="row">
+      <div class="col-md-12 ">
+        <div class="row border-bottom pr-3">
+          <h5 class="user-name.mb-0">Speed Test</h5>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6  ml-3">
+    <div class="row">
+      <div class="col-md-12 ">
+        <div class="row border-bottom pl-3">
+          <h5 class="user-name.mb-0">Speed Test</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div> -->
+    <div class="my-3">
+      <div class="row">
+        <div class="service-data-info col-lg-6 col-xs-12 col-sm-12">
+          <div class="row mr-3" id="speedTestSection"
+            *ngIf="(scopesFlag.runSpeedTestRead && ssoService.getCscType() !== 'DME') && showSpeedTestChart">
+            <div class="col-md-12 border-bottom align-text-bottom">
+              <div class="ccl-Secondary-title d-inline-flex align-text-bottom user-name speed-test-fit">
+                {{ language.Speed_Test }}
+                <span class="pl-1 small-text-2" id="serviceTimeLatest" *ngIf="globalObj.isSpeedTestRan">{{
+                  latrun
+                  }}</span>
+              </div>
+              <a *ngIf="(manufacturer == 'Calix' || manufacturer == 'MSTC' || manufacturer == 'ALPHA' ) && (ssoService.exosVersionCheck('22.4') && (testtypeforlogo ))"
+                class="pol-icon" href="https://www.speedtest.net/" target="_blank">
+                <img src="assets/img/speed_test_powered_icon.png" class="flex" />
+                <a target="_blank" href="https://www.speedtest.net/about/privacy" class="link">
+                  <!--<span class="f-s-12px"> OOKLA </span>-->
+                  {{ language.OOKLA_Privacy_Policy }}
+                </a>
+              </a>
+
+            </div>
+
+            <div class="tab-action-buttons">
+              <div class="d-flex align-items-center flex-wrap mt-3">
+                <!-- {{speedTestStates | json}} -->
+                <!-- {{ ' ' +CalixTR143Ondemand + ' ' +  StandardTr143 +' ' + speedTestStates?.tcp}} -->
+                <button *ngIf="CalixTR143Ondemand || StandardTr143 || speedTestStates?.tcp > 0"
+                  (click)="bgFilter('TCP')" [ngClass]="[activeTab == 'TCP' ? 'btn-active': '']">
+                  {{language['TCP System Test'] || 'TCP System Test'}}
+                </button>
+                <button *ngIf="CalixUDPOndemand || speedTestStates?.udp > 0" (click)="bgFilter('UDP')"
+                  [ngClass]="[activeTab == 'UDP' ? 'btn-active': '']">
+                  {{language['UDP System Test'] || 'UDP System Test'}}
+                </button>
+                <button *ngIf="OoklaOndemand || speedTestStates?.ookla_public > 0"
+                  [ngClass]="[ (isOndemand === true && activeTab == 'Public') ? 'btn-active' :'']"
+                  (click)="odFilter('Public');">{{language['Public Server Test']}}
+                </button>
+                <button *ngIf="OoklaPrivateOndemand || speedTestStates?.ookla_private > 0"
+                  [ngClass]="[(isOndemand === false && activeTab == 'Private') ? 'btn-active' :'']"
+                  (click)="bgFilter('Private')">{{language['Private Server Test']}}
+                </button>
+              </div>
+
+            </div>
+            <div class="col-md-12 my-3 full-width p-0">
+              <div class="" *ngIf="
+                  ssoService.getCscType() !== 'DME' &&
+                  modelName != '813G-2' &&
+                  modelName != '812G-2'
+                ">
+                <div class="loader" *ngIf="runSpeedTest">
+                  <div class="d-flex justify-content-center">
+                    <div class="spinner-border tesxt-primary">
+                      <span class="sr-only">{{ language.Loading }}</span>
+                    </div>
+                  </div>
+                </div>
+                <span *ngIf="bgRes">
+                  <span>
+                    <i *ngIf="globalObj?.bgspeedPerc > 0" class="fa fa-check-circle" [ngClass]="
+                      globalObj?.bgspeedPerc == 1
+                        ? 'red'
+                        : globalObj?.bgspeedPerc == 2
+                        ? 'chartOrange'
+                        : 'green'
+                    " aria-hidden="true"></i>
+                  </span>
+                  <span *ngIf="latbgDS">
+                    {{ language.Download_Speed }} {{ latbgDS || 0 }}
+                    {{ language.Mbps }}
+                    {{
+                    globalObj?.bgdwSpeedLevel ? globalObj?.bgdwSpeedLevel : ""
+                    }}</span>
+                  <span *ngIf="latDSM > 0">, {{ latDSM || 0 }}%
+                    {{ language.of_Provisioned_Max_download_speed }}</span>
+                  <!-- <span>{{language.Provisioned_Max_DS}} </span> -->
+                  <span *ngIf="latbgUS">. {{ language.Upload_Speed }} {{ latbgUS || 0 }}
+                    {{ language.Mbps }}
+                    {{
+                    globalObj?.bgupSpeedLevel ? globalObj?.bgupSpeedLevel : ""
+                    }}</span>
+                  <span *ngIf="latUSM > 0">, {{ latUSM || 0 }}%
+                    {{ language.of_Provisioned_Max_upload_speed }}</span>
+                </span>
+                <span *ngIf="odRes">
+                  <span>
+                    <i *ngIf="globalObj?.odspeedPerc > 0" class="fa fa-check-circle" [ngClass]="
+                      globalObj?.odspeedPerc == 1
+                        ? 'red'
+                        : globalObj?.odspeedPerc == 2
+                        ? 'chartOrange'
+                        : 'green'
+                    " aria-hidden="true"></i>
+                  </span>
+                  <span *ngIf="latodDS">
+                    {{ language.Download_Speed }} {{ latodDS || 0 }}
+                    {{ language.Mbps }}
+                    {{
+                    globalObj?.oddwSpeedLevel ? globalObj?.oddwSpeedLevel : ""
+                    }}</span>
+                  <span *ngIf="latDSM > 0">, {{ latDSM || 0 }}%
+                    {{ language.of_Provisioned_Max_download_speed }}</span>
+                  <!-- <span>{{language.Provisioned_Max_DS}} </span> -->
+                  <span *ngIf="latodUS">. {{ language.Upload_Speed }} {{ latodUS || 0 }}
+                    {{ language.Mbps }}
+                    {{
+                    globalObj?.odupSpeedLevel ? globalObj?.odupSpeedLevel : ""
+                    }}</span>
+                  <span *ngIf="latUSM > 0">, {{ latUSM || 0 }}%
+                    {{ language.of_Provisioned_Max_upload_speed }}</span>
+                </span>
+
+              </div>
+              <!-- <div id="speedTestChart"
+              *ngIf="ssoService.getCscType() !== 'DME' && modelName!='813G-2' && modelName!='812G-2'; else speedTestChartDME"
+              class="chart-box" style="height: 400px"></div> -->
+              <!-- <div class="f-subtitle"
+                *ngIf="(manufacturer == 'Calix' || manufacturer == 'MSTC') && isgs && speedtestByCountry && !isPrivateServerTest && !isspeediq">
+                &nbsp;&nbsp;&nbsp;{{language['DownloadorUploadSpeed Subtitle']}} </div>
+              <div class="f-subtitle"
+                *ngIf="(manufacturer == 'Calix' || manufacturer == 'MSTC') && !isgs && speedtestByCountry && !isspeediq">
+                &nbsp;&nbsp;&nbsp;{{language['DownloadorUploadSpeedSubtitle']}} </div>
+              <div class="f-subtitle"
+                *ngIf="(manufacturer == 'Calix' || manufacturer == 'MSTC') && !speedtestByCountry && isgs && !isspeediq">
+                &nbsp;&nbsp;&nbsp;{{language['DownloadorUploadSpeedPrivateSubtitle']}} </div>-->
+
+
+              <div id="speedTestDownloadChart" *ngIf="
+                ssoService.getCscType() !== 'DME' &&
+                  modelName != '813G-2' &&
+                  modelName != '812G-2';
+                else speedTestChartDME
+              " class="chart-box h-400"></div>
+              <!--<div class="row chart-w-centre" *ngIf="manufacturer == 'Calix' || manufacturer == 'MSTC'">
+                <span class="mx-1 mt-1 st-speed"
+                  *ngIf="speedtestByCountry && (!isPrivateServerTest || (!this.isgs && isPrivateServerTest))"
+                  [ngClass]="isOndemand === true ?  'st-highOpacity' :'st-lowOpacity' "></span>
+                <span class="cursor-line"
+                  *ngIf="speedtestByCountry && (!isPrivateServerTest || (!this.isgs && isPrivateServerTest))"
+                  [ngClass]="isOndemand === true ? 'st-black' : 'st-grey'" id="dsod"
+                  (click)="odFilter('ds');">{{language['Public Server Test']}}</span>
+                <span *ngIf="isgs"
+                  [ngClass]="isOndemand === false ?  'st-highOpacity' :'st-lowOpacity'" class="ml-3 mt-1 st-upl"></span>
+                <span *ngIf="isgs" [ngClass]="isOndemand === false?  'st-black' : 'st-grey' "
+                  id="dsbg" class="ml-3 cursor-pointer" (click)="bgFilter('ds')">{{language['Private Server Test']}}</span>
+              </div>-->
+
+              <div id="speedTestUploadChart" *ngIf="
+                ssoService.getCscType() !== 'DME' &&
+                  modelName != '813G-2' &&
+                  modelName != '812G-2';
+                else speedTestChartDME
+              " class="chart-box h-400"></div>
+              <!--<div class="row chart-w-centre" *ngIf="manufacturer == 'Calix' || manufacturer == 'MSTC'">
+                <span class="mx-1 mt-1 st-speed"
+                  *ngIf="speedtestByCountry && (!isPrivateServerTest || (!this.isgs && isPrivateServerTest))"
+                  [ngClass]="uploadIsOndemand === true ?  'st-highOpacity' :'st-lowOpacity' "></span>
+                <span class="cursor-pointer" [ngClass]="uploadIsOndemand === true ? 'st-black' : 'st-grey'" id="usod"
+                  (click)="odFilter('us')"
+                  *ngIf="speedtestByCountry && (!isPrivateServerTest || (!this.isgs && isPrivateServerTest))">{{language['Public
+                  Server Test']}}</span>
+                <span *ngIf="isgs"
+                  [ngClass]="uploadIsOndemand === false ?  'st-highOpacity' :'st-lowOpacity'" class="ml-3 mt-1 st-upl"></span>
+                <span *ngIf="isgs"
+                  [ngClass]="uploadIsOndemand === false?  'st-black' : 'st-grey' " id="usbg" class="ml-3 cursor-line"
+                  (click)="bgFilter('us')">{{language['Private Server Test']}}</span>
+              </div>-->
+              <ng-template #speedTestChartDME>
+                {{ language.Dont_support_info }}
+              </ng-template>
+            </div>
+          </div>
+          <!-- *ngIf="scopesFlag.runSpeedTestRead &&
+          ssoService.getCscType() !== 'DME'"-->
+          <div class="row mr-3" *ngIf="scopesFlag.runSpeedTestRead">
+            <div class="col-md-12">
+              <div class="border-bottom">
+                <div class="ccl-Secondary-title user-name" id="LatencyTestChartTitle">
+                  {{ language.Latency_Test }}
+                  <span class="small-text" *ngIf="globalObj.latencyCreateTime">{{
+                    globalObj.latencyCreateTime }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-12 my-3" id="roundTripInfoId">
+              <div class="loader" *ngIf="runLatencyTest">
+                <div class="d-flex justify-content-center">
+                  <div class="spinner-border text-primary">
+                    <span class="sr-only">{{ language.Loading }}</span>
+                  </div>
+                </div>
+              </div>
+              <span *ngIf="globalObj.triggerType">
+                <i class="fa fa-check-circle" [ngClass]="{
+                  green: globalObj.latencyLoss < 50,
+                  red: globalObj.latencyLoss >= 50
+                }" aria-hidden="true"></i>
+                <!-- <i *ngIf="globalObj.latency > 50 && globalObj.latency <=100" class="orange fa fa-check-circle"
+                aria-hidden="true"></i>
+              <i *ngIf="globalObj.latency > 100" class="red fa fa-check-circle" aria-hidden="true"></i> -->
+              </span>
+              <span *ngIf="globalObj.triggerType">
+                {{ globalObj.latencyPacketsSent || 0 }}
+                {{ language.Packets_Transmitted }},
+                {{ globalObj.latencyPacketsReceived || 0 }}
+                {{ language.received }}, {{ globalObj.latencyLoss }}%
+                {{ language.packet_loss }}<span *ngIf="globalObj.latencyLoss < 50">, {{ language.time1 }}
+                  {{ globalObj.latency }}ms</span>
+              </span>
+              <div id="latencyTestChart" class="chart-box h-400"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="service-data-info col-lg-6 col-xs-12 col-sm-12 position-relative">
+          <div class="data-loader" *ngIf="loadingWanInfoToDisplay">
+            <div class="d-flex justify-content-center">
+              <div class="spinner-border text-primary">
+                <span class="sr-only">{{ language.Loading }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="w-100" *ngIf="
+        !loadingWanInfoToDisplay && objectExistence(metaData?.WANInfo) && this.scopesFlag.wanConfigRead;
+          else wanInfoError
+        ">
+            <!--   Start avg -->
+            <!-- <div class="row" id="AverageSpeed"> -->
+            <div class="row" id="AverageSpeed" *ngIf="
+          speedtestSupported && softwareVersion >= '22.1' &&
+          scopesFlag.runSpeedTestRead && 
+          ssoService.getCscType() !== 'DME' && this.ssoService.acceptGSModel(modelName) &&
+          objectExistence(metaData?.SpeedTest)
+        ">
+              <div class="col-12 border-bottom px-0 pb-1">
+                <div class="ccl-Secondary-title" id="avg-speed-title">{{language['Average Speed']}}</div>
+              </div>
+              <div class="col-12 px-0">
+                <p class="st-grey mb-0 pt-2 pb-1 f-s-14px">
+                  {{language['Average speeds for traffic']}}
+                </p>
+              </div>
+              <div class="col-12 px-0 support-key-value mb-3">
+                <table id="avgSpeed" class="">
+                  <tbody>
+                    <tr>
+                      <th>{{language['Download Speed']}}</th>
+                      <td>{{totalDownloadspeed}} Mbps</td>
+                    </tr>
+                    <tr>
+                      <th>{{language['Upload Speed']}} </th>
+                      <td>{{totalUploadspeed}} Mbps</td>
+                    </tr>
+                  </tbody>
+
+                </table>
+              </div>
+            </div>
+            <!--end avg speed-->
+            <div class="d-flex justify-content-start row" id="WanStatusSection"
+              [ngClass]="{ stopAction: !wanInfo.length }">
+              <div class="col-8 pl-0 border-bottom" *ngIf="wanInfo.length > 1">
+                <div class="ccl-Secondary-title user-name" id="wan-status">
+                  <!--{{ language.Wan_Status }}-->{{language['Router WAN Status']}}
+
+                </div>
+              </div>
+              <div class="col-12 pl-0 border-bottom" *ngIf="wanInfo.length === 0 || wanInfo.length === 1">
+                <div class="ccl-Secondary-title user-name" id="wan-status">
+                  <!--{{ language.Wan_Status
+                  }}-->{{language['Router WAN Status']}}<span *ngIf="wanInfo.length === 1" class="float-right">{{
+                    wanInfo[0].Name }}</span>
+                </div>
+              </div>
+              <div class="col-4 border-bottom" *ngIf="wanInfo.length > 1">
+                <div class="d-flex justify-content-end arrow-down">
+                  <div class="ccl-Secondary-title" id="wanStatusSelectedId">
+                    {{ wanInfo[0].Name }}
+                  </div>
+                  <div class="cus-dd dropdown-button custom-dropdown-btn" ngbDropdown>
+                    <button class="mr-2" id="dropdownExchange" ngbDropdownToggle>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="15.472" height="8.442" viewBox="0 0 15.472 8.442">
+                        <path id="ic_chevrondown" d="M7.738,7.038.7,0,0,.7,7.034,7.742l.7.7.7-.7L15.472.7l-.7-.7Z"
+                          fill="#9e9e9e" />
+                      </svg>
+                    </button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownExchange" class="wanDropDown pt-3 pb-3">
+                      <button ngbDropdownItem class="greyaa" *ngFor="let wi of wanInfo; let i = index"
+                        (click)="wanSelection(i)">
+                        <span>{{ wi.Name }}</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+
+              <div class="col-md-12 px-0 support-key-value mb-4">
+                <table id="wanDevice" class="">
+                  <tbody>
+                    <tr *ngIf="metaData?.WANInfo?.Enable">
+                      <th scope="row">{{ language.Enabled }}</th>
+                      <td [ngClass]="{
+                      green: wanInfoToDisplay.Enable == 'True',
+                      red: wanInfoToDisplay.Enable == 'False'
+                    }">
+                        {{ language[wanInfoToDisplay.Enable] ||wanInfoToDisplay.Enable || "-" }}
+                      </td>
+                    </tr>
+                    <tr *ngIf="metaData?.WANInfo?.Uptime">
+                      <th scope="row">{{ language.Uptime }}</th>
+                      <td>{{ wanInfoToDisplay.Uptime ? upTime : "-" || "-" }}</td>
+                    </tr>
+                    <tr *ngIf="showConnectionStatus()">
+                      <th scope="row">{{ language.Connection_Status }}</th>
+                      <!-- <td>{{ language[wanInfoToDisplay.ConnectionStatus] || wanInfoToDisplay.ConnectionStatus || "-" }}</td> -->
+                      <td [ngClass]="getStatusColor()">
+                        {{ showConnectionStatus() }}
+                      </td>
+                    </tr>
+                    <tr *ngIf="wanInfoToDisplay?.IPv6ConnStatus && metaData?.WANInfo?.IPv6ConnectionStatus">
+                      <th scope="row">{{ language.IPv6_Connection_Status }}</th>
+                      <td>{{ wanInfoToDisplay.IPv6ConnStatus || "-" }}</td>
+                    </tr>
+                    <!-- <tr>
+                      <th scope="row">Backup WAN Connection Status</th>
+                      <td>{{ hasBackupWANConnectedStatus ? language.Connected : "-" }}
+                      </td>
+                    </tr> -->
+                    <tr *ngIf="wanInfoToDisplay?.MACAddress && metaData?.WANInfo?.MACAddress">
+                      <th scope="row">{{ language.MAC_Address }}</th>
+                      <td>{{ wanInfoToDisplay.MACAddress || "-" }}</td>
+                    </tr>
+                    <tr *ngIf="wanInfoToDisplay?.DownstreamRate && metaData?.WANInfo?.DownstreamRate">
+                      <th scope="row">{{ language.Downstream_Mbps }}</th>
+                      <td>{{ wanInfoToDisplay.DownstreamRate || "-" }}</td>
+                    </tr>
+                    <tr *ngIf="wanInfoToDisplay?.UpstreamRate && metaData?.WANInfo?.UpstreamRate">
+                      <th scope="row">{{ language.Upstream_Mbps }}</th>
+                      <td>{{ wanInfoToDisplay.UpstreamRate || "-" }}</td>
+                    </tr>
+                    <tr *ngIf="wanInfoToDisplay?.VlanId && metaData?.WANInfo?.VlanID">
+                      <th scope="row">{{ language.VLAN_ID }}</th>
+                      <td>{{ wanInfoToDisplay.VlanId || "-" }}</td>
+                    </tr>
+                    <tr *ngIf="wanInfoToDisplay?.Vlan">
+                      <th scope="row">{{ language.VLAN }}</th>
+                      <td>{{ wanInfoToDisplay.Vlan || "-" }}</td>
+                    </tr>
+                    <tr *ngIf="wanInfoToDisplay?.VlanPriority && metaData?.WANInfo?.VlanPriority">
+                      <th scope="row">
+                        {{ language.VLAN_Priotiry }}
+                      </th>
+                      <td>{{ wanInfoToDisplay.VlanPriority || "-" }}</td>
+                    </tr>
+                    <tr *ngIf="wanInfoToDisplay?.BytesReceived && metaData?.WANInfo?.BytesReceived">
+                      <th scope="row">{{ language.Bytes_Received }}</th>
+                      <td>{{ wanInfoToDisplay.BytesReceived || "-" }}</td>
+                    </tr>
+                    <tr *ngIf="wanInfoToDisplay?.BytesSent && metaData?.WANInfo?.BytesSent">
+                      <th scope="row">{{ language.Byte_Sent }}</th>
+                      <td>{{ wanInfoToDisplay.BytesSent || "-" }}</td>
+                    </tr>
+                    <tr *ngIf="wanInfoToDisplay?.PacketsReceived && metaData?.WANInfo?.PacketsReceived">
+                      <th scope="row">{{ language.Packets_Received }}</th>
+                      <td>{{ wanInfoToDisplay.PacketsReceived || "-" }}</td>
+                    </tr>
+                    <tr *ngIf="wanInfoToDisplay?.PacketsSent && metaData?.WANInfo?.PacketsSent">
+                      <th scope="row">{{ language.Packets_Sent }}</th>
+                      <td>{{ wanInfoToDisplay.PacketsSent || "-" }}</td>
+                    </tr>
+
+                    <tr *ngIf="wanInfoToDisplay?.BridgeLANInterface">
+                      <th scope="row">{{language.Bridge_LAN_Interface}}</th>
+                      <td>{{ wanInfoToDisplay.BridgeLANInterface || "-" }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <!--<div class="w-100 alert warning-msg fade show" *ngIf="false">
+            <span class="success-img w-40-float"><img
+                src="./assets/img/warning-icon.svg" /></span>
+            <button type="button" class="close ml-2" (click)="Bridgelanwarning = false">
+              <img src="assets/img/ic_close-44px.svg" />
+            </button>
+            <span>Bridge LAN Interface Not Support</span>
+      
+      
+          </div>-->
+            <div class="" *ngIf="objectExistence(metaData?.WANInfo) && wanInfo.length != 0">
+              <div class="row">
+                <div class="col-md-12 pl-0 border-bottom">
+                  <div class="ccl-Secondary-title user-name" id="wan-config">
+                    <!--{{ language.Wan_Configuration }}-->{{language['Router WAN Configuration']}}
+                  </div>
+                </div>
+                <div class="col-md-12 px-0 support-key-value mb-4">
+                  <table class="" id="wanConfigData">
+                    <tbody>
+                      <tr *ngIf="wanInfoToDisplay?.Username">
+                        <th scope="">{{ language.Username }}</th>
+                        <td>{{ wanInfoToDisplay.Username || "-" }}</td>
+                      </tr>
+                      <tr *ngIf="wanInfoToDisplay?.AddressingType">
+                        <th scope="">{{ language.AddressingType }}</th>
+                        <td>{{ wanInfoToDisplay.AddressingType || "-" }}</td>
+                      </tr>
+                      <tr *ngIf="wanInfoToDisplay?.ConnectionType && metaData?.WANInfo?.ConnectionType">
+                        <th scope="">{{ language.Connection_Type }}</th>
+                        <td>{{ wanInfoToDisplay.ConnectionType || "-" }}</td>
+                      </tr>
+                      <tr *ngIf="wanInfoToDisplay?.RemoteIPAddress">
+                        <th scope="">{{ language.Remote_IP_Address }}</th>
+                        <td>{{ wanInfoToDisplay.RemoteIPAddress || "-" }}</td>
+                      </tr>
+                      <tr *ngIf="wanInfoToDisplay?.DefaultGateway">
+                        <th scope="row">{{ language.Default_Gateway }}</th>
+                        <td>{{ wanInfoToDisplay.DefaultGateway || "-" }}</td>
+                      </tr>
+                      <tr *ngIf="wanInfoToDisplay?.SubnetMask">
+                        <th scope="row">{{ language["Subnet Mask"] }}</th>
+                        <td>{{ wanInfoToDisplay.SubnetMask || "-" }}</td>
+                      </tr>
+                      <tr *ngIf="wanInfoToDisplay?.DNSServers">
+                        <th scope="row">{{ language.dnsserver }}</th>
+                        <td>{{ wanInfoToDisplay.DNSServers || "-" }}</td>
+                      </tr>
+                      <tr *ngIf="wanInfoToDisplay?.ExternalIPAddress">
+                        <th scope="row">{{ language.External_IP_Address }}</th>
+                        <td>{{ wanInfoToDisplay.ExternalIPAddress || "-" }}</td>
+                      </tr>
+                      <tr *ngIf="wanInfoToDisplay?.IPv6ConnType">
+                        <th scope="">{{ language.IPv6_Connection_Type }}</th>
+                        <td>{{ wanInfoToDisplay.IPv6ConnType || "-" }}</td>
+                      </tr>
+                      <tr *ngIf="wanInfoToDisplay?.IPv6AddressingType && metaData?.WANInfo?.IPv6AddressingType">
+                        <th scope="">{{ language.IPv6_Addressing_Type }}</th>
+                        <td>{{ wanInfoToDisplay.IPv6AddressingType || "-" }}</td>
+                      </tr>
+                      <tr *ngIf="wanInfoToDisplay?.DefaultIPv6Gateway && metaData?.WANInfo?.DefaultIPv6Gateway">
+                        <th scope="row">{{ language.Default_IPv6_Gateway }}</th>
+                        <td>{{ wanInfoToDisplay.DefaultIPv6Gateway || "-" }}</td>
+                      </tr>
+                      <tr *ngIf="wanInfoToDisplay?.IPv6DNSServers && metaData?.WANInfo?.IPv6DNSServer">
+                        <th scope="row">{{ language.IPv6_DNS_Servers }}</th>
+                        <td>{{ wanInfoToDisplay.IPv6DNSServers || "-" }}</td>
+                      </tr>
+                      <tr *ngIf="wanInfoToDisplay?.ExternalIPv6Address && metaData?.WANInfo?.ExternalIPv6Address">
+                        <th scope="row">{{ language.External_IPv6_Address }}</th>
+                        <td>{{ wanInfoToDisplay.ExternalIPv6Address || "-" }}</td>
+                      </tr>
+                      <tr *ngIf="wanInfoToDisplay?.IANA && metaData?.WANInfo?.IANA">
+                        <th scope="row">{{ language.IANA }}</th>
+                        <td>{{ wanInfoToDisplay.IANA || "-" }}</td>
+                      </tr>
+                      <tr *ngIf="wanInfoToDisplay?.GRP && metaData?.WANInfo?.GRP">
+                        <th scope="row">{{ language.GRP }}</th>
+                        <td>{{ wanInfoToDisplay.GRP || "-" }}</td>
+                      </tr>
+                      <tr *ngIf="wanInfoToDisplay?.IPv6SitePrefixPltime">
+                        <th scope="row">{{ language.Preferred_Lifetime }}</th>
+                        <td>
+                          {{ wanInfoToDisplay.IPv6SitePrefixPltime || "-" }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="wanInfoToDisplay?.IPv6SitePrefixVltime">
+                        <th scope="row">{{ language.Valid_Lifetime }}</th>
+                        <td>
+                          {{ wanInfoToDisplay.IPv6SitePrefixVltime || "-" }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!---ont data service-->
+
+          <div class="" *ngIf="ssoService.getEntitlementsArr().indexOf('102') > -1 && 
+            opModeWithOnt && (dataService?.usoc || (usoc && this.dataser?.activate))">
+            <div class="row">
+              <div class="col-md-12 pl-0 border-bottom">
+                <div class="ccl-Secondary-title user-name" id="ontdataservice">{{language['Data Service']}}
+                </div>
+              </div>
+              <div class="col-md-12 px-0 support-key-value mb-4">
+                <table class="" id="wanConfigData">
+                  <tbody>
+                    <tr>
+                      <th scope="">{{language['Data Plan']}}</th>
+                      <!--<td>{{ontusoc ? ontusoc:'-'}}
+                      </td>-->
+                      <td>{{dataService?.usoc ?
+                        dataService?.usoc:usoc && this.dataser?.activate ? usoc:'-'}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th scope="">{{language['Service Status']}}</th>
+                      <!--<td [ngClass]="{
+                        green: enablestatus == 'True',
+                        red: enablestatus == 'False'
+                      }">{{ language[enablestatus] || enablestatus || "-"}}</td>-->
+                      <td>
+                        <span class="position-relative d-inline-block">
+                          {{enablestatus ? enablestatus:'-'}}
+                        </span>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <th scope="">{{language['Provisioned Downstream (Mbps)']}}
+                      </th>
+                      <td>{{ downstream || "-" }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="">{{language['Provisioned Upstream (Mbps)']}}
+                      </th>
+                      <td>{{ upstream || "-" }}</td>
+                    </tr>
+                    <tr
+                      *ngIf="(!dataser?.staticIpAddress && !dataService?.staticIp) && (!dataService?.pppoeUsername && !dataser?.pppoeUsername) ">
+                      <th scope="">{{language['Detected IP Address']}}
+                      </th>
+                      <td *ngIf="IpAddressNewOnt.length > 0">
+                        <div *ngFor="let obj of IpAddressNewOnt">
+                          <span>{{obj || "-"}}</span>
+                        </div>
+                      </td>
+                      <td *ngIf="IpAddressNewOnt.length <= 0">{{"-"}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="row"
+            *ngIf="showAsmInformation && ssoService.getEntitlementsArr().includes('102') && opModeWithOnt">
+            <div class="col-md-12 pl-0 border-bottom">
+              <div class="ccl-Secondary-title user-name" id="wan-config">
+                ASM Service
+              </div>
+            </div>
+            <div class="col-md-12 px-0 support-key-value mb-4">
+              <table id="wanDevice" class="">
+                <tbody>
+                  <tr>
+                    <th scope="row">Applied Policy Map</th>
+                    <td>{{ asmData?.appliedPolicyMapName || asmData?.pcrfSpecifiedUrlRedirectPolicy || '-'}}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">State</th>
+                    <td class="text-capitalize"
+                      [ngClass]="(asmData?.state || '').toLowerCase().includes('inactive') ? 'red' : (asmData?.state ? 'green' : '')">
+                      {{ (asmData?.state || '-').toLowerCase() }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th scope="row">IPv4 Address</th>
+                    <td>{{ (asmData?.iPv4Address || []).join(', ') || '-' }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">IPv6 Address</th>
+                    <td>{{ ssoService.isArray(asmData?.iPv6Address)
+                      ? ((asmData?.iPv6Address || []).join(', ') || '-')
+                      : (asmData?.iPv6Address || '-') }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">MAC Address</th>
+                    <td>{{ asmData.macAddress || '-' }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">First Sign of Life</th>
+                    <td>{{ (asmData?.firstSignOfLife ? (asmData?.firstSignOfLife | date: 'MMMM dd, YYYY hh:mm:ss a') :
+                      '-') }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Last Deactivation Cause</th>
+                    <td>{{ asmData.lastDeactivationCause || '-' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+        <ng-template #wanInfoError>
+          <div class="service-data-info w-100">
+            <div class="w-100 alert alert alert-danger" *ngIf="data?.wanInfo?.error">
+              <div class="d-inline-flex">
+                <span class="success-img"><img src="./assets/img/error-icon.svg" /></span>
+              </div>
+              <div class="d-inline-flex">
+                {{ data?.wanInfo?.error }}
+              </div>
+              <div class="d-inline-flex float-right">
+                <button type="button" class="ok float-right btn-default primary" (click)="data.wanInfo.error = ''">
+                  {{language.Okay}}
+                </button>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </div>
+      <div class="row" *ngIf="ssoService.getCscType() !== 'DME' && this.scopesFlag.trafficReportsRead && 
+      this.scopesFlag.runSpeedTestRead">
+        <div class="col-md-12">
+          <div class="border-bottom">
+            <div class="user-name ccl-Secondary-title" id="Bandwidth-Utilization">{{ language.Bandwidth_Utilization }}
+            </div>
+          </div>
+        </div>
+        <div class="w-100 position-relative my-3">
+          <div class="col-md-12">
+            <div class="loader" *ngIf="bandwidthLoader">
+              <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary">
+                  <span class="sr-only">{{ language.Loading }}</span>
+                </div>
+              </div>
+            </div>
+            <span>
+              <i class="green fa fa-check-circle" aria-hidden="true"></i>
+              {{ globalObj?.DSPercOfBW || 0 }}%
+              {{ language.Bandwidth_Chart_Content }}
+              {{ ssoService.getServiceDownSpeed() || 0 }} Mbps
+            </span>
+            <div id="bandwidthChart" class="chart-box h-400"></div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="service-data-info col-lg-6 col-xs-12 col-sm-12"></div>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="objectExistence(metaData?.L2Security)">
+      <div class="loader load" *ngIf="globalObj.l2Loader">
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border text-primary">
+            <span class="sr-only">{{ language.Loading }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12 px-0">
+        <div class="cco-secondary-title">
+          {{ language["Layer 2 Security"] }}
+          <span class="cursor-pointer primary mx-3" id="serviceDataRefresh" (click)="loadL2Security()">
+            <i class="fas fa-sync refreshicon"></i>
+          </span>
+        </div>
+      </div>
+      <div class="w-100 alert alert-note fade show" *ngIf="globalObj.l2Alert">
+        <!-- <button type="button" class="close" (click)="globalObj.l2Alert = false">
+          <span></span>
+        </button> -->
+        <span><img src="../../../../assets/img/info-icon.svg" height="34px" /> </span>
+        <span [innerHtml]="globalObj.l2Message" class="ml-2"></span>
+      </div>
+      <div class="col-md-12 px-0 my-2" *ngIf="!globalObj.l2Alert">
+        <div class="d-flex">
+          <label class="col-md-2 pl-0">{{language.SERVICE}}</label>
+          <div class="custom-selectbox" class="w-25" id="current-issues-interval">
+            <ng-select [searchable]="false" placeholder="{{language.SERVICE}}"
+              (change)="l2sData = globalObj.l2Res[globalObj.l2sValue]" (change)="rerender()"
+              [(ngModel)]="globalObj.l2sValue">
+              <ng-option *ngFor="let l2Res of globalObj.l2Res; let i = index" autofocus [value]="i">
+                {{l2Res.IgmpSnoopEnable == 'true'? language.Video : (language.Data_Service + ' - ' )}}
+                {{l2Res.Hairpin == 'true'? 'FB' : 'HB'}} ({{(language.VLAN + ' '+ (l2Res?.VLANID || "0"))}})
+              </ng-option>
+            </ng-select>
+            <!--<span *ngIf=testForm.get('testName').errors?.required?>Please fill this field</span>
+              
+              <div *ngIf="frequency.errors?.required && (myForm.submitted|| frequency.touched)" id="frequency-error">
+              {{language['This field is required']}}
+            </div> -->
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-12 px-0 my-3" *ngIf="!globalObj.l2Alert">
+        <div class="ccl-tabs w-100">
+          <ul id="tabs" class="nav nav-tabs sub-tab">
+            <li class="nav-item">
+              <a href="javascript:void(0)" (click)="l2sTab = 1" data-toggle="tab" class="pl-0 nav-link"
+                [ngClass]="{ active: l2sTab == 1 }">
+                {{ language["MAC Force Forwarding"] }}
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="javascript:void(0)" (click)="l2sTab = 2" data-toggle="tab" class="pl-0 nav-link"
+                [ngClass]="{ active: l2sTab == 2 }">
+                {{language.DHCP}}
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="javascript:void(0)" (click)="l2sTab = 3" data-toggle="tab" class="pl-0 nav-link"
+                [ngClass]="{ active: l2sTab == 3 }">
+                {{ language.Security }}
+              </a>
+            </li>
+          </ul>
+        </div>
+        <!-- <ul id="tabs" class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="list-group-item list-group-item-action" routerLink="#" id="" routerLinkActive="active">MAC Force
+            Forwarding</a>
+        </li>
+        <li class="nav-item">
+          <a class="list-group-item list-group-item-action" id="" routerLink="#" routerLinkActive="active">DHCP</a>
+        </li>
+        <li class="nav-item">
+          <a class="list-group-item list-group-item-action" id="" routerLink="#"
+            routerLinkActive="active">Security</a>
+        </li>
+      </ul> -->
+      </div>
+
+      <div class="col-md-12 px-0" *ngIf="l2sTab == 1">
+        <div class="col-md-12 px-0 my-3 loader-wrapper-info">
+          <div class="loader" *ngIf="dataLoaderFlag">
+            <div class="d-flex justify-content-center">
+              <div class="spinner-border text-primary">
+                <span class="sr-only">{{ language.Loading }}</span>
+              </div>
+            </div>
+          </div>
+          <label class="ccl-Secondary-title col-md-12 pl-0">{{
+            language["MACFF Associated Routers"]
+            }}</label>
+          <table *ngIf="dataFlag" datatable [dtOptions]="dtOptionStation" class="row-border hover table-alter">
+            <thead>
+              <tr>
+                <th>{{ language["MAC Address"] }}</th>
+                <th>{{ language["IP Address"] }}</th>
+                <th>{{ language.State }}</th>
+              </tr>
+            </thead>
+            <tbody *ngIf="
+            l2sData.MacffAr && l2sData.MacffAr.length;
+            else nodataavailable">
+              <tr *ngFor="let l2 of l2sData.MacffAr">
+                <td>{{ l2.MACAddress }}</td>
+                <td>{{ l2.IPAddress }}</td>
+                <td>{{ l2.State.replace('Macff', '') }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+
+        <div class="col-md-12 px-0 my-3 loader-wrapper-info">
+          <div class="loader" *ngIf="dataLoaderFlag">
+            <div class="d-flex justify-content-center">
+              <div class="spinner-border text-primary">
+                <span class="sr-only">{{ language.Loading }}</span>
+              </div>
+            </div>
+          </div>
+          <label class="ccl-Secondary-title col-md-12 pl-0" id="MACFF-Statics">{{ language["MACFF Statics"] }}</label>
+          <table *ngIf="dataFlag" datatable [dtOptions]="dtOptionStation" class="row-border hover table-alter">
+            <thead>
+              <tr>
+                <th>{{ language["IP Address"] }}</th>
+                <th>{{ language["IP Address Mask"] }}</th>
+                <th>{{ language["IP Gateway"] }}</th>
+              </tr>
+            </thead>
+            <tbody *ngIf="
+            l2sData.MacffStatic && l2sData.MacffStatic.length;
+            else nodataavailable">
+              <tr *ngFor="let l2 of l2sData.MacffStatic">
+                <td>{{ l2.IPAddress }}</td>
+                <td>{{ l2.IPAddressMask }}</td>
+                <td>{{ l2.IPGateway }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="col-md-12 px-0 my-3 loader-wrapper-info">
+          <div class="loader" *ngIf="dataLoaderFlag">
+            <div class="d-flex justify-content-center">
+              <div class="spinner-border text-primary">
+                <span class="sr-only">{{ language.Loading }}</span>
+              </div>
+            </div>
+          </div>
+          <label class="ccl-Secondary-title col-md-12 pl-0" id="MACFF-Subnets">{{ language["MACFF Subnets"] }}</label>
+          <table *ngIf="dataFlag" datatable [dtOptions]="dtOptionStation" class="row-border hover table-alter">
+            <thead>
+              <tr>
+                <th>{{ language["Port Interface"] }}</th>
+                <th>{{ language["IP Subnet"] }}</th>
+                <th>{{ language["IP Address Mask"] }}</th>
+                <th>{{ language["IP Gateway"] }}</th>
+              </tr>
+            </thead>
+            <tbody *ngIf="
+            l2sData.MacffSubnet && l2sData.MacffSubnet.length;
+            else nodataavailable">
+              <tr *ngFor="let l2 of l2sData.MacffSubnet">
+                <td>{{ l2.PortInterface }}</td>
+                <td>{{ l2.IPSubnet }}</td>
+                <td>{{ l2.IPAddressMask }}</td>
+                <td>{{ l2.IPGateway }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+
+
+        <div class="col-md-12 px-0 my-3 loader-wrapper-info">
+          <div class="loader" *ngIf="dataLoaderFlag">
+            <div class="d-flex justify-content-center">
+              <div class="spinner-border text-primary">
+                <span class="sr-only">{{ language.Loading }}</span>
+              </div>
+            </div>
+          </div>
+          <label class="ccl-Secondary-title col-md-12 pl-0" id="MACFF-Stations">{{language['MACFF Stations']}}</label>
+          <table *ngIf="dataFlag" datatable [dtOptions]="dtOptionStation" class="row-border hover table-alter">
+            <thead>
+              <tr>
+                <th>{{ language["Port Interface"] }}</th>
+                <th>{{ language["MAC Address"] }}</th>
+                <th>{{ language["IP Address"] }}</th>
+                <th>{{ language["IP Address Mask"] }}</th>
+                <th>{{ language["IP Gateway"] }}</th>
+              </tr>
+            </thead>
+            <tbody *ngIf="
+            l2sData.MacffStation && l2sData.MacffStation.length;
+            else nodataavailable">
+              <tr *ngFor="let l2 of l2sData.MacffStation">
+                <td>{{ l2.PortInterface }}</td>
+                <td>{{ l2.MACAddress }}</td>
+                <td>{{ l2.IPAddress }}</td>
+                <td>{{ l2.IPAddressMask }}</td>
+                <td>{{ l2.IPGateway }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="col-md-12 px-0" *ngIf="l2sTab == 2">
+        <div class="col-md-12 px-0 my-3 loader-wrapper-info">
+          <div class="loader" *ngIf="dataLoaderFlag">
+            <div class="d-flex justify-content-center">
+              <div class="spinner-border text-primary">
+                <span class="sr-only">{{ language.Loading }}</span>
+              </div>
+            </div>
+          </div>
+          <label class="ccl-Secondary-title col-md-12 pl-0" id="DHCP-Leases">{{ language["DHCP Leases"] }}</label>
+          <table *ngIf="dataleaseFlag" datatable class="row-border hover table-alter" [dtOptions]="dtL2Lease">
+            <thead>
+              <tr>
+                <th>{{ language["Port Interface"] }}</th>
+                <th>{{ language["ChAddress"] }}</th>
+                <th>{{ language["IP Address"] }}</th>
+                <th>{{ language["IP Address Mask"] }}</th>
+                <th>{{ language["IP Gateway"] }}</th>
+                <th>{{ language["DHCP Server"] }}</th>
+                <th>{{ language["Expiry Time"] }}</th>
+                <th>{{ language["Birth Date"] }}</th>
+                <th>{{ language["Last Renewal"] }}</th>
+                <th>{{ language.Discovers }}</th>
+                <th>{{ language.Requests }}</th>
+                <th>{{ language.Informs }}</th>
+                <th>{{ language.Acks }}</th>
+                <th>{{ language.Offers }}</th>
+              </tr>
+            </thead>
+            <tbody *ngIf="
+            l2sData.DhcpLease && l2sData.DhcpLease.length;
+            else nodataavailable" [ngClass]="l2sData.DhcpLease === undefined  ? 'dataTables_empty':'dataleaseFlag'">
+              <tr *ngFor="let l2 of l2sData.DhcpLease">
+                <td>{{ l2.PortInterface }}</td>
+                <td>{{ l2.ChAddress }}</td>
+                <td>{{ l2.IPAddress }}</td>
+                <td>{{ l2.IPAddressMask }}</td>
+                <td>{{ l2.IPGateway }}</td>
+                <td>{{ l2.DhcpServer }}</td>
+                <td>{{ ((l2.ExpiryTime || 0) + '000') | date : 'yyyy-MM-dd HH:mm:ss' }}</td>
+                <td>{{ ((l2.BirthDate || 0) + '000') | date : 'yyyy-MM-dd HH:mm:ss' }}</td>
+                <td>{{ ((l2.LastRenewal || 0) + '000') | date : 'yyyy-MM-dd HH:mm:ss' }}</td>
+                <td>{{ l2.Discovers }}</td>
+                <td>{{ l2.Requests }}</td>
+                <td>{{ l2.Informs }}</td>
+                <td>{{ l2.Acks }}</td>
+                <td>{{ l2.Offers }}</td>
+              </tr>
+            </tbody>
+            <!-- <tbody *ngIf="l2sData.DhcpLease === undefined">
+              <tr>
+                <td colspan="15" class="no-data-available">{{language['No data available in table']}}
+                </td>
+              </tr>
+            <tbody>-->
+          </table>
+        </div>
+
+        <div class="col-md-12 px-0 mt-4">
+          <label class="ccl-Secondary-title col-md-12 pl-0" id="DHCP-Stats-WAN">{{ language["DHCP Stats - WAN"]
+            }}</label>
+          <table datatable class="row-border hover table-alter" [dtOptions]="dtL2Options">
+            <thead>
+              <tr>
+                <th>{{ language.TxDiscovers }}</th>
+                <th>{{ language.TxRequests }}</th>
+                <th>{{ language.TxReleases }}</th>
+                <th>{{ language.TxInforms }}</th>
+                <th>{{ language.TxDeclines }}</th>
+                <th>{{ language.RxAcks }}</th>
+                <th>{{ language.RxNaks }}</th>
+                <th>{{ language.RxOffers }}</th>
+                <th>{{ language["Flawed Packets"] }}</th>
+                <th>{{ language["Client Drop Messages"] }}</th>
+                <th>{{ language["No Session Drops"] }}</th>
+                <th>{{ language["MAC Collisions"] }}</th>
+                <th>{{ language["Other Errors"] }}</th>
+              </tr>
+            </thead>
+            <tbody *ngIf="
+              l2sData.DhcpStatsWan && l2sData.DhcpStatsWan.length;
+              else noEntryBody
+            ">
+              <tr *ngFor="let l2 of l2sData.DhcpStatsWan">
+                <td>{{ l2.TxDiscovers }}</td>
+                <td>{{ l2.TxRequests }}</td>
+                <td>{{ l2.TxReleases }}</td>
+                <td>{{ l2.TxInforms }}</td>
+                <td>{{ l2.TxDeclines }}</td>
+                <td>{{ l2.RxAcks }}</td>
+                <td>{{ l2.RxNaks }}</td>
+                <td>{{ l2.RxOffers }}</td>
+                <td>{{ l2.FlawedPackets }}</td>
+                <td>{{ l2.ClientDropMessages }}</td>
+                <td>{{ l2.NoSessionDrops }}</td>
+                <td>{{ l2.MacCollisions }}</td>
+                <td>{{ l2.OtherErrors }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="col-md-12 px-0 mt-4">
+          <label class="ccl-Secondary-title col-md-12 pl-0">{{language['DHCP Stats - LAN']}}</label>
+          <table datatable class="row-border hover table-alter" [dtOptions]="dtL2Options">
+            <thead>
+              <tr>
+                <th>{{ language["Port Interface"] }}</th>
+                <th>{{ language.RxDiscovers }}</th>
+                <th>{{ language.RxRequests }}</th>
+                <th>{{ language.RxReleases }}</th>
+                <th>{{ language.RxInforms }}</th>
+                <th>{{ language.RxDeclines }}</th>
+                <th>{{ language.TxAcks }}</th>
+                <th>{{ language.TxOffers }}</th>
+                <th>{{ language["Flawed Packets"] }}</th>
+                <th>{{ language["Server Msg Drops"] }}</th>
+                <th>{{ language["Giaddr Errors"] }}</th>
+                <th>{{ language["Chaddr Errors"] }}</th>
+                <th>{{ language["Opt82 Errors"] }}</th>
+                <th>{{ language["Limit Drops"] }}</th>
+                <th>{{ language["Release Errors"] }}</th>
+                <th>{{ language["Other Errors"] }}</th>
+              </tr>
+            </thead>
+            <tbody *ngIf="
+              l2sData.DhcpStatsLan && l2sData.DhcpStatsLan.length;
+              else noEntryBody
+            ">
+              <tr *ngFor="let l2 of l2sData.DhcpStatsLan">
+                <td>{{ l2.PortInterface }}</td>
+                <td>{{ l2.RxDiscovers }}</td>
+                <td>{{ l2.RxRequests }}</td>
+                <td>{{ l2.RxReleases }}</td>
+                <td>{{ l2.RxInforms }}</td>
+                <td>{{ l2.RxDeclines }}</td>
+                <td>{{ l2.TxAcks }}</td>
+                <td>{{ l2.TxOffers }}</td>
+                <td>{{ l2.FlawedPackets }}</td>
+                <td>{{ l2.ServerMsgDrops }}</td>
+                <td>{{ l2.GiaddrErrors }}</td>
+                <td>{{ l2.ChaddrErrors }}</td>
+                <td>{{ l2.Opt82Errors }}</td>
+                <td>{{ l2.LimitDrops }}</td>
+                <td>{{ l2.ReleaseErrors }}</td>
+                <td>{{ l2.OtherErrors }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-sm-12 px-0 support-key-value" *ngIf="l2sTab == 3">
+        <table class="">
+          <tbody>
+            <tr>
+              <th>{{ language["DHCP Upstream Snoop Hits"] }}</th>
+              <td>{{ l2sData.Stats.DhcpUpstreamSnoopHits }}</td>
+            </tr>
+            <tr>
+              <th>{{ language["DHCP Downstream Snoop Hits"] }}</th>
+              <td>{{ l2sData.Stats.DhcpDownstreamSnoopHits }}</td>
+            </tr>
+            <tr>
+              <th>{{ language["Station Valid Count"] }}</th>
+              <td>{{ l2sData.Stats.StationValidCount }}</td>
+            </tr>
+            <tr>
+              <th>{{ language["IPv6 Downstream Hits"] }}</th>
+              <td>{{ l2sData.Stats.IPv6DownstreamHits }}</td>
+            </tr>
+            <tr>
+              <th>{{ language["IPv6 Upstream Hits"] }}</th>
+              <td>{{ l2sData.Stats.IPV6UpstreamHits }}</td>
+            </tr>
+            <tr>
+              <th>{{ language["L2CP Downstream Hits"] }}</th>
+              <td>{{ l2sData.Stats.L2CPDownstreamHits }}</td>
+            </tr>
+            <tr>
+              <th>{{ language["L2CP Upstream Hits"] }}</th>
+              <td>{{ l2sData.Stats.L2CPUpstreamHits }}</td>
+            </tr>
+            <tr>
+              <th>{{ language["Station Invalid Count"] }}</th>
+              <td>{{ l2sData.Stats.StationInvalidCount }}</td>
+            </tr>
+            <tr>
+              <th>{{ language["Station Invalid type"] }}</th>
+              <td>{{ l2sData.Stats.StationInvalidEtype }}</td>
+            </tr>
+            <tr>
+              <th>{{ language["Non-IP Or ARP Errors"] }}</th>
+              <td>{{ l2sData.Stats.NonIpOrArpErrors }}</td>
+            </tr>
+            <tr>
+              <th>{{ language["Invalid B cast Errors"] }}</th>
+              <td>{{ l2sData.Stats.InvalidBcastErrors }}</td>
+            </tr>
+            <tr>
+              <th>
+                {{ language["Upstream Unknown Unicast Mac force forwarding"] }}
+              </th>
+              <td>{{ l2sData.Stats.UpstreamUnknownUnicastMacff }}</td>
+            </tr>
+            <tr>
+              <th>{{ language["ARP Proxy Upstream Drops"] }}</th>
+              <td>{{ l2sData.Stats.ArpProxyUpstreamDrops }}</td>
+            </tr>
+            <tr>
+              <th>{{ language["ARP Proxy Downstream Drops"] }}</th>
+              <td>{{ l2sData.Stats.ArpProxyDownstreamDrops }}</td>
+            </tr>
+            <tr>
+              <th>{{ language["Non-Ar Da Errors"] }}</th>
+              <td>{{ l2sData.Stats.NonArDaErrors }}</td>
+            </tr>
+            <tr>
+              <th>{{ language["Filtered Multicast Packets"] }}</th>
+              <td>{{ l2sData.Stats.FilteredMulticastPackets }}</td>
+            </tr>
+            <tr>
+              <th>{{ language["Downstream B cast Errors"] }}</th>
+              <td>{{ l2sData.Stats.DownstreamBcastErrors }}</td>
+            </tr>
+            <tr>
+              <th>{{ language["Multicast Police Upstream Drops"] }}</th>
+              <td>{{ l2sData.Stats.MulticastPoliceUpstreamDrops }}</td>
+            </tr>
+            <tr>
+              <th>{{ language["Circuit Id String"] }}</th>
+              <td>{{ l2sData.Stats.CircuitIdString }}</td>
+            </tr>
+            <tr>
+              <th>{{ language["Remote Id String"] }}</th>
+              <td>{{ l2sData.Stats.RemoteIdString }}</td>
+            </tr>
+            <tr>
+              <th>{{ language["LLDP OLT System Id"] }}</th>
+              <td>{{ l2sData.Stats.LldpOltSystemId }}</td>
+            </tr>
+            <tr>
+              <th>{{ language["LLDP OLT Port"] }}</th>
+              <td>{{ l2sData.Stats.LldpOltPort }}</td>
+            </tr>
+            <tr>
+              <th>{{ language["LLDP Frames Received"] }}</th>
+              <td>{{ l2sData.Stats.LldpFramesReceived }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="speed-text-process" *ngIf="false">
+      <div class="maximus">
+        <h2 id="run-speed-test">
+          {{
+          runSpeedTest
+          ? language.Speed_Test_Running
+          : language.Latency_Test_Running
+          }}
+          <div class="spinner-border text-primary">
+            <span class="sr-only">{{ language.Loading }}</span>
+          </div>
+        </h2>
+      </div>
+    </div>
+
+    <ng-template #runspeedtest let-modal>
+      <div class="modal-body">
+        <div class="col-md-12">
+          <p>
+            {{ this.isgs && this.OoklaPrivateOndemand && OoklaOndemand? language.Speed_Test_Time_Estaimation_1 :
+            language.Speed_Test_Time_Estaimation_2 }}
+          </p>
+          <!--<p *ngIf="spd1 && isgs && !isPrivateServerTest">
+            {{ language.Speed_Test_Time_Estaimation_1 }}
+          </p>
+          <p *ngIf="spd2 || !isgs && isPrivateServerTest">
+            {{ language.Speed_Test_Time_Estaimation_2 }}
+          </p>
+          <p *ngIf="this.isgs && isPrivateServerTest">
+            {{ language.Speed_Test_Time_Estaimation_2 }}
+          </p>-->
+          <p>
+            {{ language.confirmation }}
+          </p>
+          <div class="add-bnt">
+            <button type="button" class="btn-default primary px-3 md-btn blue-btn mr-2"
+              (click)="modal.close(); speedTest(true)">
+              {{ language.Confirm }}
+            </button>
+            <button type="button" class="btn-default btn-dft px-3" (click)="modal.close('Save click')">
+              {{ language.Cancel }}
+            </button>
+          </div>
+        </div>
+        <div class="close">
+          <button type="button" data-dismiss="modal" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true"><img src="assets/img/close-icon.svg" /></span>
+          </button>
+        </div>
+      </div>
+    </ng-template>
+
+    <ng-template #runspeedtestTcp_Udp let-modal>
+      <div class="modal-body">
+        <div class="col-md-12">
+          <p>
+            {{ language.Speed_Test_Time_Estaimation_2 }}
+          </p>
+          <p>
+            {{ language.confirmation }}
+          </p>
+          <div class="add-bnt">
+            <button type="button" class="btn-default primary px-3 md-btn blue-btn mr-2"
+              (click)="modal.close(); speedTest(true,popUpFor)">
+              {{ language.Confirm }}
+            </button>
+            <button type="button" class="btn-default btn-dft px-3" (click)="modal.close('Save click');popUpFor = ''">
+              {{ language.Cancel }}
+            </button>
+          </div>
+        </div>
+        <div class="close">
+          <button type="button" data-dismiss="modal" aria-label="Close"
+            (click)="modal.dismiss('Cross click');popUpFor = ''">
+            <span aria-hidden="true"><img src="assets/img/close-icon.svg" /></span>
+          </button>
+        </div>
+      </div>
+    </ng-template>
+
+    <ng-template #runlatencytest let-modal>
+      <div class="modal-body">
+        <div class="col-md-12">
+          <p>
+            {{ language.Latency_Test_Time_Estaimation }}
+          </p>
+          <p>
+            {{ language.confirmation }}
+          </p>
+          <div class="add-bnt">
+            <button type="button" class="btn-default primary px-3 md-btn blue-btn mr-2"
+              (click)="modal.close(); latencyTest()">
+              {{ language.Confirm }}
+            </button>
+            <button type="button" class="btn-default btn-dft px-3" (click)="modal.close('Save click')">
+              {{ language.Cancel }}
+            </button>
+          </div>
+        </div>
+        <div class="close">
+          <button type="button" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true"><img src="assets/img/close-icon.svg" /></span>
+          </button>
+        </div>
+      </div>
+    </ng-template>
+
+    <ng-template #content let-modal>
+      <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">
+          {{ language.Profile_update }}
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="dateOfBirth">{{ language.Date_of_birth }}</label>
+            <div class="input-group"></div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">
+          {{ language.Save }}
+        </button>
+      </div>
+    </ng-template>
+  </div>
+</div>
+<ng-template #noEntryBody>
+  <tbody>
+    <tr>
+      <td colspan="100" align="center"><strong>{{language['No Entry']}}</strong></td>
+    </tr>
+  </tbody>
+</ng-template>
+<ng-template #nodataavailable>
+  <tbody>
+    <tr>
+      <td colspan="100" align="center"><strong>{{language['No data available in table']}}</strong></td>
+    </tr>
+  </tbody>
+</ng-template>

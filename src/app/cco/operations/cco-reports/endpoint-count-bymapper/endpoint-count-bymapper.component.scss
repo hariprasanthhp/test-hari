@@ -1,0 +1,30 @@
+.report-container {
+  display: flex;
+}
+
+.report-item {
+  flex-grow: 1;
+  height   : 100px;
+  width    : 100%;
+}
+
+.report-item+.report-item {
+  // margin-left: 2%;
+}
+
+.ccl-form input {
+  width     : 100%;
+  min-height: 34px !important;
+  max-height: 40px !important;
+}
+
+.ng-select.ng-select-single .ng-select-container {
+  height: 38px !important;
+}
+::ng-deep{
+.show-info-modal{
+  .modal-dialog{
+  max-width: 500px !important;
+  }
+}
+}

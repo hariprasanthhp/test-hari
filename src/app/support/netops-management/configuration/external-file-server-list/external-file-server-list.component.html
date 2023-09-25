@@ -1,0 +1,124 @@
+<div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess">
+    {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} </div>
+<div id="ext-file-server" class="tab-pane position-relative" *ngIf="hasScopeAccess">
+    <div class="d-block  my-3 d-sm-none ccl-Secondary-title mb-2 col-md-12 border-bottom">
+        {{language.External_File_Server}}</div>
+    <div class="row my-3">
+        <!-- <div class="col-md-6">
+            <h4 id="external-file-server-label">{{language.External_File_Server}}</h4>
+        </div> -->
+        <div class="col-md-6">
+            <button *ngIf="showExternalServerForm && addExternalServerForm && hasWriteAccess" type="button"
+                id="New_Ext_File" class="btn-default primary px-3 mr-3 float-left" id="new-external-file-server-btn"
+                (click)="gotoExternalFileServer();">
+                {{language.New_Ext_File}}</button>
+        </div>
+    </div>
+
+
+    <div class="pb-2">
+        <div class="w-100 alert alert alert-danger  fade show" *ngIf="showError">
+            <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+            <button type="button" class="close" (click)="hideError()"><span></span></button>
+
+            <div class="d-inline-flex" [innerHtml]="language[errorMsg] || errorMsg"></div>
+
+        </div>
+        <div class="w-100 alert alert alert-success  fade show" *ngIf="showSuccess">
+            <div class="d-inline">
+                <strong>
+                    <div class="pl-2 d-inline" [innerHtml]="language[successMsg] || successMsg"></div>
+                </strong>
+            </div>
+            <div class="d-inline">
+                <button type="button" id="closebtn" class="close" (click)="hideSuccess()"><span></span></button>
+            </div>
+
+        </div>
+        <div class="py-3 warning-msg " *ngIf="deleteData">
+            <div class="d-inline-flex">
+                <span class="error-img"><img src="./assets/img/warning-icon.svg"></span>
+            </div>
+            <div class="d-inline-flex">
+                {{language['Are you sure you want to delete']}}&nbsp;<b>{{ modalInfo }}</b>
+            </div>
+            <div class="float-right text-right">
+                <button class="btn-default primary mr-2" id="confirmPFBtn" (click)="deleteExternalFileServer()">
+                    {{language.Confirm}}
+                </button>
+                <button class="btn-default primary" id="cancelbtn" (click)="closeModal();">
+                    {{language.Cancel}}
+                </button>
+            </div>
+
+
+
+
+        </div>
+        <div class="loader" *ngIf="loading">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                </div>
+            </div>
+        </div>
+        <table *ngIf="dtRendered" datatable id="external-file-server-table" [dtOptions]="tableOptions"
+            class="row-border hover table-alter">
+            <thead>
+                <tr>
+                    <th>{{language.Name}}</th>
+                    <th>{{language.description}}</th>
+                    <th>{{language.URL}}</th>
+                    <th>{{language.User_Name}}</th>
+                    <th> </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr (click)="ssoAuthService.redirectByUrl([
+                '/support/netops-management/configuration/external-file-server-form',
+                '/cco/operations/cco-system-operations/external-file-server/external-file-server-form', '',
+                '/cco/services/configuration/external-file-server-form'
+              ])" *ngIf="externalFileServerObj.name">
+                    <td>{{ externalFileServerObj.name }}</td>
+                    <td>{{ externalFileServerObj.description }}</td>
+                    <td>{{ externalFileServerObj.baseUrl }}</td>
+                    <td>{{ externalFileServerObj.username }}</td>
+                    <td *ngIf="hasWriteAccess;else elseBlock">
+                        <span (click)="deleteConfigFileModal();$event.stopPropagation()" title="{{language.delete}}"
+                            class="px-2 primary cursor-pointer fa fa-trash-o">
+                        </span>
+                    </td>
+                    <ng-template #elseBlock>
+                        <td></td>
+                    </ng-template>
+                </tr>
+            </tbody>
+            <tbody *ngIf="!externalFileServerObj.name">
+                <tr>
+                    <td colspan="5" class="no-data-available">{{language['No data available in table']}}</td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+</div>
+<!-- Modals -->
+<!-- <ng-template #deleteExternalFileServerModal let-data let-ref="dialogRef">
+
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{modalTitle}}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        {{ modalInfo }}
+    </div>
+    <div class="modal-footer">
+        <button type="button" id="cancel-btn" class="btn-default primary px-3" data-dismiss="modal"
+            (click)="closeModal()">{{language.Cancel}}</button>
+        <button type="button" id="confirm-btn" class="btn-default primary px-3" data-dismiss="modal"
+            (click)="deleteExternalFileServer()">{{language.Confirm}}</button>
+    </div>
+</ng-template> -->
+<!-- Modals -->

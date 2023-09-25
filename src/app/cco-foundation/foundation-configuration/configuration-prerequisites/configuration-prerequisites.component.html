@@ -1,0 +1,42 @@
+<div class="row">
+    <div class="col-sm-12 col-md-2 col-lg-2 pr-0 ccl-tabs">
+        <ul id="netops-list-menu" class="nav flex-column left-menu tab-view-style">
+            <li *ngIf="systemGroupShow" class="nav-item">
+                <a class="list-group-item list-group-item-action" routerLink="./device-groups" id="device-groups"
+                    routerLinkActive="active">{{language['System Groups']}}
+                </a>
+            </li>
+            <li *ngIf="profilesShow" class="nav-item">
+                <a class="list-group-item list-group-item-action" routerLink="./foundation-profiles" id=""
+                    routerLinkActive="active">{{language['Profiles']}}
+                </a>
+            </li>
+            <!-- <li *ngIf="profilesShow" class="nav-item">
+                <a class="list-group-item list-group-item-action" routerLink="./profiles" id=""
+                    routerLinkActive="active">{{language['RG Profiles']}}
+                </a>
+            </li>
+            <li  *ngIf="profilesShow" class="nav-item">
+                <a class="list-group-item list-group-item-action" id="software-images-list"
+                    routerLink="./ONT-profile" routerLinkActive="active">{{language['ONT Services Profiles']}}
+                </a>
+            </li> -->
+            <li *ngIf="dialPlansShow" class="nav-item">
+                <a class="list-group-item list-group-item-action" id="dial-plan" routerLink="./dial-plan"
+                    routerLinkActive="active">{{language['Dial Plans']}}
+                </a>
+            </li>
+            <li *ngIf="softwareImagesShow" class="nav-item">
+                <a class="list-group-item list-group-item-action" id="software-images-list"
+                    routerLink="./software-images-list" routerLinkActive="active">{{language['Software Images']}}
+                </a>
+            </li>
+       
+
+
+        </ul>
+    </div>
+    <div class="col-sm-12 col-md-10 col-lg-10 pl-4">
+        <router-outlet></router-outlet>
+    </div>
+</div>

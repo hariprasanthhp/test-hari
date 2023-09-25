@@ -1,0 +1,48 @@
+<div class="col-md-6">
+    <div class="row" [formGroup]="systemForm">
+        <div class="col-md-12 px-0">
+            <div class="cco-secondary-title pb-1 border-bottom">{{language['OLT System']}}</div>
+        </div>
+        <div class="col-md-11">
+            <p class="pt-2 mb-1">{{language['Select a region, location, and OLT system to be included in the report']}}</p>
+        </div>
+        <div class="col-md-9">
+            <label for="inputEmail3" class="col-form-label">{{language['Region(s)']}}</label>
+            <div class="w-100">
+                <ng-select formControlName="regions" [multiple]="true" [items]="regionsDataArray" bindValue="id"
+                    bindLabel="name" [clearable]="false" [searchable]="true" placeholder="{{ language.region }}"
+                    (add)="validateRegion($event)" (remove)="loadLocationValue($event)">
+                </ng-select>
+                <div class="errorMessage" *ngIf="false">
+                    <p>{{ language["This field is required"] }}.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <label for="inputEmail3" class="col-form-label"> {{language['Location(s)']}}</label>
+            <div class="w-100">
+                <ng-select formControlName="locations" [multiple]="true" [items]="locationDataArray" bindValue="id"
+                    bindLabel="name" placeholder="{{ language.Location }}" [clearable]="false" [searchable]="true"
+                    (add)="validateLocation($event)" (remove)="loadSystemValue($event)">
+                </ng-select>
+                <div class="errorMessage" *ngIf="false">
+                    <p>{{ language["This field is required"] }}.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9 mb-3">
+            <label for="inputEmail3" class="col-form-label"> {{language['System(s)']}}</label>
+            <div class="w-100">
+                <ng-select formControlName="systems" [multiple]="true" [items]="systemDataArray" bindValue="uuid"
+                    bindLabel="name" class="selectboxwidth" placeholder="{{ language.System }}" [clearable]="false"
+                    [searchable]="true" (add)="validateSystem($event)" (remove)="validateSystem($event)">
+                </ng-select>
+                <div class="errorMessage" *ngIf="false">
+                    <p>{{ language["This field is required"] }}.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,361 @@
+.radio-in {
+  display    : inline;
+  width      : 100px;
+  align-items: center;
+}
+input.inp-disabled:hover {
+  cursor:not-allowed !important;
+}
+.ng-select.inp-disabled:hover {
+  cursor:not-allowed !important;
+}
+.disableDropDown {
+  cursor:not-allowed !important;
+  //cursor: no-drop;
+}
+::ng-deep.btn-notallowed .ng-select .ng-select-container{
+  cursor: not-allowed !important;
+    width: 100%;
+    pointer-events: none;
+}
+::ng-deep.btn-notallowed.ng-select.ng-select-single .ng-select-container .ng-value-container .ng-input{
+  cursor: not-allowed !important;
+  position: relative !important;
+  
+  }
+.cco-system-edge-table {
+  table {
+    tbody {
+      tr:hover {
+        td {
+          .remove {
+            display: block;
+            cursor : pointer;
+            float  : right;
+          }
+        }
+      }
+    }
+  }
+}
+
+.btn-default.btn-dft {
+  border: 1px solid #ccc;
+}
+
+.enabled_button {
+  cursor: pointer;
+}
+
+.remove-display {
+  display        : flex;
+  justify-content: flex-end;
+}
+
+.toggleDisabled {
+  font-weight: 300 !important;
+}
+
+.bold-label {
+  font-weight: 400 !important;
+}
+.bold {
+  font-weight: 600 !important;
+}
+.eduroam-status-title{
+  font-weight: 300 !important;
+}
+.add-btn{
+  border: 1px solid #ccc;
+  color: #000;
+  padding: 0px 15px !important;
+}
+.microsites-table {
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  thead {
+    tr {
+      border-bottom: 1px solid #cccccc;
+    }
+  }
+
+  th,
+  td {
+    padding: 8px 10px;
+    text-align: left;
+    border: 0px;
+  }
+  tbody tr:nth-child(even) {
+    background: #f8f8fa;
+  }
+}
+.imp{color: #C70000;}
+.mr-32px{margin-right: 32px;}
+.dis-none{display: none;}
+.c-red{color: #C70000;}
+.w-80px{
+  width: 80px;
+}
+.m-h-150{min-height: 150px;}
+.w-140px{width: 140px;}
+.white-nowrap{white-space: nowrap}
+.form-check-inline .form-check-input{
+  margin-right: 0px !important;
+}
+.activation-progress, .error-message-info, .success-message-info{
+  width: 100%;
+  padding: 8px 0px;
+  display: flex;
+  align-items: flex-start;
+  margin: 8px 0px;
+  .icon{
+    width: 5%;
+    display: inline-flex;
+    margin: 0px 7px;
+    img {
+      width: 34px;
+      height: 34px;
+    }
+  }
+  .message{
+    width: 85%;
+    display:inline-flex;
+  }
+  .close,.refresh {
+    width: 5%;
+    &:not(.refresh){
+      display: inline-flex;
+    }
+      margin: 0px 7px;
+      cursor: pointer;
+      img {
+        width: 16px;
+        height: 16px;
+      }
+  }
+}
+
+.activation-progress {
+  background-color: #F5FAFF; 
+  border-radius: 12px;
+}
+.error-message-info {
+  background-color: #FFF1F0;
+  border-radius: 12px;
+}
+.success-message-info {
+ background-color: #F6FFED;
+ border-radius: 12px;
+}
+.hidden {
+  visibility: hidden;
+}
+.select-community{
+  width: 60%;
+  margin-right: 10px;
+}
+.accordion-title {
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 30px;
+  border-bottom: 1px solid #CCCCCC;
+  padding-bottom: 7px;
+}
+
+.content-body {
+  background-color: #F8F8FA;
+  padding: 16px;
+}
+
+.card {
+  border: none;
+  margin-bottom: 22px;
+}
+
+.card-header {
+  background: none !important;
+}
+
+.enabled-disabled {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 20px;
+}
+::ng-deep{
+  .cco-system-edge-table .dataTables_info{padding-top: 20px !important;}
+  #Priority_Bits {
+    .ng-select-container{
+    border: 1px solid #CCCCCC !important;
+    }
+  }
+  .select-community {
+    .ng-select-container {
+      border: 1px solid #CCCCCC !important;
+    }
+  }
+}
+// .ccl-form {
+//   input {
+//     border: 1px solid #CCCCCC;
+//   }
+// }
+// #Priority_Bits {
+//   border: 1px solid #CCCCCC;
+//   border-radius: 26px;
+// }
+.vlan-input {
+  input {
+    border: 1px solid #CCCCCC;
+    border-radius: 26px;
+  }
+}
+
+.edge{
+  width: 16px;
+  img {
+    vertical-align: baseline;
+    margin-left: 7px;
+  }
+}
+.accordion-title {
+
+  [aria-expanded="true"] {
+    img {
+      transform: rotate(90deg);
+      -webkit-transform: rotate(90deg);
+      margin-left: 7px;
+    }
+  }
+}
+.contact-info {
+  input {
+    border: 1px solid #CCCCCC;
+    border-radius: 26px;
+  }
+}
+
+.content-body {
+  input {
+    border: 1px solid #CCCCCC;
+    border-radius: 26px;
+  }
+}
+
+.physical-address {
+  input {
+    border: 1px solid #CCCCCC;
+    border-radius: 26px;
+  }
+}
+.ipAddressFamily-input {
+  ng-select {
+    border: 1px solid #CCCCCC;
+    border-radius: 26px;
+  }
+}
+.modal.fade .modal-dialog .modal-content .modal-header .close {
+  z-index: 11 !important;
+}
+.card {
+  overflow: inherit !important;
+}
+.eduroam-title {
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 20px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+
+
+
+  color: #1A1F22;
+
+}
+
+.Password-icon {
+  position: absolute;
+  top: 39px;
+  right: 13px;
+}
+
+.relative-pos {
+  position: relative;
+}
+.eduroam-status{
+  font-weight: 400 !important;
+  line-height: 20px !important;
+}
+.eduroam-status-disabled{
+  font-weight: 300 !important;
+}
+.pr-35px{
+  padding-right: 35px;
+}
+.text-over-ellipse,.capt{
+  white-space:nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.capt{width: 100%;}
+.smart-state{
+  span{white-space: nowrap;}
+}
+.pr-np1{padding-right:3px;}
+.servify-care-state .dot{margin-right: 3px;}
+::ng-deep {
+  .alert-warning-modal .modal-content
+    {
+      background: #fff9f5;
+    }
+  
+  
+  .alert-warning-modal .modal-dialog 
+    {
+      max-width: 45.73% !important;
+    }
+  }
+  
+  .alert-box {
+    button.close {
+      right: 0;
+      top: 0;
+    }
+  
+    position: relative;
+    padding: 30px 0 15px 0;
+  
+    .box-content {
+      color: #1a1f22;
+  
+      .content {
+        padding-right: 30px;
+        padding-left: 80px;
+      }
+  
+      .icon {
+        min-width: 75px;
+        float: left;
+        text-align: center;
+  
+        img {
+          width: 48px;
+        }
+      }
+    }
+  
+    p {
+      color: #4c4c4c;
+      margin-bottom: 0;
+      font-size: 16px;
+      line-height: 20px;
+    }
+  
+    h3 {
+      font-size: 24px;
+      line-height: 30px;
+      color: #1a1f22;
+    }
+  }

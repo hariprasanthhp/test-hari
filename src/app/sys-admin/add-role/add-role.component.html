@@ -1,0 +1,404 @@
+<div class="container position-relative" *ngIf="pageAvailable">
+  <div class="loader" *ngIf="loader">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary">
+        <span class="sr-only">Loading...</span>
+      </div>
+    </div>
+  </div>
+  <div class="w-100 alert alert-danger fade show" *ngIf="error">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+    <button type="button" class="close" (click)="closeAlert()">
+      <span></span>
+    </button>
+    <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+  </div>
+
+  <div class="w-100 alert alert-success fade show" *ngIf="success">
+    <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+    <button type="button" class="close" (click)="closeAlert()">
+      <span></span>
+    </button>
+    <div class="d-inline-flex" [innerHtml]="successInfo"></div>
+  </div>
+
+  <div class="row justify-content-end my-3">
+    <div class="col-md-4">
+      <div class="ccl-title">{{ pageTitle }}</div>
+    </div>
+    <div class="col-md-8 px-0">
+      <div class="text-right">
+        <a class="back-text" (click)="goBack()"><i class="fa fa-angle-left mr-1" aria-hidden="true"></i>
+          {{ language["Back to Roles List"] }}
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row my-3">
+    <div class="col-md-4">
+      <div class="ccl-form">
+        <label for="first" class="f-w-600">{{ language.roleName }}<span class="error">*</span></label>
+        <input type="text" name="roleName" class="" placeholder="{{ language['Enter role name'] }}"
+          [(ngModel)]="roleName" autocomplete="new-password" (keyup)="closeAlert()" trimSpace (blur)="removeUnwantedSpace('roleName',roleName)"/>
+      </div>
+    </div>
+    <div class="col-md-8 pr-0">
+      <div class="ccl-form">
+        <label for="last" class="f-w-600">{{language.Description}}</label>
+        <input type=" text" name="roleDescription" class="" placeholder="{{language.Description}}" [(ngModel)]="roleDescription"
+          autocomplete="new-password" trimSpace (blur)="removeUnwantedSpace('roleDescription',roleDescription)"/>
+      </div>
+    </div>
+  </div>
+
+  <div class="row my-3">
+    <div class="col-md-12 ccl-title">{{ language.permissions }}</div>
+  </div>
+  <div class="row my-3">
+    <div class="col-md-12">
+      <form id="permissionsForm">
+        <div class="" *ngFor="let item of allPermissions">
+          <!-- 1ST LEVEL TREE -->
+          <div class="row">
+            <div class="box-of-permission col-md-8">
+              <div class="custom-flex">
+                <div class="checkbox-permission">
+                  <input id="{{ item._id }}_parent" type="checkbox" (change)="
+                      levelOneChange(
+                        item._id,
+                        $event.target.checked,
+                        item
+                      )
+                    " [checked]="item.checked" name="scopeName" value="{{ item.name }}" />
+                  <span class="checkbox-ui check-intermediate" id="{{ item._id }}_parent_span" (click)="showCheckBox($event, item)"
+                    style="display: none"></span>
+
+                    <span class="check-caption">
+                      {{scopeDisplayName[item.displayName] || language[item.displayName] || item.displayName }}
+                    </span>
+                  <span id="{{ item._id }}_info"></span>
+                </div>
+                <div *ngIf="item.permissions.length">
+                  <a class="collapse-btn" role="button" [attr.id]="'collapse-btn-' + item.displayName"
+                    (click)="expandCollapse(item._id)">
+                    <i class="fas fa-plus-circle collapse-btn" *ngIf="!isExpanded[item._id]"></i>
+                    <i class="fas fa-minus-circle" *ngIf="isExpanded[item._id]"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="box-of-permission col-md-4" [ngClass]="{ 'emptyRowSwitch': item?.isSubscriber }">
+              <span *ngIf="!item?.isSubscriber">
+                {{ language.readOnly }}
+                <label class="switch">
+                  <input type="checkbox" id="{{ item._id + '_action' }}" [checked]="item.readWrite"
+                    name="{{ item.name }}" value="true" class="{{ item._id }}_action firstLevel"
+                    [ngClass]="{ oneLevelDisable: item?.isSubscriber }"
+                    (change)="levelOneAction(item, $event.target.checked)" [attr.noWriteApi]="item?.disableScope"
+                    [disabled]="item.disableScope || !item.checked || item?.isSubscriber" />
+                  <span class="slider round"></span>
+                </label>
+                <span [ngClass]="{ noWriteApi: item.disableScope }">{{ language.writeAndRead }}</span>
+              </span>
+            </div>
+          </div>
+          <!-- 2ND LEVEL TREE -->
+          <!-- <div *ngIf="item.submenu"> -->
+          <div *ngIf="item.permissions.length" class="multi-collapse"
+            [ngClass]="isExpanded[item._id] ? 'd-block' : 'd-none'" [attr.id]="'collapse-' + item.displayName">
+            <div *ngFor="let menu of item.permissions">
+              <div class="row">
+                <div class="box-of-permission col-md-8">
+                  <div class="custom-flex custom-check-permission ml-3">
+                    <div class="checkbox-permission">
+                      <input id="{{ menu._id }}_parent" type="checkbox" (change)="
+                          levelTwoChange(
+                            menu,
+                            $event.target.checked,
+                            item._id
+                          )
+                        " [checked]="menu.checked" name="scopeName" value="{{ menu.name }}" class="{{ item._id }}" />
+
+                      <span class="checkbox-ui check-intermediate" id="{{ menu._id }}_parent_span" (click)="showCheckBox($event, menu)"
+                        style="display: none"></span>
+                        <span class="check-caption">
+                          {{ scopeDisplayName[menu.displayName] || language[menu.displayName] || menu.displayName }}
+                          </span>
+                      <span id="{{ menu._id }}_info"></span>
+                    </div>
+                    <div *ngIf="menu.permissions2.length">
+                      <a class="collapse-btn" role="button" [attr.id]="'collapse-btn-' + menu.displayName"
+                        (click)="expandCollapse(menu._id)">
+                        <i class="fas fa-plus-circle" *ngIf="!isExpanded[menu._id]"></i>
+                        <i class="fas fa-minus-circle" *ngIf="isExpanded[menu._id]"></i>
+                      </a>
+
+                      <!--  -->
+                    </div>
+                  </div>
+                </div>
+                <div class="box-of-permission col-md-4">
+                  {{ language.readOnly }}
+                  <label class="switch">
+                    <input type="checkbox" id="{{ menu._id + '_action' }}" [checked]="menu.readWrite"
+                      name="{{ menu.name }}" value="true" class="{{ item._id }}_action" (change)="
+                        levelTwoAction(menu, $event.target.checked, item._id)
+                      " [attr.noWriteApi]="menu?.disableScope" [disabled]="menu.disableScope || !menu.checked" />
+                    <span class="slider round"></span>
+                  </label>
+                  <span [ngClass]="{ noWriteApi: menu.disableScope || menu.name === 'cloud.rbac.csc.calloutcome.enforce' }">{{ language.writeAndRead }}</span>
+                </div>
+              </div>
+              <!-- 3RD LEVEL TREE -->
+              <div *ngIf="menu.permissions2.length" class="multi-collapse"
+                [ngClass]="isExpanded[menu._id] ? 'd-block' : 'd-none'" [attr.id]="'collapse-' + menu.displayName">
+                <div *ngFor="let secondSubMenu of menu.permissions2">
+                  <div class="row">
+                    <div class="box-of-permission col-md-8">
+                      <div class="custom-flex custom-check-permission ml-5">
+                        <div class="checkbox-permission">
+                          <input type="checkbox" id="{{ secondSubMenu._id }}_inner_parent" (change)="
+                              levelThreeChange(
+                                secondSubMenu,
+                                $event.target.checked,
+                                menu._id,
+                                item._id
+                              )
+                            " [checked]="secondSubMenu.checked" value="{{ secondSubMenu.name }}" class="{{ item._id }} {{ menu._id }} {{
+                              secondSubMenu._id
+                            }}" name="scopeName" />
+                          <span class="checkbox-ui check-intermediate" id="{{ secondSubMenu._id }}_inner_parent_span"
+                            (click)="showCheckBox($event, secondSubMenu)" style="display: none"></span>
+                            <span class="check-caption">
+                          {{scopeDisplayName[secondSubMenu.displayName] ||
+                          language[secondSubMenu.displayName] ||
+                          secondSubMenu.displayName
+                          }}
+                          </span>
+                          <span id="{{ secondSubMenu._id }}_info"></span>
+                        </div>
+                        <div *ngIf="secondSubMenu.permissions3.length">
+                          <a class="collapse-btn" role="button" [attr.id]="
+                              'collapse-btn-' + secondSubMenu.displayName
+                            " (click)="expandCollapse(secondSubMenu._id)">
+                            <i class="fas fa-plus-circle" *ngIf="!isExpanded[secondSubMenu._id]"></i>
+                            <i class="fas fa-minus-circle" *ngIf="isExpanded[secondSubMenu._id]"></i>
+                          </a>
+
+                          <!--  -->
+                        </div>
+                      </div>
+                    </div>
+                    <div class="box-of-permission col-md-4">
+                      {{ language.readOnly }}
+                      <label class="switch">
+                        <input type="checkbox" id="{{ secondSubMenu._id + '_action' }}"
+                          [checked]="secondSubMenu.readWrite" name="{{ secondSubMenu.name }}" value="true" class="{{ item._id }}_action {{ menu._id }}_action {{
+                            secondSubMenu._id
+                          }}_action" [attr.noWriteApi]="secondSubMenu?.disableScope"
+                          [disabled]="secondSubMenu.disableScope || !secondSubMenu.checked" (change)="
+                            levelThreeAction(
+                              secondSubMenu,
+                              $event.target.checked,
+                              menu._id,
+                              item._id
+                            )
+                          " />
+                        <span class="slider round"></span>
+                      </label>
+                      <span [ngClass]="{ noWriteApi: secondSubMenu.disableScope }">{{ language.writeAndRead }}</span>
+                    </div>
+                  </div>
+                  <!-- 4TH LEVEL TREE -->
+                  <div *ngIf="secondSubMenu.permissions3.length" class="multi-collapse" [ngClass]="
+                      isExpanded[secondSubMenu._id] ? 'd-block' : 'd-none'
+                    " [attr.id]="'collapse-' + secondSubMenu.displayName">
+                    <div *ngFor="let thirdSubMenu of secondSubMenu.permissions3">
+                      <div class="row">
+                        <div class="box-of-permission col-md-8">
+                          <div class="custom-flex ml-5r">
+                            <div>
+                              <input type="checkbox" id="{{ thirdSubMenu._id }}" (change)="
+                                  levelFourChange(
+                                    thirdSubMenu,
+                                    $event.target.checked,
+                                    secondSubMenu._id,
+                                    menu._id,
+                                    item._id
+                                  )
+                                " [checked]="thirdSubMenu.checked" value="{{ thirdSubMenu.name }}" class="{{ item._id }} {{ menu._id }} {{
+                                  secondSubMenu._id
+                                }} {{ thirdSubMenu._id }}" name="scopeName" />
+                              {{scopeDisplayName[thirdSubMenu.displayName] ||
+                              language[thirdSubMenu.displayName] ||
+                              thirdSubMenu.displayName
+                              }}
+                            </div>
+                          </div>
+                        </div>
+                        <div class="box-of-permission col-md-4">
+                          {{ language.readOnly }}
+                          <label class="switch">
+                            <input type="checkbox" id="{{ thirdSubMenu._id + '_action' }}"
+                              [checked]="thirdSubMenu.readWrite" name="{{ thirdSubMenu.name }}" value="true" class="{{ item._id }}_action {{
+                                menu._id
+                              }}_action {{ secondSubMenu._id }}_action {{
+                                thirdSubMenu._id
+                              }}_action" (change)="
+                                levelFourAction(
+                                  thirdSubMenu._id,
+                                  secondSubMenu._id,
+                                  menu._id,
+                                  item._id
+                                )
+                              " [attr.noWriteApi]="thirdSubMenu?.disableScope"
+                              [disabled]="thirdSubMenu.disableScope || !thirdSubMenu.checked" />
+                            <span class="slider round"></span>
+                          </label>
+                          <span [ngClass]="{ noWriteApi: thirdSubMenu.disableScope }">{{ language.writeAndRead }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="row my-3">
+    <div class="col-md-12 ccl-title">{{ language.addUsers }}</div>
+  </div>
+  <div class="col-md-6 my-3 alert alert-danger fade show" *ngIf="warning">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+    <button type="button" class="close" (click)="closeAlertWarning()">
+      <span></span>
+    </button>
+    <div class="d-inline-flex" [innerHtml]="warningInfo"></div>
+  </div>
+  <div class="row my-3">
+    <div class="col-md-4 offset-md-0">
+      <form>
+        <div class="form-group">
+          <ng-select [items]="usersList" bindLabel="username" [(ngModel)]="selectedUsers" [clearable]="false"
+            [ngModelOptions]="{ standalone: true }" (ngModelChange)="selectSocialMedia($event)"
+            placeholder="{{ language.selectUser }}" notFoundText="{{ language.noItemsFound }}">
+          </ng-select>
+        </div>
+      </form>
+    </div>
+    <div class="col-md-2 offset-md-0">
+      <button class="btn-default primary mr-2" (click)="addUser()">
+        {{ language.add }}
+      </button>
+    </div>
+  </div>
+  <div class="row my-2">
+    <div class="col-md-8">
+      <div class="text-right flat-right">
+        <button *ngIf="usersDelSelected.length != 0" class="btn-default primary px-3 mx-3" (click)="deleteMultiUsers()">
+          {{ language.delete }}
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-8" [hidden]="!dataAvailable">
+      <table id="add-role-users" width="100%" class="table table-sm row-border w-100 roles-addtable" datatable [dtOptions]="tableOptions"
+        [dtTrigger]="dtTrigger">
+        <thead class="header-color">
+          <tr>
+            <th class="checkbox-column user-all">
+              <input type="checkbox" name="websitecheck" id="user-all-delete" [checked]="usersDelSelectedChecked"
+                (click)="deleteUserCheckAll($event.target.checked)" [disabled]="addedUsersList?.length == 0" />
+              <span class="checkbox-ui" id="user-all-delete-span" (click)="showAllUserCheckBox($event)"
+                style="display: none"></span>
+            </th>
+            <th>{{ language.userName }}</th>
+            <th>{{ language.Action }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of addedUsersList">
+            <td class="checkbox-column">
+              <input type="checkbox" id="{{ item._id }}" name="user_del_{{ item._id }}"
+                [checked]="usersDelSelectedChecked" value="{{ item._id }}"
+                (click)="deleteUserCheckOne(item, $event.target.checked)" />
+            </td>
+            <td>{{ item.username }}</td>
+            <td class="actions">
+              <i class="fas fa-trash-alt p-1 primary cursor-pointer" title="{{ language.delete }}" (click)="deleteUser(item)"></i>
+            </td>
+          </tr>
+        </tbody>
+        <tbody *ngIf="(addedUsersList?.length == 0)">
+          <tr>
+            <td colspan="5" class="no-data-available">{{language['No data available in table']}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6 offset-md-6 text-right pr-0">
+     
+      <button class="btn-default primary md-btn  mr-3" id="submit-add-role" (click)="addRole()" [disabled]="loader">
+        {{ language.saveEnregistrer }}
+      </button>
+      <button class="btn-default btn-dft py-1 md-btn" id="cancel-add-role" (click)="goBack()">
+        {{ language.Cancel }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modals -->
+<ng-template #deleteModal let-data let-ref="dialogRef">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{ modalTitle }}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    {{ language["Are you sure you want to delete this Role"] }}?<br />
+    ({{ modalInfo }})
+  </div>
+  <div class="modal-footer">
+    
+    <button type="button" class="btn-default primary px-3" data-dismiss="modal" (click)="confirmDeleteSecleted()">
+      {{ language.yes }}
+    </button>
+    <button type="button" class="btn-default btn-dft py-1 px-3" data-dismiss="modal" (click)="closeModal()">
+      {{ language.no }}
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #multiDeleteModal let-data let-ref="dialogRef">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{ modalTitle }}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    {{
+    language["Are you sure you want to delete these selected Roles"]
+    }}?<br />
+    ({{ modalInfo }})
+  </div>
+  <div class="modal-footer">
+    
+    <button type="button" class="btn-default primary px-3" data-dismiss="modal" (click)="confirmMultiDeleteSecleted()">
+      {{ language.yes }}
+    </button>
+    <button type="button" class="btn-default btn-dft py-1 px-3" data-dismiss="modal" (click)="closeModal()">
+      {{ language.no }}
+    </button>
+  </div>
+</ng-template>
+<!-- Modals -->

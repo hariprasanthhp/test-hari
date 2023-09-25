@@ -1,0 +1,40 @@
+<table class="table">
+    <tbody>
+        <tr>
+            <td>{{ language['Email'] }} ({{workflowObj?.emailRecipients?.length ? workflowObj?.emailRecipients?.length:
+                0}})</td>
+            <td>
+                <span *ngIf="!workflowObj?.emailRecipients?.length">-</span>
+                <span *ngFor="let email of workflowObj?.emailRecipients; let last=last;">
+                    {{email}}<br *ngIf="!last" />
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td>{{ language["Notes"] }}</td>
+            <td class="text-break">
+                {{workflowObj?.emailNotes ? workflowObj?.emailNotes: '-'}}
+            </td>
+        </tr>
+
+        <tr>
+            <td>SMS ({{workflowObj?.sms?.length ? workflowObj?.sms?.length: 0}})</td>
+            <td>
+                <span *ngIf="!workflowObj?.sms?.length">-</span>
+                <span *ngFor="let sms of workflowObj?.sms; let last=last;">
+                    {{sms}}<br *ngIf="!last" />
+                </span>
+            </td>
+        </tr>
+
+        <tr>
+            <td><span>Webhook ({{workflowObj?.webhooks?.length ? workflowObj?.webhooks?.length: 0}})</span></td>
+            <td>
+                <span *ngIf="!workflowObj?.webhooks?.length">-</span>
+                <span class="text-break" *ngFor="let webhook of workflowObj?.webhooks; let last=last;">
+                    {{webhook}}<br *ngIf="!last" />
+                </span>
+            </td>
+        </tr>
+    </tbody>
+</table>

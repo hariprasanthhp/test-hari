@@ -1,0 +1,36 @@
+<div class="modal-header consent-modal-header d-block">
+    <h5 class="modal-title" id="showInfoModal">Consent to Receive Notifications</h5>
+
+    
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true"></span>
+    </button>
+</div>
+<div class="modal-body add-device-model">
+    <div class="consent-modal">
+        By providing your cellular or mobile telephone number, you expressly consent to receiving calls, messages,
+        including
+        auto-dialed and pre-recorded message calls, and SMS messages (including text messages) from Calix on your
+        employer’s
+        behalf to receive report alert notifications (message frequency varies).
+        <br /><br />
+        You certify and represent that the cellular or mobile telephone number that you have provided to us
+        is your contact
+        number or the contact number belongs to a network operator from your organization who has consented to
+        receive these
+        alert notifications as a part of their responsibilities. Message and data rates may apply.
+        <br />
+        <div class="my-2"><a href="https://www.calix.com/pages/privacy-policy.html" target="_blank">Calix Privacy Policy</a> </div>
+
+        <button class="btn-default primary  px-3" (click)="confirmConsent();">
+            Confirm Consent </button>
+        
+        <button type="button" class="btn-default transparant px-3 m-2" data-dismiss="modal"
+            (click)="modal.dismiss('Cross click')">
+            {{ language.Cancel }}
+        </button>
+    </div>
+   
+
+    
+</div>

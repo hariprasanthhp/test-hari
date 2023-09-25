@@ -1,0 +1,40 @@
+[type=radio]:checked, [type=radio]:not(:checked) {
+    
+    left: auto;
+}
+
+
+// .custom01 input[type="radio"] {
+// 	display: none;
+// }
+// .custom01 label {
+// 	position: relative;
+// 	display: inline-block;
+// 	padding: 3px 3px 3px 20px;
+// 	cursor: pointer;
+// }
+// .custom01 label::before {
+// 	position: absolute;
+// 	content: '';
+// 	top: 50%;
+// 	left: 0;
+// 	width: 14px;
+// 	height: 14px;
+// 	margin-top: -8px;
+// 	background: #fff;
+// 	border: 1px solid #ccc;
+// 	border-radius: 100%;
+// }
+// .custom01 input[type="radio"]:checked + label::after {
+// 	position: absolute;
+// 	content: '';
+// 	top: 50%;
+// 	left: 4px;
+// 	width: 8px;
+// 	height: 8px;
+// 	margin-top: -4px;
+// 	background: #3498db;
+// 	border-radius: 100%;
+// }
+
+

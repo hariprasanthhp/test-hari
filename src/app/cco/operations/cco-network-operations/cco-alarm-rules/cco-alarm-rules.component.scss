@@ -1,0 +1,38 @@
+.row-group{
+    padding-left: 35px;
+    .col-form-label{
+        width: 100%;
+    }
+    .col-md-3{
+        input{width: 75%;}
+    }
+    .name-col{
+        input{
+            width: 100%;
+        }
+    }
+}
+.diable-div{
+    pointer-events: none;
+    opacity: 0.5;
+}
+.form-check{
+    padding-left: 20px;
+    margin-bottom: 5px;
+    label{font-weight: 600;}
+    input[type=checkbox]{
+        max-width: 13px;
+        max-height: 15px;
+        min-height: 15px;
+            cursor: pointer;
+        }
+}
+
+.disable {
+    pointer-events: none;
+
+}
+
+.greyout{
+    opacity: 0.5;
+}

@@ -1,0 +1,113 @@
+<div class="loader" *ngIf="loading">
+  <div class="d-flex justify-content-center">
+    <div class="spinner-border text-primary">
+      <span class="sr-only">{{language.Loading}}</span>
+    </div>
+  </div>
+</div>
+<div class="row no-gutters my-3">
+  <div class="d-block d-sm-none ccl-Secondary-title mb-2 col-md-12 border-bottom">{{language['orphan Systems']}}
+  </div>
+</div>
+<div class="w-100 alert alert alert-danger fade show" *ngIf="error">
+  <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+  <button type="button" id="hide-error-btn" class="close" (click)="closeAlert()">
+    <span></span>
+  </button>
+  <div class="d-inline-flex w-auto" [innerHtml]="errorInfo"></div>
+</div>
+<div class="col-12 px-0 mb-2 overflow-auto">
+  <div class="row my-2">
+    <div class="col-sm-6">
+      <!-- <h4 class="mb-4">{{language['orphan Systems']}}</h4> -->
+    </div>
+    <div class="col-sm-6" id="netops_unassdev_search">
+      <div class="form-group ccl-form form-inline d-inline-flex position-relative">
+        <label for="search">{{language.Filter}}</label>&nbsp;
+        <input (keyup)="search($event.target.value)" (search)="search($event.target.value)" class="ccl-from w-83" id=""
+          [(ngModel)]="searchtext"
+          oninput="this.value = this.value.replace(/[^0-9A-Za-z:]/g, '').replace(/(\..?)\../g, '$1')"
+          placeholder="{{language.FSAN_Serial_Number}}/{{language.macAddress}}">
+        <span class="pointer" [ngClass]="showcloseicon ? 'show-close-search' : 'hide-close-search'"
+          (click)="closeicon($event.target.value)">×</span>
+      </div>
+    </div>
+  </div>
+  <!-- (click)="closeicon($event.target.value)"   [ngClass]="orphanDeviceDataCount === 0 ? 'dataTables_empty':'tableHide'" -->
+  <div [hidden]="tableHide" id="netops_orphandev_table_div" class="overflow-auto">
+    <table datatable [dtOptions]="tableOptions" [dtTrigger]="dtTrigger" class="hover table-alter">
+      <thead>
+        <tr>
+          <th>{{language.Serial_Number}}</th>
+          <th>{{language.IP_Address}}</th>
+          <th>{{language.MAC_Address}}</th>
+          <th>{{language.Model}}</th>
+          <th>{{language.Software_Version}}</th>
+          <th>{{language.Previous_Subscriber}}</th>
+          <th>{{language.Discovery_Time}}</th>
+          <th>{{language.Last_Inform_Time}}</th>
+          <th class="min-50">Actions</th>
+        </tr>
+      </thead>
+
+      <tbody [ngClass]="orphanDeviceDataCount === 0 ? 'dataTables_empty':'tableHide'">
+        <tr *ngFor="let data of orphanDeviceData">
+          <!--<td><span class="ud-sno" (click)="snRedirection(data)">{{data.serialnumber}}</span></td>-->
+          <td>{{data.serialnumber}}</td>
+          <td>{{data.ipaddress}}</td>
+          <td>{{data.macaddress}}</td>
+          <td>{{data.modelname}}</td>
+          <td>{{data.softwareversion}}</td>
+          <td>{{data.prevsubscriber}}</td>
+          <td><span class="d-none">{{data.createtime}}</span>{{data.createtime?(data.createtime|date:'MM/dd/yyyy,
+            hh:mm:ss a') : 'N/A'}}</td>
+          <td><span
+              class="d-none">{{data.lastinformtime}}</span>{{data.lastinformtime?(data.lastinformtime|date:'MM/dd/yyyy,
+            hh:mm:ss a'):'N/A'}}</td>
+          <td>
+            
+              <div class="btn-group dropleft">
+                <button type="button" class="btn-dot-action dropdown-toggle"  
+                id="OrphandropdownAction" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <span>...</span>
+                </button>
+                <div class="dropdown-menu" aria-labelledby="OrphandropdownAction">
+                  <a class="dropdown-item" (click)="openOutModal(orgListModel, data._id)">{{"Assign to Org"}}</a>
+                </div>
+              </div>
+          </td>
+        </tr>
+      </tbody>
+      <tbody *ngIf="orphanDeviceDataCount != undefined && orphanDeviceDataCount === 0 &&showNoResults">
+        <tr>
+          <td colspan="8" class="no-data-available">{{language['No data available in table']}}
+          </td>
+        </tr>
+      <tbody>
+    </table>
+
+  </div>
+
+
+
+</div>
+
+<ng-template #orgListModel let-modal class="col-md-12 custom-modal">
+  <div class="modal-header">
+    <button
+    class="close"
+    aria-label="Close"
+    (click)="modal.dismiss('Cross click')"
+  >
+    <span></span>
+  </button>
+  </div>
+  <div class="modal-body">
+    <app-organizations-list [fromOrphanDevice]="true" (orgSelected)="assignToOrg($event)"></app-organizations-list>
+  </div>
+  <!-- <div class="add-bnt">
+  <button type="button" class="btn-default primary px-3 px-3" (click)="refereshData();">Refresh list</button>
+  <button type="button" class="btn-default transparant px-3 px-3 m-2" (click)="closeModal()"
+    data-dismiss="modal">Close</button>
+</div> -->
+</ng-template>

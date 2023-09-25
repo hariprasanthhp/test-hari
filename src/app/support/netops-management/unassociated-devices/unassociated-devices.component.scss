@@ -1,0 +1,43 @@
+.d-inline-flex {
+    width: 100%;
+    display: inline-flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.ud-sno {
+    color: #0279ff;
+}
+
+.ud-sno:hover {
+    color: #0279ff;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+::ng-deep .dataTables_filter {
+    display: none;
+}
+
+.hide-close-search {
+    display: none;
+}
+
+.show-close-search {
+    color: #808080;
+    display: block;
+    position: absolute;
+    right: 15px;
+    font-size: 22px;
+    top: 2px;
+}
+
+.dataTables_empty {
+    display: none;
+}
+.ccl-search-input{max-width: 270px;width:100%;}
+.sh-clear-icon{
+    width: 11.7px;
+    height: 11.7px;
+    background-size: 11.7px;
+}

@@ -1,0 +1,1103 @@
+<div class="service-wizard" id="serviceWizard">
+  <!-- <h3 class="net-ops-secondary-title step-header">
+    {{ language.Step_2 }}-{{ language.Services }}
+  </h3> -->
+  <div class="alert alert-info margin-top-20" role="alert"
+    *ngIf=" !isPRConfiguredOutside && (addDeviceObj?.device.deviceMode === 'WAP' || addDeviceObj?.device.deviceMode === 'WAP-IGMP')">
+    <span>{{ language.Serv_confg_wap }}</span>
+  </div>
+  <div class="alert alert-info margin-top-20" role="alert"
+    *ngIf=" !isPRConfiguredOutside && addDeviceObj?.device.deviceMode === 'Modem'">
+    <span>{{ language.Service_config_Modem }}</span>
+  </div>
+  <!-- <div class="alert alert-info margin-top-20" role="alert" *ngIf="isPRConfiguredOutside">
+    <span>{{ language["Services for this system are managed by Operation Cloud"] }}</span>
+  </div> -->
+  <div class="w-100 alert alert alert-danger fade show" *ngIf="defaultLanValidation">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+    <button type="button" class="close" (click)="defaultLanValidation = false">
+      <span></span>
+    </button>
+    <div class="d-inline-flex" [innerHtml]="serviceErrorMsg"></div>
+  </div>
+
+  <div class="loader" *ngIf="loader">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary">
+        <span class="sr-only">{{ language.Loading }}</span>
+      </div>
+    </div>
+  </div>
+
+  <form #f="ngForm" novalidate *ngIf=" !isPRConfiguredOutside && (
+      addDeviceObj?.device.deviceMode === 'Managed ONT' ||
+      addDeviceObj?.device.deviceMode === 'RG' ||
+      addDeviceObj?.device.deviceMode === 'WAP' ||  addDeviceObj?.device.deviceMode === 'WAP-IGMP')
+    ">
+    <div class="margin-top-20" *ngIf="addDeviceObj?.device.deviceMode === 'RG'">
+      <section>
+        <div class="row">
+          <label class="col-12 col-lg-3 control-label">{{
+            language.Serv_diffsystem
+            }}</label>
+          <div class="col-12 col-lg-9">
+            <label class="radio-inline col-2">
+              <input type="radio" name="optradio" value="Yes" class="mr-2"
+                [attr.disabled]="_isPRConfiguredOutside ? '':null" [(ngModel)]="addDeviceObj.services.configuredService"
+                (click)="yesDifferentSystem()" />
+              {{ language.Yes }}
+            </label>
+
+            <label class="radio-inline col-2">
+              <input type="radio" name="optradio" value="No" class="mr-2"
+                [attr.disabled]="(addDeviceObj.services.isCMS || _isPRConfiguredOutside) ? '':null"
+                [(ngModel)]="addDeviceObj.services.configuredService" (click)="noDifferentSystem()" />
+              {{ language.No }}
+            </label>
+          </div>
+        </div>
+      </section>
+    </div>
+    <div class="margin-top-20" *ngIf="
+        addDeviceObj?.device.deviceMode === 'Managed ONT' ||
+        addDeviceObj?.device.deviceMode === 'RG'
+      ">
+      <div *ngIf="addDeviceObj?.device.deviceMode === 'Managed ONT'">
+        <br />
+        <br />
+        <h3 class="mb2">{{ language.Data }}</h3>
+        <hr />
+        <section>
+          <div class="data-add-service">
+            <div *ngIf="
+                addDeviceObj.services?.showDataServiceByDefault &&
+                addDeviceObj.services?.ontDataService?.length > 0
+              ">
+              <div class="add_Service" *ngFor="
+                  let service of addDeviceObj.services.ontDataService;
+                  let i = index
+                ">
+                <div class="form-group row">
+                  <label for="serviceProfile_{{ i }}" class="col-2">{{
+                    language.Service_Profile
+                    }}</label>
+                  <div class="col-4">
+                    <ng-select (change)="
+                        onServiceProfileChange(
+                          addDeviceObj.services.ontDataService[i],
+                          true,i,true
+                        ) ; onblurValidation(
+                          'inValidVLan',
+                          addDeviceObj.services.ontDataService[i]
+                        )
+                      " [items]="dataServiceProfileList" name="serviceProfile_{{ i }}" bindLabel="name" [(ngModel)]="
+                        addDeviceObj.services.ontDataService[i].serviceProfile
+                      " placeholder="Service profile">
+                    </ng-select>
+                  </div>
+                  <div class="col-5">
+                    <div class="tag-container" *ngIf="
+                        addDeviceObj.services.ontDataService[i].serviceProfile
+                      ">
+                      <span class="input serviceTag" id="data_serviceType_{{ i }}">{{
+                        addDeviceObj.services.ontDataService[i].serviceProfile
+                        ?.Mode
+                        }}</span>
+                      <span class="input serviceTag" id="data_portMembers_{{ i }}" *ngIf="
+                          addDeviceObj.services.ontDataService[i]
+                            .bridgeMBRPort &&
+                          addDeviceObj.services.ontDataService[i].bridgeMBRPort
+                            ?.length > 0
+                        ">
+                        {{
+                        addDeviceObj.services.ontDataService[
+                        i
+                        ].bridgeMBRPort.toString()
+                        }}</span>
+                      <span class="input serviceTag" *ngIf="
+                          addDeviceObj.services.ontDataService[i].serviceProfile
+                            ?.defaultConnectionService
+                        " id="data_wan_{{ i }}">{{language['Default WAN']}}</span>
+                      <span class="input serviceTag" *ngIf="addDeviceObj.services.ontDataService[i]?.isAPAS"
+                        id="video_port_{{ i }}">{{language['Any Port Any Service']}}</span>
+                    </div>
+                  </div>
+                  <div class="col-1">
+                    <i class="fa fa-trash-o pull-right" data-toggle="tooltip" (click)="onAddAndRemoveDataService(i)"
+                      data-placement="left" title="{{language.Delete}}" id="DeleteService_{{ i }}"></i>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-2 control-label">{{
+                    language.Service_Enabled
+                    }}</label>
+                  <div class="col-12 col-lg-9">
+                    <div class="checkbox switcher">
+                      <label for="serviceEnable_{{ i }}">
+                        <input type="checkbox" id="serviceEnable_{{ i }}" [(ngModel)]="
+                            addDeviceObj.services.ontDataService[i]
+                              .isServiceEnabled
+                          " name="serviceEnable_{{ i }}" />
+                        <span><small></small></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label for="bandwidthProfile_{{ i }}" class="col-2">{{
+                    language.Bandwidth_Profile
+                    }}</label>
+                  <div class="col-4">
+                    <ng-select (change)="
+                        onBandWidthChange(
+                          addDeviceObj.services.ontDataService[i]
+                        )
+                      " [(ngModel)]="
+                        addDeviceObj.services.ontDataService[i].bandwidthProfile
+                      " name="bandwidthProfile_{{ i }}" placeholder="{{ language.Bandwidth_Profile }}">
+                      <ng-option *ngFor="let bandwidth of bandWidthProfileList" [value]="bandwidth._id">{{
+                        bandwidth.name }}</ng-option>
+                    </ng-select>
+                    <sup *ngIf="
+                        addDeviceObj.services.ontDataService[i].isBWOverRide
+                      ">{{ language.Override }}</sup>
+                  </div>
+                  <label class="col-2">{{ language.VLAN }}</label>
+                  <div class="col-4 ccl-form">
+                    <input name="VLAN_{{ i }}" id="VLAN_{{ i }}" type="text" (keyup)="
+                        onblurValidation(
+                          'inValidVLan',
+                          addDeviceObj.services.ontDataService[i]
+                        )
+                      " (blur)="
+                        onVLANChange(addDeviceObj.services.ontDataService[i])
+                      " [(ngModel)]="addDeviceObj.services.ontDataService[i].vLAN" maxlength="4" />
+                    <sup *ngIf="
+                        addDeviceObj.services.ontDataService[i].isVLANOverRide
+                      ">{{ language.Override }}</sup>
+                    <div class="errorMessage" *ngIf="
+                        addDeviceObj.services.ontDataService[i].inValidVLan
+                      ">
+                      <p class="m-0">{{ vlanErrorMsg }}</p>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="tempAddDeviceObj.services.ontDataService[i].showPPPOE" id="test_{{i}}"
+                  class="form-group row">
+                  <label class="col-2">{{language.PPPoE_Username}}</label>
+                  <div class="col-4 ccl-form">
+                    <input type="text" id="username_{{i}}" name="Username_{{i}}"
+                      [(ngModel)]="addDeviceObj.services.ontDataService[i].PPPoEUsername" class="col-12">
+                  </div>
+
+                  <label class="col-2">{{language.PPPoE_Password}}</label>
+                  <div class="col-4 ccl-form">
+                    <input name="Password_{{i}}" id="password_{{i}}" class="col-12"
+                      [(ngModel)]="addDeviceObj.services.ontDataService[i].PPPoEPwd" type="text">
+                  </div>
+                </div>
+                <hr />
+              </div>
+            </div>
+            <div class="col-sm-12">
+              <button id="addManagedOntDataService" type="button" (click)="onAddAndRemoveDataService(-1)"
+                class="btn-default primary">
+                {{ language.Add_Service }}
+              </button>
+            </div>
+          </div>
+        </section>
+        <br />
+        <br />
+        <h3 class="mb-2">{{ language.Video }}</h3>
+        <hr />
+        <section>
+          <div class="video-add-service">
+            <div *ngIf="
+                addDeviceObj.services.showVideoServiceByDefault &&
+                addDeviceObj.services.ontVideoService?.length > 0
+              ">
+              <div class="add_Service" *ngFor="
+                  let service of addDeviceObj.services.ontVideoService;
+                  let i = index
+                ">
+                <div class="form-group row">
+                  <label for="videoServiceProfile_{{ i }}" class="col-2">{{
+                    language.Service_Profile
+                    }}</label>
+                  <div class="col-6">
+                    <ng-select [items]="videoServiceProfileList" (change)="
+                        onServiceProfileChange(
+                          addDeviceObj.services.ontVideoService[i],
+                          true,i
+                        )
+                      " name="videoServiceProfile_{{ i }}" bindLabel="name" [(ngModel)]="
+                        addDeviceObj.services.ontVideoService[i].serviceProfile
+                      " placeholder="Service profile">
+                    </ng-select>
+                  </div>
+                  <div class="col-3 inline-div">
+                    <div class="tag-container" *ngIf="
+                        addDeviceObj.services.ontVideoService[i].serviceProfile
+                      ">
+                      <span class="input serviceTag" id="video_serviceType_{{ i }}">{{
+                        addDeviceObj.services.ontVideoService[i]
+                        .serviceProfile?.Mode
+                        }}</span>
+                      <span class="input serviceTag" id="video_portMembers_{{ i }}" *ngIf="
+                          addDeviceObj.services.ontVideoService[i]
+                            .bridgeMBRPort &&
+                          addDeviceObj.services.ontVideoService[i].bridgeMBRPort
+                            ?.length > 0
+                        ">
+                        {{
+                        addDeviceObj.services.ontVideoService[
+                        i
+                        ].bridgeMBRPort.toString()
+                        }}
+                        {{
+                        addDeviceObj.services.ontVideoService[i]
+                        .serviceProfile.IPTVSSID
+                        ? ",5GHz IPTV SSID"
+                        : ""
+                        }}</span>
+                      <span class="input serviceTag" *ngIf="
+                          addDeviceObj.services.ontVideoService[i]
+                            .serviceProfile?.defaultConnectionService
+                        " id="video_wan_{{ i }}">{{ language.Default_WAN }}</span>
+                      <span class="input serviceTag" *ngIf="addDeviceObj.services.ontVideoService[i]?.isAPAS"
+                        id="video_port_{{ i }}">{{ language.Any_Port_Any_Service }}</span>
+                    </div>
+                  </div>
+                  <div class="col-1">
+                    <i class="fa fa-trash-o pull-right" (click)="onAddAndRemoveVideoService(i)" data-toggle="tooltip"
+                      data-placement="left" title="{{language.Delete}}" id="DeleteService_{{ i }}"></i>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-2 control-label">{{
+                    language.Service_Enabled
+                    }}</label>
+                  <div class="col-12 col-lg-9">
+                    <div class="checkbox switcher">
+                      <label for="videoServiceEnable_{{ i }}">
+                        <input type="checkbox" name="videoServiceEnable_{{ i }}" [(ngModel)]="
+                            addDeviceObj.services.ontVideoService[i]
+                              .isServiceEnabled
+                          " id="videoServiceEnable_{{ i }}" />
+                        <span><small></small></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label for="BwProfiles4Service_{{ i }}" class="col-2">{{
+                    language.Bandwidth_Profile
+                    }}</label>
+                  <div class="col-4">
+                    <ng-select (change)="
+                        onBandWidthChange(
+                          addDeviceObj.services.ontVideoService[i]
+                        )
+                      " [(ngModel)]="
+                        addDeviceObj.services.ontVideoService[i]
+                          .bandwidthProfile
+                      " name="BwProfiles4Service_{{ i }}" placeholder="{{ language.Bandwidth_Profile }}">
+                      <ng-option *ngFor="let bandwidth of bandWidthProfileList" [value]="bandwidth._id">{{
+                        bandwidth.name }}</ng-option>
+                    </ng-select>
+                    <sup *ngIf="
+                        addDeviceObj.services.ontVideoService[i].isBWOverRide
+                      ">{{ language.Override }}</sup>
+                  </div>
+                  <label class="col-2">{{ language.VLAN }}</label>
+                  <div class="col-4 ccl-form">
+                    <input name="Video_VLAN_{{ i }}" id="video_VLAN_{{ i }}" (keyup)="
+                        onblurValidation(
+                          'inValidVLan',
+                          addDeviceObj.services.ontVideoService[i]
+                        )
+                      " (blur)="
+                        onVLANChange(addDeviceObj.services.ontVideoService[i])
+                      " [(ngModel)]="
+                      addDeviceObj.services.ontVideoService[i].vLAN
+                      " type="text" maxlength="4" />
+                    <sup *ngIf="
+                        addDeviceObj.services.ontVideoService[i].isVLANOverRide
+                      ">{{ language.Override }}</sup>
+                    <div class="errorMessage" *ngIf="
+                        addDeviceObj.services.ontVideoService[i].inValidVLan
+                      ">
+                      <p class="m-0">{{ vlanErrorMsg }}</p>
+                    </div>
+                  </div>
+                </div>
+                <hr />
+              </div>
+            </div>
+            <div class="col-12">
+              <button id="addManagedOntVideoService" type="button" *ngIf="
+                  addDeviceObj.services.ontVideoService.length === 0 ||
+                  !addDeviceObj.services.showVideoServiceByDefault
+                " (click)="onAddAndRemoveVideoService(-1)" class="btn-default primary">
+                {{ language.Add_Service }}
+              </button>
+            </div>
+          </div>
+        </section>
+        <br />
+      </div>
+      <div *ngIf="
+          addDeviceObj?.device.deviceMode === 'RG' &&
+          addDeviceObj.services.configuredService === 'No'
+        ">
+        <section>
+          <div class="form-group ccl-form row">
+            <label class="col-12 col-lg-3 control-label">{{
+              language.Data_Service
+              }}</label>
+            <div class="col-12 col-lg-9">
+              <div class="checkbox switcher">
+                <label for="dataService">
+                  <input type="checkbox" id="dataService" name="dataService"
+                    [checked]="addDeviceObj.services.dataService.isDataService"
+                    (change)="handleOnOffBtn('DataService')" />
+                  <span><small></small></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </section>
+        <div *ngIf="addDeviceObj.services.dataService.isDataService">
+          <section>
+            <div class="form-group ccl-form row">
+              <label class="col-12 col-lg-3 control-label">{{
+                language.PPPoE_Username
+                }}</label>
+              <div class="col-12 col-lg-9">
+                <input id="pppoe_username_input" name="pppoeUsername" autocomplete="new-password"
+                  [(ngModel)]="addDeviceObj.services.dataService.PPPoEUsername" type="text" />
+              </div>
+            </div>
+          </section>
+          <section>
+            <div class="form-group ccl-form row">
+              <label class="col-12 col-lg-3 control-label">{{
+                language.PPPoE_Password
+                }}</label>
+              <div class="col-12 col-lg-9">
+                <input id="pppoe_password_input" name="pppoePassword" autocomplete="new-password"
+                  [(ngModel)]="addDeviceObj.services.dataService.PPPoEPwd"
+                  [type]="secretEyeIcon ? 'text' : 'password'" />
+                <span class="position-absolute secretEyeIcon"
+                  [ngClass]="secretEyeIcon ?'password_view' : 'password_hide'"
+                  (click)="secretEyeIcon = !secretEyeIcon"></span>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <div class="form-group ccl-form row">
+              <label class="col-12 col-lg-3 control-label">{{
+                language.VLAN
+                }}</label>
+              <div class="col-12 col-lg-9">
+                <input id="dataVlanInput" name="dataVlan" (keyup)="
+                    onblurValidation(
+                      'inValidVLan',
+                      addDeviceObj.services.dataService
+                    )
+                  " [(ngModel)]="addDeviceObj.services.dataService.vLAN" type="text" />
+                <sup>{{ language.Supported_Exos }}</sup>
+                <div class="errorMessage" *ngIf="addDeviceObj.services.dataService.inValidVLan">
+                  <p class="m-0" *ngIf="addDeviceObj.services.dataService.vLAN !== ''">{{ vlanErrorMsg }}</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <div class="form-group ccl-form row">
+              <label class="col-12 col-lg-3 control-label">{{
+                language.Priority_Bits
+                }}</label>
+              <div class="col-12 col-lg-9">
+                <ng-select [(ngModel)]="addDeviceObj.services.dataService.priority" name="priorityBits"
+                  placeholder="{{ language.Priority_Bits }}">
+                  <ng-option [value]=""></ng-option>
+                  <ng-option *ngFor="let dataPbit of dataPbitList" [value]="dataPbit">{{ dataPbit }}
+                  </ng-option>
+                </ng-select>
+                <sup>{{ language.Supported_Exos }}</sup>
+              </div>
+            </div>
+          </section>
+        </div>
+        <section>
+          <div class="row">
+            <label for="dataBwProfile" class="col-12 col-lg-3">{{
+              language.Bandwidth_Profile
+              }}</label>
+            <div class="col-12 col-lg-9">
+              <ng-select [(ngModel)]="addDeviceObj.services.dataService.bandwidth" name="bandwidthProfile"
+                placeholder="{{ language.Bandwidth_Profile }}">
+                <ng-option *ngFor="let bandwidth of bandWidthProfileList" [value]="bandwidth._id">
+                  {{ bandwidth.name }}</ng-option>
+              </ng-select>
+              <sup>{{ language.Supported_Without_Exos }}</sup>
+            </div>
+          </div>
+        </section>
+        <br />
+        <br />
+        <section>
+          <div class="row">
+            <label class="col-12 col-lg-3 control-label">{{
+              language.Video_Service
+              }}</label>
+            <div class="col-12 col-lg-9">
+              <div class="checkbox switcher">
+                <label for="videoService">
+                  <input type="checkbox" id="videoService" name="videoService" [checked]="
+                      addDeviceObj.services &&
+                      addDeviceObj.services.videoService &&
+                      addDeviceObj.services.videoService.isVideoService
+                    " (change)="handleOnOffBtn('VideoService')" />
+                  <span><small></small></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </section>
+        <p>
+          <sup>{{ language.Data_Video_services_configuration_info }}</sup>
+        </p>
+        <div *ngIf="addDeviceObj.services.videoService.isVideoService">
+          <section>
+            <div class="form-group ccl-form row">
+              <label class="col-12 col-lg-3 control-label">{{
+                language.VLAN
+                }}</label>
+              <div class="col-12 col-lg-9">
+                <input id="videoVlanInput" name="videoVlan" (keyup)="
+                    onblurValidation(
+                      'inValidVLan',
+                      addDeviceObj.services.videoService
+                    )
+                  " [(ngModel)]="addDeviceObj.services.videoService.vLAN" type="text" />
+                <sup>{{ language.Supported_Exos }}</sup>
+                <div class="errorMessage" *ngIf="addDeviceObj.services.videoService.inValidVLan">
+                  <p class="m-0" *ngIf="addDeviceObj.services.videoService.vLAN !== ''">{{ vlanErrorMsg }}</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <div class="row">
+              <label class="col-12 col-lg-3 control-label">{{
+                language.Priority_Bits
+                }}</label>
+              <div class="col-12 col-lg-9">
+                <ng-select [(ngModel)]="addDeviceObj.services.videoService.priority" name="videoPriorityBits"
+                  placeholder="{{ language.Priority_Bits }}">
+                  <ng-option [value]=""></ng-option>
+                  <ng-option *ngFor="let dataPbit of dataPbitList" [value]="dataPbit">{{ dataPbit }}
+                  </ng-option>
+                </ng-select>
+                <sup>{{ language.Supported_Exos }}</sup>
+              </div>
+            </div>
+          </section>
+        </div>
+        <div class="row mt-3">
+          <label for="videoBwProfile" class="col-12 col-lg-3">{{
+            language.Bandwidth_Profile
+            }}</label>
+          <div class="col-12 col-lg-9">
+            <ng-select [(ngModel)]="addDeviceObj.services.videoService.bandwidth" name="videoBandwidth"
+              placeholder="{{ language.Bandwidth_Profile }}">
+              <ng-option *ngFor="let bandwidth of bandWidthProfileList" [value]="bandwidth._id">
+                {{ bandwidth.name }}</ng-option>
+            </ng-select>
+            <sup>{{ language.Supported_Without_Exos }}</sup>
+          </div>
+        </div>
+        <br />
+        <br />
+      </div>
+      <div *ngIf="
+          addDeviceObj.services.configuredService === 'No' ||
+          addDeviceObj?.device.deviceMode === 'Managed ONT' && addDeviceObj?.device.selectedModel !=='GPR2032H' 
+        ">
+        <span *ngIf="addDeviceObj?.device.deviceMode === 'Managed ONT'">
+          <br />
+          <br />
+          <h3 class="mb-2">{{ language.Voice }}</h3>
+          <hr />
+        </span>
+        <section>
+          <div class="ccl-form form-group">
+            <div class="col-12" *ngIf="
+                !addDeviceObj.services.voiceService.showVocieService &&
+                addDeviceObj?.device.deviceMode === 'Managed ONT'&& addDeviceObj?.device.selectedModel !=='GPR2032H'
+              ">
+              <button id="addManagedOntVoiceService" type="button" (click)="onAddAndRemoveVoiceService(true)"
+                class="btn-default primary">
+                {{ language.Add_Service }}
+              </button>
+              <div class="w-100 alert alert alert-danger fade show" *ngIf="noProfileVoiceError">
+                <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+                <button type="button" class="close" (click)="noProfileVoiceError = false">
+                  <span></span>
+                </button>
+                <div class="d-inline-flex" [innerHtml]="noProfileVoiceErrorMsg"></div>
+              </div>
+            </div>
+            <div class="col-12 float-right pb-3" *ngIf="
+                addDeviceObj.services.voiceService.showVocieService &&
+                addDeviceObj?.device.deviceMode === 'Managed ONT'&& voiceStatus
+              ">
+              <i class="fa fa-trash-o pull-right" (click)="onAddAndRemoveVoiceService()" data-toggle="tooltip"
+                data-placement="left" title="{{language.Delete}}" id="DeleteService1"></i>
+            </div>
+          </div>
+          <div class="row" *ngIf="addDeviceObj?.device.deviceMode === 'RG'&& voiceStatus">
+            <div class="col-12">
+              <h5 class="net-ops-secondary-title">{{ language.Voice }}</h5>
+            </div>
+          </div>
+          <div *ngIf="
+              (addDeviceObj.services.voiceService.showVocieService &&
+                addDeviceObj?.device.deviceMode === 'Managed ONT') ||
+              addDeviceObj?.device.deviceMode === 'RG'&& voiceStatus
+            ">
+            <div>
+              <div class="row mt-3">
+                <label class="col-12 col-lg-3" *ngIf="addDeviceObj?.device.deviceMode !== 'Managed ONT'">{{
+                  language.Voice_Profile }}</label>
+                <div class="col-12 col-lg-9" *ngIf="addDeviceObj?.device.deviceMode !== 'Managed ONT'">
+                  <ng-select [items]="voiceServiceProfileList" bindLabel="name" name="ontVoiceVoiceProfile"
+                    [(ngModel)]="addDeviceObj.services.voiceService.VoiceProfile" placeholder="Voice profile">
+                  </ng-select>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="row mt-3">
+                <label class="col-12 col-lg-3" *ngIf="addDeviceObj?.device.deviceMode !== 'Managed ONT'">{{
+                  language.Service_Type }}</label>
+                <label class="col-12 col-lg-3" *ngIf="addDeviceObj?.device.deviceMode === 'Managed ONT'">{{
+                  language.Service_Profile }}</label>
+                <div class="col-12 col-lg-9" *ngIf="addDeviceObj?.device.deviceMode !== 'Managed ONT'">
+                  <ng-select (change)="onVoiceServiceTypeChange()" [items]="serviceTypeList" bindLabel="label"
+                    name="voiceServiceType" bindValue="value"
+                    [(ngModel)]="addDeviceObj.services.voiceService.serviceType" placeholder="Service type">
+                  </ng-select>
+                </div>
+                <div class="col-12 col-lg-9" *ngIf="addDeviceObj?.device.deviceMode === 'Managed ONT'">
+                  <ng-select (change)="onVoiceServiceTypeChange()" [items]="voiceServiceProfileList" bindLabel="name"
+                    name="ontVoiceServiceType" [(ngModel)]="addDeviceObj.services.voiceService.serviceType"
+                    placeholder="Service type">
+                  </ng-select>
+                </div>
+              </div>
+            </div>
+            <div class="row pt-3 pb-2" *ngIf="isSIPVoiceServiceType">
+              <label class="col-12 col-lg-3 control-label">{{
+                language.T38Fax
+                }}</label>
+              <div class="col-12 col-lg-9">
+                <div class="checkbox switcher">
+                  <label for="faxRelay">
+                    <input type="checkbox" name="faxRelay" id="faxRelay"
+                      [checked]="addDeviceObj.services.voiceService.faxRelay"
+                      [(ngModel)]="addDeviceObj.services.voiceService.faxRelay" />
+                    <span><small></small></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="row" *ngIf="isSIPVoiceServiceType">
+              <label for="DialPlan" class="col-12 col-lg-3">{{
+                language.Dial_Plan
+                }}</label>
+              <div class="col-12 col-lg-9">
+                <ng-select [items]="dialPlanList" name="voiceDialplan" bindLabel="name" bindValue="_id"
+                  [(ngModel)]="addDeviceObj.services.voiceService.dialPlan" placeholder="Dial plan">
+                </ng-select>
+              </div>
+            </div>
+            <br />
+            <div class="row">
+              <label for="addressingType" class="col-12 col-lg-3 control-label">{{ language.Addressing_Type }}</label>
+              <div class="col-12 col-lg-9">
+                <ng-select [items]="addressingType" (change)="onDropDownChange($event)" name="voiceaddressingType"
+                  [(ngModel)]="addDeviceObj.services.voiceService.addressType"
+                  placeholder="{{ language.AddressingType }}">
+                </ng-select>
+              </div>
+            </div>
+            <div class="form-group pt-3" *ngIf="
+                addDeviceObj.services.voiceService.addressType === 'Static' ||
+                isSIPVoiceServiceType === false
+              ">
+              <div class="form-group ccl-form row" *ngIf="
+                  clientQDN.indexOf(addDeviceObj?.device.selectedModel) === -1 ||
+                  addDeviceObj.services.voiceService.addressType === 'Static'
+                ">
+                <label class="col-12 col-lg-3 control-label" *ngIf="
+                    addDeviceObj.services.voiceService.addressType === 'Static'
+                  ">{{ language.IP_Address }} <span class="error">*</span></label>
+                <label class="col-12 col-lg-3 control-label" *ngIf="
+                    isSIPVoiceServiceType === false &&
+                    addDeviceObj.services.voiceService.addressType !== 'Static'
+                  ">{{ language.IP_Host_Name }}</label>
+                <div class="col-12 col-lg-9" *ngIf="
+                    addDeviceObj.services.voiceService.addressType === 'Static'
+                  ">
+                  <input id="ipAddress" name="ipAddress" [(ngModel)]="addDeviceObj.services.voiceService.ipAddress"
+                    placeholder="IP Address" type="text" />
+                  <div class="errorMessage" *ngIf="addDeviceObj.services.voiceService.inValidIP">
+                    <p class="m-0" *ngIf="
+                        addDeviceObj.services.voiceService.ipAddress === ''
+                      ">{{ language["This field is required"] }}</p>
+                    <p class="m-0" *ngIf="
+                        addDeviceObj.services.voiceService.ipAddress !== ''
+                      ">{{ language["Please enter a valid IP address"] }}</p>
+                  </div>
+                </div>
+                <div class="col-12 col-lg-9" *ngIf="
+                    isSIPVoiceServiceType === false &&
+                    addDeviceObj.services.voiceService.addressType !== 'Static'
+                  ">
+                  <input id="ipAddress" name="ipAddress" [(ngModel)]="addDeviceObj.services.voiceService.ipAddress"
+                    placeholder="Enter IP Host Name" type="text" />
+                  <div class="errorMessage" *ngIf="addDeviceObj.services.voiceService.inValidIP">
+                    <p class="m-0" *ngIf="
+                        addDeviceObj.services.voiceService.ipAddress === ''
+                      ">{{ language["This field is required"] }}</p>
+                    <p class="m-0" *ngIf="
+                        addDeviceObj.services.voiceService.ipAddress !== ''
+                      ">{{ language["Please enter a valid IP address"] }}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group ccl-form row" *ngIf="
+                  clientQDN.indexOf(addDeviceObj?.device.selectedModel) !== -1
+                ">
+                <label class="col-12 col-lg-3 control-label" *ngIf="
+                    isSIPVoiceServiceType === false &&
+                    addDeviceObj.services.voiceService.addressType !== 'Static'
+                  ">{{language.Client_FQDN}}</label>
+                <div class="col-12 col-lg-9" *ngIf="
+                    isSIPVoiceServiceType === false &&
+                    addDeviceObj.services.voiceService.addressType !== 'Static'
+                  ">
+                  <input id="ipAddress" name="ipAddress" [(ngModel)]="addDeviceObj.services.voiceService.ipAddress"
+                    placeholder="{{ language.Enter_Client_FQDN }}" type="text" />
+                  <div class="errorMessage" *ngIf="addDeviceObj.services.voiceService.ipAddress != ''">
+                    <p *ngIf="!validateHostNAmeAndIPAddress(addDeviceObj.services.voiceService.ipAddress)">
+                      {{language.New_Profile_Validation7}}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group ccl-form row" *ngIf="
+                  addDeviceObj.services.voiceService.addressType === 'Static'
+                ">
+                <label class="col-12 col-lg-3 control-label">{{
+                  language.Subnet_Mask
+                  }}<span class="error">*</span></label>
+                <div class="col-12 col-lg-9">
+                  <input id="subnetMask" name="subnetMask" (keyup)="
+                      checkValidation(
+                        'inValidSubnet',
+                        addDeviceObj.services.voiceService.subnetMask
+                      )
+                    " [(ngModel)]="addDeviceObj.services.voiceService.subnetMask"
+                    placeholder="{{ language.Subnet_Mask }}" type="text" />
+                  <div class="errorMessage" *ngIf="addDeviceObj.services.voiceService.inValidSubnet">
+                    <p class="m-0" *ngIf="
+                        addDeviceObj.services.voiceService.subnetMask === ''
+                      ">{{ language["This field is required"] }}</p>
+                    <p class="m-0" *ngIf="
+                        addDeviceObj.services.voiceService.subnetMask !== ''
+                      ">{{ language["Please enter a valid IP address"] }}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group ccl-form row" *ngIf="
+                  addDeviceObj.services.voiceService.addressType === 'Static'
+                ">
+                <label class="col-12 col-lg-3 control-label">{{
+                  language.Default_Gateway
+                  }}<span class="error">*</span></label>
+                <div class="col-12 col-lg-9">
+                  <input id="defaultGateway" name="defaultGateway" (keyup)="
+                      checkValidation(
+                        'inValidgateway',
+                        addDeviceObj.services.voiceService.defaultGateway
+                      )
+                    " [(ngModel)]="
+                      addDeviceObj.services.voiceService.defaultGateway
+                    " placeholder="Default Gateway" type="text" />
+                  <div class="errorMessage" *ngIf="addDeviceObj.services.voiceService.inValidgateway">
+                    <p class="m-0" *ngIf="
+                        addDeviceObj.services.voiceService.defaultGateway === ''
+                      ">{{ language["This field is required"] }}</p>
+                    <p class="m-0" *ngIf="
+                        addDeviceObj.services.voiceService.defaultGateway !== ''
+                      ">{{ language["Please enter a valid IP address"] }}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group ccl-form row" *ngIf="
+                  addDeviceObj.services.voiceService.addressType === 'Static'
+                ">
+                <label class="col-12 col-lg-3 control-label">{{
+                  language.dnsserver
+                  }}</label>
+                <div class="col-12 col-lg-9">
+                  <input id="dnsServers" name="dnsServers" (keyup)="
+                      onDNSServerValidation(
+                        'inValidDNSServer',
+                        addDeviceObj.services.voiceService.dnsServers
+                      )
+                    " [(ngModel)]="addDeviceObj.services.voiceService.dnsServers" placeholder="DNS Servers"
+                    type="text" />
+                  <div class="errorMessage" *ngIf="addDeviceObj.services.voiceService.inValidDNSServer">
+                    <p class="m-0" *ngIf="
+                        addDeviceObj.services.voiceService.dnsServers !== ''
+                      ">{{ language.DNS_server_IP_Addresses }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group pt-3" *ngIf="addDeviceObj?.device.deviceMode === 'Managed ONT'">
+              <div class="form-group ccl-form row">
+                <label class="col-12 col-lg-3 control-label">{{
+                  language.IP_Host_Name
+                  }}</label>
+                <div class="col-12 col-lg-9">
+                  <input id="ipHostName" name="ipHostName" [(ngModel)]="addDeviceObj.services.voiceService.ipHostName"
+                    placeholder="{{ language.Enter_IP_Host_Name }}" type="text" />
+                  <div class="errorMessage" *ngIf="addDeviceObj.services.voiceService.inValidIpHostName">
+                    <p *ngIf="
+                        addDeviceObj.services.voiceService.ipHostName === ''
+                      ">{{ language["This field is required"] }}
+                    </p>
+                    <p *ngIf="
+                        addDeviceObj.services.voiceService.ipHostName !== ''
+                      ">{{ language["Please enter a valid IP address"] }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <div class="form-group pt-3 bottom-border">
+                  <ul class="nav nav-pills cc-plus voice-line" role="tablist">
+                    <li class="voiceLineTab active col-3 pl-0" (click)="onSwitchingLines('LineOne')">
+                      <a href="javascript:void(0)" role="tab" id="line1" [ngClass]="{ 'active show': isLineOne }"
+                        data-toggle="pill">{{ language.line }} 1</a>
+                    </li>
+                    <li class="voiceLineTab col-3 pl-0" (click)="onSwitchingLines('LineTwo')">
+                      <a href="javascript:void(0)" role="tab" id="line2" [ngClass]="{ 'active show': isLineTwo }"
+                        data-toggle="pill">{{ language.line }} 2</a>
+                    </li>
+                  </ul>
+                </div>
+                <app-voice-line-service *ngIf="isLineOne" [addDeviceObj]="addDeviceObj"
+                  [lineObject]="addDeviceObj.services.voiceService.lineOne"></app-voice-line-service>
+                <app-voice-line-service *ngIf="isLineTwo" [addDeviceObj]="addDeviceObj"
+                  [lineObject]="addDeviceObj.services.voiceService.lineTwo"></app-voice-line-service>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+    <div class="mt-3" *ngIf="
+        addDeviceObj.services.wifiSSID &&
+        (isSSID2_4GZ || isSSID5_4GZ) &&
+        showSSIDOption
+      ">
+      <div class="row" *ngIf="!ftrProperties?.bSmbMode">
+        <div class="col-md-12">
+          <h4 class="net-ops-secondary-title border-bottom"> {{language["Wi_Fi_SSID"]}} </h4>
+        </div>
+        <!-- <div class="col-md-6 text-left" *ngIf="showUnifiedWiFiSIDtoggle">
+          <div class="d-inline-flex error mr-3"> {{language["Unified_WiFi_SID"]}}
+          </div>
+          <div class="d-inline-flex">
+            <div class="checkbox switcher">
+              <label for="test">
+                <input type="checkbox" id="test" data-toggle="toggle" name="chkUnifiedWiFiSID"
+                  [(ngModel)]="UnifiedWiFiSID" (change)="changeUnifiedWiFiSID($event)" />
+
+                <span><small class="on"></small>
+                  <small class="off"></small>
+                </span>
+              </label>
+            </div>
+
+
+          </div>
+        </div> -->
+      </div>
+      <div class="row" *ngIf="showUnifiedSSIDButton && (isSSID5_4GZ || isSSID6_4GZ) && !ftrProperties?.bSmbMode">
+        <div class="col-md-12">
+          <div class="checkbox" [ngClass]="addDeviceObj.toggeledUnifiedPrimarySSID ? 'switcher-disabled' : 'switcher'">
+            <label class="w-100 mb-0">{{language["Unified_SSID"]}}</label>
+            <label for="unifiedSSID">
+              <input type="checkbox" name="chkUnifiedWiFiSID" [(ngModel)]="UnifiedWiFiSID" id="unifiedSSID"
+                (change)="changeUnifiedWiFiSID($event)"
+                [disabled]="this.addDeviceObj.toggeledUnifiedPrimarySSID || bSmbMode">
+              <span [ngClass]="{'cursornotallow': bSmbMode}"><small></small></span>
+            </label>&nbsp;&nbsp;&nbsp;&nbsp;
+            <label [ngClass]="{'cursornotallow': bSmbMode}">{{ UnifiedWiFiSID?language.Enabled: language.Disabled
+              }}</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex  alert-info-note"
+        *ngIf="(showUnifiedPrimarySSID && editMode && addDeviceObj.isUnifiedPrimarySSID) && !this.addDeviceObj.toggeledUnifiedPrimarySSID">
+        <div class="alert-info-icon">
+          <img src="../../../../../../assets/img/warning-icon.svg">
+        </div>
+        <div class="alert-info-content">
+          {{language.wifi_ssid_alertmsg}}.
+        </div>
+      </div>
+      <!-- <label
+        *ngIf="(showUnifiedPrimarySSID && editMode && addDeviceObj.isUnifiedPrimarySSID) && !this.addDeviceObj.toggeledUnifiedPrimarySSID">
+        WiFi SSID configuration data differs between 2.4GHz and 5GHz bands in existing Provisioning Record and on saving
+        Provisioning Record will be updated across all bands.
+      </label> -->
+      <section id="wifi_ssid" class="">
+        <div class="row" *ngIf="!ftrProperties?.bSmbMode">
+          <div class="col-12">
+            <ul class="nav nav-tabs medium-tab" [ngClass]="{'cursornotallow': bSmbMode}" id="tabs"
+              *ngIf="!showUnifiedPrimarySSID">
+              <li *ngIf="
+                  (isSSID2_4GZ || isSSID5_4GZ) &&
+                  addDeviceObj?.device.selectedModel === '836GE'
+                " class="nav-item pl-0" (click)="bSmbMode ? '' : onSwitchingWifiSSID('Primary SSID')">
+                <a href="javascript: void(0)" class="nav-link" [ngClass]="{
+                    'active show': switchedWifiSSID === 'Primary SSID','PointerEvent': bSmbMode
+                  }" role="tab" id="X_CALIX_SXACC_PRIMARY_2DOT4GHZ_SSID" data-toggle="pill">{{ language.Primary_SSID
+                  }}</a>
+              </li>
+              <li *ngIf="
+                  (isSSID2_4GZ || isSSID5_4GZ) &&
+                  addDeviceObj?.device.selectedModel === '836GE'&& !isZyxelModel &&
+                  !ssoService.acceptGSModel(addDeviceObj?.device.selectedModel)
+                " class="nav-item" (click)="bSmbMode ? '' : onSwitchingWifiSSID('Guest SSID')">
+                <a href="javascript: void(0)" class="nav-link" [ngClass]="{
+                    'active show': switchedWifiSSID === 'Guest SSID','PointerEvent': bSmbMode
+                  }" role="tab" id="X_CALIX_SXACC_GUEST_2DOT4GHZ_SSID" data-toggle="pill">{{ language.Guest_SSID }}</a>
+              </li>
+              <li *ngIf="
+                  (isSSID2_4GZ) &&
+                  addDeviceObj?.device.selectedModel !== '836GE'
+                " class="nav-item pl-0" (click)="bSmbMode ? '' : onSwitchingWifiSSID('2.4GHz Primary SSID')">
+                <a href="javascript: void(0)" class="nav-link" [ngClass]="{
+                    'active show': switchedWifiSSID === '2.4GHz Primary SSID','PointerEvent': bSmbMode
+                  }" role="tab" id="X_CALIX_SXACC_PRIMARY_2DOT4GHZ_SSID" data-toggle="pill">2.4{{
+                  language.GHz_Primary_SSID }}</a>
+              </li>
+              <li *ngIf="
+                  (isSSID2_4GZ) &&
+                  addDeviceObj?.device.selectedModel !== '836GE' && !isZyxelModel &&
+                  !ssoService.acceptGSModel(addDeviceObj?.device.selectedModel)
+                " class="nav-item" (click)="bSmbMode ? '' : onSwitchingWifiSSID('2.4GHz Guest SSID')">
+                <a href="javascript: void(0)" class="nav-link" [ngClass]="{
+                    'active show': switchedWifiSSID === '2.4GHz Guest SSID','PointerEvent': bSmbMode
+                  }" role="tab" id="X_CALIX_SXACC_GUEST_2DOT4GHZ_SSID" data-toggle="pill">2.4{{ language.GHz_Guest_SSID
+                  }}</a>
+              </li>
+              <li *ngIf="
+                  isSSID5_4GZ && addDeviceObj?.device.selectedModel !== '836GE'
+                " class="nav-item" (click)="bSmbMode ? '' : onSwitchingWifiSSID('5GHz Primary SSID')">
+                <a href="javascript: void(0)" class="nav-link" [ngClass]="{
+                    'active show': switchedWifiSSID === '5GHz Primary SSID','PointerEvent': bSmbMode
+                  }" role="tab" id="X_CALIX_SXACC_PRIMARY_5GHZ_SSID" data-toggle="pill">5{{ language.GHz_Primary_SSID
+                  }}</a>
+              </li>
+              <li *ngIf="
+                  isSSID5_4GZ && addDeviceObj?.device.selectedModel !== '836GE' && !isZyxelModel 
+                  && !ssoService.acceptGSModel(addDeviceObj?.device.selectedModel)
+                " class="nav-item" (click)="bSmbMode ? '' : onSwitchingWifiSSID('5GHz Guest SSID')">
+                <a href="javascript: void(0)" class="nav-link" [ngClass]="{
+                    'active show': switchedWifiSSID === '5GHz Guest SSID','PointerEvent': bSmbMode
+                  }" role="tab" id="X_CALIX_SXACC_GUEST_5GHZ_SSID" data-toggle="pill">5{{ language.GHz_Guest_SSID
+                  }}</a>
+              </li>
+
+              <li *ngIf="isSSID6_4GZ && addDeviceObj?.device.selectedModel !== '836GE'" class="nav-item"
+                (click)="bSmbMode ? '' : onSwitchingWifiSSID('6GHz Primary SSID')">
+                <a href="javascript: void(0)" class="nav-link"
+                  [ngClass]="{'active show': switchedWifiSSID === '6GHz Primary SSID','PointerEvent': bSmbMode}"
+                  role="tab" id="X_CALIX_SXACC_PRIMARY_6GHZ_SSID" data-toggle="pill">6{{
+                  language.GHz_Primary_SSID
+                  }}</a>
+              </li>
+
+              <li *ngIf="isSSID6_4GZ && addDeviceObj?.device.selectedModel !== '836GE' && !isZyxelModel 
+                                && !ssoService.acceptGSModel(addDeviceObj?.device.selectedModel)
+                              " class="nav-item" (click)="bSmbMode ? '' : onSwitchingWifiSSID('6GHz Guest SSID')">
+                <a href="javascript: void(0)" class="nav-link" [ngClass]="{
+                                  'active show': switchedWifiSSID === '6GHz Guest SSID','PointerEvent': bSmbMode
+                                }" role="tab" id="X_CALIX_SXACC_GUEST_6GHZ_SSID" data-toggle="pill">6{{
+                  language.GHz_Guest_SSID
+                  }}</a>
+              </li>
+
+
+            </ul>
+
+            <ul *ngIf="showUnifiedPrimarySSID" class="nav nav-tabs medium-tab" id="tabs">
+              <li *ngIf="(isSSID2_4GZ || isSSID5_4GZ || isSSID6_4GZ) && addDeviceObj?.device.selectedModel !== '836GE'
+                    " class="nav-item col-3" (click)="bSmbMode ? '' : onSwitchingWifiSSID('UNIFIED_PRIMARY_SSID')">
+                <a href="javascript: void(0)" class="nav-link" [ngClass]="{
+                        'active show': switchedWifiSSID === 'UNIFIED_PRIMARY_SSID','PointerEvent': bSmbMode
+                      }" role="tab" id="UNIFIED_PRIMARY_SSID" data-toggle="pill">{{language.Primary_SSID}}</a>
+              </li>
+            </ul>
+
+            <app-wifi-ssid-service [bSmbMode]="bSmbMode" [deviceData]="addDeviceObj?.device" *ngIf="
+                switchedWifiSSID === 'Primary SSID' &&
+                (isSSID2_4GZ || isSSID5_4GZ)
+              " [wifiSSIDObj]="
+                addDeviceObj.services.wifiSSID
+                  .X_CALIX_SXACC_PRIMARY_2DOT4GHZ_SSID
+              " [wifiType]="'X_CALIX_SXACC_PRIMARY_2DOT4GHZ_SSID'" [Networktype]='switchedWifiSSID'
+              [isWifi5Radio]='false' [Security]="security" [metaData]="metaData2G" [ftrProperties]="ftrProperties"
+              (emitWifiObj)="getWifiData($event)" [editMode]="editMode" [tempWifiObj]="tempWifiObj">
+            </app-wifi-ssid-service>
+            <app-wifi-ssid-service [bSmbMode]="bSmbMode" [deviceData]="addDeviceObj?.device" *ngIf="
+                switchedWifiSSID === 'Guest SSID' &&
+                (isSSID2_4GZ || isSSID5_4GZ)
+              " [wifiSSIDObj]="
+                addDeviceObj.services.wifiSSID.X_CALIX_SXACC_GUEST_2DOT4GHZ_SSID
+              " [wifiType]="'X_CALIX_SXACC_GUEST_2DOT4GHZ_SSID'" [Networktype]='switchedWifiSSID'
+              [isWifi5Radio]='false' [Security]="security" [ftrProperties]="ftrProperties"
+              (emitWifiObj)="getWifiData($event)" [editMode]="editMode" [tempWifiObj]="tempWifiObj">
+            </app-wifi-ssid-service>
+            <app-wifi-ssid-service [bSmbMode]="bSmbMode" [deviceData]="addDeviceObj?.device" *ngIf="
+                switchedWifiSSID === '2.4GHz Primary SSID' &&
+                (isSSID2_4GZ || isSSID5_4GZ)
+              " [wifiSSIDObj]="
+                addDeviceObj.services.wifiSSID
+                  .X_CALIX_SXACC_PRIMARY_2DOT4GHZ_SSID
+              " [wifiType]="'X_CALIX_SXACC_PRIMARY_2DOT4GHZ_SSID'" [Networktype]='switchedWifiSSID'
+              [metaData]="metaData2G" [Security]="security" [isWifi5Radio]='false' [ftrProperties]="ftrProperties"
+              (emitWifiObj)="getWifiData($event)" [editMode]="editMode" [tempWifiObj]="tempWifiObj">
+            </app-wifi-ssid-service>
+            <app-wifi-ssid-service [bSmbMode]="bSmbMode" [deviceData]="addDeviceObj?.device" *ngIf="
+                switchedWifiSSID === '2.4GHz Guest SSID' &&
+                (isSSID2_4GZ || isSSID5_4GZ)
+              " [wifiSSIDObj]="
+                addDeviceObj.services.wifiSSID.X_CALIX_SXACC_GUEST_2DOT4GHZ_SSID 
+              " [wifiType]="'X_CALIX_SXACC_GUEST_2DOT4GHZ_SSID'" [Networktype]='switchedWifiSSID' [Security]="security"
+              [ftrProperties]="ftrProperties" [isWifi5Radio]='false' (emitWifiObj)="getWifiData($event)"
+              [editMode]="editMode" [tempWifiObj]="tempWifiObj">
+            </app-wifi-ssid-service>
+            <app-wifi-ssid-service [bSmbMode]="bSmbMode" [deviceData]="addDeviceObj?.device" [isWifi5Radio]='false'
+              *ngIf="switchedWifiSSID === '5GHz Primary SSID' && isSSID5_4GZ" [wifiSSIDObj]="
+                addDeviceObj.services.wifiSSID.X_CALIX_SXACC_PRIMARY_5GHZ_SSID
+              " [wifiType]="'X_CALIX_SXACC_PRIMARY_5GHZ_SSID'" [Networktype]='switchedWifiSSID' [metaData]="metaData5G"
+              [Security]="security" [ftrProperties]="ftrProperties" (emitWifiObj)="getWifiData($event)"
+              [editMode]="editMode" [tempWifiObj]="tempWifiObj">
+            </app-wifi-ssid-service>
+            <app-wifi-ssid-service [bSmbMode]="bSmbMode" [deviceData]="addDeviceObj?.device" [isWifi5Radio]='false'
+              *ngIf="switchedWifiSSID === '5GHz Guest SSID' && isSSID5_4GZ" [wifiSSIDObj]="
+                addDeviceObj.services.wifiSSID.X_CALIX_SXACC_GUEST_5GHZ_SSID 
+              " [wifiType]="'X_CALIX_SXACC_GUEST_5GHZ_SSID'" [Networktype]='switchedWifiSSID' [Security]="security"
+              [ftrProperties]="ftrProperties" (emitWifiObj)="getWifiData($event)" [editMode]="editMode"
+              [tempWifiObj]="tempWifiObj">
+            </app-wifi-ssid-service>
+
+            <!-- 6 GHZ Primary SSID -->
+
+            <app-wifi-ssid-service [bSmbMode]="bSmbMode" [deviceData]="addDeviceObj?.device"
+              *ngIf="switchedWifiSSID === '6GHz Primary SSID' && isSSID6_4GZ" [isWifi5Radio]='false'
+              [wifiSSIDObj]="addDeviceObj.services.wifiSSID.X_CALIX_SXACC_PRIMARY_6GHZ_SSID"
+              [wifiType]="'X_CALIX_SXACC_PRIMARY_6GHZ_SSID'" [Networktype]='switchedWifiSSID' [metaData]="metaData5G"
+              [Security]="six_Ghz_SecurityOptions" [ftrProperties]="ftrProperties" (emitWifiObj)="getWifiData($event)"
+              [editMode]="editMode" [tempWifiObj]="tempWifiObj">
+            </app-wifi-ssid-service>
+            <app-wifi-ssid-service [bSmbMode]="bSmbMode" [deviceData]="addDeviceObj?.device"
+              *ngIf="switchedWifiSSID === '6GHz Guest SSID' && isSSID6_4GZ"
+              [wifiSSIDObj]="addDeviceObj.services.wifiSSID.X_CALIX_SXACC_GUEST_6GHZ_SSID" [isWifi5Radio]='false'
+              [wifiType]="'X_CALIX_SXACC_GUEST_5GHZ_SSID'" [Networktype]='switchedWifiSSID'
+              [Security]="six_Ghz_SecurityOptions" [ftrProperties]="ftrProperties" (emitWifiObj)="getWifiData($event)"
+              [editMode]="editMode" [tempWifiObj]="tempWifiObj">
+            </app-wifi-ssid-service>
+
+            <app-wifi-ssid-service [bSmbMode]="bSmbMode" [deviceData]="addDeviceObj?.device"
+              *ngIf="switchedWifiSSID === 'UNIFIED_PRIMARY_SSID'" [isWifi5Radio]='false'
+              [wifiSSIDObj]="addDeviceObj.services.wifiSSID.UNIFIED_PRIMARY_SSID" [wifiType]="'UNIFIED_PRIMARY_SSID'"
+              [Networktype]='switchedWifiSSID' [metaData]="metaData5G" [Security]="unifiedSSID_SecurityOptions"
+              [ftrProperties]="ftrProperties" (emitWifiObj)="getWifiData($event)" [editMode]="editMode"
+              [tempWifiObj]="tempWifiObj">
+            </app-wifi-ssid-service>
+
+          </div>
+        </div>
+
+
+        <!-- WIFI -Radio -->
+
+        <div class="row mt-3"
+          *ngIf="(addDeviceObj?.device.selectedModel !== '836GE') && !isZyxelModel &&
+                 ((switchedWifiSSID === '2.4GHz Primary SSID' && (isSSID2_4GZ && isSSID5_4GZ)) ||
+                 (switchedWifiSSID === '5GHz Primary SSID' && isSSID5_4GZ) ||
+                 (switchedWifiSSID === '6GHz Primary SSID' && isSSID6_4GZ)) || (switchedWifiSSID === 'UNIFIED_PRIMARY_SSID' && !isZyxelModel && ((isSSID2_4GZ && isSSID5_4GZ) || isSSID6_4GZ))">
+          <div class="col-12">
+            <h4 class="net-ops-secondary-title mb-0"> {{language['WiFi Radio']}} </h4>
+          </div>
+          <div class="col-12 mb-2">
+            <ul class="nav nav-tabs medium-tab">
+              <li class="nav-item pl-0" (click)="onSwitchingWifiSSIDRadio('FiveGRadio')"
+                *ngIf="isSSID5_4GZ && addDeviceObj?.device.selectedModel !== '836GE' && (isSSID2_4GZ && isSSID5_4GZ)">
+                <a class="nav-link active show" role="tab" id="5g_Radio_Pill" data-toggle="pill">
+                  {{language['5GHz Radio']}}
+                </a>
+              </li>
+              <li class="nav-item pl-0" (click)="onSwitchingWifiSSIDRadio('SixGRadio')"
+                *ngIf="isSSID6_4GZ && addDeviceObj?.device.selectedModel !== '836GE' && isSSID6_4GZ">
+                <a class="nav-link" role="tab" id="6g_Radio_Pill" data-toggle="pill">
+                  {{language['6GHz Radio']}}
+                </a>
+              </li>
+            </ul>
+            <app-wifi-ssid-service [bSmbMode]="bSmbMode" [deviceData]="addDeviceObj?.device" *ngIf="switchedWifiSSIDRadio==='FiveGRadio' && 
+                                             isSSID5_4GZ
+                                            " [wifiSSIDObj]="
+                                              addDeviceObj.services.wifiSSID
+                                                .X_CALIX_SXACC_PRIMARY_5GHZ_SSID
+                                            " [wifiType]="'X_CALIX_SXACC_PRIMARY_5GHZ_SSID'" [isWifi5Radio]='true'
+              [Security]="security" [metaData]="metaData2G" [ftrProperties]="ftrProperties"
+              (emitWifiObj)="getWifiData($event)" [editMode]="editMode" [tempWifiObj]="tempWifiObj">
+            </app-wifi-ssid-service>
+
+            <app-wifi-ssid-service [bSmbMode]="bSmbMode" [deviceData]="addDeviceObj?.device" *ngIf="switchedWifiSSIDRadio==='SixGRadio' && 
+                                                              isSSID6_4GZ 
+                                                            " [wifiSSIDObj]="
+                                                              addDeviceObj.services.wifiSSID
+                                                                .X_CALIX_SXACC_PRIMARY_6GHZ_SSID
+                                                            " [wifiType]="'X_CALIX_SXACC_PRIMARY_6GHZ_SSID'"
+              [isWifi5Radio]='true' [Security]="security" [metaData]="metaData2G" [ftrProperties]="ftrProperties"
+              (emitWifiObj)="getWifiData($event)" [editMode]="editMode" [tempWifiObj]="tempWifiObj">
+            </app-wifi-ssid-service>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </form>
+</div>

@@ -1,0 +1,237 @@
+<section>
+  <div class="container">
+    <div class="row justify-content-between">
+      <div class="col-md-6 pl-0">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="heading-4">{{ language["All Alarms"] }}</div>
+            <span class="Lists">
+              {{ language["Select and add the alarms you wish to monitor"] }}
+            </span>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12">
+            <div class="box-list">
+              <div class="alarm-menu-list">
+                <ul class="nav nav-pills" #nonMonitoredView>
+                  <li>
+                    <a data-toggle="pill" [ngClass]="{
+                        active: alarmsActiveTab == 'individual_alarm'
+                      }" href="#individual_alarms" (click)="
+                        changeNavPills(
+                          'individual_alarm',
+                          'non-monitored',
+                          $event
+                        )
+                      ">{{ language.Alarms }}</a>
+                  </li>
+                  <!-- <li>
+                    <a data-toggle="pill" [ngClass]="{
+                        active: alarmsActiveTab == 'transform_alarm'
+                      }" href="#transform_alarms" (click)="
+                        changeNavPills(
+                          'transform_alarm',
+                          'non-monitored',
+                          $event
+                        )
+                      ">{{ language["Transformed Alarms"] }}</a>
+                  </li>
+                  <li>
+                    <a data-toggle="pill" [ngClass]="{ active: alarmsActiveTab == 'alarm_group' }" href="#alarm_groups"
+                      (click)="
+                        changeNavPills('alarm_group', 'non-monitored', $event)
+                      ">{{ language["Alarm Category Subgroups"] }}</a>
+                  </li> -->
+                </ul>
+
+                <div class="tab-content">
+
+                  <div id="individual_alarms" [ngClass]="{
+                    active: alarmsActiveTab == 'individual_alarm'
+                  }" class="tab-pane alarm-menu-info">
+                    <div class="alarm-menu-info">
+                      <app-workflow-datatable (addRemoveAlarmList)="callAddRemove($event)"
+                        [alarmData]="workFlowAlarmsData.individualAlarmData"
+                        [canShowTableBodyInputSubject]="canShowTableBodySubject"></app-workflow-datatable>
+                    </div>
+                    <ng-template *ngIf="
+                      workFlowAlarmsData?.individualAlarmData?.data?.length <=
+                      0
+                    " [ngTemplateOutlet]="noAlarmsTemplate"></ng-template>
+                  </div>
+                  <!-- <div id="transform_alarms" [ngClass]="{ active: alarmsActiveTab == 'transform_alarm' }"
+                    class="tab-pane alarm-menu-info">
+                    <div class="alarm-menu-info">
+                      <div class="alarm-menu-info">
+                        <app-workflow-datatable (addRemoveAlarmList)="callAddRemove($event)"
+                          [alarmData]="workFlowAlarmsData.transformAlarmData"></app-workflow-datatable>
+                      </div>
+                      <ng-template *ngIf="
+                          workFlowAlarmsData.transformAlarmData?.data?.length <=
+                          0
+                        " [ngTemplateOutlet]="noAlarmsTemplate"></ng-template>
+                    </div>
+                  </div>
+                  <div id="alarm_groups" [ngClass]="{ active: alarmsActiveTab == 'alarm_group' }"
+                    class="tab-pane alarm-menu-info alarm-group-tab">
+                    <div class="alarm-menu-info">
+                      <app-workflow-datatable (addRemoveAlarmList)="callAddRemove($event)"
+                        [alarmData]="workFlowAlarmsData.groupAlarmData"></app-workflow-datatable>
+                    </div>
+                    <ng-template *ngIf="
+                        workFlowAlarmsData.groupAlarmData?.data?.length <= 0
+                      " [ngTemplateOutlet]="noAlarmsTemplate"></ng-template>
+                  </div> -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 pr-0">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="heading-4">
+              {{ language["Monitored Alarms"] }}<span class="error">*</span> ({{
+              workFlowAlarmsData.totMonitoredAlarms | number
+              }})
+            </div>
+            <span class="Lists">
+              {{
+              language[
+              "The following alarms will be monitored by this notification schedule"
+              ]
+              }}
+            </span>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12">
+            <div class="box-list">
+              <div class="alarm-menu-list">
+                <ul class="nav nav-pills" #monitoredView>
+                  <li>
+                    <a data-toggle="pill" [ngClass]="{
+                        active:
+                          selectedAlarmsActiveTab ==
+                          'selected_individual_alarms'
+                      }" href="#individual_alarms_selected" (click)="
+                        changeNavPills(
+                          'selected_individual_alarms',
+                          'monitored',
+                          $event
+                        )
+                      ">{{ language.Alarms }}</a>
+                  </li>
+                  <!-- <li>
+                    <a data-toggle="pill" [ngClass]="{
+                        active:
+                          selectedAlarmsActiveTab == 'selected_transform_alarms'
+                      }" href="#transform_alarms_selected" (click)="
+                        changeNavPills(
+                          'selected_transform_alarms',
+                          'monitored',
+                          $event
+                        )
+                      ">{{ [language["Transformed Alarms"]] }}</a>
+                  </li>
+                  <li>
+                    <a data-toggle="pill" [ngClass]="{
+                        active:
+                          selectedAlarmsActiveTab == 'selected_alarm_groups'
+                      }" href="#alarm_groups_selected" (click)="
+                        changeNavPills(
+                          'selected_alarm_groups',
+                          'monitored',
+                          $event
+                        )
+                      ">{{ language["Alarm Category Subgroups"] }}</a>
+                  </li> -->
+                </ul>
+
+                <div class="tab-content">
+                  <div id="individual_alarms_selected" [ngClass]="{
+                      active:
+                        selectedAlarmsActiveTab == 'selected_individual_alarms'
+                    }" class="tab-pane alarm-menu-info">
+                    <div class="alarm-menu-info">
+                      <app-workflow-datatable (addRemoveAlarmList)="callAddRemove($event)" [alarmData]="
+                          workFlowAlarmsData.monitoredIndividualAlarm
+                        "></app-workflow-datatable>
+                    </div>
+                    <ng-template *ngIf="
+                        workFlowAlarmsData?.monitoredIndividualAlarm?.data
+                          ?.length <= 0
+                      " [ngTemplateOutlet]="noMonitoredAlarmsTemplate"></ng-template>
+                  </div>
+                  <!-- <div id="transform_alarms_selected" [ngClass]="{
+                      active:
+                        selectedAlarmsActiveTab == 'selected_transform_alarms'
+                    }" class="tab-pane alarm-menu-info">
+                    <div class="alarm-menu-info">
+                      <app-workflow-datatable (addRemoveAlarmList)="callAddRemove($event)"
+                        [alarmData]="workFlowAlarmsData.monitoredTransformAlarm"></app-workflow-datatable>
+                    </div>
+                    <ng-template *ngIf="
+                        workFlowAlarmsData?.monitoredTransformAlarm?.data
+                          ?.length <= 0
+                      " [ngTemplateOutlet]="noMonitoredAlarmsTemplate"></ng-template>
+                  </div>
+                  <div id="alarm_groups_selected" [ngClass]="{
+                      active: selectedAlarmsActiveTab == 'selected_alarm_groups'
+                    }" class="tab-pane alarm-menu-info">
+                    <div class="alarm-menu-info">
+                      <app-workflow-datatable (addRemoveAlarmList)="callAddRemove($event)"
+                        [alarmData]="workFlowAlarmsData.monitoredGroupAlarm"></app-workflow-datatable>
+                    </div>
+                    <ng-template *ngIf="
+                        workFlowAlarmsData?.monitoredGroupAlarm?.data?.length <=
+                        0
+                      " [ngTemplateOutlet]="noMonitoredAlarmsTemplate"></ng-template>
+                  </div> -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ng-template #noMonitoredAlarmsTemplate>
+    <div class="text-center" style="color: #808080; margin-top: 100px">
+      <span> {{ language["There are no monitored alarms"] }}</span>
+      <br /><br /><br />
+      <span>
+        {{ language["From the left panel, select and add"] }} <br />
+        {{ language["the alarms you wish to monitor"] }}</span>
+    </div>
+  </ng-template>
+  <ng-template #noAlarmsTemplate>
+    <div class="text-center" style="color: #808080; margin-top: 100px">
+      <span> {{ language["There are no alarms"] }}</span>
+      <br /><br /><br />
+    </div>
+  </ng-template>
+  <ng-template #deleteModal let-data let-ref="dialogRef">
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Remove</h4>
+      <button type="button" class="close" aria-label="Close" (click)="close('No')">
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p [innerHtml]="removeName"></p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-default btn-dft" (click)="close('No')">
+        {{ language.no }}
+      </button>
+      <button type="button" class="btn btn-primary" (click)="doRemoveAlarms()" style="margin-left: 3px">
+        {{ language.Yes }}
+      </button>
+    </div>
+  </ng-template>
+</section>

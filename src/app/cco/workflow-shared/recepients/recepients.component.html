@@ -1,0 +1,132 @@
+<section>
+    <div class="w-100 alert alert-danger fade show my-3" *ngIf="errorMessage && submitted">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+        <button type="button" class="close" (click)="submitted=false">
+            <span></span>
+        </button>
+        <div class="d-inline-flex" [innerHtml]="language[errorMessage] || errorMessage"></div>
+    </div>
+
+    <div class="row" [formGroup]="recepientForm">
+        <div class="col-md-6">
+            <div class="cco-secondary-title border-bottom pb-2">Send Notifications To</div>
+            <div class="form-group mt-3">
+                <label for="recipients">{{ language.Email }}
+                    <!--<span class="error">*</span>-->
+                </label>
+                <div class="custom-paste-input"
+                    (click)="onCustomPasteClick(dynamicFieldsObj['emailRecipients'], $event)">
+                    <div class="custom-paste-list"
+                        *ngFor="let item of workflowObj?.[dynamicFieldsObj['emailRecipients']]; let i = index">
+                        {{ item }}
+                        <span class="remove-input-btn primary" data-key=""
+                            (click)="removeData(dynamicFieldsObj['emailRecipients'], i)"><i
+                                class="fa fa-times"></i></span>
+                    </div>
+
+                    <input autocomplete="off" id="mail_recepients" #mail_recepients name="emailRecipients"
+                        [formControlName]="dynamicFieldsObj['emailRecipients']" type="text"
+                        (keyup.enter)="makeList(dynamicFieldsObj['emailRecipients'])" class="w-100"
+                        (paste)="pasteMakeList(dynamicFieldsObj['emailRecipients'], $event)"
+                        (keyup.Space)="makeList(dynamicFieldsObj['emailRecipients'])"
+                        (blur)="makeList(dynamicFieldsObj['emailRecipients'])"
+                        placeholder="{{ language['Add email address(es)'] }}" aria-required="true"
+                        aria-describedby="mail_recepients-error" />
+                </div>
+                <div class="errorMessage"
+                    *ngIf="(formControls?.[dynamicFieldsObj['emailRecipients']]?.invalid || formControls?.[dynamicFieldsObj['emailRecipients']]?.errors?.invalidEmail) && 
+                    (formControls?.[dynamicFieldsObj['emailRecipients']]?.dirty || formControls?.[dynamicFieldsObj['emailRecipients']]?.touched || submitted)">
+                    <div *ngIf="!workflowObj?.[dynamicFieldsObj['emailRecipients']]?.length && formControls?.[dynamicFieldsObj['emailRecipients']]?.errors?.required"
+                        class="mt-1">
+                        {{language['This field is required.']}}
+                    </div>
+
+                    <div *ngIf="formControls?.[dynamicFieldsObj['emailRecipients']]?.errors?.invalidEmail" class="mt-1">
+                        {{language['Please enter a valid email address']}}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="emailNotes">{{ language["Email Notes"] }}</label>
+                <textarea [formControlName]="dynamicFieldsObj['emailNotes']" placeholder="Add a note" minlength="0"
+                    maxlength="200" class="form-control" id="emailNotes" rows="3"
+                    style="border-radius: 22px 22px 2px 22px"></textarea>
+
+                <div class="text-right">
+                    <span>{{recepientForm.get(dynamicFieldsObj['emailNotes']).value?.length ?
+                        recepientForm.get(dynamicFieldsObj['emailNotes']).value?.length: 0}}</span>
+                    <span>/200</span>
+                </div>
+            </div>
+
+
+            <div class="form-group mt-3">
+                <label for="recipients">Phone Number
+                    <!--<span class="error">*</span>-->
+                </label>
+                <div class="custom-paste-input" (click)="onCustomPasteClick(dynamicFieldsObj['sms'], $event)">
+                    <div class="custom-paste-list"
+                        *ngFor="let item of workflowObj?.[dynamicFieldsObj['sms']]; let i = index">
+                        {{ item }}
+                        <span class="remove-input-btn primary" data-key=""
+                            (click)="removeData(dynamicFieldsObj['sms'], i)"><i class="fa fa-times"></i></span>
+                    </div>
+
+                    <input autocomplete="off" name="sms" [formControlName]="dynamicFieldsObj['sms']" type="text"
+                        (keyup.enter)="makeList(dynamicFieldsObj['sms'])" class="w-100"
+                        (paste)="pasteMakeList(dynamicFieldsObj['sms'], $event)"
+                        (keyup.Space)="makeList(dynamicFieldsObj['sms'])" (blur)="makeList(dynamicFieldsObj['sms'])"
+                        placeholder="Add phone number(s) (for example: +9999999999)" />
+                </div>
+
+                <div class="errorMessage"
+                    *ngIf="(formControls?.[dynamicFieldsObj['sms']]?.invalid) && 
+                                (formControls?.[dynamicFieldsObj['sms']]?.dirty || formControls?.[dynamicFieldsObj['sms']]?.touched || submitted)">
+                    <div *ngIf="!workflowObj?.[dynamicFieldsObj['sms']]?.length && formControls?.[dynamicFieldsObj['sms']]?.errors?.required"
+                        class="mt-1">
+                        {{language['This field is required.']}}
+                    </div>
+
+                    <div *ngIf="formControls?.[dynamicFieldsObj['sms']]?.errors?.pattern" class="mt-1">
+                        Please enter valid Phone Number
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group mt-3">
+                <label for="recipients">Webhook
+                    <!--<span class="error">*</span>-->
+                </label>
+                <div class="custom-paste-input" (click)="onCustomPasteClick(dynamicFieldsObj['webhooks'], $event)">
+                    <div class="custom-paste-list"
+                        *ngFor="let item of workflowObj?.[dynamicFieldsObj['webhooks']]; let i = index">
+                        {{ item }}
+                        <span class="remove-input-btn primary" data-key=""
+                            (click)="removeData(dynamicFieldsObj['webhooks'], i)"><i class="fa fa-times"></i></span>
+                    </div>
+
+                    <input autocomplete="off" name="webhooks" [formControlName]="dynamicFieldsObj['webhooks']"
+                        type="text" (keyup.enter)="makeList(dynamicFieldsObj['webhooks'])" class="w-100"
+                        (paste)="pasteMakeList(dynamicFieldsObj['webhooks'], $event)"
+                        (keyup.Space)="makeList(dynamicFieldsObj['webhooks'])"
+                        (blur)="makeList(dynamicFieldsObj['webhooks'])" placeholder="Add webhook URL(s)" />
+                </div>
+
+                <div class="errorMessage"
+                    *ngIf="(formControls?.[dynamicFieldsObj['webhooks']]?.invalid) && 
+                                            (formControls?.[dynamicFieldsObj['webhooks']]?.dirty || formControls?.[dynamicFieldsObj['webhooks']]?.touched || submitted)">
+                    <div *ngIf="!workflowObj?.[dynamicFieldsObj['webhooks']]?.length && formControls?.[dynamicFieldsObj['webhooks']]?.errors?.required"
+                        class="mt-1">
+                        {{language['This field is required.']}}
+                    </div>
+
+                    <div *ngIf="formControls?.[dynamicFieldsObj['webhooks']]?.errors?.pattern" class="mt-1">
+                        Please enter a valid URL
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

@@ -1,0 +1,133 @@
+<top-nav-bar *ngIf="isLatestVersion" [menus]="menus" (activeTab)="selectedTab($event)"></top-nav-bar>
+
+<div class="col-12 px-0" id="skipped-devices">
+
+    <!-- error message -->
+    <div class="w-100 alert alert alert-danger fade show d-flex justify-content-between align-items-center"
+        *ngIf="errorMessage">
+        <div class="error-img"><img src="./assets/img/ic_error-36px.svg" /></div>
+        <div class="d-inline-flex wrn-msg" [innerHtml]="errorMessage"></div>
+        <button type="button" class="btn-default primary ok" (click)="errorMessage = ''">
+            {{ language.OK }}
+        </button>
+    </div>
+    <!-- error message end -->
+
+    <!-- loader -->
+    <div class="loader" *ngIf="loading">
+        <div class=" d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">{{ language.Loading }}</span>
+            </div>
+        </div>
+    </div>
+    <!-- loader end -->
+
+    <div class="skipped-devices">
+        <div>
+            <button type="button" id="skip-all" class="btn btn-primary py-1 mr-3" [disabled]="!scopeFlag.configWrite"
+                [ngClass]="!scopeFlag.configWrite ? 'toggleDisabled' : ''" (click)="toggleDevicesSkipStatus(true)">
+                {{ language.Skip_All }}
+            </button>
+            <button type="button" id="scan-all" class="btn btn-primary py-1" [disabled]="!scopeFlag.configWrite"
+                [ngClass]="!scopeFlag.configWrite ? 'toggleDisabled' : ''" (click)="toggleDevicesSkipStatus(false)">
+                {{ language.Scan_All }}
+            </button>
+        </div>
+        <table class="detail-list skip-device mt-4">
+            <thead>
+                <th class="w-40">
+                    <div class="f-size-16 f-w-600 px-2">{{ language.device }}</div>
+                </th>
+                <th class="w-50">
+                    <div class="f-size-16 f-w-600 px-2">{{ language.Status }}</div>
+                </th>
+                <th class="w-10"></th>
+            </thead>
+            <ng-container *ngFor="let skipDevicesDetail of skipDevicesDetails | keyvalue; let i = index">
+                <tbody>
+                    <tr id="accordionTable" class="accordion-toggle collapsed" [attr.id]="'accordion_' + i">
+                        <td colspan="3">
+                            <div class="protect-iq-accordion">
+                                <div id="accordion">
+                                    <div class=" ">
+                                        <div class="dropdown-toggle align-middle"
+                                            (click)="isExpandedSkipDevice[i] = !isExpandedSkipDevice[i]">
+                                            <div class="mb-0">
+                                                <div class="device-info">
+                                                    <span class="plus-minus-toggle">
+                                                        <span *ngIf="!isExpandedSkipDevice[i];else expanded">+</span>
+                                                        <ng-template #expanded>
+                                                            <span [attr.id]="'symbolMinus' + i">-</span>
+                                                        </ng-template>
+                                                    </span>
+                                                    <span class="lap-icon">
+                                                        <img [src]="skipDevicesDetail.key | catogryImg" alt="" />
+                                                    </span>
+                                                    {{ skipDevicesDetail.key | catogry }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div [id]="'collapse' + i" *ngIf="isExpandedSkipDevice[i]"
+                                            aria-labelledby="headingThree" data-parent="#accordion">
+                                            <table class="table device-detail table-borderless skipped-devices-table">
+                                                <tbody *ngFor="let details of skipDevicesDetail.value">
+                                                    <tr>
+                                                        <th scope="row" class="w-40">
+                                                            <div class="about-device">
+                                                                <h6 class="d-flex align-items-center">
+                                                                    <img style="width: 25px; height: 25px"
+                                                                        [src]="skipDevicesDetail.key | catogryImg"
+                                                                        alt="" />
+                                                                    <span class="text-break ml-1">{{ details.name }}</span>
+                                                                </h6>
+                                                                <p>{{ details.mac }}</p>
+                                                            </div>
+                                                        </th>
+                                                        <td class="w-50 align-middle pl-2"
+                                                            *ngIf="!details.skip; else elseBlock">
+                                                            {{ language.Scanning }}
+                                                        </td>
+                                                        <ng-template #elseBlock>
+                                                            <td class="w-50 align-middle">
+                                                                {{ language.Skipping }}
+                                                            </td>
+                                                        </ng-template>
+                                                        <td class="w-10 align-middle pr-1">
+                                                            <div class="skip-sec"
+                                                                *ngIf="!details.skip; else checkSkipping">
+                                                                <button [disabled]="!scopeFlag.configWrite"
+                                                                    [ngClass]="!scopeFlag.configWrite ? 'toggleDisabled' : ''"
+                                                                    type="button" class="btn-default primary"
+                                                                    (click)="toggleSkipStatus(details.deviceId, details.skip)">
+                                                                    {{ language.Skipping }}
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                        <ng-template #checkSkipping>
+                                                            <td class="w-10 align-middle pr-1">
+                                                                <div class="skip-sec">
+                                                                    <button [disabled]="!scopeFlag.configWrite"
+                                                                        [ngClass]="!scopeFlag.configWrite ? 'toggleDisabled' : ''"
+                                                                        type="button"
+                                                                        class="btn-default primary skip-btn"
+                                                                        (click)="toggleSkipStatus(details.deviceId, details.skip)">
+                                                                        {{ language.Scanning }}
+                                                                    </button>
+                                                                </div>
+                                                            </td>
+                                                        </ng-template>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </ng-container>
+        </table>
+    </div>
+</div>

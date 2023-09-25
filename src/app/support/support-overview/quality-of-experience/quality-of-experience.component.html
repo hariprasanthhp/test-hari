@@ -1,0 +1,395 @@
+<app-subscriber-menu *ngIf="showQOE"> </app-subscriber-menu>
+<div *ngIf="showQOE">
+    <!-- <div class="loader" *ngIf="loading">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">{{ language.Loading }}</span>
+            </div>
+        </div>
+    </div> -->
+    <div class="row">
+
+        <div class="col-md-12 ccl-tabs">
+            <ul id="tabs" class="nav nav-tabs">
+                <li class="nav-item" id="qe-issues-tab">
+                    <a routerLink="/{{ MODULE }}/overview/issues" (Click)="$event.preventDefault()" data-toggle="tab"
+                        class="nav-link small" routerLinkActive="active">
+                        <span class="big-text"> {{language.Issues}}</span></a>
+                </li>
+
+                <li class="nav-item" id="qe-topology-tab" *ngIf="showTopologyTab">
+                    <a routerLink="/{{ MODULE }}/overview/topology" data-toggle="tab" class="nav-link small"
+                        routerLinkActive="active">
+                        <span class="big-text"> {{language.Topology}}</span>
+                    </a>
+                </li>
+                <li class="nav-item" id="qe-qoe-tab" *ngIf="showQoeTab">
+                    <a routerLink="/{{ MODULE }}/overview/quality-of-experience" data-toggle="tab"
+                        class="nav-link small" routerLinkActive="active">
+                        <span class="big-text">{{language['Quality of Experience']}}</span>
+                    </a>
+                </li>
+            </ul>
+            <div id="tabsContent" class="tab-content">
+                <div id="issue" class="tab-pane fade active show">
+                    <div class="row pb-2"></div>
+                </div>
+                <div id="topology" class="tab-pane fade">
+                    <div class="row pb-2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section>
+        <div class="w-100 alert alert alert-danger fade show" *ngIf="isError">
+            <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+            <button type="button" class="close" (click)="isError = false">
+                <span></span>
+            </button>
+            <div class="d-inline-flex" [innerHtml]="alertMessage"></div>
+        </div>
+
+        <!-- <div class="string-slider mt-2" *ngIf="silderDataAvail">
+            <label *ngIf="value3 == 0" class="no-realtime-data">Real-time data is not available at this time</label>
+            <ngx-slider [(value)]="value3" [options]="options3"></ngx-slider>
+        </div> -->
+        <div class="w-100 alert alert alert-danger fade show" *ngIf="isDateAreEqual">
+            <span class="error-img"><img src="./assets/img/ic_error-36px.svg" />{{language['Both Start Time And End Time
+                are Same']}}</span>
+            <button type="button" class="close" (click)="isDateAreEqual=false">
+                <span></span>
+            </button>
+        </div>
+
+        <div class="d-flex align-items-center my-2 ">
+            <div class="col-md-12 col-lg-3 col-xl-3">
+                <label class="f-s-14px mb-0">{{language.TTimeFrame}}</label>
+                <ng-select (change)="dropDownchange()" [clearable]="false" [searchable]="false" [items]="Frame"
+                    bindLabel="name" bindValue="id" [(ngModel)]="TimeFrame">
+                </ng-select>
+            </div>
+            <div class="col-md-12 col-lg-3 col-xl-3" *ngIf="softwareVersion < 22.1">
+                <label class="f-s-14px mb-0">{{language.TTimeFrame}}</label>
+                <ng-select (change)="dropDownchange()" [clearable]="false" [searchable]="false" [items]="FrameSV"
+                    bindLabel="name" bindValue="id" [(ngModel)]="TimeFrame">
+                </ng-select>
+            </div>
+
+            <div class="col-md-12 col-lg-2 col-xl-2 cus-select-height-24" *ngIf="TimeFrame == 4">
+                <label class="f-s-14px mb-0">{{language['Day_s']}}</label>
+                <ng-select (change)="dropDownchange()" [items]="WeekFramedata" [clearable]="false" [searchable]="false"
+                    bindLabel="name" bindValue="id" [(ngModel)]="WeekFrame">
+                </ng-select>
+            </div>
+            <!-- <div class="col-md-12 col-lg-2 col-xl-2 cus-select-height-24" *ngIf="TimeFrame == 4">
+                <label class="f-s-14px mb-0">Day(s)</label>
+                <ng-select [searchable]="false" [(ngModel)]="WeekFrame">
+                    <ng-option value="1"> {{ firstday}}</ng-option>
+                    <ng-option value="2">{{secondday }} </ng-option>
+                </ng-select>
+            </div> -->
+
+            <!-- <div class="col-md-12 col-lg-2 col-xl-2 cus-select-height-24" *ngIf="TimeFrame == 6">
+                <label class="f-s-14px mb-0">Time Interval</label>
+                <ng-select [items]="[{ id: 1, name: ' Every 15 Minutes' }]" bindLabel="name" bindValue="id"
+                    [(ngModel)]="TimeInterval">
+                </ng-select>
+            </div> -->
+            <!-- <div class="col-md-2" *ngIf="TimeFrame == 4">
+                <label>{{language.Date}}</label>
+                <p-calendar class="ccl-form" id="week_Date" [style]="{ width: '100%', height: '38px' }"
+                    [inputStyle]="{ height: '36px' }" appendTo="body" [autoZIndex]="true" placeholder="weekDate"
+                    [(ngModel)]="weekDate" [showIcon]="true" [ngModelOptions]="{ standalone: true }"
+                    value="#{dateBean.date}" [maxDate]="maxDate" [minDate]="minDate" (onSelect)="dayUpdate()">
+                </p-calendar>
+            </div> -->
+            <span class="cursor-pointer primary mt-4" *ngIf="true"><i class="fas fa-sync" (click)="reload()"></i></span>
+        </div>
+        <div class="row mb-3" *ngIf="false">
+            <!-- <div class="loader-wrapper-info" *ngIf="loader">
+                <div class="loader">
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border text-primary">
+                            <span class="sr-only"></span>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+            <div class="col-md-3">
+                <label>{{language.TTimeFrame}}</label>
+                <ng-select (ngModelChange)="onTimeFrameChange($event)" [items]="Frame" bindLabel="name" bindValue="id"
+                    [(ngModel)]="TimeFrame">
+                </ng-select>
+            </div>
+            <div class="col-md-2" *ngIf="start && !isLastDay15minSelected">
+                <label>{{language.Date}}</label>
+                <p-calendar class="ccl-form" id="week_Date" [style]="{ width: '100%', height: '38px' }"
+                    [inputStyle]="{ height: '36px' }" appendTo="body" [autoZIndex]="true" placeholder="weekDate"
+                    [(ngModel)]="weekDate" [showIcon]="true" [ngModelOptions]="{ standalone: true }"
+                    value="#{dateBean.date}" [maxDate]="maxDate" [minDate]="minDate" (onSelect)="dayUpdate()">
+                </p-calendar>
+            </div>
+            <div class="col-md-2 form-check" *ngIf="start">
+                <label>{{language['Start Time']}} </label>
+                <p-calendar [(ngModel)]="startDate" [stepMinute]="this.stepMinuteVal" class="ccl-form" id="start_date"
+                    [style]="{ width: '100%', height: '38px' }" [inputStyle]="{ height: '36px' }" appendTo="body"
+                    [autoZIndex]="true" placeholder="Time" [showIcon]="true" hourFormat="12"
+                    [ngModelOptions]="{ standalone: true }" [timeOnly]="this.showHrs" (onSelect)="startTimeUpdate()"
+                    [panelStyleClass]="!isLastDay15minSelected ? 'hideMin' : ''" [minDate]="minStartTime"
+                    [maxDate]="maxStartTime">
+                </p-calendar>
+            </div>
+            <div class="col-md-2 form-check" *ngIf="start">
+                <label>{{language['End Time']}} </label>
+                <p-calendar [stepMinute]="this.stepMinuteVal" class="ccl-form" id="end_date"
+                    [style]="{ width: '100%', height: '38px' }" [inputStyle]="{ height: '36px' }" appendTo="body"
+                    [autoZIndex]="true" placeholder="Time" [(ngModel)]="endDate" [showIcon]="true" hourFormat="12"
+                    [ngModelOptions]="{ standalone: true }" [timeOnly]="this.showHrs" [disabled]="isEndDateDisabled"
+                    [panelStyleClass]="!isLastDay15minSelected ? 'hideMin' : ''" [minDate]="minEndTime"
+                    [maxDate]="maxEndTime" (onSelect)="endTimeUpdate()">
+                </p-calendar>
+            </div>
+            <div class="col-md-3 col-lg-3 text-right btns-con smy-2" style="margin-top: 40px">
+                <div class="d-inline-flex mr-3">
+                    <button type="button" class="btn-default primary px-3" (click)="loadChart()">
+                        {{ language.apply }}
+                    </button>
+                </div>
+
+                <!-- <div class="d-inline-flex">
+                <button type="button" id="#" class="btn-default btn-dft" (click)="clearFilter()">
+                    {{ language.Clear_Filters }}
+                </button>
+
+            </div> -->
+            </div>
+        </div>
+
+
+        <section *ngIf="TimeFrame == 6 || TimeFrame == 4 " class="time-frame-section mb-3" style="min-height: 100px;"
+            id="qoe-chart-timeframe-filter">
+            <div class="loader-wrapper-info" *ngIf="loader">
+                <div class="loader">
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border text-primary">
+                            <span class="sr-only"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="left-label" data-toggle="tooltip" data-placement="top" title="{{language['Chart Timeframe']}}">
+                <label>{{language['Chart Timeframe']}}</label>
+
+                <span *ngIf="TimeFrame == 6">{{language['Last 24h']}}</span>
+                <span *ngIf="TimeFrame == 4">{{language['Last 1week']}}</span>
+
+            </div>
+            <div class="multi-point-slider" *ngIf="showIntervalSlider">
+
+                <ngx-slider [(value)]="selectedInterval" (userChangeEnd)="sliderEvent()"
+                    [options]="timeIntervalOptions">
+                </ngx-slider>
+                <span class="left-most-slider-time"><label> {{ leftSliderTime}}</label></span>
+                <span class="right-most-slider-time"><label>{{ rightSliderTime}}</label></span>
+            </div>
+
+            <div class="row mb-3" *ngIf="false">
+                <div class="col-md-3 col-lg-3 text-left btns-con smy-2" style="margin-top: 15px">
+                    <div class="d-inline-flex mr-3">
+                        <button type="button" class="btn-default primary px-3" (click)="loadChart()">
+                            {{ language.apply }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </section>
+
+    <section>
+        <div class="row mb-3 loader-wrapper">
+            <div class="loader-wrapper-info" *ngIf="loader">
+                <div class="loader">
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border text-primary">
+                            <span class="sr-only"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="ccl-Secondary-title border-bottom mb-4" id="qoe-score-title">{{language['QoE Score']}}
+                </div>
+                <div class="">
+                    <div id="qoeScoreChart" class="chart-box" style="height: 300px">
+                    </div>
+                    <div class="row d-flex justify-content-center">
+                        <!-- <span class="legendSolid"></span> -->
+                        <!-- <span (click)="filterContent(1, 'qoeDash')" [ngClass]="{'opac': !legendType['qoeDash']}"
+                            class="cursor-pointer mr-2">Score</span> -->
+                        <span class="serviceLegend mr-1" style="background-color: #82BF00;"></span>
+                        <span (click)="filterContent(1, 'qoeGood')" [ngClass]="{'opac': !legendType['qoeGood']}"
+                            class="cursor-pointer mr-3">{{language.Good}}</span>
+
+                        <span class="serviceLegend mr-1" style="background-color: rgba(252, 114, 53);"></span>
+                        <span (click)="filterContent(1, 'qoeFair')" [ngClass]="{'opac': !legendType['qoeFair']}"
+                            class="cursor-pointer mr-3">{{language.Fair}}</span>
+
+                        <span class="serviceLegend mr-1" style="background-color: #C70000;"></span>
+                        <span (click)="filterContent(1, 'qoePoor')" [ngClass]="{'opac': !legendType['qoePoor']}"
+                            class="cursor-pointer mr-3">{{language.Poor}}</span>
+
+                        <span class="serviceLegend mr-1" style="background-color: grey;"></span>
+                        <span (click)="filterContent(1, 'qoeNoData')" [ngClass]="{'opac': !legendType['qoeNoData']}"
+                            class="cursor-pointer">{{language['No
+                            Data Available']}}</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="row mb-3 loader-wrapper">
+            <div class="loader-wrapper-info" *ngIf="loader">
+                <div class="loader">
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border text-primary">
+                            <span class="sr-only"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="ccl-Secondary-title border-bottom mb-3" id="qoe-WAN-service"> {{language['WAN Service']}}
+                </div>
+                <div class="">
+                    <div id="wanServiceChart" class="chart-box" style="height: 210px">
+                    </div>
+                    <div class="row d-flex justify-content-center">
+                        <span class="serviceLegend mr-1" style="background-color: #82BF00;"></span>
+                        <span (click)="filterContent(2, 'serviceGood')" [ngClass]="{'opac': !legendType['serviceGood']}"
+                            class="cursor-pointer mr-3">{{language.Good}}</span>
+                        <span class="serviceLegend mr-1" style="background-color: rgba(252, 114, 53);"></span>
+                        <span (click)="filterContent(2, 'serviceFair')" [ngClass]="{'opac': !legendType['serviceFair']}"
+                            class="cursor-pointer mr-3">{{language.Fair}}</span>
+                        <span class="serviceLegend mr-1" style="background-color: #C70000;"></span>
+                        <span (click)="filterContent(2, 'servicePoor')" [ngClass]="{'opac': !legendType['servicePoor']}"
+                            class="cursor-pointer mr-3">{{language.Poor}}</span>
+                        <span class="serviceLegend mr-1" style="background-color: grey;"></span>
+                        <span (click)="filterContent(2, 'serviceNoData')"
+                            [ngClass]="{'opac': !legendType['serviceNoData']}" class="cursor-pointer">{{language['No
+                            Data Available']}}</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="row mb-3 loader-wrapper">
+            <div class="loader-wrapper-info" *ngIf="loader">
+                <div class="loader">
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border text-primary">
+                            <span class="sr-only"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="ccl-Secondary-title border-bottom mb-3" id="qoe-wan-continuity"> {{language['WAN
+                    Continuity']}} </div>
+                <div class="">
+                    <div id="wanContinuityChart" class="chart-box" style="height: 210px">
+                    </div>
+                    <div class="row d-flex justify-content-center">
+                        <span class="serviceLegend mr-1" style="background-color: #82BF00;"></span>
+                        <span (click)="filterContent(3, 'contGood')" [ngClass]="{'opac': !legendType['contGood']}"
+                            class="cursor-pointer mr-3">{{language['WAN Up']}}</span>
+
+                        <!-- <span class="serviceLegend mr-1" style="background-color: rgba(252, 114, 53);"></span>
+                        <span (click)="filterContent(3, 'contFair')" [ngClass]="{'opac': !legendType['contFair']}"
+                            class="cursor-pointer mr-3">Fair</span> -->
+
+                        <span class="serviceLegend mr-1" style="background-color: #C70000;"></span>
+                        <span (click)="filterContent(3, 'contPoor')" [ngClass]="{'opac': !legendType['contPoor']}"
+                            class="cursor-pointer mr-3">{{language['WAN Down']}}</span>
+
+                        <span class="serviceLegend mr-1" style="background-color: grey;"></span>
+                        <span (click)="filterContent(3, 'contNoData')" [ngClass]="{'opac': !legendType['contNoData']}"
+                            class="cursor-pointer">{{language['No Data Available']}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="row mb-3 loader-wrapper">
+            <div class="loader-wrapper-info" *ngIf="loader">
+                <div class="loader">
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border text-primary">
+                            <span class="sr-only"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="ccl-Secondary-title border-bottom mb-4" id="qoe-home-efficiency"> {{language['Whole Home
+                    Efficiency']}}</div>
+                <div class="">
+                    <div id="wholeHomeEfficiencyChart" class="chart-box" style="height: 300px"></div>
+                    <div class="row d-flex justify-content-center">
+                        <span class="serviceLegend mr-1" style="background-color: '#0a77fb';"></span>
+                        <span (click)="filterContent(4, 'homeData')" [ngClass]="{'opac': !legendType['homeData']}"
+                            class="cursor-pointer mr-2">{{language['Whole Home Efficiency Score']}}</span>
+                        <!-- <span class="legendDash"></span>
+                        <span (click)="filterContent(1, 'qoeSolid')" [ngClass]="{'opac': !legendType['qoeSolid']}"
+                            class="cursor-pointer">No Data Available</span> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <ng-template #clientEfficencyChartTest let-data let-ref="dialogRef">
+        <div class="loader" *ngIf="effLoader">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{ language.Loading }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title"></h4>
+            <button type="button" class="close" aria-label="Close" (click)="close()">
+                <span aria-hidden="true"></span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <section>
+
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <div class="ccl-Secondary-title border-bottom mb-4" id="qoe-client-efficiency">
+                            {{language['Client Efficiency']}} -
+                            <span id="date">{{clientDates}} </span>
+                        </div>
+
+                        <div class="">
+                            <div id="clientEfficiencyChartDiv" class="chart-box" style="height: 300px"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <!-- <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark">
+            close 
+        </button>       
+    </div> -->
+    </ng-template>
+</div>

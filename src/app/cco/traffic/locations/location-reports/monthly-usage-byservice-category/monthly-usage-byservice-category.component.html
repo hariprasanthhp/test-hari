@@ -1,0 +1,95 @@
+<div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess">
+    {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}}
+</div>
+<div class="col-md-12 mt-4" *ngIf="pageAvailable && hasScopeAccess">
+    <div class="w-100 alert alert-danger  fade show my-3" *ngIf="error">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+        <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+        <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+    </div>
+    <!-- <div class="loader" *ngIf="Initialloading">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">{{language.Loading}}</span>
+            </div>
+        </div>
+    </div> -->
+    <div class="" style="height:auto;">
+        <div class="row justify-content-end " *ngIf="dataAvailable">
+            <div class="col-md-3 px-0 text-right">
+                <div class="cus-dd dropdown-button float-right" placement="bottom-right" ngbDropdown>
+                    <button class="float-right" id="dropdownExchange" ngbDropdownToggle>
+                        <p class="listdata bar-label mb0">
+                            <i class="fa fa-bars mr-2"></i>{{language.export}}
+                        </p>
+                    </button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownExchange" id="supportListId">
+                        <button ngbDropdownItem class="greyaa">
+                            <span (click)="downloadPdf();">{{language.exportPdf}}</span>
+                        </button>
+                        <button ngbDropdownItem class="greyaa">
+                            <span (click)="downloadCSV();">{{language.exportCsv}}</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class=" fa-chart-wrapper chart-min-h" id="fa-chart-wrapper">
+            <div class="loader" *ngIf="loading">
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border text-primary">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="chart-sec">
+                <div class="fa-chart-container mt-5 ">
+                    <div id="container" class="cco-traffic-reports-container"></div>
+                </div>
+            </div>
+
+            <div class="row my-3" *ngIf="pageAvailable" style="min-height: 65vh;">
+                <div class="col">
+                    <table [hidden]="!dataAvailable" id="active_subscribers" width="100%"
+                        class="row-border hover table-alter " datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+                        <thead class="">
+                            <tr>
+                                <th>{{language["month_title"]}}</th>
+                                <th>{{language.GroupName}}</th>
+                                <th text-align: right>{{language.downUsage}}</th>
+                                <th text-align: right>{{language.upUsage}}</th>
+                                <th text-align: right>{{language.totalUsage}}</th>
+
+                            </tr>
+                        </thead>
+                        <tbody *ngIf="data?.length !=0">
+                            <tr id="{{item._id}}" *ngFor="let item of data">
+                                <td>{{item.startPeriodSec ?
+                                    chartOptionService.getUTCDateFormatFromUTCTime(item.startPeriodSec, true,
+                                    'MM/dd/yyyy') : '--'}}
+                                </td>
+                                <td>{{item.key ? item.key : '--'}}</td>
+                                <td text-align: right>{{(item.dsOctets && item.dsOctets !== -1) ?
+                                    convertByteToGB(item.dsOctets) : 0}}</td>
+                                <td text-align: right>{{(item.usOctets && item.usOctets !== -1) ?
+                                    convertByteToGB(item.usOctets) :0}}</td>
+                                <td text-align: right>{{(item.totalOctets && item.totalOctets !== -1) ?
+                                    convertByteToGB(item.totalOctets) :0}}
+                                </td>
+
+                        </tbody>
+                        <!-- <tbody
+                            *ngIf="(tableData?.length == 0 || (dataCount != 'undefined' && dataCount === 0) || (filterCount != 'undefined' && filterCount === 0))">
+                            <tr>
+                                <td style="text-align:center;" colspan="5" class="no-data-available">{{language['No data
+                                    available in table']}}
+                                </td>
+                            </tr>
+                        </tbody> -->
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

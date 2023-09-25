@@ -1,0 +1,292 @@
+<section>
+    <div class="w-100 alert alert-danger  fade show my-3" *ngIf="errorInfo">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+        <button type="button" class="close" (click)="errorInfo = ''"><span></span></button>
+        <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+    </div>
+    <div class="alert alert-success alert-dismissible fade show" *ngIf="deleteSuccess" role="alert">
+        <span class="mr-2"><img src="./assets/img/success-icon.svg" class="wh-26"/></span>
+        <div class="d-inline">
+                <strong> {{selectedUserForEditOrDelete.email}}</strong> {{language['Successfully Deleted']}}
+        </div>
+        <div class="d-inline">
+            <button type="button" class="close" (click)="deleteSuccess = false"><span></span></button>
+        </div>
+    </div>
+    <div class="loader" *ngIf="loader || bspDataLoader">
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border text-primary">
+            <span class="sr-only">{{language.Loading}}</span>
+          </div>
+        </div>
+      </div>
+    <div class="container">
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <div class="">
+                    <button data-toggle="modal" data-target=".bd-example-modal-lg" class="btn-default primary px-3 mt-2"
+                        (click)="openAddUserPopup(AddUsersModal)" [disabled]="disabledAddUser || microSiteList.length <=1 ">{{language['addUsers']}} </button>
+                </div>
+            </div>
+        </div>
+        <div class="row d-flex justify-content-between mt-3">
+
+            <div class="col-md-3 ccl-form">
+                <input type="search" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                    placeholder="{{language['Search']}}" [(ngModel)]="filter" (ngModelChange)="filterValue()">
+
+            </div>
+            <div class="col-md-3">
+                <ng-select [items]="microSiteList" [(ngModel)]="selectedMicroSite"  placeholder="Select" bindLabel="communityName" bindValue="id" (change)="getCount()" >
+                    <!-- <ng-option *ngFor="let car of cars" [value]="car.id"
+                        placeholder="All communities">{{car.name}}</ng-option> -->
+                </ng-select>
+            </div>
+        </div>
+
+
+        <div class="row my-3" >
+            <div class="col-md-12">
+
+                <div class="community-users-list">
+                    <table class="w-100" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+                        <thead>
+                            <tr>
+                                <th>{{language['First_Name']}}</th>
+                                <th>{{language['Last_Name']}}</th>
+                                <th class="email-with text-break">{{language['Email']}}</th>
+                                <th>{{language['BSP Subscriber']}}</th>
+                                <th>{{language['Community Access']}}</th>
+                                <th class="pl-4">{{language['Action']}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let subscriber of communitySubscriberList;let i=index">
+                                <td>{{subscriber?.firstName}}</td>
+                                <td>{{subscriber?.lastName}}</td>
+                                <td class="text-break">{{subscriber?.email}}</td>
+                                <td>{{language[subscriber?.isCommunitySubscriber ? 'No' : 'Yes']}}</td>
+                                <td><span
+                                        *ngFor="let community of subscriber?.community;let j = index;">{{community.communityName}}{{(subscriber.community.length-1) !== j ? ', ' :''}}</span>
+                                </td>
+                                <td class="pl-4">
+                                    <div class="dropdown">
+                                        <div class="dropdown-toggle pointer" data-toggle="dropdown"
+                                            aria-expanded="false">
+                                            ...
+                                        </div>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item cursor-pointer" data-toggle="modal"
+                                                data-target=".bd-example-modal-lg"
+                                                (click)="openEditOrDeleteUsersModal(subscriber,EditUsersModal)" >{{language['Edit access']}}</a>
+                                            <a class="dropdown-item cursor-pointer" *ngIf="subscriber?.isCommunitySubscriber" data-target=".bd-example-modal-lg"
+                                            (click)="openEditOrDeleteUsersModal(subscriber,DeleteUsersModal)">{{language['Delete user']}}</a>
+
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+
+
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+<!---------------------------------------- Add Users Modal here ---------------------------------------->
+<ng-template #AddUsersModal>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">{{language['addUsers']}}</h3>
+            <button type="button" (click)="close()" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true"></span>
+            </button>
+        </div>
+        <div class="user-warning-meg d-flex" *ngIf="CSVLimitExceded">
+            <div class="user-warning-img">
+                <img src="../../../../assets/img/ic_error-outline.svg" alt="">
+
+            </div>
+            <div class="user-warning-content">
+                {{replaceLimitValue(language['reduce the number of records'])}}
+            </div>
+
+        </div>
+        <div>
+            {{language['uploading a CSV file with their information']}}
+            <ul class="pl-4 list-style-disc">
+                <li>
+                     <b>{{language['Only .csv format is supported (Maximum 1000 users)']}}</b>
+                </li>
+                <li>
+                    <strong>{{language['Duplicate users will be appended upon upload']}}</strong>
+                </li>
+            </ul>
+        </div>
+
+        <p>{{language['Please use the format exactly as shown below:']}} </p>
+        <div class="modal-body">
+            <div class="community-users-list">
+                <table> 
+                    <thead>
+                        <tr>
+                            <th>{{language['First Name']}}</th>
+                            <th>{{language['Last_Name']}}</th>
+                            <th>{{language['emailAddess']}}</th>
+                            <th>{{language['Bsp_Microsite_Name']}}(s)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>John</td>
+                            <td>McClane</td>
+                            <td>Jmac@APD.gov</td>
+                            <td>station-wifi</td>
+                        </tr>
+                        <tr>
+                            <td>James</td>
+                            <td>Smith</td>
+                            <td>Smith@APD.tgd</td>
+                            <td>c-library</td>
+                        </tr>
+                        <tr>
+                            <td>Mary </td>
+                            <td>Smith</td>
+                            <td>Mary@gmail.com</td>
+                            <td>station-wifi</td>
+                        </tr>
+                        <tr>
+                            <td>Maria </td>
+                            <td>Hernandez</td>
+                            <td>Hernande@gmail.com</td>
+                            <td>c-library, station-wifi</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="my-4">
+                <div>
+                    <label for="CSVFile" type="button" class="usoc-upload-button btn-default primary ml-1 mr-3">{{language['Browse']}}
+                    </label>
+                    <input type="file" id="CSVFile" class="d-none" accept=".csv" (change)="readSingleFile($event)"/>
+
+                    <button id="cancel-add-role" class="btn-default btn-dft py-1 md-btn" (click)="close()">
+                        {{language['Cancel']}} </button>
+                </div>
+            </div>
+
+
+
+
+        </div>
+
+    </div>
+</ng-template>
+
+<!---------------------------------------- Add Users Modal here ---------------------------------------->
+
+
+<!---------------------------------------- Edit Users Modal here ---------------------------------------->
+<ng-template #EditUsersModal>
+    <div class="modal-content">
+        <div class="loader" *ngIf="EditLoader">
+            <div class="d-flex justify-content-center">
+              <div class="spinner-border text-primary">
+                <span class="sr-only">{{language.Loading}}</span>
+              </div>
+            </div>
+          </div>
+        <div class="modal-header">
+            <h3 class="modal-title d-flex"><span>{{language['Edit']}}: </span><span class="text-break">"{{selectedUserForEditOrDelete.email}}"</span></h3>
+            <button type="button" (click)="close()" class="close p-0" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true"></span>
+            </button>
+        </div>
+        <div class="alert alert-success alert-dismissible fade show" *ngIf="editSuccess" role="alert">
+            <span class="mr-2"><img src="./assets/img/success-icon.svg" class="wh-26"/></span>
+            <div class="d-inline" [innerHTML]="language['community_removed_successfully'](this.removedCommunity[0].communityName)">             
+            </div>
+            <div class="d-inline ">
+                <button type="button" class="close close-btn" (click)="editSuccess = false"><span></span></button>
+            </div>
+        </div>
+        <div class="modal-body">
+            <div class="edit-warning-info w-100 d-flex align-items-start" *ngIf="selectedCommunityForRemove !== undefined">
+                <div class="w-10 mr-2">
+                    <img src="../../../../assets/img/ic_warning-36px.svg" alt="">
+                </div> 
+                <div class="w-90 m;-2">
+                    {{language['Are you sure you want to remove access to']}} <B>{{removeCommunityName}}</B>
+                    {{language['for this user?']}}
+                    <div class="">
+                        <button class="btn-default primary px-3 mt-2 mr-3" (click)="removeCommunity()">{{language['Remove access']}} </button>
+                        <button class="btn-default btn-dft py-1 md-btn" (click)="selectedCommunityForRemove = undefined">{{language['Cancel']}} </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <p>{{language['This user has access to the following communities']}}:</p>
+            <div class="community-users-list">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>{{language['Community Access']}}</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let community of selectedUserForEditOrDelete.community;let i=index;">
+                            <td>
+                                {{community.communityName}}
+                            </td>
+                            <td> <img class="pointer" src="../../../../assets/img/ic_close-24px.svg" (click)="selectedCommunityForRemove=i;removeCommunityName = selectedUserForEditOrDelete?.community[i]?.communityName" alt=""></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button class="btn-default primary px-2 mt-2" (click)="close()">{{language['done']}} </button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!---------------------------------------- Edit Users Modal here ---------------------------------------->
+
+<!-- Delete Users Modal here -->
+ <ng-template #DeleteUsersModal>
+    <div class="modal-content">
+        <div class="modal-header mb-4">
+            
+            <button type="button" (click)="close()" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true"></span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="d-flex w-100 align-items-start">
+                <div class="w-10 mr-2">
+<img class="err-img" src="../../../../assets/img/ic_warning-36px.svg" alt="">
+                </div>
+                <div class="w-90 ml-2">
+                    <div class="stop-user-sub-title chart-title">{{language['Delete Community User Access']}}</div>
+                    <p [innerHTML]="language['Remove_Community_access'](selectedUserForEditOrDelete?.name,selectedUserForEditOrDelete?.email)"></p>
+                    <div class="">
+                        <button id="" class="btn-default primary mr-2" (click)="deleteUser(selectedUserForEditOrDelete.subscriberId)">{{language['Delete']}} </button>
+                        <button type="button" class="btn-default btn-dft py-1 md-btn ml-1 mr-3" (click)="close()">{{language['Cancel']}} </button>
+                    </div>
+                </div>
+
+            </div>
+            
+        </div>
+        
+    </div>
+
+ </ng-template>
+
+<!-- Delete Users Modal here -->

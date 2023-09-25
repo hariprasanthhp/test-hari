@@ -1,0 +1,189 @@
+// .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+//     color: #2078fa;
+//     background-color: #fff;
+//     border-color: #dee2e6 #dee2e6 #fff;
+//     border: none;
+//     border-bottom: 1px solid #2078fa;
+// }
+// .nav-tabs{
+//     border-bottom: none;
+// }
+// a{
+//     color: #333;
+// }
+// .nav-link{
+//     font-size: 18px;
+//     border-bottom: 1px solid transparent;
+//     cursor: pointer;
+// }
+// .nav-tabs .nav-link:focus, .nav-tabs .nav-link:hover {
+//     border-color: #e9ecef #e9ecef #dee2e6;
+//     border: none;
+//     color: #9bc1f9;
+//     border-bottom: 1px solid #9bc1f9;
+// }
+.string-slider .ngx-slider-pointer {
+  position: relative;
+}
+
+::ng-deep {
+  .string-slider {
+    height: 88px;
+    margin-bottom: 20px;
+    position: relative;
+
+    .ngx-slider-bubble {
+      display: none !important;
+    }
+
+    .ngx-slider-bar {
+      background: linear-gradient(90deg, #FF734F 0%, #F7C343 47.94%, #82BF00 95.83%) !important;
+      border-radius: 26px !important;
+      height: 21px !important;
+    }
+
+    [ng-reflect-value="0"] {
+      .ngx-slider-bar {
+        background: #bcbcbc !important;
+      }
+
+    }
+
+    .ngx-slider .ngx-slider-pointer {
+      border-radius: 100px;
+      width: 88px;
+      height: 88px;
+      top: -30px;
+      border: 1px solid #82BF00;
+      background-color: transparent !important;
+    }
+
+    .ngx-slider-pointer::before {
+      content: "";
+      position: absolute;
+      top: 2.3px;
+      left: 2.3px;
+      width: 81.77px;
+      height: 81.77px;
+      background: #fff;
+      border-radius: 100px;
+      z-index: -1;
+      border: 1px solid #82BF00;
+    }
+  }
+
+  .string-slider {
+    .ngx-slider .ngx-slider-pointer:after {
+      position: absolute;
+      left: 0;
+      z-index: 999;
+      width: 100% !important;
+      height: 100% !important;
+      color: #000;
+      background-color: transparent !important;
+      text-align: center;
+      line-height: 56px;
+      font-size: 16px;
+    }
+
+    [aria-valuetext="0"] {
+      border-color: #ccc !important;
+      display: none !important;
+    }
+
+    [aria-valuetext="0"]::before {
+      background-color: #F8F8FA !important;
+      border-color: #ccc !important;
+    }
+
+    [aria-valuetext="0"]::after {
+      content: 'No Data' !important;
+      color: #bcbcbc !important;
+    }
+
+    [aria-valuetext="1"]::after,
+    [aria-valuetext="2"]::after {
+      content: 'Low' !important;
+
+    }
+
+    [aria-valuetext="3"]::after {
+      content: 'Medium' !important;
+    }
+
+    [aria-valuetext="4"]::after,
+    [aria-valuetext="5"]::after {
+      content: 'High' !important;
+    }
+  }
+
+  .multi-point-slider {
+    position: relative;
+    z-index: 1;
+    .ngx-slider-bar{
+      height: 5px !important;
+      background: #EBEAEF !important;
+      border-radius: 6px;
+    }
+    .ngx-slider .ngx-slider-bubble{
+      color: #4C4C4C !important;
+      font-size: 14px !important;
+      font-weight: 600;
+      bottom:8px !important;
+      padding:0px 15px !important;
+    }
+    .ngx-slider-pointer {
+      background-color: #0279ff !important;
+      cursor: pointer;
+      width: 32px !important;
+      height: 12px !important;
+      top: -3px !important;
+      &:after{display: none;}
+    }
+    .left-most-slider-time,.right-most-slider-time
+    {
+    position: absolute;
+    color: #4C4C4C;
+    font-size: 12px;
+    font-weight: normal;
+    bottom: -16px;
+    }
+    .left-most-slider-time{left: 0;}
+    .right-most-slider-time{
+      right: 0;
+    }
+    .dir-arrows{
+      cursor: pointer;
+      position: absolute;
+      top: 5px;
+      right: 0;
+      z-index: 999;
+      background-repeat: no-repeat !important;
+      width: 20px;
+      height: 15px;
+    }
+    #slider-click-next {
+      background: url(../../../assets/img/ic_chevronright_blue.svg);
+      background-position: 14px 0px !important;
+   }
+   #slider-click-prev {
+    background: url(../../../assets/img/ic_chevronleft_blue.svg);
+    left: 0;
+  }
+  }
+
+}
+
+::ng-deep{
+  .ce-modal{ 
+   .modal-dialog{
+    width: 75.5% !important;
+    max-width: 75.5% !important;
+    .modal-content {
+      width: 100% !important;
+      left: auto !important;
+      float: none;
+    }
+  }
+ }
+}

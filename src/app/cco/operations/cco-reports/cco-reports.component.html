@@ -1,0 +1,54 @@
+<div class="row">
+  <div class="col-sm-12 col-md-2 col-lg-2 pr-0 ccl-tabs">
+    <ul id="netops-list-menu" class="nav flex-column left-menu tab-view-style">
+      <li class="nav-item" *ngIf="showMappedeplists">
+        <a class="list-group-item list-group-item-action" id="mapped-endpoint-list" routerLink="./mapped-endpoint-list"
+          routerLinkActive="active">
+          {{ language["Mapped Endpoint List"] }}
+        </a>
+      </li>
+      <li class="nav-item" *ngIf="showEpcountbymapper">
+        <a class="list-group-item list-group-item-action" id="endpoint-count-bymapper"
+          routerLink="./endpoint-count-bymapper" routerLinkActive="active">
+          {{language["Endpoint Count by Mapper"] }}
+        </a>
+      </li>
+      <li *ngIf="showOntDevices && allowReports" class="nav-item">
+        <a class="list-group-item list-group-item-action" id="ont-devices" routerLink="./ont-devices"
+          routerLinkActive=" active">
+          {{language['ONT Systems']}}
+        </a>
+      </li>
+      <li class="nav-item" *ngIf="unmappedIPsAccess">
+        <a class="list-group-item list-group-item-action" id="Unmapped" routerLink="./unmapped-ips"
+          routerLinkActive="active">
+          {{language['Unmapped IPs']}}
+        </a>
+      </li>
+      <li class="nav-item" *ngIf="inventoryReportAccess">
+        <a routerLink="/cco/operations/cco-reports/inventory-report" class="list-group-item list-group-item-action"
+          id="inventoryReportTabId" routerLinkActive="active">{{language.Inventory_Report}}</a>
+      </li>
+      <!-- <li class="nav-item" *ngIf="calloutcomeReportAccess">
+        <a class="list-group-item list-group-item-action" routerLink="/cco/operations/cco-reports/call-outcome-report"
+          routerLinkActive="active" id="callOutcomeReportTabId">{{language.Call_Outcome_Report}}</a>
+      </li> -->
+      <li class="nav-item" *ngIf="unassociatedSystemAccess">
+        <a class="list-group-item list-group-item-action" routerLink="/cco/operations/cco-reports/unassociated-devices"
+          id="unassociatedDevicesMenuId" routerLinkActive="active">{{language['Unassociated Systems']}}</a>
+      </li>
+
+      <li class="nav-item" *ngIf="calloutcomeReportAccess">
+        <a class="list-group-item list-group-item-action" routerLink="/cco/operations/cco-reports/call-outcome-report"
+          id="callOutcomeReportTabId" routerLinkActive="active">{{language['Call_Outcome']}}</a>
+      </li>
+      <li class="nav-item" *ngIf="auditReportAccess">
+        <a class="list-group-item list-group-item-action" routerLink="/cco/operations/cco-reports/Audit-report"
+          id="callOutcomeReportTabId" routerLinkActive="active">{{language['Audit_Report']}}</a>
+      </li>
+    </ul>
+  </div>
+  <div class="col-sm-12 col-md-10 col-lg-10 pl-4">
+    <router-outlet></router-outlet>
+  </div>
+</div>

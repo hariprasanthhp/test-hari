@@ -1,0 +1,112 @@
+<div class="subscriber-list cust-searchlist">
+  <div class="w-100 alert alert alert-danger fade show" *ngIf="errorMsg">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+    <button type="button" class="close" (click)="errorMsg = false">
+      <span></span>
+    </button>
+    <div class="d-inline-flex" [innerHtml]="language[errorMsg] || errorMsg"></div>
+  </div>
+
+  <div class="loader" *ngIf="loader">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary">
+        <span class="sr-only">{{ language.Loading }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="title-row flex">
+    <h4 class="title flex" id="filterCountId" *ngIf="showResult && showCount">
+      {{ showFilterCount ? filterCount : topSearchResultscount }}
+      {{
+      count <= 1 || filterCount <=1 ? language["Result"] : language["Results"] }} {{ searchText ? language["for"] : ""
+        }} &nbsp; <b id="searchedValue"> {{ searchText }}</b>
+    </h4>
+    <div class="filter-rht flex"></div>
+  </div>
+  <div class="subscriber-list-wrap" [hidden]="!showResult">
+    <div class="row">
+      <div class="col-md-12 subscriber-title">
+        <table>
+          <thead>
+            <tr>
+              <th class=" w-30"> {{ language["support_search_subscribers"] }}</th>
+              <th class=" w-20"> {{ language["support_search_phone"] }}</th>
+              <th class=" w-50"> {{ language["support_search_system"] }}</th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+
+    </div>
+    <table *ngIf="showResult" id="searchResult" class="row-border row-border hover table-alter" width="100%" datatable
+      [dtOptions]="dtOptions">
+      <thead class="d-none">
+        <tr>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of searchResult.records">
+          <td>
+            <a [routerLink]="['/support/overview']" style="color: currentColor" [state]="{
+                fromSearch: true,
+                subscriberData: data.subscriberId,
+                devices: stringify(devicesSelected || data.devices)
+              }" (contextmenu)="openNote(data.subscriberId, data.devices, $event)">
+              <ul class="address-list" (click)="
+                  showSubscriber(data.subscriberId, data.devices, $event)
+                ">
+                <li class="list-list w-30">
+                  <div class="address-detail">
+                    <div class="address-des">
+                      <p class="subscriberName">
+                        <span *ngIf="data.name" [innerHTML]="data.name | highlight: searchText">{{ data.name }}
+                        </span>
+                        <a href="javascript:void(0)" *ngIf="!data.name">{{
+                          "-"
+                          }}</a>
+                      </p>
+                      <div class="detials">{{ data.serviceAddress }}</div>
+                    </div>
+                  </div>
+                </li>
+                <li class="list-list w-20">
+                  <div class="list-id">{{ data.phone }}</div>
+                </li>
+                <li class="list-list w-50">
+                  <div class="list-pagelink flex-column">
+                    <ng-container *ngFor="let device of data.devices; let i = index">
+                      <p *ngIf="!_array.isArray(device); else arrayDevice">
+                        {{ device | sortDeviceData:'show' }}
+                      </p>
+                      <ng-template #arrayDevice>
+                        <div [ngClass]="{ 'mt-2 pt-2 resultSplitter': i }" (click)="
+                            showSubscriber(data.subscriberId, device, $event, true)
+                          ">
+                          <p *ngFor="let rgSet of device">
+                            {{ rgSet | sortDeviceData:'show' }}
+                          </p>
+                        </div>
+                      </ng-template>
+                    </ng-container>
+                  </div>
+                </li>
+              </ul>
+            </a>
+          </td>
+        </tr>
+      </tbody>
+      <tbody *ngIf="count == 0">
+        <tr>
+          <td colspan="5" class="no-data-available">
+            {{ language["No data available in table"] }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <!-- <div *ngIf="showExcessError" class="mt-2">
+      <p class="req-text text-small"> {{language.searchError}}</p>
+    </div> -->
+  </div>
+ 
+</div>

@@ -1,0 +1,192 @@
+<!-- <div *ngIf="scopeFlag.issuesRead" class="accordion" id="accordionExample"> (apiCallDone)="responseFromStatus($event)"-->
+<app-subscriber-menu [issues]="issueData" [responseFromIssuse]="apiCallDone" [issuesAndReasons]="reason"
+  (apiCallDone)="responseFromStatus($event)">
+</app-subscriber-menu>
+<div class="row">
+  <div class="col-12">
+    <!-- <div class="loader load" *ngIf="loading">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{language.Loading}}</span>
+        </div>
+      </div>
+    </div> -->
+    <section class="m-2">
+      <div class="row ">
+        <div class="col-md-12 ccl-tabs">
+
+          <ul id="tabs" class="nav nav-tabs">
+            <li class="nav-item" id="iss-issues-tab"><a routerLink="/{{MODULE}}/overview/issues"
+                (Click)="$event.preventDefault()" data-toggle="tab" class="nav-link small" routerLinkActive="active">
+                <span class="big-text">{{language.Issues}}</span></a>
+            </li>
+
+            <li class="nav-item" id="iss-topology-tab" *ngIf="showTopologyTab">
+              <a routerLink="/{{MODULE}}/overview/topology" data-toggle="tab" class="nav-link small"
+                routerLinkActive="active">
+                <span class="big-text">{{language.Topology}}</span>
+              </a>
+            </li>
+            <li class="nav-item" id="iss-qoe-tab" *ngIf="showQoeTab">
+              <a routerLink="/{{MODULE}}/overview/quality-of-experience" data-toggle="tab" class="nav-link small"
+                routerLinkActive="active">
+                <span class="big-text">{{language['Quality of Experience']}}</span>
+              </a>
+            </li>
+          </ul>
+          <div id="tabsContent" class="tab-content">
+            <div id="issue" class="tab-pane fade active show">
+              <div class="row pb-2">
+
+              </div>
+            </div>
+            <div id="topology" class="tab-pane fade">
+              <div class="row pb-2">
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- issues html starts -->
+
+<div class="row">
+  <div class ="col-12">
+      <div class="loader load" *ngIf="loading">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{language.Loading}}</span>
+        </div>
+      </div>
+    </div>
+  <div class="row">
+    <div class="col-sm-12 col-md-12 col-lg-10 col-xl-10">
+      <!-- remove later -->
+      <!-- <span class="ml-4">{{language['Hover on an issue to see more details']}}</span> -->
+      <span class="ml-4">{{language['Hover over an issue and click available options to see more details']}}.</span>
+    </div>
+    <div class="custom-selectbox" class="col-sm-12 col-md-12 col-lg-2 col-xl-2">
+      
+      <label>{{language.Severity}}</label>
+      <ng-select [(ngModel)]="severityfilter" (change)="sort()" [searchable]="false">
+        <ng-option value="All">{{language.all}} </ng-option>
+        <ng-option value="Issues">{{language.Issue}}</ng-option>
+        <ng-option value="Warning">{{language.Warning}}</ng-option>
+      </ng-select>
+    </div>
+  </div>
+  <div class="accordion mb-5" id="accordion" *ngIf="!loading">
+
+    <table id="scrolldi" data-ordering="false" datatable [dtOptions]="dtOptions" class="row-border hover"
+      on-mouseleave="hoveredIndex=null">
+      <thead>
+        <tr>
+
+          <!-- <th width="8%">{{language.Occured}}</th>
+      <th width="7%"></th> -->
+          <th>{{language.Issue}}</th>
+          <th width="3%"></th>
+          <th width="15%">{{language.Source}}</th>
+          <th width="6%">{{language.Severity}}</th>
+          <th width="22%"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- <tr *ngIf="totalissues == 0">
+          <td style="text-align:center;">{{language.No_Issues_available}}</td>
+          <td></td><td></td><td></td><td></td>
+        </tr> -->
+        <tr *ngFor="let data of issueData; let i=index" on-mouseover="hoveredIndex=i">
+
+          <!--  colspan="4"<td>{{getdate(data.createTime)| date : 'd MMM'}}</td>
+      <td>{{getdate(data.createTime)| date : 'shortTime'}}</td> (click)="ReasonDescription(data.Code,data,i)"-->
+          <!-- (click)="routeforissues(data,i)" [style.cursor]='primaryActionButton[i] == true ? "Default": "pointer"' -->
+          <td>
+            <div class="mt-2 mb-2">{{ReasonDescription(data.code,data,i)?" ":" "}}{{reason[i]?this.reason[i]:" "}}
+              <br />
+            </div>
+            <div id="{{'collapseReason'+i}}">
+              <div *ngIf="i == clickicon" class="mt-2 mb-2">{{Description[i] ? Description[i] : ''}}</div>
+
+            </div>
+          </td>
+          <td valign="center">
+            <!-- <div class="card-header d-flex justify-content-between" id="headingCollapse1">
+              <div>
+                  <a class="collapsed"  data-toggle="collapse" data-target="collapse1"  aria-expanded="false" aria-controls="collapse1">
+                    <i [ngClass]="hiconplus" aria-hidden="true"></i>
+                  </a>
+              </div>
+             
+          </div> -->
+            <!-- <a *ngIf="i==hoveredIndex && !isIconClicked[i]" class="primary" data-toggle="collapse"
+             href="#{{'collapseReason'+i}}" role="button" aria-expanded="false" aria-controls="collapseReason">
+              <i [ngClass]="hiconplus" (click)="onIconClick(i,data.code)" aria-hidden="true"></i>
+            </a> -->
+            <!-- <a *ngIf="i==hoveredIndex && isIconClicked[i]" class="primary" data-toggle="collapse"
+              href="#{{'collapseReason'+i}}" role="button" aria-expanded="false" aria-controls="collapseReason">
+              <i [ngClass]="hiconminus" (click)="onIconClick(i)" aria-hidden="true"></i>
+            </a> -->
+            <a *ngIf="i==hoveredIndex" class="primary" href="javascript:void(0)">
+              <i [ngClass]="(clickicon == i)?'fa fa-minus-circle':'fa fa-plus-circle'"
+                (click)="clickicon == i  ?clickicon=-1:clickicon=i"></i>
+            </a>
+          </td>
+          <td>
+            <span class="img-float" *ngIf="data.type == 'SERVICE' || data.type == 'Service'">
+              <img height="16" width="16" src="./assets/img/ic_cloud.svg" alt="warning" class="mr-1">
+            </span>
+            <span class="img-float"
+              *ngIf="data.type == 'Router/Satellite'|| data.type == 'ROUTER' || data.type == 'Router' ">
+              <img height="16" width="16" src="./assets/img/ic_modem.svg" alt="warning" class="mr-1 modem-icon">
+            </span>
+            <span class="img-float" *ngIf=" data.type =='WI-FI' || data.type =='WIFI'">
+              <img height=" 16" width="16" src="./assets/img/ic_wifi.svg" alt="warning" class="mr-1 ic-wifi">
+            </span>
+            <span class="img-float"
+              *ngIf=" data.type =='DEVICE' ||data.type =='CLIENT' || data.type =='Client' || data.type == 'Device' ">
+              <img height=" 16" width="16" src="./assets/img/ic_alldevices.svg" alt="warning"
+                class="mr-1">
+            </span>
+            <span class="img-float"
+              *ngIf=" data.type =='APPLICATION' ||data.type =='Application' ">
+              <img height=" 16" width="16" src="./assets/img/ic_chart.svg" alt="warning" class="mr-1">
+            </span>{{data.source}}
+          </td>
+          <td class="text-center">
+            <span *ngIf="data.severity == '0'">
+              <div class="issue">{{language.Issue}}</div>
+            </span>
+            <span *ngIf="data.severity == '1'">
+              <div class="warning">{{language.Warning}}</div>
+            </span>
+            <span *ngIf="data.severity != '0' && data.severity != '1'">
+              <div class="resolved">{{language.Resolved}}</div>
+            </span>
+          </td>
+          <td class="text-center">
+            <div *ngIf="i==hoveredIndex ">
+              <div *ngIf="primaryActionButton[i] == true && data.isValid"><button class="btn-default primary px-2 py-0"
+                  (click)="routeforbutton(data)">{{ReasonDescription(data.code,data,i)}}
+                </button></div>
+              <!--{{ReasonDescription(data.code,data,i)}} -->
+            </div>
+          </td>
+        </tr>
+      </tbody>
+      <tbody *ngIf="issueData?.length == 0">
+        <tr>
+          <td colspan="8" class="no-data-available">{{language['No data available in table']}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+    <!-- issues html ends -->
+
+
+  </div>
+</div>

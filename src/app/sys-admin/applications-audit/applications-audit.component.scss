@@ -1,0 +1,33 @@
+.audit-header{
+    border-bottom: 2px solid #cccc;
+}
+.err-address{
+    background-color: #FFCDBF;
+}
+.success-address{
+    background-color: #E0EFBF;
+}
+.audit-table thead th:nth-child(1){
+    width: 40%;
+}
+.audit-table thead th:nth-child(2){
+    width: 30%;
+}
+.audit-table thead th:nth-child(3){
+    width: 20%;
+}
+.audit-table td{
+    vertical-align: middle;
+}
+.max-h-200{
+    max-height: 200px;
+    overflow: auto;
+
+}
+.ml-29px{
+    margin-left: 29px !important;
+}
+.audit-table thead tr th:nth-child(1){width:20% !important;}
+.audit-table thead tr th:nth-child(2){width:25% !important;}
+.audit-table thead tr th:nth-child(3){width:30% !important;}
+.audit-table thead tr th:nth-child(4){width:30% !important;}

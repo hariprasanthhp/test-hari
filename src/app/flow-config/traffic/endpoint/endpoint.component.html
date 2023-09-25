@@ -1,0 +1,285 @@
+<div class="container mt-3 position-relative" *ngIf="pageAvailable">
+    <div class="row"
+        *ngIf="(router.url.indexOf('/traffic/endpoint/realtime') != -1 || router.url.indexOf('/traffic/endpoint/reports') != -1) && !showSubscriber">
+        <!--Added to  show subscriber card only on endpoints page-->
+        <div class="col-12 info-section-top">
+            <div class="row my-2">
+                <div class="col-sm-10 col-md-10 col-lg-10 col-xl-10">
+                    <!-- <div class="sub-name">65-23-173-253-host.drtel.net</div> -->
+                    <div class="sub-name text-break">{{endPointName}}
+                        <app-favorite-endpoints [pageType]="'EndPoint'" [endPointId]="endpointID"
+                            [endPointName]="endPointNameUnMask"></app-favorite-endpoints>
+                    </div>
+
+                </div>
+                <div class="col-sm-2 col-md-2 col-lg-2 col-xl-2 text-right" (click)="gotoPreviousScreen()"><span
+                        class="close-icon pointer"><img src="assets/img/close-icon.svg" alt=""></span></div>
+            </div>
+            <div class="row mb-40">
+                <div class="sub-account-details">
+                    <div class="sub-account-details-info">
+                        <div class="sub-accounts-info">
+                            <table class="sub-account-details-table">
+                                <tbody *ngIf="isUnsolicitedEndpoint">
+                                    <tr *ngIf="IPAddress">
+                                        <td>{{language.IPAddress}} ({{language.Unsolicited}})</td>
+                                        <td>{{IPAddress}}</td>
+                                    </tr>
+                                </tbody>
+                                <tbody *ngIf="webSocketService.isUnmapped && !isUnsolicitedEndpoint">
+                                    <tr *ngIf="IPAddress">
+                                        <td>{{language.IPAddress}}</td>
+                                        <td>{{IPAddress}}</td>
+                                    </tr>
+                                </tbody>
+                                <tbody *ngIf="!webSocketService.isUnmapped && !isUnsolicitedEndpoint">
+                                    <tr *ngIf="IPAddress">
+                                        <td>{{language.IPAddress}}</td>
+                                        <td>{{IPAddress}}</td>
+                                    </tr>
+                                    <tr *ngIf="endPointsInfo.mappedBy">
+                                        <td>{{language.mappedVia}}</td>
+                                        <td>{{aggregateGroupList.length > 0 ? 'Aggregate' : endPointsInfo.mappedBy}}
+                                        </td>
+                                    </tr>
+                                    <!-- new rows start-->
+                                    <tr *ngIf="endPointsInfo.dhcpCircuitId">
+                                        <td>{{language['DHCP_Circuit_Id']}}</td>
+                                        <td>{{endPointsInfo.dhcpCircuitId}}</td>
+                                    </tr>
+                                    <tr *ngIf="endPointsInfo.dhcpClientHostName">
+                                        <td>{{language['DHCP_Client_Hostname']}}</td>
+                                        <td>{{endPointsInfo.dhcpClientHostName}}</td>
+                                    </tr>
+                                    <!-- new rows end-->
+                                    <tr *ngIf="endPointsInfo.macAddress">
+                                        <td>{{language.MAC_Address}}</td>
+                                        <td>{{endPointsInfo.macAddress}}</td>
+                                    </tr>
+                                    <!-- new row CCL-58580 start-->
+                                    <tr *ngIf="endPointsInfo.radiusUserName">
+                                        <td>{{language['RADIUS']}} {{language['userName']}}</td>
+                                        <td>{{endPointsInfo.radiusUserName}}</td>
+                                    </tr>
+                                    <!-- new row CCL-58580 end-->
+                                    <!-- new rows start-->
+                                    <tr *ngIf="endPointsInfo.dhcpRemoteId">
+                                        <td>{{language['DHCP_Remote_Id']}}</td>
+                                        <td>{{endPointsInfo.dhcpRemoteId}}</td>
+                                    </tr>
+                                    <tr *ngIf="endPointsInfo.dhcpKey">
+                                        <td>{{language['DHCP_Key']}}</td>
+                                        <td>{{endPointsInfo.dhcpKey}}</td>
+                                    </tr>
+                                    <tr *ngIf="endPointsInfo.dhcpSubscriberId">
+                                        <td>{{language['DHCP_Subscriber_Id']}}</td>
+                                        <td>{{endPointsInfo.dhcpSubscriberId}}</td>
+                                    </tr>
+                                    <!-- new rows end-->
+                                    <tr *ngIf="endPointsInfo.manufacturer">
+                                        <td>{{language.manufacturer}}</td>
+                                        <td>{{endPointsInfo.manufacturer}}</td>
+                                    </tr>
+
+                                    <tr *ngIf="endPointsInfo.model">
+                                        <td>{{language.model}}</td>
+                                        <td>{{endPointsInfo.model}}</td>
+                                    </tr>
+
+                                    <tr *ngIf="endPointsInfo.serialNumber || endPointsInfo.cmSerialNumber">
+                                        <td>{{language.FSAN}}</td>
+                                        <td>{{endPointsInfo.serialNumber ? endPointsInfo.serialNumber :
+                                            endPointsInfo.cmSerialNumber}}</td>
+                                    </tr>
+
+                                    <tr *ngIf="ontInfo?.macAddr">
+                                        <td>{{language.ONT}} {{language.MAC_Address}}</td>
+                                        <td>{{ontInfo.macAddr}}</td>
+                                    </tr>
+
+                                    <tr *ngIf="ontInfo?.model">
+                                        <td>{{language.ONT}} {{language.model}}</td>
+                                        <td>{{ontInfo.model}}</td>
+                                    </tr>
+
+                                    <!--CCL-58632  ONT FSAN -->
+                                    <tr *ngIf="ontInfo?.serialNo || ontInfo?.serialNumber">
+                                        <td>{{language.ONT}} {{language.FSAN}}</td>
+                                        <td>{{ontInfo.serialNo ?? ontInfo.serialNumber}}</td>
+                                    </tr>
+                                    <!--CCL-58632  -->
+
+                                    <tr *ngIf="endPointsInfo.subscriberName">
+                                        <td>{{language.Subscriber_Name}}</td>
+                                        <td>{{endPointsInfo.subscriberName}}</td>
+                                    </tr>
+
+                                    <tr *ngIf="!endPointsInfo.subscriberName && endPointsInfo.cmSubscriberInfo">
+                                        <td>{{language['Subscriber Info']}}</td>
+                                        <td>{{endPointsInfo.cmSubscriberInfo}}</td>
+                                    </tr>
+
+                                    <tr *ngIf="endPointsInfo.subscriberType">
+                                        <td>{{language['Subscriber Type']}}</td>
+                                        <td>{{endPointsInfo.subscriberType}}</td>
+                                    </tr>
+
+                                    <tr *ngIf="endPointsInfo.subscriberPhone">
+                                        <td>{{language['Subscriber Phone']}}</td>
+                                        <td>{{endPointsInfo.subscriberPhone}}</td>
+                                    </tr>
+
+                                    <tr *ngIf="endPointsInfo.cmMappedName">
+                                        <td>{{language['Mapped Name']}}</td>
+                                        <td>{{endPointsInfo.cmMappedName}}</td>
+                                    </tr>
+
+                                    <tr *ngIf="endPointsInfo.cmNetworkName">
+                                        <td>{{language['Network Name']}}</td>
+                                        <td>{{endPointsInfo.cmNetworkName}}</td>
+                                    </tr>
+
+                                    <tr *ngIf="endPointsInfo.cmNetworkAid">
+                                        <td>{{language['Network AID']}}</td>
+                                        <td>{{endPointsInfo.cmNetworkAid}}</td>
+                                    </tr>
+
+                                    <tr *ngIf="endPointsInfo.cmDeviceType">
+                                        <td>{{language['Device Type']}}</td>
+                                        <td>{{endPointsInfo.cmDeviceType}}</td>
+                                    </tr>
+
+                                    <tr *ngIf="endPointsInfo.cmPortType">
+                                        <td>{{language['Port Type']}}</td>
+                                        <td>{{endPointsInfo.cmPortType}}</td>
+                                    </tr>
+
+                                    <tr *ngIf="endPointsInfo.cmRegion">
+                                        <td>{{language.region}}</td>
+                                        <td>{{endPointsInfo.cmRegion}}</td>
+                                    </tr>
+
+                                    <tr
+                                        *ngIf="endPointsInfo.locations && endPointsInfo.locations.length > 0 && endPointsInfo.locations[0].location">
+                                        <td>{{language.location}}</td>
+                                        <td>{{endPointsInfo.locations[0].location}}</td>
+                                    </tr>
+
+                                    <tr *ngIf="endPointsInfo.email || endPointsInfo.cmEmail">
+                                        <td>{{language.Email}}</td>
+                                        <td>{{endPointsInfo.email ? endPointsInfo.email : endPointsInfo.cmEmail}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+
+                    </div>
+                    <div class="sub-account-details-info" *ngIf="showHyperLink">
+                        <a class="nav-link small" id="subscribers" (click)="goSubscribers(true)" data-toggle="tab"
+                            class="nav-link">
+                            <i class="fa fa-user" aria-hidden="true"></i> {{language.subscriber}}</a>
+                        <!-- <span class="sub-info-details">{{language.subscriber}}</span> -->
+                    </div>
+                    <div *ngIf="!webSocketService.isUnmapped && !isUnsolicitedEndpoint"
+                        class="sub-account-details-info">
+                        <span class="sub-info-details">{{language.lastUpdated}} : {{lastUpdatedTime}} </span>
+                    </div>
+                </div>
+                <div class="pl-3 mt-2" *ngIf="isAggregate">
+                    <span> <b> {{language['Aggregated Member List']}}</b></span>
+                    <table class="sub-account-details-table">
+                        <tbody>
+                            <tr *ngFor="let item of aggregateGroupList; let i = index">
+                                <td class="pr-3">{{item.name ? item.name : ''}}</td>
+                                <td class="pr-3">{{item.mappedBy ? item.mappedBy : ''}}</td>
+                                <td class="pr-3">{{item.ipAddress ? item.ipAddress : ''}}</td>
+                                <td>{{item.macAddress ? item.macAddress : ''}}</td>
+                                <!-- <td>{{item.updateTime ? convertToDateTime(item.updateTime) : convertToDateTime(item.createTime)}}
+                        </td> -->
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row"
+        *ngIf="(router.url.indexOf('/traffic/endpoint/realtime') != -1 || router.url.indexOf('/traffic/endpoint/reports') != -1) && showSubscriber">
+        <div class="col-12 info-section-top">
+            <div class="row my-2">
+                <div class="col-sm-10 col-md-10 col-lg-10 col-xl-10">
+                    <div class="sub-name">{{subscriberName}}</div>
+                </div>
+                <div class="col-sm-2 col-md-2 col-lg-2 col-xl-2 text-right" (click)="goSubscribers(false)"><span
+                        class="close-icon pointer"><img src="assets/img/close-icon.svg" alt=""></span></div>
+            </div>
+            <div class="row">
+                <div class="sub-account-details">
+                    <div class="sub-account-details-info">
+                        <div class="sub-accounts-info">
+                            <table class="sub-account-details-table">
+                                <tbody>
+                                    <tr *ngIf="subscriberInfo.account">
+                                        <td>{{language.Account}}</td>
+                                        <td>{{subscriberInfo.account}}</td>
+                                    </tr>
+                                    <tr *ngIf="subscriberInfo.customerType">
+                                        <td>{{language['Customer Type']}}</td>
+                                        <td>{{subscriberInfo.customerType}}</td>
+                                    </tr>
+
+                                    <tr *ngIf="subscriberInfo.billingAddress">
+                                        <td>{{language['Billing Address']}}</td>
+                                        <td>{{subscriberInfo.billingAddress}}</td>
+                                    </tr>
+
+                                    <tr *ngIf="subscriberInfo.devices">
+                                        <td>{{language.Devices}}</td>
+                                        <td>{{subscriberInfo.devices[0]}}{{subscriberInfo?.devices[1] ? ',' : ''}}
+                                            {{subscriberInfo?.devices[1]}}</td>
+                                    </tr>
+
+                                    <tr *ngIf="subscriberInfo.subscriberLocationId">
+                                        <td>{{language.Subscriber_Location_ID}}</td>
+                                        <td>{{subscriberInfo.subscriberLocationId}}</td>
+                                    </tr>
+
+                                    <tr *ngIf="subscriberInfo.email">
+                                        <td>{{language.Email}}</td>
+                                        <td>{{subscriberInfo.email}}</td>
+                                    </tr>
+
+                                    <tr *ngIf="subscriberInfo.phone">
+                                        <td>{{language.Phone}}</td>
+                                        <td>{{subscriberInfo.phone}}</td>
+                                    </tr>
+
+                                    <tr *ngIf="subscriberInfo.location">
+                                        <td>{{language.Location}}</td>
+                                        <td>{{subscriberInfo.location}}</td>
+                                    </tr>
+
+                                    <tr *ngIf="subscriberInfo.region">
+                                        <td>{{language.Region}}</td>
+                                        <td>{{subscriberInfo.region}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="flow-config-sub-tab" *ngIf="pageAvailable">
+    <ul class="nav">
+        <li class="nav-item" *ngFor="let menu of menus">
+            <a class="nav-link" id="{{menu.title}}" routerLink="{{menu.link}}" [queryParams]="{id: endpointID}"
+                [routerLinkActive]="['active']">{{menu.title}}</a>
+        </li>
+    </ul>
+</div>
+<router-outlet></router-outlet>

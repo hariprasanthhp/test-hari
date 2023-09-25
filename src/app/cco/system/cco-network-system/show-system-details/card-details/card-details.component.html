@@ -1,0 +1,596 @@
+<!-- <div class="row"> -->
+<div class="row">
+   <div class="loader-wrapper-info" *ngIf="loading">
+      <div class="loader">
+         <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary" role="">
+               <span class="sr-only">{{language.loading}}</span>
+            </div>
+         </div>
+      </div>
+   </div>
+<div class="col-md-12">
+   <div class="w-100 alert alert-danger fade show my-3" *ngIf="error">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+      <button type="button" class="close" (click)="closeAlert()">
+         <span></span>
+      </button>
+      <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+   </div>
+</div>
+</div>
+<div class="row">
+<div class="col-12 my-3 pl-space position-relative pr-4">
+   <a class="icon-back-arrow" (click)="goBack()">
+      <img src="../../../../../assets/img/ic_chevronleft_blue.svg" width="16" />
+   </a>
+   <div class="row">
+      <div class="col-12">
+         <div class="d-flex justify-content-between border-bottom mb-3 pb-2">
+            <div class="cco-secondary-title" id="card-single-status">
+               {{cardDetails['pon']['name']}}
+            </div>
+            <div>
+               <button class="btn-default btn-dft mr-3" *ngIf = "!loading && !isICLPort" (click)="goToHealth();">{{language['View Health'] || 'View
+                  Health'}}</button>
+
+               <img class="ml-1" data-toggle="tooltip" data-placement="top" title="{{language['healthPortMsg'] || healthPortMsg}}"
+               [ngClass]="{'pointer': healthPortMsg}" src="assets/img/tooltip-icon.svg" />
+            </div>
+         </div>
+      </div>
+      <div class="col-lg-4 col-md-6 mb-4">
+         <div>
+            <!-- <div class="loader-wrapper-info" *ngIf="interfaceDetailsLoader">
+               <div class="loader">
+                  <div class="d-flex justify-content-center">
+                     <div class="spinner-border text-primary" role="">
+                        <span class="sr-only">{{language?.interfaceDetailsLoader}}</span>
+                     </div>
+                  </div>
+               </div>
+            </div> -->
+            <table class="table show-sysinfo-table">
+               <tbody>
+                  <tr>
+                     <td class="min-w40">{{language['Operational State']}}</td>
+                     <td [ngClass]="interfaceDetails && (interfaceDetails['operState']?.toLowerCase() == 'up' || interfaceDetails['operState']?.toLowerCase()?.includes('enable')) ? 'green-text':'red-text'">
+                        {{interfaceDetails && interfaceDetails['operState'] ?
+                        language[interfaceDetails['operState']] || interfaceDetails['operState'] : '-'}}</td>
+                  </tr>
+                  <tr>
+                     <td class="min-w40">{{language['Admin_State']}}</td>
+                     <td [ngClass]="interfaceDetails && (interfaceDetails['adminState']?.toLowerCase() == 'up' || interfaceDetails['adminState']?.toLowerCase()?.includes('enable')) ? 'green-text':'red-text'">
+                        {{interfaceDetails && interfaceDetails['adminState'] ?
+                        language[interfaceDetails['adminState']] || interfaceDetails['adminState'] : '-'}}</td>
+                  </tr>
+
+                  
+                  <tr *ngIf = "cardDetails['pon']['ifType'] == 'ethernetCsmacd'">
+                     <td class="min-w40">{{language['Operational Speed']}}</td>
+                     <td>
+                        {{interfaceDetails && interfaceDetails['ethOperSpeed'] ?
+                         interfaceDetails['ethOperSpeed'] : '-'}}</td>
+                  </tr>
+
+                  <ng-container *ngIf = "cardDetails['pon']['ifType'] == 'vdsl'">
+                  <tr>
+                     <td class="min-w40 ">{{language['DSL Status']}}</td>
+                     <td class="capitalizeCls">
+                        {{dslPortDetails && dslPortDetails.dslStatus ?
+                           language[dslPortDetails.dslStatus] || dslPortDetails.dslStatus : '-'}}
+                     </td>
+                  </tr>
+                  <tr>
+                     <td class="min-w40">{{language['Time in DSL Status']}}</td>
+                     <td>
+                        {{dslPortDetails && dslPortDetails.timeInCurrentState}}
+
+                     </td>
+                  </tr>
+                  <tr>
+                     <td class="min-w40">{{language['retrainCount']}} </td>
+                     <td>
+                        {{dslPortDetails && dslPortDetails.retrainCount>=0 ? dslPortDetails.retrainCount : '-'}}
+                     </td>
+                  </tr>
+                  <tr>
+                     <td class="min-w40 ">{{language['retrainReason']}} </td>
+                     <td class="capitalizeCls">
+                        {{dslPortDetails && dslPortDetails.retrainReason ? language[dslPortDetails.retrainReason] || dslPortDetails.retrainReason : '-'}}
+                     </td>
+                  </tr>
+                  <tr>
+                     <td class="min-w40">{{language['actualPsdMask']}}</td>
+                     <td>
+                        {{dslPortDetails && dslPortDetails.actualPsdMask ? dslPortDetails.actualPsdMask : '-'}}
+                     </td>
+                  </tr>
+                  <tr>
+                     <td class="min-w40">{{language['transmissionMode']}}</td>
+                     <td>
+                        {{dslPortDetails && dslPortDetails.transmissionMode ? dslPortDetails.transmissionMode : '-'}}
+                     </td>
+                  </tr>
+                  <tr>
+                     <td class="min-w40">{{language['vectorMode']}}</td>
+                     <td class="capitalizeCls">
+                        {{dslPortDetails && dslPortDetails.actualVectoringMode ? dslPortDetails.actualVectoringMode : '-'}}
+                     </td>
+                  </tr>
+                  <tr>
+                     <td class="min-w40">{{language['lineVectorState']}}</td>
+                     <td class="capitalizeCls">
+                        {{dslPortDetails && dslPortDetails.lineVectoringState ? dslPortDetails.lineVectoringState : '-'}}
+                     </td>
+                  </tr>
+                  <tr>
+                     <td class="min-w40">{{language['powerSaveTimeRemaining']}} </td>
+                     <td>
+                        {{dslPortDetails.powerSaveTimeRemaining}}
+                     </td>
+                  </tr>
+                  
+                  </ng-container>
+                  <tr>
+                     <td class="min-w40">{{language['Present_Onts'] || 'Present ONTs'}}</td>
+                     <td [ngClass]="interfaceDetails && interfaceDetails['ontCount'] <= 0 ? 'red-text' : ''">
+                        {{interfaceDetails && interfaceDetails['ontCount'] >= 0 ?
+                        interfaceDetails['ontCount'] : '-'}}</td>
+                  </tr>
+               </tbody>
+            </table>
+         </div>
+      </div>
+      <div class="col-lg-4 col-md-6 mb-4">
+         <div>
+            <table class="table show-sysinfo-table">
+               <tbody>
+                  <tr>
+                     <ng-container *ngIf = "cardDetails['pon']['ifType'] != 'ethernetCsmacd' && cardDetails['pon']['ifType'] != 'vdsl'">
+                        <td class="w-50">{{language['usOct']}}</td>
+                        <td>{{interfaceCounters && interfaceCounters.usOctets ? unitConversion('Upstream Octets', interfaceCounters.usOctets) : '-'}}</td>
+                     </ng-container>
+                     <ng-container *ngIf = "cardDetails['pon']['ifType'] == 'ethernetCsmacd' || cardDetails['pon']['ifType'] == 'vdsl'">
+                        <td class="w-50">{{language['rxOct']}}</td>
+                        <td>{{interfaceCounters && interfaceCounters.rxOctets ? unitConversion('Receive Octets', interfaceCounters.rxOctets) : '-'}}</td>
+                     </ng-container>
+                  </tr>
+                  <tr>
+                     <td class="w-50">{{language['rxPkt']}}</td>
+                     <td>{{interfaceCounters && interfaceCounters.rxPackets ? unitConversion('Receive Packets', interfaceCounters.rxPackets) : '-'}}</td>
+                  </tr>
+                  <tr>
+                     <td class="w-50">{{language['rxDis']}}</td>
+                     <td>{{ interfaceCounters && interfaceCounters.rxDiscards ? unitConversion('Receive Discards', interfaceCounters.rxDiscards) : '-'}}</td>
+                  </tr>
+                  <tr>
+                     <td class="w-50">{{language['rxErr']}}</td>
+                     <td>{{ interfaceCounters && interfaceCounters.rxErrors ? unitConversion('Receive Errors', interfaceCounters.rxErrors) : '-'}}</td>
+                  </tr>
+                  <ng-container *ngIf = "cardDetails['pon']['ifType'] == 'vdsl'">
+                  <tr>
+                     <td class="w-50">{{language['dsCurRate']}}</td>
+                     <td>{{ dslPortDetails && dslPortDetails.dsCurrentRate ?  unitConversion('Downstream Current Rate', dslPortDetails.dsCurrentRate)  : '-'}}</td>
+                  </tr>
+                  <tr>
+                     <td class="w-50">{{language['dsAttRate']}}</td>
+                     <td>{{ dslPortDetails && dslPortDetails.dsAttainableRate ? unitConversion('Downstream Attainable Rate', dslPortDetails.dsAttainableRate) : '-'}}</td>
+                  </tr>
+                  <tr>
+                     <td class="w-50">{{language['dsSnrMargin']}}</td>
+                     <td>{{ dslPortDetails && dslPortDetails.dsSnrMargin ? dslPortDetails.dsSnrMargin : '-'}}</td>
+                  </tr>
+                  <tr>
+                     <td class="w-50">{{language['dsTransmitPower']}}</td>
+                     <td>{{ dslPortDetails && dslPortDetails.dsTransmitPower ? dslPortDetails.dsTransmitPower : '-'}}</td>
+                  </tr>
+                  <tr>
+                     <td class="w-50">{{language['dsLoopAttenuation']}}</td>
+                     <td>{{ dslPortDetails && dslPortDetails.dsLoopAttenuation ? dslPortDetails.dsLoopAttenuation : '-'}}</td>
+                  </tr>
+               </ng-container>
+                  
+                  <!-- <tr>
+                     <td class="w-50">{{language['usRate']}}</td>
+                     <td>{{ interfaceCounters && interfaceCounters.usRate ? unitConversion('Upstream Rate', interfaceCounters.usRate) : '-'}}</td>
+                  </tr>
+                  <tr>
+                     <td class="w-50">{{language['rxErrToPktRatio']}}</td>
+                     <td>{{ interfaceCounters && interfaceCounters.rxErrRate ? unitConversion('Receive Errors To Packets Ratio', interfaceCounters.rxErrRate) : '-'}}</td>
+                  </tr>
+                  <tr>
+                     <td class="w-50">{{language['rxDisToPktRatio']}}</td>
+                     <td>{{ interfaceCounters && interfaceCounters.rxDisRate ? unitConversion('Receive Discards To Packets Ratio', interfaceCounters.rxDisRate) : '-'}}</td>
+                  </tr> -->
+               </tbody>
+            </table>
+         </div>
+      </div>
+      <div class="col-lg-4 col-md-6 mb-4">
+         <div>
+            <table class="table show-sysinfo-table">
+               <tbody>
+                  <tr>
+                     <ng-container *ngIf = "cardDetails['pon']['ifType'] != 'ethernetCsmacd' && cardDetails['pon']['ifType'] != 'vdsl'">
+                        <td class="w-50">{{language['dsOct']}}</td>
+                        <td>{{ interfaceCounters && interfaceCounters.dsOctets ? unitConversion('Downstream Octets', interfaceCounters.dsOctets) : '-'}}</td>
+                     </ng-container>
+                     <ng-container *ngIf = "cardDetails['pon']['ifType'] == 'ethernetCsmacd' || cardDetails['pon']['ifType'] == 'vdsl'">
+                        <td class="w-50">{{language['txOct']}}</td>
+                        <td>{{interfaceCounters && interfaceCounters.txOctets ? unitConversion('Transmit Octets', interfaceCounters.txOctets) : '-'}}</td>
+                     </ng-container>
+                  </tr>
+                  <tr>
+                     <td class="w-50">{{language['txPkt']}}</td>
+                     <td>{{ interfaceCounters && interfaceCounters.txPackets ? unitConversion('Transmit Packets', interfaceCounters.txPackets) : '-'}}</td>
+                  </tr>
+                  <tr>
+                     <td class="w-50">{{language['txDis']}}</td>
+                     <td>{{ interfaceCounters && interfaceCounters.txDiscards ? unitConversion('Transmit Discards', interfaceCounters.txDiscards) : '-'}}</td>
+                  </tr>
+                  <tr>
+                     <td class="w-50">{{language['txErr']}}</td>
+                     <td>{{ interfaceCounters && interfaceCounters.txErrors ? unitConversion('Transmit Errors', interfaceCounters.txErrors) : '-'}}</td>
+                  </tr>
+                  <ng-container *ngIf = "cardDetails['pon']['ifType'] == 'vdsl'">
+                     <tr>
+                        <td class="w-50">{{language['usCurRate']}}</td>
+                       <td>{{ dslPortDetails && dslPortDetails.usCurrentRate ? unitConversion('Upstream Current Rate', dslPortDetails.usCurrentRate) : '-'}}</td>
+                     </tr>
+                     <tr>
+                        <td class="w-50">{{language['usAttRate']}}</td>
+                        <td>{{ dslPortDetails && dslPortDetails.usAttainableRate ? unitConversion('Upstream Attainable Rate', dslPortDetails.usAttainableRate): '-'}}</td>
+                     </tr>
+                     <tr>
+                        <td class="w-50">{{language['usSnrMargin']}}</td>
+                        <td>{{ dslPortDetails && dslPortDetails.usSnrMargin ? dslPortDetails.usSnrMargin : '-'}}</td>
+                     </tr>
+                     <tr>
+                        <td class="w-50">{{language['usTransmitPower']}}</td>
+                        <td>{{ dslPortDetails && dslPortDetails.usTransmitPower ? dslPortDetails.usTransmitPower : '-'}}</td>
+                     </tr>
+                     <tr>
+                        <td class="w-50">{{language['usLoopAttenuation']}}</td>
+                        <td>{{ dslPortDetails && dslPortDetails.usLoopAttenuation ? dslPortDetails.usLoopAttenuation : '-'}}</td>
+                     </tr>
+                  </ng-container>
+                  <!-- <tr>
+                     <td class="w-50">{{language['dsRate']}}</td>
+                     <td>{{ interfaceCounters && interfaceCounters.dsRate ? unitConversion('Downstream Rate', interfaceCounters.dsRate) : '-'}}</td>
+                  </tr>
+                  <tr>
+                     <td class="w-50">{{language['txErrToPktRatio']}}</td>
+                     <td>{{ interfaceCounters && interfaceCounters.txErrRate ? unitConversion('Transmit Errors To Packets Ratio', interfaceCounters.txErrRate) : '-'}}</td>
+                  </tr>
+                  <tr>
+                     <td class="w-50">{{language['txDisToPktRatio']}}</td>
+                     <td>{{ interfaceCounters && interfaceCounters.txDisRate ? unitConversion('Transmit Discards To Packets Ratio', interfaceCounters.txDisRate) : '-'}}</td>
+                  </tr> -->
+               </tbody>
+            </table>
+         </div>
+      </div>
+
+   </div>
+</div>
+<div class="col-12 mb-3 pl-space position-relative pr-4" [ngClass] = "{showHideTable : ontDetailsLoader || isICLPort || cardDetails['pon']['ifType'] == 'vdsl'}">
+   <div class="row justify-content-between mb-3">
+      <div class="col-lg-3 col-md-4 ccl-form position-relative">
+         <button *ngIf="searchInput" class="icon-clear-input close" (click)="clearSearch(searchInput)">
+            <span></span>
+         </button>
+         <input type="text" placeholder="{{language['Search ONTs']}}" (keyup)="search($event.target.value)"
+            (search)="search($event.target.value)" [(ngModel)]="searchInput" />
+      </div>
+      <div class="col-lg-3 col-md-4">
+        <ng-select [clearable]="false" [(ngModel)]="reportTypeSelected" (ngModelChange)="getNfaOntList()" [searchable]="false" [items]="reportTypes" bindLabel="name" bindValue="value">
+        </ng-select>
+      </div>
+   </div>
+   <div class="col-lg-12 px-0">
+      <div class="table-responsive">
+         <div class="loader-wrapper-info" *ngIf="ontDetailsLoader">
+            <div class="loader">
+               <div class="d-flex justify-content-center">
+                  <div class="spinner-border text-primary" role="">
+                     <span class="sr-only">{{language?.ontDetailsLoader}}</span>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+         <div class="loader-wrapper-info" *ngIf="ontDetailsExpandLoader">
+            <div class="loader">
+               <div class="d-flex justify-content-center">
+                  <div class="spinner-border text-primary" role="">
+                     <span class="sr-only">{{language?.ontDetailsExpandLoader}}</span>
+                  </div>
+               </div>
+            </div>
+         </div>
+         
+         
+         <!-- <div class="loader-wrapper-info" *ngIf="ontListLoader">
+            <div class="loader">
+               <div class="d-flex justify-content-center">
+                  <div class="spinner-border text-primary" role="">
+                     <span class="sr-only">{{language?.ontListLoader}}</span>
+                  </div>
+               </div>
+            </div>
+         </div> -->
+         <table class="table tbl-common w-100" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+            <thead>
+               <tr>
+                  <th class="w-100 px-0">
+                     <div class="d-flex w-100" id = "sortables">
+                        <div class="w-50 pl-2 cursor-pointer clx-sorting" (click) = "customSorting($event, 'onuid')"> 
+                           <!-- clx-sorting_desc,clx-sorting_asc -->
+                           {{language['ONT_ID']}}
+                        </div>
+                     </div>
+                  </th>
+                  <th  class="w-100 px-0">
+                     <div class="d-flex w-100" id="sortables">
+                        <div class="w-50 pl-2 cursor-pointer clx-sorting" (click)="customSorting($event, 'fsan')">
+                           <!-- clx-sorting_desc,clx-sorting_asc -->
+                           {{language['FSAN']}}
+                        </div>
+                     </div>
+                  </th>
+                  <th class="w-100 px-0">
+                     <div class="d-flex w-100" id = "sortables">
+                        <div class="w-50 px-2 cursor-pointer clx-sorting" (click) = "customSorting($event, 'onuid')"> 
+                           <!-- clx-sorting_desc,clx-sorting_asc -->
+                           {{language['ONT_ID']}}
+                        </div>
+                        <div class="w-50 pl-2 cursor-pointer clx-sorting" (click) = "customSorting($event, 'fsan')">
+                           {{language['FSAN']}}
+                        </div>
+                        <div class="w-50 pl-2 cursor-pointer clx-sorting" (click) = "customSorting($event, 'model')">
+                           {{language['Model']}}
+                        </div>
+                        <div class="w-50 pl-2 cursor-pointer clx-sorting" (click) = "customSorting($event, 'ispresent')">
+                           {{language['Operational State']}}
+                        </div>
+                        <div class="w-50 pl-2 cursor-pointer clx-sorting" (click) = "customSorting($event, 'registrationid')">
+                           {{language['RegID']}}
+                        </div>
+                        <div class="w-50 pl-2 cursor-pointer clx-sorting" (click) = "customSorting($event, 'onumacaddr')">
+                           {{language['ONU Mac Address']}}
+                        </div>
+                        <div class="w-50 pl-2 cursor-pointer clx-sorting" (click) = "customSorting($event, 'currversion')">
+                           {{language['Version']}}
+                        </div>
+                        <div class="w-50 pl-2 cursor-pointer clx-sorting" (click) = "customSorting($event, 'isrogue')">
+                           {{language['IsQuarantined']}}
+                        </div>
+                        <div class="w-50 pl-2 cursor-pointer clx-sorting" (click) = "customSorting($event, 'firstpresenttime')">
+                           {{language['First discovered']}}
+                        </div>
+                        <div class="w-50 pl-2 cursor-pointer clx-sorting" (click) = "customSorting($event, 'lastpresenttime')">
+                           {{language['Last discovered']}}
+                        </div>
+                     </div>
+                  </th>
+               </tr>
+            </thead>
+            <tbody>
+               <tr *ngFor="let ont of ontList; let i = index">
+                  <td class="w-100 p-0">
+                     <div class="d-flex w-100 table-row-main" [ngClass]="ont.isExpanded ? 'table-row-expanded':''">
+                        <div class="w-50 pl-2">
+                           <a class="text-list text-decoration-none cursor-pointer"
+                              *ngIf="cardDetails['pon']['ifType'] != 'ethernetCsmacd' && cardDetails['pon']['ifType'] != 'vdsl' && (ont && ont.ontId)" (click)="getOntDetails(i, ont)">
+                              {{ont && ont.ontId ? ont.ontId : '-'}}
+                              <span class="cardex-down" [ngClass]="ont.isExpanded ? 'cardex-up':''">
+                                 <img src="../../../../../assets/img/ic_chevron_circle_blue.svg" />
+                              </span>
+                           </a>
+                           <a class="text-list text-decoration-none text-reset"
+                              *ngIf="cardDetails['pon']['ifType'] == 'ethernetCsmacd' || cardDetails['pon']['ifType'] == 'vdsl' || !ont || (ont && !ont.ontId)">
+                              {{ont && ont.ontId ? ont.ontId : '-'}}
+                           </a>
+                        </div>
+                     </div>
+                  </td>
+                  <td class="w-100 p-0">
+                     <div class="d-flex w-100 table-row-main" [ngClass]="ont.isExpanded ? 'table-row-expanded':''">
+                        <div class="w-50">
+                           <a class="text-list text-decoration-none cursor-pointer"
+                              *ngIf="cardDetails['pon']['ifType'] != 'vdsl' && (ont && ont.fsan)"
+                              (click)="getSubscriberDetails(i, ont)">
+                              {{ont?.fsan}}
+                           </a>
+                           <a class="text-list text-decoration-none text-reset"
+                              *ngIf="cardDetails['pon']['ifType'] == 'vdsl' || !ont || (ont && !ont.fsan)">
+                              {{ont?.fsan}}
+                           </a>
+                        </div>
+                     </div>
+                  </td>
+                  <td class="w-100 p-0">
+                     <div class="d-flex w-100 table-row-main" [ngClass]="ont.isExpanded ? 'table-row-expanded':''">
+                        <div class="w-50 px-2">
+                           <a class="text-list text-break text-decoration-none cursor-pointer"
+                              *ngIf="cardDetails['pon']['ifType'] != 'ethernetCsmacd' && cardDetails['pon']['ifType'] != 'vdsl' && (ont && ont.ontId)" (click)="getOntDetails(i, ont)">
+                              {{ont && ont.ontId ? ont.ontId : '-'}}
+                              <span class="cardex-down" [ngClass]="ont.isExpanded ? 'cardex-up':''">
+                                 <img src="../../../../../assets/img/ic_chevron_circle_blue.svg" />
+                              </span>
+                           </a>
+                           <a class="text-list text-decoration-none text-reset"
+                              *ngIf="cardDetails['pon']['ifType'] == 'ethernetCsmacd' || cardDetails['pon']['ifType'] == 'vdsl' || !ont || (ont && !ont.ontId)">
+                              {{ont && ont.ontId ? ont.ontId : '-'}}
+                           </a>
+                        </div>
+                        <div class="w-50">
+                           <a class="text-list text-decoration-none cursor-pointer"
+                              *ngIf="cardDetails['pon']['ifType'] != 'vdsl' && (ont && ont.fsan)" (click)="getSubscriberDetails(i, ont)">
+                              {{ont?.fsan}}
+                           </a>
+                           <a class="text-list text-decoration-none text-reset"
+                              *ngIf="cardDetails['pon']['ifType'] == 'vdsl' || !ont || (ont && !ont.fsan)">
+                              {{ont?.fsan}}
+                           </a>
+                        </div>
+                        <div class="w-50">
+                           <span>{{ont?.discoveredModel}}</span>
+                        </div>
+                        <div class="w-50" [ngClass]="!ont.isPresent ? 'red-text' : ''">
+                           <span>{{ont.isPresent ? 'Present' : 'Missing'}}</span>
+                        </div>
+                        <div class="w-50">
+                           <span>{{ont?.discoveredRegistrationId}}</span>
+                        </div>
+                        <div class="w-50">
+                           <span>{{ont?.discoveredMacAddress}}</span>
+                        </div>
+                        <div class="w-50">
+                           <span>{{ont?.discoveredVersion}}</span>
+                        </div>
+                        <div class="w-50">
+                           <span>{{ont?.isRogue == true ? "Yes":"No"}}</span>
+                        </div>
+                        <div class="w-50">
+                           <span>{{ont?.firstPresentTime ? convertToDateTime(ont.firstPresentTime):""}}</span>
+                        </div>
+                        <div class="w-50">
+                           <span>{{ont?.lastPresentTime ? convertToDateTime(ont.lastPresentTime):""}}</span>
+                        </div>
+                     </div>
+                     
+                     <div class="table-container d-flex w-100" *ngIf="ont.isExpanded && ont['ontDetails']">
+                        <div class="d-flex w-100 pl-2 table-child">
+                           <div class="col-4">
+                              <table class="w-100">
+
+                                    <tbody *ngIf="(ont['ontDetails'] | json) != '{}'">
+                                       <tr>
+                                          <td>{{ language['Status'] || 'Status'}} </td>
+                                          <td class="min-60"
+                                          [ngClass]="ont['ontDetails'].status?.toLowerCase() == 'up' || ont['ontDetails'].status?.toLowerCase()?.includes('enable') ? 'green-text':'red-text'">
+                                             {{ont['ontDetails']?.status || '-'}}
+                                          </td>
+                                       </tr>
+                                       <tr>
+                                          <td>{{ language['Up Time'] || 'Up Time'}}</td> 
+                                          <td class="min-60" [ngClass]="ont['ontDetails'] && ont['ontDetails']['parsedUptime'] ? 'green-text':'red-text'">
+                                             {{ ont['ontDetails'] && (ont['ontDetails'].upTime || ont['ontDetails'].upTime == 0) ? ont['ontDetails'].upTime : '-'}}
+                                          </td>
+                                       </tr>
+                                       <tr>
+                                          <td>{{ language['Fiber Length'] || 'Fiber Length'}}</td>
+                                          <td class="min-60">
+                                             {{ont['ontDetails']?.fiberLength || '-'}}
+                                          </td>
+                                       </tr>
+                                       <tr>
+                                          <td>{{ language['OLT Rx Power'] || 'OLT Rx Power'}}</td>
+                                          <td class="min-60">
+                                             {{checkPowerValues(ont['ontDetails']['oltRxPower'], ont)}}
+                                          </td>
+                                       </tr>
+
+                                       <tr>
+                                          <td>{{ language['ONT Rx Power'] || 'ONT Rx Power'}}</td>
+                                          <td class="min-60">
+                                             {{checkPowerValues(ont['ontDetails']['ontRxPower'], ont)}}
+                                          </td>
+                                       </tr>
+                                       <tr>
+                                          <td>{{ language['ONT Tx Power'] || 'ONT Tx Power'}}</td>
+                                          <td class="min-60">
+                                             {{checkPowerValues(ont['ontDetails']['ontTxPower'], ont)}}
+                                          </td>
+                                       </tr>
+                                       <tr>
+                                          <td>{{ language['maxTemp']}}</td>
+                                          <td class="min-60">
+                                             {{ont['ontDetails'] && ont['ontDetails'].temperature ? (ont['ontDetails'].temperature + ' °' + 'C') : '-'}}
+                                          </td>
+                                       </tr>
+                                       <tr>
+                                          <td>{{ language['CPU Utilization'] || 'CPU Utilization'}}</td>
+                                          <td class="min-60">
+                                             {{ont['ontDetails'] && ont['ontDetails'].cpuUtilization ? ont['ontDetails'].cpuUtilization + "%" : '-'}}
+                                          </td>
+                                       </tr>
+                                    </tbody>
+                                    <tbody *ngIf="(ont['ontDetails'] | json) == '{}'">
+                                       <tr>
+                                          <td colspan="8" class="no-data-available">{{language['No Data Available']}}
+                                          </td>
+                                       </tr>
+                                    </tbody>
+                              </table>
+                           </div>
+                           <div class="col-6">
+                              <table class="w-100 tabe-second">
+                                 <tbody *ngIf="(ont['ontDetails'] | json) != '{}'">
+                                    <tr>
+                                       <td>{{ language['Upstream BIP Error'] || 'Upstream BIP Errors'}}</td>
+                                       <td class="min-60">
+                                          {{ont['ontDetails'] && ont['ontDetails'].upstreamBipErrors ? unitConversion('Upstream BIP Error Count', ont['ontDetails'].upstreamBipErrors) : '-'}}
+                                       </td>
+                                    </tr>
+                                    <tr>
+                                       <td>{{ language['Downstream BIP Error'] || 'Downstream BIP Errors'}}</td>
+                                       <td class="min-60">
+                                          {{ont['ontDetails'] && ont['ontDetails'].downstreamBipErrors ? unitConversion('Downstream BIP Error Count', ont['ontDetails'].downstreamBipErrors) : '-'}}
+                                       </td>
+                                    </tr>
+                                    <tr>
+                                       <td>{{ language['Upstream Fec Total Code Words'] || 'Upstream FEC Total
+                                          Codewords'}}</td>
+                                       <td class="min-60">
+                                          {{ont['ontDetails'] && ont['ontDetails'].upstreamFecTotalCodewords ? unitConversion('Upstream Fec Total Codewords', ont['ontDetails'].upstreamFecTotalCodewords) : '-'}}
+                                       </td>
+                                    </tr>
+                                    <tr>
+                                       <td>{{ language['Downstream Fec Total Code Words'] || 'Downstream FEC Total
+                                          Codewords'}}</td>
+                                       <td class="min-60">
+                                          {{ont['ontDetails'] && ont['ontDetails'].downstreamFecTotalCodewords ? unitConversion('Downstream Fec Total Codewords', ont['ontDetails'].downstreamFecTotalCodewords) : '-'}}
+                                       </td>
+                                    </tr>
+                                    <tr>
+                                       <td>{{ language['Upstream FEC Corrected Bytes'] || 'Upstream FEC Corrected
+                                          Bytes'}}</td>
+                                       <td class="min-60">
+                                          {{ont['ontDetails'] && ont['ontDetails'].upstreamFecCorrectedBytes ?unitConversion('Upstream Fec Corrected Bytes', ont['ontDetails'].upstreamFecCorrectedBytes) : '-'}}
+                                       </td>
+                                    </tr>
+                                    <tr>
+                                       <td>{{ language['Downstream FEC Corrected Bytes'] || 'Downstream FEC Corrected
+                                          Bytes'}}</td>
+                                       <td class="min-60">
+                                          {{ont['ontDetails'] && ont['ontDetails'].downstreamFecCorrectedBytes ?unitConversion('Downstream Fec Corrected Bytes', ont['ontDetails'].downstreamFecCorrectedBytes) : '-'}}
+                                       </td>
+                                    </tr>
+                                    <tr>
+                                       <td>{{ language['Upstream Fec Uncorrected Code Words'] || 'Upstream Fec Uncorrected Code Words'}}</td>
+                                       <td class="min-60">
+                                          {{ont['ontDetails'] && ont['ontDetails'].upstreamUncorrectedFecCodewords ?unitConversion('Upstream Fec Uncorrected Codewords', ont['ontDetails'].upstreamUncorrectedFecCodewords) : '-'}}
+                                       </td>
+                                    </tr>
+                                    <tr>
+                                       <td>{{ language['Downstream Fec Uncorrected Code Words'] || 'Downstream Fec Uncorrected Code Words'}}</td>
+                                       <td class="min-60">
+                                          {{ont['ontDetails'] && ont['ontDetails'].downstreamUncorrectedFecCodewords ?unitConversion('Downstream Fec Uncorrected Codewords', ont['ontDetails'].downstreamUncorrectedFecCodewords) : '-'}}
+                                       </td>
+                                    </tr>
+                                 </tbody>
+                              </table>
+                           </div>
+                        </div>
+                     </div>
+                  </td>
+               </tr>
+            </tbody>
+         </table>
+      </div>
+   </div>
+</div>
+</div>

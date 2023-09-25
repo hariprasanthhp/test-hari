@@ -1,0 +1,130 @@
+<top-nav-bar *ngIf="isLatestVersion" [menus]="menus" (activeTab)="selectedTab($event)"></top-nav-bar>
+<div class="w-100 alert alert alert-danger fade show d-flex justify-content-between align-items-center" *ngIf="warningMessage">
+    <div class="error-img"><img src="./assets/img/ic_error-36px.svg" /></div>
+    <div class="d-inline-flex wrn-msg">{{ language[warningMessage] || warningMessage }}</div>
+    <button type="button" class="btn-default primary ok" (click)="warningMessage = ''">{{ language.OK }}</button>
+</div>
+<section>
+    <div class="loader" *ngIf="loading">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">{{ language.Loading }}</span>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="col-12 px-0" id="trusted_List" role="tab" aria-labelledby="alert">
+    <div class="trusted_list_table px-0">
+        <div class="ml-auto w-20">
+            <ng-select class="my-2" [(ngModel)]="selectedType" name="alert" [items]="alerts"
+                (change)="warningMessage = ''; showTrustList()" bindLabel="viewValue" bindValue="value" [searchable]="false">
+                <ng-template ng-label-tmp let-item="item">
+                    {{language[item.viewValue] || item.viewValue }}
+                </ng-template>
+                <ng-template ng-option-tmp let-item="item" let-index="index">
+                    {{ language[item.viewValue] }}
+                </ng-template>
+            </ng-select>
+        </div>
+        <table class="detail-list skip-device" id="protect-iq-trusted-list">
+            <thead>
+                <tr>
+                    <th class="">
+                        <div class="f-size-16 f-w-600 px-2" id="trusted-head-name">{{ language.Name }}
+                        </div>
+                    </th>
+                    <th class="w-40">
+                        <div class="f-size-16 f-w-600 px-2" id="trustedList">{{ language.Trusted_List }}
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngFor="let trustListDetail of trustListDetails.whitelist; let i = index">
+                    <tr id="accordionTable" class="accordion-toggle collapsed" [attr.id]="'accordion_' + i">
+                        <td colspan="3">
+                            <ul class="px-0 dropdown-toggle alert-ul justify-content-between" (click)="isExpanded[i] = !isExpanded[i]">
+                                <li class="occurr-date">
+                                    <div class="Protect-iq-info">
+                                        <span class="plus-minus-toggle mr-2">
+                                            <span class="plus" [attr.id]="'symbolPlus' + i"
+                                                *ngIf="!isExpanded[i]; else expanded">
+                                                +
+                                            </span>
+                                            <ng-template #expanded>
+                                                <span class="minus" [attr.id]="'symbolMinus' + i">-</span>
+                                            </ng-template>
+                                        </span>
+                                        <div class="trusted-title-info">
+                                            {{ trustListDetail.msg }}
+                                        </div>
+                                    </div>
+                                </li>
+                                <!-- <li class="occurr-date">
+                                    <div class="Protect-iq-info"></div>
+                                </li>
+                                <li class="occurr-date">
+                                    <div class="Protect-iq-info"></div>
+                                </li> -->
+                                <li class="alert-btn opacityCheck">
+                                    <button class="btn btn-delete" [id]="'whitelabelbtn' + i"
+                                        (click)="deleteWhiteListItem(trustListDetail.signatureId)">
+                                        {{ language.delete }}
+                                    </button>
+                                </li>
+                            </ul>
+                            <div [attr.id]="'collapseOne_' + i" *ngIf="isExpanded[i]" class="in p-3 w-40 ml-auto">
+                                <table class="table table-borderless">
+                                    <tbody>
+                                        <tr>
+                                            <th class="w-60 p-0">
+                                                <table class="detail-list protectiq-trusted-list-table">
+                                                    <tbody>
+                                                        <tr>
+                                                            <th scope="row" class="">
+                                                                {{ language.Time }} :
+                                                            </th>
+                                                            <td class="">
+                                                                {{ trustListDetail.created |
+                                                                date: "MMM dd yyyy, hh:mm:sa" }}
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row" class="">
+                                                                {{ language.Type }} :
+                                                            </th>
+                                                            <td class="">
+                                                                {{ trustListDetail.type | alertType }}
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </th>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </td>
+                        <!-- <td class="align-middle"> -->
+                            
+                        <!-- </td> -->
+                        <!-- <td>
+                            <button class="btn btn-danger" [id]="'whitelabelbtn' + i"
+                                (click)="deleteWhiteListItem(trustListDetail.signatureId)">
+                                {{ language.delete }}
+                            </button>
+                        </td> -->
+                    </tr>
+                    <ng-template #showInfoMsg>
+                        {{ language["No Data is available for "] }} {{ trustListDetail.type | alertType }} type
+                    </ng-template>
+                </ng-container>
+                <tr *ngIf="trustListDetails.whitelist == 0">
+                    <td colspan="5" class="no-data-available">
+                        {{ language["No data available"] }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

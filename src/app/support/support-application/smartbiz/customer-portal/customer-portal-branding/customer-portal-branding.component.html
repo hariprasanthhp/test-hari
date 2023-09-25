@@ -1,0 +1,112 @@
+<div class="row" [formGroup]="form">
+    <div class="branding-container">
+        <div class="branding-item">
+            <div class="d-flex">
+                <div class="w-50 mr-2">
+                    <div>
+                        <label>{{language['Logo']}}</label>
+                        <div class="form-input-field mt-1">
+                            <div class="input-field">
+                                <div id="logo-image-view-div" class="logo-image-view">
+                                    <img id="logo-image-view" class="default-cover-image" [src]="logoImage || ' ' ">
+                                </div>
+                                <span class="error" id="logoUploadError" *ngIf="invalidLogoImage">
+                                    {{language['Upload valid image file']}}
+                                </span>
+                            </div>
+                            <div class="upload-btn-wrapper">
+                                <label class="btn" for="logoImage">{{language['Upload Image']}}</label>
+                                <input type="file" id="logoImage"
+                                    accept=".jpeg, .JPEG, .PNG, .jpg, .png, .JPG, .img, .IMG, .bin, .BIN"
+                                    (change)="uploadLogo($event)" />
+                            </div>
+                            <span class="ml-3 position-absolute" *ngIf="logoImage" (click)="deleteLogo()">
+                                <a href="javascript:void(0)" class="primary link-pointer">{{language.delete}}</a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-50">
+                    <label>{{language['Logo_Guidelines']}}</label>
+                    <div class="guidelines">
+                        <ul>
+                            <li>
+                                <span class="text-capitalize">{{language['Max File size']}}</span>:20MB
+                            </li>
+                            <li>{{language['Max Width']}}:400px</li>
+                            <li>{{language['Max Height']}}:400px</li>
+                            <li>{{language['Supported Formats']}}: .png, .jpeg/.jpg</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="branding-item">
+            <div class="form-group color-picker-custom">
+                <label>{{language['Background']}}</label>
+                <div class="d-flex w-100">
+                    <div class="position-relative ccl-form min-w-135">
+                        <input type="text" class="clearable-input" formControlName="bgColor" (blur)="submit()" />
+                        <div *ngIf="!ssoAuthService.validateHexCode(bgColor)" class="error">
+                            {{language['capitive_portal_color_validate']}}</div>
+                    </div>
+                    <input class="form-control color-box" name="primaryColor" [(colorPicker)]="bgColorPicker"
+                        formControlName="bgColor" id="bgColor" [cpOutputFormat]="'hex'" [cpPosition]="'top-left'"
+                        [style.background]="bgColor" autocomplete="off"
+                        (colorPickerChange)="colorPickerChangedEvent($event, 'bgColor')"
+                        (colorPickerClose)="submit()" />
+                </div>
+            </div>
+            <div class="form-group color-picker-custom">
+                <label>{{language['Primary Button']}}</label>
+                <div class="d-flex  w-100">
+                    <div class="position-relative ccl-form min-w-135">
+                        <input type="text" class="clearable-input" formControlName="pbColor" (blur)="submit()" />
+                        <div *ngIf="!ssoAuthService.validateHexCode(pbColor)" class="error">
+                            {{language['capitive_portal_color_validate']}}</div>
+                    </div>
+                    <input class="form-control color-box" name="pbColor" [(colorPicker)]="pbColorPicker"
+                        formControlName="pbColor" id="pbColor" [cpOutputFormat]="'hex'" [cpPosition]="'top-left'"
+                        [style.background]="pbColor" autocomplete="off"
+                        (colorPickerChange)="colorPickerChangedEvent($event, 'pbColor')"
+                        (colorPickerClose)="submit()" />
+                </div>
+            </div>
+
+        </div>
+        <div class="branding-item">
+            <div class="form-group color-picker-custom">
+                <label>{{language['Font']}}</label>
+                <div class="d-flex w-100">
+                    <div class="position-relative ccl-form min-w-135">
+                        <input type="text" class="clearable-input" formControlName="fColor" (blur)="submit()" />
+                        <div *ngIf="!ssoAuthService.validateHexCode(fColor)" class="error">
+                            {{language['capitive_portal_color_validate']}}</div>
+                    </div>
+                    <input class="form-control color-box" name="fColor" [(colorPicker)]="fColorPicker"
+                        formControlName="fColor" id="fColor" [cpOutputFormat]="'hex'" [cpPosition]="'top-left'"
+                        [style.background]="fColor" autocomplete="off"
+                        (colorPickerChange)="colorPickerChangedEvent($event, 'fColor')" 
+                        (colorPickerClose)="submit()" />
+                </div>
+            </div>
+
+            <div class="form-group color-picker-custom mt-3">
+                <label>{{language['Button Font']}}</label>
+                <div class="d-flex w-100">
+                    <div class="position-relative ccl-form min-w-135">
+                        <input type="text" class="clearable-input" formControlName="bfColor" [value]="bfColor"
+                            (blur)="submit()" />
+                        <div *ngIf="!ssoAuthService.validateHexCode(bfColor)" class="error">
+                            {{language['capitive_portal_color_validate']}}</div>
+                    </div>
+                    <input class="form-control color-box" name="bfColor" [(colorPicker)]="bfColorPicker"
+                        formControlName="bfColor" id="bfColor" [cpOutputFormat]="'hex'" [cpPosition]="'top-left'"
+                        [style.background]="bfColor" autocomplete="off"
+                        (colorPickerChange)="colorPickerChangedEvent($event, 'bfColor')" 
+                        (colorPickerClose)="submit()" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

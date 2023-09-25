@@ -1,0 +1,161 @@
+<section *ngIf="hasScopeAccess" [ngClass]="{ 'blur-bg' : loading == true }">
+    <div class="row">
+
+        <div class="w-100 py-3 warning-msg" *ngIf="deletedata">
+            <span class="error-img"><img src="./assets/img/warning-icon.svg" /></span>
+            <span class="warn-msg">
+                {{
+                language["Are you sure you want to delete Custom Alarm"]
+                }}
+                <b>{{ modalInfo }}</b>?
+            </span>
+            <div class="btn-con-sec float-right">
+                <button class="btn-default btn-primary mr-2" id="deletePFBtn" [disabled]="btnDisabled"
+                    (click)="deletePerceivedSeverity()">
+                    {{ language.Confirm }}
+                </button>
+                <button class="btn-default btn-dft py-1" (click)="closeModal()">
+                    {{ language.Cancel }}
+                </button>
+            </div>
+        </div>
+
+        <div class="w-100 alert alert-danger  fade show my-3" *ngIf="errorInfo">
+            <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+            <button type="button" class="close close-icon-pos" (click)=" errorInfo = ''"><span></span></button>
+            <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+        </div>
+
+        <div class="w-100 alert alert-success fade show my-3" *ngIf="successInfo">
+            <div class="d-flex align-items-center">
+                <span class="success-img d-inline-flex"><img src="./assets/img/success-icon.svg" /></span>
+                <div class="d-inline-flex text-break pr-4" [innerHtml]="successInfo"></div>
+                <button type="button" class="close close-icon-pos" (click)="successInfo = ''"><span></span></button>
+            </div>
+
+
+        </div>
+    </div>
+    <div class="row justify-content-between filters-cl">
+        <div class="col-md-5">
+            <div class="search-box-input ccl-form">
+                <ng-select [(ngModel)]="opsCloudAlarms.searchedAlarm" (change)="searchAlarmsFromMaster($event)"
+                    placeholder="{{ language['Search alarms'] || 'Search alarms' }}"
+                    [items]="opsCloudAlarms?.alarmsData" bindValue="alarm_id" bindLabel="alarm_name"
+                    [clearable]="false">
+                </ng-select>
+                <span class="pointer" [ngClass]="showcloseicon ? 'show-close-search' : 'hide-close-search'"
+                    (click)="clearAlarmFilter('')">×</span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="d-inline-flex align-items-center justify-content-end w-100">
+                <ng-select [searchable]="false" [clearable]="false" [(ngModel)]="opsCloudAlarms.searchSeverity"
+                    placeholder="{{ language['Search Severity'] || 'Search Severity' }}"
+                    (change)="searchCustomAlarms($event)" class="max-w170-select" [clearable]="false">
+                    <ng-option value="allseverities">{{ language['All Severities'] || 'All Severities' }}</ng-option>
+                    <ng-option value="critical">{{ language.critical }}</ng-option>
+                    <ng-option value="major">{{ language.major }}</ng-option>
+                    <ng-option value="minor">{{ language.minor }}</ng-option>
+                    <ng-option value="warning">{{language.Warning}}</ng-option>
+                    <ng-option value="info">{{language.Info}}</ng-option>
+                </ng-select>
+            </div>
+
+        </div>
+    </div>
+    <div class="row position-relative">
+        <div class="col-md-12">
+            <div class="operations-cloud-alarms-table">
+                <div class="row mb-3" *ngIf="loading">
+                    <div class="col-md-12">
+                        <div class="loader mt-5">
+                            <div class="d-flex justify-content-center">
+                                <div class="spinner-border text-primary">
+                                    <span class="sr-only">{{ language.Loading }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div [hidden]="!dataAvailable">
+                    <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"
+                        class="row-border hover table-alter dataTable no-footer">
+                        <thead>
+                            <tr>
+                                <th>{{language['Name']}} </th>
+                                <th>{{language['Original Severity']}} </th>
+                                <th>{{language['Severity']}} </th>
+                                <th class="min-width-130">{{language['Visibility in Real-Time List']}}</th>
+                                <th>{{ language.Action }}</th>
+                            </tr>
+                        </thead>
+                        <tbody *ngIf="opsCloudAlarms?.customAlarmsData?.length > 0">
+                            <tr *ngFor="let customAlarm of opsCloudAlarms?.customAlarmsData;let i = index">
+                                <td>
+                                    {{customAlarm.alarm_name}}
+                                </td>
+                                <td>
+                                    {{ customAlarm?.dispOriginalSeverity?.toUpperCase() == 'CRITICAL' ||
+                                    customAlarm?.dispOriginalSeverity?.toUpperCase() == 'MAJOR' ||
+                                    customAlarm?.dispOriginalSeverity?.toUpperCase() == 'MINOR' ?
+                                    language[customAlarm.dispOriginalSeverity?.toLowerCase()] :
+                                    (language[customAlarm.dispOriginalSeverity] || '')}}
+                                </td>
+                                <td [ngClass]="{'cursornallow' : !hasWriteAccess}">
+                                    <div class="severity-select" [ngClass]="{'diable-div' : !hasWriteAccess}">
+
+                                        <ng-select [searchable]="false"
+                                            [ngClass]="colorClass[customAlarm.severity_class]"
+                                            [(ngModel)]="customAlarm.severity" placeholder="{{language['Severity']}}"
+                                            (change)="changeAlarmSeverity($event, customAlarm)" [clearable]="false">
+                                            <!-- <ng-option value="allseverities">{{ language['All Severities'] || 'All Severities' }}</ng-option> -->
+                                            <ng-option value="critical">{{ language.critical }}</ng-option>
+                                            <ng-option value="major">{{ language.major }}</ng-option>
+                                            <ng-option value="minor">{{ language.minor }}</ng-option>
+                                            <ng-option value="warning">{{language.Warning}}</ng-option>
+                                            <ng-option value="info">{{language.Info}}</ng-option>
+                                        </ng-select>
+
+                                        <!-- <ng-select [searchable]="false"
+                                        [ngClass]="colorClass[customAlarm.severity_class]" [(ngModel)]="customAlarm.severity"
+                                            (change)="changeAlarmSeverity($event, customAlarm)"
+                                            placeholder="Severity"
+                                            [items]="severityList" bindValue="value"
+                                            bindLabel="language[name]">
+                                        </ng-select> -->
+                                    </div>
+
+                                </td>
+                                <td [ngClass]="{'cursornallow' : !hasWriteAccess}">
+                                    <div [ngClass]="{
+                                        'diable-div': !hasWriteAccess
+                                      }">
+                                        <span [ngClass]="customAlarm.visibility == true? 'password_view_blue' :  'password_hide'" class="editDeviceClass pointer"
+                                         (click)="changeVisibility(customAlarm)"></span>
+                                    </div>
+                                    
+                                </td>
+
+                                <td class="actions">
+
+                                    <i class="fas fa-trash-alt p-1 primary pointer ml-2" title="{{language.Delete}}"
+                                        (click)="delete(customAlarm)"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody *ngIf="opsCloudAlarms?.customAlarmsData?.length === 0">
+                            <tr>
+                                <td colspan="5" class="no-data-available">
+                                    {{ language['No data available in table'] }}
+                                </td>
+                            </tr>
+                        <tbody>
+                    </table>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</section>

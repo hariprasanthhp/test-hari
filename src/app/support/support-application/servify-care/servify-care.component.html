@@ -1,0 +1,466 @@
+<section class="position-relative my-3">
+  <div class="w-100 alert alert alert-danger fade show" *ngIf="isError">
+    <span class="error-img error-img-w"><img src="./assets/img/ic_error-36px.svg" /></span>
+    <button type="button" class="btn-default primary ok float-right" (click)="isError = false">
+      {{language.OK}}
+    </button>
+    <span class="d-inline-flex alert-msg-w" [innerHtml]="alertMessage"></span>
+  </div>
+
+  <!-- <div class="loader load" *ngIf="loading">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary">
+        <span class="sr-only">{{language.Loading}}</span>
+      </div>
+    </div>
+  </div> -->
+  
+  <div class="row">
+    <div class="col-md-12">
+      <!-- <button id="Escalate" class="btn-default primary mr-2"
+        (click)="escalationProcessModalOpen()"> {{language['Escalate to Servify']}}
+      </button> -->
+      <button class="btn-default primary" *ngIf="userId" (click)="escalationProcessEditorModal()">
+        {{language['Escalate to Servify']}}
+      </button>
+    </div>
+  </div>
+  <div class="row mt-2">
+
+    <!-- Account Details -->
+    <div class="col-sm-12 col-md-12 col-lg-3 col-xl-3">
+      <div class="loader load" *ngIf="accountDetailsLoading">
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border text-primary">
+            <span class="sr-only">{{language.Loading}}</span>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex justify-content-between border-bottom mb-2">
+        <div class="cco-secondary-title">{{language['Account Details']}}</div>
+        <div class="cco-secondary-title wh-cursor">
+          <img class="refresh-icon" src="assets/img/Refresh-icon.svg" (click)="loading=true; initialLoad(true);">
+        </div>
+      </div>
+      <div class="servify-care-table">
+        <table class="table">
+          <tbody>
+            <tr>
+              <td>{{language['Subscription Status']}}
+              </td>
+              <td [ngClass]="this.subscribedStatus ? 'highlightGreen' : 'highlightRed'">
+                {{ accountDetailsLoading ? '-' : 
+                  (this.subscribedStatus ? language.Subscribed : language.Unsubscribed)
+                }}
+              </td>
+            </tr>
+            <tr *ngIf="!cancelledStatus">
+              <td>{{language['Subscription Start']}}</td>
+              <td>{{ accountDetailsLoading ? '-' : 
+                ((servifyInfo?.planPurchaseDate | date:'MM/dd/Y') || '-')
+              }}</td>
+            </tr>
+            <!-- <tr *ngIf="servifyInfo?.planChange?.newPlanCode">
+              <td>{{language['Subscription End']}}
+              </td>
+              <td *ngIf="servifyInfo?.planChange?.effective">
+                {{(servifyInfo?.planChange?.effective | date:
+                  'MM/dd/Y') || '-'}}
+              </td>
+              <td *ngIf="servifyInfo?.planChange?.effective == 0">
+                {{'-'}} 
+              </td>
+               <td *ngIf="servifyInfo?.cancelDate">
+                {{(servifyInfo?.cancelDate | date:
+                  'MM/dd/Y')}} 
+              </td>
+            </tr> -->
+
+            <tr>
+              <td>{{language['Subscription End']}}</td>
+              <td>{{ accountDetailsLoading ? '-' : ((subscriptionEndDt | date:'MM/dd/Y') || '-')}}</td>
+              <!-- <td *ngIf="servifyInfo?.planChange?.effective == 0">
+                {{'-'}} 
+              </td> -->
+              <!-- <td *ngIf="servifyInfo?.cancelDate">
+                {{(servifyInfo?.cancelDate | date:
+                  'MM/dd/Y')}} 
+              </td> -->
+            </tr>
+            <tr>
+              <td>{{language['Claims Eligible']}}</td>
+              <td [ngClass]="!ClaimEligible ? 'highlightRed' : 'highlightGreen'">
+                {{ accountDetailsLoading ? '-' : (ClaimEligible ? language.Yes : !servifyInfo?.planCode ? '-' : language.No)}}
+              </td>
+            </tr>
+            <tr>
+              <td>{{language['Account Email']}}</td>
+              <td>{{ accountDetailsLoading ? '-' : (servifyInfo?.email || '-')}}</td>
+            </tr>
+            <tr>
+              <td>{{language.Plan}}</td>
+              <td class="change-case">
+                {{ accountDetailsLoading ? '-' : ((servifyInfo?.planCode || '-').replace('SERVIFYCARE', '') | lowercase)}}
+              </td>
+            </tr>
+            <tr *ngIf="!accountDetailsLoading && servifyInfo?.planChange?.newPlanCode || cancelledStatus">
+              <td colspan="2" class="text-muted font-italic">
+                <p class="m-0" *ngIf="!cancelledStatus"
+                  [innerHtml]="language.planChangeServify([((servifyInfo?.planChange?.newPlanCode ||
+                '').replace('SERVIFYCARE', '') | lowercase), (servifyInfo?.planChange?.requested | date: 'MMMM d, y')])">
+                </p>
+                <p class="m-0"
+                  *ngIf="!cancelledStatus && servifyInfo?.planChange?.status === 'requested' && servifyInfo?.planChange?.effective">
+                  {{language['The changeover is expected to take place on']}}
+                  <span class="bold">{{(servifyInfo?.planChange?.effective | date: 'MMMM d, y')}}</span>
+                </p>
+                <p class="m-0" class="req-text"
+                  *ngIf="!cancelledStatus && servifyInfo?.planChange?.status === 'denied'">
+                  {{servifyInfo?.planChange?.message}}</p>
+                <p class="m-0"
+                  *ngIf="!cancelledStatus && servifyInfo?.planChange?.status === 'accepted' && servifyInfo?.planChange?.effective">
+                  {{language.servifyPlanEffectiveFrom}}
+                  <span class="bold">
+                    {{(servifyInfo?.planChange?.effective | date:'MMMM d, y')}}
+                  </span>
+                </p>
+                <p class="m-0" *ngIf="cancelledStatus && servifyInfo?.cancelDate">
+                  {{language["This subscriber's service was cancelled on"]}}
+                  <b>{{(servifyInfo?.cancelDate | date: 'MMMM d, y')}}</b>
+                </p>
+              </td>
+            </tr>
+            <!-- <tr>
+                <td>Open Claims</td>
+                <td>2</td>
+            </tr> -->
+            <tr>
+              <td>{{language['Total Claims']}}</td>
+              <td>{{accountDetailsLoading ? '-' : servifyClaims.length}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- Account Details end -->
+
+    <!-- Servify Status -->
+    <div class="col-sm-12 col-md-12 col-lg-3 col-xl-3">
+      <div class="loader load" *ngIf="servifyStatusLoading">
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border text-primary">
+            <span class="sr-only">{{language.Loading}}</span>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex justify-content-between border-bottom mb-2">
+        <div class="cco-secondary-title">{{language['Servify Status']}}</div>
+        <div class="cco-secondary-title wh-cursor">
+          <img class="primary" src="assets/img/Refresh-icon.svg" (click)="loading=true; getHealth()">
+        </div>
+      </div>
+      <div class="servify-care-table">
+        <table class="table border-top-none">
+          <tbody>
+            <tr>
+              <td>{{language['Overall Status']}}</td>
+              <td [ngClass]="overallStatus ? 'highlightRed' : 'highlightGreen'">
+                {{ servifyStatusLoading ? '-' : 
+                (overallStatus && overallStatus <= 4 ? language.DEGRADED : (overallStatus ? language['Down'] :
+                  language['Up'] ))}} 
+              </td>
+            </tr>
+            <tr *ngFor="let hlth of health">
+              <td>{{language[hlth.health_name] || hlth.health_name}}</td>
+              <td [ngClass]="hlth.status ? 'highlightGreen' : 'highlightRed'">
+                {{ servifyStatusLoading ? '-' : (hlth.status ? language['Up'] : language['Down'])}}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- Servify Status end -->
+
+    <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
+      <div class="loader load" *ngIf="recentClaimsLoading">
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border text-primary">
+            <span class="sr-only">{{language.Loading}}</span>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex justify-content-between border-bottom mb-2">
+        <div class="cco-secondary-title">{{language['Recent Claims']}}</div>
+        <div class="cco-secondary-title wh-cursor">
+          <img class="primary" src="assets/img/Refresh-icon.svg" (click)="getClaims(userId)">
+        </div>
+      </div>
+      <div class="servify-care-devices-table">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>{{language['Claim']}}#</th>
+              <th>{{language['Date Opened']}}</th>
+              <th>{{language.device}}</th>
+              <th>{{language['Serial No']}}</th>
+              <th>{{language.Status}}</th>
+              <th>{{language['Status Details']}}</th>
+              <!-- <th></th> -->
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let sc of servifyClaims">
+              <th>{{sc?.claimId}}</th>
+              <td>{{sc?.created | date:'MMM d, y'}}</td>
+              <td>{{sc?.deviceName}}</td>
+              <td>{{sc?.serialNumber}}</td>
+              {{showClaimStatus(sc.claimStatus)}}
+              <td>
+                <div class="mt-2" [ngClass]="claimStatusClass"><span class="dot"></span> {{claimStatusinText}} </div>
+              </td>
+              <!-- <td>{{sc.claimStatus}}</td> -->
+              <td>{{sc.claimStatusDetail}}</td>
+              <!-- <td><img class="refresh-icon" src="assets/img/Refresh-icon.svg"></td> -->
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr *ngIf="!servifyClaims.length">
+                <td colspan="6" class="align-center">
+                    {{ language["No Data Available"] }}
+                </td>
+            </tr>
+        </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+<!--end-->
+
+<ng-template #escalationProcessModal let-modal>
+  <div class="modal-header justify-content-end">
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <img src="../../../../assets/img/ic_close-44px.svg" />
+    </button>
+  </div>
+  <div class="row">
+    <div class="col-md-12 center-space px-5 pt-2">
+      <div class="modal-body">
+        <div class="w-100">
+          <h5 class="ccl-admin-title" id="EscalationProcess">{{language['Escalation Process']}}</h5>
+        </div>
+        <div class="w-100 mt-4 pl-12">
+          <div class="row">
+            <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+              <div class="w-100">
+                <div class="ccl-secondary-title border-bottom" id="EscalationProcess">{{language.Instructions}}</div>
+              </div>
+              <!--end-->
+              <div class="escalate-list">
+                <ol>
+                  <li>{{language['Open your preferred email client and paste the following email template']}}
+                  </li>
+                  <li>{{language['Update the subject line with a summary of the issue being experienced']}}
+                  </li>
+                  <li>{{language['Add the requested information to each line in the body of the email']}}</li>
+                  <li>{{language['Send the email to']}} <a
+                      href="mailto:calixpartnersupport@servifycare.com">calixpartnersupport@servifycare.com</a> </li>
+                </ol>
+                <ul>
+                  <li>
+                    *{{language['Do not modify this template as it will result in a delay of handling the escalation.']}}
+                  </li>
+                  <li>
+                    *<span
+                      [innerHTML]="language['The BSP email address will be used as the email sender ID and all replies will be sent to this ID only. If any other recepients are required, please CC them.']"></span>
+                  </li>
+                </ul>
+              </div>
+              <!--end-->
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+              <div class="w-100">
+                <div class="ccl-secondary-title border-bottom" id="EmailTemplate">{{language['Email Template']}}</div>
+              </div>
+              <div class="w-100">
+                <div>
+                  <span class="gray-text">{{language.subject}}:</span>
+                </div>
+                <div id="servifyTemplateSubject">
+                  {{language['Calix Partner Escalation']}}: 
+                  <span> {{"<"}}{{language['BSP Name']}}{{">"}}</span>
+                  <!-- <span>
+                    {{language['<BSP Name>']}}
+                  </span> -->
+                </div>
+                <div class="mt-3">
+                  <span class="gray-text">{{language.Body}}:</span>
+                </div>
+                <div>
+                  <ul id="servifyTemplateBody">
+                    <li> {{language['Short Description of the Problem']}} 
+                      <span class="email-body-text">
+                        {{language["(it is recommended not to include any personally identifiable information (PII) in the description):"]}}
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+                <div class="">
+                  <button type="button" class="btn-default primary" (click)="copyToClipboard()">
+                    {{language['Copy to clipboard']}}</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #escalationProcessEditor let-modal>
+  <div class="loader load" *ngIf="modalLoader">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary">
+        <span class="sr-only">{{language.Loading}}</span>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12 d-flex justify-content-between">
+      <div class="ccl-admin-title mb-2">
+        {{language['Escalation Email']}}
+      </div>
+      <div aria-label="Close" (click)="modal.dismiss('Cross click')"> <img class="pointer"
+          src="../../../../assets/img/close-icon.svg" alt=""></div>
+    </div>
+    <div class="col-12 ccl-form">
+      <div class="d-flex w-100 mb-3">
+        <div class="col-auto-width">
+          <label>{{language['From']}}</label>
+        </div>
+        <div class="col">
+          <input type="text" class="mail-disable w-100"
+            [value]="servifyMail" disabled="true" />
+        </div>
+      </div>
+      <div class="d-flex w-100 mb-3">
+        <div class="col-auto-width">
+          <label>{{language['Reply To']}}</label>
+        </div>
+        <div class="col">
+          <input type="text" placeholder="{{'CSR Email Address'}}" class="w-100" [(ngModel)]="replyTo" trimSpace (blur)="removeUnwantedSpace('replyTo',replyTo)"/>
+          <small class="highlightRed" *ngIf="mailSubmit && !replyTo">
+            {{ language["This field is required"] }}.
+          </small>
+          <small class="highlightRed" *ngIf="mailSubmit && !patternCheck(replyTo)">
+            {{ language["Please enter a valid email address"] }}.
+          </small>
+        </div>
+      </div>
+      <div class="d-flex w-100 mb-3">
+        <div class="col-auto-width">
+          <label>{{language['Send To']}}</label>
+        </div>
+        <div class="col">
+          <input type="text" placeholder="{{'Partner Escalation Email Address, CSR Email Address'}}" class="w-100"
+            [(ngModel)]="sendTo" trimSpace (blur)="removeUnwantedSpace('sendTo',sendTo)"/>
+          <small class="highlightRed" *ngIf="mailSubmit && !sendTo">
+            {{ language["This field is required"] }}.
+          </small>
+          <small class="highlightRed" *ngIf="mailSubmit && !patternCheck(sendTo)">
+            {{ language["Please enter a valid email address"] }}.
+          </small>
+        </div>
+      </div>
+      <div class="d-flex w-100 mb-3">
+        <div class="col-auto-width">
+          <label>{{language['subject']}}</label>
+        </div>
+        <div class="col">
+          <input type="text" class="w-100" [(ngModel)]="mailSubject" trimSpace (blur)="removeUnwantedSpace('mailSubject',mailSubject)"/>
+          <small class="highlightRed" *ngIf="mailSubmit && !mailSubject">
+            {{ language["This field is required"] }}.
+          </small>
+        </div>
+      </div>
+    </div>
+    <!--end-->
+    <div class="col-12">
+      <div class="d-flex w-100 border-top">
+        <div class="w-100 mb-3" id="editor-new">
+          <div class="toolbar d-flex w-100 border-none" id="toolbar-toolbar">
+            <div class="col-auto-width">
+              <span class="ql-formats">
+                <button type="button" [ngClass]="{'redoDisablity':!changescount}" class="ql-undo mr-3" value="undo"></button>
+                <button type="button" class="ql-redo" value="redo"></button>
+              </span>
+            </div>
+            <div class="col">
+              <span class="ql-format-group">
+                <span class="ql-formats ql-font-family">
+                  <select class="ql-font">
+                    <option value="sans-serif" selected>Sans Serif</option>
+                    <option value="serif">Serif</option>
+                    <option value="monospace">Monospace</option>
+                  </select>
+                </span>
+                <span class="ql-formats">
+                  <select title="Font Size" class="ql-size">
+                    <option value="12px" selected>12</option>
+                    <option value="14px">14</option>
+                    <option value="16px">16</option>
+                    <option value="18px">18</option>
+                    <option value="20px">20</option>
+                    <option value="22px">22</option>
+                    <option value="24px">24</option>
+                    <option value="26px">26</option>
+                    <option value="28px">28</option>
+                    <option value="36px">36</option>
+                    <option value="40px">40</option>
+                  </select>
+                </span>
+
+              </span>
+              <span class="ql-formats">
+                <button class="ql-bold" aria-label="Bold"></button>
+                <button class="ql-italic" aria-label="Italic"></button>
+                <button class="ql-underline" aria-label="Underline"></button>
+                <button class="ql-strike" aria-label="Strike"></button>
+              </span>
+              <span class="ql-formats">
+                <button type="button" class="ql-list" aria-label="List" value='ordered'></button>
+                <button type="button" class="ql-list" aria-label="Bullet" value='bullet'></button>
+                <!-- <button class="ql-image" type="button"></button> -->
+              </span>
+            </div>
+          </div>
+          <div class="d-flex w-100">
+            <div class="col-auto-width pl-2">
+              <p>{{language['Body']}}</p>
+            </div>
+            <div class="col ">
+
+              <div class="arlo-mail-body">
+                <div class="border-none capital" id="editor-container" #content>
+                </div>
+              </div>
+
+              <div class="w-100 editor-footer my-3">
+                <label class="d-inline-flex align-items-center">
+                  <input type="checkbox" checked="saveCallOutCome" [(ngModel)]="saveCallOutCome" />
+                  <span class="pl-2">{{language['Save as Call Outcome']}}</span>
+                </label>
+                <div class="mt-2">
+                  <button type="button" class="btn-default primary" (click)="sendEmail()">{{language['Send Email']}}</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--end-->
+  </div>
+</ng-template>

@@ -1,0 +1,415 @@
+<div *ngIf="acquisitionchartDownloadError" class="alert alert-warning alert-dismissible fade show" role="alert">
+    <strong>{{language.Error}}!</strong>{{acquisitionchartDownloadErrorMsg}}.
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true" (click)='errorReset()'></span>
+    </button>
+</div>
+
+<div class="subscriber-details" [ngClass]="!fullScreen ? 'd-block' : 'd-none'">
+    <div class="marketing-wizard flex">
+        <div class="mark-wiz-col brd-btm-snowgrey">
+            <div class="mwc-header flex">
+                <h3 class="chart-title greyaa mb0" id="new_subscribe">{{language.new_subscribe}}</h3>
+                <div class="mwc-btns flex">
+                    <button id="subscriberNewModelOpen" class="d-none btn-round btn-small-24 btn-grey btn-que"
+                        (click)="acquisationChartModalOpen(language.new_subscribe)" data-toggle="tooltip"
+                        title="{{language.serviceTierNew_content_tip}}"></button>
+                    <button id="subscriberNewDownloadSection" class="btn-round btn-small-24 btn-grey btn-dload"
+                        (click)="downloadFunction(language.new_subscribe)" data-toggle="tooltip"
+                        title="{{language.subs_download_tip}}"></button>
+                    <button id="subscriberNewExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+                        (click)="fullScreenExpandFunction(language.new_subscribe)" data-toggle="tooltip"
+                        title="{{language.subs_fullscreen_tip}}"></button>
+                </div>
+            </div>
+            <div class="req-text text-center" *ngIf="newSubscribersByTechError">
+                <div class="loader loader-h300-center">
+                    {{newSubscribersByTechErrorMsg}}
+                </div>
+            </div>
+            <div class="text-center" *ngIf="!newSubscribersByTechDataAvailable && !newSubscribersByTechError">
+                <div class="h300-left">
+                    <div class="spinner-border text-primary loader">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <div [ngClass]="newSubscribersByTechDataAvailable ? 'd-block' : 'd-none'">
+                <h5 class="greyaa mb0  heading-subtitle">
+                    {{language.Total_Acquired}} {{currentPeriod}}:&nbsp;{{newServiceTierTechTotalAcquired | number}}
+                </h5>
+                <div class="mwc-content">
+                    <div class="col-md-12 p-2 ">
+                        <div id="new-subscriber-tier-tech-chart" class="chart-box h300-left">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mark-wiz-col brd-btm-snowgrey" *ngIf="revenueInsightsAccess">
+            <div class="mwc-header flex">
+                <h3 class="chart-title greyaa mb0" id="revenueInsight">{{language.revenue_Insight}}</h3>
+                <div class="mwc-btns flex">
+                    <button id="revenueInsigtModelOpen" class="d-none btn-round btn-small-24 btn-grey btn-que"
+                        (click)="acquisationChartModalOpen(language.revenue_Insight)" data-toggle="tooltip"
+                        title="{{language.AcquisitionRevenueAndInsights_Info}}"></button>
+                    <button id="revenueInsigtDownloadSection" class="btn-round btn-small-24 btn-grey btn-dload"
+                        (click)="downloadFunction(language.revenue_Insight)" data-toggle="tooltip"
+                        title="{{language.subs_download_tip}}"></button>
+                    <button id="revenueInsigtExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+                        (click)="fullScreenExpandFunction(language.revenue_Insight)" data-toggle="tooltip"
+                        title="{{language.subs_fullscreen_tip}}"></button>
+                </div>
+            </div>
+            <div class="req-text text-center" *ngIf="acquisitionRevenueInsightsError">
+                <div class="loader loader-h300-center">
+                    {{acquisitionRevenueInsightsErrorMsg}}
+                </div>
+            </div>
+            <div class="text-center"
+                *ngIf="!acquisitionRevenueInsightsDataAvailable && !acquisitionRevenueInsightsError">
+                <div class="h300-left">
+                    <div class="spinner-border text-primary loader">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
+            </div>
+            <div [ngClass]="acquisitionRevenueInsightsDataAvailable ? 'd-block' : 'd-none'">
+                <h5 class="greyaa mb0  heading-subtitle">
+                    {{language.MaxPotentialRevenue}}:&nbsp;${{maxPotentialRevenue | number}}<br>
+                    {{language.ActualRevenue}}:&nbsp;${{actualRevenue | number}}
+                </h5>
+
+                <div class="mwc-content">
+                    <div class="col-md-12 p-2 ">
+                        <div id="acquisition-revenue-insights-chart" class="chart-box h300-left">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mark-wiz-col brd-btm-snowgrey">
+            <div class="mwc-header flex">
+                <h3 class="chart-title greyaa mb0" id="acquisition">{{language.acquisition}}</h3>
+                <div class="mwc-btns flex">
+                    <button id="acquisitionModelOpen" class="d-none btn-round btn-small-24 btn-grey btn-que"
+                        (click)="acquisationChartModalOpen(language.acquisition)" data-toggle="tooltip"
+                        title="{{language.AcquisitionRateAndInsights_Info}}"></button>
+                    <button id="acquisitionDownloadSection" class="btn-round btn-small-24 btn-grey btn-dload"
+                        (click)="downloadFunction(language.acquisition)" data-toggle="tooltip"
+                        title="{{language.subs_download_tip}}"></button>
+                    <button id="acquisitionExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+                        (click)="fullScreenExpandFunction(language.acquisition)" data-toggle="tooltip"
+                        title="{{language.subs_fullscreen_tip}}"></button>
+                </div>
+            </div>
+            <div class="req-text text-center" *ngIf="acquisitionRateInsightsError">
+                <div class="loader loader-h300-center">
+                    {{acquisitionRateInsightsErrorMsg}}
+                </div>
+            </div>
+            <div class="text-center" *ngIf="!acquisitionRateInsightsDataAvailable && !acquisitionRateInsightsError">
+                <div class="h300-left">
+                    <div class="spinner-border text-primary loader">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <!--  -->
+
+            <div [ngClass]="acquisitionRateInsightsDataAvailable ? 'd-block' : 'd-none'">
+                <h5 class="greyaa mb0  heading-subtitle">
+                    {{language.Total_Acquired}}
+                    {{language.Last_Six_Month}}:&nbsp;{{acquisitionRateInsightsTotalAcquired | number}}
+                </h5>
+
+                <div class="mwc-content">
+                    <div class="col-md-12 p-2 ">
+                        <div id="acquisition-rate-insights-chart" class="chart-box h300-left">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- service -->
+<ng-template #acquisationChartModal let-modal class="col-md-12">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addModal">{{popup_heading}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form class="custom-form">
+            <div class="form-group ccl-form ">
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>{{language.new_subscribe_popup1}}</p>
+                        <p>{{language.new_subscribe_popup2}}</p>
+                        <ul class="list-block">
+                            <li>{{language.new_subscribe_popup3}}</li>
+                            <li>{{language.new_subscribe_popup4}}</li>
+                            <li>{{language.new_subscribe_popup5}}</li>
+                            <li>{{language.new_subscribe_popup6}}</li>
+                            <li class="ml-20px"><span>{{language.new_subscribe_popup7}}</span>
+                                {{language.new_subscribe_popup10}}</li>
+                            <li class="ml-20px"><span>{{language.new_subscribe_popup8}}</span>
+                                {{language.new_subscribe_popup11}}</li>
+                            <li>{{language.new_subscribe_popup9}}</li>
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+            <!-- <button type="button" class="btn-default primary px-3 px-3">{{language.Save}}</button> -->
+            <button type="button" class="btn-default  btn-dft px-3 px-3 m-2" (click)="closeModal()"
+                data-dismiss="modal">{{language.Cancel}}</button>
+        </form>
+    </div>
+</ng-template>
+<!-- Revenue -->
+<ng-template #acquisationRevenueChartModal let-modal class="col-md-12">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addModal">{{popup_heading}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form class="custom-form">
+            <div class="form-group ccl-form ">
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>{{language.new_revenue_popup1}}</p>
+                        <p>{{language.new_revenue_popup2}}</p>
+                        <ul class="list-block">
+                            <li>{{language.new_revenue_popup3}}</li>
+                            <li>{{language.new_revenue_popup4}}</li>
+                            <li>{{language.new_revenue_popup5}}</li>
+                            <li>{{language.new_revenue_popup6}}</li>
+                            <li class="ml-20px"><span>{{language.new_revenue_popup7}}</span>
+                                {{language.new_revenue_popup10}}</li>
+                            <li class="ml-20px"><span>{{language.new_revenue_popup8}}</span>
+                                {{language.new_revenue_popup11}}</li>
+                            <li>{{language.new_revenue_popup9}}</li>
+                        </ul>
+
+                    </div>
+                </div>
+
+            </div>
+            <!-- <button type="button" class="btn-default primary px-3 px-3">{{language.Save}}</button> -->
+            <button type="button" class="btn-default  btn-dft px-3 px-3 m-2" (click)="closeModal()"
+                data-dismiss="modal">{{language.Cancel}}</button>
+        </form>
+    </div>
+</ng-template>
+<!-- Rate -->
+<ng-template #acquisationRateChartModal let-modal class="col-md-12">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addModal">{{popup_heading}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form class="custom-form">
+            <div class="form-group ccl-form ">
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>{{language.new_rate_popup1}}</p>
+                        <p>{{language.new_rate_popup2}}</p>
+                        <ul class="list-block">
+                            <li>{{language.new_rate_popup3}}</li>
+                            <li>{{language.new_rate_popup4}}</li>
+                            <li>{{language.new_rate_popup5}}</li>
+                            <li>{{language.new_rate_popup6}}</li>
+                            <li>{{language.new_rate_popup7}}</li>
+                            <li class="ml-20px"><span>{{language.new_rate_popup8}}</span>
+                                {{language.new_rate_popup11}}</li>
+                            <li class="ml-20px"><span>{{language.new_rate_popup9}}</span>
+                                {{language.new_rate_popup12}}</li>
+                            <li>{{language.new_rate_popup10}}</li>
+                        </ul>
+
+                    </div>
+                </div>
+
+            </div>
+            <!-- <button type="button" class="btn-default primary px-3 px-3">{{language.Save}}</button> -->
+            <button type="button" class="btn-default  btn-dft px-3 px-3 m-2" (click)="closeModal()"
+                data-dismiss="modal">{{language.Cancel}}</button>
+        </form>
+    </div>
+</ng-template>
+
+<div class="subscriber-details" [ngClass]="fullScreen ? 'd-block' : 'd-none'">
+    <div class="marketing-wizard flex">
+        <div class="mark-wiz-col brd-btm-snowgrey w-100">
+            <div class="mwc-header flex">
+                <h3 class="chart-title greyaa mb0">{{fullScreenChart}}</h3>
+                <div class="mwc-btns flex">
+                    <button id="acquisitionModelChart" class="d-none btn-round btn-small-24 btn-grey btn-que"
+                        (click)="acquisationChartModalOpen(fullScreenChart)" data-toggle="tooltip"
+                        title="{{acquisitionFullScreenContent}}"></button>
+                    <button id="acquisitionModelChartDownlod" *ngIf="getExportMenus.length < 2"
+                        [ngClass]="fullScreenDownload ? 'spinnershow': '' " (click)="downloadFunction(fullScreenChart)"
+                        class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                        title="{{language.subs_download_tip}}"></button>
+                    <!-- EXPORT MENU -->
+                    <div *ngIf="getExportMenus.length > 1" class="dropdown-button" ngbDropdown>
+                        <button data-toggle="tooltip" title="{{language.explort_option}}"
+                            [ngClass]="fullScreenDownload ? 'spinnershow': '' "
+                            class="btn-round btn-small-24 btn-grey btn-dload" id="dropdownPeriod11" ngbDropdownToggle>
+                        </button>
+                        <div ngbDropdownMenu aria-labelledby="dropdownPeriod11">
+                            <button id="acquisitionModelDropdownlod" data-toggle="tooltip"
+                                title="{{item}}"
+                                (click)="downloadFunction(fullScreenChart,item)" *ngFor="let item of getExportMenus"
+                                ngbDropdownItem class="greyaa">{{item}}
+                            </button>
+                        </div>
+                    </div>
+                    <button class="btn-round btn-small-24 btn-grey btn-expand-inv" id="acquisitionModelScreenClose"
+                        (click)="fullScreenCloseFunction()" data-toggle="tooltip"
+                        title="{{language.subs_fullscreen_close_tip}}"></button>
+                </div>
+            </div>
+
+            <div class="col-12" [ngClass]="dataAvailable ? 'd-block' : 'd-none'">
+                <h5 class="greyaa mb0  heading-subtitle" *ngIf="fullScreenChart == language.new_subscribe">
+                    {{language.Total_Acquired}} {{currentPeriod}}:&nbsp;{{newServiceTierTechTotalAcquired | number}}
+                </h5>
+                <h5 class="greyaa mb0  heading-subtitle" *ngIf="fullScreenChart == 'Acquisition Rate & Insights'">
+                    {{language.Total_Acquired}}
+                    {{language.Last_Six_Month}}:&nbsp;{{acquisitionRateInsightsTotalAcquired | number}}
+                </h5>
+                <h5 class="greyaa mb0  heading-subtitle" *ngIf="fullScreenChart == language.revenue_Insight">
+                    {{language.MaxPotentialRevenue}}:&nbsp;${{maxPotentialRevenue | number}}<br>
+                    {{language.ActualRevenue}}:&nbsp;${{actualRevenue | number}}
+                </h5>
+                <div class="chart-sec">
+                    <div id={{fullScreenChart}} class="chart-box h400-w100"></div>
+                </div>
+            </div>
+
+            <div class="text-center" *ngIf="!dataAvailable">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                </div>
+            </div>
+
+            <div [ngClass]="fullScreenTableAvailable ? 'd-block' : 'd-none'">
+                <div id="tableContentReady">
+                    <h4 class="fullscreen-table-info" *ngIf="clickData">
+                        {{clickData.tier}} / {{clickData.tech}}</h4>
+
+                    <div class="table-responsive">
+                        <table [ngClass]="!fullScreenTableDataNotAvailable ? 'd-block' : 'd-none'"
+                            id="tableAquisationTier"
+                            class="table subscriber-table table-striped showTableDataInChart smal">
+                            <!-- NEW SUBSCRIBERS TIER TECH -->
+                            <thead *ngIf="fullScreenChart == language.new_subscribe">
+                                <tr>
+                                    <td>{{language.accountNumber}} </td>
+                                    <td>{{language.Name}} </td>
+                                    <td>{{language.phonenumber}} </td>
+                                    <td>{{language.serviceaddress}} </td>
+                                    <td>{{language.email}}</td>
+                                    <td>{{language.region}} </td>
+                                    <td>{{language.Location}} </td>
+                                    <td>{{language.Customer_Type}}</td>
+                                    <td class="text-right">{{language.downloadSpeedLabel}}</td>
+                                    <td class="text-right">{{language.uploadSpeedLabel}}</td>
+                                    <td>{{language.attainableRateLabel}}</td>
+                                    <td>{{language.Start_Date}}</td>
+                                </tr>
+                            </thead>
+                            <!-- ACQUISITION REVENUE INSIGHTS -->
+                            <thead *ngIf="fullScreenChart == language.revenue_Insight">
+                                <tr>
+                                    <td>{{language.accountNumber}} </td>
+                                    <td>{{language.Name}} </td>
+                                    <td>{{language.phonenumber}} </td>
+                                    <td>{{language.serviceaddress}} </td>
+                                    <td>{{language.Service_Tier}} </td>
+                                    <td>{{language.region}} </td>
+                                    <td>{{language.Location}} </td>
+                                    <td>{{language.Technology_Type}}</td>
+                                    <td>{{language.Customer_Type}}</td>
+                                    <td class="text-right">{{language.downloadSpeedLabel}}</td>
+                                    <td class="text-right">{{language.uploadSpeedLabel}}</td>
+                                    <td class="text-center">{{language.attainableRateLabel}}</td>
+                                    <td class="text-right">{{language.Total_Usage}}</td>
+                                    <td class="text-right">{{language.streamingusage}}</td>
+                                    <td class="text-right">{{language.gamingusage}}</td>
+                                    <td class="text-right">{{language.UpstreamLimitLabel}} </td>
+                                    <td class="text-right">{{language.downstreamlimithits}} </td>
+                                    <td class="text-right">{{language.currentFeeLabel}}</td>
+                                    <td class="text-right">{{language.maxFeeLabel}}</td>
+                                    <td class="text-right">{{language.Start_Date}}</td>
+                                </tr>
+                            </thead>
+                            <!-- ACQUISITION RATE INSIGHTS -->
+
+                            <thead *ngIf="fullScreenChart == language.acquisition">
+                                <tr>
+                                    <td>{{language.accountNumber}} </td>
+                                    <td>{{language.Name}} </td>
+                                    <td>{{language.phonenumber}} </td>
+                                    <td>{{language.serviceaddress}} </td>
+                                    <td>{{language.Service_Tier}} </td>
+                                    <td>{{language.region}} </td>
+                                    <td>{{language.Location}} </td>
+                                    <td>{{language.Technology_Type}}</td>
+                                    <td>{{language.Customer_Type}}</td>
+                                    <td class="text-right">{{language.downloadSpeedLabel}}</td>
+                                    <td class="text-right">{{language.uploadSpeedLabel}}</td>
+                                    <td class="text-center">{{language.attainableRateLabel}}</td>
+                                    <td class="text-right">{{language.Total_Usage}}</td>
+                                    <td class="text-right">{{language.streamingusage}}</td>
+                                    <td class="text-right">{{language.gamingusage}}</td>
+                                    <td class="text-right">{{language.UpstreamLimitLabel}}</td>
+                                    <td class="text-right">{{language.downstreamlimithits}} </td>
+                                    <td class="text-right">{{language.currentFeeLabel}}</td>
+                                    <td class="text-right">{{language.maxFeeLabel}}</td>
+                                    <td class="text-right">{{language.Start_Date}}</td>
+                                </tr>
+                            </thead>
+
+
+                            <tbody class="tbodyheading" id="append-table-list">
+                            </tbody>
+                        </table>
+
+                        <!-- LOAD MORE BUTTON SECTION -->
+                        <div class="ccl-center text-center" *ngIf="loadMoreButton">
+                            <button id="tableAquisationLoadMore" [ngClass]="loadingBtn ? 'cursor-ban': ''"
+                                class="btn-default primary" (click)='loadMore()' id="loadMoreBtn">{{loadingBtn ? language['Loading'] : language['loadmore']}}
+                                <div *ngIf="loadingBtn" class="spinner">
+                                    <i class="fa fa-spinner"></i>
+                                </div>
+                            </button>
+
+                        </div>
+                    </div>
+                    <div *ngIf="fullScreenTableDataNotAvailable" id="no-data-available"
+                        class="border-for-no-data text-center">
+                        <span>{{language.nodata}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="req-text text-center" *ngIf="fullscreenTableError">
+                {{fullscreenTableErrorMsg}}
+            </div>
+
+            <div class="text-center" *ngIf="tableLoader">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

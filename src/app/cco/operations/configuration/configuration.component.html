@@ -1,0 +1,51 @@
+<div role="alert" class="alert alert-warning" *ngIf="!hasPageAccess">
+    {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} </div>
+
+<section [hidden]="!hasPageAccess">
+    <div class="container mp-0">
+        <div class="row mm-0">
+            <div class="col-12 col-md-2 pl-0 mpr-0" *ngIf="hasPageAccess">
+                <ul id="netops-list-menu" class="nav flex-column left-menu tab-view-style mbr-none">
+                    <li class="nav-item" *ngIf="menus['workflows']">
+                        <a class="list-group-item list-group-item-action"
+                            routerLink="/cco/operations/configuration/workflows"
+                            routerLinkActive="active" id="CcoConfiguration-Workflows">{{language['Workflows']}}</a>
+                    </li>
+                    <li class="nav-item" *ngIf="menus['systemgroups']">
+                        <a class="list-group-item list-group-item-action"
+                            routerLink="/cco/operations/configuration/system-groups"
+                            routerLinkActive="active"  [ngClass]="{'active' : activeMenus['devices-group']}" 
+                            id="CcoConfiguration-SystemGroups">{{language['System Groups']}}</a>
+                    </li>
+                    <li class="nav-item" *ngIf="menus['softwareimages']">
+                        <a class="list-group-item list-group-item-action"
+                            routerLink="/cco/operations/configuration/software/software-images-list"
+                            [ngClass]="{'active' : activeMenus['software']}" 
+                            id="CcoConfiguration-SoftwareImages">{{language['Software Images']}}</a>
+                    </li>
+                    <li class="nav-item" *ngIf="menus['performancetesting']">
+                        <a class="list-group-item list-group-item-action"
+                            routerLink="/cco/operations/configuration/performance-testing"
+                            routerLinkActive="active" 
+                            id="CcoConfiguration-PerformanceTesting">{{language['Performance_Testing']}}</a>
+                    </li>
+                    <li class="nav-item" *ngIf="menus['configurationfiles']">
+                        <a class="list-group-item list-group-item-action"
+                            routerLink="/cco/operations/configuration/configuration-files-list"
+                            [ngClass]="{'active' : activeMenus['configuration']}"
+                            [ngClass]="[(router.url.includes('configuration-files-list')|| router.url.includes('configuration-files-form'))  ? 'active' : '']" 
+                            id="CcoConfiguration-ConfigurationFiles">{{language['configuration_Files']}}</a>
+                    </li>
+                    <li class="nav-item" *ngIf="menus['axosmigration']">
+                        <a class="list-group-item list-group-item-action"
+                            routerLink="/cco/operations/configuration/migrations"
+                            routerLinkActive="active" id="CcoConfiguration-Migrations">{{language['Migrations']}}</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-12 col-md-10 padl mp-0 mmt-3 pr-0 position-relative" [hidden]="!hasPageAccess">
+                <router-outlet></router-outlet>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,147 @@
+@import "~src/assets/variables";
+
+// samu css start
+
+.dash-drop {
+  cursor: pointer;
+}
+
+.dash-drop.dropdown-toggle::after {
+  display: none;
+}
+
+.mod-page ul {
+  display    : flex;
+  align-items: center;
+}
+
+.mod-page ul li {
+  // width     : 250px;
+  text-align: center;
+  display   : flex;
+  cursor    : pointer;
+}
+
+.mod-li {
+  width: 80px;
+}
+
+.mod-li img {
+  width : 100%;
+  height: auto;
+}
+
+.mod-li p {
+  font-size     : 14px;
+  letter-spacing: 0.5px;
+  margin-bottom : 0px;
+  min-height    : 32px;
+}
+
+.admin-profile {
+  cursor: pointer;
+}
+
+.admin-profile .mod-page {
+  padding: 0px 20px;
+}
+
+.mod-about.dropdown-button.show .dropdown-menu.show {
+  top           : 0px !important;
+  left          : auto !important;
+  width         : auto;
+  border-radius : 20px;
+  z-index       : 1111;
+  padding-top   : 10px;
+  box-shadow    : 0 5px 15px rgba(0, 0, 0, 0.13);
+  border        : 0;
+  padding-bottom: 20px;
+  right         : 0px;
+}
+
+.mod-page {
+  padding: 0px 10px;
+}
+
+.mod-page h6 {
+  font-size    : 18px;
+  font-weight  : 600;
+  word-break   : break-all;
+  margin-bottom: 15px;
+}
+
+.mod-about.dropdown-button.show .dropdown-menu.show {
+  min-width: auto;
+  max-width: initial;
+}
+
+
+.mod-page .admin-prf {
+  margin: 10px 0px;
+  cursor: pointer;
+}
+
+.mod-page .admin-prf:last-child {
+  margin-bottom: 0px;
+}
+
+.mod-page .admin-prf:hover a {
+  color: $primary !important;
+}
+
+.mod-page .admin-prf:hover svg {
+  fill: $primary !important;
+}
+
+span.admin-prf-icon {
+  padding-right: 10px;
+}
+
+.admin-prf a {
+  margin-left: 0px !important;
+}
+
+// samu css end
+
+.mod-page a {
+  margin       : 10px;
+  border-radius: 5px;
+}
+
+.mod-page a:hover {
+  text-decoration: none;
+  background     : #EDF5FF;
+  color          : #1A1F22 !important;
+}
+
+.mod-page {
+  padding: 0;
+
+  ul {
+    flex-direction: column;
+    min-width     : 200px;
+    align-items   : flex-start;
+    margin-bottom : 0px !important;
+
+    li {
+      width     : 100%;
+      text-align: left;
+
+      a {
+        margin : 0px !important;
+        padding: 5px 10px 0px 25px;
+        display: block;
+        width  : 100%;
+        color  : #1A1F22;
+
+        .mod-li {
+          width: 100%;
+
+          p {
+            font-size: 16px;
+          }
+        }
+      }
+    }
+  }
+}

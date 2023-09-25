@@ -1,0 +1,51 @@
+<!-- <h2 class="net-ops-title">{{language.Operations}}</h2> -->
+<div class="ccl-tabs"[ngClass]="[router.url.includes('/operations/workflows') ? 'mb-3' : '']">
+    <ul id="tabs" class="nav nav-tabs sub-tab">
+        <li class="nav-item">
+            <a routerLink="/cco/operations/cco-subscriber-operations/operations/devices-groups"
+                (Click)="$event.preventDefault()" class="nav-link small" id="deviceGroupTabId" routerLinkActive="active"
+                data-toggle="tab" class="nav-link">{{language.Device_groups}}</a>
+        </li>
+        <li class="nav-item">
+            <a data-toggle="tab" class="nav-link"
+                routerLink="/cco/operations/cco-subscriber-operations/operations/ONT-profile"
+                (Click)="$event.preventDefault()" class="nav-link small" id="profileONTTabId"
+                routerLinkActive="active">{{language['ONT Services Profiles']}}</a>
+        </li>
+        <li class="nav-item">
+            <a routerLink="/cco/operations/cco-subscriber-operations/operations/profiles" data-toggle="tab"
+                class="nav-link" (Click)="$event.preventDefault()" class="nav-link small" id="profileTabId"
+                routerLinkActive="active">{{language['RG Profiles']}}</a>
+        </li>
+        <li class="nav-item">
+            <a routerLink="/cco/operations/cco-subscriber-operations/operations/configuration-files-list"
+                (Click)="$event.preventDefault()" class="nav-link small" id="configFileTabId"
+                [ngClass]="[(router.url.includes('configuration-files-list')|| router.url.includes('configuration-files-form'))  ? 'active' : '']"
+                data-toggle="tab" class="nav-link">{{language.Config_Files}}</a>
+        </li>
+        <li class="nav-item">
+            <a routerLink="/cco/operations/cco-subscriber-operations/operations/software-images-list"
+                (Click)="$event.preventDefault()" class="nav-link small" id="swImgTabId"
+                [ngClass]="[(router.url.includes('software-images-list')|| router.url.includes('software-images-form'))  ? 'active' : '']"
+                data-toggle="tab" class="nav-link">{{language.Software_Images}}</a>
+        </li>
+        <li class="nav-item">
+            <a data-toggle="tab" class="nav-link"
+                routerLink="/cco/operations/cco-subscriber-operations/operations/workflows"
+                (Click)="$event.preventDefault()" class="nav-link small" id="workflowsTabId"
+                routerLinkActive="active">{{language.Work_Flows}}</a>
+        </li>
+        <!-- <li class="nav-item" *ngIf = "isDev">
+            <a data-toggle="tab" class="nav-link" routerLink="/cco/operations/cco-subscriber-operations/operations/alarm-work-flow"
+              (Click)="$event.preventDefault()" class="nav-link small" id="alarmWorkflowsTabId"
+              routerLinkActive="active">{{language.Alarm_work_flows}}</a>
+          </li> -->
+        <li class="nav-item">
+            <a data-toggle="tab" class="nav-link"
+                routerLink="/cco/operations/cco-subscriber-operations/operations/performance-testing"
+                (Click)="$event.preventDefault()" class="nav-link small" id="performanceTestingTabId"
+                routerLinkActive="active">{{language.Performance_Testing}}</a>
+        </li>
+    </ul>
+</div>
+<router-outlet></router-outlet>

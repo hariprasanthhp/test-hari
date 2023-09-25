@@ -1,0 +1,60 @@
+<!-- <section>
+  <div class="row">
+    <div class="col-md-12 px-0">
+      <div class="custom-selectbox col-md-3" id="current-issues-System">
+        <label>Reports</label>
+        <ng-select [searchable]="false" placeholder="Reports">
+          <ng-option value="Usage">Usage</ng-option>
+          <ng-option value="Rate"> Rate</ng-option>
+          <ng-option value="Monthly Usage "> Monthly Usage </ng-option>
+          <ng-option value="Applications">Applications </ng-option>
+          <ng-option value="Top Application Traffic"> Top Application Traffic </ng-option>
+        </ng-select>
+      </div>
+    </div>
+  </div>
+</section> -->
+<section class="m-2">
+  <div class="row mt-4">
+    <div class="col-md-12 ccl-tabs">
+      <ul id="tabs" class="nav nav-tabs sub-tab">
+        <li class="nav-item">
+          <a routerLink="/support/traffic-reports/reports/usage" (Click)="$event.preventDefault()" data-toggle="tab"
+            class="nav-link small" routerLinkActive="active"><span class="">{{ language.Usage }}</span></a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/support/traffic-reports/reports/rate" data-toggle="tab" class="nav-link small"
+            routerLinkActive="active"><span class="">{{ language.rate }}</span></a>
+        </li>
+
+        <li class="nav-item">
+          <a routerLink="/support/traffic-reports/reports/monthly-usage" data-toggle="tab" class="nav-link small"
+            routerLinkActive="active"><span class="">{{ language.Monthly_Usage }}</span></a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/support/traffic-reports/reports/applications" data-toggle="tab" class="nav-link small"
+            routerLinkActive="active"><span class="">{{ language.Applications }}</span></a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/support/traffic-reports/reports/top-application-traffic" data-toggle="tab"
+            class="nav-link small" routerLinkActive="active"><span class="">{{ language.Top_Appln_Traffic }}</span></a>
+        </li>
+        <!-- <li class="nav-item"><a routerLink="/support/traffic-reports/reports/top-end-points" data-toggle="tab"
+                        class="nav-link small" routerLinkActive="active"><span class="">{{language.Top_Endpoints}}</span></a>
+                </li> -->
+      </ul>
+      <br />
+      <div id="tabsContent" class="tab-content">
+        <div id="issue" class="tab-pane fade active show">
+          <div class="row pb-2"></div>
+        </div>
+        <div id="topology" class="tab-pane fade">
+          <div class="row pb-2"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</section>
+<router-outlet></router-outlet>

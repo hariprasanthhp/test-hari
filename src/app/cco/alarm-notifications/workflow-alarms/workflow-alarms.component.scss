@@ -1,0 +1,116 @@
+.heading-4 {
+
+    font-size     : 24px;
+    font-style    : normal;
+    font-weight   : 400;
+    line-height   : 30px;
+    letter-spacing: 0em;
+    text-align    : left;
+    border-bottom : 1px solid #CCCCCC;
+    padding-bottom: 5px;
+
+}
+
+.Lists {
+
+    font-size     : 15px;
+    font-style    : normal;
+    font-weight   : 400;
+    line-height   : 24px;
+    letter-spacing: 0em;
+    text-align    : left;
+    color         : #808080;
+
+}
+
+.box-list {
+    border       : 1px solid #EBEAEF;
+    box-sizing   : border-box;
+    box-shadow   : 2px 3px 43px -12px rgba(77, 77, 77, 0.15);
+    border-radius: 24px;
+    padding      : 26px;
+    height       : 940px;
+    overflow-y   : hidden;
+    margin-top   : 16px;
+    margin-bottom: 24px;
+}
+
+
+
+
+.alarm-menu-list {}
+
+
+.alarm-menu-list ul {
+    padding         : 0;
+    margin          : 0;
+    list-style      : none;
+    position        : relative;
+    border-radius   : 26px;
+    background-color: #EDF5FF;
+    width           : max-content;
+}
+
+.alarm-menu-list ul li {
+    display   : inline-block;
+    min-width : 110px;
+    text-align: center;
+}
+
+.alarm-menu-list ul li a {
+    display    : block;
+    padding    : 4px 12px 4px 13px;
+    color      : #333333;
+    font-size  : 14px;
+    line-height: 18px;
+
+    text-decoration: none;
+}
+
+.alarm-menu-list ul li a:hover {
+    background-color: #0054B2;
+    color           : #FFFFFF;
+    border-radius   : 26px;
+}
+
+.alarm-menu-list ul li a {
+    &.active {
+        background-color: #0054B2;
+        color           : #FFFFFF;
+        border-radius   : 26px;
+    }
+}
+
+.alarm-menu-list ul li.active a {
+
+    color: #FFFFFF;
+
+}
+
+.alarm-menu-info {
+    width: 100%;
+}
+
+.add-search-icon {
+    background-color: #0279FF;
+    width           : 40px;
+    height          : 100%;
+    border-radius   : 25px;
+    position        : absolute;
+    right           : 15px;
+    top             : 0px;
+    padding         : 7px;
+    padding-top     : 7px;
+}
+
+::ng-deep .dataTables_length {
+
+    display: none !important;
+
+}
+
+::ng-deep .dataTables_filter {
+
+    display: none !important;
+
+}

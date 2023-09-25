@@ -1,0 +1,2625 @@
+<div class="w-100 alert alert alert-danger fade show" *ngIf="error">
+  <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+  <button type="button" class="close" (click)="closeAlert()">
+    <span></span>
+  </button>
+  <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+</div>
+<div id="wifi-rg-container" class="container loader-wrapper" *ngIf="!metaData || !ssidSupport?.support"
+  style="min-height: 60vh">
+  <!-- <div class="loader" *ngIf="!metaData">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary">
+        <span class="sr-only">{{language.Loading}}</span>
+      </div>
+    </div>
+  </div> -->
+  <div class="loader-wrapper-info" *ngIf="!metaData">
+    <div class="loader" *ngIf="metaDataLoader">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row my-4" *ngIf="metaData && !ssidSupport?.support">
+    <div class="col-12 pl-0">
+      <p>{{ language["The Router does not support Wi-Fi"] }}</p>
+    </div>
+  </div>
+</div>
+
+<div id="wifi-extend-container" class="container" *ngIf="metaData && ssidSupport?.support">
+  <div class="loader" *ngIf="loading">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary">
+        <span class="sr-only">Loading...</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <button type="button" id="wifi-changelog-modal-open-btn" class="btn-default primary px-3 mr-2"
+        *ngIf="metaData?.ChannelChangeLogs24G || metaData?.ChannelChangeLogs5G || metaData?.ChannelChangeLogs6G"
+        (click)="channelchangesModalOpen()" [disabled]="!changeLogDataAvailable">
+        {{ language["Retrieve Channel Change Logs"] }}
+        <!-- <span
+          *ngIf="!changeLogDataAvailable" class="spinner-border spinner-border-sm"
+          aria-hidden="true"></span> -->
+      </button>
+      <!-- <button type="button" id="wifi-wps-modal-open-btn" (click)="showWPSWizard()" *ngIf="
+          metaData?.WpsStateIptv ||
+          metaData?.WpsState5G ||
+          metaData?.WpsState24G ||
+          metaData?.WpsStateBackhaul 
+        " class="btn-default btn-dft px-3 mx-2" [disabled]="!wpsDataAavilable && !showCountDown">
+        {{ language.WPS }}
+      </button> -->
+      <span class="cursor-pointer primary mx-3" id="wifi-refresh-page-btn" (click)="refreshAll()"
+        *ngIf="showWidgets.radioSummary">
+        <i class="fas fa-sync refreshicon"></i>
+      </span>
+      <!-- <button type="button" id="wifi-refresh-page-btn" (click)="refreshAll()" class="btn-default btn-dft px-3 mx-2"
+        *ngIf="showWidgets.radioSummary">{{language.Refresh}}</button> -->
+    </div>
+  </div>
+
+  <div id="wifi-backhaul-container" class="container px-0 mt-4 mb-5 loader-wrapper" style="min-height: 250px"
+    *ngIf="showWidgets.backhaul&&dmebackhaul">
+    <!--  <div id="wifi-backhaul-container" class="container px-0 mt-4 mb-5 loader-wrapper" style="min-height: 250px"
+    *ngIf="showWidgets.backhaul && ssoAuthService.getCscType() !== 'DME'">-->
+    <div class="loader-wrapper-info" *ngIf="showBackhaulLoading">
+      <div class="loader">
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border text-primary">
+            <span class="sr-only">{{ language.Loading }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 border-bottom mt-3 mb-1 px-0" id="wifi-backhaul-title">
+        <h4 class="user-name">{{ language.Backhaul_Information }}</h4>
+      </div>
+
+      <div class="w-100 alert alert alert-danger fade show" *ngIf="backhaulError">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+        <button type="button" class="close" (click)="backhaulError = false">
+          <span></span>
+        </button>
+        <div class="d-inline-flex" [innerHtml]="backhaulErrorInfo"></div>
+      </div>
+
+      <div class="col-md-12 ccl-wifi-table my-1 px-0" *ngIf="showBackhaulData && !noBackhaulAvailable">
+        <table id="wifi-backhaul-table" class="wifi-backhaul-table table table-borderless backhaul-information-table">
+          <thead>
+            <tr>
+              <!-- <th scope="col">{{language.Emesh_Status}}</th> -->
+              <th scope="col">{{ language.Signal_Strength }}</th>
+              <th scope="col">{{ language.SNR }}</th>
+              <!--<th scope="col">{{ language.Airtime_Usage }}</th>-->
+              <th scope="col">{{ language.DS_PHY_Rate }}</th>
+              <th scope="col">{{ language.US_PHY_Rate }}</th>
+              <th scope="col">{{ language.Dropped_Packets }}</th>
+              <th scope="col">{{ language.RTX_Packets }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <!-- <th>-</th> -->
+              <th>
+                {{
+                backhaulData["Signal-strength"] != undefined
+                ? backhaulData["Signal-strength"]
+                : "N/A"
+                }}
+                <span class="small-text" *ngIf="backhaulData['Signal-strength']">dBm</span>
+                <!-- <span
+                  class="arrow-img arrow-img-d"></span> <img src="./assets/images/ic_upload-primary-down.svg"
+                  class="red">  -->
+              </th>
+              <th>
+                {{ backhaulData["SNR"] != undefined ? backhaulData["SNR"] : "N/A" }}
+                <span *ngIf="backhaulData['SNR']" class="small-text">dB</span>
+                <!-- <img
+                  src="./assets/images/ic_upload-primary.svg" style="transform: rotate(180deg);" class="red"> -->
+              </th>
+              <!--<th>
+                {{
+                backhaulData["Airtime-usage"] != undefined
+                ? backhaulData["Airtime-usage"]
+                : "N/A"
+                }}
+                <span *ngIf="backhaulData['Airtime-usage']" class="small-text">%</span>
+                <!-- <img
+                  src="./assets/images/ic_upload-primary-down.svg" style="transform: rotate(180deg);" class="red"> -->
+              <!-- </th>-->
+              <th>
+                {{
+                backhaulData["DS-phy-rate"] != undefined
+                ? kbpsTO(backhaulData["DS-phy-rate"], true, false)
+                : "N/A"
+                }}
+                <span *ngIf="backhaulData['DS-phy-rate']" class="small-text">{{
+                  backhaulData["DS-phy-rate"]
+                  ? kbpsTO(backhaulData["DS-phy-rate"], false, true) + "bps"
+                  : "Kbps"
+                  }}</span>
+                <!-- <img
+                  src="./assets/images/ic_upload-primary.svg" class="red"> -->
+              </th>
+              <th>
+                {{
+                backhaulData["US-phy-rate"] != undefined
+                ? kbpsTO(backhaulData["US-phy-rate"], true, false)
+                : "N/A"
+                }}
+                <span *ngIf="backhaulData['US-phy-rate']" class="small-text">{{
+                  backhaulData["US-phy-rate"]
+                  ? kbpsTO(backhaulData["US-phy-rate"], false, true) + "bps"
+                  : "Kbps"
+                  }}</span>
+                <!-- <img
+                                          src="./assets/images/ic_upload-primary.svg" class="red"> -->
+              </th>
+              <th>
+                {{
+                backhaulData["DS-packet-drops"] != undefined
+                ? backhaulData["DS-packet-drops"]
+                : "N/A"
+                }}
+                <!-- <img
+                  src="./assets/images/ic_upload-primary.svg" class="red"> -->
+              </th>
+              <th>
+                {{
+                backhaulData["DS-retx-packets"] != undefined
+                ? backhaulData["DS-retx-packets"]
+                : "N/A"
+                }}
+                <!-- <img
+                  src="./assets/images/ic_upload-primary.svg" class="red"> -->
+              </th>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-md-12 ccl-wifi-table my-1 px-0 overflow-auto" *ngIf="showBackhaulData && !noBackhaulAvailable">
+        <table class="table-borderless backhaul-information-table">
+          <thead>
+            <tr>
+              <th scope="col">
+                <div class="backhaul-info">{{ language.Connection_Type }}</div>
+              </th>
+              <th scope="col" class="min-w160">
+                <div class="backhaul-info"></div>
+                {{ language.SSID }}
+              </th>
+              <th scope="col" class="min-w160">
+                <div class="backhaul-info">{{ language.Mode }}</div>
+              </th>
+              <th scope="col">
+                <div class="backhaul-info">{{ language.Access_Point }}</div>
+              </th>
+            </tr>
+          </thead>
+          <tbody style="font-size: 30px">
+            <tr>
+              <th>
+                <div class="backhaul-info">
+                  {{
+                  backhaulData["Connection-type"]
+                  ? backhaulData["Connection-type"]
+                  : "-"
+                  }}
+                </div>
+              </th>
+              <th>
+                <div class="backhaul-info">
+                  {{ backhaulData["SSID"] ? backhaulData["SSID"] : "-" }}
+                </div>
+              </th>
+              <th>
+                <div class="backhaul-info">
+                  {{
+                  backhaulData["Mode"] ? "802." + backhaulData["Mode"] : "-"
+                  }}
+                </div>
+              </th>
+              <th>
+                <div class="backhaul-info">
+                  {{
+                  backhaulData["AccessPoint"]
+                  ? backhaulData["AccessPoint"]
+                  : "-"
+                  }}
+                </div>
+              </th>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div *ngIf="noBackhaulAvailable&& !noBackhauloverethernet" class="col-md-12 ccl-wifi-table my-1 px-0">
+      <div>
+        {{ language["No Backhaul Information Available"] }}
+      </div>
+    </div>
+    <div *ngIf="noBackhauloverethernet" class="col-md-12 ccl-wifi-table my-1 px-0">
+      <div>
+        {{ language["Backhaul is done over ethernet"] }}
+      </div>
+    </div>
+  </div>
+
+  <section class="" id="wifi-signal-strength-container">
+    <div class="row mt-4" *ngIf="
+        (showWidgets.signalStrength || showWidgets.txrx) && backHaulResReceived &&
+        ssoAuthService.getCscType() !== 'DME'
+      " [hidden]="showBackhaulLoading">
+      <div class="col-md-12 px-0 ">
+        <ul id="tabs" class="nav nav-tabs wifi-signal-strength-container-tab">
+          <li class="nav-item" (click)="isSignalStrength = true" id="wifi-signal-strength-tab">
+            <a class="nav-link small" [ngClass]="{ active: isSignalStrength === true }">{{
+              language.Signal_Strength_PHY_Rate }}</a>
+          </li>
+          <li class="nav-item" (click)="isSignalStrength = false" id="wifi-txrx-tab">
+            <a class="nav-link small" [ngClass]="{ active: isSignalStrength === false }">{{ language.TX_RX_Bytes }}</a>
+          </li>
+        </ul>
+        <br />
+        <app-signal-strength [orgId]="orgId" [fsan]="latestFSAN" [routerData]="routerData" [RGRouter]="RGRouter"
+          *ngIf="isSignalStrength" [showSteeringLog]="false" [showCharts]="true">
+        </app-signal-strength>
+        <app-tx-rx [orgId]="orgId" [fsan]="latestFSAN" [routerData]="routerData" *ngIf="!isSignalStrength"></app-tx-rx>
+      </div>
+    </div>
+    <!--<section class="loader-wrapper" style="min-height: 300px" *ngIf="showWidgets.radioSummary">
+      <div class="loader-wrapper-info" *ngIf="radioSummaryLoading">
+        <div class="loader">
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+              <span class="sr-only">{{ language.Loading }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="container">
+        <div class="my-3">
+          <div id="wifi-ext-radio-summary-container" class="radio-details-container">
+            <div class="radio-details-item" id="wifi-ext-radio-summary-24g">
+              <div class="d-flex border-bottom mb-2">
+                <div class="col-lg-10 col-md-6 col-sm-12 px-0">
+                  <h2 class="user-name">
+                    2.4GHz {{language['Radio Details']}}
+                  </h2>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-10 text-right px-0">
+                  <span id="wifi-ext-radio-24g-modal-btn" class="cursor-pointer" (click)="editRadioSummary('2.4G')"
+                    *ngIf="
+                      wifiWrite &&
+                      showRadioSummary &&
+                      radioSummary &&
+                      radioSummary['2.4G'] &&
+                      (objectExistence(metaData?.RadioStatus24G) ||
+                        objectExistence(metaData?.RadioMisc24G)) &&
+                      showWidgets.radioSummaryEdit
+                    ">
+                    <i class="fas fa-pencil-alt"></i>
+                  </span>
+                </div>
+              </div>
+              <div class="d-flex" *ngIf="
+                  showRadioSummary &&
+                  isRadio24gAvailable &&
+                  radioSummary &&
+                  radioSummary['2.4G']
+                ">
+                <div class="col-md-12 px-0 support-key-value">
+                  <table class="">
+                    <tbody>
+                      <tr *ngIf="metaData?.RadioStatus24G?.RadioEnabled">
+                        <th scope="row">
+                          {{ language.Wireless_Radio_Status }}
+                        </th>
+                        <td [ngClass]="
+                            radioSummary['2.4G']?.RadioEnabled == 'false'
+                              ? 'text-red'
+                              : 'text-green'
+                          ">
+                          {{
+                          radioSummary["2.4G"]?.RadioEnabled &&
+                          radioSummary["2.4G"]?.RadioEnabled == "true"
+                          ? language.Enabled
+                          : language.Disabled
+                          }}
+                          <span *ngIf="
+                              radioSummary['2.4G']?.RadioEnabled &&
+                              radioSummary['2.4G']?.RadioEnabled == 'false'
+                            "><img src="assets/img/Ic_warning-18px.svg" /></span>
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus24G?.Mode">
+                        <th scope="row">{{ language.Wireless_Mode }}</th>
+                        <td>
+                          {{ checkWirelessMode(radioSummary["2.4G"], "2.4G") }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus24G?.Channel">
+                        <th scope="row">{{ language.Channel_Mode }}</th>
+                        <td>
+                          {{
+                          radioSummary["2.4G"]?.AutoChannelEnable &&
+                          (radioSummary["2.4G"]?.AutoChannelEnable ==
+                          "true" ||
+                          radioSummary["2.4G"]?.AutoChannelEnable == "1")
+                          ? "Auto"
+                          : "Manual"
+                          }}
+                          ({{
+                          radioSummary["2.4G"]?.Channel
+                          ? radioSummary["2.4G"]?.Channel
+                          : ""
+                          }})
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus24G?.Bandwidth">
+                        <th scope="row">{{ language.Channel_Bandwidth }}</th>
+                        <td>
+                          {{
+                          radioSummary["2.4G"]?.Bandwidth
+                          ? radioSummary["2.4G"]?.Bandwidth
+                          : ""
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus24G?.NoiseLevel">
+                        <th scope="row">{{ language.Noise_Level }}</th>
+                        <td>
+                          {{
+                          radioSummary["2.4G"]?.NoiseLevel
+                          ? radioSummary["2.4G"]?.NoiseLevel
+                          : 0
+                          }}dBm
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus24G?.PowerLevel">
+                        <th scope="row">{{ language.Power_Level }}</th>
+                        <td>
+                          {{
+                          radioSummary["2.4G"]?.PowerLevel
+                          ? radioSummary["2.4G"]?.PowerLevel
+                          : 0
+                          }}%
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus24G?.PacketsSent">
+                        <th scope="row">{{ language.Packets_Sent }}</th>
+                        <td>
+                          {{
+                          radioSummary["2.4G"]?.PacketsSent
+                          ? radioSummary["2.4G"]?.PacketsSent
+                          : 0
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus24G?.PacketsReceived">
+                        <th scope="row">{{ language.Packets_Received }}</th>
+                        <td>
+                          {{
+                          radioSummary["2.4G"]?.PacketsReceived
+                          ? radioSummary["2.4G"]?.PacketsReceived
+                          : 0
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="
+                          metaData?.RadioStatus24G
+                            ?.PacketsReTransmittedDownstream
+                        ">
+                        <th scope="row">{{ language.Packets_RETX_DS }}</th>
+                        <td>
+                          {{
+                          radioSummary["2.4G"]?.PacketsReTransmittedDownstream
+                          ? radioSummary["2.4G"]
+                          .PacketsReTransmittedDownstream
+                          : 0
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="
+                          metaData?.RadioStatus24G?.PacketsDroppedDownstream
+                        ">
+                        <th scope="row">
+                          {{ language["Packets Dropped DS"] }}
+                        </th>
+                        <td>
+                          {{
+                          radioSummary["2.4G"]?.PacketsDroppedDownstream
+                          ? radioSummary["2.4G"]?.PacketsDroppedDownstream
+                          : 0
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus24G?.MulticastForwarding">
+                        <th scope="row">
+                          {{ language["Multicast Forwarding"] }}
+                        </th>
+                        <td>
+                          {{
+                          radioSummary["2.4G"]?.MulticastForwarding &&
+                          radioSummary["2.4G"]?.MulticastForwarding == "true"
+                          ? language["On"]
+                          : language["Off"]
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus24G?.AirtimeFairness">
+                        <th scope="row">{{ language["Airtime Fairness"] }}</th>
+                        <td>
+                          {{
+                          radioSummary["2.4G"]?.AirtimeFairness &&
+                          radioSummary["2.4G"]?.AirtimeFairness == "true"
+                          ? language["On"]
+                          : language["Off"]
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus24G?.FrameBurst">
+                        <th scope="row">{{ language["Frame Burst"] }}</th>
+                        <td>
+                          {{
+                          radioSummary["2.4G"]?.FrameBurst &&
+                          radioSummary["2.4G"]?.FrameBurst == "true"
+                          ? language["On"]
+                          : language["Off"]
+                          }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="row" *ngIf="
+                  !isRadio24gAvailable &&
+                  showRadioSummary &&
+                  !radioSummaryLoading
+                ">
+                <div class="col-md-12 px-0 support-key-value">
+                  <div>
+                    {{ language["Radio 2.4GHz is Disabled"] }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="radio-details-item" id="wifi-ext-radio-summary-5g" *ngIf="show5gWidgets">
+              <div class="d-flex border-bottom mb-2">
+                <div class="col-lg-10 col-md-6 col-sm-12 px-0">
+                  <h2 class="user-name">5GHz {{language['Radio Details']}}</h2>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-10 text-right px-0">
+                  <span class="cursor-pointer" id="wifi-ext-radio-5g-modal-btn" (click)="editRadioSummary('5G')" *ngIf="
+                      wifiWrite &&
+                      showRadioSummary &&
+                      radioSummary &&
+                      radioSummary['5G'] &&
+                      (objectExistence(metaData?.RadioStatus5G) ||
+                        objectExistence(metaData?.RadioMisc5G)) &&
+                      showWidgets.radioSummaryEdit
+                    ">
+                    <i class="fas fa-pencil-alt"></i>
+                  </span>
+                </div>
+              </div>
+              <div class="d-flex" *ngIf="
+                  showRadioSummary &&
+                  isRadio5gAvailable &&
+                  radioSummary &&
+                  radioSummary['5G']
+                ">
+                <div class="col-md-12 px-0 support-key-value">
+                  <table class="">
+                    <tbody>
+                      <tr *ngIf="metaData?.RadioStatus5G?.RadioEnabled">
+                        <th scope="row">
+                          {{ language.Wireless_Radio_Status }}
+                        </th>
+                        <td [ngClass]="
+                            radioSummary['5G']?.RadioEnabled == 'false'
+                              ? 'text-red'
+                              : 'text-green'
+                          ">
+                          {{
+                          radioSummary["5G"]?.RadioEnabled &&
+                          radioSummary["5G"]?.RadioEnabled == "true"
+                          ? language.Enabled
+                          : language.Disabled
+                          }}
+                          <span *ngIf="
+                              radioSummary['5G']?.RadioEnabled &&
+                              radioSummary['5G']?.RadioEnabled == 'false'
+                            "><img src="assets/img/Ic_warning-18px.svg" /></span>
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus5G?.Mode">
+                        <th scope="row">{{ language.Wireless_Mode }}</th>
+                        <td>
+                          {{ checkWirelessMode(radioSummary["5G"], "5G") }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus5G?.Channel">
+                        <th scope="row">{{ language.Channel_Mode }}</th>
+                        <!-- <td>Auto ({{radioSummary['5G']?.Channel ? radioSummary['5G']?.Channel : 0}})</td> -->
+    <!--                       <td>
+                          {{
+                          radioSummary["5G"]?.AutoChannelEnable &&
+                          (radioSummary["5G"]?.AutoChannelEnable == "true" ||
+                          radioSummary["5G"]?.AutoChannelEnable == "1")
+                          ? "Auto"
+                          : "Manual"
+                          }}
+                          ({{
+                          radioSummary["5G"]?.Channel
+                          ? radioSummary["5G"]?.Channel
+                          : ""
+                          }})
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus5G?.Bandwidth">
+                        <th scope="row">{{ language.Channel_Bandwidth }}</th>
+                        <td>
+                          {{
+                          radioSummary["5G"]?.Bandwidth
+                          ? radioSummary["5G"]?.Bandwidth
+                          : ""
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus5G?.NoiseLevel">
+                        <th scope="row">{{ language.Noise_Level }}</th>
+                        <td>
+                          {{
+                          radioSummary["5G"]?.NoiseLevel
+                          ? radioSummary["5G"]?.NoiseLevel
+                          : 0
+                          }}dBm
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus5G?.PowerLevel">
+                        <th scope="row">Power Level</th>
+                        <td>
+                          {{
+                          radioSummary["5G"]?.PowerLevel
+                          ? radioSummary["5G"]?.PowerLevel
+                          : 0
+                          }}%
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus5G?.PacketsSent">
+                        <th scope="row">{{ language.Packets_Sent }}</th>
+                        <td>
+                          {{
+                          radioSummary["5G"]?.PacketsSent
+                          ? radioSummary["5G"]?.PacketsSent
+                          : 0
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus5G?.PacketsReceived">
+                        <th scope="row">{{ language.Packets_Received }}</th>
+                        <td>
+                          {{
+                          radioSummary["5G"]?.PacketsReceived
+                          ? radioSummary["5G"]?.PacketsReceived
+                          : 0
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="
+                          metaData?.RadioStatus5G
+                            ?.PacketsReTransmittedDownstream
+                        ">
+                        <th scope="row">{{ language.Packets_RETX_DS }}</th>
+                        <td>
+                          {{
+                          radioSummary["5G"]?.PacketsReTransmittedDownstream
+                          ? radioSummary["5G"]
+                          ?.PacketsReTransmittedDownstream
+                          : 0
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="
+                          metaData?.RadioStatus5G?.PacketsDroppedDownstream
+                        ">
+                        <th scope="row">
+                          {{ language["Packets Dropped DS"] }}
+                        </th>
+                        <td>
+                          {{
+                          radioSummary["5G"]?.PacketsDroppedDownstream
+                          ? radioSummary["5G"]?.PacketsDroppedDownstream
+                          : 0
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus5G?.DFS">
+                        <th scope="row">DFS</th>
+                        <td>
+                          {{
+                          radioSummary["5G"]?.DFS &&
+                          radioSummary["5G"]?.DFS == "true"
+                          ? language["On"]
+                          : language["Off"]
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus5G?.MUMIMO">
+                        <th scope="row">MU-MIMO</th>
+                        <td>
+                          {{
+                          radioSummary["5G"]?.MUMIMO &&
+                          radioSummary["5G"]?.MUMIMO == "true"
+                          ? language["On"]
+                          : language["Off"]
+                          }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="row" *ngIf="
+                  !isRadio5gAvailable &&
+                  showRadioSummary &&
+                  !radioSummaryLoading
+                ">
+                <div class="col-md-12 px-0 support-key-value">
+                  <div>
+                    {{ language["Radio 5GHz is Disabled"] }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="radio-details-item" id="wifi-rg-radio-summary-6g"
+              *ngIf="showRadioSummary && radioSummary && radioSummary['6G']">
+              <div class="row border-bottom">
+                <div class="col-lg-10 col-md-6 col-sm-12">
+                  <div class="ccl-Secondary-title user-name"> 6GHz {{language['Radio
+                    Details']}}
+                  </div>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-10 text-right">
+                  <span class="cursor-pointer" id="wifi-rg-radio-6g-modal-btn" title="{{language.Edit}}"
+                    (click)="editRadioSummary('6G')" *ngIf="
+                                        showRadioSummary &&
+                                        isRadio6gAvailable &&
+                                        radioSummary['6G'] &&
+                                        (objectExistence(metaData?.RadioStatus6G) ||
+                                          objectExistence(metaData?.RadioMisc6G)) &&
+                                        wifiWrite
+                                      ">
+                    <i class="fas fa-pencil-alt primary "></i>
+                  </span>
+                </div>
+              </div>
+              <div class="row" *ngIf="
+                            showRadioSummary &&
+                            isRadio6gAvailable &&
+                            radioSummary &&
+                            radioSummary['6G']
+                          ">
+                <div class="col-md-12 support-key-value support-cus-table">
+                  <table class="">
+                    <tbody>
+                      <tr *ngIf="metaData?.RadioStatus6G?.RadioEnabled">
+                        <th scope="row">{{ language.Wireless_Radio_Status }}</th>
+                        <td [ngClass]="
+                                                    radioSummary['6G']?.RadioEnabled == 'false'
+                                                      ? 'text-red'
+                                                      : 'text-green'
+                                                  ">
+                          {{
+                          radioSummary["6G"]?.RadioEnabled &&
+                          radioSummary["6G"]?.RadioEnabled == "true"
+                          ? language.Enabled
+                          : language.Disabled
+                          }}
+                          <span *ngIf="
+                                                      radioSummary['6G']?.RadioEnabled &&
+                                                      radioSummary['6G']?.RadioEnabled == 'false'
+                                                    ">
+                            <img src="assets/img/Ic_warning-18px.svg" /></span>
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus6G?.Mode">
+                        <th scope="row">{{ language.Wireless_Mode }}</th>
+                        <td>
+                          {{ checkWirelessMode(radioSummary["6G"], "6G") }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus6G?.Channel">
+                        <th scope="row">{{ language.Channel_Mode }}</th>
+                        <td>
+                          {{
+                          radioSummary["6G"]?.AutoChannelEnable &&
+                          (radioSummary["6G"]?.AutoChannelEnable == "true" ||
+                          radioSummary["6G"]?.AutoChannelEnable == "1")
+                          ? "Auto"
+                          : "Manual"
+                          }}
+                          ({{
+                          radioSummary["6G"]?.Channel
+                          ? radioSummary["6G"]?.Channel
+                          : ""
+                          }})
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus6G?.Bandwidth">
+                        <th scope="row">{{ language.Channel_Bandwidth }}</th>
+                        <td>
+                          {{
+                          radioSummary["6G"]?.Bandwidth
+                          ? radioSummary["6G"]?.Bandwidth
+                          : ""
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus6G?.NoiseLevel">
+                        <th scope="row">{{ language.Noise_Level }}</th>
+                        <td>
+                          {{
+                          radioSummary["6G"]?.NoiseLevel
+                          ? radioSummary["6G"]?.NoiseLevel
+                          : 0
+                          }}dBm
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus6G?.PowerLevel">
+                        <th scope="row">{{ language.Power_Level }}</th>
+                        <td>
+                          {{
+                          radioSummary["6G"]?.PowerLevel
+                          ? radioSummary["6G"]?.PowerLevel
+                          : 0
+                          }}%
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus6G?.PacketsSent">
+                        <th scope="row">{{ language.Packets_Sent }}</th>
+                        <td>
+                          {{
+                          radioSummary["6G"]?.PacketsSent
+                          ? radioSummary["6G"]?.PacketsSent
+                          : 0
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus6G?.PacketsReceived">
+                        <th scope="row">{{ language.Packets_Received }}</th>
+                        <td>
+                          {{
+                          radioSummary["6G"]?.PacketsReceived
+                          ? radioSummary["6G"]?.PacketsReceived
+                          : 0
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="
+                                                  metaData?.RadioStatus6G?.PacketsReTransmittedDownstream
+                                                ">
+                        <th scope="row">{{ language.Packets_RETX_DS }}</th>
+                        <td>
+                          {{
+                          radioSummary["6G"]?.PacketsReTransmittedDownstream
+                          ? radioSummary["6G"]
+                          .PacketsReTransmittedDownstream
+                          : 0
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus6G?.PacketsDroppedDownstream">
+                        <th scope="row">{{ language["Packets Dropped DS"] }}</th>
+                        <td>
+                          {{
+                          radioSummary["6G"]?.PacketsDroppedDownstream
+                          ? radioSummary["6G"]?.PacketsDroppedDownstream
+                          : 0
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus6G?.MulticastForwarding">
+                        <th scope="row">
+                          {{ language["Multicast Forwarding"] }}
+                        </th>
+                        <td>
+                          {{
+                          radioSummary["6G"]?.MulticastForwarding &&
+                          radioSummary["6G"]?.MulticastForwarding == "true"
+                          ? language["On"]
+                          : language["Off"]
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus6G?.AirtimeFairness">
+                        <th scope="row">{{ language["Airtime Fairness"] }}</th>
+                        <td>
+                          {{
+                          radioSummary["6G"]?.AirtimeFairness &&
+                          radioSummary["6G"]?.AirtimeFairness == "true"
+                          ? language["On"]
+                          : language["Off"]
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus6G?.FrameBurst">
+                        <th scope="row">{{ language["Frame Burst"] }}</th>
+                        <td>
+                          {{
+                          radioSummary["6G"]?.FrameBurst &&
+                          radioSummary["6G"]?.FrameBurst == "true"
+                          ? language["On"]
+                          : language["Off"]
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus6G?.DFS">
+                        <th scope="row">DFS</th>
+                        <td>
+                          {{
+                          radioSummary["6G"]?.DFS &&
+                          radioSummary["6G"]?.DFS == "true"
+                          ? language["On"]
+                          : language["Off"]
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus6G?.MUMIMO">
+                        <th scope="row">MU-MIMO</th>
+                        <td>
+                          {{
+                          radioSummary["6G"]?.MUMIMO &&
+                          radioSummary["6G"]?.MUMIMO == "true"
+                          ? language["On"]
+                          : language["Off"]
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus6G?.PSCOnly">
+                        <th scope="row">{{language['PSC Only']}}</th>
+                        <td>
+                          {{
+                          radioSummary["6G"]?.PSCOnly &&
+                          radioSummary["6G"]?.PSCOnly == "true"
+                          ? language["On"]
+                          : language["Off"]
+                          }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="row" *ngIf="radioSummary && radioSummary['6G'] && !objectExistence(radioSummary['6G'])">
+                <div class="col-md-12">
+                  {{ language.radioStatusIsNotAvailable('6G') }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>-->
+
+    <!--radiodetails with new api as below -->
+    <section class="loader-wrapper" style="min-height: 300px"
+      *ngIf="showWidgets.radiodetails || this.showWidgets.radioSummary">
+      <div class="loader-wrapper-info" *ngIf="radiodetailsLoading">
+        <div class="loader">
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+              <span class="sr-only">{{ language.Loading }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="container">
+        <div class="my-3">
+          <div id="wifi-ext-radio-summary-container" class="radio-details-container">
+            <div class="radio-details-item" *ngIf="metaData.RadioStatistics24G || metaData.RadioStatus24G "
+              id="wifi-ext-radio-details-24g">
+              <div class="d-flex border-bottom mb-2">
+                <div class="col-lg-10 col-md-6 col-sm-12 px-0">
+                  <div class="ccl-Secondary-title user-name">2.4GHz {{language['Radio Details']}}</div>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-10 text-right px-0">
+                  <span id="wifi-ext-radio-24g-modal-btn" class="cursor-pointer" (click)="editRadioSummary('2.4G')"
+                    *ngIf="
+                      wifiWrite &&
+                      isRadio24gAvailable &&
+                      showRadioSummary &&
+                      radiodetails &&
+                      radiodetails['2.4G'] &&
+                      (objectExistence(metaData?.RadioStatus24G) ||
+                        objectExistence(metaData?.RadioMisc24G)) 
+                    ">
+                    <i class="fas fa-pencil-alt"></i>
+                  </span>
+                </div>
+              </div>
+              <div class="d-flex" *ngIf="
+                  isRadiodetails24g &&
+                  radiodetails &&
+                  radiodetails['2.4G']
+                ">
+                <div class="col-md-12 px-0 support-key-value">
+                  <table class="">
+                    <tbody>
+
+                      <tr *ngIf="metaData?.RadioStatus24G?.RadioEnabled">
+                        <th scope="row">{{ language.Wireless_Radio_Status }}</th>
+                        <td [ngClass]="
+                        radiodetails['2.4G']?.RadioEnabled == 'false'
+                                  ? 'text-red'
+                                  : 'text-green'
+                              ">
+                          {{
+                          radiodetails["2.4G"]?.RadioEnabled &&
+                          radiodetails["2.4G"]?.RadioEnabled == "true"
+                          ? language.Enabled
+                          : language.Disabled
+                          }}
+                          <span *ngIf="
+                          radiodetails['2.4G']?.RadioEnabled &&
+                          radiodetails['2.4G']?.RadioEnabled == 'false'
+                                ">
+                            <img src="assets/img/Ic_warning-18px.svg" /></span>
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus24G?.Mode">
+                        <th scope="row">{{ language.Wireless_Mode }}</th>
+                        <td>
+                          {{ checkWirelessMode(radiodetails["2.4G"], "2.4G") }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus24G?.Channel">
+                        <th scope="row">{{ language.Channel_Mode }}</th>
+                        <td>
+                          {{
+                          (radiodetails["2.4G"]?.AutoChannelEnable &&
+                          (radiodetails["2.4G"]?.AutoChannelEnable == "true" ||
+                          radiodetails["2.4G"]?.AutoChannelEnable == "1")) || (this.metaData?.AutoChannel24G &&
+                          radiodetails["2.4G"]?.Channel==0)
+                          ? "Auto"
+                          : "Manual"
+                          }}
+                          ({{
+                          radiodetails["2.4G"]?.Channel
+                          ? radiodetails["2.4G"]?.Channel
+                          : ""
+                          }})
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus24G?.Bandwidth">
+                        <th scope="row">{{ language.Channel_Bandwidth }}</th>
+                        <td>
+                          {{
+                          radiodetails["2.4G"]?.Bandwidth
+                          ? radiodetails["2.4G"]?.Bandwidth
+                          : ""
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus24G?.NoiseLevel || metaData?.RadioStatistics24G?.NoiseLevel">
+                        <th scope="row">{{ language.Noise_Level }}</th>
+                        <td>
+                          {{
+                          radiodetails["2.4G"]?.NoiseLevel
+                          ? radiodetails["2.4G"]?.NoiseLevel
+                          : 0
+                          }}dBm
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus24G?.PowerLevel">
+                        <th scope="row">{{ language.Power_Level }}</th>
+                        <td>
+                          {{
+                          radiodetails["2.4G"]?.PowerLevel
+                          ? radiodetails["2.4G"]?.PowerLevel
+                          : 0
+                          }}{{unitfor24g ? unitfor24g : '%'}}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus24G?.PacketsSent || metaData?.RadioStatistics24G?.PacketsSent">
+                        <th scope="row">{{ language.Packets_Sent }}</th>
+                        <td>
+                          {{
+                          radiodetails["2.4G"]?.PacketsSent
+                          ? radiodetails["2.4G"]?.PacketsSent
+                          : 0
+                          }}
+                        </td>
+                      </tr>
+                      <tr
+                        *ngIf="metaData?.RadioStatus24G?.PacketsReceived || metaData?.RadioStatistics24G?.PacketsReceived">
+                        <th scope="row">{{ language.Packets_Received }}</th>
+                        <td>
+                          {{
+                          radiodetails["2.4G"]?.PacketsReceived
+                          ? radiodetails["2.4G"]?.PacketsReceived
+                          : 0
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="
+                              metaData?.RadioStatus24G?.PacketsReTransmittedDownstream || metaData?.RadioStatistics24G
+                              ?.PacketsReTransmittedDownstream
+                            ">
+                        <th scope="row">{{ language.Packets_RETX_DS }}</th>
+                        <td>
+                          {{
+                          radiodetails["2.4G"]?.PacketsReTransmittedDownstream
+                          ? radiodetails["2.4G"]
+                          .PacketsReTransmittedDownstream
+                          : 0
+                          }}
+                        </td>
+                      </tr>
+                      <tr
+                        *ngIf="metaData?.RadioStatus24G?.PacketsDroppedDownstream || metaData?.RadioStatistics24G?.PacketsDroppedDownstream">
+                        <th scope="row">{{ language["Packets Dropped DS"] }}</th>
+                        <td>
+                          {{
+                          radiodetails["2.4G"]?.PacketsDroppedDownstream
+                          ? radiodetails["2.4G"]?.PacketsDroppedDownstream
+                          : 0
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus24G?.MulticastForwarding">
+                        <th scope="row">
+                          {{ language["Multicast Forwarding"] }}
+                        </th>
+                        <td>
+                          {{
+                          radiodetails["2.4G"]?.MulticastForwarding &&
+                          radiodetails["2.4G"]?.MulticastForwarding == "true"
+                          ? language["On"]
+                          : language["Off"]
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus24G?.AirtimeFairness">
+                        <th scope="row">{{ language["Airtime Fairness"] }}</th>
+                        <td>
+                          {{
+                          radiodetails["2.4G"]?.AirtimeFairness &&
+                          radiodetails["2.4G"]?.AirtimeFairness == "true"
+                          ? language["On"]
+                          : language["Off"]
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus24G?.FrameBurst">
+                        <th scope="row">{{ language["Frame Burst"] }}</th>
+                        <td>
+                          {{
+                          radiodetails["2.4G"]?.FrameBurst &&
+                          radiodetails["2.4G"]?.FrameBurst == "true"
+                          ? language["On"]
+                          : language["Off"]
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatistics24G?.Channel">
+                        <th scope="row">{{ language.Channel }}</th>
+                        <td>
+                          {{
+                          radiodetails["2.4G"]?.Channel
+                          ? radiodetails["2.4G"]?.Channel
+                          : ""
+                          }}
+                        </td>
+                      </tr>
+                      <!--      <tr *ngIf="metaData?.RadioStatistics24G?.NoiseLevel">
+                        <th scope="row">{{ language.Noise_Level }}</th>
+                        <td>
+                          {{
+                            radiodetails["2.4G"]?.NoiseLevel
+                          ? radiodetails["2.4G"]?.NoiseLevel
+                          : 0
+                          }}dBm
+                        </td>
+                      </tr>
+                                           <tr *ngIf="metaData?.RadioStatistics24G?.PacketsSent">
+                        <th scope="row">{{ language.Packets_Sent }}</th>
+                        <td>
+                          {{
+                            radiodetails["2.4G"]?.PacketsSent
+                          ? radiodetails["2.4G"]?.PacketsSent
+                          : 0
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatistics24G?.PacketsReceived">
+                        <th scope="row">{{ language.Packets_Received }}</th>
+                        <td>
+                          {{
+                            radiodetails["2.4G"]?.PacketsReceived
+                          ? radiodetails["2.4G"]?.PacketsReceived
+                          : 0
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="
+                          metaData?.RadioStatistics24G
+                            ?.PacketsReTransmittedDownstream
+                        ">
+                        <th scope="row">{{ language.Packets_RETX_DS }}</th>
+                        <td>
+                          {{
+                            radiodetails["2.4G"]?.PacketsReTransmittedDownstream
+                          ? radiodetails["2.4G"]
+                          .PacketsReTransmittedDownstream
+                          : 0
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="
+                          metaData?.RadioStatistics24G?.PacketsDroppedDownstream
+                        ">
+                        <th scope="row">
+                          {{ language["Packets Dropped DS"] }}
+                        </th>
+                        <td>
+                          {{
+                            radiodetails["2.4G"]?.PacketsDroppedDownstream
+                          ? radiodetails["2.4G"]?.PacketsDroppedDownstream
+                          : 0
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatistics24G?.Channel">
+                        <th scope="row">{{ language.Channel }}</th>
+                        <td>
+                          {{
+                            radiodetails["2.4G"]?.Channel
+                          ? radiodetails["2.4G"]?.Channel
+                          : ""
+                          }}
+                        </td>
+                      </tr>-->
+
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="row" *ngIf="
+                  !isRadiodetails24g &&
+                  !radiodetailsLoading
+                ">
+                <div class="col-md-12">
+                  <div>
+                    {{ language.radioStatusIsNotAvailable('2.4G') }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="radio-details-item" id="wifi-ext-radio-details-5g"
+              *ngIf="metaData.RadioStatistics5G || metaData.RadioStatus5G">
+              <div class="d-flex border-bottom mb-2">
+                <div class="col-lg-10 col-md-6 col-sm-12 px-0">
+                  <div class="ccl-Secondary-title user-name">5GHz {{language['Radio Details']}}</div>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-10 text-right px-0">
+                  <span class="cursor-pointer" id="wifi-ext-radio-5g-modal-btn" (click)="editRadioSummary('5G')" *ngIf="
+                      wifiWrite &&
+                      isRadio5gAvailable &&
+                      showRadioSummary &&
+                      radiodetails &&
+                      radiodetails['5G'] &&
+                      (objectExistence(metaData?.RadioStatus5G) ||
+                        objectExistence(metaData?.RadioMisc5G)) 
+                    ">
+                    <i class="fas fa-pencil-alt"></i>
+                  </span>
+                </div>
+              </div>
+
+              <div class="d-flex" *ngIf="
+                  isRadiodetails5g &&
+                  radiodetails &&
+                  radiodetails['5G']
+                ">
+                <div class="col-md-12 px-0 support-key-value">
+                  <table class="">
+                    <tbody>
+                      <tr *ngIf="metaData?.RadioStatus5G?.RadioEnabled">
+                        <th scope="row">{{ language.Wireless_Radio_Status }}</th>
+                        <td [ngClass]="
+                          radiodetails['5G']?.RadioEnabled == 'false'
+                                    ? 'text-red'
+                                    : 'text-green'
+                                ">
+                          {{
+                          radiodetails["5G"]?.RadioEnabled &&
+                          radiodetails["5G"]?.RadioEnabled == "true"
+                          ? language.Enabled
+                          : language.Disabled
+                          }}
+                          <span *ngIf="
+                            radiodetails['5G']?.RadioEnabled &&
+                            radiodetails['5G']?.RadioEnabled == 'false'
+                                  "><img src="assets/img/Ic_warning-18px.svg" /></span>
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus5G?.Mode">
+                        <th scope="row">{{ language.Wireless_Mode }}</th>
+                        <td>{{ checkWirelessMode(radiodetails["5G"], "5G") }}</td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus5G?.Channel">
+                        <th scope="row">{{ language.Channel_Mode }}</th>
+                        <!-- <td>Auto ({{radioSummary['5G']?.Channel ? radioSummary['5G']?.Channel : 0}})</td> -->
+                        <td>
+                          {{
+                          (radiodetails["5G"]?.AutoChannelEnable &&
+                          (radiodetails["5G"]?.AutoChannelEnable == "true" ||
+                          radiodetails["5G"]?.AutoChannelEnable == "1") ) || (this.metaData?.AutoChannel5G &&
+                          radiodetails["5G"]?.Channel==0)
+                          ? "Auto"
+                          : "Manual"
+                          }}
+                          ({{
+                          radiodetails["5G"]?.Channel
+                          ? radiodetails["5G"]?.Channel
+                          : ""
+                          }})
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus5G?.Bandwidth">
+                        <th scope="row">{{ language.Channel_Bandwidth }}</th>
+                        <td>
+                          {{
+                          radiodetails["5G"]?.Bandwidth
+                          ? radiodetails["5G"]?.Bandwidth
+                          : ""
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus5G?.NoiseLevel || metaData?.RadioStatistics5G?.NoiseLevel">
+                        <th scope="row">{{ language.Noise_Level }}</th>
+                        <td>
+                          {{
+                          radiodetails["5G"]?.NoiseLevel
+                          ? radiodetails["5G"]?.NoiseLevel
+                          : 0
+                          }}dBm
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus5G?.PowerLevel">
+                        <th scope="row">{{ language.Power_Level }}</th>
+                        <td>
+                          {{
+                          radiodetails["5G"]?.PowerLevel
+                          ? radiodetails["5G"]?.PowerLevel
+                          : 0
+                          }}{{unitfor5g ? unitfor5g : '%'}}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus5G?.PacketsSent ||metaData?.RadioStatistics5G?.PacketsSent">
+                        <th scope="row">{{ language.Packets_Sent }}</th>
+                        <td>
+                          {{
+                          radiodetails["5G"]?.PacketsSent
+                          ? radiodetails["5G"]?.PacketsSent
+                          : 0
+                          }}
+                        </td>
+                      </tr>
+                      <tr
+                        *ngIf="metaData?.RadioStatus5G?.PacketsReceived || metaData?.RadioStatistics5G?.PacketsReceived">
+                        <th scope="row">{{ language.Packets_Received }}</th>
+                        <td>
+                          {{
+                          radiodetails["5G"]?.PacketsReceived
+                          ? radiodetails["5G"]?.PacketsReceived
+                          : 0
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="
+                                metaData?.RadioStatus5G?.PacketsReTransmittedDownstream ||  metaData?.RadioStatistics5G
+                                ?.PacketsReTransmittedDownstream
+                              ">
+                        <th scope="row">{{ language.Packets_RETX_DS }}</th>
+                        <td>
+                          {{
+                          radiodetails["5G"]?.PacketsReTransmittedDownstream
+                          ? radiodetails["5G"]?.PacketsReTransmittedDownstream
+                          : 0
+                          }}
+                        </td>
+                      </tr>
+                      <tr
+                        *ngIf="metaData?.RadioStatus5G?.PacketsDroppedDownstream || metaData?.RadioStatistics5G?.PacketsDroppedDownstream">
+                        <th scope="row">{{ language["Packets Dropped DS"] }}</th>
+                        <td>
+                          {{
+                          radiodetails["5G"]?.PacketsDroppedDownstream
+                          ? radiodetails["5G"]?.PacketsDroppedDownstream
+                          : 0
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus5G?.DFS">
+                        <th scope="row">{{language['DFS']}}</th>
+                        <td>
+                          {{
+                          radiodetails["5G"]?.DFS &&
+                          radiodetails["5G"]?.DFS == "true"
+                          ? language["On"]
+                          : language["Off"]
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus5G?.MUMIMO">
+                        <th scope="row">{{language['MU-MIMO']}}</th>
+                        <td>
+                          {{
+                          radiodetails["5G"]?.MUMIMO &&
+                          radiodetails["5G"]?.MUMIMO == "true"
+                          ? language["On"]
+                          : language["Off"]
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatistics5G?.Channel">
+                        <th scope="row">{{ language.Channel }}</th>
+                        <td>
+                          {{
+                          radiodetails["5G"]?.Channel
+                          ? radiodetails["5G"]?.Channel
+                          : ""
+                          }}
+                        </td>
+                      </tr>
+                      <!--  <tr *ngIf="metaData?.RadioStatistics5G?.NoiseLevel">
+                        <th scope="row">{{ language.Noise_Level }}</th>
+                        <td>
+                          {{
+                            radiodetails["5G"]?.NoiseLevel
+                          ? radiodetails["5G"]?.NoiseLevel
+                          : 0
+                          }}dBm
+                        </td>
+                      </tr>
+                    
+                      <tr *ngIf="metaData?.RadioStatistics5G?.PacketsSent">
+                        <th scope="row">{{ language.Packets_Sent }}</th>
+                        <td>
+                          {{
+                            radiodetails["5G"]?.PacketsSent
+                          ? radiodetails["5G"]?.PacketsSent
+                          : 0
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatistics5G?.PacketsReceived">
+                        <th scope="row">{{ language.Packets_Received }}</th>
+                        <td>
+                          {{
+                            radiodetails["5G"]?.PacketsReceived
+                          ? radiodetails["5G"]?.PacketsReceived
+                          : 0
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="
+                          metaData?.RadioStatistics5G
+                            ?.PacketsReTransmittedDownstream
+                        ">
+                        <th scope="row">{{ language.Packets_RETX_DS }}</th>
+                        <td>
+                          {{
+                            radiodetails["5G"]?.PacketsReTransmittedDownstream
+                          ? radiodetails["5G"]
+                          ?.PacketsReTransmittedDownstream
+                          : 0
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="
+                          metaData?.RadioStatistics5G?.PacketsDroppedDownstream
+                        ">
+                        <th scope="row">
+                          {{ language["Packets Dropped DS"] }}
+                        </th>
+                        <td>
+                          {{
+                            radiodetails["5G"]?.PacketsDroppedDownstream
+                          ? radiodetails["5G"]?.PacketsDroppedDownstream
+                          : 0
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatistics5G?.Channel">
+                        <th scope="row">{{ language.Channel }}</th>
+                        <td>
+                          {{
+                            radiodetails["5G"]?.Channel
+                          ? radiodetails["5G"]?.Channel
+                          : ""
+                          }}
+                        </td>
+                      </tr>
+                    -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="row" *ngIf="
+                  !isRadiodetails5g &&
+                  !radiodetailsLoading
+                ">
+                <div class="col-md-12">
+                  <div>
+                    {{ language.radioStatusIsNotAvailable('5G') }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="radio-details-item" id="wifi-ext-radio-details-6g"
+              *ngIf="(metaData.RadioStatistics6G || metaData.RadioStatus6G) && wifiConfiguration && wifiConfiguration.wifi6">
+              <div class="d-flex border-bottom mb-2">
+                <div class="col-lg-10 col-md-6 col-sm-12 px-0">
+                  <div class="ccl-Secondary-title user-name">
+                    6GHz {{language['Radio Details']}}
+                  </div>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-10 text-right">
+                  <span class="cursor-pointer" id="wifi-rg-radio-6g-modal-btn" title="{{language.Edit}}"
+                    (click)="editRadioSummary('6G')" *ngIf="
+                                  showRadioSummary &&
+                                  isRadio6gAvailable &&
+                                  radiodetails['6G'] &&
+                                  (objectExistence(metaData?.RadioStatus6G) ||
+                                    objectExistence(metaData?.RadioMisc6G)) &&
+                                  wifiWrite
+                                ">
+                    <i class="fas fa-pencil-alt primary "></i>
+                  </span>
+                </div>
+              </div>
+              <div class="d-flex" *ngIf="
+                            isRadiodetails6g &&
+                            radiodetails &&
+                            radiodetails['6G']
+                          ">
+                <div class="col-md-12 px-0 support-key-value">
+                  <table class="">
+                    <tbody>
+
+                      <tr *ngIf="metaData?.RadioStatus6G?.RadioEnabled">
+                        <th scope="row">{{ language.Wireless_Radio_Status }}</th>
+                        <td [ngClass]="
+                          radiodetails['6G']?.RadioEnabled == 'false'
+                                                  ? 'text-red'
+                                                  : 'text-green'
+                                              ">
+                          {{
+                          radiodetails["6G"]?.RadioEnabled &&
+                          radiodetails["6G"]?.RadioEnabled == "true"
+                          ? language.Enabled
+                          : language.Disabled
+                          }}
+                          <span *ngIf="
+                            radiodetails['6G']?.RadioEnabled &&
+                                                  radiodetails['6G']?.RadioEnabled == 'false'
+                                                ">
+                            <img src="assets/img/Ic_warning-18px.svg" /></span>
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus6G?.Mode">
+                        <th scope="row">{{ language.Wireless_Mode }}</th>
+                        <td>
+                          {{ checkWirelessMode(radiodetails["6G"], "6G") }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus6G?.Channel">
+                        <th scope="row">{{ language.Channel_Mode }}</th>
+                        <td>
+                          {{
+                          (radiodetails["6G"]?.AutoChannelEnable &&
+                          (radiodetails["6G"]?.AutoChannelEnable == "true" ||
+                          radiodetails["6G"]?.AutoChannelEnable == "1") ) || (this.metaData?.AutoChannel6G &&
+                          radiodetails["6G"]?.Channel==0)
+                          ? "Auto"
+                          : "Manual"
+                          }}
+                          {{
+                          radiodetails["6G"]?.Channel && radiodetails["6G"]?.Channel != 0
+                          ? '('+radiodetails["6G"]?.Channel+')'
+                          : ""
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus6G?.Bandwidth">
+                        <th scope="row">{{ language.Channel_Bandwidth }}</th>
+                        <td>
+                          {{
+                          radiodetails["6G"]?.Bandwidth
+                          ? radiodetails["6G"]?.Bandwidth
+                          : ""
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus6G?.NoiseLevel ||metaData?.RadioStatistics6G?.NoiseLevel">
+                        <th scope="row">{{ language.Noise_Level }}</th>
+                        <td>
+                          {{
+                          radiodetails["6G"]?.NoiseLevel
+                          ? radiodetails["6G"]?.NoiseLevel
+                          : 0
+                          }}dBm
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus6G?.PowerLevel">
+                        <th scope="row">{{ language.Power_Level }}</th>
+                        <td>
+                          {{
+                          radiodetails["6G"]?.PowerLevel
+                          ? radiodetails["6G"]?.PowerLevel
+                          : 0
+                          }}{{unitfor6g ? unitfor6g : '%'}}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus6G?.PacketsSent || metaData?.RadioStatistics6G?.PacketsSent">
+                        <th scope="row">{{ language.Packets_Sent }}</th>
+                        <td>
+                          {{
+                          radiodetails["6G"]?.PacketsSent
+                          ? radiodetails["6G"]?.PacketsSent
+                          : 0
+                          }}
+                        </td>
+                      </tr>
+                      <tr
+                        *ngIf="metaData?.RadioStatus6G?.PacketsReceived || metaData?.RadioStatistics6G?.PacketsReceived">
+                        <th scope="row">{{ language.Packets_Received }}</th>
+                        <td>
+                          {{
+                          radiodetails["6G"]?.PacketsReceived
+                          ? radiodetails["6G"]?.PacketsReceived
+                          : 0
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="
+                                              metaData?.RadioStatus6G?.PacketsReTransmittedDownstream || metaData?.RadioStatistics6G?.PacketsReTransmittedDownstream
+                                            ">
+                        <th scope="row">{{ language.Packets_RETX_DS }}</th>
+                        <td>
+                          {{
+                          radiodetails["6G"]?.PacketsReTransmittedDownstream
+                          ? radiodetails["6G"]
+                          .PacketsReTransmittedDownstream
+                          : 0
+                          }}
+                        </td>
+                      </tr>
+                      <tr
+                        *ngIf="metaData?.RadioStatus6G?.PacketsDroppedDownstream || metaData?.RadioStatistics6G?.PacketsDroppedDownstream">
+                        <th scope="row">{{ language["Packets Dropped DS"] }}</th>
+                        <td>
+                          {{
+                          radiodetails["6G"]?.PacketsDroppedDownstream
+                          ? radiodetails["6G"]?.PacketsDroppedDownstream
+                          : 0
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus6G?.MulticastForwarding">
+                        <th scope="row">
+                          {{ language["Multicast Forwarding"] }}
+                        </th>
+                        <td>
+                          {{
+                          radiodetails["6G"]?.MulticastForwarding &&
+                          radiodetails["6G"]?.MulticastForwarding == "true"
+                          ? language["On"]
+                          : language["Off"]
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus6G?.AirtimeFairness">
+                        <th scope="row">{{ language["Airtime Fairness"] }}</th>
+                        <td>
+                          {{
+                          radiodetails["6G"]?.AirtimeFairness &&
+                          radiodetails["6G"]?.AirtimeFairness == "true"
+                          ? language["On"]
+                          : language["Off"]
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus6G?.FrameBurst">
+                        <th scope="row">{{ language["Frame Burst"] }}</th>
+                        <td>
+                          {{
+                          radiodetails["6G"]?.FrameBurst &&
+                          radiodetails["6G"]?.FrameBurst == "true"
+                          ? language["On"]
+                          : language["Off"]
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus6G?.DFS">
+                        <th scope="row">{{language['DFS']}}</th>
+                        <td>
+                          {{
+                          radiodetails["6G"]?.DFS &&
+                          radiodetails["6G"]?.DFS == "true"
+                          ? language["On"]
+                          : language["Off"]
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus6G?.MUMIMO">
+                        <th scope="row">{{language['MU-MIMO']}}</th>
+                        <td>
+                          {{
+                          radiodetails["6G"]?.MUMIMO &&
+                          radiodetails["6G"]?.MUMIMO == "true"
+                          ? language["On"]
+                          : language["Off"]
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatus6G?.PSCOnly">
+                        <th scope="row">{{language['PSC Only']}}</th>
+                        <td>
+                          {{
+                          radiodetails["6G"]?.PSCOnly &&
+                          radiodetails["6G"]?.PSCOnly == "true"
+                          ? language["On"]
+                          : language["Off"]
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatistics6G?.Channel">
+                        <th scope="row">{{ language.Channel }}</th>
+                        <td>
+                          {{
+                          radiodetails["6G"]?.Channel
+                          ? radiodetails["6G"]?.Channel
+                          : ""
+                          }}
+                        </td>
+                      </tr>
+
+                      <!--                  <tr *ngIf="metaData?.RadioStatistics6G?.NoiseLevel">
+                        <th scope="row">{{ language.Noise_Level }}</th>
+                        <td>
+                          {{
+                            radiodetails["6G"]?.NoiseLevel
+                          ? radiodetails["6G"]?.NoiseLevel
+                          : 0
+                          }}dBm
+                        </td>
+                      </tr>
+                    
+                    
+                      <tr *ngIf="metaData?.RadioStatistics6G?.PacketsSent">
+                        <th scope="row">{{ language.Packets_Sent }}</th>
+                        <td>
+                          {{
+                            radiodetails["6G"]?.PacketsSent
+                          ? radiodetails["6G"]?.PacketsSent
+                          : 0
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatistics6G?.PacketsReceived">
+                        <th scope="row">{{ language.Packets_Received }}</th>
+                        <td>
+                          {{
+                            radiodetails["6G"]?.PacketsReceived
+                          ? radiodetails["6G"]?.PacketsReceived
+                          : 0
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="
+                                                  metaData?.RadioStatistics6G?.PacketsReTransmittedDownstream
+                                                ">
+                        <th scope="row">{{ language.Packets_RETX_DS }}</th>
+                        <td>
+                          {{
+                            radiodetails["6G"]?.PacketsReTransmittedDownstream
+                          ? radiodetails["6G"]
+                          .PacketsReTransmittedDownstream
+                          : 0
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatistics6G?.PacketsDroppedDownstream">
+                        <th scope="row">{{ language["Packets Dropped DS"] }}</th>
+                        <td>
+                          {{
+                            radiodetails["6G"]?.PacketsDroppedDownstream
+                          ? radiodetails["6G"]?.PacketsDroppedDownstream
+                          : 0
+                          }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="metaData?.RadioStatistics6G?.Channel">
+                        <th scope="row">{{ language.Channel }}</th>
+                        <td>
+                          {{
+                            radiodetails["6G"]?.Channel
+                          ? radiodetails["6G"]?.Channel
+                          : ""
+                          }}
+                        </td>
+                      </tr>
+                    -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="row" *ngIf="!isRadiodetails6g && !radiodetailsLoading">
+                <div class="col-md-12">
+                  {{ language.radioStatusIsNotAvailable('6G') }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!--radiodetails with new api as above-->
+    <div class="container-fluid" id="wifi-airtime-analysis-container" *ngIf="showWidgets.airtimeAnalysis">
+      <div class="row">
+        <div class="col-md-12 px-0">
+          <!-- <div class="row">
+            <div class="col-md-12 px-0">
+              <div class="row" id="wifi-airtime-analysis-title">
+                <div class="col-md-12">
+                  <h4 class="user-name">{{ language.Airtime_Analysis }}</h4>
+                  <hr />
+                </div>
+              </div>
+            </div>
+          </div> -->
+          <div class="row" id="wifi-airtime-analysis-chart-container">
+            <div class="col-md-12">
+              <div class="row">
+                <div class="col-md-12">
+                  <app-air-time-analysis [airtimeData]="airtimeData" [fsan]="latestFSAN" [orgId]="orgId"
+                    [radioSummary]="radioSummary" [radioSummaryLoading]="radioSummaryLoading" [metaData]="metaData"
+                    [hasRadioSummary]="showWidgets.radioSummary" [show5gWidgets]="show5gWidgets">
+                  </app-air-time-analysis>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <section class="loader-wrapper" style="min-height: 300px" *ngIf="showWidgets.siteScan">
+      <div class="loader-wrapper-info"
+        *ngIf="siteScanLoading || siteScanRunHappening || radioSummaryLoading || siteScanTableLoading">
+        <div class="loader">
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+              <span class="sr-only">{{ language.Loading }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <section class="container" id="wifi-ext-sitescan-container">
+        <div class="row my-2 border-bottom">
+          <div class="col-md-12 pb-2">
+            <h4>
+              {{ language.Site_Scan }} <span class="small-text">{{ lastRunTime }}</span>
+            </h4>
+          </div>
+        </div>
+        <div class="row" *ngIf="wifiWrite">
+          <div class="col-md-12">
+            <button type="button" id="wifi-ext-sitescan-run-btn" (click)="runSiteScan()" *ngIf="!siteScanRunHappening"
+              class="btn-default primary px-3 md-btn blue-btn mr-2"
+              [disabled]="siteScanDisabled || radioSummaryLoading">
+              {{ language.Run_Site_Scan }}
+            </button>
+
+            <button type="button" id="wifi-ext-sitescan-run-btn" *ngIf="siteScanRunHappening" style="cursor: no-drop"
+              class="btn-default primary px-3 md-btn blue-btn mr-2 disabled">
+              {{ language.Run_Site_Scan }}
+              <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+            </button>
+          </div>
+        </div>
+        <div class="my-2 w-100 alert alert alert-danger fade show" id="wifi-rg-sitescan-warning" *ngIf="siteScanError">
+          <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+          <button type="button" class="close" (click)="siteScanError = false">
+            <span></span>
+          </button>
+          <div class="d-inline-flex" [innerHtml]="siteScanErrorInfo"></div>
+        </div>
+        <div class="container-fluid" style="min-height: 400px">
+          <div class="row mt-4" *ngIf="showSiteScan">
+            <div class="col-md-12 px-0 ccl-tabs">
+              <ul id="tabs" class="nav nav-tabs">
+                <li class="nav-item" (click)="changeSiteScanType('2.4G', true)" id="wifi-ext-sitescan-24g-tab">
+                  <a [ngClass]="{ active: siteScanGHzTab === '2.4G' }" class="nav-link small">
+                    <h5 class="">2.4GHz</h5>
+                  </a>
+                </li>
+                <li class="nav-item" *ngIf="show5gWidgets" (click)="changeSiteScanType('5G', true)"
+                  id="wifi-ext-sitescan-5g-tab">
+                  <a [ngClass]="{ active: siteScanGHzTab === '5G' }" class="nav-link small">
+                    <h5 class="">5GHz</h5>
+                  </a>
+                </li>
+                <li class="nav-item" *ngIf="show6gTab" (click)="changeSiteScanType('6G', true)"
+                  id="wifi-ext-sitescan-6g-tab">
+                  <a [ngClass]="{ active: siteScanGHzTab === '6G' }" class="nav-link small">
+                    <h5 class="">6GHz</h5>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="my-2 w-100 alert alert alert-warning fade show" id="wifi-ext-sitescan-warning"
+            *ngIf="showSiteScan && !emptySiteScanData && siteScanDisabled">
+            <button type="button" class="close"></button>
+            <div>{{ language.cannotInitiateExtenderSitescan(siteScanGHzTab) }}</div>
+          </div>
+          <div class="row my-2" *ngIf="showSiteScan && !emptySiteScanData && !siteScanDisabled">
+            <div class="col-md-8">
+              <span class="pr-2 d-ininle" *ngIf="
+                  showRecommendData &&
+                  ssRecommendedData.current_channel &&
+                  ssRecommendedData.rec_channel &&
+                  ssRecommendedData.rec_channel !=
+                    ssRecommendedData.current_channel
+                "><img src="./assets/images/outline-warning-1@2x.png" />
+              </span>
+              <span class="pr-2 d-ininle"><span *ngIf="showRecommendData && siteScanRecommendChannel?.channel">{{
+                  language.Recommended_Channel }} :
+                  {{ siteScanRecommendChannel?.channel ? siteScanRecommendChannel?.channel : '-' }},</span>
+                {{ language["Channel at last sitescan"] }}
+                <span style="font-size: 14px" *ngIf="siteScanResults && siteScanResults.timestamp">({{
+                  siteScanResults && siteScanResults.timestamp
+                  ? date_format_sitescan(siteScanResults.timestamp)
+                  : ""
+                  }})</span>
+                :
+                {{ siteScanCurrentChannel?.channel }}
+                &nbsp;
+                <i class="fas fa-ellipsis-v"></i>
+              </span>
+              <div class="recommended-info">
+                <h5>{{ language["Best Channel By SiteScan"] }}</h5>
+                <ul>
+                  <li *ngIf="showRecommendData">{{ language.Recommended }}</li>
+                  <li *ngIf="showRecommendData">
+                    <ul>
+                      <li>
+                        {{ language.Channel }}:
+                        {{
+                        ssRecommendedData.rec_channel
+                        ? ssRecommendedData.rec_channel
+                        : ""
+                        }}
+                      </li>
+                      <li>
+                        {{ language["Overlapping Channel SSIDs"] }}:
+                        {{
+                        ssRecommendedData.rec_ovl_channel_sidds
+                        ? ssRecommendedData.rec_ovl_channel_sidds
+                        : "0"
+                        }}
+                      </li>
+                      <li>
+                        {{ language["Co-Channel SSIDs"] }}:
+                        {{
+                        ssRecommendedData.rec_cco_sidds
+                        ? ssRecommendedData.rec_cco_sidds
+                        : "0"
+                        }}
+                      </li>
+                      <li>
+                        {{ language["Total Aggregated Interference"] }}:
+                        {{
+                        ssRecommendedData.rec_tot_interfer
+                        ? ssRecommendedData.rec_tot_interfer
+                        : ""
+                        }}
+                      </li>
+                    </ul>
+                  </li>
+                  <li>{{ language.Current }}</li>
+                  <li>
+                    <ul>
+                      <li>
+                        {{ language.Channel }}:
+                        {{
+                        ssRecommendedData.current_channel
+                        ? ssRecommendedData.current_channel
+                        : ""
+                        }}
+                      </li>
+                      <li>
+                        {{ language["Overlapping Channel SSIDs"] }}:
+                        {{
+                        ssRecommendedData.current_ovl_channel_sidds
+                        ? ssRecommendedData.current_ovl_channel_sidds
+                        : "0"
+                        }}
+                      </li>
+                      <li>
+                        {{ language["Co-Channel SSIDs"] }}:
+                        {{
+                        ssRecommendedData.current_cco_sidds
+                        ? ssRecommendedData.current_cco_sidds
+                        : "0"
+                        }}
+                      </li>
+                      <li>
+                        {{ language["Total Aggregated Interference"] }}:
+                        {{
+                        ssRecommendedData.current_tot_interfer
+                        ? ssRecommendedData.current_tot_interfer
+                        : ""
+                        }}
+                      </li>
+                    </ul>
+                  </li>
+                  <li></li>
+                  <!-- <li
+                    *ngIf="(ssRecommendedData.rec_channel && ssRecommendedData.current_channel && ssRecommendedData.rec_channel == ssRecommendedData.current_channel)">
+                    {{language.Recommended_Channel}}: {{ssRecommendedData.rec_channel ? ssRecommendedData.rec_channel :
+                    ''}}</li> -->
+                  <li *ngIf="
+                      ssRecommendedData.channel_from &&
+                      ssRecommendedData.channel_to
+                    ">
+                    <span style="font-size: 14px">{{
+                      language["Last Change"]
+                      }}</span>
+                    {{
+                    language.sitescanSwitchInfo(
+                    ssRecommendedData.channel_from,
+                    ssRecommendedData.channel_to,
+                    ssRecommendedData.channel_changed_at
+                    )
+                    }}
+                  </li>
+                </ul>
+              </div>
+              <div class="d-inline">
+                <button type="button" id="wifi-site-scan-fix-btn" (click)="fixSiteScanRun()"
+                  [disabled]="fixnowdisable || hasFixed.includes(siteScanGHzTab)"
+                  *ngIf="showRecommendData && showFixSiteScan" class="btn-default primary px-3 md-btn blue-btn mr-2">
+                  {{ language["Fix Now"] }}
+                </button>
+              </div>
+              <p class="mt-2 mb-0"
+                *ngIf="showRecommendData && showFixSiteScan && sitescannote && hasFixed.includes(siteScanGHzTab)"><b>{{
+                  language.Note}}</b>: {{ language.Recommended_Channel_Updated_Please_Run_SiteScan }}</p>
+            </div>
+            <div class="col-md-4" *ngIf="showSiteScan && !emptySiteScanData && !siteScanDisabled">
+              <div class="row">
+                <div class="col-md-6" id="wifi-ext-sitescan-ssid-filter">
+                  <div class="d-inline">
+                    <span class="small-text">SSID</span>
+                    <div class="dropdown">
+                      <ng-select [items]="siteScanSSIDs" [multiple]="true" placeholder="{{language.All}}"
+                        [(ngModel)]="siteScanSSIDSelected" [ngModelOptions]="{ standalone: true }" [clearable]="true"
+                        (change)="siteScanFilter()" [searchable]="true" [disabled]="siteScanDisabled">
+                      </ng-select>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6" id="wifi-ext-sitescan-channel-filter">
+                  <div class="d-inline">
+                    <span class="small-text">{{ language.Channel }}</span>
+                    <div class="dropdown">
+                      <ng-select [items]="siteScanChannels" [multiple]="true" placeholder="{{language.All}}"
+                        [(ngModel)]="siteScanChannelSelected" [ngModelOptions]="{ standalone: true }" [clearable]="true"
+                        [searchable]="true" (change)="siteScanFilter()" [disabled]="siteScanDisabled">
+                      </ng-select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row" *ngIf="tableShow">
+            <div class="col-md-12"
+              [hidden]="!showSiteScan || siteScanDisabled || emptySiteScanData || !tableDataAvailable">
+              <table *ngIf="showSiteScanTable" datatable id="wifi-ext-sitescan-table"
+                class="row-border row-border hover table-alter" width="100%" [dtOptions]="dtOptions">
+                <thead>
+                  <tr>
+                    <th>SSID</th>
+                    <th>{{ language.Channel }}</th>
+                    <th>RSSI</th>
+                    <th>{{ language.Security }}</th>
+                    <th>{{ language.Channel_Bandwidth }}</th>
+                    <th>BSSID</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr id="wifi-ext-sitescan-row-{{ i }}" *ngFor="let data of siteScanTableData; let i = index">
+                    <td>{{ data.ssid ? data.ssid : "" }}</td>
+                    <td>{{ data.channel ? data.channel : "" }}</td>
+                    <td>{{ data.rssi ? data.rssi : "0" }}dBm</td>
+                    <td>{{ data.security ? data.security : "" }}</td>
+                    <td>
+                      {{ data.channel_bandwidth ? data.channel_bandwidth : "" }}
+                    </td>
+                    <td>{{ data.bssid ? data.bssid : "" }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="container-fluid my-3" *ngIf="!siteScanDisabled && !emptySiteScanData">
+            <div class="row">
+              <div class="col-md-12 px-0">
+                <div class="row col-md-12">
+                  <div class="align-self-start mr-3" *ngIf="showSiteScan">
+                    <input type="checkbox" checked name="ssidChecked" id="ssidChecked" [(ngModel)]="ssidChecked"
+                      (change)="ssidCheckUncheck()" />
+                    <label for="ssidChecked"> SSIDs </label>
+                  </div>
+                  <div class="align-self-start mr-3" *ngIf="
+                      showSiteScan &&
+                      showSiteScanBusyness &&
+                      siteScanResults?.busyness?.length
+                    ">
+                    <label for="busynessChecked">
+                      {{ language.Busyness }}:
+                    </label>
+                    <input type="checkbox" checked name="busyness" id="busynessChecked" [(ngModel)]="busynessChecked"
+                      style="margin-left: 5px" />
+                    {{ sitescanBusynessBand ? sitescanBusynessBand : "" }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row my-3" *ngIf="DYGRAPH_CHART_SHOW">
+              <div class="col-md-12 px-0">
+                <div class="row" id="wifi-ext-sitescan-chart-wrapper">
+                  <div class="col-md-12" *ngIf="showSiteScan">
+                    <app-history-site-scan [chartData]="siteScanResults" [fsan]="latestFSAN" [orgId]="orgId"
+                      [siteScanSSIDSelected]="siteScanSSIDSelected" [siteScanChannelSelected]="siteScanChannelSelected"
+                      [type]="siteScanGHzTab" [ssidChecked]="ssidChecked" [busynessChecked]="busynessChecked">
+                    </app-history-site-scan>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!--dygraph-poc-implement-->
+            <div class="row my-3" *ngIf="!DYGRAPH_CHART_SHOW">
+              <div class="col-md-12 px-0">
+                <div class="row">
+                  <div class="col-md-12" *ngIf="showSiteScan">
+                    <dygraph-history-site-scan [chartData]="siteScanResults" [fsan]="latestFSAN" [orgId]="orgId"
+                      [siteScanSSIDSelected]="siteScanSSIDSelected" [siteScanChannelSelected]="siteScanChannelSelected"
+                      [type]="siteScanGHzTab" [ssidChecked]="ssidChecked" [busynessChecked]="busynessChecked"
+                      [deviceInfo]="routerData" [radioSummary]="radioSummaryData">
+                    </dygraph-history-site-scan>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!--dygraph-poc-implement-->
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <section id="wifi-ext-reports-container" *ngIf="showWidgets.historicalAirtime || showWidgets.downstream">
+      <div class="row my-2 border-bottom" id="wifi-ext-reports-title">
+        <div class="col-md-12 px-0 pb-2">
+          <h4 class="user-name">{{ language.Reports }}</h4>
+        </div>
+      </div>
+      <div class="row" id="wifi-ext-reports-tabs">
+        <div class="col-md-12 px-0 ccl-tabs">
+          <ul id="tabs" class="nav nav-tabs">
+            <li class="nav-item" *ngIf="showWidgets.historicalAirtime" (click)="changeReportsType(true, true)"
+              id="wifi-ext-reports-airtime-tab">
+              <a [ngClass]="{ active: showReportsAirtime === true }" class="nav-link small">
+                <h5 class="">{{ language.Airtime_Analytics }}</h5>
+              </a>
+            </li>
+            <li class="nav-item" *ngIf="showWidgets.downstream" (click)="changeReportsType(false, true)"
+              id="wifi-ext-reports-downstream-tab">
+              <a [ngClass]="{ active: showReportsAirtime !== true }" class="nav-link small">
+                <h5 class="">{{ language.Downstream_Traffic }}</h5>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="row my-3">
+        <div class="warning-msg" *ngIf="warning">
+          <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+          <div [innerHtml]="waringInfo"></div>
+        </div>
+        <div class="col-md-2 pl-0" id="wifi-ext-reports-period-filter">
+          <div class="small-text">Period</div>
+          <div class="dropdown">
+            <ng-select [items]="reportRanges" bindLabel="label" bindValue="value" [multiple]="false" placeholder=""
+              [(ngModel)]="reportRangeSelected" [ngModelOptions]="{ standalone: true }" [clearable]="false"
+              (change)="reportRangeChanges()" [searchable]="false">
+            </ng-select>
+          </div>
+        </div>
+
+        <div *ngIf="reportRangeSelected == 'customized'" class="col-md-3 ccl-form"
+          id="wifi-ext-reports-starttime-filter">
+          <div class="small-text">Start</div>
+          <div class="dropdown">
+            <p-calendar id="start_date" [(ngModel)]="reportStartTime" hourFormat="12" [showTime]="true"
+              [style]="{ width: '100%', height: '36px' }" [inputStyle]="{ height: '36px' }" appendTo="body"
+              [autoZIndex]="true" placeholder="" [showIcon]="true" readonlyInput="true"
+              [ngModelOptions]="{ standalone: true }" dateFormat="mm-dd-yy" [maxDate]="maxDate">
+            </p-calendar>
+          </div>
+        </div>
+        <div *ngIf="reportRangeSelected == 'customized'" class="col-md-3 ccl-form"
+          id="wifi-ext-reports-starttime-filter">
+          <div class="small-text">End</div>
+          <div class="dropdown">
+            <p-calendar id="end_date" [(ngModel)]="reportEndTime" hourFormat="12" [showTime]="true"
+              [style]="{ width: '100%', height: '36px' }" [inputStyle]="{ height: '36px' }" appendTo="body"
+              [autoZIndex]="true" placeholder="" [showIcon]="true" readonlyInput="true"
+              [ngModelOptions]="{ standalone: true }" dateFormat="mm-dd-yy" [maxDate]="maxDate">
+            </p-calendar>
+          </div>
+        </div>
+        <div class="col-md-2" id="wifi-ext-reports-interval-filter">
+          <div class="small-text">Intervals</div>
+          <div class="dropdown">
+            <ng-select [items]="reportIntervals" bindLabel="label" bindValue="value" [multiple]="false" placeholder=""
+              [(ngModel)]="reportIntervalSelected" [ngModelOptions]="{ standalone: true }" [clearable]="false"
+              [searchable]="false">
+            </ng-select>
+          </div>
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+          <button class="btn-default primary" (click)="refreshReport()" id="wifi-ext-reports-filter-btn">
+            {{ language.Load }}
+          </button>
+        </div>
+      </div>
+      <div class="row" *ngIf="
+          showReportsAirtime &&
+          refreshReportClicked &&
+          showWidgets.historicalAirtime
+        ">
+        <div class="col-md-12" id="wifi-ext-reports-airtime-chart-wrapper">
+          <app-historical-air-time #historicAirtimeChild [fsan]="latestFSAN" [orgId]="orgId" [metaData]="metaData"
+            [refStartTime]="refStartTime" [refEndTime]="refEndTime" [interval]="reportIntervalSelected"
+            [reportRangeSelected]="reportRangeSelected" [show5gWidgets]="show5gWidgets">
+          </app-historical-air-time>
+        </div>
+      </div>
+
+      <div class="row" *ngIf="
+          !showReportsAirtime && refreshReportClicked && showWidgets.downstream
+        ">
+        <div class="col-md-12" id="wifi-ext-reports-downstream-chart-wrapper">
+          <app-wifi-downstream-traffic #downstreamChild [fsan]="latestFSAN" [orgId]="orgId" [metaData]="metaData"
+            [refStartTime]="refStartTime" [refEndTime]="refEndTime" [interval]="reportIntervalSelected"
+            [show5gWidgets]="show5gWidgets">
+          </app-wifi-downstream-traffic>
+        </div>
+      </div>
+    </section>
+
+    <div class="container-fluid" *ngIf="showWidgets.channelScore && ssoAuthService.getCscType() !== 'DME'">
+      <div class="row" id="wifi-channelscore-contianer">
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="row">
+                <div class="col-md-12">
+                  <h4 class="user-name">{{ language.Channel_Score }}</h4>
+                  <hr />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <app-channel-score [orgId]="orgId" [fsan]="latestFSAN" [radioSummary]="radioSummary"
+                [ssidSelfHeal]="ssidSelfHeal" [show5gWidgets]="show5gWidgets"
+                [channelChangeLogsData]="channelChangeLogs">
+              </app-channel-score>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<ng-template #radioSummaryModal let-modal class="col-md-12 custom-modal">
+  <div class="modal-header">
+    <h5 class="modal-title" id="Radio-Status-label">
+      {{ rsEditType }}Hz {{language['Radio Details']}}
+    </h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body" id="wifi-ext-radio-summary-update-wrapper">
+    <div class="loader" *ngIf="radioSummaryUpdating">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="w-100 alert alert alert-danger fade show" *ngIf="rsError">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+      <button type="button" class="close" (click)="closeAlert()">
+        <span></span>
+      </button>
+      <div class="d-inline-flex" [innerHtml]="rsErrorInfo"></div>
+    </div>
+    <div class="row">
+      <div class="col-md-11 support-key-value dhcp-inputtable pl-4 radio-status-table">
+        <table class="pop-table-blocks">
+          <tbody>
+            <tr class="my-2" id="wifi-radio-summary-update-RadioEnabled" *ngIf="radioMetaEdits?.RadioEnabled_writable">
+              <th scope="row">{{ language.Wireless_Radio }}</th>
+              <td>
+                <div class="d-inline toggle-swtbtn checkbox switcher">
+                  <label for="RadioEnabled">
+                    <input type="checkbox" id="RadioEnabled" checked name="RadioEnabled"
+                      [(ngModel)]="radio.RadioEnabled" (change)="radioFieldChanged()"
+                      [disabled]="!radioMetaEdits?.RadioEnabled_writable" />
+                    <span><small></small></span>
+                  </label>
+                </div>
+              </td>
+            </tr>
+            <tr class="my-2" id="wifi-radio-summary-update-Mode" *ngIf="radioMetaEdits?.Mode_writable">
+              <th scope="row">{{ language.Mode }}</th>
+              <td>
+                <div class="ccl-form mb-10">
+                  <ng-select id="wifi-radio-summary-update-Mode-select" [items]="radioMetaEdits?.radioModes"
+                    bindLabel="displayName" bindValue="value" [multiple]="false" placeholder="" [(ngModel)]="radio.Mode"
+                    [ngModelOptions]="{ standalone: true }" [clearable]="false" [searchable]="false" (change)="
+                      changeEditRadioModes(rsEditType); radioFieldChanged()
+                    " [disabled]="!radioMetaEdits?.Mode_writable">
+                  </ng-select>
+                </div>
+              </td>
+            </tr>
+            <tr class="my-2" id="wifi-radio-summary-update-Bandwidth" *ngIf="radioMetaEdits?.Bandwidth_writable">
+              <th scope="row">{{ language.bandwidth }}</th>
+              <td>
+                <div class="custom-selectbox ccl-form mb-10">
+                  <ng-select id="wifi-radio-summary-update-Bandwidth-select" [items]="radioMetaEdits.bandWidths"
+                    [multiple]="false" placeholder="" [(ngModel)]="radio.Bandwidth"
+                    (change)="setChannelModes(rsEditType); radioFieldChanged()" [ngModelOptions]="{ standalone: true }"
+                    [clearable]="false" [searchable]="false" [disabled]="!radioMetaEdits?.Bandwidth_writable">
+                  </ng-select>
+                </div>
+              </td>
+            </tr>
+            <tr id="wifi-radio-summary-update-Channel" *ngIf="radioMetaEdits?.Channel_writable">
+              <th scope="row">{{ language.Channel }}</th>
+              <td>
+                <div class="ccl-form mb-10">
+                  <ng-select *ngIf="rsEditType == '2.4G' || rsEditType == '6G'"
+                    id="wifi-radio-summary-update-Channel-select" [items]="radioMetaEdits.channels" bindLabel="label"
+                    bindValue="value" [multiple]="false" placeholder="" [(ngModel)]="radio.Channel"
+                    [ngModelOptions]="{ standalone: true }" [clearable]="false" [searchable]="false"
+                    [disabled]="!radioMetaEdits?.Channel_writable" (change)="radioFieldChanged()">
+                  </ng-select>
+                  <ng-select *ngIf="rsEditType == '5G'" id="wifi-radio-summary-update-Channel-select"
+                    [items]="radioMetaEdits.channels" bindLabel="label" bindValue="value" [multiple]="false"
+                    placeholder="" [(ngModel)]="radio.Channel" [ngModelOptions]="{ standalone: true }"
+                    [clearable]="false" [searchable]="false" [disabled]="!radioMetaEdits?.Channel_writable"
+                    (change)="radioFieldChanged()">
+                  </ng-select>
+                </div>
+              </td>
+            </tr>
+            <tr id="wifi-radio-summary-update-NoiseLevel" *ngIf="radioMetaEdits?.NoiseLevel_writable">
+              <th scope="row">{{ language.Noise_Level }}</th>
+              <td>
+                <div class="ccl-form mb-10" [ngClass]="true ? 'cursor-ban' : ''">
+                  <input type="test" class="form-control" id="wifi-radio-summary-update-NoiseLevel-input"
+                    aria-describedby="dhcp-ip" name="Noise Level" (change)="radioFieldChanged()"
+                    [(ngModel)]="radio.NoiseLevel" readonly [disabled]="!radioMetaEdits?.NoiseLevel_writable" />
+                </div>
+              </td>
+            </tr>
+            <tr id="wifi-radio-summary-update-PowerLevel" *ngIf="radioMetaEdits?.PowerLevel_writable">
+              <th scope="row">{{ language.Power_Level }}</th>
+              <td>
+                <div class="ccl-form mb-10">
+                  <ng-select id="wifi-radio-summary-update-PowerLevel-select" [items]="powerLevels" bindLabel="label"
+                    bindValue="value" [multiple]="false" placeholder="" [(ngModel)]="radio.PowerLevel"
+                    [ngModelOptions]="{ standalone: true }" [clearable]="false" (change)="radioFieldChanged()"
+                    [searchable]="false" [disabled]="!radioMetaEdits?.PowerLevel_writable">
+                  </ng-select>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="
+                rsEditType == '2.4G' &&
+                radioMetaEdits?.MulticastForwarding_writable
+              " id="wifi-radio-summary-update-MulticastForwarding">
+              <th scope="row">{{ language["Multicast Forwarding"] }}</th>
+              <td>
+                <div class="d-inline toggle-swtbtn checkbox switcher">
+                  <label for="RadioMulticastForwarding">
+                    <input type="checkbox" id="RadioMulticastForwarding" checked name="RadioMulticastForwarding"
+                      [(ngModel)]="radio.MulticastForwarding" (change)="radioFieldChanged()"
+                      [disabled]="!radioMetaEdits?.MulticastForwarding_writable" />
+                    <span><small></small></span>
+                  </label>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="
+                rsEditType == '2.4G' && radioMetaEdits?.AirtimeFairness_writable
+              " id="wifi-radio-summary-update-RadioAirtimeFairness">
+              <th scope="row">{{ language["Airtime Fairness"] }}</th>
+              <td>
+                <div class="d-inline toggle-swtbtn checkbox switcher">
+                  <label for="RadioAirtimeFairness">
+                    <input type="checkbox" id="RadioAirtimeFairness" checked name="RadioAirtimeFairness"
+                      [(ngModel)]="radio.AirtimeFairness" (change)="radioFieldChanged()"
+                      [disabled]="!radioMetaEdits?.AirtimeFairness_writable" />
+                    <span><small></small></span>
+                  </label>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="
+                rsEditType == '2.4G' && radioMetaEdits?.FrameBurst_writable
+              " id="wifi-radio-summary-update-RadioFrameBurst">
+              <th scope="row">{{ language["Frame Burst"] }}</th>
+              <td>
+                <div class="d-inline toggle-swtbtn checkbox switcher">
+                  <label for="RadioFrameBurst">
+                    <input type="checkbox" id="RadioFrameBurst" checked name="RadioFrameBurst"
+                      [(ngModel)]="radio.FrameBurst" (change)="radioFieldChanged()"
+                      [disabled]="!radioMetaEdits?.FrameBurst_writable" />
+                    <span><small></small></span>
+                  </label>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="rsEditType == '5G' && radioMetaEdits?.DFS_writable" id="wifi-radio-summary-update-RadioDFS">
+              <th scope="row">{{language['DFS']}}</th>
+              <td>
+                <div class="d-inline toggle-swtbtn checkbox switcher">
+                  <label for="RadioDFS">
+                    <input type="checkbox" id="RadioDFS" checked name="RadioDFS" [(ngModel)]="radio.DFS" (change)="
+                        changeEditRadioModes(rsEditType); radioFieldChanged()
+                      " [disabled]="!radioMetaEdits?.DFS_writable" />
+                    <span><small></small></span>
+                  </label>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="(rsEditType == '5G' || rsEditType == '6G') && radioMetaEdits?.MUMIMO_writable"
+              id="wifi-radio-summary-update-RadioMUMIMO">
+              <th scope="row">{{language['MU-MIMO']}}</th>
+              <td>
+                <div class="d-inline toggle-swtbtn checkbox switcher">
+                  <label for="RadioMUMIMO">
+                    <input type="checkbox" id="RadioMUMIMO" checked name="RadioMUMIMO" [(ngModel)]="radio.MUMIMO"
+                      [disabled]="!radioMetaEdits?.MUMIMO_writable" (change)="radioFieldChanged()" />
+                    <span><small></small></span>
+                  </label>
+                </div>
+              </td>
+            </tr>
+
+            <!---
+            
+             <tr id="wifi-radio-summary-update-PacketsSent" *ngIf="radioMetaEdits?.PacketsSent_writable">
+              <th scope="row">{{ language.Packets_Sent }}</th>
+              <td>
+                <div class="ccl-form mb-10" [ngClass]="true ? 'cursor-ban' : ''">
+                  <input type="test" class="form-control" id="packets-sent" aria-describedby="packets-sent"
+                    name="packetsSent" [(ngModel)]="radio.PacketsSent" readonly
+                    [disabled]="!radioMetaEdits?.PacketsSent_writable" />
+                </div>
+              </td>
+            </tr>
+            <tr id="wifi-radio-summary-update-PacketsReceived" *ngIf="radioMetaEdits?.PacketsReceived_writable">
+              <th scope="row">{{ language.Packets_Received }}</th>
+              <td>
+                <div class="ccl-form mb-10" [ngClass]="true ? 'cursor-ban' : ''">
+                  <input type="test" class="form-control" id="packets-received" aria-describedby="PacketsReceived"
+                    name="PacketsReceived" [(ngModel)]="radio.PacketsReceived" readonly
+                    [disabled]="!radioMetaEdits?.PacketsReceived_writable" />
+                </div>
+              </td>
+            </tr> 
+            -->
+            <tr *ngIf="rsEditType == '6G' && radioMetaEdits?.PSCOnly_writable"
+              id="wifi-radio-summary-update-RadioPSCOnly">
+              <th scope="row">{{language['PSC Only']}}</th>
+              <td>
+                <div class="d-inline toggle-swtbtn checkbox switcher-disabled">
+                  <label for="RadioPSCOnly">
+                    <input type="checkbox" id="RadioPSCOnly" checked name="RadioPSCOnly" [(ngModel)]="radio.PSCOnly"
+                      [disabled]="!radioMetaEdits?.PSCOnly_writable" (change)="radioFieldChanged()" [disabled]="true" />
+                    <span><small></small></span>
+                  </label>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="add-bnt float-left">
+      <button type="button" id="submitRadioSummary" class="btn-default primary px-3 px-3" (click)="submitRadioSummary()"
+        [disabled]="radioSummaryUpdating || !radioSubmitEnabled">
+        {{language.submit}}
+      </button>
+      <button type="button" id="closeRadioSummary" class="btn-default transparant px-3 px-3 m-2" (click)="closeModal()"
+        data-dismiss="modal">
+        {{ language.Cancel }}
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #channelchangesModal let-modal class="col-md-12 custom-modal">
+  <div class="modal-header">
+    <h5 class="modal-title" id="addModal">
+      {{ language.Channel_Change_Logs }}
+    </h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body" id="wifi-ext-changelog-modal-wrapper">
+    <div class="ccl-form">
+      <div *ngIf="
+          channelChangeLogsData &&
+          (channelChangeLogsData['2.4g'].length ||
+            channelChangeLogsData['5g'].length)
+        " class="d-flex align-items-center">
+        <div *ngIf="metaData?.ChannelChangeLogs24G" class="align-self-start mr-3">
+          <input class="align-self-center" type="radio" id="changelog24g" name="changelog24g"
+            (change)="changeLog('2.4G')" value="true" [(ngModel)]="changelog24g" />
+          <label class="align-self-start" for="changelog24g">2.4GHz</label>
+        </div>
+        <div *ngIf="metaData?.ChannelChangeLogs5G" class="align-self-start">
+          <input class="align-self-center" type="radio" id="changelog5g" name="changelog24g" (change)="changeLog('5G')"
+            [(ngModel)]="changelog24g" value="false" />
+          <label class="align-self-start" for="changelog5g">5GHz</label>
+        </div>
+
+        <div *ngIf="metaData?.ChannelChangeLogs6G" class="align-self-start">
+          <input class="align-self-center" type="radio" id="changelog6g" name="changelog24g" (change)="changeLog('6G')"
+            [(ngModel)]="changelog24g" value="6G" />
+          <label class="align-self-start" for="changelog5g">6GHz</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="event-details-table" id="wifi-ext-changelog-table">
+      <table datatable [dtOptions]="changeLogOptions" class="row-border row-border hover table-alter">
+        <thead>
+          <tr>
+            <th width="40%">{{ language.Date }}</th>
+            <th width="20%" class="text-right">{{ language.Channel }}</th>
+            <th width="40%">{{ language.Reason }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="wifi-ext-changelog-table-row-{{ i }}" *ngFor="let item of channelChangeLogsTable; let i = index">
+            <td>{{ date_format(item.TimeStamp) }}</td>
+            <td class="text-right">
+              {{ item.NewChannel }}
+            </td>
+            <td class="">{{ changeLogReason(item.ReasonCode) }}</td>
+          </tr>
+          <tr id="wifi-ext-changelog-table-no-data-row" *ngIf="!channelChangeLogsTable?.length">
+            <td colspan="3" class="no-data-available">{{ language['No Data Available'] }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #wpsModal let-modal class="col-md-12 custom-modal">
+  <div class="modal-header">
+    <h5 class="modal-title" id="addModal">WPS</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body" id="wifi-wps-wrapper">
+    <div class="loader" *ngIf="wpsUpdating">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="w-100 alert alert alert-danger fade show" *ngIf="wpsError">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+      <button type="button" class="close" (click)="wpsError = false">
+        <span></span>
+      </button>
+      <div class="d-inline-flex" [innerHtml]="wpsErrorInfo"></div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="">
+          <h5>{{ language.wpsInfo }}</h5>
+        </div>
+        <div class="my-3" id="wifi-wps-select-checkbox">
+          <label class="mr-3" for="formGroupExampleInput">WPS {{ language.Type }}</label>
+          <div class="form-check-inline">
+            <div class="mr-3">
+              <input type="radio" id="primarySelect" name="wpsSelect" [(ngModel)]="iptvSelectRadio" value="false"
+                (click)="chooseWPS(false)" [disabled]="connectDisabled || !gloObj.primarySelectable" />
+              <label class="align-self-start" for="primarySelect">{{
+                language.primary
+                }}</label>
+            </div>
+            <div class="mr-3">
+              <!-- <input class="" type="radio" id="iptvSelect" name="iptvSelect" value="iptvSelect" [(ngModel)]="iptvSelect"
+                [disabled]="!iptvSelect"> -->
+              <input class="" type="radio" id="iptvSelect" name="wpsSelect" [(ngModel)]="iptvSelectRadio" value="true"
+                (click)="chooseWPS(true)" [disabled]="connectDisabled || !iptvSelect || !gloObj.iptvSelectable" />
+              <label class="align-self-start" for="iptvSelect">IPTV</label>
+            </div>
+            <div *ngIf="metaData?.WpsStateBackhaul" class="">
+              <input class="" type="radio" id="backhaulSelect" name="wpsSelect" [(ngModel)]="iptvSelectRadio"
+                value="backhaul" (click)="chooseWPS('backhaul')" [disabled]="connectDisabled" />
+              <label class="align-self-start" for="backhaulSelect">Backhaul</label>
+            </div>
+          </div>
+          <div class="form-check-inline">
+            <button type="button" id="wifi-wps-connect-btn" class="btn-default primary px-2 md-btn blue-btn mx-2"
+              [disabled]="connectDisabled || wpsConnected" (click)="connectWPS()">
+              {{
+              showCountDown
+              ? language.Connecting
+              : wpsConnected
+              ? language.Connected
+              : language.Connect
+              }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="wifi-wps-countdown" class="row my-4 justify-content-center" *ngIf="showCountDown">
+      <div class="col-md-4 d-flex justify-content-center">
+        <div class="timecount">
+          <h3>{{ countDown }}</h3>
+          <span>{{ language.secsLeft }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

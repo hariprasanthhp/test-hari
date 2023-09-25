@@ -1,0 +1,99 @@
+[type=radio]:checked,
+[type=radio]:not(:checked) {
+  position: relative !important;
+  left: unset !important;
+}
+
+.f-w-600 {
+  font-weight: 600;
+}
+
+[type=radio]:checked,
+[type=radio]:not(:checked) {
+  position: relative !important;
+  left: 0 !important
+}
+
+select {
+  border-radius: 20px;
+  background: #F8F8FA;
+}
+
+.gotorouter {
+  cursor: pointer;
+  text-decoration: underline;
+  color: blue;
+}
+
+.ccl-form input {
+  font-size: 14px;
+}
+
+.sm-text {
+  font-size: 12px;
+}
+
+#deviceWizard {
+  padding: 0px 20px;
+}
+
+.ng-select.custom ::ng-deep .ng-select-container .ng-value-container .ng-input>input {
+  height: 26px;
+}
+
+#staticGroups input {
+  height: 26px;
+}
+
+.wap-alert {
+  position: relative;
+  padding: .75rem .25rem;
+  margin-bottom: 1rem;
+  border: 1px solid transparent;
+  border-radius: .25rem;
+}
+
+.disableDropDown {
+  cursor: not-allowed !important;
+  //cursor: no-drop;
+}
+
+
+
+.ng-select.disableDropDown:hover {
+  cursor: not-allowed !important;
+}
+
+
+input.disableDropDown:hover {
+  cursor: not-allowed !important;
+}
+
+
+
+::ng-deep.btn-notallowed .ng-select .ng-select-container {
+  cursor: not-allowed !important;
+  width: 100%;
+  pointer-events: none;
+}
+
+::ng-deep.btn-notallowed.ng-select.ng-select-single .ng-select-container .ng-value-container .ng-input {
+  cursor: not-allowed !important;
+  position: relative !important;
+
+}
+
+input.inp-disabled:hover {
+  cursor: not-allowed !important;
+}
+.pt-20{padding-top: 20px;}
+.check{
+  max-width: 13px;
+    max-height: 15px;
+    min-height: 15px;
+    cursor: pointer;
+}
+.padl-m {
+  padding-left : 30px !important;
+  padding-right: 30px !important;
+}

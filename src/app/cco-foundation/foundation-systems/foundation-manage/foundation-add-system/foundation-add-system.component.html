@@ -1,0 +1,212 @@
+<section class="mb-2">
+  <div class="container" *ngIf="!subscriberName && !subscriberLocationId">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="cco-title">{{ language[system] || system }} </div>
+      </div>
+    </div>
+  </div>
+  <div class="container" *ngIf="(subscriberName || subscriberLocationId) && system">
+    <div class="row">
+      <div class="col-md-12">
+        <div class='cco-title'>{{ language[system] || system }} - {{subscriberName ?
+          subscriberName:subscriberLocationId}}</div>
+      </div>
+    </div>
+  </div>
+  <div class="container" *ngIf="!system">
+    <div class="row">
+      <div class="col-md-12">
+        <div class='cco-title'> {{subscriberName ? subscriberName:subscriberLocationId}}</div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container loader-wrapper">
+  <div class="loader-wrapper-info"
+    *ngIf="(loading || savesystemsubloading || edgeSuiteLoading || serviceLoading)|| (systemInfo?.sn && !deviceDataAvail) || microSiteLoading">
+    <div class="loader">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="w-100 alert alert-danger fade show" *ngIf="error">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+    <button type="button" class="close" (click)="closeAlert()">
+      <span></span>
+    </button>
+    <div class="d-inline-flex" [innerHtml]="language[errorInfo] || errorInfo"></div>
+  </div>
+
+  <div class="w-100 alert alert-success fade show" *ngIf="success">
+    <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+    <button type="button" class="close" (click)="closeAlert()">
+      <span></span>
+    </button>
+    <div class="d-inline-flex" [innerHtml]="language[successInfo] || successInfo"></div>
+  </div>
+
+  <div class="w-100 alert alert-danger" *ngIf="edgeSuitsWarning">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+    <button type="button" class="close" (click)="closeAlert()">
+      <span></span>
+    </button>
+    <div class="d-inline-flex" [innerHtml]="edgeSuitsWarningInfo"></div>
+  </div>
+
+  <div class="row my-2">
+    <div class="col-md-8 px-0 ccl-tabs mt-2">
+      <ul id="tabs" class="nav nav-tabs sub-tab">
+        <li class="nav-item">
+          <a (click)="gotoTab('systemDetails')" class="nav-link small" id="sys-subscriber" data-toggle="tab"
+            [ngClass]="activeTab == 'systemDetails' ? 'active' : ''" class="nav-link">
+            {{language.Details}}
+          </a>
+        </li>
+        <!-- <li class="nav-item">
+          <a (click)="gotoTab('systemSubscriber')" class="nav-link small" id="sys-details" data-toggle="tab"
+            [ngClass]="activeTab == 'systemSubscriber' ? 'active' : ''" class="nav-link" style="padding-left: 0%">
+            {{ language.Subscriber_Information }}</a>
+        </li> -->
+        <!--   <li class="nav-item" *ngIf="servicetabdisable">
+          <a (click)="servicetabdisable ? false : gotoTab('systemServices')" class="disabled" id="sys-services"
+            data-toggle="tab" [ngClass]="activeTab == 'systemServices' ? 'active' : ''">
+            {{ language.servicetierlabel }}</a>
+        </li>
+        <li class="nav-item" *ngIf="!servicetabdisable">
+          <a (click)="servicetabdisable ? false : gotoTab('systemServices')" class="nav-link" id="sys-services"
+            data-toggle="tab" [ngClass]="activeTab == 'systemServices' ? 'active' : ''">
+            {{ language.servicetierlabel }}</a>
+        </li> -->
+        <div
+          *ngIf=" arloEnableentitlement || proAndExpEnableentitlement || productIQEnableentitlement ||  ExperienceIQEnableentitlement || ServifyEnableentitlement || arloUnlimitedentitlement || arloUnlimitedplusentitlement ||smallBizIQentitlement || Bark_Premiumentitlement || Bark_Juniorentitlement || ServifyPlatinumentitlement || ServifySilverentitlement || ServifyGoldentitlement || myCommunityIQEntitlement ">
+          <li class="nav-item" *ngIf="subonlytabDisable">
+            <a (click)="subonlytabDisable ? false : gotoTab('SystemEdgesuits');(myCommunityIQEntitlement)"
+              id="sys-edgesuits" data-toggle="tab" [ngClass]="activeTab == 'SystemEdgesuits' ? 'active' : ''"
+              class="disabled">
+              {{ language['Managed_Services'] }}</a>
+          </li>
+          <li class="nav-item" *ngIf="!subonlytabDisable">
+            <a (click)="subonlytabDisable ? false : gotoTab('SystemEdgesuits');(myCommunityIQEntitlement)"
+              id="sys-edgesuits" data-toggle="tab" [ngClass]="activeTab == 'SystemEdgesuits' ? 'active' : ''"
+              class="nav-link">
+              {{ language['Managed_Services'] }}</a>
+          </li>
+        </div>
+
+        <!--  <li class="nav-item" *ngIf="tabDisable">
+          <a (click)="tabDisable ? false : gotoTab('systemStaticgroups')" class="disabled" id="sys-edgesuits"
+            data-toggle="tab" [ngClass]="activeTab == 'systemStaticgroups' ? 'active' : ''">
+            {{ language["Static Groups"] }}
+          </a>
+        </li> -->
+        <!--  <li class="nav-item" *ngIf="!tabDisable">
+          <a (click)="tabDisable ? false : gotoTab('systemStaticgroups')" class="nav-link small" id="sys-edgesuits"
+            data-toggle="tab" [ngClass]="activeTab == 'systemStaticgroups' ? 'active' : ''" class="nav-link">
+            {{ language["Static Groups"] }}
+          </a>
+        </li> -->
+        <li class="nav-item" *ngIf="servicetabdisable && !createdSubscriberId">
+          <a class="disabled" id="sys-Advance"
+            data-toggle="tab" [ngClass]="(activeTab == 'systemAdvanced' || activeTab == 'networkService') ? 'active' : ''">
+            {{language.Advanced}}
+          </a>
+        </li>
+
+        <li class="nav-item" *ngIf="!servicetabdisable || createdSubscriberId">
+          <a (click)="gotoTab((((servicedisable  || (SaveSystem == 'Save' && (this.systemInfo?.subscriberId || createdSubscriberId || this.createdSubcriberData?._id  ))) || (SaveSystem !== 'Save' && ((systemInfo?.subscriberId || createdSubscriberId || createdSubcriberData?._id))))&&(!LegazyViewIsConfigured || (!netWorkServiceIsNotConfigured && LegazyViewIsConfigured))) ? 'networkService' : 'systemAdvanced')" class="nav-link small" id="sys-Adv"
+            data-toggle="tab" [ngClass]="(activeTab == 'systemAdvanced' || activeTab == 'networkService') ? 'active' : ''" class="nav-link">
+            {{language.Advanced}}
+          </a>
+        </li>
+        <!-- <li class="nav-item" *ngIf="(servicedisable  || SaveSystem == 'Save')">
+          <a (click)="servicetabdisable ? null : gotoTab('networkService')" [class]="servicetabdisable ? 'disabled' : 'nav-link small'"  id="sys-Adv" data-toggle="tab"
+            [ngClass]="activeTab == 'networkService' ? 'active' : ''">
+            {{language['Network Services']}}
+          </a>
+        </li> -->
+        <!-- <li class="nav-item" *ngIf="!tabDisable">
+          <a (click)="tabDisable ? false : gotoTab('systemStaticgroups')" class="nav-link small" id="sys-edgesuits"
+            data-toggle="tab" [ngClass]="activeTab == 'systemStaticgroups' ? 'active' : ''" class="nav-link">
+            Advanced
+          </a>
+        </li> -->
+      </ul>
+    </div>
+    <div class="col-md-4 text-right border-bottom-grey">
+      <button type="submit" class="mr-3 btn-default primary" (click)="saveSystem()" [disabled]="loading ||saveDisabled">
+        {{language['Save Changes']}}
+      </button>
+
+      <!-- <button type="submit" class="btn-default btn-dft" (click)="closeAddEdit()">
+        Cancel
+      </button> -->
+      <span class="close-icon pointer" (click)="closeAddEdit()"><img src="assets/img/close-icon.svg" alt="" /></span>
+    </div>
+    <!-- </div>
+    <div class="col-md-4 text-right border-bottom">
+      <button
+        type="submit"
+        class="mr-3 btn-default btn-dft"
+        (click)="saveSystem()"
+      >
+        {{ language.Save_System }}
+      </button>
+      <span class="close-icon"
+        ><img src="assets/img/close-icon.svg" alt=""
+      /></span>
+    </div> -->
+  </div>
+  <section *ngIf="dataAvail">
+    <app-foundation-system-details [staticGroups]="StaticForm" [AllFormData]="syetemsAllData" (out_static_groups_submit)="submitStaticGroups()" (out_static_groups_change)="OnStaticFormData($event)" (advanced_enable_disable)="saveEnableDisable($event)" [sys_Det]="FormData.SysDetails" [system_id]="system" [AllFormData]="syetemsAllData"
+      [subscriberName]="subscriberName"  [SSIDbackup]="SSIDbackup" [subscriberLocationId]="subscriberLocationId" [deviceDataList]="deviceDataList"
+      (Out_sysDet)="OnFormData('SysDetails', $event)" (out_sys_Subsc_submit)="saveSyetemsubscriber()"
+      *ngIf="activeTab == 'systemDetails'" (Out_System_Focus)="saveEnableDisable($event)"
+      (Out_Service_Status)="serviceDetails($event)">
+    </app-foundation-system-details>
+    <app-service-tier [sys_ServiceTiers]="FormData.SysServicetiers" [AllFormData]="syetemsAllData"
+      [formOptions]="formOptions" [servicesListData]="servicesListData"
+      (Out_sys_ServiceTiers)="OnFormData('SysServicetiers', $event)"
+      (out_sys_service_tiers_submit)="submitServiceData()" *ngIf="activeTab == 'systemServices'">
+    </app-service-tier>
+    <app-edge-suits [sys_EdgeSuites]="FormData.SysEdgeSuites" [AllFormData]="syetemsAllData"
+      [IQ_SuiteEnable]="iqsuitEnable" [arloEntitleEnable]="arloEnableentitlement"
+      [myCommunityIQEntitlement]="myCommunityIQEntitlement" (Out_System_Focus)="saveEnableDisable($event)"
+      [arloUnlimitedplusentitlement]="arloUnlimitedplusentitlement" [proExpDisable]="proExpDisable"
+      [arloUnlimitedentitlement]="arloUnlimitedentitlement" [ServifyEnableentitlement]="ServifyEnableentitlement"
+      [ServifyPlatinumentitlement]="ServifyPlatinumentitlement" [ServifySilverentitlement]="ServifySilverentitlement"
+      [ServifyGoldentitlement]="ServifyGoldentitlement" [Bark_Premiumentitlement]="Bark_Premiumentitlement"
+      [Bark_Juniorentitlement]="Bark_Juniorentitlement" [ProductIQEntitleEnable]="productIQEnableentitlement"
+      [ExpIQEntitleEnable]="ExperienceIQEnableentitlement" [ProAndExpIQEntitleEnable]="proAndExpEnableentitlement"
+      [smallBizIQentitlement]="smallBizIQentitlement" [systemInfo]="systemInfo "
+      (Out_sys_EdgeSuites)="OnFormData('SysEdgeSuites', $event)" (allFormData)="allFormData($event)"
+      [formOptions]="formOptions" (out_sys_edge_suits_submit)="submitEdgeSuitsData($event)"
+      (parentOpMode)="getOpMode($event)" *ngIf="activeTab == 'SystemEdgesuits'"></app-edge-suits>
+    <app-static-groups [staticGroups]="StaticForm" [AllFormData]="syetemsAllData" [deviceDataList]="deviceDataList"
+      (out_static_groups_change)="OnStaticFormData($event)" (out_static_groups_submit)="submitStaticGroups()"
+      *ngIf="activeTab == 'systemStaticgroups'">
+    </app-static-groups>
+    <!-- SaveSystem === 'Save' &&  -->
+<!--  || 
+      (SaveSystem !== 'save' && (this.systemInfo?.subscriberId || createdSubscriberId || this.createdSubcriberData?._id) && (systemInfo.sn || this.FormData.SysDetails.systemId) && (netWorkServiceIsNotConfigured && 
+      !LegazyViewIsConfigured) -->
+    <a *ngIf="(activeTab == 'networkService' || activeTab == 'systemAdvanced')&&(this.systemInfo?.subscriberId || createdSubscriberId || this.createdSubcriberData?._id) && (systemID) && (netWorkServiceIsNotConfigured && 
+      !LegazyViewIsConfigured)" class="py-4 pointer" (click)="activeTab = (activeTab == 'systemAdvanced') ? 'networkService' : 'systemAdvanced'">{{(activeTab == 'networkService') ? language['Enable Legacy(NetOps) View'] : language['Disable Legacy(NetOps) View'] }}</a>
+    <app-system-advanced  [sys_ServiceTiers]="FormData.SysServicetiers"  [AllFormData]="syetemsAllData"
+      [formOptions]="formOptions" [servicesListData]="servicesListData"
+      (Out_sys_ServiceTiers)="OnFormData('SysServicetiers', $event)" [device]="deviceInfo"
+      (out_sys_service_tiers_submit)="submitServiceData()" [staticGroups]="StaticForm" [deviceDataList]="deviceDataList"
+      (out_static_groups_change)="OnStaticFormData($event)" (out_static_groups_submit)="submitStaticGroups()"
+      *ngIf="activeTab == 'systemAdvanced' " [servicedisable]="servicedisable" [preProvisionedSystem]="PreProvisnedSystem">
+
+    </app-system-advanced>
+
+    <app-add-services *ngIf="activeTab == 'networkService'" [data_plan]="DataPlanitem" [video_plan]="VideoPlanitem" [voice_plan]="VoicePlanitem"
+    [sys_Service]="defaultServices" (Out_Service)="formDataUpdate( $event, 'services')" (out_servicesubmit)="saveServiceData()"  [DialPlanitem]="DialPlanitems"
+    [disableService]="false" [serviceData]="serviceData" (serviceFormClone)="getServiceForm($event)"></app-add-services>
+  </section>
+</div>

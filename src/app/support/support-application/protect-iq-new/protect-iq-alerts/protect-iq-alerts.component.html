@@ -1,0 +1,173 @@
+<div class="col-12 px-0" id="alert" role="tab" aria-labelledby="alert">
+
+    <!-- error message -->
+    <div class="w-100 alert alert alert-danger fade show d-flex justify-content-between align-items-center"
+        *ngIf="errorMessage">
+        <div class="error-img"><img src="./assets/img/ic_error-36px.svg" /></div>
+        <div class="d-inline-flex wrn-msg" [innerHtml]="errorMessage"></div>
+        <button type="button" class="btn-default primary ok" (click)="errorMessage = ''">
+            {{ language.OK }}
+        </button>
+    </div>
+    <!-- error message end -->
+
+    <!-- loader -->
+    <div class="loader" *ngIf="loading">
+        <div class=" d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">{{ language.Loading }}</span>
+            </div>
+        </div>
+    </div>
+    <!-- loader end -->
+
+    <div class="alerts">
+        <div class="w-20 ml-auto">
+            <ng-select class="my-2" [(ngModel)]="selectedType" name="alert" [items]="alertTypes" (change)="loadData()"
+                bindLabel="label" bindValue="value" [searchable]="false">
+                <ng-template ng-label-tmp let-item="item">
+                    {{language[item.label] || item.label }}
+                </ng-template>
+                <ng-template ng-option-tmp let-item="item" let-index="index">
+                    {{ language[item.label] }}
+                </ng-template>
+            </ng-select>
+        </div>
+        <table class="detail-list skip-device">
+            <thead>
+                <th class="w-30">
+                    <div class="f-size-16 f-w-600 px-2" id="alert-occurred">{{ language.Occurred }}</div>
+                </th>
+                <th class="w-30">
+                    <div class="f-size-16 f-w-600 px-2" id="alert-details">{{ language.Alert_Details }}</div>
+                </th>
+                <!-- <th class="w-20 ccl-form">
+                    
+                </th> -->
+            </thead>
+            <tbody>
+                <tr *ngFor="let alertDetail of alerts; let i = index">
+                    <td colspan="3">
+                        <div class="protect-iq-accordion">
+                            <div id="accordion">
+                                <div class="card">
+                                    <div class="row mb-0">
+                                        <ul class="alert-ul" (click)="isExpanded[i] = !isExpanded[i]">
+                                            <li class="occurr-date">
+                                                <div class="alerts-info">
+                                                    <span class="plus-minus-toggle mr-2">
+                                                        <span class="plus"
+                                                            *ngIf="!isExpanded[i]; else expanded">+</span>
+                                                        <ng-template #expanded>
+                                                            <span class="minus" [attr.id]="'symbolMinus' + i">-</span>
+                                                        </ng-template>
+                                                    </span>
+                                                    {{ alertDetail.timestamp
+                                                    | date: "MMM dd yyyy, hh:mm:s a" }}
+                                                </div>
+                                            </li>
+                                            <li class="alert-details">
+                                                <div *ngIf="alertDetail?.securityAlarm?.type != 'WG'; else showUrl">
+                                                    {{ alertDetail?.securityAlarm?.message }} was
+                                                    {{ alertDetail?.securityAlarm?.action }}ED
+                                                </div>
+                                                <ng-template #showUrl>
+                                                    {{ alertDetail?.securityAlarm?.url }} was
+                                                    {{ alertDetail?.securityAlarm?.action }}ED
+                                                </ng-template>
+                                            </li>
+                                            <li class="alert-btn opacityCheck">
+                                                <button class="btn default-btn" [id]="'whitelabelbtn' + i"
+                                                    (click)="addToTrustList(alertDetail)">
+                                                    {{ language.Add_To_trust }}
+                                                </button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div [id]="'collapseA' + i" *ngIf="isExpanded[i]">
+                                        <table class="table table-borderless">
+                                            <tbody>
+                                                <tr>
+                                                    <th class="w-30"></th>
+                                                    <th class="w-60 p-0">
+                                                        <table class="detail-list alerts-table">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <th scope="row" class="">
+                                                                        {{ language.Time }} :
+                                                                    </th>
+                                                                    <td class="">
+                                                                        {{ alertDetail.timestamp
+                                                                        | date: "MMM dd yyyy,hh:mm:s a"}}
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th scope="row" class="">
+                                                                        {{ language.Type }} :
+                                                                    </th>
+                                                                    <td class="">
+                                                                        {{getAlertLabel(alertDetail?.securityAlarm?.type)}}
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th scope="row">
+                                                                        {{ language.Source_IP }} :
+                                                                    </th>
+                                                                    <td>
+                                                                        {{alertDetail?.securityAlarm?.sourceIp
+                                                                        || "-" }}
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th scope="row">
+                                                                        {{ language.Action }} :
+                                                                    </th>
+                                                                    <td>
+                                                                        {{ alertDetail?.securityAlarm?.action
+                                                                        || "-" }}
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th scope="row">
+                                                                        {{ language["Client Device"] }} :
+                                                                    </th>
+                                                                    <td>
+                                                                        {{alertDetail?.securityAlarm?.targetStaName
+                                                                        || "-" }}
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th scope="row">URL:</th>
+                                                                    <td>
+                                                                        {{ alertDetail?.securityAlarm?.url
+                                                                        || "-" }}
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th scope="row">File:</th>
+                                                                    <td>
+                                                                        {{ alertDetail?.securityAlarm?.file
+                                                                        || "-" }}
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </th>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr *ngIf="alerts.length == 0">
+                    <td colspan="5" class="no-data-available">
+                        {{ language["No data available"] }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

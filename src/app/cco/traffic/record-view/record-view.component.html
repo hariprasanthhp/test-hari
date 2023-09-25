@@ -1,0 +1,403 @@
+<!-- <div role="alert" class="alert alert-warning" *ngIf="!hasNetworkAccess"> {{language['Access denied due to RBAC. Please
+    consult your Organization Administrator for access.']}} </div> -->
+
+<div class="loader load" *ngIf="loading">
+    <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+            <span class="sr-only">{{language.Loading}}</span>
+        </div>
+    </div>
+</div>
+
+<div class="w-100 alert alert-danger  fade show my-3" *ngIf="errorInfo">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+    <button type="button" class="close" (click)=" errorInfo = ''"><span></span></button>
+    <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+</div>
+
+<!-- <section class="section-rec">
+    <div class="col-md-12">
+        <h1 class="cco-title border-bottom mb-3 pb-1">Traffic Recording</h1>
+    </div>
+    <div class="action-control">
+        <div class="played">
+            <label>Played</label>
+            {{playedTimeStr}}
+        </div>
+        <div class="total">
+            <label>Total</label>
+            {{totalTimeStr}}
+        </div>
+        <div class="action-btn">
+            <a (click)="toggleShowAction()">
+                <span *ngIf="showAction" class="fa fa-pause-circle" (click)="pauseVideo()"></span>
+                <span *ngIf="!showAction" class="fa fa-play-circle" (click)="playVideo()"></span>
+            </a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 track-slider">
+            <ngx-slider [(value)]="playedTime" (mouseup)="sliderEvent()" [options]="options"></ngx-slider>
+        </div>
+    </div>
+</section> -->
+<section class="section-rec">
+    <div class="col-md-12 p-0">
+        <h1 class="cco-title border-bottom mb-3 pb-1">{{language["Traffic Recording"]}}<span *ngIf="recordInfo"> -
+                {{recordInfo.name}}</span></h1>
+        <div class="position-abslt">
+            <button type="button" (click)="goToRecordList()" class="close" aria-label="Close">
+                <span aria-hidden="true"></span>
+            </button>
+        </div>
+    </div>
+    <!-- <div class="col-md-12 p-0">
+        <div class="filter">
+            <div class="row">
+                <div class="col-md-3">
+                    <label class="col-12 p-0 col-form-label">Timeframe</label>
+                    <div class="col-12 p-0 mb-1 white-select">
+                        <ng-select placeholder="Time Window">
+                            <ng-option>5 Minute Window</ng-option>
+                        </ng-select>
+                    </div>
+                </div>
+                <div class="col-md-2" style="padding-top: 25px;">
+                    <button class="btn-default primary">Apply</button>
+                </div>
+                <div class="col-md-7 text-right pt-4">
+                    <a class="primary cursor-pointer text-decoration-none">Clear Filter</a>
+                </div>
+            </div>
+        </div>
+    </div> -->
+    <!--end filter-->
+    <div class="row" *ngIf="showRealTime">
+        <div class="col-md-6 track-slider">
+            <div class="item duration">
+                <span *ngIf="showAction" class="red"></span>
+                <span *ngIf="!showAction" class="gray"></span>
+                {{playedTimeStr}}
+            </div>
+            <div class="item bar-slider">
+                <ngx-slider [(value)]="playedTime" (mouseup)="sliderEvent()" [options]="options">
+                </ngx-slider>
+            </div>
+            <div class="item action-icon">
+                <a class="pr-5px" (click)="toggleShowAction()">
+                    <span *ngIf="showAction" (click)="pauseVideo()">
+                        <img src="../../../../assets/img/ic_pause.svg" />
+                    </span>
+                    <span *ngIf="!showAction" (click)="playVideo()">
+                        <img src="../../../../assets/img/ic_play.svg" />
+                    </span>
+                </a>
+                <!-- <a>
+                    <span>
+                        <img src="../../../../assets/img/ic_stop.svg" />
+                    </span>
+                </a> -->
+            </div>
+        </div>
+        <div class="col-md-6 text-right" *ngIf="recordInfo">
+            <p>{{language['timerecording']}} - {{recordInfo.startTime | date: 'yyyy-MM-dd HH:mm:ss'}}</p>
+        </div>
+    </div>
+    <!--end slider-->
+</section>
+<section>
+    <div class="container px-0">
+
+        <div class="d-flex justify-content-between md-block">
+
+            <div class="col-12 col-md-12 pr-0 col-lg-6" [hidden]="fsView">
+
+                <div id="traffic-network-realtime-rate" class="card m-10"
+                    *ngIf="data['maxRate'].length || showRealTime">
+                    <div class="" id="ngx-stream-path-chart-rate">
+
+                        <app-record-stream-chart [reload]="reload" [play]="showAction" [totalTime]="totalTime"
+                            [playedTime]="playedTime" [startTime]="startTime" [endTime]="endTime" [chartName]="rate"
+                            [yAxixTitle]="rateUnit" [data]="data.maxRate" [time]="data.sendTime" [windowLen]="windowLen"
+                            *ngIf="showRealTime" [history]="cacheRateData" [selectedFilter]="selectedTime">
+                        </app-record-stream-chart>
+                    </div>
+                </div>
+                <div id="traffic-network-realtime-packet" class="card m-10"
+                    *ngIf="data['packet'].length || showRealTime">
+                    <div class="" id="ngx-stream-path-chart-packet">
+                        <app-record-stream-chart [reload]="reload" [play]="showAction" [totalTime]="totalTime"
+                            [playedTime]="playedTime" [startTime]="startTime" [endTime]="endTime" [chartName]="packet"
+                            [yAxixTitle]="packetUnit" [data]="data.packet" [time]="data.sendTime"
+                            [windowLen]="windowLen" *ngIf="showRealTime" [history]="cachePacketData"
+                            [selectedFilter]="selectedTime">
+                        </app-record-stream-chart>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-12 pr-0 col-lg-6" [hidden]="fsView">
+
+                <div *ngIf="traffic.endpoints" id="traffic-network-realtime-tep" class="card m-10 h-auto">
+                    <div class="board_head">
+                        <!-- <div class="orange-text-wrapper" style="display: inline-block">
+                            <ng-select class="realtime-custom-select" id="usage_criteria" [items]="topEPs"
+                                bindLabel="name" bindValue="value" [multiple]="false" placeholder=""
+                                [(ngModel)]="tepSelectedTopLength" [ngModelOptions]="{ standalone: true }"
+                                [clearable]="false" [searchable]="false" (change)="changeTopLength('TEP')">
+                            </ng-select>
+                        </div> -->
+                        <div class="orange-text-wrapper d-inline-block">
+                            <p class="orange-text">{{ language.top5Endpoints }}</p>
+                        </div>
+                        <span class="ml20">{{ language.interval }}: 15 sec</span>
+                        <span class="top5-fullscreen pointer  btn-round btn-small-24 btn-grey btn-expand"
+                            (click)="fullscreen('TEP')" id="open-fullscreen-top-apps"
+                            title="{{language.lossofpon_fullscreen_tip}}">
+                        </span>
+                    </div>
+
+                    <div class="card-body row board_body no-gutters h-210">
+                        <div class="col-md-6 col-12" id="top-endpoints-up-chart-div">
+                            <div class="chart-info">
+                                <span class="ml-2">{{language.upRate}} (<b>{{tEPrcntData.upPercentage}}%</b>
+                                    {{language.ofTotal}})</span>
+
+                            </div>
+                            <app-bar-chart id="top-endpoints-up-chart" *ngIf="tEPData.upData.length > 0 && showRealTime"
+                                [chartOptions]="topEndPointUpChartoptions" [type]="'up'" [updateFlag]="updateFlag">
+                            </app-bar-chart>
+
+                        </div>
+                        <div class="col-md-6 col-12">
+                            <div class="chart-info">
+                                <span class="ml-2">{{language.downRate}} (<b>{{tEPrcntData.downPercentage}}%</b>
+                                    {{language.ofTotal}})</span>
+                            </div>
+                            <app-bar-chart id="top-endpoints-down-chart"
+                                *ngIf="tEPData.downData.length > 0 && showRealTime"
+                                [chartOptions]="topEndPointDownChartoptions" [type]="'down'" [updateFlag]="updateFlag">
+                            </app-bar-chart>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="traffic.applications" id="traffic-network-realtime-tapp" class="card mt-2 m-10 h-auto">
+                    <div class="board_head">
+                        <!-- <div class="orange-text-wrapper" style="display: inline-block">
+                            <ng-select class="realtime-custom-select" id="usage_criteria" [items]="topAPPs"
+                                bindLabel="name" bindValue="value" [multiple]="false" placeholder=""
+                                [(ngModel)]="tappSelectedTopLength" [ngModelOptions]="{ standalone: true }"
+                                [clearable]="false" [searchable]="false" (change)="changeTopLength('TAPP')">
+                            </ng-select>
+                        </div> -->
+                        <div class="orange-text-wrapper d-inline-block">
+                            <p class="orange-text">{{ language.top5Applications }}</p>
+                        </div>
+                        <span class="ml20">{{ language.interval }}: 15 sec</span>
+                        <span class="top5-fullscreen pointer  btn-round btn-small-24 btn-grey btn-expand"
+                            (click)="fullscreen('TAPP')" id="open-fullscreen-top-apps"
+                            title="{{language.lossofpon_fullscreen_tip}}">
+                        </span>
+                    </div>
+
+                    <div class="card-body row board_body no-gutters h-210">
+                        <div class="col-md-6 col-12" id="top-apps-up-chart-div">
+                            <div class="chart-info">
+                                <span class="ml-2">{{language.upRate}}
+                                    (<b>{{tAPrcntData.upPercentage}}% </b>{{language.ofTotal}})</span>
+                            </div>
+                            <app-bar-chart id="top-apps-up-chart" *ngIf="tAData.upData.length > 0 && showRealTime"
+                                [chartOptions]="topAppsUpChartoptions" [type]="'up'" [updateFlag]="updateFlag">
+                            </app-bar-chart>
+                        </div>
+                        <div class="col-md-6 col-12" id="top-apps-down-chart-div">
+                            <div class="chart-info">
+                                <span class="ml-2">{{language.downRate}} (<b>{{tAPrcntData.downPercentage}}%</b>
+                                    {{language.ofTotal}})</span>
+                            </div>
+                            <app-bar-chart id="top-apps-down-chart" *ngIf="tAData.downData.length > 0 && showRealTime"
+                                [chartOptions]="topAppsDownChartoptions" [type]="'down'" [updateFlag]="updateFlag">
+                            </app-bar-chart>
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngIf="traffic.locations" id="traffic-network-realtime-location" class="card mt-2 m-10 h-auto">
+                    <div class="board_head">
+                        <!-- <div class="orange-text-wrapper" style="display: inline-block">
+                            <ng-select class="realtime-custom-select" id="usage_criteria" [items]="topLOCs"
+                                bindLabel="name" bindValue="value" [multiple]="false" placeholder=""
+                                [(ngModel)]="tlocSelectedTopLength" [ngModelOptions]="{ standalone: true }"
+                                [clearable]="false" [searchable]="false" (change)="changeTopLength('TLOC')">
+                            </ng-select>
+                        </div> -->
+                        <div class="orange-text-wrapper d-inline-block">
+                            <p class="orange-text">{{ language.top5Locations }}</p>
+                        </div>
+                        <span class="ml20">{{ language.interval }}: 15 sec</span>
+                        <span class="top5-fullscreen pointer  btn-round btn-small-24 btn-grey btn-expand"
+                            (click)="fullscreen('TLOC')" id="open-fullscreen-top-apps"
+                            title="{{language.lossofpon_fullscreen_tip}}">
+                        </span>
+                    </div>
+
+                    <div class="card-body row board_body no-gutters h-210">
+                        <div class="col-md-6 col-12" id="top-apps-up-chart-div">
+                            <div class="chart-info">
+                                <span class="ml-2">{{language.upRate}}
+                                    (<b>{{tLPrcntData.upPercentage}}% </b>{{language.ofTotal}})</span>
+                            </div>
+                            <app-bar-chart id="top-apps-up-chart" *ngIf="tLData.upData.length > 0 && true"
+                                [chartOptions]="topLocationsUpChartoptions" [type]="'up'" [updateFlag]="updateFlag">
+                            </app-bar-chart>
+                        </div>
+                        <div class="col-md-6 col-12" id="top-apps-down-chart-div">
+                            <div class="chart-info">
+                                <span class="ml-2">{{language.downRate}} (<b>{{tLPrcntData.downPercentage}}%</b>
+                                    {{language.ofTotal}})</span>
+                            </div>
+                            <app-bar-chart id="top-apps-down-chart" *ngIf="tLData.downData.length > 0 && showRealTime"
+                                [chartOptions]="topLocationsDownChartoptions" [type]="'down'" [updateFlag]="updateFlag">
+                            </app-bar-chart>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div [hidden]="!fsView" class="bg-light full-screen-info">
+                <div class="row">
+                    <div class="col-md-12 col-12">
+                        <!-- Top End Point Full Secreen Starts -->
+                        <div class="card h-auto" *ngIf="fsChartDetails.topChart == 'TEP'">
+                            <div class="board_head">
+                                <div class="orange-text-wrapper d-inline-block">
+                                    <ng-select class="realtime-custom-select" id="usage_criteria" [items]="topLengths"
+                                        bindLabel="name" bindValue="value" [multiple]="false" placeholder=""
+                                        [(ngModel)]="selectedTopLength" [ngModelOptions]="{ standalone: true }"
+                                        [clearable]="false" [searchable]="false" (change)="changeTopLength('TEP')">
+                                    </ng-select>
+                                </div>
+                                <span class="ml20">{{ language.interval }}: 15 sec</span>
+                                <span class="top5-fullscreen pointer expand-icon" (click)="closeFullscreen()"
+                                    id="close-fullscreen-top-endpoints"
+                                    title="{{language.lossofpon_fullscreen_close_tip}}">&nbsp; <i
+                                        class="fa fa-expand"></i></span>
+                            </div>
+
+                            <div class="card-body row board_body mt20 no-gutters">
+                                <div class="col-md-6 col-12">
+                                    <div class="chart-info">
+                                        <span class="">{{ language.upRate }} (<b>{{ tEPrcntData.upPercentage }}%</b>
+                                            {{ language.ofTotal }})</span>
+                                    </div>
+                                    <app-bar-chart id="top-endpoints-up-chart-fullscreen"
+                                        [chartOptions]="topEndPointUpChartoptions" [type]="'up'"
+                                        [updateFlag]="updateFlag" *ngIf="true">
+                                    </app-bar-chart>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <div class="chart-info">
+                                        <span class="">{{ language.downRate }} (<b>{{ tEPrcntData.downPercentage }}%</b>
+                                            {{ language.ofTotal }})</span>
+                                    </div>
+                                    <app-bar-chart id="top-endpoints-down-chart-fullscreen"
+                                        [chartOptions]="topEndPointDownChartoptions" [type]="'down'"
+                                        [updateFlag]="updateFlag" *ngIf="true">
+                                    </app-bar-chart>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Top End Point Full Secreen Ends -->
+
+                        <!-- Top Apps Full Secreen Starts -->
+                        <div class="card h-auto" *ngIf="fsChartDetails.topChart == 'TAPP'">
+                            <div class="board_head">
+                                <div class="orange-text-wrapper d-inline-block">
+                                    <ng-select class="realtime-custom-select" id="usage_criteria" [items]="topLengths"
+                                        bindLabel="name" bindValue="value" [multiple]="false" placeholder=""
+                                        [(ngModel)]="selectedTopLength" [ngModelOptions]="{ standalone: true }"
+                                        [clearable]="false" [searchable]="false" (change)="changeTopLength('TAPP')">
+                                    </ng-select>
+                                </div>
+                                <span class="ml20">{{ language.interval }}: 15 sec</span>
+                                <span class="top5-fullscreen pointer expand-icon" (click)="closeFullscreen()"
+                                    id="close-fullscreen-top-apps" title="{{language.lossofpon_fullscreen_close_tip}}">
+                                    <i class="fa fa-expand"></i></span>
+                            </div>
+
+                            <div class="card-body row board_body mt20 no-gutters">
+                                <div class="col-md-6 col-6">
+                                    <div class="chart-info">
+                                        <span class="">{{language.upRate}} (<b>{{tAPrcntData.upPercentage}}%</b>
+                                            {{language.ofTotal}})</span>
+                                        <!-- <span class="">{{ language.upRate }} </span> -->
+                                    </div>
+                                    <app-bar-chart id="top-apps-up-chart-fullscreen"
+                                        [chartOptions]="topAppsUpChartoptions" [type]="'up'" [updateFlag]="updateFlag"
+                                        *ngIf="true">
+                                    </app-bar-chart>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <div class="chart-info">
+                                        <span class="">{{language.downRate}} (<b>{{tAPrcntData.downPercentage}}%</b>
+                                            {{language.ofTotal}})</span>
+                                        <!-- <span class="">{{ language.downRate }} </span> -->
+                                    </div>
+                                    <app-bar-chart id="top-apps-down-chart-fullscreen"
+                                        [chartOptions]="topAppsDownChartoptions" [type]="'down'"
+                                        [updateFlag]="updateFlag" *ngIf="true">
+                                    </app-bar-chart>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Top Locations Full Secreen Starts -->
+                        <div class="card h-auto" *ngIf="fsChartDetails.topChart == 'TLOC'">
+                            <div class="board_head">
+                                <div class="orange-text-wrapper d-inline-block">
+                                    <ng-select class="realtime-custom-select" id="usage_criteria" [items]="topLengths"
+                                        bindLabel="name" bindValue="value" [multiple]="false" placeholder=""
+                                        [(ngModel)]="selectedTopLength" [ngModelOptions]="{standalone: true}"
+                                        [clearable]="false" [searchable]="false" (change)="changeTopLength('TLOC')">
+                                    </ng-select>
+                                </div>
+                                <span class="ml20">{{language.interval}}: 15 sec</span>
+                                <span class="top5-fullscreen pointer expand-icon" (click)="closeFullscreen()"> <i
+                                        class="fa fa-expand"
+                                        title="{{language.lossofpon_fullscreen_close_tip}}"></i></span>
+                            </div>
+
+                            <div class="card-body row board_body mt20">
+                                <div class="col-md-6 col-12">
+                                    <div class="chart-info">
+                                        <span class="">{{language.upRate}} (<b>{{tLPrcntData.upPercentage}}%</b>
+                                            {{language.ofTotal}})</span>
+                                    </div>
+                                    <app-bar-chart [chartOptions]="topLocationsUpChartoptions" [type]="'up'"
+                                        [updateFlag]="updateFlag" *ngIf="true">
+                                    </app-bar-chart>
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <div class="chart-info">
+                                        <span class="">{{language.downRate}} (<b>{{tLPrcntData.downPercentage}}%</b>
+                                            {{language.ofTotal}})</span>
+                                    </div>
+                                    <app-bar-chart [chartOptions]="topLocationsDownChartoptions" [type]="'down'"
+                                        [updateFlag]="updateFlag" *ngIf="true">
+                                    </app-bar-chart>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Top Locations Full Secreen Ends -->
+                    </div>
+                </div>
+            </div>
+
+
+
+
+        </div>
+
+
+    </div>
+</section>

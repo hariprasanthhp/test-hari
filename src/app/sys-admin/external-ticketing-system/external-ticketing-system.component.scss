@@ -1,0 +1,139 @@
+
+  /*toggle style*/
+  // colors
+  $blue    : #269bff;
+  $bg-light: #f2f2f2;
+  $bg-med  : #eee;
+  
+  // the magic
+  div.checkbox.switcher,
+  div.radio.switcher {
+    float: right;
+  
+    label {
+      padding: 0;
+      cursor: pointer;
+  
+      * {
+        vertical-align: middle;
+      }
+  
+      input {
+        display: none;
+  
+        &+span {
+          position     : relative;
+          display      : inline-block;
+          width        : 45px;
+          height       : 25px;
+          background   : #ffffff;
+          border       : 1px solid #0279ff;
+          border-radius: 50px;
+          transition   : all 0.3s ease-in-out;
+          padding      : 5px;
+  
+          small {
+            position     : absolute;
+            display      : block;
+            width        : 20px;
+            height       : 19px;
+            background   : #0279ff;
+            border-radius: 50%;
+            transition   : all 0.3s ease-in-out;
+            left         : 2px;
+            top          : 2px;
+          }
+        }
+  
+        &:checked+span {
+          background  : $blue;
+          border-color: $blue;
+  
+          small {
+            left      : 50%;
+            background: #ffffff;
+          }
+        }
+      }
+    }
+  }
+  
+  @import '~src/assets/theme/imports/_variables.scss';
+  
+  $btn-color      : #2078fa;
+  $btn-hover-color: #1454b2;
+  $btn-disabled   : #c0ddfd;
+  
+  $btn-sec-color      : #f8f8fa;
+  $btn-sec-hover-color: #ebeaef;
+  $btn-sec-disabled   : #fcfcfd;
+  
+  @mixin shadow {
+    box-shadow: 0 0px 0px 0 rgba(0, 0, 0, 0.16), 0 0px 5px 0 rgba(0, 0, 0, 0.16) !important
+  }
+  
+  .ng-select .ng-select-container {
+    border-radius: 26px !important;
+    background   : #f8f8fa !important;
+    border       : 1px solid #dfdfdf !important;
+  }
+
+
+  span.togg-icon {
+    position: absolute;
+    cursor: pointer;
+    right   : 10px;
+    top     : 38px;
+  }
+
+  .overflow-ellipsis {
+    max-width    : 120px;
+    white-space  : nowrap;
+    overflow     : hidden;
+    text-overflow: ellipsis;
+}
+
+:host ::ng-deep table.dataTable td.dataTables_empty {
+    display: none;
+}
+
+.no-data-available {
+    text-align: center;
+}
+
+.alert.alert-success {
+    display: none;
+}
+
+.alert.alert-error {
+    display: none;
+}
+
+.dail-plan-table {
+    tbody {
+        tr {
+            td {
+                font-size    : 13px;
+                font-weight  : 400;
+                color        : #4C4C4C;
+                padding      : 0px 10px 0px 0px;
+                border-top   : 0 !important;
+                border-bottom: 1px solid transparent;
+                line-height  : 38px;
+                word-break   : break-all;
+            }
+        }
+    }
+}
+.modal.fade .modal-dialog {
+    border-radius: 26px;
+    max-width: 35% !important;
+}
+.modal.fade .modal-dialog .modal-content {
+    padding: 40px 32px !important;
+}
+.position-right {
+  position: absolute;
+  right: -155px;
+  top: 33px;
+}

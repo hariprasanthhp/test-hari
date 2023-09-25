@@ -1,0 +1,78 @@
+<div class="preview-container-wrapper" [style.background]="portalData.bgColor">
+
+
+    <div class="preview-main-wrapper">
+        <!-- <div class="preview-form">
+            <form>
+                <div class="form-group">
+                    <label for="exampleInputEmail1" [style.color]="portalData.fColor"> Name</label>
+                    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1" [style.color]="portalData.fColor">Email</label>
+                    <input type="password" class="form-control" id="exampleInputPassword1">
+                </div>
+
+                <button type="submit" class="btn btn-primary connect-button" [style.background]="portalData.pbColor"
+                    [style.color]="portalData.bfColor">Connect</button>
+            </form>
+        </div> -->
+        <div class="preview-form">
+            <div class="d-flex justify-content-center" *ngIf="portalData.logoImage">
+                <div class="logo-preview">
+                    <img [src]="portalData.logoImage || ' ' ">
+                </div>
+            </div>
+            <div class="preview-title" [style.color]="portalData.fColor"
+                [ngClass]="!portalData.coverImage ? 'mb-3' : ''">
+                {{portalData.title}}
+            </div>
+            <div class="cover-preview" *ngIf="portalData.coverImage">
+                <img [src]="portalData.coverImage || ' ' ">
+            </div>
+            <form>
+                <div class="form-group">
+                    <label for="exampleInputEmail1" [style.color]="portalData.fColor">
+                        {{language['First_Name']}}</label>
+                    <input type="text" class="form-control" id="exampleInputFName" aria-describedby="emailHelp">
+
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputEmail1" [style.color]="portalData.fColor"> {{language['Last_Name']}}</label>
+                    <input type="text" class="form-control" id="exampleInputLName" aria-describedby="emailHelp">
+
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1" [style.color]="portalData.fColor">{{language['email']}}</label>
+                    <input type="email" class="form-control" id="exampleInputPassword1">
+                </div>
+                <div class="form-check" *ngIf="portalData.termsUrl && checkUrlIsValid(portalData.termsUrl)">
+                    <input type="checkbox" class="form-check-input" id="exampleCheck1" />
+                    <label class="form-check-label" for="exampleCheck1" [style.color]="portalData.fColor">
+                        <div class="checkbox-bg input-checked"
+                            [style.background]="portalData.pbColor ? portalData.pbColor : '#0279ff'"
+                            [style.borderColor]="portalData.pbColor">
+                            <span class="tick-svg">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="9" viewBox="0 0 10 9"
+                                    fill="none">
+                                    <path d="M1 5.5L4 8L9 1" [attr.stroke]="portalData.fColor || '#ffffff'" />
+                                </svg>
+                            </span>
+                        </div>
+                        <div class="checkbox-bg input-unchecked" [style.borderColor]="portalData.pbColor">
+
+                        </div>
+                        {{language['I agree to the']}}
+                        <a [attr.href]="portalData.termsUrl" [style.color]="portalData.pbColor">{{language['Terms of
+                            Service']}}</a>
+                    </label>
+                </div>
+                <button type="submit" class="btn btn-primary access-button" [style.background]="portalData.pbColor"
+                    [style.color]="portalData.bfColor">{{portalData.buttonText}}</button>
+            </form>
+        </div>
+    </div>
+
+
+</div>

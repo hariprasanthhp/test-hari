@@ -1,0 +1,364 @@
+<!-- <div class="whitelabel-form">
+	<h5> Add Whitelabel Theme</h5>
+	<form>
+		<div class="white-form  mb-4">
+			<div class="form-input-field">
+				<label class="label-control"><b>Service Provider</b> </label>
+
+				<div class="input-field text-center">
+					calix_spid
+				</div>
+			</div>
+
+			<div class="form-input-field ccl-form">
+				<label class="label-control"><b>App Name</b> </label>
+
+				<div class="input-field">
+					<input id="" type="text" name="name" />
+				</div>
+			</div>
+			<div class="form-input-field ">
+				<label class="label-control"><b>App Icon</b> </label>
+
+				<div class="input-field ccl-form">
+					<div class="">
+						<input type="text">
+					</div>
+				</div>
+				<div class="browse-update ">
+					<div class="form-input-field-2">
+						<label for="file-upload" class="custom-file-upload">
+							Browse
+						</label>
+						<input id="file-upload" type="file" accept="image/png, image/jpeg" hidden="hidden" />
+					</div>
+				</div>
+					<a class="preview"> Preview </a>
+			</div>
+			<div class="form-input-field ccl-form">
+				<label class="label-control"><b>Primary Color </b> </label>
+
+				<div class="input-field">
+					<input [style.background]="primaryColor" [(colorPicker)]="primaryColor" />
+				</div>
+			</div>
+			<div class="form-input-field ccl-form">
+				<label class="label-control"><b>Secondary Color </b> </label>
+
+				<div class="input-field">
+					<input [style.background]="secondaryColor" [(colorPicker)]="secondaryColor" />
+				</div>
+			</div>
+			<div class="form-input-field ">
+				<label class="label-control"><b>Logo</b> </label>
+
+				<div class="input-field ccl-form">
+					<div class="">
+						<input type="text">
+					</div>
+				</div>
+				<div class="form-input-field-2">
+					<label for="file-upload" class="custom-file-upload">
+						Browse
+					</label>
+					<input id="file-upload" type="file" accept="image/png, image/jpeg" hidden="hidden" />
+				</div>
+				<a class="preview"> Preview </a>
+			</div>
+			<div class="form-input-field flex-input">
+				<label class="label-control"><b>EULA</b> </label>
+
+				<div class="multi-file-upload input-field">
+					<label class="label-text">
+						English:
+					</label>
+					<div class="browse-file">
+						<div class="ccl-form">
+							<input type="text">
+						</div>
+						<div class="form-input-field-2">
+							<label for="file-upload" class="custom-file-upload">
+								Browse
+							</label>
+							<input id="file-upload" type="file" accept="image/png, image/jpeg" hidden="hidden" />
+						</div>
+						<a class="preview"> Preview </a>
+					</div>
+					<label class="label-text">
+						French:
+					</label>
+					<div class="browse-file">
+						<div class=" ccl-form">
+							<input type="text">
+						</div>
+						<div class="form-input-field-2">
+							<label for="file-upload" class="custom-file-upload">
+								Browse
+							</label>
+							<input id="file-upload" type="file" accept="image/png, image/jpeg" hidden="hidden" />
+						</div>
+						<a class="preview"> Preview </a>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-input-field flex-input">
+				<label class="label-control"><b>About</b> </label>
+
+				<div class="multi-file-upload input-field">
+					<label class="label-text">
+						English:
+					</label>
+					<div class="browse-file">
+						<div class="ccl-form">
+							<input type="text">
+						</div>
+						<div class="form-input-field-2">
+							<label for="file-upload" class="custom-file-upload">
+								Browse
+							</label>
+							<input id="file-upload" type="file" accept="image/png, image/jpeg" hidden="hidden" />
+						</div>
+						<a class="preview"> Preview </a>
+					</div>
+					<label class="label-text">
+						French:
+					</label>
+					<div class="browse-file">
+						<div class=" ccl-form">
+							<input type="text">
+						</div>
+						<div class="form-input-field-2">
+							<label for="file-upload" class="custom-file-upload">
+								Browse
+							</label>
+							<input id="file-upload" type="file" accept="image/png, image/jpeg" hidden="hidden" />
+						</div>
+						<a class="preview"> Preview </a>
+					</div>
+				</div>
+			</div>
+
+			<button class="btn-default primary px-3">Save</button>
+
+		</div>
+	</form>
+</div> -->
+<div class="position-relative">
+<div class="loader" *ngIf="loader">
+	<div class="d-flex justify-content-center">
+		<div class="spinner-border text-primary" role="">
+			<span class="sr-only">{{ language.Loading }}</span>
+		</div>
+	</div>
+</div>
+<div class="">
+	<div class="border-bottom update-comiq-title">{{ language.Update_Whitelabel_Theme }}</div>
+	<div class="alert alert-warning alert-dismissible fade show" role="alert" *ngIf="showError">
+		<span class="mr-2"><img src="../../../assets/img/ic_error-outline.svg"/></span>
+		<strong>{{ language.Error }}!</strong> {{ errorMsg }}.
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="validateError()">
+			<span aria-hidden="true"></span>
+		</button>
+	</div>
+
+	<!-- <div  [ngClass]="{'alert alert-warning alert-dismissible fade hide': showError == false, 'alert alert-warning alert-dismissible fade show':showError == true }" role="alert" >
+    <strong>Error!</strong> {{errorMsg}}.
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true"></span>
+    </button>
+  </div> -->
+	<div class="row">
+		<div class="col-md-10">
+			<div class="toggle-swtbtn checkbox switcher">
+				<label>
+					<input type="checkbox" name="Status" id="Status" [(ngModel)]="isActive" />
+					<span class="mr-1"><small></small></span>
+					{{ language.Enabled }}
+				</label>
+
+			</div>
+
+
+		</div>
+		<!--<div class="col-md-2 text-right"><button id="" class="btn-default primary mx-2" >Update</button></div>-->
+	</div>
+	<div class="row my-2">
+		<div class="col-md-3">
+			<div class="form-input-field">
+				<label class="label-control">{{ language.Service_Provider }}
+				</label>
+
+				<div class="input-field">
+					{{ calixspid }}
+				</div>
+			</div>
+
+			<div class="form-input-field ccl-form">
+				<label class="label-control">{{ language.Seller_Name }}<span class="error">*</span>
+				</label>
+
+				<div class="input-field">
+					<input id="appName" type="text" name="appName" [(ngModel)]="appName" />
+				</div>
+			</div>
+			<div class="form-input-field ccl-form">
+				<label class="label-control">{{ language.Primary_Color }}<span class="error">*</span>
+				</label>
+
+				<div class="input-field">
+					<!--<input [style.background]="primaryColor" [cpOutputFormat]="'hex'" [(colorPicker)]="primaryColor"
+						name="primaryColor" id="primaryColor" />-->
+					<input class="form-control" name="primaryColor" [(colorPicker)]="primaryColor"
+						[style.background]="primaryColor" [(ngModel)]="primaryColor" id="primaryColor"
+						[cpOutputFormat]="'hex'" style="color: #faf9f5;" />
+				</div>
+			</div>
+		</div>
+		<div class="col-md-3">{{ language.Logo_Icon }}<span class="error">*</span>
+
+			<div class="form-input-field">
+				<label class="label-control logo-info">
+					<!-- <span>
+						* {{language['Max-Width']}}: 1080px<br>
+						* {{language['Max-Height']}}: 180px<br>
+						* {{language.Format}}: .png ({{language['transparent background']}})<br>
+						* {{language['Max File size']}}: 250KB
+					</span> -->
+				</label>
+
+				<!-- <div class="input-field">
+          <div class="">
+            <img id="logo-image-view" height="100px" width="200px" [src]="updatelogo">
+
+          </div>
+        </div> -->
+				<div class="input-field" *ngIf="dataAvailable">
+					<div id="logo-image-view-div" class="d-block">
+						<img id="logo-image-view" src="{{updatelogo + '?timestamp=' + timestamp }}" />{{
+						logoFile
+						}}
+						<label for="logo" class="custom-file-upload btn-sm btn-light">
+							<a (click)="hidelogo()"><i class="fa fa-cloud-upload mx-2"></i> Replace Image</a>
+						</label>
+						<input class="type-file" type="file" name="logo" id="logo" #logo
+							(change)="readURL(logo, 'logo')"  accept= ".jpeg, .JPEG, .PNG, .jpg, .png, .JPG, .img, .IMG, .bin, .BIN" />
+					</div>
+					<!-- <input type="file" name="logo" #logo (change)="readURL(logo, 'logo')"
+              *ngIf="!ISlogo"> -->
+				</div>
+
+
+			</div>
+
+		</div>
+		<div class="col-md-3">{{ language.White_Logo_Icon }}<span class="error">*</span>
+			<div class="form-input-field">
+				<label class="label-control logo-info">
+					<!-- <span>
+						* {{language['Max-Width']}}: 1080px<br>
+						* {{language['Max-Height']}}: 180px<br>
+						* {{language.Format}}: .png ({{language['transparent background']}})<br>
+						* {{language['Max File size']}}: 250KB
+					</span> -->
+				</label>
+				<div class="input-field" *ngIf="dataAvailable">
+					<div id="white-logo-image-view-div" class="d-inline-block">
+						<img class="white-logo-image-box" id="white-logo-image-view"
+							src="{{updateWhiteLogo + '?timestamp=' + timestamp }}" />{{
+						whiteLogoFile
+						}}
+						<label for="white_logo" class="custom-file-upload btn-sm btn-light">
+							<a (click)="hidelogo()"><i class="fa fa-cloud-upload mx-2"></i>Replace Image</a>
+						</label>
+						<input class="type-file" type="file" name="white_logo" id="white_logo" #white_logo
+							(change)="readURL(white_logo, 'white_logo')"  accept= ".PNG, .png"/>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-3">{{ language.Logo_Guidelines }}
+			<div class="guidelines">
+				<ul>
+
+					<li>{{language['Max-Width']}}: 1080px</li>
+					<li>{{language['Max-Height']}}: 180px</li>
+					<!--<li>{{language.Format}}: .png ({{language['transparent background']}})</li>-->
+					<li>{{language['Max File size']}}: 250KB</li>
+					<li>{{language.Format}}</li> <small>
+						{{language.Primary_Logo}}:
+						jpeg,JPEG,jpg,JPG,png,PNG,img,IMG,bin,BIN<br>
+						{{language.White_Logo}}:
+						png,PNG
+
+					</small>
+					<!--<li>Max File Size : 250kb</li>
+					<li>Max Width : 1080px</li>
+					<li>Max Height :180px</li>
+					<li>Format:png</li>
+					<li>Transparent background recommended</li>-->
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<form>
+		<div class="white-form my-3">
+			<!-- <div class="form-input-field">
+				<label class="label-control"><b>{{ language.Service_Provider }}</b>
+				</label>
+
+				<div class="input-field text-center">
+					{{ calixspid }}
+				</div>
+			</div> -->
+
+			<!-- <div class="form-input-field ccl-form">
+        <label class="label-control"><b>{{ language.App_Name }}</b>
+        </label>
+
+        <div class="input-field">
+          <input id="appName" type="text" name="appName" [(ngModel)]="appName" />
+        </div>
+      </div> -->
+			<!-- <div class="form-input-field">
+        <label class="label-control"><b>{{ language.Logo_Icon }}</b>
+        </label>
+
+        <div class="input-field">
+          <div id="logo-image-view-div" style="display: inline-block">
+            <img id="logo-image-view" height="100px" width="200px" [src]="updateappIcon" *ngIf="updateappIcon" />{{
+            iconFile }}
+            <label for="appIcon" class="custom-file-upload btn-sm btn-light">
+              <a (click)="hideAppicon()"><i class="fa fa-cloud-upload"></i> {{ language.Change }}</a>
+            </label>
+            <input class="type-file" type="file" name="appIcon" id="appIcon" #appIcon
+              (change)="readURL(appIcon, 'appIcon')" />
+          </div>
+        </div>
+        <div class="form-input-field-2">
+        </div>
+      </div> -->
+
+			<!-- <div class="form-input-field ccl-form">
+        <label class="label-control"><b>Secondary Color </b> </label>
+
+        <div class="input-field">
+          <input [style.background]="secondaryColor" [(colorPicker)]="secondaryColor" name="secondaryColor"
+            id="secondaryColor" />
+        </div>
+      </div> -->
+
+
+
+
+			<button class="btn-default primary px-3" (click)="add()">
+				{{ language.Save }}
+			</button>
+			<button class="btn-default btn-dft py-1 ml-3 px-3" (click)="cancel()">
+				{{ language.Cancel }}
+			</button>
+		</div>
+	</form>
+</div>
+</div>

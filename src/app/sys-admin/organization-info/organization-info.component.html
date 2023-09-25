@@ -1,0 +1,47 @@
+<div class="container position-relative">
+  <div class="loader" *ngIf="loading">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary">
+        <span class="sr-only">Loading...</span>
+      </div>
+    </div>
+  </div>
+  <div class="w-100 alert alert-danger fade show" *ngIf="error">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+    <button type="button" class="close" (click)="closeAlert()">
+      <span></span>
+    </button>
+    <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+  </div>
+  <div class="row">
+    <div class="col-md-12 px-0">
+      <div class="ccl-admin-title">{{ orgInfoData.calixOrganization.name }}</div>
+    </div>
+  </div>
+  <div class="row my-3">
+    <div class="col-md-12 pl-0  ccl-title">
+      {{ language.service }} : {{ orgInfoSpID }}
+    </div>
+  </div>
+  <div class="row orginfo-service mb-3 pb-1" *ngFor="let item of orgInfoEntitlementdata">
+    <div class="col-md-12">
+      <h3 *ngIf="item?.name == 'CCO'">{{ language['Operations Cloud'] ? language['Operations Cloud'] : 'Operations
+        Cloud' }}</h3>
+      <h3 *ngIf="item?.name != 'CCO'">{{ language[item.name] ? language[item.name] : item.name ? item.name : '' }}</h3>
+    </div>
+
+    <div class="col-sm-6 col-md-4 col-lg-4">
+      <span>{{ language.Startdate }}</span><br />
+      <strong>{{ item.startDate }}&nbsp;</strong>
+    </div>
+    <div class="col-sm-6 col-md-4 col-lg-4">
+      <span>{{ language.enddate }}</span><br />
+      <strong>{{ item.endDate }}&nbsp;</strong>
+    </div>
+    <div class="col-sm-6 col-md-4 col-lg-4 pull-right">
+      <span>{{ language.Status }}</span><br />
+      <strong>{{ item.status ? (item.status.replaceAll('_', ' ') ? language[item.status.replaceAll('_', ' ')] : item.status.replaceAll('_', ' ')) 
+        : '' }}&nbsp;</strong>
+    </div>
+  </div>
+</div>

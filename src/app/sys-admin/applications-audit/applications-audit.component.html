@@ -1,0 +1,154 @@
+<div class="loader" *ngIf="show.loading">
+    <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+            <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+    </div>
+</div>
+<section class="mt-3">
+    <div class="d-flex justify-content-between align-items-center audit-header">
+        <h3 class="ccl-admin-title">{{language.applications_audit}}</h3>
+        <div>
+            <a class="primary text-decoration-none cursor-pointer" (click)="routeToDifinition()">{{language.Cancel}}</a>
+            <button class="btn-default btn-primary ml-3" [disabled]="!selectedaddressV4.length && !selectedaddressV6.length" 
+            (click)="updateApplications()">{{language.accept}}</button>
+        </div>
+    </div>
+</section>
+
+<section class="mt-4" *ngIf="show.auditExistCheck">
+    <div class="wrn-msg alert alert-warning d-inline-flex pr-3 align-items-center">
+        <img class="mx-2" src="../../../assets/img/ic_warning-36px.svg" alt="">
+        <p class="m-0">{{language['One or more applications cannot be audited due to missing domain name.']}}</p>
+    </div>
+</section>
+
+<p>{{language['The following configuration changes have been found.']}}</p>
+<p>{{language['Please review and select the changes you would like to accept.']}}</p>
+
+<section>
+    <div class="col-md-12">
+        <table id="" class="w-100 hover table-alter dataTable no-footer audit-table" datatable [dtOptions]="dtOptions"  [dtTrigger]="dtTrigger">
+        <thead>
+                <tr>
+                    <th class="">{{ language.applicationname }}</th>
+                    <th>{{ language['Domain Name'] }}</th>
+                    <th>
+                        <input type="checkbox" id="selectAllv4" [disabled]="show.disabledv4All" (click)="$event.stopPropagation()"
+                        (change)="selectDeselectv4All($event.target.checked)">
+                        <span *ngIf="show.v4PartialSelectedSpan" class="checkbox-ui" (click)="selectDeselectv4All(true)" id="selectAllv4Span" ></span>
+                        <span class="ml-3">{{ language.applicationAddressIPV4 }}</span>
+                    </th>
+                    <th>
+                        <input type="checkbox" id="selectAllv6" [disabled]="show.disabledv6All"  (click)="$event.stopPropagation()"
+                        (change)="selectDeselectv6All($event.target.checked)">
+                        <span *ngIf="show.v6PartialSelectedSpan" class="checkbox-ui" (click)="selectDeselectv6All(true)" id="selectAllv6Span"></span>
+                        <span class="ml-3">{{ language.applicationAddressIPV6 }}</span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- {{auditList | json}} -->
+                <tr  *ngFor="let item of auditList">
+                     <td class="py-3" >
+                        <div class="max-h-200">{{item.name || '' }}</div></td> 
+                        <td class="py-3" >
+                            <div class="max-h-200">{{item.domainName || '' }}</div></td> 
+                     <ng-container *ngIf="item?.auditExists">
+                     <td class="align-top">
+                        <div class="max-h-200">
+                            <ng-container *ngIf="item?.addressesV4?.similarAddresses && item?.addressesV4?.similarAddresses.length">
+                                <ng-container *ngFor="let similarAddress of item.addressesV4.similarAddresses">
+                                    <span class="ml-4 pl-1">{{ similarAddress }}</span><br>
+                                </ng-container>
+                                </ng-container>
+                                <ng-container *ngIf="item?.addressesV4?.varianceExists">
+                                <ng-container *ngIf="item?.addressesV4?.incrementalAddresses && item?.addressesV4?.incrementalAddresses.length">
+                                <div *ngFor="let incrementalAddresses of item.addressesV4.incrementalAddresses">
+                                    <input type="checkbox" class="addressv4"
+                                     (change)="selectDeselectV4($event.target.checked, incrementalAddresses, item, true)"
+                                    id="inc_{{incrementalAddresses}}" name="v4_{{incrementalAddresses}}"> 
+                                    <span class="ml-3 success-address"> 
+                                        <span class="text-success">+</span>{{ incrementalAddresses }}</span>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngIf="item?.addressesV4?.decrementalAddresses && item?.addressesV4?.decrementalAddresses.length">
+                            <div  *ngFor="let decrementalAddresses of item.addressesV4.decrementalAddresses">
+                                <input type="checkbox" class="addressv4" (change)="selectDeselectV4($event.target.checked, decrementalAddresses, item, false)"
+                                 id="dec_{{decrementalAddresses}}"
+                                 name="v4_{{decrementalAddresses}}">
+                                <span class="ml-3 err-address">
+                                    <span class="text-danger">-</span> {{ decrementalAddresses }}</span>
+                                </div>
+                            </ng-container>
+                            </ng-container>
+                        </div>
+                    
+                    </td>
+                    <td class="align-top">
+                        <div class="max-h-200">
+                            <ng-container *ngIf="item.addressesV6.similarAddresses && item.addressesV6.similarAddresses.length">
+                                <div *ngFor="let similarAddressesv6 of item.addressesV6.similarAddresses">
+                                    <span class="ml-4 pl-1">
+                                        {{ similarAddressesv6 }}
+                                    </span>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngIf="item.addressesV6.varianceExists">
+                            <ng-container *ngIf="item.addressesV6.incrementalAddresses && item.addressesV6.incrementalAddresses.length">
+                            <ng-container *ngFor="let incrementalAddressesv6 of item.addressesV6.incrementalAddresses">
+                                <div>
+                                    <input type="checkbox" (change)="selectDeselectV6($event.target.checked, incrementalAddressesv6, item, true)"
+                                    id="inc_v6_{{incrementalAddressesv6}}" class="addressv6" name="v6_{{incrementalAddressesv6}}">
+                                   <span class="ml-3 success-address"> 
+                                       <span class="text-success">+</span>{{ incrementalAddressesv6 }}
+                                   </span>
+                                </div>
+                            </ng-container>
+                            </ng-container>
+                            <ng-container *ngIf="item.addressesV6.decrementalAddresses && item.addressesV6.decrementalAddresses.length">
+                            <ng-container *ngFor="let decrementalAddressesv6 of item.addressesV6.decrementalAddresses">
+                                <div>
+                                    <input type="checkbox" (change)="selectDeselectV6($event.target.checked, decrementalAddressesv6, item, false)"
+                                    id="dec_v6_{{decrementalAddressesv6}}" class="addressv6" name="v6_{{decrementalAddressesv6}}">
+                                    <span class="ml-3 err-address">
+                                        <span class="text-danger">-</span> {{ decrementalAddressesv6 }}
+                                    </span>
+                                </div>
+                                   
+                            </ng-container>
+                            </ng-container>
+                            </ng-container>
+                        </div>
+                    
+                    </td>
+                    </ng-container>
+                    <ng-container *ngIf="!item?.auditExists">
+                        <td ><span class="ml-4 pl-1"><i>{{language['Not audited due to missing domain name']}}</i></span></td>
+                        <td></td>
+                    </ng-container>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Modals -->
+<ng-template #infoModal let-data let-ref="dialogRef">
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">{{ infoTitle }}</h4>
+      <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+    <div class="modal-body modal-scrll">
+      <div class="w-100">
+        <p class="f-size-16px" [innerHTML]="infoBody"></p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-default primary px-3" data-dismiss="modal" (click)="closeModal()">
+        {{ language["Okay"] }}
+      </button>
+    </div>
+  </ng-template>

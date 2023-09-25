@@ -1,0 +1,276 @@
+<section id="review_wizrd" class="review-wizard">
+  <div class="loader-wrapper-info" *ngIf="micrositeLoader">
+    <div class="loader">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary" role="">
+                <span class="sr-only">{{language.Loading}}</span>
+            </div>
+        </div>
+    </div>
+</div>
+  <div class="review-table-sec">
+    <span class="net-ops-secondary-title">{{ language.Workflow }}</span>
+    <div class="table-responsive" id="Workflow_div">
+      <table datatable [dtOptions]="tableRevOptions" class="row-border dataTable hover table-alter">
+        <thead>
+          <tr>
+            <th>{{ language.Name }}</th>
+            <th>{{ language.description }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{ workflowInputData?.name ? workflowInputData?.name : "" }}</td>
+            <td>
+              {{
+              workflowInputData?.description
+              ? workflowInputData?.description
+              : ""
+              }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="review-table-sec">
+    <span class="net-ops-secondary-title">{{ language.Device_Groups }}</span>
+    <div class="table-responsive" id="devicegrp_div" *ngIf="dataAvailable">
+      <table datatable [dtOptions]="tableRevOptions" class="row-border dataTable hover table-alter">
+        <thead>
+          <tr>
+            <th>{{ language.Name }}</th>
+            <th>{{ language.description }}</th>
+            <th>{{ language.Type }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of deviceArray">
+            <td>{{ item.name ? language[item.name]||item.name : "" }}</td>
+            <td>{{ item.description ? item.description : "" }}</td>
+            <td>
+              {{ item.type === "dynamic" ? language.Dynamic : language.Static }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="review-table-sec">
+    <span class="net-ops-secondary-title">{{
+      language.Operation_Parameters
+      }}</span>
+    <div class="table-responsive" id="opr_div">
+      <table datatable [dtOptions]="tableRevOptions" class="row-border dataTable hover table-alter">
+        <thead>
+          <tr>
+            <th class="col-4">{{ language.Type }}</th>
+            <th class="col-4">{{ language.Name }}</th>
+            <th class="col-4">{{ language.Condition }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of workflowInputData?.actions">
+            <td *ngIf="item.actionType == 'Add to Static Device Group'">Add to Static System Group</td>
+            <td *ngIf="item.actionType != 'Add to Static Device Group'">{{ item.actionType ? language[item.actionType]||item.actionType : "" }}</td>
+           
+            <td *ngIf="item.actionType == 'myCommunityIQ Bulk Activation'">
+              <div *ngIf="item.actionType == 'myCommunityIQ Bulk Activation' && communityArr.length && item?.passpointConfig">
+                <span> {{language.System_Membership}}: {{(item?.passpointConfig?.enable)?'True':'False'}}<span
+                    *ngIf="item?.passpointConfig?.communities?.length">,&nbsp;</span></span>
+            <span class="pr-1"
+                *ngFor="let communitiesItem of item?.passpointConfig?.communities;let i=index">{{showMicroSiteName(communitiesItem.micrositeId)}}<span
+                    *ngIf="i != item?.passpointConfig?.communities?.length-1">,</span></span>
+            </div>
+           <div>
+            <span *ngIf="item.actionType == 'myCommunityIQ Bulk Activation' && (item?.eduroam)">
+                <span>Eduroam: {{(item?.eduroam?.enable)?'True':'False'}}<span>{{item?.eduroam?.primaryServer ? ',':''}}&nbsp;</span></span><span class="pr-1">{{item?.eduroam?.primaryServer}}{{item?.eduroam?.secondaryServer ? ',':''}}&nbsp;{{item?.eduroam?.secondaryServer}}</span>
+            </span>
+           </div>
+            
+            </td>
+            <td id="test" *ngIf="item.actionType!='Edge Suites Bulk Activation' && item.actionType != 'myCommunityIQ Bulk Activation'">
+              {{ item.actionType === 'SmartBiz Bulk Activation' ? "SmartBiz: " + language[item.profileName.split(': ')[1]] :
+              item.profileName ?
+              language[item.profileName] || item.profileName :((item.actionType=="ExperienceIQ Bulk Activation" || item.actionType=="ProtectIQ Bulk Activation") && item.name)?language[item.name]? language[item.name] : (item.name) ? item.name : "": "" }}
+              <p *ngIf="item?.bulkActivationConfig"> {{language['Subscribe']}} : {{item?.bulkActivationConfig?.subscribe ?  language.Enable : language.Disable }}, {{language['Deploy Container']}} : {{item?.bulkActivationConfig?.enable ? language.Enable : language.Disable}}
+              </p>
+
+            </td>
+            <td class="w-50" *ngIf="item.actionType=='Edge Suites Bulk Activation'">{{ item.appType ? language[item.appType]|| item.appType: ""}}
+            </td>
+            <!-- <td class="w-50" *ngIf="item.actionType=='SmartBiz Bulk Activation'">{{ item.actionConfig ? language[item.actionConfig] || item.actionConfig : ""}}
+            </td> -->
+            <td>{{ item.conditionLogic ? item.conditionLogic : "" }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="row workflow-policy-sec">
+    <div class="col-xs-12 col-12 col-md-12 col-lg-12">
+      <span class="net-ops-secondary-title">{{ language.Select_Trigger }}</span>
+      <h6 *ngIf="workflowInputData?.execPolicy.initialTrigger.type === 'CPE Event' && workflowInputData?.execPolicy?.initialTrigger?.cpeEvent === 'CC EVENT - On Boot'">
+        {{ language.Triggered_CPE_Boot }}
+      </h6>
+      <h6 *ngIf="workflowInputData?.execPolicy.initialTrigger.type === 'CPE Event' && workflowInputData?.execPolicy?.initialTrigger?.cpeEvent === 'CC EVENT - New CPE Discovered'">
+        {{ language.Triggered_CPE_discovered }}
+      </h6>
+      <form class="workflow-policy" *ngIf="workflowInputData?.execPolicy.initialTrigger.type !== 'CPE Event'">
+        <div class="form-group ccl-form row">
+          <div class="col-sm-12 col-md-12 col-lg-2 col-xl-2">
+            <label class="timelabel" title="TimeZone as Local">{{
+              language.Start_Time
+              }}</label>
+          </div>
+
+          <div class="col-sm-12 col-md-12 col-lg-10 col-xl-10 calender">
+            <p-calendar id="start_date" [style]="{ width: '100%', height: '36px' }" [inputStyle]="{ height: '36px' }"
+              appendTo="body" [autoZIndex]="true" placeholder="{{language['Select Time']}}" disabled
+              [(ngModel)]="startDateTime" [showIcon]="true" [ngModelOptions]="{ standalone: true }" timeOnly="true"
+              hourFormat="12">
+            </p-calendar>
+          </div>
+        </div>
+        <div class="form-group ccl-form row">
+          <div class="col-sm-12 col-md-12 col-lg-2 col-xl-2"> <label for="windowlength" class="timelabel" title="">
+              {{language.Time_window}}</label></div>
+
+          <div class="col-sm-12 col-md-12 col-lg-10 col-xl-10 input-group">
+            <input class="set-due-date form-control" type="text" id="windowlength" name="windowlength" disabled
+              [(ngModel)]="windowlength" />
+          </div>
+        </div>
+        <div class="form-group ccl-form row">
+          <div class="col-sm-12 col-md-12 col-lg-2 col-xl-2"><label for="windowlength" class=" timelabel" title="">{{
+              language.Recurrence_Pattern
+              }}</label></div>
+
+          <!-- daily -->
+          <div class="col-sm-12 col-md-12 col-lg-10 col-xl-10 input-group"
+            *ngIf="workflowInputData?.execPolicy.window.type === 'daily'">
+            <div class="col-sm-12 col-md-12 col-lg-3 col-xl-3"><label class="radio-inline  p-0">
+                {{ language.Daily }}
+              </label></div>
+
+            <div class="daily-check flex-start col-sm-12 col-md-12 col-lg-9 col-xl-9">
+              <label class="radio-inline pr-0 mb-0">
+                <input type="radio" name="optionGroupsRadios" disabled class="mr-2" />
+                {{ language.Every }}
+              </label>
+              <div class="ccl-form ml-2 number-input">
+                <input type="number" placeholder="1" disabled class="col-md-3" id="daily-pattern-frequence"
+                  [(ngModel)]="workflowInputData.execPolicy.window.frequency" name="daily-pattern-frequence" />
+                <span> {{ language.Day_s }} </span>
+              </div>
+            </div>
+          </div>
+          <!-- weekly -->
+          <div class="col-10 input-group" *ngIf="workflowInputData?.execPolicy.window.type === 'weekly'">
+            <label class="radio-inline col-12 p-0">
+              {{ language.Weekly }}
+            </label>
+            <div class="daily-check flex-start">
+              <label class="radio-inline pr-0 mb-0">
+                <input type="radio" name="optionGroupsRadios" disabled class="mr-2" />
+                {{ language.Recur_every }}
+              </label>
+              <div class="ccl-form ml-2 number-input">
+                <input type="number" placeholder="1" class="col-2" id="daily-pattern-frequence"
+                  name="daily-pattern-frequence" [(ngModel)]="workflowInputData.execPolicy.window.frequency" />
+                <span> {{ language.weeks_on }} </span>
+              </div>
+            </div>
+            <label class="radio-inline col-12 p-0" *ngIf="workflowInputData?.execPolicy.window.type === 'weekly'">
+              {{ weekdays }}
+            </label>
+          </div>
+          <!-- month  -->
+          <div class="col-10 input-group" *ngIf="workflowInputData?.execPolicy.window.type === 'monthly'">
+            <label class="radio-inline col-12 p-0">
+              {{ language.Monthly }}
+            </label>
+            <div class="mont-list flex-start">
+              <label class="radio-inline mb-0 pr-0">
+                <input type="radio" name="optionGroupsRadios" disabled class="mr-2" />{{ language.Day }}
+              </label>
+              <div class="ccl-form">
+                <input type="number" placeholder="1" class="" id="month-pattern-frequence" disabled
+                  name="month-pattern-frequence" [(ngModel)]="workflowInputData.execPolicy.window.daysOfMonth" />
+                <span> {{ language.of_every }}</span>
+              </div>
+              <div class="ccl-form">
+                <input type="number" placeholder="1" class="" id="daysofmonth-pattern-frequence" disabled
+                  name="daysofmonth-pattern-frequence" [(ngModel)]="workflowInputData.execPolicy.window.frequency" />
+                <span> {{ language['month(s)'] }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="row ccl-form">
+            <div class="col-sm-12 col-md-12 col-lg-2 col-xl-2"><label class=" timelabel" title="TimeZone as Local">{{
+                language.Start_Date
+                }}</label></div>
+
+            <div class="col-sm-12 col-md-12 col-lg-10 col-xl-10 calender">
+              <p-calendar id="start_date_1" [style]="{ width: '100%', height: '36px' }"
+                [inputStyle]="{ height: '36px' }" appendTo="body" [autoZIndex]="true"
+                placeholder="{{language['Select Date']}}" [(ngModel)]="custumStartDate" [showIcon]="true"
+                [ngModelOptions]="{ standalone: true }" dateFormat="mm-dd-yy" disabled>
+              </p-calendar>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="row ccl-form">
+            <div class="col-sm-12 col-md-12 col-lg-2 col-xl-2"> <label class="timelabel"
+                title="TimeZone as Local"></label> </div>
+
+            <div class="col-sm-12 col-md-12 col-lg-10 col-xl-10 calender">
+              <label class="radio-inline" *ngIf="!endAfter">
+                {{ language.End_by }}
+              </label>
+              <label class="radio-inline " *ngIf="endAfter">
+                {{ language.End_after }}
+              </label>
+              <p-calendar id="start_date_1" [style]="{ width: '100%', height: '36px' }"
+                [inputStyle]="{ height: '36px' }" appendTo="body" [autoZIndex]="true" placeholder="Select Date"
+                [(ngModel)]="customEndRange" [showIcon]="true" [ngModelOptions]="{ standalone: true }"
+                dateFormat="mm-dd-yy" disabled *ngIf="!endAfter">
+              </p-calendar>
+            </div>
+          </div>
+        </div>
+        <div class="form-group ccl-form row" *ngIf="endAfter">
+          <div class="col-sm-12 col-md-12 col-lg-2 col-xl-2"><label class="timelabel"></label></div>
+
+          <div class="col-sm-12 col-md-12 col-lg-10 col-xl-10 workflow-oneline">
+            <input type="number" id="range-occurrence" placeholder="#" class="col-2" name="range-occurrence"
+              [(ngModel)]="rangeOccurrence" disabled />
+            <label class="period-padding">{{ language.Occurrences }}</label>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-sm-12 col-md-12 col-lg-2 col-xl-2">
+            <label class="col-2 timelabel">{{ language.Prioritization }}</label>
+          </div>
+
+          <div class="col-sm-12 col-md-12 col-lg-10 col-xl-10">
+            <input type="checkbox" id="priortize" placeholder="#" class="mr-3"
+              [checked]="workflowInputData?.fullGroupExecute" name="range-occurrence" disabled /><span>{{
+              language.Ex_fullgrps }}</span>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+<div class="workflow-next-previous">
+  <button type="button" class="btn-arrow btn-arr-prev btn-grey mr-2" (click)="go_previous()" id="previous">
+    <img src="assets/img/ic_chevronleft_grey.svg"> {{ language.Previous }}
+  </button>
+  <button type="button" class="btn-default primary px-3" (click)="submit()" id="finish">
+    {{ language.Finish }}
+  </button>
+</div>

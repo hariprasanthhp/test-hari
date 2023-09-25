@@ -1,0 +1,111 @@
+<!-- <div class="d-flex justify-content-end ccl-navbar">
+    <div class="col-xs-12">
+        <p class="mb-0 pl-4 pb-3">
+            <a class="w-s-nowrap addDeviceClass"
+                routerLink="/cco/operations/cco-network-operations/cco-alarm-notifications" routerLinkActive="active">
+                <img src="assets/img/ic_close-44px.svg" alt="" />
+            </a>
+        </p>
+    </div>
+</div> -->
+
+<div class="w-100 alert alert-danger fade show my-3" *ngIf="error">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+    <button type="button" class="close" (click)="closeAlert()">
+        <span></span>
+    </button>
+    <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+</div>
+
+<div class="w-100 alert alert-success fade show my-3" *ngIf="success">
+    <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+    <button type="button" class="close" (click)="success = false">
+        <span></span>
+    </button>
+    <div class="d-inline-flex" [innerHtml]="language[successInfo] || successInfo"></div>
+</div>
+
+<div class="outage-workflow" id="outage-workflow">
+    <div class="row mb-2">
+        <div class="col-md-12 border-bottom pb-1 pl-0 pr-5 position-relative min-h-58px">
+            <div class="ccl-admin-title">
+                {{workflowObj?.name || language['New Service Disruption'] }}
+            </div>
+            <div class="close-icon">
+                <button class="close cursor-pointer" routerLink="/cco/operations/alarms/health-alarm-notifications"
+                    routerLinkActive="active">
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 px-0">
+            <section class="stepper-main mt-3">
+                <ul class="stepper-ui mb-4">
+                    <li *ngFor="let tab of tabs; let i = index">
+                        <button title="{{ language[tab] }}" (click)="onTabChange(i)" [ngClass]="{
+              'step-current': activeTab === tab,
+              '': tabs.length === 2,
+              'step-done': levelsPassed > i && activeTab !== tab
+            }">
+                            <span>{{ language[tab] || tab}}</span></button>
+                    </li>
+                </ul>
+
+                <!--new stepper end-->
+                <div class="pos-action-btn">
+                    <button type="button" class="btn-arrow btn-arr-prev btn-grey mr-2 float-left"
+                        [ngClass]="{ primary: selectedTabIndex !== 0 }" (click)="onTabChange(selectedTabIndex - 1)"
+                        *ngIf="selectedTabIndex > 0">
+                        <img src="assets/img/ic_chevronleft_grey.svg"> {{ language['Go back'] }}
+                    </button>
+                    <button type="button" class="btn-default primary" *ngIf="selectedTabIndex + 1 !== tabs?.length"
+                        (click)="onTabChange(selectedTabIndex + 1)" [disabled]="disableNextBtn">
+                        {{ language['save_and_continue'] }}
+                        <img class="ml-1" src="assets/img/ic_chevron-r-w.svg" />
+                    </button>
+
+                    <button type="button" class="btn-default primary px-3 mr-2"
+                        *ngIf="selectedTabIndex + 1 === tabs?.length" [disabled]="disableFinishBtn"
+                        (click)="deploy('PAUSE');">
+                        {{ language['save_and_pause'] }}
+                    </button>
+                    <button type="button" class="btn-default primary px-3" *ngIf="selectedTabIndex + 1 === tabs?.length"
+                        [disabled]="disableFinishBtn" (click)="deploy('RUN');">
+                        {{ language['save_and_activate'] }}
+                    </button>
+                    <!-- <button type="button" class="btn-default primary px-3" *ngIf="selectedTabIndex + 1 === tabs?.length"
+                [disabled]="disableFinishBtn">
+                {{ language.Finish }}
+            </button> -->
+                </div>
+            </section>
+            <div class="loader" *ngIf="loader">
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border text-primary">
+                        <span class="sr-only">{{ language.Loading }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <app-details [workflowObj]="workflowObj" (isFormValid)="validateForm($event)"
+                    *ngIf="activeTab === outageWorkflow?.DETAILS_LABEL">
+                </app-details>
+                <app-outge-wrkflw-notification-trigger [workflowObj]="workflowObj" (isFormValid)="validateForm($event)"
+                    *ngIf="activeTab === outageWorkflow?.NOTIFICATION_LABEL">
+                </app-outge-wrkflw-notification-trigger>
+                <app-recepients [dynamicFields]="recepientFormFields" [dynamicFieldsObj]="recepientFormFieldsObj"
+                    [workflowObj]="workflowObj" (isFormValid)="validateForm($event)"
+                    *ngIf="activeTab === outageWorkflow?.RECEPIENTS_LABEL">
+                </app-recepients>
+                <app-outge-wrkflw-summary [workflowObj]="workflowObj"
+                    *ngIf="activeTab === outageWorkflow?.SUMMARY_LABEL">
+                </app-outge-wrkflw-summary>
+
+            </div>
+        </div>
+    </div>
+
+</div>

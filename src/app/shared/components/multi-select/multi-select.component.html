@@ -1,0 +1,82 @@
+<ng-select name="cName" [multiple]="true" [items]="cItems" [bindValue]="cBindValue" [bindLabel]="cBindLabel"
+[clearable]="cClearable" [searchable]="cSearchable" [placeholder]="language[cPlaceHolder] || cPlaceHolder" [closeOnSelect]="false"
+    [(ngModel)]="cSelectedItems" class="clx-multi-select" (change)="onChange($event)" (close)="multiSelectBlur($event)"
+    [attr.cShowSelectAll]="cShowSelectAll" #multiNgSelect>
+    <ng-template ng-footer-tmp>
+        <div class="ng-select-search">
+            <div class="search-box-icon"></div>
+            <input type="text" [(ngModel)]="filterSearchInput" (input)="multiNgSelect.filter($event.target.value)"
+                placeholder="{{language.Search}}" />
+            <button type="button" class="close" *ngIf="filterSearchInput"
+                (click)="filterSearchInput = '';multiNgSelect.filter($event.target.value)">
+                <span></span>
+            </button>
+        </div>
+    </ng-template>
+    <ng-template ng-header-tmp *ngIf="cShowSelectAll">
+        <div class="ng-select-all-holder" *ngIf="filterSearchInput.toLowerCase() == 'All' || filterSearchInput == ''">
+            <input type="checkbox" id="item-all-options-select" class="ng-checkbox-input"
+                (click)="chooseAllOptions($event)"
+                [indeterminate]="cSelectedItems.length > 0 && cSelectedItems.length !== cItems.length"
+                [checked]="cSelectedItems.length > 0 && cSelectedItems.length == cItems.length" />
+            <label for="item-all-options-select">{{language['All']}} <span>({{cItems.length}})</span></label>
+        </div>
+    </ng-template>
+    <!-- <ng-template ng-multi-label-tmp let-items="items" let-index="index" let-clear="clear">
+        <div class="ng-selected-label" *ngIf="items.length <= 2">
+            <div class="ng-value-placeholder" *ngFor="let item of items">
+                <span class="ng-value-label" title=" {{item.name}}">
+                    {{item.name}}
+                    <span class="cursor-pointer" (click)="clear(item)" aria-hidden="true">×</span>
+                </span>
+            </div>
+        </div>
+        <div class="ng-selected-label" *ngIf="items.length > 2">
+            <div class="ng-value-placeholder">
+                <span class="ng-value-label" title="{{items.length}} {{language[cName]}}">
+                    {{items.length}} {{language[cName]}}
+                    <span class="cursor-pointer" (click)="multiNgSelect.handleClearClick()" aria-hidden="true">×</span>
+                </span>
+            </div>
+        </div>
+    </ng-template> -->
+    <ng-template ng-multi-label-tmp let-items="items" let-index="index" let-clear="clear">
+        <!-- <div class="d-inline-flex"> -->
+          <div class="ng-selected-label" *ngIf="items.length === 1 && items.length !== cItems?.length || ( cShowCountOfItems && items.length === 1 && cItems?.length === 1)">
+            <div class="ng-value-placeholder">
+                <span class="ng-value-label" title=" {{items.name}}">{{items[0].name}}
+                    <span class="cursor-pointer" (click)="multiNgSelect.handleClearClick()" aria-hidden="true">×</span>
+                </span>
+                
+            </div>
+          </div>
+          <div class="ng-selected-label" *ngIf="(items.length > 1 && items.length !== cItems?.length) || (cShowCountOfItems && items.length !== 1 && cItems?.length !== 1 && (items.length > 1 || items.length == cItems?.length))">
+            <div class="ng-value-placeholder">
+                <span class="ng-value-label" title="{{items.length}} {{language[cName]}}">{{items.length}} {{language[cName]}}
+                    <span class="cursor-pointer" (click)="multiNgSelect.handleClearClick()" aria-hidden="true">×</span>
+                </span>
+                
+            </div>
+          </div>
+          <div class="ng-selected-label" *ngIf="items.length === cItems?.length && !cShowCountOfItems">
+            <div class="ng-value-placeholder">
+                <span class="ng-value-label">{{language['All']}}
+                    <span class="cursor-pointer" (click)="multiNgSelect.handleClearClick()" aria-hidden="true">×</span>
+                </span>
+                
+            </div>
+          </div>
+        <!-- </div> -->
+      </ng-template>
+    <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+        <div class="ng-option-text text-truncated" title="{{item.name}}">
+            <input type="checkbox" [checked]="item$.selected" class="ng-checkbox-input" />
+            <span>{{item.name}}</span>
+        </div>
+    </ng-template>
+    <ng-template ng-notfound-tmp>
+        <div class="ng-option ng-option-disabled" title="{{language['noItemsFound']}}">
+            {{language['noItemsFound']}}
+        </div>
+    </ng-template>
+</ng-select>

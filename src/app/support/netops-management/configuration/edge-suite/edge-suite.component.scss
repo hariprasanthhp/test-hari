@@ -1,0 +1,11 @@
+.opacity-50 {
+  opacity: 0.5
+}
+
+.switch-disabled {
+  opacity: 0.5;
+
+  label {
+    cursor: not-allowed;
+  }
+}

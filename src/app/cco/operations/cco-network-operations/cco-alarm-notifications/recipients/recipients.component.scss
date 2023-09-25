@@ -1,0 +1,82 @@
+.blue {
+    color: blue !important;
+}
+
+.search-close {
+    position: absolute;
+    right: 27px;
+    top: 10px;
+    color: #cdcdcd;
+    cursor: pointer;
+}
+    .expired-but {
+        font-size: 12px;
+        font-weight: 600;
+        text-align: Center;
+        padding: 5px 12px 5px 8px;
+        border-radius: 20px;
+        line-height: 15.08px;
+        margin: 2px 0px;
+        border: 1px solid #CCCCCC !important;
+        background-color: transparent;
+}
+::ng-deep {
+    table.dataTable td.dataTables_empty {
+        display: none;
+    }
+}
+.icon-btn{
+        width: 20px;
+        height: 20px;
+}
+// .notification{
+//     min-width: 160px;
+//     max-width: 200px;
+//     word-wrap: break-word;
+// }
+// .recipient{
+//     min-width: 230px;
+//     max-width: 410px;
+//     word-break: break-all;
+// }
+.close-clear {
+    position: absolute;
+    top: 13px;
+    right: 25px;
+    cursor: pointer;
+  }
+  .close-clear button span {
+    width: 11.7px;
+    height: 11.7px;
+    background-size: 11.7px;
+  }
+  .sub-imp-table table thead tr th:nth-child(1),
+  .sub-imp-table table tbody tr td:nth-child(1){
+    width: 40% !important;
+    word-break: break-all;
+    }
+    .sub-imp-table table thead tr th:nth-child(2),
+    .sub-imp-table table tbody tr td:nth-child(2){
+        width: 14% !important;
+    }
+    .sub-imp-table table thead tr th:nth-child(3),
+    .sub-imp-table table tbody tr td:nth-child(3){
+        width: 22% !important;
+        word-wrap: break-word;
+    }
+    .sub-imp-table table thead tr th:nth-child(4),
+    .sub-imp-table table tbody tr td:nth-child(4){
+        width: 16% !important;
+    }
+    .sub-imp-table table thead tr th:nth-child(5),
+    .sub-imp-table table tbody tr td:nth-child(5){
+        width: 23% !important;
+        white-space: nowrap;
+    }
+    #Opt-In-Status{
+        min-width: 130px;
+    }
+
+
+    
+  

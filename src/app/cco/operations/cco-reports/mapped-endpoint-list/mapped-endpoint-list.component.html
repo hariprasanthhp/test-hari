@@ -1,0 +1,74 @@
+<div class="loader" *ngIf="loading">
+  <div class="d-flex justify-content-center">
+    <div class="spinner-border text-primary">
+      <span class="sr-only">{{language['Loading']}}</span>
+    </div>
+  </div>
+</div>
+<div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess"> {{language['Access denied due to RBAC. Please
+  consult your Organization Administrator for access.']}} </div>
+
+<section>
+  <div class="container" *ngIf="hasScopeAccess">
+    <div class="w-100 alert alert-danger  fade show my-3" *ngIf="error">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+      <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+      <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 px-0 cco-secondary-title mb-1" *ngIf="isCcoReports">
+        {{ language["Mapped Endpoint List"] }}
+      </div>
+    </div>
+    <div class="row justify-content-end">
+      <div class="col-md-2 my-2 text-right">
+        <button type="button" id="export" class="btn-default btn-dft" (click)="export()">
+          {{ language.Export }}
+          <span *ngIf="exportLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+        </button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 px-0 mt-2" *ngIf="showTable">
+        <table *ngIf="tableCountAvailable" id="management-table" width="100%" datatable [dtOptions]="dtOptions"
+          class="row-border hover table-alter">
+          <thead>
+            <tr>
+              <th>{{language.Subscriber}}</th>
+              <th>{{language.ip}}</th>
+              <th>{{language["Mapped By"]}}</th>
+              <th class="max-width-120">{{language["flowDiscovered"]}}</th>
+              <th class="max-width-120">{{language["Aggregated Groups"]}}</th>
+              <!-- <th>{{ language.Location }}</th> -->
+            </tr>
+          </thead>
+          <tbody *ngIf="mappedEndpointData?.length != 0">
+            <tr id="{{item.id}}" *ngFor="let item of mappedEndpointData">
+              <td class="td-map-subsc">
+                {{item.name ? item.name : ''}}
+                <!-- {{item.subscriberName ? item.subscriberName : ''}} -->
+
+              </td>
+              <td>{{item.ipAddress ? item.ipAddress : ''}}
+              </td>
+              <td>
+                <div>
+                  {{item.ipAddress ? (item.mappedBy ? item.mappedBy : '') : ''}}
+                </div>
+              </td>
+              <td>{{item.discovered === true ? language.Yes :language.No}}
+              <td>{{ item.isAggGroup ? item.isAggGroup : ''}}
+                <!-- <td>{{item.locString ? item.locString : ''}}</td> -->
+            </tr>
+          </tbody>
+          <tbody
+            *ngIf="(!mappedEndpointData?.length || (tableCount != undefined && tableCount == 0) || (filterCount != undefined && filterCount == 0))">
+            <tr>
+              <td colspan="5" class="no-data-available">{{language['No data available in table']}}</td>
+            </tr>
+          <tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>

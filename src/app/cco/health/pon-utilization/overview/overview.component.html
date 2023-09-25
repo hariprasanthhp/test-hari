@@ -1,0 +1,27 @@
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 px-0">
+        <div class="ccl-tabs">
+          <ul id="tabs" class="nav nav-tabs">
+            <li class="nav-item">
+              <a routerLink="/cco/health/pon-utilization/overview/basic" class="nav-link small" id="utilization-basic"
+                routerLinkActive="active" data-toggle="tab" class="nav-link" style="padding-left: 0%">{{ language.Basic
+                }}</a>
+            </li>
+            <!-- <li class="nav-item">
+              <a routerLink="/cco/health/pon-utilization/overview/advance" class="nav-link small"
+                id="utilization-advance" routerLinkActive="active" data-toggle="tab" class="nav-link">{{
+                language.Advanced }}</a>
+            </li> -->
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 px-0">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+</section>

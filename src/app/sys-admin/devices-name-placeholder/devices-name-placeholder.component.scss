@@ -1,0 +1,31 @@
+.tab-pane.fade:not(.show) > .tab-pane-content{display:none;}
+.tab-pane.fade.show > .tab-pane-content{display:block;}
+.nav-tab-list > li > .btn{
+    padding: 3px 20px !important;
+    border:1px solid #0279FF;
+    color: #0279FF;
+    font-size: 14px;
+    line-height: 16.67px !important;
+}
+.nav-tab-list > li > .btn:not(.active):hover{
+    background-color: #0279FF;
+    color: #fff;
+}
+.nav-tab-list > li > .btn.active{background-color: #0279FF;color: #fff;}
+.nav-tab-list > li > .btn{border-radius: 0 !important;}
+
+.nav-tab-list > li:first-child .btn{
+    border-top-left-radius: 12px !important;
+    border-bottom-left-radius: 12px !important;
+}
+.nav-tab-list > li:last-child .btn{
+    border-top-right-radius: 12px !important;
+    border-bottom-right-radius: 12px !important;
+}
+.chat-info-desc {
+    font-family: Source Sans Pro !important;
+    font-size: 14px!important;
+    color: #1a1f22;
+    margin-bottom: 5px;
+    margin-top: 10px;
+}

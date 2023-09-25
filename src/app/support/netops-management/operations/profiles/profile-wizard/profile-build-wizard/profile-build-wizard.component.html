@@ -1,0 +1,133 @@
+<!-- build-->
+
+<section class="netop-build pb-4">
+  <!-- <h3 class="net-ops-secondary-title">
+    {{ language.Step_2 }}- {{ language.Build_Profile }}
+  </h3> -->
+
+  <div *ngIf="!buildProfileObj.isFromDataModel">
+    <div class="margin-top-20">
+      <h6 *ngIf="!buildProfileObj.addNewCategory">
+        <span class="net-ops-secondary-title">{{
+          language.Profile_Categories
+          }}</span>
+      </h6>
+
+      <div class="table-responsive b-1" *ngIf="
+          !buildProfileObj.addNewCategory &&
+          buildProfileObj.categoryList?.length > 0
+        ">
+        <table datatable [dtOptions]="tableOptions" class="row-border hover table-alter w-100">
+          <thead>
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of buildProfileObj.categoryList; let i = index">
+              <td>{{ language[item.category] || item.category }}</td>
+              <td *ngIf="item.category !== 'Set Parameter Value'"></td>
+              <td *ngIf="item.category === 'Set Parameter Value'">
+                <div *ngFor="let key of item.selectedCategory">
+                  {{ key.displayName }}:{{ item.parameterValues[key.name] }}
+                </div>
+              </td>
+              <td class="text-center">
+                <a href="javascript:void(0)" title="{{ language.delete }}" id="delteCategory_{{ i }}"
+                  (click)="deleteCategory(i, item.category)"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <span *ngIf="(!buildProfileObj.addNewCategory&&buildProfileObj.categoryList?.length>0)?errorMsgFun():''"></span>
+      <div class="row pt-3" *ngIf="!buildProfileObj.addNewCategory">
+        <div class="col pull-left mb-2">
+          <button type="button" id="addNewCategory" [ngClass]="{ noDropCursor: !buildProfileObj.disableAddCategoryBtn }"
+            class="btn-default primary px-3 float-left" (click)="onaddCategClicked();"
+            [disabled]="!buildProfileObj.disableAddCategoryBtn">
+            {{ language.New_Category }}
+          </button>
+        </div>
+      </div>
+    </div>
+    <form>
+      <section class="margin-top-20" *ngIf="buildProfileObj.addNewCategory">
+        <div class="row">
+          <label class="col-2 control-label">{{ language.Category }}</label>
+          <div class="col-10">
+            <div class="custom-selectbox">
+              <!--<select class="form-control" *ngIf="!isFoundation && !isCsc" id="inputCategory" name="buildCategory"
+                [(ngModel)]="selectedCategory" (change)="categoryChange()">
+                <optgroup label="{{ language[categoryGroup] }}" *ngFor="let categoryGroup of groupOfcocCategory" class="text-ind-9px">
+                  <ng-container *ngFor="let category of categoryConfigData[categoryGroup]">
+                    <option value="{{ category.displayName }}" class="text-ind-17px"
+                      *ngIf="filterCategory(category.displayName)&& category.displayName !='myCommunityIQ Traffic'">
+                      {{ language[category.displayName] }}
+                    </option>
+                  </ng-container>
+                </optgroup>
+              </select>-->
+              <select class="form-control" *ngIf="!isFoundation && enableMyCommunity " id="inputCategory" name="buildCategory"
+                [(ngModel)]="selectedCategory" (change)="categoryChange()">
+                <optgroup label="{{ language[categoryGroup] }}" *ngFor="let categoryGroup of groupOfCategory" class="text-ind-9px">
+                  <ng-container *ngFor="let category of categoryConfigData[categoryGroup]">
+                    <option value="{{ category.displayName }}" class="text-ind-17px"
+                    *ngIf="filterCategory(category.displayName)">
+                      <!-- {{ language[category.displayName] }} -->
+                      {{ language[category.displayName] }}
+                    </option>
+                  </ng-container>
+                </optgroup>
+              </select>
+              <select class="form-control" *ngIf="!isFoundation && !enableMyCommunity " id="inputCategory" name="buildCategory"
+                [(ngModel)]="selectedCategory" (change)="categoryChange()">
+                <optgroup label="{{ language[categoryGroup] }}" *ngFor="let categoryGroup of groupOfcocCategory" class="text-ind-9px">
+                  <ng-container *ngFor="let category of categoryConfigData[categoryGroup]">
+                    <option value="{{ category.displayName }}" class="text-ind-17px"
+                    *ngIf="filterCategory(category.displayName)&& category.displayName !='myCommunityIQ Traffic'">
+                      {{ language[category.displayName] }}
+                    </option>
+                  </ng-container>
+                </optgroup>
+              </select>
+              <select class="form-control" *ngIf="isFoundation && enableMyCommunity" id="inputCategory" name="buildCategory"
+                [(ngModel)]="selectedCategory" (change)="categoryChange()">
+                <optgroup label="{{ language[categoryGroup] }}" *ngFor="let categoryGroup of groupOfCategory"  class="text-ind-9px">
+                  <ng-container *ngFor="let category of categoryConfigData[categoryGroup]">
+                    <option value="{{ category.displayName }}" class="text-ind-17px"
+                      *ngIf="filterCategory(category.displayName)&&category.displayName!='Time Zone'&&category.displayName!='Wi-Fi SSID'&&category.displayName!='Bandwidth'&&category.displayName!='QoS Rule'&&category.displayName!='QoS State'&&category.displayName!='Wi-Fi Country'">
+                      {{ language[category.displayName] }}
+                    </option>
+                  </ng-container>
+                </optgroup>
+              </select>
+              <select class="form-control" *ngIf="isFoundation && !enableMyCommunity" id="inputCategory" name="buildCategory"
+                [(ngModel)]="selectedCategory" (change)="categoryChange()">
+                <optgroup label="{{ language[categoryGroup] }}" *ngFor="let categoryGroup of groupOfcocCategory"  class="text-ind-9px">
+                  <ng-container *ngFor="let category of categoryConfigData[categoryGroup]">
+                    <option value="{{ category.displayName }}" class="text-ind-17px"
+                      *ngIf="filterCategory(category.displayName)&&category.displayName!='Time Zone'&&category.displayName!='Wi-Fi SSID'&&category.displayName!='Bandwidth'&&category.displayName!='QoS Rule'&&category.displayName!='QoS State'&&category.displayName!='Wi-Fi Country' && category.displayName !='myCommunityIQ Traffic'">
+                      {{ language[category.displayName] }}
+                    </option>
+                  </ng-container>
+                </optgroup>
+              </select>
+            </div>
+          </div>
+        </div>
+        <hr />
+        <div class="category-container" *ngIf="buildProfileObj.addNewCategory">
+          <app-add-new-categories [buildProfileObj]="buildProfileObj" [categoryType]="selectedCategoryType" (errorOutput)="emitError($event)">
+          </app-add-new-categories>
+        </div>
+      </section>
+    </form>
+  </div>
+  <div class="category-container" *ngIf="buildProfileObj.isFromDataModel">
+    <app-add-new-categories [buildProfileObj]="buildProfileObj" [categoryType]="buildProfileObj?.dataModelCategoryObj" (errorOutput)="emitError($event)">
+    </app-add-new-categories>
+  </div>
+</section>

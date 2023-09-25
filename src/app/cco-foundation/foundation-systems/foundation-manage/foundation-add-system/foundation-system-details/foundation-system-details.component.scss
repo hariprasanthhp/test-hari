@@ -1,0 +1,19 @@
+input{
+    border-radius: 20px;
+}
+@media screen and (max-width: 767px){
+    .mpl-0{
+        padding-left: 0 !important;
+    }
+    .mpr-0{
+        padding-right: 0 !important;
+    }
+}
+::ng-deep{
+    .custom-alert-warn .modal-dialog{max-width:47.47% !important}
+    .custom-alert-warn .modal-content{background-color: #FFF9F5 !important;padding: 26px 36px !important;}
+  }
+input.inp-disabled:hover {
+    cursor:not-allowed !important;
+}
+.border-color{border-color: red;}

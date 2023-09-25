@@ -1,0 +1,386 @@
+<div class="wifissid-service">
+  <div id="selectedSSIDPos">
+    <div class="col-12 p-1 pt-3">
+      <form #myForm="ngForm" id="ssid-form">
+        <div *ngIf="!isWifi5Radio">
+          <div class="row mb-2">
+            <label class="col-12 col-lg-3 control-label">{{
+              language.Service
+              }}</label>
+            <div class="col-12 col-lg-9 inline-group pl-0" id="{{'serviceEnabled_' + wifiType}}">
+              <label class="radio-inline col-3" [ngClass]="{'cursornotallow': bSmbMode}">
+                <input type="radio" id="{{'Enabled_true_' + wifiType}}" name="Enable" value="true"
+                  [attr.disabled]="metaData ? !metaData?.Enable? '' : null :  null" [disabled]="bSmbMode"
+                  [(ngModel)]="wifiSSIDObj.serviceEnabled" class="mr-2" [checked]="wifiSSIDObj.serviceEnabled == 'true'"
+                  (change)="emitData()" />
+                <i></i>{{ language.Enabled }}
+              </label>
+              <label class="radio-inline col-3" [ngClass]="{'cursornotallow': bSmbMode}">
+                <input type="radio" id="{{'Enabled_false_' + wifiType}}" name="Enable" value="false"
+                  [(ngModel)]="wifiSSIDObj.serviceEnabled" class="mr-2"
+                  [checked]="wifiSSIDObj.serviceEnabled == 'false'" (change)="emitData()" [disabled]="bSmbMode"
+                  [attr.disabled]="metaData ? !metaData?.Enable? '' : null  :  null" />
+                <i></i>{{ language.Disabled }}
+              </label>
+              <label class="radio-inline col-3" [ngClass]="{'cursornotallow': bSmbMode}">
+                <input type="radio" id="{{'Enabled_undefined_' + wifiType}}" name="Enable" value="undefined"
+                  [(ngModel)]="wifiSSIDObj.serviceEnabled"
+                  [attr.disabled]="metaData ? !metaData?.Enable? '' : null  :  null" class="mr-2" [disabled]="bSmbMode"
+                  [checked]="wifiSSIDObj.serviceEnabled == 'undefined'" (change)="emitData()" />
+                <i></i>{{ language.Unchanged }}
+              </label>
+            </div>
+          </div>
+          <div class="form-group ccl-form row">
+            <label for="ssid_name" class="col-12 col-lg-3 control-label">{{
+              language.Name
+              }}<span *ngIf="isNameRequired" class="error">*</span></label>
+            <div class="col-12 col-lg-9" [ngClass]="[
+        (name.errors?.customMax ||
+          name.errors?.customPattern) || (name.errors?.required && isNameRequired)
+         &&  (myForm.submitted || name.touched)
+          ? 'errorMessage'
+          : '',bSmbMode ? 'cursornotallow': ''
+      ]">
+              <input id="name" #name="ngModel" type="text" name="name" [customPattern]="ssidNamePattern"
+                [customMax]="32" [(ngModel)]="wifiSSIDObj.name" placeholder="{{language.Name}}" name="SSID"
+                [required]="isNameRequired ? 'required' : null"
+                [attr.disabled]="metaData ? (!metaData?.SSID) ? '': null : null" (keyup)="emitData()"
+                (change)="emitData();" aria-describedby="name-error" aria-invalid="true" [disabled]="bSmbMode"
+                autocomplete="new-password" [ngClass]="{'PointerEvent': bSmbMode}" />
+
+              <em *ngIf="
+                          (name.touched || myForm.submitted) && name.errors?.required && isNameRequired
+                        " id="name-error">
+                {{ language['Please enter the name'] }}
+              </em>
+              <em *ngIf="
+            (name.touched || myForm.submitted) && name.errors?.customPattern
+          " id="name-error">
+                {{ language[namePatternError] }}
+              </em>
+              <em *ngIf="(name.touched || myForm.submitted) && name.errors?.customMax" id="name-error">
+                {{ language.New_Profile_Validation5 }} 32
+                {{ language.Characters }}..
+              </em>
+            </div>
+          </div>
+          <div class="row">
+            <label class="col-12 col-lg-3 control-label">{{
+              language.Broadcasting
+              }}</label>
+            <div class="col-12 col-lg-9 inline-group pl-0" id="broadcastEnabled">
+              <label class="radio-inline col-3" [ngClass]="{'cursornotallow': bSmbMode}">
+                <input type="radio" name="SSIDAdvertisementEnabled" [value]="true"
+                  [attr.disabled]="(metaData || bSmbMode) ? (!metaData?.SSIDAdvertisementEnabled || bSmbMode) ? '' : null : null"
+                  [(ngModel)]="wifiSSIDObj.broadcastEnabled" class="mr-2" [checked]="wifiSSIDObj.broadcastEnabled"
+                  (change)="emitData()" />
+                <i></i>{{ language.Enabled }}
+              </label>
+              <label class="radio-inline col-3" [ngClass]="{'cursornotallow': bSmbMode}">
+                <input type="radio" name="SSIDAdvertisementEnabled" [value]="false"
+                  [(ngModel)]="wifiSSIDObj.broadcastEnabled" class="mr-2"
+                  [attr.disabled]="(metaData || bSmbMode) ? (!metaData?.SSIDAdvertisementEnabled || bSmbMode) ? '' : null : null"
+                  [checked]="wifiSSIDObj.broadcastEnabled == 'false'" (change)="emitData()" />
+                <i></i>{{ language.Disabled }}
+              </label>
+              <label class="radio-inline col-3" [ngClass]="{'cursornotallow': bSmbMode}">
+                <input type="radio" name="SSIDAdvertisementEnabled" [value]="undefined"
+                  [checked]="wifiSSIDObj.broadcastEnabled == undefined" [(ngModel)]="wifiSSIDObj.broadcastEnabled"
+                  [attr.disabled]="(metaData || bSmbMode) ? (!metaData?.SSIDAdvertisementEnabled || bSmbMode) ? '' : null : null"
+                  class="mr-2" (change)="emitData()" />
+                <i></i>{{ language.Unchanged }}
+              </label>
+            </div>
+          </div>
+          <div class="form-group ccl-form row mt-2">
+            <label for="securityType" class="col-12 col-lg-3 control-label">{{
+              language.Security
+              }} <span *ngIf="showSecurityRequired" class="error">*</span></label>
+            <div class="col-12 col-lg-9 select" [ngClass]="[
+              (BeaconType.errors?.required) &&
+                            (myForm.submitted || BeaconType.touched)
+                ? 'errorMessage'
+                : '',bSmbMode ? 'cursornotallow': ''
+            ]">
+              <ng-select [searchable]="false" placeholder="Security" id="Security" name="BeaconType"
+                [required]="showSecurityRequired ? 'required' : null" [items]="securityTypes" bindLabel="name"
+                bindValue="id" [clearable]="false" placeholder="Security" #BeaconType="ngModel"
+                (change)="emitData('security');changeSecurityType()" [(ngModel)]="wifiSSIDObj.securityType"
+                [attr.disable]="metaData ? !metaData?.BeaconType : null" [disabled]="bSmbMode"
+                [ngClass]="{'PointerEvent': bSmbMode}">
+                <ng-template ng-label-tmp let-item="item">
+                  {{ item.name | customReplace:'\/':'-'}}
+                </ng-template>
+                <ng-template ng-option-tmp let-item="item">
+                  {{ item.name | customReplace:'\/':'-'}}
+                </ng-template>
+              </ng-select>
+              <em class="error" *ngIf="
+                            (BeaconType.errors?.required) &&
+                            (myForm.submitted || BeaconType.touched)" id="KeyPassphrase-error">
+                {{language['Please select security']}}
+                <br>
+              </em>
+            </div>
+          </div>
+          <div *ngIf="wifiSSIDObj.securityType !== 'Basic'">
+            <div class="form-group row">
+              <label for="encryption" class="col-12 col-lg-3 control-label">{{
+                language.Encryption
+                }}</label>
+              <div class="col-12 col-lg-9 select" [ngClass]="{'cursornotallow': bSmbMode}">
+                <ng-select [searchable]="false" id="encryption" name="Encryption" [items]="encryptionTypes"
+                  bindLabel="name" bindValue="id" [clearable]="false" (change)="emitData()"
+                  [attr.disable]="metaData ? !metaData?.WPAEncryptionModes : null" [(ngModel)]="wifiSSIDObj.encryption"
+                  [disabled]="bSmbMode" [ngClass]="{'PointerEvent': bSmbMode}">
+                </ng-select>
+              </div>
+            </div>
+            <div class="form-group ccl-form row">
+              <label for="passphrase" class="col-12 col-lg-3 control-label">{{
+                language.Passphrase
+                }} <span *ngIf="showPasswordRequired" class="error">*</span></label>
+              <div [ngClass]="[
+              (KeyPassphrase.errors?.customMin ||
+                KeyPassphrase.errors?.customWhiteSpace ||
+                KeyPassphrase.errors?.customMax ||
+                KeyPassphrase.errors?.isASCII ||
+                passVal || 
+                KeyPassphrase.errors?.required) &&
+              (myForm.submitted || KeyPassphrase.touched || KeyPassphrase.invalid)
+                ? 'errorMessage'
+                : '',bSmbMode ? 'cursornotallow': ''
+            ]" class="col-12 col-lg-9 pos-icon-r">
+                <input id="passphrasewifissid" name="KeyPassphrase"
+                  [type]="showPassPhraseOldModel ? 'text' : 'password'" placeholder="{{phassPharsePlaceHolder}}"
+                  [required]="showPasswordRequired ? 'required' : null" [customMin]="8" [customMax]="63" isASCII
+                  customWhiteSpace #KeyPassphrase="ngModel" autocomplete="off" [disabled]="bSmbMode"
+                  [attr.disable]="metaData ? !metaData?.KeyPassphrase : null" [(ngModel)]="wifiSSIDObj.passphrase"
+                  (keyup)="emitData()" (ngModelChange)="onSecondaryKeyPhraseChange($event)" class="col-12"
+                  [ngClass]="{'PointerEvent': bSmbMode}" />
+                <!--  [type]="wifiSSIDObj.showPassPhrase ? 'text' : 'password'" [(ngModel)]="wifiSSIDObj.passphrase" -->
+                <!--(click)="wifiSSIDObj.showPassPhrase =!wifiSSIDObj.showPassPhrase;"-->
+                <span class="togg-icon" [ngClass]="{'PointerEvent': bSmbMode}">
+                  <img *ngIf="!showPassPhraseOldModel" src="assets/img/ic_eye_hide.svg" alt="icon here"
+                    (click)="passWordEditOldModel(wifiSSIDObj)" />
+                  <img *ngIf="showPassPhraseOldModel" src="assets/img/ic_eye_view.svg" alt="icon here"
+                    (click)="hidepassWordEditOldModel(wifiSSIDObj)" />
+                </span>
+                <div *ngIf="
+              (KeyPassphrase.errors?.required) &&
+              (myForm.submitted || KeyPassphrase.touched)" id="KeyPassphrase-error">
+                  {{ language.PassphraseRequired }}
+                  <br>
+                </div>
+                <div *ngIf="(passVal && isAllSplChar) &&
+              (KeyPassphrase.touched || KeyPassphrase.invalid)" id="KeyPassphrase-error">
+                  {{language['Password cannot have only space or only special characters']}}.
+                  <br>
+                </div>
+                <div *ngIf="
+              (KeyPassphrase.errors?.customMin ||
+                KeyPassphrase.errors?.customMax) &&
+              (myForm.submitted || KeyPassphrase.touched || KeyPassphrase.invalid)
+            " id="KeyPassphrase-error">
+                  {{ language.Number_Hint_8_63 }}
+                  <br>
+                </div>
+                <div *ngIf="
+              KeyPassphrase.errors?.isASCII &&
+              (myForm.submitted || KeyPassphrase.touched)
+            " id="KeyPassphrase-isASCII-error">
+                  {{ language.ASCII_warning }}
+                  <br>
+                </div>
+                <div *ngIf="
+              KeyPassphrase.errors?.customWhiteSpace &&
+              (myForm.submitted || KeyPassphrase.touched || KeyPassphrase.invalid)
+            " id="KeyPassphrase-customWhiteSpace-error">
+                  {{ language.Passphrase_warning }}
+                  <br>
+                </div>
+
+              </div>
+
+              <!-- <div class="col-12 col-lg-9" *ngIf="!wifiSSIDObj.showPassPhrase">
+            <input id="passphrase" name="KeyPassphrase" type="text" value="********" class="col-12" readonly
+              (change)="emitData()" />
+          </div> -->
+            </div>
+
+            <div class="col-12 px-0 mb-3" *ngIf="editaccesspasspharsepopup">
+              <div class="d-flex w-100 flex-wrap warning-alert">
+                <div class="icon-warn-24">
+                  <img src="../../../../assets/img/warning-icon.svg" />
+                </div>
+                <div class="width-calc">
+                  <div class="warn-title">
+                    <!--{{language.Ask_the_subscriber_msg}}-->{{language.SSIDpopupmessage}}
+                  </div>
+
+                  <div class="form-group ccl-form" *ngIf="freetextedit">
+
+                    <textarea class="form-control round-textarea textarea-box" id="exampleFormControlTextarea1"
+                      [(ngModel)]="ssidfreetextedit" [ngModelOptions]="{ standalone: true }"
+                      placeholder="{{language['Enter any comments (Optional)']}}"></textarea>
+                  </div>
+                  <div class="table-responisve">
+                    <!--    <table class="table table-borderless ssid-warn-table">
+                      <thead>
+                        <tr>
+                          <th>{{language.Account}}</th>
+                          <th>{{language.Phone_No}}</th>
+                          <th>{{language.Email}}</th>
+                          <th>{{language.address}}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>{{subscriberaccount}}</td>
+                          <!--secondary edit pop-up-->
+                    <!--        <td>{{subscriberphone}}</td>
+                          <td>{{subscriberemail}}</td>
+                          <td>{{subscriberaddress}} </td>
+                        </tr>
+                      </tbody>
+                    </table>-->
+                    <div>
+                      <div class="form-check">
+                        <input type="checkbox" class="form-check-input check-input-inline"
+                          [(ngModel)]="checksubvalidate" [ngModelOptions]="{ standalone: true }"
+                          (change)="checksubvalidatechange()" />
+                        <span>{{language.subscriber_verifi_msg}}</span>
+                      </div>
+                    </div>
+                    <!--end-->
+                    <div class="w-100 mt-2 warn-action-buttons">
+                      <button class="btn-default btn-primary mr-3" type="button" [disabled]="accessPassphrasenable"
+                        id="accessPassphrase" (click)="accesspopupedit(wifiSSIDObj)">{{language['Access
+                        Passphrase']}}</button>
+                      <button class="btn-default btn-dft"
+                        (click)="editaccesspasspharsepopupclose()">{{language.cancel}}</button>
+                    </div>
+                    <!--end-->
+                  </div>
+                </div>
+                <!--end-->
+              </div>
+            </div>
+            <div class="col-12 px-0 mb-3" *ngIf="editpasspharsealertpopup">
+              <div class="d-flex w-100 flex-wrap warning-alert">
+
+                <div class="icon-warn-48">
+                  <img src="../../../../assets/img/warning-icon-36px.svg" />
+                </div>
+                <div>
+                  <div class="ccl-Secondary-title mb-0 pb-0">
+                    {{language['You don’t have permission to view the passphrase']}}
+                  </div>
+                  <p class="mb-0">{{language['Talk to your administrator for access']}}.</p>
+                </div>
+                <button type="button" class="close pos-abs-right" (click)="editpasspharsealertpopupclose()">
+                  <span></span>
+                </button>
+
+                <!--end-->
+              </div>
+            </div>
+            <!-- <div class="form-group ccl-form row">
+          <label for="passphraseToggle" class="col-12 col-lg-3 control-label">
+            {{ language.Show_Passphrase }}
+          </label>
+          <div class="col-12 col-lg-9">
+            <div class="checkbox switcher">
+              <label for="showPassPhrase">
+                <input type="checkbox" id="showPassPhrase" name="showPassPhrase"
+                  [(ngModel)]="wifiSSIDObj.showPassPhrase" (change)="emitData()" />
+                <span><small></small></span>
+              </label>
+            </div>
+          </div>
+        </div> -->
+          </div>
+        </div>
+
+        <!-- <div class="row"
+        *ngIf="wifiType == 'X_CALIX_SXACC_PRIMARY_5GHZ_SSID' || wifiType == 'X_CALIX_SXACC_GUEST_5GHZ_SSID'"> -->
+        <div class="row" *ngIf="(wifiType == 'X_CALIX_SXACC_PRIMARY_5GHZ_SSID') && isWifi5Radio">
+          <label class="col-12 col-lg-3 control-label">{{
+            language.DFS
+            }}</label>
+          <div class="col-12 col-lg-9 inline-group pl-0" id="broadcastEnabled">
+            <label class="radio-inline col-3">
+              <input type="radio" name="enableDfsChannels" [value]="true" [(ngModel)]="wifiSSIDObj.enableDfsChannels"
+                class="mr-2" [checked]="wifiSSIDObj.enableDfsChannels" (change)="emitData()" />
+              <i></i>{{ language.Enabled }}
+            </label>
+            <label class="radio-inline col-3">
+              <input type="radio" name="enableDfsChannels" [value]="false" [(ngModel)]="wifiSSIDObj.enableDfsChannels"
+                class="mr-2" [checked]="wifiSSIDObj.enableDfsChannels == 'false'" (change)="emitData()" />
+              <i></i>{{ language.Disabled }}
+            </label>
+            <label class="radio-inline col-3">
+              <input type="radio" name="enableDfsChannels" [value]="undefined"
+                [checked]="wifiSSIDObj.enableDfsChannels == undefined" [(ngModel)]="wifiSSIDObj.enableDfsChannels"
+                class="mr-2" (change)="emitData()" />
+              <i></i>{{ language.Unchanged }}
+            </label>
+          </div>
+        </div>
+        <!-- <div class="row"
+          *ngIf="wifiType == 'X_CALIX_SXACC_PRIMARY_5GHZ_SSID' || wifiType ==  'X_CALIX_SXACC_GUEST_5GHZ_SSID'"> -->
+        <div class="row" *ngIf="(wifiType == 'X_CALIX_SXACC_PRIMARY_5GHZ_SSID') && isWifi5Radio">
+          <label class="col-12 col-lg-3 control-label">{{
+            language['MU-MIMO']
+            }}</label>
+          <div class="col-12 col-lg-9 inline-group pl-0" id="broadcastEnabled">
+            <label class="radio-inline col-3">
+              <input type="radio" name="mumimoEnabled" [value]="true" [(ngModel)]="wifiSSIDObj.mumimoEnabled"
+                class="mr-2" [checked]="wifiSSIDObj.mumimoEnabled" (change)="emitData()" />
+              <i></i>{{ language.Enabled }}
+            </label>
+            <label class="radio-inline col-3">
+              <input type="radio" name="mumimoEnabled" [value]="false" [(ngModel)]="wifiSSIDObj.mumimoEnabled"
+                class="mr-2" [checked]="wifiSSIDObj.mumimoEnabled == 'false'" (change)="emitData()" />
+              <i></i>{{ language.Disabled }}
+            </label>
+            <label class="radio-inline col-3">
+              <input type="radio" name="mumimoEnabled" [value]="undefined"
+                [checked]="wifiSSIDObj.mumimoEnabled == undefined" [(ngModel)]="wifiSSIDObj.mumimoEnabled" class="mr-2"
+                (change)="emitData()" />
+              <i></i>{{ language.Unchanged }}
+            </label>
+          </div>
+        </div>
+
+
+
+        <div class="row" *ngIf="(wifiType == 'X_CALIX_SXACC_PRIMARY_6GHZ_SSID') && isWifi5Radio">
+          <label class="col-12 col-lg-3 control-label">{{
+            language['MU-MIMO']
+            }}</label>
+          <div class="col-12 col-lg-9 inline-group pl-0" id="broadcastEnabled">
+            <label class="radio-inline col-3">
+              <input type="radio" name="mumimoEnabled" [value]="true" [(ngModel)]="wifiSSIDObj.mumimoEnabled"
+                class="mr-2" [checked]="wifiSSIDObj.mumimoEnabled" (change)="emitData()" />
+              <i></i>{{ language.Enabled }}
+            </label>
+            <label class="radio-inline col-3">
+              <input type="radio" name="mumimoEnabled" [value]="false" [(ngModel)]="wifiSSIDObj.mumimoEnabled"
+                class="mr-2" [checked]="wifiSSIDObj.mumimoEnabled == 'false'" (change)="emitData()" />
+              <i></i>{{ language.Disabled }}
+            </label>
+            <label class="radio-inline col-3">
+              <input type="radio" name="mumimoEnabled" [value]="undefined"
+                [checked]="wifiSSIDObj.mumimoEnabled == undefined" [(ngModel)]="wifiSSIDObj.mumimoEnabled" class="mr-2"
+                (change)="emitData()" />
+              <i></i>{{ language.Unchanged }}
+            </label>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>

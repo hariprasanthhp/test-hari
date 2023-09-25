@@ -1,0 +1,24 @@
+<div class="col-12 col-md-12 pl-0 ccl-tabs">
+
+    <!-- <h2 class="net-ops-title">{{language.Reports}}</h2> -->
+    <ul id="tabs" class="nav nav-tabs sub-tab">
+        <li class="nav-item">
+            <a routerLink="/cco/operations/cco-subscriber-operations/reports/inventory-report"
+                (Click)="$event.preventDefault()" class="nav-link small f-size-16" id="inventoryReportTabId"
+                routerLinkActive="active">{{language.Inventory_Report}}</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link small f-size-16"
+                routerLink="/cco/operations/cco-subscriber-operations/reports/call-outcome-report"
+                (Click)="$event.preventDefault()" routerLinkActive="active"
+                id="callOutcomeReportTabId">{{language.Call_Outcome_Report}}</a>
+        </li>
+
+        <li class="nav-item"><a class="nav-link small f-size-16"
+                routerLink="/cco/operations/cco-subscriber-operations/reports/unassociated-devices"
+                id="unassociatedDevicesMenuId" (Click)="$event.preventDefault()"
+                routerLinkActive="active">{{language['Unassociated Systems']}}</a>
+        </li>
+    </ul>
+</div>
+<router-outlet></router-outlet>

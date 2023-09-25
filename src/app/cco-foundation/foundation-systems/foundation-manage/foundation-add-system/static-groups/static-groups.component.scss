@@ -1,0 +1,49 @@
+.new-stepper {
+    ul {
+        display   : flex;
+        list-style: none;
+        margin    : 0;
+        padding   : 0;
+        overflow  : hidden;
+    }
+
+    ul li {
+        padding   : 12px 30px;
+        background: blue;
+        color     : #fff;
+        position  : relative;
+    }
+
+    ul li span {
+        position: relative;
+        z-index : 2;
+    }
+
+    ul li:after {
+        content   : '';
+        width     : 40px;
+        height    : 100%;
+        background: blue;
+        position  : absolute;
+        top       : 0;
+        transform : rotate(45deg);
+        z-index   : 1;
+        border    : 2px solid transparent;
+    }
+
+    ul li:first-child {
+        border-top-left-radius   : 30px;
+        border-bottom-left-radius: 30px;
+    }
+
+    ul li:first-child:after {
+        border-top-color       : #fff;
+        border-right-color     : #fff;
+        border-top-right-radius: 5px;
+    }
+
+    li:hover,
+    li:hover:after {
+        background: red;
+    }
+}

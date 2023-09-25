@@ -1,0 +1,42 @@
+.dsl-ports-kbi .col-auto{border-left: 1px solid #EBEAEF;padding-left: 12px;min-width: 130px;}
+.long-title-ellips{
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+.search-close{
+    position: absolute;
+    width: 12px;
+    right: 32px;
+    top: 5px;
+    cursor: pointer;
+}
+
+input.inp-disabled:hover {
+  cursor:not-allowed !important;
+}
+
+.ic_info{
+    width: 13px;
+    height: 13px;
+  }
+  .pop{
+    padding: 22px 24px 26px 26px;
+    width: 475px;
+    filter: drop-shadow(0px 5px 15px rgba(128, 128, 128, 0.25));
+    fill: #FFF;
+    border-radius: 10px;
+    border: none;
+    transform: translate(-101%, -50%) !important;}
+  .pop .title{
+    color: #000;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 24px;
+  }
+  .dropleft .dropdown-toggle::before{
+    display: none !important;
+  }
+  .pop .close span{
+    background-size: 12px 12px;
+  }

@@ -1,0 +1,244 @@
+<div class="voice-line-service">
+    <div class="">
+        <div class="row">
+            <label class="col-12 col-lg-3 control-label">{{language.Voice_Service}}
+            </label>
+            <div class="col-12 col-lg-9">
+                <div class="checkbox switcher">
+                    <label for="voiceService">
+                        <input type="checkbox" id="voiceService" name="voiceService"
+                            [checked]="lineObject.isVoiceService" (change)="handleOnOffBtn('VoiceService')">
+                        <span><small></small></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div
+            *ngIf="lineObject.isVoiceService && (addDeviceObj.services.voiceService.serviceType === 'SIP' || addDeviceObj.services.voiceService.serviceType?.configurations?.parameterValues?.Type === 'SIP')">
+            <div class="form-group ccl-form row">
+                <label class="col-12 col-lg-3">{{language.Username}}
+                    <span class="error">*</span>
+                </label>
+                <div class="col-12 col-lg-9">
+                    <input class="voiceParam valid" name="Username"
+                        (keyup)="checkValidation('inValidUserName', lineObject.username)"
+                        [(ngModel)]="lineObject.username" type="text" id="AuthUserName" required
+                        placeholder="{{language['Enter Username']}}" aria-invalid="false" aria-required="true">
+                    <div class="errorMessage" *ngIf="lineObject.inValidUserName">
+                        <p *ngIf="!lineObject.username">{{language['This field is required']}}.</p>
+                        <p *ngIf="lineObject.username !== ''">{{userNameErrorMsg}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group ccl-form row">
+                <label class="col-12 col-lg-3">{{language.Password}}
+                    <span class="error">*</span>
+                </label>
+                <div class="col-12 col-lg-9 password-eye-icon">
+                    <input class="voiceParam valid" name="Password" [type]="isPPoE_Hide ? 'text' : 'password'"
+                        (keyup)="checkValidation('inValidPWD', lineObject.password)" [(ngModel)]="lineObject.password"
+                        type="text" id="AuthPassword" required placeholder="{{language['Enter Password']}}"
+                        aria-invalid="false" aria-required="true">
+                        <span [ngClass]="isPPoE_Hide ? 'password_view' : 'password_hide'" (click)="isPPoE_Hide = !isPPoE_Hide"></span>
+                    <div class="errorMessage" *ngIf="lineObject.inValidPWD">
+                        <p *ngIf="!lineObject.password">{{language['This field is required']}}.</p>
+                        <p *ngIf="lineObject.password !== ''">{{userNameErrorMsg}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group ccl-form row">
+                <label class="col-12 col-lg-3">{{language.SIP_URI}}
+                    <span class="error">*</span>
+                </label>
+                <div class="col-12 col-lg-9">
+                    <input class="voiceParam valid" name="URI" type="text"
+                        (keyup)="checkValidation('inValidURI', lineObject.uri)" [(ngModel)]="lineObject.uri" id="URI"
+                        placeholder="{{language.Enter_URI}}" aria-invalid="false" aria-required="true">
+                    <div class="errorMessage" *ngIf="lineObject.inValidURI">
+                        <p>{{language['This field is required']}}.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-12 col-lg-3">{{language.Call_Waiting}}</label>
+                <div class="col-12 col-lg-9">
+                    <div class="checkbox switcher mb-1">
+                        <label for="callWaiting">
+                            <input type="checkbox" id="callWaiting" name="callWaiting"
+                                [(ngModel)]="lineObject.isCallWaiting" [checked]="lineObject.isCallWaiting">
+                            <span><small></small></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-12 col-lg-3">{{language.Caller_ID}}</label>
+                <div class="col-12 col-lg-9">
+                    <div class="checkbox switcher mb-1">
+                        <label for="callerID">
+                            <input type="checkbox" id="callerID" name="callerID" [(ngModel)]="lineObject.isCallerId"
+                                [checked]="lineObject.isCallerId">
+                            <span><small></small></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-12 col-lg-3">{{language.Three_waycall}}</label>
+                <div class="col-12 col-lg-9">
+                    <div class="checkbox switcher mb-1">
+                        <label for="threeWayCalling">
+                            <input type="checkbox" name="threeWayCalling" id="threeWayCalling"
+                                [(ngModel)]="lineObject.isThreeWayCalling" [checked]="lineObject.isThreeWayCalling">
+                            <span><small></small></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-12 col-lg-3">{{language.Message_Waiting}}</label>
+                <div class="col-12 col-lg-9">
+                    <div class="checkbox switcher mb-1">
+                        <label for="msgIndicator">
+                            <input type="checkbox" id="msgIndicator" name="msgIndicator"
+                                [(ngModel)]="lineObject.messageWaitIndi" [checked]="lineObject.messageWaitIndi">
+                            <span><small></small></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-12 col-lg-3">{{language.Direct_Connect}} </label>
+                <div class="col-12 col-lg-9">
+                    <div class="checkbox switcher mb-1">
+                        <label for="directCon">
+                            <input type="checkbox" id="directCon" name="directCon" [checked]="lineObject.isDirectCon"
+                                (change)="handleOnOffBtn('DirectConnect')">
+                            <span><small></small></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="lineObject.isDirectCon">
+                <div class="form-group">
+                    <div class="form-group ccl-form row">
+                        <label class="col-12 col-lg-3">{{language.Direct_No}} <span class="error">*</span></label>
+                        <div class="col-12 col-lg-9">
+                            <input class="voiceParam" type="text"
+                                (keyup)="checkValidation('inValidDireConnectNum', lineObject.direConnectNum)"
+                                id="X_000631_DirectConnectNumber" maxlength="32" name="Direct Connect Number"
+                                [(ngModel)]="lineObject.direConnectNum"
+                                placeholder="{{language['Enter Direct Connect Number']}}" aria-invalid="false"
+                                aria-required="true">
+                            <div class="errorMessage" *ngIf="lineObject.inValidDireConnectNum">
+                                <p *ngIf="lineObject.direConnectNum === ''">{{language['This field is
+                                    required']}}.</p>
+                                <p *ngIf="lineObject.direConnectNum !== ''">{{language['Please enter a
+                                    number']}}.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group ccl-form row">
+                        <label class="col-12 col-lg-3">{{language.Direct_Connect_Timer}}</label>
+                        <div class="col-12 col-lg-9">
+                            <input class="voiceParam" id="X_000631_DirectConnectTimer"
+                                (change)="checkValidation('inValidDireConnectTime', lineObject.directConnectTimer)"
+                                name="Direct Connect Timer" type="number" [(ngModel)]="lineObject.directConnectTimer"
+                                placeholder="{{language['Enter Direct Connect Timer']}}" aria-invalid="false">
+                            <div class="errorMessage" *ngIf="lineObject.inValidDireConnectTime">
+                                <p>[{{language['Direct Connect Timer ranges from 0 to 35']}}.]</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div
+            *ngIf="lineObject.isVoiceService && (addDeviceObj.services.voiceService.serviceType !== 'SIP' || addDeviceObj.services.voiceService.serviceType?.configurations?.parameterValues?.Type !== 'SIP')">
+            <div class="row"
+                *ngIf="addDeviceObj.services.voiceService.serviceType === 'MGCP' || addDeviceObj.services.voiceService.serviceType?.configurations?.parameterValues?.Type === 'MGCP'">
+                <label class="col-12 col-lg-3">{{language.GR303}}</label>
+                <div class="col-12 col-lg-9">
+                    <div class="checkbox switcher mb-1">
+                        <label for="isGR303">
+                            <input type="checkbox" id="isGR303" name="isGR303" [(ngModel)]="lineObject.isGR303"
+                                [checked]="lineObject.isGR303">
+                            <span><small></small></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group ccl-form row"
+                *ngIf="addDeviceObj.services.voiceService.serviceType === 'H.248' || addDeviceObj.services.voiceService.serviceType?.configurations?.parameterValues?.Type === 'H.248'">
+                <label class="col-12 col-lg-3">{{language.Termination_ID}}</label>
+                <div class="col-12 col-lg-9">
+                    <input class="termination" type="text"
+                        (keyup)="checkValidation('inValidTerminateId', lineObject.terminateId)" id="termination_ID"
+                        maxlength="32" name="Direct Connect Number" [(ngModel)]="lineObject.terminateId"
+                        placeholder="{{language['Enter Termination ID']}}" aria-invalid="false" aria-required="true">
+                    <div class="errorMessage" *ngIf="lineObject.inValidTerminateId">
+                        <p>{{language['This field is required']}}.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group ccl-form row"
+                *ngIf="addDeviceObj.services.voiceService.serviceType === 'X_000631_TDMGW' || addDeviceObj.services.voiceService.serviceType?.configurations?.parameterValues?.Type === 'X_000631_TDMGW'">
+                <label class="col-12 col-lg-3">{{language.CRV}}</label>
+                <div class="col-12 col-lg-9">
+                    <input class="CRV" type="text" id="CRV_ID" maxlength="32" name="Direct Connect Number"
+                        [(ngModel)]="lineObject.CRV" (keyup)="checkValidation('inValidCRV', lineObject.CRV)"
+                        placeholder="N1-1-IG1-1" aria-invalid="false" aria-required="true">
+                    <div class="errorMessage" *ngIf="lineObject.inValidCRV">
+                        <p>{{language['This field is required']}}.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="lineObject.isVoiceService">
+            <div class="row">
+                <div class="col-sm-12 voice-margin">
+                    <button id="btn-advancedSettings" type="button" class="btn-default primary"
+                        (click)="onToggleAdvSettings()">{{language.advanceSettingsLbl || advanceSettingsLbl}}</button>
+                </div>
+            </div>
+            <div *ngIf="isShowAdvSetting">
+                <div class="row">
+                    <label for="systemLossPlan" class="col-12 col-lg-3 f-w-600">{{language.System_loss}}</label>
+                    <div class="col-12 col-lg-9 mb-3">
+                        <ng-select [items]="voiceParam" id="systemLossPlan" (change)="onSysLossChange()"
+                            [(ngModel)]="lineObject.systemLoss" name="systemLoss" placeholder="System loss plan">
+                        </ng-select>
+                    </div>
+                </div>
+                <div *ngIf="lineObject.systemLoss === 'Manual'">
+                    <div class="form-group ccl-form row pt-3 pb-2">
+                        <label class="col-12 col-lg-3 f-w-600">{{language['System Tx Loss']}}<br>{{language.Plan}}
+                            (dB)</label>
+                        <div class="col-12 col-lg-9">
+                            <input class="voiceParam" name="System Tx Loss Plan" type="text"
+                                (keyup)="checkValidation('inValidsystemTXLoss', lineObject.systemTXLoss)"
+                                [(ngModel)]="lineObject.systemTXLoss" id="TransmitGain" aria-invalid="false">
+                            <div class="errorMessage" *ngIf="lineObject.inValidsystemTXLoss">
+                                <p>{{language.gainErrorMsg}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group ccl-form row">
+                        <label class="col-12 col-lg-3 f-w-600">{{language.System_Rx_Loss}}<br>{{language.Plan}}
+                            (dB)</label>
+                        <div class="col-12 col-lg-9">
+                            <input class="voiceParam" name="System Rx Loss Plan" type="text"
+                                (keyup)="checkValidation('inValidsystemRXLoss', lineObject.systemRXLoss)"
+                                [(ngModel)]="lineObject.systemRXLoss" id="ReceiveGain" aria-invalid="false">
+                            <div class="errorMessage" *ngIf="lineObject.inValidsystemRXLoss">
+                                <p>{{language.gainErrorMsg}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

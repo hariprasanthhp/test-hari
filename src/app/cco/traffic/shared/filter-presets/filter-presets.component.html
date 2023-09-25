@@ -1,0 +1,468 @@
+<div class="btn-group fl-preset-btn dropleft mx-3">
+  <button type="button" class="btn-dot-icon dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+    aria-expanded="false">
+    <span>...</span>
+  </button>
+  <ul class="dropdown-menu dropdown-ul border-0">
+    <li class="dropdown-item dropdown-sub">
+      <div class="d-flex justify-content-between">{{language['Use filter preset']}} <span>
+          <img src="../../../../../assets/img/ic_chevrondown-sec-grey.svg" />
+        </span></div>
+      <div class="dropdown-ul dropdown-menu border-0">
+        <!-- <li><button type="button" class="dropdown-item">Preset</button></li> -->
+        <ng-container *ngFor="let item of filterPresets">
+    <li class="filter-presets text-truncate" title="{{item.settingName}}" (click)="applyFilterPreset(item)">
+      {{item.settingName}}</li>
+    </ng-container>
+    <li class="no-filter-presets" (click)="$event.stopPropagation()" *ngIf="filterPresets?.length == 0">
+      {{language['No filter presets saved']}}
+    </li>
+</div>
+</li>
+<li [title]="tooltipByType">
+  <button type="button" class="dropdown-item" [disabled]="filterPresets?.length >= 10 || enableSave == false"
+    (click)="showModal(modalSaveAsFilter)">{{language['Save as filter preset']}}
+  </button>
+</li>
+<li><button type="button" class="dropdown-item" (click)="showModalFilterPreset(modalViewFilters)">
+    {{language['View all filter presets']}}</button></li>
+</ul>
+</div>
+<!-- Modals -->
+
+<ng-template #modalSaveAsFilter let-modal>
+
+  <div class="modal-header">
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span></span>
+    </button>
+  </div>
+
+  <div class="modal-body px-4">
+    <div class="px-3">
+      <div class="ccl-admin-title my-3"> {{language['Save as filter preset']}}</div>
+      <div class="w-100 alert alert-danger fade show" *ngIf="errorMessage">
+        <div class="d-flex position-relative">
+          <button type="button" class="close close-alt" (click)="closeAlert()">
+            <span></span>
+          </button>
+          <div class="col-auto px-2">
+            <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+          </div>
+          <div class="col pl-0">
+            <span class="text-break pr-2">{{errorMessage}}</span>
+          </div>
+        </div>
+      </div>
+      <div class="w-100 alert alert-success fade show" *ngIf="successMessage">
+        <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+        <span>{{successMessage}}</span>
+        <button type="button" class="close" (click)="closeAlert()">
+          <span></span>
+        </button>
+      </div>
+      <div class="mb-3 ccl-form">
+        <label>{{language['Name']}} <span class="required-field">*</span></label>
+        <input type="text" placeholder="{{language['Name']}}" [(ngModel)]="filterName" />
+      </div>
+      <div class="loader" *ngIf="loading">
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border text-primary">
+            <span class="sr-only">{{language.Loading}}</span>
+          </div>
+        </div>
+      </div>
+      <div class="cco-secondary-title mb-2 pb-2 border-bottom">{{language['parameters']}}</div>
+      <div class="table-parameter pl-3">
+        <table class="w-100">
+          <tbody>
+            <tr *ngIf="isFieldVisible(TrafficFieldType.TimeFrame)">
+              <td>{{language['TTimeFrame']}}</td>
+              <td>{{ getTimeFrameNameById(selectedTimeFrame) }}</td>
+            </tr>
+            <tr *ngIf="reportType">
+              <td>{{language['Type']}}</td>
+              <td class="text-capitalize">
+                {{ getReportNameById(reportType) }}
+              </td>
+            </tr>
+            <tr *ngIf="isFieldVisible(TrafficFieldType.Application)">
+              <td>{{language['Application']}}</td>
+              <td>
+                <ul>
+                  <li *ngFor="let item of getApplicationNames(selectedApplicationIds)">{{ item }}</li>
+                </ul>
+              </td>
+            </tr>
+            <tr *ngIf="isFieldVisible(TrafficFieldType.ApplicationGroup)">
+              <td>{{language['applicationGroup']}}</td>
+              <td>
+                <ul>
+                  <li *ngFor="let item of getApplicationGroupNames(selectedApplicationGroupIds)">{{ item }}</li>
+                </ul>
+              </td>
+            </tr>
+            <tr *ngIf="isFieldVisible(TrafficFieldType.Location)">
+              <td>{{language['Location']}}</td>
+              <td>
+                <ul>
+                  <li *ngFor="let item of getLocationNames(selectedLocationIds)">{{ item }}</li>
+                </ul>
+              </td>
+            </tr>
+            <tr *ngIf="isFieldVisible(TrafficFieldType.Criteria)">
+              <td>{{language['criteria']}}</td>
+              <td class="text-capitalize">
+                {{ language[selectedCriteria] }}
+              </td>
+            </tr>
+            <tr *ngIf="isFieldVisible(TrafficFieldType.MonthYear)">
+              <td>{{language['month_title']}}</td>
+              <td>
+                {{ selectedMonthYear | date : 'yyyy-MM' }}
+              </td>
+            </tr>
+            <tr *ngIf="isFieldVisible(TrafficFieldType.Rate)">
+              <td>{{language['rate']}}</td>
+              <td class="text-capitalize">
+                {{ language[selectedRate] }}
+              </td>
+            </tr>
+            <tr *ngIf="isFieldVisible(TrafficFieldType.FromDate)">
+              <td>{{language['From Date']}}</td>
+              <td>
+                {{ selectedStartDate | date : 'MM-dd-yyyy' }}
+              </td>
+            </tr>
+            <tr *ngIf="isFieldVisible(TrafficFieldType.ToDate)">
+              <td>{{language['To Date']}}</td>
+              <td>
+                {{ selectedEndDate | date : 'MM-dd-yyyy' }}
+              </td>
+            </tr>
+            <tr *ngIf="isFieldVisible(TrafficFieldType.StartHour)">
+              <td>{{language['start_hour']}}(0-23)</td>
+              <td>
+                {{ selectedStartHour }}
+              </td>
+            </tr>
+            <tr *ngIf="isFieldVisible(TrafficFieldType.EndHour)">
+              <td>{{language['end_hour']}}(0-23)</td>
+              <td>
+                {{ selectedEndHour }}
+              </td>
+            </tr>
+            <tr *ngIf="isFieldVisible(TrafficFieldType.Limit)">
+              <td>{{language['limit']}}</td>
+              <td>
+                {{ selectedLimit }}
+              </td>
+            </tr>
+            <tr *ngIf="isFieldVisible(TrafficFieldType.Group)">
+              <td>{{language['group']}}</td>
+              <td class="text-capitalize">
+                {{ language[selectedGroup] }}
+              </td>
+            </tr>
+            <tr *ngIf="isFieldVisible(TrafficFieldType.Direction)">
+              <td>{{language['direction']}}</td>
+              <td class="text-capitalize">
+                {{ getDirectionNameById(selectedDirection) }}
+              </td>
+            </tr>
+            <tr *ngIf="isFieldVisible(TrafficFieldType.Threshold)">
+              <td *ngIf="reportType == TrafficReportType.ActiveSubscribers" class="text-capitalize">
+                {{language['treshold']}}({{language['bytes']}})</td>
+              <td *ngIf="reportType == TrafficReportType.SubscriberDistribution" class="text-capitalize">
+                {{language['treshold']}}(KB)</td>
+              <td>
+                {{ selectedThreshold }}
+              </td>
+            </tr>
+            <tr *ngIf="isFieldVisible(TrafficFieldType.PeakRateFrom)">
+              <td>{{language['peakRateFrom']}}(Mbps)</td>
+              <td>
+                {{ selectedPeakRateFrom }}
+              </td>
+            </tr>
+            <tr *ngIf="isFieldVisible(TrafficFieldType.PeakRateTo)">
+              <td>{{language['peakRateTo']}}(Mbps)</td>
+              <td>
+                {{ selectedPeakRateTo }}
+              </td>
+            </tr>
+            <tr *ngIf="isFieldVisible(TrafficFieldType.Period)">
+              <td>{{language['period']}}</td>
+              <td>
+                {{ getPeriodNameById(selectedPeriod) }}
+              </td>
+            </tr>
+            <tr *ngIf="isFieldVisible(TrafficFieldType.EliminateUnknown)">
+              <td>{{language['elim']}}</td>
+              <td class="text-capitalize">
+                {{ language[selectedEliminateUnknown] }}
+              </td>
+            </tr>
+            <tr *ngIf="isFieldVisible(TrafficFieldType.ThresholdType)">
+              <td>{{language['thres']}}</td>
+              <td>
+                {{ getThresholdTypeNameById(selectedThresholdType) }}
+              </td>
+            </tr>
+            <tr *ngIf="isFieldVisible(TrafficFieldType.Metric)">
+              <td>{{language['Metric']}}</td>
+              <td>
+                {{ selectedMetric }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class=" modal-footer mt-3 justify-content-start px-4">
+    <button [disabled]="!filterName.trim()" type="button" class="btn btn-default btn-primary ml-3"
+      (click)="saveFilterPreset()">{{language['Save']}}</button>
+    <button type="button" class="btn-default btn-dft ml-2"
+      (click)="modal.close('Close click')">{{language['Cancel']}}</button>
+  </div>
+</ng-template>
+<ng-template #modalViewFilters let-modal>
+  <div class="loader" *ngIf="loading">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary">
+        <span class="sr-only">{{language.Loading}}</span>
+      </div>
+    </div>
+  </div>
+  <div class="modal-header">
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span></span>
+    </button>
+  </div>
+  <div class="modal-body px-4">
+    <div class="px-3">
+      <div class="ccl-admin-title my-3">{{language['Filter Presets']}}</div>
+      <div class="w-100 alert alert-danger fade show" *ngIf="errorMessage">
+        <div class="d-flex position-relative">
+          <button type="button" class="close close-alt" (click)="closeAlert()">
+            <span></span>
+          </button>
+          <div class="col-auto px-2">
+            <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+          </div>
+          <div class="col pl-0">
+            <span class="text-break pr-1">{{errorMessage}}</span>
+          </div>
+        </div>
+      </div>
+      <div class="w-100 alert alert-success fade show" *ngIf="successMessage">
+        <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+        <span>{{successMessage}}</span>
+        <button type="button" class="close mt-0" (click)="closeAlert()">
+          <span></span>
+        </button>
+      </div>
+      <p class="mb-4" *ngIf="filterPresets?.length > 0"
+        [innerHtml]="language.filter_presets_info(filterPresets?.length)">
+      </p>
+      <div class="row">
+        <div class="col-3" *ngIf="filterPresets?.length > 0">
+          <ul class="left-nav">
+            <li class="nav-item" *ngFor="let item of filterPresets">
+              <a class="nav-item-link text-decoration-none" [class.active]="selectedFilter.id == item.id"
+                (click)="selectFilterPreset(item)">{{item?.settingName}}
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div class="col-9" *ngIf="filterPresets?.length > 0">
+          <div class="clx-warning-alert mb-3" [hidden]="!isDeleteSelected">
+            <div class="clx-warning-wrapper">
+              <div class="clx-warning-icon">
+                <span></span>
+              </div>
+              <div class="clx-warning-content">
+                <div class="text-break cco-secondary-title warning-title mb-3">
+                  {{language['Are you sure you want to delete']}} <div>
+                    <b>{{selectedFilter?.settingName}}</b>?
+                  </div>
+                </div>
+                <div class="mt-3">
+                  <button type="button" class="btn-default btn-primary mr-3" (click)="confirmDeleteFilter()">
+                    {{language['Confirm']}}
+                  </button>
+                  <button type="button" class="btn-default btn-dft" (click)="deleteFilter(false)">
+                    {{language['Cancel']}}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cco-secondary-title d-flex justify-content-between mb-2 pb-2 border-bottom">
+            {{language['parameters']}}
+
+            <a (click)="deleteFilter(true)" class="text-decoration-none primary cursor-pointer">
+              <span class="f-size-16px d-inline-flex align-items-center"><i class="mr-2"><img
+                    src="../../../../../assets/img/ic_delete_trash.svg" /></i>{{language['Delete']}}</span>
+            </a>
+          </div>
+          <div class="table-parameter pl-3 mb-3">
+            <table class="w-100">
+              <tbody>
+                <tr *ngIf="selectedFilter?.settingJsonTyped?.timeFrame">
+                  <td>{{language['TTimeFrame']}}</td>
+                  <td>{{getTimeFrameNameById(selectedFilter?.settingJsonTyped?.timeFrame)}}</td>
+                </tr>
+                <tr *ngIf="reportType">
+                  <td>{{language['Type']}}</td>
+                  <td class="text-capitalize">
+                    {{ getReportNameById(reportType) }}
+                  </td>
+                </tr>
+                <tr *ngIf="selectedFilter?.settingJsonTyped?.application">
+                  <td>
+                    {{language['Application']}}</td>
+                  <td>
+                    <ul>
+                      <li *ngFor="let item of getApplicationNames(selectedFilter?.settingJsonTyped?.application)">{{
+                        item }}</li>
+                    </ul>
+                  </td>
+                </tr>
+                <tr *ngIf="selectedFilter?.settingJsonTyped?.applicationGroup">
+                  <td>
+                    {{language['applicationGroup']}}</td>
+                  <td>
+                    <ul>
+                      <li
+                        *ngFor="let item of getApplicationGroupNames(selectedFilter?.settingJsonTyped?.applicationGroup)">
+                        {{
+                        item }}</li>
+                    </ul>
+                  </td>
+                </tr>
+                <tr *ngIf="selectedFilter?.settingJsonTyped?.location">
+                  <td>{{language['Location']}}</td>
+                  <td>
+                    <ul>
+                      <li *ngFor="let item of getLocationNames(selectedFilter?.settingJsonTyped?.location)">{{ item }}
+                      </li>
+                    </ul>
+                  </td>
+                </tr>
+                <tr *ngIf="selectedFilter?.settingJsonTyped?.criteria">
+                  <td>{{language['criteria']}}</td>
+                  <td class="text-capitalize">
+                    {{ language[selectedFilter?.settingJsonTyped?.criteria] }}
+                  </td>
+                </tr>
+                <tr *ngIf="selectedFilter?.settingJsonTyped?.monthYear">
+                  <td>{{language['month_title']}}</td>
+                  <td class="text-capitalize">
+                    {{ selectedFilter?.settingJsonTyped?.monthYear | date : 'yyyy-MM' }}
+                  </td>
+                </tr>
+                <tr *ngIf="selectedFilter?.settingJsonTyped?.rate">
+                  <td>{{language['rate']}}</td>
+                  <td class="text-capitalize">
+                    {{ language[selectedFilter?.settingJsonTyped?.rate] }}
+                  </td>
+                </tr>
+                <tr *ngIf="selectedFilter?.settingJsonTyped?.fromDate">
+                  <td>{{language['From Date']}}</td>
+                  <td>
+                    {{ selectedFilter?.settingJsonTyped?.fromDate | date : 'MM-dd-yyyy' }}
+                  </td>
+                </tr>
+                <tr *ngIf="selectedFilter?.settingJsonTyped?.toDate">
+                  <td>{{language['To Date']}}</td>
+                  <td>
+                    {{ selectedFilter?.settingJsonTyped?.toDate | date : 'MM-dd-yyyy' }}
+                  </td>
+                </tr>
+                <tr *ngIf="selectedFilter?.settingJsonTyped?.startHour">
+                  <td>{{language['start_hour']}}(0-23)</td>
+                  <td>
+                    {{ selectedFilter?.settingJsonTyped?.startHour }}
+                  </td>
+                </tr>
+                <tr *ngIf="selectedFilter?.settingJsonTyped?.endHour">
+                  <td>{{language['end_hour']}}(0-23)</td>
+                  <td>
+                    {{ selectedFilter?.settingJsonTyped?.endHour }}
+                  </td>
+                </tr>
+                <tr *ngIf="selectedFilter?.settingJsonTyped?.limit">
+                  <td>{{language['limit']}}</td>
+                  <td>
+                    {{ selectedFilter?.settingJsonTyped?.limit }}
+                  </td>
+                </tr>
+                <tr *ngIf="selectedFilter?.settingJsonTyped?.group">
+                  <td>{{language['group']}}</td>
+                  <td class="text-capitalize">
+                    {{ language[selectedFilter?.settingJsonTyped?.group] }}
+                  </td>
+                </tr>
+                <tr *ngIf="selectedFilter?.settingJsonTyped?.direction">
+                  <td>{{language['direction']}}</td>
+                  <td class="text-capitalize">
+                    {{ getDirectionNameById(selectedFilter?.settingJsonTyped?.direction)}}
+                  </td>
+                </tr>
+                <tr *ngIf="selectedFilter?.settingJsonTyped?.threshold">
+                  <td *ngIf="reportType == TrafficReportType.ActiveSubscribers" class="text-capitalize">
+                    {{language['treshold']}}({{language['bytes']}})</td>
+                  <td *ngIf="reportType == TrafficReportType.SubscriberDistribution" class="text-capitalize">
+                    {{language['treshold']}}(KB)</td>
+                  <td>
+                    {{ selectedFilter?.settingJsonTyped?.threshold }}
+                  </td>
+                </tr>
+                <tr *ngIf="selectedFilter?.settingJsonTyped?.peakRateFrom">
+                  <td>{{language['peakRateFrom']}}(Mbps)</td>
+                  <td>
+                    {{ selectedFilter?.settingJsonTyped?.peakRateFrom }}
+                  </td>
+                </tr>
+                <tr *ngIf="selectedFilter?.settingJsonTyped?.peakRateTo">
+                  <td>{{language['peakRateTo']}}(Mbps)</td>
+                  <td>
+                    {{ selectedFilter?.settingJsonTyped?.peakRateTo }}
+                  </td>
+                </tr>
+                <tr *ngIf="selectedFilter?.settingJsonTyped?.period">
+                  <td>{{language['period']}}</td>
+                  <td>
+                    {{ getPeriodNameById(selectedFilter?.settingJsonTyped?.period) }}
+                  </td>
+                </tr>
+                <tr *ngIf="selectedFilter?.settingJsonTyped?.eliminateUnknown">
+                  <td>{{language['elim']}}</td>
+                  <td class="text-capitalize">
+                    {{ language[selectedFilter?.settingJsonTyped?.eliminateUnknown] }}
+                  </td>
+                </tr>
+                <tr *ngIf="selectedFilter?.settingJsonTyped?.thresholdType">
+                  <td>{{language['thres']}}</td>
+                  <td>
+                    {{ getThresholdTypeNameById(selectedFilter?.settingJsonTyped?.thresholdType) }}
+                  </td>
+                </tr>
+                <tr *ngIf="selectedFilter?.settingJsonTyped?.metric">
+                  <td>{{language['Metric']}}</td>
+                  <td>{{language[selectedFilter?.settingJsonTyped?.metric]}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="col-12 text-center" *ngIf="filterPresets?.length == 0 && !loading">
+          <p class="mb-4">{{language['There are no filter presets saved.']}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

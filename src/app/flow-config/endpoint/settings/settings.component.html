@@ -1,0 +1,75 @@
+<div class="container position-relative">
+    <div class="loader" *ngIf="loading">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row my-3 p-2">
+        <div class="col-md-12">
+            <form class="fw100">
+                <div class="form-group row ">
+                    <label class="col-sm-2" for="age">{{language.ageOut}} <span class="error">*</span></label>
+                    <div class="col-sm-6">
+                        <div class="row">
+                            <div class="ccl-form col-sm-6">
+                                <input type="number" id="age" class="" placeholder="" name="age" [(ngModel)]="age"
+                                    min="5" max="200" (keyup)="changeAge()" (change)="changeAge()">
+                            </div>
+                            <div class="col-sm-6 pl-0">
+                                <label class="age-out-days-text pt-1">{{language.days}}</label>
+                            </div>
+                        </div>
+                        <small id="" class="form-text text-muted">({{language.byDefault}})</small>
+                    </div>
+
+                </div>
+                <button type="button" class="btn-default btn-primary" id="apply-btn" (click)="validateTimeDelay()"
+                    [disabled]="!showButton">{{language.apply}}</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modals -->
+<ng-template #infoModal let-data let-ref="dialogRef">
+
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{infoTitle}}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        {{infoBody}}
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn-default primary px-3" data-dismiss="modal"
+            (click)="closeModal()">{{language['Okay']}}</button>
+    </div>
+</ng-template>
+
+<ng-template #confirmModal let-data let-ref="dialogRef">
+
+    <ng-container>
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">{{infoTitle}}</h4>
+            <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+                <span aria-hidden="true"></span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div [innerHtml]="infoBody"></div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-default primary px-3" data-dismiss="modal"
+            (click)="mappingSourceFlag ? openConfirmModal(true) : save()">{{language['Okay']}}</button>
+            <button type="button" class="btn-default btn-dft py-1 px-3" data-dismiss="modal"
+                (click)="closeModal()">{{language['Cancel']}}</button>
+        </div>
+    </ng-container>
+
+</ng-template>
+<!-- Modals -->

@@ -1,0 +1,67 @@
+<!-- 
+<section class="profile-start-wizard pb-4">
+  <h3 class="net-ops-secondary-title">
+    {{ language.Step_1 }}- {{ language.Start }}
+  </h3>
+
+  <form [formGroup]="myForm">
+    <div class="form-group ccl-form row">
+      <label class="col-2 control-label">{{ language.Name }}</label>
+      <div class="col-10">
+        <input id="prof_strt_nme" name="prof_strt_nme" type="text" formControlName="profileName" aria-required="true"
+          aria-describedby="prof_strt_nme-error" [(ngModel)]="addProfileObj.start.name"
+          placeholder="{{ language.name }}" />
+        <div class="errorMessage" *ngIf="
+            (myForm?.controls['profileName']?.touched &&
+              (myForm?.controls['profileName']?.invalid ||
+                myForm?.controls['profileName']?.errors?.required)) ||
+            !addProfileObj.start.isNameEntered
+          ">
+          <p>{{ language["This field is required"] }}.</p>
+        </div>
+      </div>
+    </div>
+    <div class="form-group ccl-form row">
+      <label class="col-2 control-label">{{ language.description }} {{ language.optional }}</label>
+      <div class="col-10">
+        <input id="prof_strt_desc" name="prof_strt_desc" formControlName="description"
+          [(ngModel)]="addProfileObj.start.description" type="text" placeholder="{{ language.Decription }}" />
+      </div>
+    </div>
+  </form>
+</section> -->
+
+<!-- strt-->
+<section class="profile-start-wizard pb-4">
+  <!-- <h3 class="net-ops-secondary-title">
+    {{ language.Step_1 }}- {{ language.Start }}
+  </h3> -->
+
+  <form [formGroup]="myForm">
+    <div class="form-group ccl-form row">
+      <label class="col-2 control-label">{{ language?.Name }}
+        <span class="error">*</span>
+      </label>
+      <div class="col-10">
+        <input id="prof_strt_nme" name="prof_strt_nme" type="text" formControlName="profileName" aria-required="true"
+          aria-describedby="prof_strt_nme-error" placeholder="{{ language?.name }}" trimSpace [formValue]="myForm"/>
+        <div class="errorMessage" *ngIf="
+            (myForm?.controls['profileName']?.touched &&
+              (myForm?.controls['profileName']?.invalid ||
+                myForm?.controls['profileName']?.errors?.required)) ||
+            !addProfileObj.start?.isNameEntered
+          ">
+          <p>{{ language["This field is required"] }}.</p>
+        </div>
+      </div>
+    </div>
+    <div class="form-group ccl-form row">
+      <label class="col-2 control-label">{{ language.description }} <span class="small">{{ language.optional
+          }}</span></label>
+      <div class="col-10">
+        <input id="prof_strt_desc" name="prof_strt_desc" formControlName="description" type="text"
+          placeholder="{{ language?.Decription }}" trimSpace [formValue]="myForm"/>
+      </div>
+    </div>
+  </form>
+</section>

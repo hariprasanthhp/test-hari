@@ -1,0 +1,395 @@
+<section>
+  <form [formGroup]="workFlowScheduleData?.workFlowScheduleForm">
+    <div class="row">
+      <div class="col-md-5">
+        <div class="heading-4">{{ language.Email }}</div>
+        <!-- <div class="w-100 mb-3">
+          <label class="mb-0"> {{language["Email Format"]}} </label>
+          <ng-container *ngFor="let format of formatType; let i = index">
+            <div class="form-check d-inline-flex w-100">
+              <input formControlName="mailFormat" class="form-check-input" type="radio" name="mailFormat" id="{{ format.value }}"
+              value="{{ format.value }}" />
+              <label class="form-check-label" for="{{ format.value }}">
+                {{ language[format['name']] }}
+              </label>
+            </div>
+          </ng-container>
+        </div> -->
+        <div class="form-group">
+          <label for="recipients"
+            >{{ language.Recipients }}
+            <span class="error">*</span>
+          </label>
+          <div class="custom-paste-input" (click)="onCustomPasteClick($event)">
+            <div
+              class="custom-paste-list"
+              *ngFor="
+                let item of workFlowScheduleData.mailRecepients;
+                let i = index
+              "
+            >
+              {{ item }}
+              <span
+                class="remove-input-btn primary"
+                data-key=""
+                (click)="removeData(i)"
+                ><i class="fa fa-times"></i
+              ></span>
+            </div>
+
+            <input
+              autocomplete="off"
+              class="w-100"
+              id="mail_recepients"
+              #mail_recepients
+              name="mail_recepients"
+              type="text"
+              [(ngModel)]="inputBoxData"
+              [ngModelOptions]="{ standalone: true }"
+              required=""
+              (keyup.enter)="makeList()"
+              (paste)="pasteMakeList($event)"
+              (keyup.Space)="makeList()"
+              (blur)="makeList()"
+              placeholder="{{ language['Add email address(es)'] }}"
+              aria-required="true"
+              aria-describedby="mail_recepients-error"
+              trimSpace [formValue]="workFlowScheduleData?.workFlowScheduleForm"
+            />
+          </div>
+          <div class="errorMessage" *ngIf="!validEmail">
+            <p>{{ language["Please enter a valid email address"] }}</p>
+          </div>
+          <div
+            class="errorMessage"
+            *ngIf="
+              !workFlowScheduleData.mailEntered && workFlowScheduleData.mailRecepients &&
+              workFlowScheduleData.mailRecepients.length <= 0
+            "
+          >
+            <p>{{ language["This field is required"] }}.</p>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="emailNotes">{{ language["Email Notes"] }}</label>
+          <textarea
+            formControlName="notes"
+            placeholder="{{ language['Email Notes'] }}"
+            minlength="0"
+            maxlength="200"
+            class="form-control"
+            id="emailNotes"
+            rows="3"
+            style="border-radius: 22px 22px 2px 22px"
+            trimSpace [formValue]="workFlowScheduleData?.workFlowScheduleForm"
+          ></textarea>
+          <!-- <span
+            *ngIf="
+            workFlowScheduleData.workFlowScheduleForm.controls['notes'].value &&
+            workFlowScheduleData.workFlowScheduleForm.controls['notes'].value.length > 0
+            "
+            (click)="clearSearch()"
+            aria-hidden="true"
+            class="custom-clear"
+            >×</span
+          > -->
+          <div class="text-right">
+            <span id="current">{{
+              workFlowScheduleData && workFlowScheduleData.workFlowScheduleForm && workFlowScheduleData.workFlowScheduleForm['controls'] && workFlowScheduleData.workFlowScheduleForm['controls']["notes"] && workFlowScheduleData.workFlowScheduleForm['controls']["notes"].value && workFlowScheduleData.workFlowScheduleForm['controls']["notes"].value.length >= 0
+                ? workFlowScheduleData.workFlowScheduleForm['controls']["notes"]
+                    .value.length
+                : 0
+            }}</span>
+            <span id="maximum">/200</span>
+          </div>
+        </div>
+      </div>
+      <!-- [ngClass]="{
+        'diable-div':
+          workFlowScheduleData?.soakTime == 0
+      }" -->
+      <!-- <div class="col-md-4" [ngClass]="{
+        'diable-div':
+          workFlowScheduleData?.soakTime > 0
+      }"> -->
+        <!-- <div class="heading-4">{{language.Trigger}}</div>
+        <div class="row" style="margin-bottom: 24px">
+          <div class="col-md-12">
+            <ng-container *ngFor="let trigger of triggerType; let i = index">
+              <div class="form-check w-100 pl-0"> -->
+        <!-- <input
+                  formControlName="immediate"
+                  class="form-check-input"
+                  type="radio"
+                  name="immediate"
+                  id="{{ trigger.value }}"
+                  value="{{ trigger.value }}"
+                /> -->
+        <!-- <label class="form-check-label" for="{{ trigger.value }}">{{
+                  trigger.name -->
+        <!-- }}</label>
+              </div> -->
+        <!-- [(ngModel)]="workFlowScheduleData.immediate" -->
+        <!-- </ng-container>
+          </div>
+        </div> -->
+        <!-- <ng-container
+          *ngIf="
+            workFlowScheduleData?.workFlowScheduleForm.controls['immediate']
+              ?.value == 'false'
+          "
+        >
+          <div class="schedule-container"> -->
+        <!-- justify-content space betwwen removed bcoz everycount input field was removed -->
+        <!-- <div class="item">{{language.Every}}</div> -->
+        <!-- <div class="item ccl-form">
+              <input
+                formControlName="everyCount"
+                type="number"
+                min="1"
+                (keyup)="enforceMinMax($event)"
+                class="ccl-form"
+                id="scheduleEveryCount"
+                aria-describedby="scheduleEveryCount"
+                placeholder=""
+              />
+              <div
+                class="errorMessage"
+                *ngIf="
+                  workFlowScheduleData?.workFlowScheduleForm?.controls[
+                    'everyCount'
+                  ]?.touched &&
+                  (workFlowScheduleData?.workFlowScheduleForm?.controls[
+                    'everyCount'
+                  ]?.invalid ||
+                    workFlowScheduleData?.workFlowScheduleForm?.controls[
+                      'everyCount'
+                    ]?.errors?.required)
+                "
+              >
+                <p>{{ language["This field is required"] }}.</p>
+              </div>
+            </div> -->
+        <!-- <div class="item">
+              <ng-select
+                formControlName="recurrence"
+                [items]="recurrenceList"
+                [searchable]="true"
+                [clearable]="false"
+                bindLabel="name"
+                bindValue="id"
+              >
+              <ng-template ng-label-tmp let-item="item">
+                {{language[item.name] }}
+              </ng-template>
+              <ng-template ng-option-tmp let-item="item" let-index="index">
+                {{language[item.name] }}
+              </ng-template>
+              </ng-select>
+            </div>
+          </div> -->
+
+        <!-- week(s) Container -->
+        <!-- <div
+            *ngIf="
+              workFlowScheduleData?.workFlowScheduleForm.controls['recurrence']
+                ?.value == 'weekly'
+            "
+            class="week-container align-items-center my-3"
+          >
+            <div class="mr-3">on</div>
+            <ng-container formArrayName="weekDays">
+              <ng-container
+                [formGroupName]="i"
+                *ngFor="
+                  let days of workFlowScheduleData?.workFlowScheduleForm
+                    ?.controls?.weekDays?.controls;
+                  let i = index
+                "
+              >
+                <div
+                  ngDefaultControl
+                  formControlName="scheduleWeeklyStatus"
+                  (click)="
+                    selectWeeklySchedule(
+                      workFlowScheduleData?.weekDays[i]
+                    )
+                  "
+                  id="{{ workFlowScheduleData?.weekDays[i].scheduleWeekly }}"
+                  [ngClass]="{
+                    'select-day':
+                      workFlowScheduleData?.weekDays[i].scheduleWeeklyStatus ==
+                      true,
+                    day:
+                      workFlowScheduleData?.weekDays[i].scheduleWeeklyStatus ==
+                      false
+                  }"
+                >
+                  <span class="week-circle"
+                    >{{ workFlowScheduleData?.weekDays[i].scheduleWeekly }}
+                  </span>
+                </div>
+              </ng-container>
+            </ng-container>
+          </div> -->
+
+        <!-- week(s) Container  End-->
+
+        <!-- month(s) Container -->
+        <!-- <div
+            *ngIf="
+              workFlowScheduleData?.workFlowScheduleForm.controls['recurrence']
+                ?.value == 'monthly'
+            "
+            class="month-container align-items-center my-3"
+          >
+            <div class="month-info">on the</div>
+            <div class="month-info ccl-form">
+              <input
+                formControlName="numberOfMonths"
+                placeholder = "1"
+                type="number"
+                class="ccl-form"
+                min="1"
+                max="31"
+                (keyup)="enforceMinMax($event)"
+                id="numberOfMonthsSchedule"
+                aria-describedby="numberOfMonthsSchedule"
+              />
+              <div
+                class="errorMessage"
+                *ngIf="
+                  workFlowScheduleData?.workFlowScheduleForm?.controls[
+                    'numberOfMonths'
+                  ]?.touched &&
+                  (workFlowScheduleData?.workFlowScheduleForm?.controls[
+                    'numberOfMonths'
+                  ]?.invalid ||
+                    workFlowScheduleData?.workFlowScheduleForm?.controls[
+                      'numberOfMonths'
+                    ]?.errors?.required)
+                "
+              >
+                <p>{{ language["This field is required"] }}.</p>
+              </div>
+            </div>
+            <div class="month-info">day of the month</div>
+          </div> -->
+        <!-- month(s) Container End -->
+
+        <!-- Day Container -->
+        <!-- <div class="row justify-content-around my-3">
+            <div class="col-md-12 exclusions-item ccl-form">
+              <label>Date and Time</label>
+              <p-calendar
+                formControlName="scheduleStartTime"
+                id="scheduleStartTimeId"
+                [style]="{ width: '100%', height: '36px' }"
+                [inputStyle]="{ height: '36px' }"
+                appendTo="body"
+                [autoZIndex]="true"
+                [showIcon]="true"
+                [showTime]="true"
+                hourFormat="12"
+                [minDate]="scheduleMinDate"
+              >
+              </p-calendar>
+              <div
+                class="errorMessage"
+                *ngIf="
+                  workFlowScheduleData?.workFlowScheduleForm?.controls[
+                    'scheduleStartTime'
+                  ]?.touched &&
+                  (workFlowScheduleData?.workFlowScheduleForm?.controls[
+                    'scheduleStartTime'
+                  ]?.invalid ||
+                    workFlowScheduleData?.workFlowScheduleForm?.controls[
+                      'scheduleStartTime'
+                    ]?.errors?.required)
+                "
+              >
+                <p>{{ language["This field is required"] }}.</p>
+              </div>
+            </div>
+          </div> -->
+
+        <!-- Day Container End -->
+        <!-- </ng-container> -->
+
+        <!-- <div class="heading-4">
+          {{ language["Cleared Alarms Email"] }}
+        </div>
+        <div class="form-group form-check">
+          <input
+            formControlName="notifyOnClear"
+            type="checkbox"
+            class="form-check-input"
+            id="mailNotifyOnClear"
+          />
+          <label class="form-check-label info-text" for="mailNotifyOnClear"
+            [innerHTML]="language['clearedAlarmNotificationLabel']">
+          </label>
+          
+        </div> -->
+        <!-- <div
+          class="form-group ccl-form row"
+          [ngClass]="{
+            'diable-div':
+              workFlowScheduleData?.workFlowScheduleForm.controls[
+                'notifyOnClear'
+              ]?.value == false
+          }"
+        > -->
+         
+          <!-- <div class="note-clear form-check-label info-text" [innerHTML]="language.quntityThresholdMessage(workFlowScheduleData?.minClearThreshold)">
+            
+          </div> -->
+        <!-- </div> -->
+        <!-- <div
+          class="errorMessage"
+          *ngIf="
+            workFlowScheduleData?.workFlowScheduleForm?.controls[
+              'clearThreshold'
+            ]?.touched &&
+            (workFlowScheduleData?.workFlowScheduleForm?.controls[
+              'clearThreshold'
+            ]?.invalid ||
+              workFlowScheduleData?.workFlowScheduleForm?.controls[
+                'clearThreshold'
+              ]?.errors?.required)
+          "
+        >
+          <p>{{ language["This field is required"] }}.</p>
+        </div> -->
+        <!-- <div class="clear-div" [ngClass]="{
+          'diable-div':
+            workFlowScheduleData?.workFlowScheduleForm?.controls?.notifyOnClear?.value == false
+        }">
+        <div id="ccoWorkflowSchedulePendo">{{language['Cleared Alarms Threshold']}}</div>
+        <div class="col-sm-12 ccl-form my-2 pl-0">
+          <div class="d-flex align-items-center">
+            <input
+            type="number"
+            [readonly]="
+            workFlowScheduleData?.workFlowScheduleForm?.controls?.notifyOnClear?.value == false
+            "
+            class="form-control width-100"
+            id="clear_threshold"
+            placeholder="0"
+            formControlName="clearThreshold"
+            min="0"
+            [max]="workFlowScheduleData?.minClearThreshold"
+            (keyup)="enforceMinMax($event, 'clearThreshold')"
+          />
+          <span class="ml-2">{{language['alarms remaining']}}</span>
+          </div>
+          
+        </div>
+        </div> -->
+        
+       
+      <!-- </div> -->
+    </div>
+  </form>
+</section>

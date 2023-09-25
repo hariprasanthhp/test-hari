@@ -1,0 +1,39 @@
+<!-- <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+    aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content"> -->
+            <div class="loader-wrapper-info" *ngIf="loading">
+                <div class="loader">
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border text-primary" role="">
+                            <span class="sr-only">{{ language.Loading }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <ng-container *ngIf="!loading">
+                <div class="w-100 alert alert-danger fade show my-3" *ngIf="error">
+                    <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+                    <button type="button" class="close" (click)="closeAlert()">
+                      <span></span>
+                    </button>
+                    <div class="d-inline-flex" [innerHtml]="language[errorInfo] || errorInfo"></div>
+                </div>
+                <div class="row" *ngIf="!dataAvailable">
+                    <div class="col-12 text-right pr-4 pt-2"><img aria-hidden="true" src="assets/img/ic_close-44px.svg" class="pointer mr-2"
+                        data-dismiss="modal" aria-label="Close" (click)="onRefreshAckShelve($event)">
+                        
+                    </div>
+                    <div class="col-md-12 pl-5 pb-2 text-left">
+                        <p class="pb-1">{{language["No Data Available"]}}</p>
+                    </div>
+                    
+                </div>
+                <app-alarm-details *ngIf="dataAvailable" [fullData]="fullData" [showAckShelveBtn]="showAckShelveBtn"
+                    [hasWriteAccess]="hasWriteAccess" (ackShelveData)="onAckShelve($event)" [hideSource]="hideSource"
+                    [connected]="true" (refreshAckShelveBtn)="onRefreshAckShelve($event)" [clickedAlarmType]="'Alarm'"
+                    [alarmType]="'Alarm'"></app-alarm-details>
+            </ng-container>
+        <!-- </div>
+    </div>
+</div> -->

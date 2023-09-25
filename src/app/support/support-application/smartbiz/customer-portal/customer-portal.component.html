@@ -1,0 +1,115 @@
+<div class="customer-portal">
+    <div class="loader" *ngIf="loading">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">{{ language.Loading }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="w-100 alert alert alert-danger fade show" *ngIf="errorMessage">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+        <button type="button" class="close" (click)="errorMessage = ''">
+            <span></span>
+        </button>
+        <div class="d-inline-flex" [innerHtml]="errorMessage"></div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <ul id="tabs" class="nav nav-tabs">
+                <li class="nav-item">
+                    <a id="content" class="nav-link small" [ngClass]="activeTab == 'content'? 'active': '' "
+                        href="javascript:void(0)"
+                        (click)="activeTab = 'content'; errorValidation.logoImage ? errorValidation.logoImage = false : ''">
+                        {{language['Page Content']}}
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a id="branding" class="nav-link small" [ngClass]="activeTab == 'branding'? 'active': '' "
+                        href="javascript:void(0)"
+                        (click)="activeTab = 'branding'; errorValidation.coverImage ? errorValidation.coverImage = false : ''">
+                        {{language['Bsp_Add_Micro__Branding']}}
+                    </a>
+                </li>
+                <li class="nav-item"> <!--hide this network access tab for next release(R23.2)!-->
+                    <a id="network-access" class="nav-link small"
+                        [ngClass]="activeTab == 'network-access'? 'active': '' " href="javascript:void(0)"
+                        (click)="activeTab = 'network-access'; errorValidation = {}">
+                        {{language['Network Access Hours']}}
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a id="visitors" class="nav-link small" [ngClass]="activeTab == 'visitors'? 'active': '' "
+                        href="javascript:void(0)" (click)="activeTab = 'visitors'; errorValidation = {}">
+                        {{language['Customer Portal Visitors']}}
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="preview-button">
+                <button type="button" id="CP-Preview-Btn" class="btn-default btn-dft pointer">
+                    <a (click)="showPreview()">
+                        {{language['Preview']}}
+                        <img src="../../../../assets/img/External Link.svg" alt="">
+                    </a>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <form [formGroup]="form">
+        <div class="page-content col-md-12">
+            <customer-portal-content *ngIf="activeTab == 'content'" [language]="language"
+                (submitForm)="setCaptivePortal('content')" (uploadImage)="uploadImage($event)"
+                (deleteImage)="deleteImage($event)"></customer-portal-content>
+            <customer-portal-branding *ngIf="activeTab == 'branding'" [language]="language"
+                (submitForm)="setCaptivePortal('branding')" (uploadImage)="uploadImage($event)"
+                (deleteImage)="deleteImage($event)"></customer-portal-branding>
+            <customer-portal-network-access *ngIf="activeTab == 'network-access'" [language]="language"
+                (submitForm)="setCaptivePortal('network-access')" [detectScheduleChange]="form.get('schedules').value"
+                [detectLanguageChange]="language"></customer-portal-network-access>
+            <customer-portal-visitors *ngIf="activeTab == 'visitors'" [language]="language"
+                (submitForm)="setCaptivePortal('visitors')"></customer-portal-visitors>
+        </div>
+    </form>
+</div>
+
+<ng-template #deleteImageModal let-modal class="col-md-12">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" (click)="modal.close('cancel')"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="alert modal-warning alert-warning alert-dismissible fade show">
+            <div class="modal-warning-info d-flex justify-content-between">
+                <div class="icon">
+                    <img src="../../../../assets/img/warning-icon-36px.svg" alt="">
+                </div>
+                <div class="Warning-content">
+                    <div class="warn-confirm pb-2">
+                        <div class="content-title">
+                            {{language['Are you sure you want to delete image?']}}
+                        </div>
+                        <p>{{language['This action cannot be undone']}}</p>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" id="confirm-delete" (click)="deleteImage(false)"
+                class="btn-default primary px-3 mr-3 mt-5">
+                {{ language.Confirm }}
+            </button>
+            <button type="button" id="cancel" (click)="modal.close('cancel')"
+                class="btn-default default btn-dft px-3 mr-3 mt-5">
+                {{ language.cancel }}
+            </button>
+        </div>
+    </div>
+</ng-template>

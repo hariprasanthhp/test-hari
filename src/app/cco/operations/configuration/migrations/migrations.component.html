@@ -1,0 +1,25 @@
+<div role="alert" class="alert alert-warning" *ngIf="!hasPageAccess">
+    {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}}
+</div>
+<!-- <span class="cco-title" *ngIf="hasPageAccess">
+    {{ language.Operations }}
+</span> -->
+<div class="ccl-tabs mb-3" *ngIf="hasPageAccess && hasScope">
+    <ul id="tabs" class="nav nav-tabs">
+        <li class="nav-item">
+            <a routerLink="/cco/operations/configuration/migrations/jobs" data-toggle="tab" class="nav-link"
+                routerLinkActive="active" class="nav-link small" 
+                id="CcoConfiguration-Migrations-Jobs">{{language['Jobs']}}</a>
+        </li>
+
+        <li class="nav-item">
+            <a routerLink="/cco/operations/configuration/migrations/profiles" data-toggle="tab" class="nav-link"
+                routerLinkActive="active" class="nav-link small" 
+                id="CcoConfiguration-Migrations-Profiles">{{language['Profiles']}}</a>
+        </li>
+    </ul>
+
+</div>
+<div class="col-sm-12 col-md-12 col-lg-12 p-0" [hidden]="!hasPageAccess">
+    <router-outlet></router-outlet>
+</div>

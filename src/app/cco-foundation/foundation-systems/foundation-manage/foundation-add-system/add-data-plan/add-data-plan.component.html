@@ -1,0 +1,75 @@
+<!-- <div class="alert alert-info margin-top-20" role="alert" *ngIf="servicedisable">
+  <span>{{ language["Services for this system are managed by Operation Cloud"] }}</span>
+</div> -->
+<div class="w-100 alert alert-danger fade show  px-0" *ngIf="error">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+    <button type="button" class="close" (click)="error = false;">
+      <span></span>
+    </button>
+    <div class="d-inline-flex" [innerHtml]="language[errorInfo] || errorInfo"></div>
+  </div>
+<form class="ccl-form needs-validation" [formGroup]="servicetierForm">
+  <!-- *ngIf="!servicedisable" -->
+<div class="col-md-12 col-sm-12 col-lg-4 col-xl-4 pl-0" >
+    <div class="border-bottom">
+      <div class="cco-secondary-title">{{language.Data}}</div>
+    </div>
+
+    <div class="ccl-form needs-validation" formGroupName="data">
+      <div class="form-group inline-input row">
+        <label class="col-md-12 col-form-label"> {{language.Data_Service}}</label>
+        <div class="col-md-12">
+          <div class="toggle-swtbtn checkbox switcher">
+            <label for="protectiq">
+              <input type="checkbox" id="protectiq" (change)="servicetierChange()" formControlName="Enable" />
+              <span class="enabled_button"><small></small></span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="form-group inline-input row" *ngIf="dataShowAllFields" formGroupName="pppoe">
+        <label class="col-form-label col-md-12">{{ language.PPPoE_Username }} </label>
+        <div class="col-md-12">
+          <input class="form-control" #name1 type="text" formControlName="Username"
+            (change)="emailChange(name1.value)" placeholder="{{ language.PPPoE_Username }}" trimSpace [formValue]="servicetierForm"/>
+        </div>
+      </div>
+      <div class="form-group inline-input row  position-relative" *ngIf="dataShowAllFields" formGroupName="pppoe">
+        <label class="col-form-label col-md-12">{{ language.PPPoE_Password }}</label>
+        <div class="col-md-12">
+          <span class="pass-icon" [ngClass]="isPPoE_Hide ? 'password_view' : 'password_hide'" (click)="PPoE_showHide()">
+       </span>
+          <input class="form-control" id="address" [type]="isPPoE_Hide ? 'text' : 'password'" formControlName="Password"
+            (change)="servicetierChange()" placeholder="{{ language.PPPoE_Password }}" />
+        </div>
+      </div>
+      <section>
+        <div class="form-group inline-input row" *ngIf="dataShowAllFields">
+          <label class="col-form-label col-md-12">{{ language.VLAN }} </label>
+          <div class="col-md-12">
+            <input class="form-control position-relative" #s_name (keyup)="lanValidate('data', 'VlanId')"
+              (change)="servicetierChange()" type="text" min="0" max="4095" maxlength="4" formControlName="VlanId"
+              (keypress)="allowNumberOnly($event)"
+              placeholder="{{ language.VLAN }}" />
+             <div *ngIf="!dataFormValidate.VlanId">
+              <div *ngIf="servicetierForm.value.data.VlanId">
+                <span class="mandatory-msg">{{language['Please enter a value less than or equal to 4093']}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <div class="form-group inline-input row" *ngIf="dataShowAllFields">
+        <label class="col-form-label col-md-12"> {{ language.Priority_Bits }} </label>
+        <div class="custom-selectbox-opr w-select col-md-12">
+          <div class="w-100">
+            <ng-select id="Priority_Bits" [items]="priorityItems" bindLabel="name" bindValue="value"
+              [multiple]="false" placeholder="" formControlName="Pbit" (change)="servicetierChange()"
+              [clearable]="true" [searchable]="false" placeholder="{{ language.Priority_Bits }}">
+            </ng-select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </form>

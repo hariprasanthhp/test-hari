@@ -1,0 +1,154 @@
+<!-- This for Campaigns Start -->
+
+<section>
+  <div class="loader" *ngIf="loading">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary">
+        <span class="sr-only">{{ language.Loading }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="container" [hidden]="loading">
+    <div class="row">
+      <div class="col-md-12 px-0">
+        <h2 class="greyaa">{{ language.Campaigns }}</h2>
+      </div>
+    </div>
+
+    <div class="row my-2">
+      <div class="col-md-12 px-0">
+        <button href="javascript:void(0)" routerlinkactive="active" class="btn-default primary mr-2"
+          ng-reflect-router-link="./cco-add-new-system">
+          {{ language.New }}
+        </button>
+      </div>
+    </div>
+
+    <div class="row my-2">
+      <div class="col-md-12 px-0 ccl-tabs mt-2">
+        <ul id="tabs" class="nav nav-tabs sub-tab">
+          <li class="nav-item">
+            <a routerLink="#" class="nav-link small" id="network-system" routerLinkActive="active" data-toggle="tab"
+              class="nav-link" style="padding-left: 0%">
+              {{ language.all_camp }}
+            </a>
+          </li>
+          <li class="nav-item">
+            <a routerLink="#" data-toggle="tab" class="nav-link" class="nav-link small" id="subscriber-system"
+              routerLinkActive="active">{{ language.Marketing_Channels }}</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12 px-0">
+        <div class="campaigns-list-wrapper my-4">
+          <div class="campaigns-list-item">
+            <div class="row">
+              <div class="col-md-8">
+                <div class="ccl-mktg-subtitle">{{ language["Command IQ Mobile Message"] }}</div>
+                <div class="active-but my-2">
+                  <span class="active-dot"></span>
+                  {{ language.active }}
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="cm-logo">
+                  <img src="assets/img/related_calix_cloudpng.png" alt="" />
+                </div>
+              </div>
+            </div>
+
+            <div class="my-3">
+              <button class="btn-default primary mr-2" ng-reflect-router-link="#">
+                {{ language["View Channel Results"] }}
+              </button>
+            </div>
+            <p>{{ language["# of Calix segments in this channel"] }}</p>
+          </div>
+
+          <div class="campaigns-list-item">
+            <div class="row">
+              <div class="col-md-8">
+                <b>Facebook</b>
+                <div class="active-but my-2">
+                  <span class="active-dot"></span>
+                  {{ language.active }}
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="cm-logo">
+                  <img src="assets/img/fb.png" alt="" />
+                </div>
+              </div>
+            </div>
+
+            <div class="my-3">
+              <button class="btn-default primary mr-2" ng-reflect-router-link="#">
+                {{ language["View Channel Results"] }}
+              </button>
+
+              <button class="btn-default btn-dft" ng-reflect-router-link="#">
+                {{ language.testConnection }}
+              </button>
+            </div>
+            <p>{{ language["# of Calix segments in this channel"] }}</p>
+          </div>
+          <div class="campaigns-list-item" *ngIf="!validMailchimpToken">
+            <div class="row">
+              <div class="col-md-8">
+                <div class="ccl-mktg-subtitle">Mailchimp</div>
+                <div class="active-but my-2">
+                  <span class="active-red-dot"></span>
+                  {{ language[mailchimpStatus] }}
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="cm-logo">
+                  <img src="assets/img/Mailchimp-logo.png" alt="" />
+                </div>
+              </div>
+            </div>
+
+            <div class="my-3">
+              <!-- <a
+                                href="https://login.mailchimp.com/oauth2/authorize?response_type=code&client_id={{clientId}}&redirect_uri={{serviceUrl}} "><button
+                                    class="btn-default primary mr-2">
+                                    Configure </button></a> -->
+
+              <a routerLink="/engagement/channels/configuation"><button class="btn-default primary mr-2">
+                  {{ language.configure }}
+                </button></a>
+            </div>
+          </div>
+
+          <div class="campaigns-list-item" *ngIf="validMailchimpToken">
+            <div class="row">
+              <div class="col-md-8">
+                <div class="ccl-mktg-subtitle">Mailchimp</div>
+                <div class="active-but my-2">
+                  <span class="active-dot"></span>
+                  {{ language.active }}
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="cm-logo">
+                  <img src="assets/img/related_calix_cloudpng.png" alt="" />
+                </div>
+              </div>
+            </div>
+
+            <div class="my-3">
+              <button class="btn-default primary mr-2" ng-reflect-router-link="#">
+                {{ language["View Mailchimp Results"] }}
+              </button>
+            </div>
+            <p>{{ language["# of Calix segments in this channel"] }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- This for Campaigns End -->

@@ -1,0 +1,104 @@
+<section>
+    <div class="container px-0" [formGroup]="triggerForm">
+
+        <div class="row mb-3">
+            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                <div class="heading-4">{{language['Frequency Threshold']}}<span class="error">*</span></div>
+                <div class="px-3">
+                    <div class="info-text pt-2">
+                        {{language['Frequency of email notifications during the outage']}}
+                    </div>
+                    <div class="my-3">
+                        <div class="ccl-form row">
+                            <div class="col-sm-5 max-121">
+                                <!-- <input type="number" class="form-control max-105" [min]="1" [max]="10000"
+                                    placeholder="1" formControlName="outagePollInterval" /> -->
+
+                                <ng-select formControlName="outagePollInterval" [multiple]="false"
+                                    [items]="outagePollOptions" bindValue="id" bindLabel="name" [clearable]="false">
+                                </ng-select>
+                                <div class="errorMessage"
+                                    *ngIf="submitted && formControls?.outagePollInterval?.invalid">
+                                    <div *ngIf="formControls?.outagePollInterval?.errors?.isrequired" class="mt-1">
+                                        {{language['This field is required.']}}
+                                    </div>
+                                    <div *ngIf="formControls?.outagePollInterval?.errors?.minMaxError">
+                                        {{language['Please enter a value between 1 and 10000']}}
+                                    </div>
+                                </div>
+                            </div>
+                            <label for="wf_outagepollinterval" class="col-form-label text-lowercase">{{
+                                language['Minute(s)'] }}</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                <div class="heading-4">Outage {{ language['Duration Threshold']}}<span class="error">*</span></div>
+                <div class="info-text pt-2">
+                    Min. duration that outage alarm must be active to trigger this notifiction
+                </div>
+                <div class="my-3">
+                    <div class="ccl-form row">
+                        <div class="col-sm-5">
+                            <input class="form-control" id="wf_duration" name="wf_duration" min="1" max="120"
+                                type="number" formControlName="outageDuration" placeholder="0" />
+                            <div class="errorMessage" *ngIf="submitted && formControls?.outageDuration?.invalid">
+                                <div *ngIf="formControls?.outageDuration?.errors?.required" class="mt-1">
+                                    {{language['This field is required.']}}
+                                </div>
+                                <div *ngIf="formControls?.outageDuration?.errors?.minMaxError">
+                                    Please enter a value between 1 and 120
+                                </div>
+                            </div>
+                        </div>
+                        <label for="wf_duration" class="col-form-label">{{language['Minute(s)']}}</label>
+
+                    </div>
+                </div>
+            </div> -->
+            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                <div class="heading-4">{{language.Geography}}</div>
+                <div class="px-3">
+                    <div class="info-text pt-2">
+                        {{language['immediate_geography_msg']}}
+                    </div>
+                    <ng-template [ngTemplateOutlet]="geographyTemplate"></ng-template>
+                </div>
+            </div>
+        </div>
+
+        <ng-template #geographyTemplate>
+
+            <div class="row">
+                <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                    <label for="inputEmail3" class="col-form-label">{{language['Region(s)']}}</label>
+                    <div class="w-100">
+                        <ng-select formControlName="region" [multiple]="true" [items]="regionsDataArray" bindValue="id"
+                            bindLabel="name" [clearable]="false" [searchable]="true" placeholder="{{ language.region }}"
+                            (add)="validateRegion($event)" (remove)="loadLocationValue($event)">
+                        </ng-select>
+                        <div class="errorMessage" *ngIf="false">
+                            <p>{{ language["This field is required"] }}.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                    <label for="inputEmail3" class="col-form-label"> {{language['Location(s)']}}</label>
+                    <div class="w-100">
+                        <ng-select formControlName="location" [multiple]="true" [items]="locationDataArray"
+                            bindValue="id" bindLabel="name" placeholder="{{ language.Location }}" [clearable]="false"
+                            [searchable]="true" (add)="validateLocation($event)" (remove)="validateLocation($event)">
+                        </ng-select>
+                        <div class="errorMessage" *ngIf="false">
+                            <p>{{ language["This field is required"] }}.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </ng-template>
+        <!--end onShedule-->
+    </div>
+</section>

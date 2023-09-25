@@ -1,0 +1,67 @@
+<div class="loader" *ngIf="loader">
+    <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary" role="">
+            <span class="sr-only">{{language.Loading}}</span>
+        </div>
+    </div>
+</div>
+<div class="main-card" id="main-div">
+    <div class="main-card-header text-center">
+        <h4>{{language.Subscriber_Services}}</h4>
+    </div>
+    <div class="alert alert-warning alert-dismissible fade show" role="alert" *ngIf="error">
+        <strong>Error!</strong> {{errorMsg}}.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="mb1" style="text-align: end;" [hidden]="loader" *ngIf="!error">
+        <button class="btn btn-sm btn-success" *ngIf="showAddSbscrbr" (click)="exportToExcel();"
+            style="cursor: pointer; margin-right: 10px;">{{language.Export_Data_Excel}}
+        </button>
+        <button class="btn btn-sm btn-success" *ngIf="showAddSbscrbr" (click)="addSubscriber();"
+            style="cursor: pointer;">{{language.Add_Subscriber}}
+        </button>
+    </div>
+    <div [hidden]="loader" *ngIf="!error">
+
+        <table class="table table-bordered text-center" style="width: 100%; overflow-x: scroll;">
+            <thead>
+                <tr>
+                    <th>{{language.MAC_Address}}</th>
+                    <th>{{language.First_Name}}</th>
+                    <th>{{language.Last_Name}}</th>
+                    <th>{{language.City}}</th>
+                    <th>{{language.State}}</th>
+                    <th>{{language.Application_s}}</th>
+                    <th>{{language.Action}}</th>
+
+                </tr>
+
+            </thead>
+            <tbody id="subscriber-services-list">
+                <!-- <tr *ngFor='let item of subscribersData'>
+                    <td>{{item.macAddr}}</td>
+                    <td>{{item.firstName|titlecase}}</td>
+                    <td>{{item.lastName|titlecase}}</td>
+                    <td>{{item.city}}</td>
+                    <td>{{item.state}}</td>
+                    <td>{{item.containersSelectedNames ? item.containersSelectedNames: '-'}}</td>
+                    <td>
+                        <button (click)="update(item)" class="btn btn-sm btn-success">
+                            {{language.Update}}
+                        </button>
+                    </td>
+
+
+                </tr> -->
+            </tbody>
+        </table>
+    </div>
+
+    <div class="form-group text-center" id="load_more" *ngIf="showLoadMoreBtn" [hidden]="loader">
+        <button class="btn btn-lg font-medium-1 btn-outline-success block-element" (click)="loadRecords();"
+            (click)="loadRecords();">
+            {{language.Show_More}}</button>
+    </div>
+</div>

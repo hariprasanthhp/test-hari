@@ -1,0 +1,484 @@
+<div class="workflow-wizard-schedule" id="workflowWizardSchedule">
+
+  <div class="form-group row">
+    <div class="col-xs-12 col-12 col-md-12 col-lg-12">
+      <div class="alert alert-note " role="alert" style="margin-right: -13px" *ngIf="timeschedule">
+        <span class="success-img"><img src="./assets/img/ic_info.svg" /></span>
+        {{ language.Device_reboot }}
+        <ul class="waring-ul mb-0">
+          <li>1.&nbsp;{{ language.Changes_Wan }}</li>
+          <li>2.&nbsp;{{ language.Apply_wifi }}</li>
+          <li>3.&nbsp;{{ language.Apply_reboot }}</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- <div *ngIf="!timeschedule" style="position: absolute; right: 0px; top: 55px;">
+    <button type="button" class="btn-default primary px-3 mr-2" (click)="go_previous()" id="previous">
+      {{ language.Previous }}
+    </button>
+    <button type="button" id="submit" class="btn-default primary px-3" (click)="go_next()" id="next">
+      {{ language.Next }}
+    </button>
+  </div> -->
+  <div class="workflow-next-previous">
+    <button type="button" class="btn-arrow btn-arr-prev btn-grey mr-2" (click)="go_previous()" id="previous">
+      <img src="assets/img/ic_chevronleft_grey.svg"> {{ language.Previous }}
+    </button>
+    <!-- <button type="submit" id="submit" class="btn-default primary px-3" id="next">
+      {{ language.Next }}
+    </button> -->
+    <button type="button" id="submit" class="btn-arrow btn-arr-nxt primary" (click)="go_next()" id="next">
+      {{ language.Next }} <img src="assets/img/ic_chevron-r-w.svg">
+    </button>
+  </div>
+
+  <form class="row mt-4 mb-2" id="trigger-form">
+    <label for="inputOperationType" class="col-lg-2 col-md-2 col-sm-2 control-label">{{ language.Trigger }}</label>
+    <div class="custom-selectbox-shedule-par col-lg-8 col-md-10 col-sm-12">
+      <ng-select [items]="inputOperationType" bindLabel="name" autofocus placeholder="" (change)="optionValChoose()"
+        [(ngModel)]="scheduleValueSelected" name="trigger" id="trigger" [searchable]="false" [clearable]="false"
+        id="trigger" bindValue="id" [disabled]=" diabledTrigger ||workflowInputData?.state === 'In Progress' ">
+        <ng-template ng-label-tmp let-item="item">
+          {{ language[item.name] }}
+        </ng-template>
+        <ng-template ng-option-tmp let-item="item" let-index="index">
+          {{ language[item.name] }}
+        </ng-template>
+      </ng-select>
+    </div>
+  </form>
+
+  <h4 *ngIf="!timeschedule && scheduleValueSelected == 'On Discovery'" class="f-size-18 pb-3">
+    {{ language.Triggered_CPE_discovered }}
+  </h4>
+  <h4 *ngIf="!timeschedule && scheduleValueSelected == 'On Boot'" class="f-size-18 pb-3">
+    {{ language.Triggered_CPE_Boot }}
+  </h4>
+  <div class="container px-0" *ngIf="timeschedule">
+    <div class="row">
+      <div class="col-md-12 net-ops-secondary-title">{{ language.Workflow_Time }}</div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12 col-12 col-md-12 col-lg-12">
+        <form #myForm="ngForm" (ngSubmit)="myForm.form.valid && go_next()" novalidate class="workflow-policy"
+          id="policy-form">
+          <div class="form-group ccl-form row">
+            <label class="col-lg-2 col-md-12 col-sm-12 col-xl-2" id="start-time-label" title="TimeZone as Local">{{
+              language.Start_Time }}</label>
+            <div class="col-lg-8 col-md-12 col-sm-12 col-xl-8 calender">
+              <p-calendar id="start-time" [style]="{ width: '100%', height: '36px' }" [inputStyle]="{ height: '36px' }"
+                appendTo="body" [autoZIndex]="true" [(ngModel)]="startDateTime" [showIcon]="true"
+                (focusout)="onSelectStartOnlyTime($event)" [ngModelOptions]="{ standalone: true }" timeOnly="true"
+                hourFormat="12" id="start-time">
+              </p-calendar>
+            </div>
+          </div>
+          <div class="form-group ccl-form row required">
+            <label for="windowlength" id="Time-window-label" class="col-lg-2 col-xl-2 col-md-12 col-sm-12" title="">
+              {{ language.Time_window }}<span class="error">*</span>
+            </label>
+            <div class="col-lg-8 col-xl-8 col-md-12 col-sm-12 input-group" [ngClass]="[
+                (windowLength.errors?.required ||
+                  windowLength.errors?.pattern ||
+                  windowLength.errors?.customNeg ||
+                  WindowerrorMsg) &&
+                (myForm.submitted || windowLength.touched)
+                  ? ' errorMessage '
+                  : ''
+              ]">
+              <div class="form-field-error w-100">
+                <input class="set-due-date form-control" type="text" pattern="[0-9]+" id="windowlength"
+                  name="windowlength" min="1" max="1440" customNeg [(ngModel)]="timeWindow" (ngModelChange)="
+                    !windowLength.errors?.pattern && validateWindow($event)
+                  " #windowLength="ngModel" required aria-required="true" aria-describedby="windowLength-error"
+                  aria-invalid="true" autocomplete="new-password" trimSpace (blur)="removeUnwantedSpace('timeWindow',timeWindow)"/>
+                <div class="error-div">
+                  <div *ngIf="
+                      (windowLength.touched || myForm.submitted) &&
+                      windowLength.errors?.required
+                    " id="windowLength-error">
+                    Please enter a value
+                  </div>
+                  <div *ngIf="
+                      windowLength.touched && windowLength.errors?.customNeg
+                    " id="windowLength-error">
+                    {{ language.Only_Digits }}
+                  </div>
+                  <div *ngIf="windowLength.touched && WindowerrorMsg" id="windowLength-error">
+                    {{ WindowerrorMsg }}
+                  </div>
+                  <div *ngIf="windowLength.touched && windowLength.errors?.pattern" id="windowLength-error">
+                    {{ language.Only_Digits }} <br />
+                    {{ language.Input_Number_Validation }} 0<br />
+                    {{ language.Input_Number_Validation2 }} 1440
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <span class="net-ops-secondary-title">{{
+            language.Recurrence_Pattern
+            }}</span>
+          <div class="row">
+            <label class="col-lg-2 col-md-12 col-sm-12 col-xl-2"></label>
+            <div class="col-lg-10 col-md-12 col-sm-12 col-xl-10">
+              <ul class="date-order workflow-date-order">
+                <li>
+                  <label id="daily-radio-label " class="radio-inline">
+                    <input type="radio" id="daily-radio" name="optionGroupsRadios" value="daily" class="mr-2" checked
+                      (change)="getRecurrenceData($event)" [checked]="dailyChecked" />{{ language.Daily }}
+                  </label>
+                </li>
+                <li>
+                  <label id="weekly-radio-label" class="radio-inline">
+                    <input type="radio" id="weekly-radio" name="optionGroupsRadios" value="weekly" class="mr-2"
+                      (change)="getRecurrenceData($event)" [checked]="weekChecked" />{{ language.Weekly }}
+                  </label>
+                </li>
+                <li>
+                  <label id="monthly-radio-label" class="radio-inline">
+                    <input type="radio" id="monthly-radio" name="optionGroupsRadios" value="monthly" class="mr-2"
+                      (change)="getRecurrenceData($event)" [checked]="monthChecked" />{{ language.Monthly }}
+                  </label>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="row form-group">
+            <label class="col-lg-2 col-md-12 col-sm-12 col-xl-2"></label>
+            <div class="col-lg-10 col-md-12 col-sm-12 col-xl-10" *ngIf="dailyChecked">
+              <div>
+                <div class="daily-check flex-start">
+                  <label id="daily-check-label" class="radio-inline pr-0 mb-0">
+                    <input type="radio" id="daily-check-input" name="optionGroupsRadios" disabled class="mr-2" />{{
+                    language.Every }}
+                  </label>
+                  <div class="ccl-form ml-2 number-input">
+                    <input type="number" placeholder="#" class="col-lg-2 col-md-12 col-sm-12 col-xl-2"
+                      id="daily-pattern-frequence" min="1" [customMin]="1" customNeg name="daily-pattern-frequence"
+                      [required]="dailyChecked" #frequency="ngModel" [(ngModel)]="daily_frequency" aria-required="true"
+                      aria-describedby="frequency-error" aria-invalid="true" />
+                    <span> {{ language.days_s }}</span>
+                  </div>
+                </div>
+              </div>
+              <div [ngClass]="[
+                  (frequency.errors?.required ||
+                    frequency.errors?.customMin ||
+                    frequency.errors?.customNeg) &&
+                  (myForm.submitted || frequency.touched)
+                    ? ' errorMessage'
+                    : ''
+                ]">
+                <div *ngIf="
+                    (frequency.touched || myForm.submitted) &&
+                    frequency.errors?.required
+                  " id="frequency-error">
+                  {{ language.Enter_A_Value }}
+                </div>
+                <div *ngIf="
+                    (frequency.touched || myForm.submitted) &&
+                    frequency.errors?.customNeg
+                  " id="frequency-error">
+                  {{ language.Only_Digits }}<br />
+                </div>
+                <div *ngIf="
+                    (frequency.touched || myForm.submitted) &&
+                    frequency.errors?.customMin
+                  " id="frequency-error">
+                  {{ language.Input_Number_Validation }} 0
+                </div>
+              </div>
+            </div>
+            <div class="col-10" *ngIf="weekChecked">
+              <div class="weekly-sec" [ngClass]="[
+                  (weeklyReccur.errors?.required ||
+                    weeklyReccur.errors?.customMin ||
+                    weeklyReccur.errors?.customNeg) &&
+                  (myForm.submitted || weeklyReccur.touched)
+                    ? 'errorMessage'
+                    : ''
+                ]">
+                <div class="workflow-oneline mb-0">
+                  <div class="text-tclr">{{ language.Recur_every }}</div>
+                  <div class="form-group row">
+                    <input type="number" class="form-control" id="weeklyReccur" placeholder="#" [customMin]="1"
+                      customNeg [required]="weekChecked" min="1" aria-required="true"
+                      aria-describedby="weeklyReccur-error" aria-invalid="true" #weeklyReccur="ngModel"
+                      class="form-control" name="weekly-pattern-frequency" [(ngModel)]="week_frequency" />
+                  </div>
+                  <div class="text-tclr">{{ language.weeks_on }}:</div>
+                </div>
+                <div class="error-div">
+                  <div *ngIf="
+                      (weeklyReccur.touched || myForm.submitted) &&
+                      weeklyReccur.errors?.required
+                    " id="weeklyReccur-error">
+                    {{ language.Enter_A_Value }}
+                  </div>
+                  <div *ngIf="
+                      (weeklyReccur.touched || myForm.submitted) &&
+                      weeklyReccur.errors?.customNeg
+                    " id="weeklyReccur-error">
+                    {{ language.Only_Digits }} <br />
+                  </div>
+                  <div *ngIf="
+                      (weeklyReccur.touched || myForm.submitted) &&
+                      weeklyReccur.errors?.customMin
+                    " id="weeklyReccur-error">
+                    {{ language.Input_Number_Validation }} 0
+                  </div>
+                </div>
+              </div>
+              <div class="form-group weekly-days mt-3">
+                <div class="checkbox checkbox-inline days-label" [ngClass]="[
+                    weekselected?.length === 0 && myForm.submitted && weekerror
+                      ? ' errorMessage'
+                      : ''
+                  ]">
+                  <label>
+                    <input type="checkbox" value="SUN" name="weekly-pattern-day" (change)="bindData($event)"
+                      [checked]="Sunday" id="sunday" />{{ language.Sunday }}
+                  </label>
+
+                  <label>
+                    <input type="checkbox" value="MON" name="weekly-pattern-day" (change)="bindData($event)"
+                      [checked]="Monday" id="monday" />{{ language.Monday }}
+                  </label>
+                  <label>
+                    <input type="checkbox" value="TUE" name="weekly-pattern-day" (change)="bindData($event)"
+                      [checked]="Tuesday" id="tuesday" />{{ language.Tuesday }}
+                  </label>
+                  <label>
+                    <input type="checkbox" value="WEN" name="weekly-pattern-day" (change)="bindData($event)"
+                      [checked]="Wednesday" id="wednesday" />{{ language.Wednesday }}
+                  </label>
+                  <label>
+                    <input type="checkbox" value="THU" name="weekly-pattern-day" (change)="bindData($event)"
+                      [checked]="Thursday" id="thursday" />{{ language.Thursday }}
+                  </label>
+                  <label>
+                    <input type="checkbox" value="FRI" name="weekly-pattern-day" (change)="bindData($event)"
+                      [checked]="Friday" id="friday" />{{ language.Friday }}
+                  </label>
+                  <label>
+                    <input type="checkbox" value="SAT" name="weekly-pattern-day" (change)="bindData($event)"
+                      [checked]="Saturday" id="saturday" />{{ language.Saturday }}
+                  </label>
+                </div>
+              </div>
+              <div [ngClass]="[
+                  weekselected?.length === 0 && myForm.submitted && weekerror
+                    ? ' errorMessage'
+                    : ''
+                ]">
+                <div *ngIf="
+                    myForm.submitted && weekselected?.length === 0 && weekerror
+                  ">
+                  {{ language.select_pattern }}
+                </div>
+              </div>
+            </div>
+            <div class="col-10" *ngIf="monthChecked">
+              <div class="mont-list flex-start" [ngClass]="[
+                  (dailyPattern.errors?.required ||
+                    dailyPattern.errors?.customMin ||
+                    dailyPattern.errors?.customMax ||
+                    dailyPattern.errors?.customNeg) &&
+                  (myForm.submitted || dailyPattern.touched)
+                    ? ' ccl-error '
+                    : ''
+                ]">
+                <span class="text-tclr mb-0 pr-2">
+                  <input type="radio" name="optionGroupsRadios" disabled class="mr-2" />{{ language.Day }}
+                </span>
+
+                <div class="ccl-form">
+                  <input type="number" placeholder="#" class="form-control" id="monthPattern" name="dailyPattern"
+                    [(ngModel)]="daysOfMonth" [customMin]="1" min="1" customNeg [customMax]="28"
+                    [required]="monthChecked" aria-required="true" aria-describedby="dailyPattern-error"
+                    aria-invalid="true" #dailyPattern="ngModel" />
+                  <span style="color: black">{{ language.of_every }}</span>
+                </div>
+                <div class="ccl-form">
+                  <input type="number" placeholder="#" class="" id="month-pattern-frequence"
+                    name="daily-pattern-frequence" [(ngModel)]="month_frequency" [customMin]="1" customNeg
+                    [required]="monthChecked" min="1" aria-required="true" aria-describedby="every-error"
+                    aria-invalid="true" #every="ngModel" />
+                  <span class="text-tclr"> {{ language['month(s)'] }}</span>
+                </div>
+              </div>
+              <div class="mothly-error-div">
+                <div class="daily-month-error" [ngClass]="[
+                    (dailyPattern.errors?.required ||
+                      dailyPattern.errors?.customMin ||
+                      dailyPattern.errors?.customMax) &&
+                    (myForm.submitted || dailyPattern.touched)
+                      ? ' errorMessage'
+                      : ''
+                  ]">
+                  <div *ngIf="
+                      (dailyPattern.touched || myForm.submitted) &&
+                      dailyPattern.errors?.required
+                    " id="dailyPattern-error">
+                    {{ language.Enter_A_Value }}
+                  </div>
+                  <div *ngIf="
+                      (dailyPattern.touched || myForm.submitted) &&
+                      dailyPattern.errors?.customNeg
+                    " id="dailyPattern-error">
+                    {{ language.Only_Digits }} <br />
+                  </div>
+                  <div *ngIf="
+                      (dailyPattern.touched || myForm.submitted) &&
+                      dailyPattern.errors?.customMin
+                    " id="dailyPattern-error">
+                    {{ language.Input_Number_Validation }} 0
+                  </div>
+                  <div *ngIf="
+                      (dailyPattern.touched || myForm.submitted) &&
+                      dailyPattern.errors?.customMax
+                    " id="dailyPattern-error">
+                    {{ language.No_Greater_Than }} 28
+                  </div>
+                </div>
+                <div class="daily-month-error" [ngClass]="[
+                    (every.errors?.required || every.errors?.customMin) &&
+                    (myForm.submitted || every.touched)
+                      ? ' errorMessage'
+                      : ''
+                  ]">
+                  <div *ngIf="
+                      (every.touched || myForm.submitted) &&
+                      every.errors?.required
+                    " id="every-error">
+                    {{ language.Enter_A_Value }}
+                  </div>
+                  <div *ngIf="
+                      (every.touched || myForm.submitted) &&
+                      every.errors?.customNeg
+                    " id="every-error">
+                    {{ language.Only_Digits }} <br />
+                  </div>
+                  <div *ngIf="
+                      (every.touched || myForm.submitted) &&
+                      every.errors?.customMin
+                    " id="every-error">
+                    {{ language.Input_Number_Validation }} 0
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <span class="net-ops-secondary-title">{{
+            language.Range_of_Recurrence
+            }}</span>
+          <div class="form-group">
+            <div class="row ccl-form">
+              <label class="col-lg-2 col-xl-2 col-md-12 col-sm-12" title="TimeZone as Local">{{
+                language.Start
+                }}</label>
+              <div class="col-lg-8 col-xl-8 col-md-12 col-sm-12 calender">
+                <p-calendar id="start_date_1" [style]="{ width: '100%', height: '36px' }"
+                  [inputStyle]="{ height: '36px' }" appendTo="body" [autoZIndex]="true"
+                  (focusout)="onSelectStartTime($event)" placeholder="Select Date" [(ngModel)]="customStartDate"
+                  [showIcon]="true" [ngModelOptions]="{ standalone: true }" dateFormat="mm/dd/yy" id="start-date_1">
+                </p-calendar>
+              </div>
+            </div>
+
+            <div class="row">
+              <label class="col-lg-2 col-md-12 col-sm-12 col-xl-2"></label>
+              <div class="col-lg-10 col-md-12 col-sm-12 col-xl-10 pl-1 pt-4 pb-3">
+                <label class="radio-inline mx-2">
+                  <input type="radio" name="radio" value="endBy" class="mr-2" [checked]="endBy"
+                    (change)="getRangeRecurrence($event)" id="end-by" />{{ language.End_by }}
+                </label>
+                <label class="radio-inline">
+                  <input type="radio" name="radio" value="endAfter" class="mr-2" [checked]="endAfter"
+                    (change)="getRangeRecurrence($event)" id="end-after" />{{ language.End_after }}
+                </label>
+              </div>
+            </div>
+            <div class="form-group ccl-form row">
+              <label class="col-lg-2 col-md-12 col-sm-12 col-xl-2"></label>
+              <div class="col-lg-8 col-md-12 col-sm-12 col-xl-8 calender" *ngIf="RangeRecurrenceEndAfter === false">
+                <p-calendar id="start_date_2" [style]="{ width: '100%', height: '36px' }"
+                  [inputStyle]="{ height: '36px' }" appendTo="body" [autoZIndex]="true"
+                  (onSelect)="onSelectEndTime($event)" aria-required="true" name="endTime"
+                  aria-describedby="edTime-error" (focusout)="onChangeEndTime($event)" placeholder="Select Date"
+                  #endTime="ngModel" [(ngModel)]="customEndRange" [showIcon]="true" dateFormat="mm/dd/yy">
+                </p-calendar>
+                <div [ngClass]="[
+                    (myForm.submitted && endtimeError) || endtimeError ? ' errorMessage' : ''
+                  ]">
+                  <div *ngIf="(endtimeError && myForm.submitted) || endtimeError" id="edTime-error">
+                    {{ language.Time_Validation }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group ccl-form row" *ngIf="RangeRecurrenceEndAfter === true">
+              <label class="col-lg-2 col-md-12 col-sm-12 col-xl-2"></label>
+              <div class="col-lg-10 col-md-12 col-sm-12 col-xl-10 occurr-end">
+                <label class="period-padding mb-0">{{
+                  language.Occurrences
+                  }}</label>
+                <div class="occur-input">
+                  <input type="number" [required]="!RangeRecurrenceEndAfter" aria-required="true"
+                    aria-describedby="occur-error" aria-invalid="true" #occur="ngModel" class="form-control"
+                    [customMin]="1" min="1" customNeg id="range-occurrence" placeholder="#" name="range-occurrence"
+                    [(ngModel)]="rangeOccurrence" />
+                  <div [ngClass]="[
+                      (occur.errors?.required || occur.errors?.customMin) &&
+                      (myForm.submitted || occur.touched)
+                        ? ' errorMessage'
+                        : ''
+                    ]">
+                    <div *ngIf="
+                        (occur.touched || myForm.submitted) &&
+                        occur.errors?.required
+                      " id="occur-error">
+                      {{ language.Enter_A_Value }}
+                    </div>
+                    <div *ngIf="
+                        (occur.touched || myForm.submitted) &&
+                        occur.errors?.customNeg
+                      " id="occur-error">
+                      {{ language.Only_Digits }} <br />
+                    </div>
+                    <div *ngIf="
+                        (occur.touched || myForm.submitted) &&
+                        occur.errors?.customMin
+                      " id="occur-error">
+                      {{ language.Input_Number_Validation }} 0
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <span class="net-ops-secondary-title">{{
+            language.Prioritization
+            }}</span>
+          <div class="form-group row">
+            <label class="col-lg-2 col-xl-2 col-md-12 col-sm-12"></label>
+            <div class="col-lg-10 col-xl-10 col-md-12 col-sm-12">
+              <input type="checkbox" id="Prioritization" class="mr-3" placeholder="#"
+                [disabled]="disablefullGroupExecute" [checked]="workflowInputData.fullGroupExecute"
+                [(ngModel)]="workflowInputData.fullGroupExecute" [ngModelOptions]="{ standalone: true }" />
+              <label for="range-occurrence" class="pointer">
+                {{ language.Ex_fullgrps }}
+              </label>
+            </div>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

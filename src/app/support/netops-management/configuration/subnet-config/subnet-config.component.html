@@ -1,0 +1,287 @@
+<!-- Begin HTML -->
+<div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess">
+  {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} </div>
+<div id="subnet-config" class="tab-pane position-relative" *ngIf="hasScopeAccess">
+
+
+  <div class="py-3 warning-msg" *ngIf="subnetDeleteModalRef">
+
+
+    <span class="error-img"><img src="./assets/img/warning-icon.svg"></span>
+    <span>
+      {{ language.Confirmation }}, 
+    </span>
+    {{ language.delete_subnet_confirmation }}
+    <strong class="f-size-18">{{ selectedSubnetObj?.subnet }}</strong>?
+
+    <div class="btn-con-sec float-right">
+      <button type="button" class="btn-default btn-primary mr-2" ngbAutofocus id="confirm-btn"
+        (click)="openDeleteConfirmation(selectedSubnetObj, true)">
+        {{ language.Confirm }}
+      </button>
+      <button type="button" class="btn-default btn-dft py-1" id="cancel-btn" (click)="closeDeleteConfirmation()">
+        {{ language.Cancel }}
+      </button>
+    </div>
+  </div>
+
+  <div class="loader" *ngIf="loading">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary">
+        <span class="sr-only">{{ language.Loading }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="d-block d-sm-none ccl-Secondary-title mb-2 col-md-12 border-bottom">{{language['Subnet Configuration']}}</div>
+  <!-- <div class="row">
+    <div class="col-md-12">
+      <h4 id="subnet-config-label">{{language.Subnet_Configuration}}</h4>
+    </div>
+  </div> -->
+  <p class="text-md-left mt-3" *ngIf="subnetList && hasWriteAccess && allowSubnetConfig">
+    <!-- <button class="btn-default primary px-3 sm" data-toggle="modal" data-target="#exampleModal" (click)="toggleSubnet()"
+      type="button" id="add-subnet-button">
+      {{ language.Add_Subnet }}
+    </button> -->
+    <button type="button" class="btn-default primary" (click)="addSubnetConfigMOdalOpen()">{{ language.Add_Subnet
+      }}</button>
+  </p>
+  <!-- New Subnet modal -->
+  <!--<p class="text-md-left mt-4" *ngIf="subnetList && hasWriteAccess">
+    <button type="button" class="btn btn-primary" (click)="toggleSubnet()" data-toggle="modal"
+      data-target="#exampleModalCenter">
+      {{ language.Add_Subnet }}
+    </button>
+  </p>-->
+
+
+  <!-- Modal -->
+  <!--   <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Add Subnet</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true"></span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-danger">
+            <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+            <div class="d-inline-flex" [innerHtml]="errorMessage"></div>
+            <button type="button" id="hide-error-btn" class="close" (click)="closeAlert()" aria-label="Close">
+              <span aria-hidden="true"></span>
+            </button>
+
+          </div>
+          <form class="form-group ccl-form row" id="subnet-config-form" #subnetNgForm="ngForm" (ngSubmit)="onSubmit()"
+            autocomplete="off" novalidate>
+            <label for="subnet-cidr" class="col-sm-4 col-form-label">
+              {{ language.Enter_Subnet }}
+            </label>
+            <div class="col-sm-8">
+              <input type="text" id="subnet" (input)="closeAlert()" #subnet class="form-control"
+                #subnetFormControl="ngModel" [ngClass]="{
+                'is-invalid': subnetNgForm.submitted && subnetFormControl.invalid
+              }" required spellcheck="false" autocomplete="off" placement="bottom"
+                ngbTooltip="{{ language.CIDR_Format }}" [(ngModel)]="subnetValue" name="subnet" />
+              <div *ngIf="subnetNgForm.submitted && subnetFormControl.invalid" class="invalid-feedback">
+                <div *ngIf="subnetFormControl.errors.required">
+                  {{ language.CIDR_Format }}
+                </div>
+              </div>
+            </div>
+            <div class="w-100">
+              <div class="text-md-left mt-4">
+                <button type="reset" data-dismiss="modal" id="cancel-btn" (click)="
+                  toggleSubnetConfigForm = false; subnetValue = null; closeAlert()
+                " class="btn-default transparant px-3 sm float-left mr-2 mb-3">
+                  {{ language.cancel }}
+                </button>
+              </div>
+              <div class="text-md-left mt-4">
+                <button class="btn-default primary px-3 sm float-leftmb-3" id="submit-btn" type="submit">
+                  {{ language.Save }}
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div> -->
+  <table width="100%" id="subnetConfigTable" class="row-border hover table-alter" *ngIf="countReceived" datatable
+    [dtOptions]="dtOptions">
+    <thead>
+      <tr>
+        <th>{{ language.Subnet }}</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let subnetObj of subnetList">
+        <td>{{ subnetObj.subnet }}</td>
+        <td class="text-right">
+          <i class="fa fa-trash-o cursor-pointer del-action-icon" title="{{ language.delete }}"
+            (click)="openDeleteConfirmation(subnetObj, '')" *ngIf="hasWriteAccess"></i>
+        </td>
+      </tr>
+    </tbody>
+    <tbody *ngIf="subnetList != undefined && subnetList.length === 0 ">
+      <tr>
+        <td colspan="8" class="no-data-available">{{language['No data available in table']}}
+        </td>
+      </tr>
+    <tbody>
+  </table>
+</div>
+<!-- Add Subnet Form -->
+<!-- <div class="mt-4">
+  <form class="form-group ccl-form row" id="subnet-config-form" #subnetNgForm="ngForm" *ngIf="toggleSubnetConfigForm"
+    (ngSubmit)="onSubmit()" autocomplete="off" novalidate>
+    <label for="subnet-cidr" class="col-sm-4 col-form-label">
+      {{ language.Enter_Subnet }}
+      <span class="error">*</span>
+    </label>
+    <div class="col-sm-8">
+      <input type="text" id="subnet" (input)="closeAlert()" #subnet class="form-control" #subnetFormControl="ngModel"
+        [ngClass]="{
+          'is-invalid': subnetNgForm.submitted && subnetFormControl.invalid
+        }" required spellcheck="false" autocomplete="off" placement="bottom" ngbTooltip="{{ language.CIDR_Format }}"
+        [(ngModel)]="subnetValue" name="subnet" />
+      <div *ngIf="subnetNgForm.submitted && subnetFormControl.invalid" class="invalid-feedback">
+        <div *ngIf="subnetFormControl.errors.required">
+          {{ language.CIDR_Format }}
+        </div>
+      </div>
+    </div>
+    <div class="w-100">
+      <div class="text-md-left mt-4">
+        <button type="reset" id="cancel-btn" (click)="
+            toggleSubnetConfigForm = false; subnetValue = null; closeAlert()
+          " class="btn-default transparant px-3 sm float-left mr-2 mb-3">
+          {{ language.cancel }}
+        </button>
+      </div>
+      <div class="text-md-left mt-4">
+        <button class="btn-default primary px-3 sm float-leftmb-3" id="submit-btn" type="submit">
+          {{ language.Save }}
+        </button>
+      </div>
+    </div>
+  </form>
+</div> -->
+<div class="modal" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModal" aria-hidden="true">
+  <div class="modal-dialog modal-subnet-con modal-dialog-centered" role="document">
+    <div class="modal-content modal-cus-pad">
+      <div class="modal-header border-0">
+        <div class="sub-title">{{language['Add Subnet']}}</div>
+        <img class="sub-close" src="assets/img/close-icon.svg" (click)="
+        toggleSubnetConfigForm = false; subnetValue = null; closeAlert()" #closeModal data-dismiss="modal" alt="">
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-danger">
+          <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+          <div class="d-inline-flex" [innerHtml]="language[errorMessage] || errorMessage"></div>
+          <button type="button" id="hide-error-btn" class="close" (click)="closeExistingAlert();subnetValue = null"
+            aria-label="Close">
+            <span aria-hidden="true"></span>
+          </button>
+
+        </div>
+        <form class="form-group ccl-form row" id="subnet-config-form" #subnetNgForm="ngForm" (ngSubmit)="onSubmit()"
+          autocomplete="off" novalidate>
+          <label for="subnet-cidr" class="col-sm-4 col-form-label pt-0 pr-0">
+            {{ language.Enter_Subnet }}
+            <span class="error">*</span>
+          </label>
+          <div class="col-sm-8">
+            <!-- ngbTooltip="{{ language.CIDR_Format }}" replacing to place holder as per client requirement -->
+            <input type="text" id="subnet" (input)="closeExistingAlert()" #subnet class="form-control"
+              #subnetFormControl="ngModel" [ngClass]="{
+          'is-invalid': subnetNgForm.submitted && subnetFormControl.invalid
+        }" required spellcheck="false" autocomplete="off" placement="bottom" placeholder="{{ language.CIDR_Format }}"
+              [(ngModel)]="subnetValue" name="subnet"  trimSpace (blur)="removeUnwantedSpace('subnetValue',subnetValue)"/>
+            <div *ngIf="subnetNgForm.submitted && subnetFormControl.invalid" class="invalid-feedback">  
+              <div *ngIf="subnetFormControl.errors.required">
+                {{ language['This field is required'] }}
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer mt-3 border-0">
+            <div class="text-md-left">
+              <button class="btn-default primary px-3 mr-2 sm float-left" id="submit-btn" type="submit">
+                {{ language.Save }}
+              </button>
+            </div>
+            <div class="text-md-left">
+              <button type="reset" id="cancel-btn" (click)="
+            toggleSubnetConfigForm = false; subnetValue = null; closeAlert()
+          " class="btn-default transparant px-3 sm float-left">
+                {{ language.cancel }}
+              </button>
+            </div>
+
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #addSubnetConfigMOdal let-modal>
+  <div class="modal-header mb-4">
+    <div class="sub-title">{{language['Add Subnet']}}</div>
+    <!-- <img class="sub-close" src="assets/img/close-icon.svg" alt="icon here"> -->
+    <button type="button" class="close" aria-label="Close" (click)=" subnetValue = null;closeSubnet()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="alert alert-danger">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+      <div class="d-inline-flex" [innerHtml]="language[errorMessage] || errorMessage"></div>
+      <button type="button" id="hide-error-btn" class="close" (click)="closeExistingAlert();subnetValue = null"
+        aria-label="Close">
+        <span aria-hidden="true"></span>
+      </button>
+
+    </div>
+    <form class="form-group ccl-form row" id="subnet-config-form" #subnetNgForm="ngForm" (ngSubmit)="onSubmit()"
+      autocomplete="off" novalidate>
+      <label for="subnet-cidr" class="col-sm-4 col-form-label pt-0 pr-0">
+        {{ language.Enter_Subnet }}
+        <span class="error">*</span>
+      </label>
+      <div class="col-sm-8">
+        <!-- ngbTooltip="{{ language.CIDR_Format }}" replacing to place holder as per client requirement -->
+        <input type="text" id="subnet" (input)="closeExistingAlert()" #subnet class="form-control"
+          #subnetFormControl="ngModel" [ngClass]="{
+      'is-invalid': subnetNgForm.submitted && subnetFormControl.invalid
+    }" required spellcheck="false" autocomplete="off" placement="bottom" placeholder="{{ language.CIDR_Format }}"
+          [(ngModel)]="subnetValue" name="subnet" trimSpace (blur)="removeUnwantedSpace('subnetValue',subnetValue)"/>
+        <div *ngIf="subnetNgForm.submitted && subnetFormControl.invalid" class="invalid-feedback">
+          <div *ngIf="subnetFormControl.errors.required">
+            {{ language['This field is required'] }}
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer mt-3 border-0">
+        <div class="text-md-left">
+          <button class="btn-default primary px-3 mr-2 sm float-left" id="submit-btn" type="submit">
+            {{ language.Save }}
+          </button>
+        </div>
+        <div class="text-md-left">
+          <button type="reset" id="cancel-btn" (click)="
+        toggleSubnetConfigForm = false; subnetValue = null; closeSubnet()
+      " class="btn-default btn-dft px-3 sm float-left">
+            {{ language.cancel }}
+          </button>
+        </div>
+
+      </div>
+    </form>
+  </div>
+</ng-template>

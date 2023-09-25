@@ -1,0 +1,78 @@
+<div class="row">
+  <div class="col-sm-12 col-md-2 col-lg-2 pr-0 ccl-tabs">
+    <ul id="netops-list-menu" class="nav flex-column left-menu tab-view-style">
+      <li class="nav-item">
+        <a class="list-group-item list-group-item-action" routerLink="./secure-onboard" id="secure-onboard"
+          routerLinkActive="active">{{ language.Secure_Onboarding }}
+        </a>
+      </li>
+      <!-- <li class="nav-item">
+        <a class="list-group-item list-group-item-action" routerLink="./self-heal" id="self-heal"
+          routerLinkActive="active">
+          {{ language.Self_Heal }}
+        </a>
+      </li> -->
+      <li class="nav-item">
+        <a class="list-group-item list-group-item-action" routerLink="./stale-device" id="stale-device"
+          routerLinkActive="active">{{ language.Stale_Device_Purge }}
+        </a>
+      </li>
+      <li *ngIf="showSubnetConfig" class="nav-item">
+        <a class="list-group-item list-group-item-action" id="subNet" routerLink="./subnet-configuration"
+          routerLinkActive="active">{{ language.Subnet_Configuration }}
+        </a>
+      </li>
+      <li *ngIf="showDialPlan" class="nav-item">
+        <a class="list-group-item list-group-item-action" id="subProfile" routerLink="./sub-profile"
+          routerLinkActive="active">{{ language.Subscriber_Profile }}
+        </a>
+      </li>
+      <li *ngIf="showSoftwareImage" class="nav-item">
+        <a class="list-group-item list-group-item-action" id="subProfile" routerLink="./software-image"
+          routerLinkActive="active">{{ language.Software_Images }}
+        </a>
+      </li>
+      <li *ngIf="showDeviceGrps" class="nav-item">
+        <a class="list-group-item list-group-item-action" id="subProfile" routerLink="./device-groups"
+          routerLinkActive="active">{{ language.Groups }}
+        </a>
+      </li>
+      <li *ngIf="showProfiles" class="nav-item">
+        <a class="list-group-item list-group-item-action" id="subProfile" routerLink="./profiles"
+          routerLinkActive="active">{{ language.Profiles }}
+        </a>
+      </li>
+      <li *ngIf="showWorkFlow" class="nav-item">
+        <a class="list-group-item list-group-item-action" id="subProfile" routerLink="./workflows"
+          routerLinkActive="active">{{ language.Workflows }}
+        </a>
+      </li>
+      <li *ngIf="showBlackPageTemplates" class="nav-item">
+        <a class="list-group-item list-group-item-action" id="subProfile" routerLink="./block_page_template_list"
+          [class.active]="router.isActive('/cco-foundation/foundation-operations/foundation-system-operation/block_page_template_list', false) || router.isActive('/cco-foundation/foundation-operations/foundation-system-operation/block_page_template', false) || router.isActive('/cco-foundation/foundation-operations/foundation-system-operation/block_page_template_update', false)">{{
+          language.Block_Page_Temp }}
+        </a>
+      </li>
+      <li *ngIf="showCommandIQ" class="nav-item">
+        <a class="list-group-item list-group-item-action" id="subProfile" routerLink="./whitelabel"
+          [class.active]="router.isActive('cco-foundation/foundation-operations/foundation-system-operation/whitelabel', false) || router.isActive('cco-foundation/foundation-operations/foundation-system-operation/whitelabel-create', false) || router.isActive('cco-foundation/foundation-operations/foundation-system-operation/whitelabel-update', false)">{{
+          language['White Label'] }}
+        </a>
+      </li>
+      <li *ngIf="1" class="nav-item">
+        <a class="list-group-item list-group-item-action" id="subProfile" routerLink="./system_settings"
+          routerLinkActive="active">{{language['System Delete Settings']}}
+        </a>
+      </li>
+      <li *ngIf="1" class="nav-item">
+        <a class="list-group-item list-group-item-action" id="subProfile" routerLink="./edge-suites-provision"
+          routerLinkActive="active">
+          {{language['EDGE Suites Provisioning']}}
+        </a>
+      </li>
+    </ul>
+  </div>
+  <div class="col-sm-12 col-md-10 col-lg-10 pl-4">
+    <router-outlet></router-outlet>
+  </div>
+</div>

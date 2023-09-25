@@ -1,0 +1,67 @@
+<div class="subscriber-details">
+   
+    <div class="subs-title">
+        <div class="st-header flex">
+            <div class="sth-left">
+                <div class="ccl-mktg-large-title greyaa" id="campaigns-main-title">{{language.Campaigns}}</div>
+            </div>
+            <div class="sth-left">
+                <button type="button" id="#" class="btn-default btn-dft mr-2" (click)="electronicLink()">{{language["Electronic Content Builder"]}} <span><img
+                            class="mx-1" src="../../../assets/img/arrow-up-right-from-square.svg" alt=""> </span></button>
+                     
+                <!-- <button *ngIf="hasScope" id="newCampaignAdd" 
+                     class="btn-default primary" style="margin-right: 10px; padding: 0px 15px;">{{language.NewCampaign }}</button> -->
+
+                    <button class="btn-default primary" type="button" id="newCampaignAdd" data-toggle="dropdown" *ngIf="scopes.campaignWrite">{{language.NewCampaign }}
+                        <div class="dropdown dropleft position-static">
+                              <ul class="dropdown-menu">
+                                <li>
+                                  <button class="btn btn-white w-100 text-left" (click)="newCampaign(1)">
+                                    {{language['Scheduled Campaign']}}
+                                  </button>
+                                </li>
+                                <li>
+                                  <button class="btn btn-white w-100 text-left" (click)="newCampaign(0)">
+                                    {{language['Triggered Campaign']}}
+                                  </button>
+                                </li>
+                              </ul>
+                          </div>
+                    </button>
+      
+                <!-- <button id="newCampaignAdd" class="btn-default primary" (click)="newCampaign()"
+                    style="margin-right: 10px; padding: 0px 15px;">New Campaign</button> -->
+            </div>
+
+
+        </div>
+        <div class="tabs-wrapper">
+            <div class="tabs flex sub-tab">
+                <a id="basicData-list-tab" href="javascript:void(0)" [ngClass]="{'active': campaign}"
+                    (click)="tab_Chart_Sec('campaign')">{{language['Scheduled Campaigns']}}</a>
+                    <!-- <a id="scheduled-list-tab" href="javascript:void(0)" [ngClass]="{'active': scheduledCampaigns}"
+                    (click)="tab_Chart_Sec('scheduledCampaigns')">Scheduled Campaigns</a> -->
+                    <a id="triggered-list-tab" href="javascript:void(0)" [ngClass]="{'active': triggeredCampaigns}"
+                    (click)="tab_Chart_Sec('triggeredCampaigns')">{{language['Triggered Campaigns']}}</a>
+                <a id="advancedData-list-tab" href="javascript:void(0)" [ngClass]="{'active': channel}"
+                    (click)="tab_Chart_Sec('channel')">{{language.Marketing_Channels}}</a>
+
+            </div>
+        </div>
+        <div>
+            <ng-container *ngIf="active_Chart=='campaign'">
+                <app-campaignchannel></app-campaignchannel>
+            </ng-container>
+            <ng-container *ngIf="active_Chart=='channel'">
+                <app-marketingchannel></app-marketingchannel>
+            </ng-container>
+            <!-- <ng-container *ngIf="active_Chart=='scheduledCampaigns'">
+                <app-scheduled-campaigns></app-scheduled-campaigns>
+            </ng-container> -->
+            <ng-container *ngIf="active_Chart=='triggeredCampaigns'">
+                <app-triggered-campaigns></app-triggered-campaigns>
+            </ng-container>
+        </div>
+
+    </div>
+</div>

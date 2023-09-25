@@ -1,0 +1,55 @@
+<div role="alert" class="alert alert-warning" *ngIf="!hasPageAccess"> 
+  {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} </div>
+<section style="margin-bottom: 10px;" *ngIf="menus['network'] || menus['subscriber']">
+  <div class="container">
+    <div class="row" *ngIf="systemView && hasPageAccess ">
+      <span class="cco-title">{{language.Systems}}</span>
+    </div>
+    <!-- <div class="row" *ngIf="systemView && hasPageAccess && isProvisioned && ccoSearchText">
+      <span class="cco-title">{{ccoSearchText}} : Provisioned Subscribers</span>
+    </div> -->
+  </div>
+</section>
+
+<section *ngIf="hasPageAccess && menus['network'] || menus['subscriber']">
+  <div class="container mb-2">
+    <!-- <div class="row mt-3" *ngIf="module == 'network'">
+      <span class="cco-title h5"><b>{{ language.Sys_Manual }}</b></span>
+    </div> -->
+    <div class="row mt-3 tab-subscriber-name" *ngIf="module == 'subscriber'">
+      <span class="subscriber-name">{{ subscriberStepperInfo && !TableView ? language[subscriberStepperInfo] || subscriberStepperInfo
+        : '' }}</span>
+    </div>
+  </div>
+</section>
+<section *ngIf="isSystemsMainPage && hasPageAccess">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 px-0 ccl-tabs mt-2">
+        <ul id="tabs" class="nav nav-tabs">
+          <li *ngIf="menus['network']" class="nav-item">
+            <a routerLink="/cco/system/cco-network-system" class="nav-link small" id="network-system"
+              routerLinkActive="active" data-toggle="tab" class="nav-link">{{ language["Network
+              System"] }}
+            </a>
+          </li>
+          <li class="nav-item" *ngIf="menus['subscriber']  && allowSubscriberSystems">
+            <a routerLink="/cco/system/cco-subscriber-system" data-toggle="tab" class="nav-link" class="nav-link small"
+              id="subscriber-system" routerLinkActive="active">{{ language["Subscriber System"]
+              }}</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section [hidden]="!hasPageAccess">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 px-0">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,19 @@
+// .small-tag{
+//     font-size: 12px;
+//     font-weight: 300;
+// }
+
+.errorMessage{
+    color:#C70000;
+    visibility: hidden;
+    opacity: 0;
+  }
+
+  .error-occure .errorMessage{
+  	visibility: visible;
+  	opacity: 1
+  }
+
+.error-occure input{
+	border-color: #C70000
+}

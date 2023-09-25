@@ -1,0 +1,71 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="description" content="An almost minimal diagram using a very simple node template and the default link template." />
+<!-- Copyright 1998-2018 by Northwoods Software Corporation. -->
+<meta charset="UTF-8">
+<script src="https://unpkg.com/gojs@2.1.45/release/go.js"></script>
+
+<style>
+.gshHeader {
+  border-color: #a768d9;
+  font-size: 11px;
+  margin-bottom: 11px;
+}
+</style>
+
+<script id="code">
+  function init() {
+
+  go.Diagram.licenseKey = "73f946e4b56e28a800ca0d2b113f69ed1bb37f3b9e8c1bf0595446a7ef0b6d173089ef2802868ac582ff19fd1829c0dcd5c46c7a9e1c0138e132d38c40e485ade16477b6435b448da3012f90ccaf2ff5ac2f77a0c3b672a68a70dff6eea8c59a59eff5861ace1cab2f2d5637562cff4ba5ebda7afa02d349746d9a";
+
+    var $ = go.GraphObject.make ;  // for conciseness in defining templates
+    myDiagram = $(go.Diagram, "myDiagramDiv",  // create a Diagram for the DIV HTML element
+                  {
+                    "animationManager.isEnabled":false,
+                    "undoManager.isEnabled": true  // enable undo & redo
+                  });
+
+
+
+    myDiagram.nodeTemplate =
+      $(go.Node, "Auto",
+        $(go.Shape, "RoundedRectangle", { strokeWidth: 0 },
+          new go.Binding("fill", "color")),
+        $(go.TextBlock,
+          { margin: 8 },
+          new go.Binding("text", "key"))
+      );
+
+
+    myDiagram.model = new go.GraphLinksModel(
+    [
+      { key: "Alpha", color: "lightblue" },
+      { key: "Beta", color: "orange" },
+      { key: "Gamma", color: "lightgreen" },
+      { key: "Delta", color: "pink" }
+    ],
+    [
+      { from: "Alpha", to: "Beta" },
+      { from: "Alpha", to: "Gamma" },
+      { from: "Beta", to: "Beta" },
+      { from: "Gamma", to: "Delta" },
+      { from: "Delta", to: "Alpha" }
+    ]);
+
+  } // end init
+
+  window.click = function() {
+
+  }
+</script>
+</head>
+<body onload="init()">
+<div id="sample">
+  <div id="myDiagramDiv" style="border: solid 1px black; width:400px; height:400px"></div>
+  <button onclick="window.click()">click</button>
+</div>
+</body>
+</html>

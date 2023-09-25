@@ -1,0 +1,128 @@
+<div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess">
+    {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}}
+</div>
+<div class="col-md-12 mt-4" *ngIf="pageAvailable && hasScopeAccess">
+    <div class="w-100 alert alert-danger  fade show my-3" *ngIf="error">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+        <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+        <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+    </div>
+    <!-- <div class="loader" *ngIf="Initialloading">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">{{language.Loading}}</span>
+            </div>
+        </div>
+    </div> -->
+    <div class="h-auto">
+        <div class="cus-dd dropdown-button float-right" placement="bottom-right" *ngIf="dataAvailable" ngbDropdown>
+            <button class="mr-2" id="dropdownExchange" ngbDropdownToggle>
+                <p class="listdata bar-label mb0">
+                    <i class="fa fa-bars mr-2"></i>{{language.export}}
+                </p>
+            </button>
+            <div ngbDropdownMenu aria-labelledby="dropdownExchange" id="supportListId">
+                <button ngbDropdownItem class="greyaa">
+                    <span (click)="downloadPdf();">{{language.exportPdf}}</span>
+                </button>
+                <button ngbDropdownItem class="greyaa">
+                    <span (click)="downloadCSV();">{{language.exportCsv}}</span>
+                </button>
+            </div>
+        </div>
+        <div class="text-margin-50" *ngIf="runClicked">
+            <p *ngIf="filters.type === 'location'" class="chart-main-title">
+                {{language.location}} {{language.Active_subscriber}}
+            </p>
+            <p *ngIf="filters.type === 'network'" class="chart-main-title">
+                {{language.network}} {{language.Active_subscriber}}
+            </p>
+            <p class="hc-chart-subtitle" id="criteriaText">
+                <span *ngIf="filters.type === 'location'">{{language.location}} : {{filters.locationsSelectedNames
+                    ?(filters.locationsSelectedNames |
+                    slice:0:3):""}} {{filters.locationsSelectedNames?filters.locationsSelectedNames[3]?"...":"":""}}
+                    &nbsp;&nbsp;</span>
+                {{filters.applicationsSelectedNames?language.Application+":":""}}
+                {{filters.applicationsSelectedNames?(filters.applicationsSelectedNames | slice:0:3 ):""}}
+                {{filters.applicationsSelectedNames ? filters.applicationsSelectedNames[3]?"...":"":""}}&nbsp;&nbsp;
+                {{language.timeWindow}}:
+                {{filters.startDate | date: 'MM/dd/yyyy'}} {{language.to}}
+                {{filters.endDate | date: 'MM/dd/yyyy'}} [Coordinated Universal Time] &nbsp;&nbsp;
+                {{language.treshold}} (Bytes): {{filters.threshold}} <br> &nbsp;&nbsp;
+                <!-- {{language.aggre}} : {{filters.aggregateSelected}} &nbsp;&nbsp; -->
+                {{language.elim}} : {{filters.eliminateUnknownSelected === 'yes' ? language.Yes : language.No}}
+                &nbsp;&nbsp;
+                {{language.thres}} : {{filters.thresholdTypeSelected === 'AllEndpoints' ? language["All Endpoints"] :
+                language["Static Endpoints"]}}&nbsp;&nbsp;
+            </p>
+        </div>
+
+        <div class=" fa-chart-wrapper chart-min-h" id="fa-chart-wrapper">
+            <div class="loader" *ngIf="loading">
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border text-primary">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="chart-sec" [ngClass]="!loading ? 'd-block' : 'd-none'">
+                
+            </div> -->
+
+            <div class="row my-3" *ngIf="dataAvailable && 0">
+                <div class="col-md-6 offset-md-6">
+                    <div class="text-right flat-right">
+                        <div class="row">
+                            <div class="col-md-4">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="ccl-form">
+                                    <input type="search" name="searchbox" class="input-sm"
+                                        placeholder="{{language.searchAdmins}}" (keyup)="search($event.target.value)"
+                                        (search)="search($event.target.value)">
+                                    <button class="serach-but btn-default primary btn-icon-md inline"><i
+                                            class="fa fa-search" aria-hidden="true"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row my-3 min-height-65" [hidden]="loading || !dataAvailable ||!pageAvailable">
+                <div class="col">
+                    <table id="active_subscribers" width="100%" class="row-border hover table-alter " datatable
+                        [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+                        <thead>
+                            <tr>
+                                <th>{{language.location}}</th>
+                                <th>{{language.subscriber}}</th>
+                                <th class="alnright">{{language.upUsage}}</th>
+                                <th class="alnright">{{language.downUsage}}</th>
+                                <th class="alnright">{{language.totalUsage}}</th>
+                                <th class="alnright">{{language.hitCount}}</th>
+                                <!-- <th class="alnright">{{language.aggregateCount}}</th> -->
+                            </tr>
+                        </thead>
+                        <tbody *ngIf="tableData?.length !=0">
+                            <tr id="{{item._id}}" *ngFor="let item of tableData">
+                                <td>{{item.location ? item.location : ''}}</td>
+                                <td>
+                                    <div class="d-flex col-subs-width">
+                                        {{item.subscriber ? item.subscriber : ''}}
+                                    </div>
+                                </td>
+                                <td align="right">{{item.usOctets ? convertByteToGB(item.usOctets) : 0}}</td>
+                                <td align="right">{{item.dsOctets ? convertByteToGB(item.dsOctets) : 0}}</td>
+                                <td align="right">{{item.totalOctets ? convertByteToGB(item.totalOctets) : 0}}
+                                </td>
+                                <td align="right">{{item.hitCount ? item.hitCount : 0}}</td>
+                                <!-- <td align="right">{{item.aggCount ? item.aggCount : '--'}}</td> -->
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

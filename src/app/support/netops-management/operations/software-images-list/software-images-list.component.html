@@ -1,0 +1,294 @@
+<div class="w-100 position-relative">
+  <div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess">
+    {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} </div>
+  <div class="row no-gutters" *ngIf="hasScopeAccess">
+    <div class="d-block my-3 d-sm-none ccl-Secondary-title mb-2 col-md-12 border-bottom">{{language.Software_Images}}
+    </div>
+  </div>
+  <div class="row my-3" *ngIf="hasScopeAccess">
+    <!-- <div class="col-md-6">
+    <h4 id="software-images-label">{{language.Software_Images}}</h4>
+  </div> -->
+    <div class="col-md-6">
+      <div class="d-flex">
+        <button *ngIf="hasWriteAccess" id="add-software-images-btn" type="button" class="btn-default primary px-3"
+          (click)="gotoAdd();">
+          {{ language.Add_SW_Image }}
+        </button>
+        <button *ngIf="showOutageAlert" id="" type="button" class="btn-default btn-dft px-3 ml-3" (click)="openOutdatedImageAlert(outdatedImageAlert)">
+          {{language['Outdated Image Alert']}}
+        </button>
+      </div>
+    </div>
+
+    <!-- phase2
+  
+  <div class="col-md-6">
+    <div class="d-flex justify-content-end align-items-center">
+      <button class="btn-default btn-primary mr-3" *ngIf="deleteSelectionButtonShow" (click)="deleteEntryListZipcode(deleteSoftwareImages)"> 
+        <span class="fa fa-trash-o"></span> {{language['Delete Selection']}}</button>
+      <div class="min-130px">
+        <ng-select [searchable]="false" [(ngModel)]="filterImages">
+                <ng-option value="All">All Images</ng-option>
+        </ng-select>
+      </div>
+    </div>
+   
+  </div>-->
+  </div>
+  <div id="software-images-list" class="tab-pane" *ngIf="hasScopeAccess">
+    <div class="pb-2">
+      <div class="w-100 alert alert alert-danger fade show" *ngIf="showError">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+        <button type="button" id="hide-error-btn" class="close" (click)="hideError()">
+          <span></span>
+        </button>
+        <div class="d-inline-flex" [innerHtml]="errorMsg"></div>
+      </div>
+
+      <div class="w-100 alert alert alert-success fade show" *ngIf="showSuccess">
+        <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+        <button type="button" class="close" id="hide-success-btn" (click)="hideSuccess()">
+          <span></span>
+        </button>
+        <div class="d-inline-flex" [innerHtml]="language[successMsg] || successMsg"></div>
+
+      </div>
+
+      <div class="py-3 warning-msg warning-msg-dis" *ngIf="deleteData?._id">
+        <div class="">
+          <span class="error-img float-left"><img src="./assets/img/warning-icon.svg" /></span>
+          <span class="span-info-text">{{ language["Are you sure you want to delete"] }}
+            {{ modalInfo }}</span>
+        </div>
+        <div class="btn-con-sec float-right">
+          <button class="btn-default btn-primary px-3 mr-2" id="deletePFBtn" (click)="deleteSoftwareFile()">
+            {{ language.Confirm }}
+          </button>
+          <button class="btn-default btn-dft py-1" (click)="closeModal()">
+            {{ language.Cancel }}
+          </button>
+        </div>
+      </div>
+
+      <div class="py-3 warning-msg" *ngIf="softwareImageOfficial">
+        <span class="error-img"><img src="./assets/img/ic_warning-36px.svg" /></span>
+        <span> {{ language.Confirmation }}, </span>
+        {{ swConfrmMsg }}
+
+        <div class="btn-con-sec float-right">
+          <button type="button" class="btn-default btn-primary px-3 mr-2" ngbAutofocus id="confirm-btn"
+            (click)="swOfficialConfirmation()">
+            {{ language.Confirm }}
+          </button>
+          <button type="button" class="btn-default btn-dft py-1" id="cancel-btn"
+            (click)="closeswOfficialConfirmation()">
+            {{ language.Cancel }}
+          </button>
+        </div>
+      </div>
+
+      <!-- <div class="loader" *ngIf="loading">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div> -->
+      <div class="w-100">
+        <div class="loader pt-5 align-items-start" *ngIf="loading">
+          <div class="d-flex align-items-start justify-content-center">
+            <div class="spinner-border text-primary">
+              <span class="sr-only">{{ language.Loading }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="overflow-auto">
+          <table *ngIf="datatableVisible" id="software-images-table" datatable [dtOptions]="tableOptions"
+            class=" row-border hover table-alter software-images-table">
+            <thead>
+              <tr>
+                <!-- phase2
+              <th class="th-after-none"><input type="checkbox" class="checkbox" (change)="selectAll($event.target.checked)"
+                [checked]="allChecked"  /></th> -->
+                <!---[disabled]="zipCodeDetailLists?.length == 0 || newArray?.length == 0"-->
+                <th class="w-70px disable-th-alt" *ngIf="isFoundation && hasWriteAccess">{{ language['Official Status']
+                  }}</th>
+                <th>{{ language.Name }}</th>
+                <th>{{ language.model }}</th>
+                <th>{{ language.description }}</th>
+                <th>{{ language.Version }}</th>
+                <th class="col-size">{{language.Size}}</th>
+                <th *ngIf="isFoundation">{{language['Supported']}}</th>
+                <th></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr id="{{ file._id }}" *ngFor="let file of softwareImageObj ; let i = index">
+                <!-- phase2
+                <td> <input type="checkbox" (change)="selectedOne($event.target.checked,i)" [(ngModel)]="zipCodeDetailLists[i].checked" /></td> -->
+                <td *ngIf="isFoundation && hasWriteAccess">
+                  <div class="checkbox switcher w-70px"
+                    *ngIf="router.url.includes('cco-foundation')?file.isOfficialImageEligible : true">
+                    <label [for]="file.name">
+                      <input type="checkbox" class="pointer" [checked]="file.isOfficialImage"
+                        [(ngModel)]="file.isOfficialImage" (change)="onSoftwareChange(file)" [id]="file.name"
+                        [disabled]="softwareImageOfficial" />
+                      <span><small></small></span>
+                    </label>
+                  </div>
+                </td>
+                <td>
+                  <div class="long-text-break">{{ file.name }}</div>
+                </td>
+                <td *ngIf="file?.officialImageModels">
+                  <div *ngFor="let model of file.models">
+                    {{model}}
+                    <!-- <span *ngIf="file?.officialImageModels?.indexOf(model)!=-1?true:false">(official)</span> -->
+                  </div>
+                </td>
+                <td *ngIf="!file?.officialImageModels">
+                  <div *ngFor="let model of file.models">
+                    {{model}}
+                  </div>
+                </td>
+                <td>{{ file?.description == 'Calix Uploaded Release Image' ? language["Calix Uploaded Release Image"] :
+                  file.description }}</td>
+                <td>{{ file.version }}</td>
+                <td class="col-size">{{ ((file.size/1024)/1024) | number : '1.2-2'}} {{ file.size == 0 ? '' : 'MB' }}
+                </td>
+
+                <td class="text-center" *ngIf="isFoundation">
+                  <span class="mr-4" [ngClass]="file?.supported ? 'icon-checked' : 'icon-close'">
+                    <span>{{file?.supported}}</span>
+                  </span>
+                </td>
+                <td *ngIf="hasWriteAccess && !isFoundation && file.orgId !=0; else elseBlock" class="">
+                  <span (click)="deleteSoftwareFileConfirm(file)" title="{{ language.delete }}"
+                    class="fa fa-trash-o del-action-icon">
+                  </span>
+                </td>
+                <td *ngIf="hasWriteAccess && isFoundation && file.orgId !=0; else elseBlock" class="">
+                  <span (click)="deleteSoftwareFileConfirm(file)" title="{{ language.delete }}"
+                    class="fa fa-trash-o del-action-icon">
+                  </span>
+                </td>
+                <ng-template #elseBlock>
+                  <td></td>
+                </ng-template>
+              </tr>
+            </tbody>
+            <tbody *ngIf="softwareImageObj?.length == 0">
+              <tr>
+                <td colspan="10" class="no-data-available">
+                  {{ language["No data available in table"] }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #deleteSoftwareImages let-modal>
+  <div class="modal-body">
+    <div class="w-100 alert-box">
+      <button class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span></span>
+      </button>
+      <div class="box-content">
+        <div class="icon">
+          <img src="../../../../assets/img/ic_warning-36px.svg" alt="icon here" />
+        </div>
+        <div class="content">
+          <h3>{{language['Delete Software Image(s)']}}</h3>
+          <p>
+            {{language['Are you sure you want to delete the following software image(s):']}}
+          </p>
+          <ul>
+            <li *ngFor="let item of deleteZipcodeZipPlusfour">{{item.name}}
+            </li>
+          </ul>
+          <div class="w-100">
+            <button type="button" id="removeDeleteSImageBtn" class="btn-default primary mr-3">
+              {{language['Delete Software Image(s)']}}
+            </button>
+            <button type="button" id="canceltDeleteSImageBtn" class="btn-default btn-dft" aria-label="Close"
+              (click)="modal.dismiss('Cross click')">
+              {{ language.Cancel }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Modals -->
+<!-- <ng-template #deleteSoftareImageModal let-data let-ref="dialogRef">
+
+  <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">{{modalTitle}}</h4>
+      <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+          <span aria-hidden="true"></span>
+      </button>
+  </div>
+  <div class="modal-body">
+      {{ modalInfo }}
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn-default primary px-3" data-dismiss="modal"
+          (click)="closeModal()">{{language.no}}</button>
+      <button type="button" class="btn-default primary px-3" data-dismiss="modal"
+          (click)="deleteSoftwareFile()">{{language.yes}}</button>
+  </div>
+</ng-template> -->
+
+<ng-template #outdatedImageAlert>
+  <div class="loader" *ngIf="softwareLoading">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary">
+        <span class="sr-only">{{language.Loading}}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">{{language['Outdated Image Alert']}}</h4>
+      <button type="button" class="close" aria-label="Close" (click)="closeOutageModal();">
+          <span aria-hidden="true"></span>
+      </button>
+  </div>
+
+  <div class="warning-msg position-relative" *ngIf="warning">
+    <span class="error-img"><img src="./assets/img/ic_warning-36px.svg" /></span>
+    <span [innerHtml]="warningInfo"></span>
+    <button class="close" (click)="warning = !warning">
+      <span></span>
+    </button>
+  </div>
+
+  <div class="modal-body ccl-form mb-4">
+    <p>{{language['recommended_to_set_the_image']}}</p>
+    <div class="mb-3">
+      <label for="" class="col-5">{{language['Receive GigaSpire Alert After']}}</label>
+      <input type="text" [(ngModel)]="releaseValue" class="w-20 mx-2">
+      <label for="">{{language['Releases']}}</label>
+      <p class="m-0 error" *ngIf="emptyReleaseValue"> {{language['Please enter a value']}}</p>
+    </div>
+    <div>
+      <label for="" class="col-5">{{language['Receive GigaCenter Alert After']}}</label>
+      <input type="text" [(ngModel)]="releaseValue1" class="w-20 mx-2">
+      <label for="">{{language['Releases']}}</label>
+      <p class="m-0 error" *ngIf="emptyReleaseValue1"> {{language['Please enter a value']}}</p>
+    </div>
+  </div>
+  <div class="">
+      <button type="button" [disabled]="!hasWriteAccess" class="btn-default primary px-3 mr-3" (click)="saveAlert();">{{language['Save Alert Settings']}}</button>
+      <button type="button" class="btn-default btn-dft px-3" (click)="closeOutageModal();">{{language['Cancel']}}</button>
+  </div>
+</ng-template>
+<!-- Modals -->

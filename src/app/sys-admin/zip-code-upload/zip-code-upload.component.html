@@ -1,0 +1,314 @@
+<section>
+  <div class="container position-relative">
+    <div class="w-100 alert alert-danger fade show" *ngIf="errorMessage">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+      <span>{{errorMessage}}</span>
+      <button type="button" class="close" (click)="closeAlert()">
+        <span></span>
+      </button>
+    </div>
+    <div class="w-100 alert alert-success fade show" *ngIf="successMessage">
+      <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+      <span>{{successMessage}}</span>
+      <button type="button" class="close" (click)="closeAlert()">
+        <span></span>
+      </button>
+    </div>
+
+    <ng-template #messageDialog let-modal>
+      <div class="w-100 py-3">
+        <button type="button" class="close mt-1" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span></span>
+        </button>
+      </div>
+      <div class="px-4">
+        <div class="ccl-admin-title mb-4">
+          {{language['Invalid file format']}}
+        </div>
+        <div>
+          <span>{{modalMessage}}</span>
+        </div>
+        <div class="mt-3 mb-3">
+          <button class="btn-default primary float-right"
+            (click)="modal.close('Close click')">{{language.Okay}}</button>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+</section>
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="w-100">
+        <div class="ccl-admin-title">
+          {{language['ZIP Code Filter Lists']}}
+        </div>
+        <p>{{language['ZIP_Code_Filter_Lists_Description']}}</p>
+        <button class="btn-default primary mt-1 mb-3" (click)="uploadModal(zipCodeUploadModal)">
+          {{language['Upload CSV']}}
+        </button>
+      </div>
+    </div>
+    <!--end-->
+    <div class="row" [hidden]="loading">
+      <div class="table-filter d-flex flex-wrap justify-content-between align-items-center w-100">
+        <div class="ccl-form">
+          <div class="d-flex flex-wrap">
+            <div class="search-input pr-4">
+              <input type="text" placeholder="{{language.Search}}" [(ngModel)]="searchText"
+                (input)="searchName($event.target.value)" trimSpace (blur)="removeUnwantedSpace('searchText',searchText)" />
+              <span class="pos-abs-right" *ngIf="searchText" (click)="clearText()"><img
+                  src="../../../../../assets/img/close-icon.svg" /></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--end-->
+      <div class="overflow-auto w-100 my-3">
+        <table class="zip-code-table table" datatable [dtOptions]="zipCodeFilterOptions" [dtTrigger]="dtTrigger">
+          <thead>
+            <tr>
+              <th class="w-50"><span>{{language['Name']}}</span></th>
+              <th class="w-30 sorting_disabled">{{language['Date Added']}}</th>
+              <th class="th-del-action w-20"></th>
+            </tr>
+          </thead>
+          <tbody [ngClass]="!zipcodeArrayResultError ? 'table-row-group': 'd-none'">
+            <tr *ngFor="let list of zipCodeFilterList">
+              <td><a class="primary cursor-pointer text-decoration-none text-break"
+                  (click)="zipcodeFilter(list.listName)">{{list.listName}}</a></td>
+              <td>{{traslateDate(list.createdTime)}}</td>
+              <td>
+                <div class="action-icons-row text-center">
+                  <a class="primary cursor-pointer" (click)="modalOpen(list.listName)"><i class="fa fa-pencil"
+                      title="{{language['edit']}}"></i></a>
+                  <a class="primary cursor-pointer" (click)="delModalOpen(list.listName)"><i class="fa fa-trash-o"
+                      title="{{language['delete']}}"></i></a>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+          <tbody [ngClass]="zipcodeArrayResultError ? 'table-row-group': 'd-none'">
+            <tr>
+              <td colspan="9" class="text-center">{{language.nodata}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="center-chart flex mt-60" *ngIf="loading">
+      <div class="spinner-border text-primary mt-60">
+        <span class="sr-only">{{language.Loading}}</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!--Modals-->
+<ng-template #editZipcodeFilterName let-modal>
+  <div class="w-100 py-3">
+    <button type="button" class="close mt-1" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span></span>
+    </button>
+  </div>
+  <div class="px-4">
+    <div class="ccl-admin-title mb-4" id="edit-zip-modal-title">{{language['ZIP Code Filter Name']}}</div>
+    <div class="ccl-form mb-2">
+      <label>{{language['Name']}}</label>
+      <input type="text" [(ngModel)]="zipcodeName" (input)="onChangeZipcodeFilterName($event.target.value)" 
+      trimSpace (blur)="removeUnwantedSpace('zipcodeName',zipcodeName)" />
+    </div>
+    <div *ngIf="zipcodeNameError">
+      <small class="mandatory-msg">{{language['File name must only have alphanumeric characters and spaces']}}</small>
+    </div>
+    <div class="mt-5 mb-3">
+      <button class="btn-default primary mr-3" (click)="updateZipcodeName()"
+        [disabled]="!saveButtonShow">{{language['Save Changes']}}</button>
+      <button class="btn-link primary" (click)="modal.close('Close click')">{{language.Cancel}}</button>
+    </div>
+  </div>
+</ng-template>
+<ng-template #deleteZipcodeFilterList let-modal>
+  <div class="w-100 py-3">
+    <button type="button" class="close mt-1" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span></span>
+    </button>
+  </div>
+  <div class="zipcode-alert">
+    <div class="d-flex">
+      <div class="warn-icon-min">
+        <img src="/assets/img/warning-icon-36px.svg" />
+      </div>
+      <div>
+        <div class="ccl-Secondary-title mb-3 text-break">{{language['Are you sure you want to delete']}}
+          {{zipcodeName}}?</div>
+        <button class="btn-default primary mr-3" (click)="deleteZipcodeName()">{{language.Delete}}</button>
+        <button class="btn-dft btn-default" (click)="modal.close('Close click')">{{language.Cancel}}</button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<ng-template #zipCodeUploadModal let-modal>
+  <div class="w-100 py-3">
+    <button type="button" class="close mt-1" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span></span>
+    </button>
+  </div>
+  <div class="px-4">
+    <div class="ccl-admin-title mb-2" id="upload-csv-modal-title">{{language['Upload CSV']}}</div>
+    <p>{{language['Please use one of the following formats exactly as they are shown below:']}}</p>
+    <div class="row">
+      <div class="col-6">
+        <div class="mb-1">{{language['ZIP Code Example']}}</div>
+        <table class="table table-uplod-csv" id="Upload-CSV-ZIPCode">
+          <tbody>
+            <tr>
+              <td>32137</td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>32007</td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>32127</td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>32140</td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-6">
+        <div class="mb-1">{{language['ZIP+4 Example']}}</div>
+        <table class="table table-uplod-csv" id="Upload-CSV-ZIP">
+          <tbody>
+            <tr>
+              <td>32137</td>
+              <td>7563</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>32007</td>
+              <td>7160</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>32127</td>
+              <td>0112</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>32140</td>
+              <td>9118</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-6">
+
+        <div class="mb-1">{{language['ZIP Code & Service Example']}}</div>
+        <table class="table table-uplod-csv" id="Upload-CSV-ZIP">
+          <tbody>
+            <tr>
+              <td>32137</td>
+              <td></td>
+              <td>{{language['Yes']}}</td>
+
+            </tr>
+            <tr>
+              <td>32007</td>
+              <td></td>
+              <td>{{language['No']}}</td>
+
+            </tr>
+            <tr>
+              <td>32127</td>
+              <td></td>
+              <td></td>
+
+            </tr>
+            <tr>
+              <td>32140</td>
+              <td></td>
+
+              <td>{{language['No']}}</td>
+
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+
+      <div class="col-6">
+        <div class="mb-1">{{language['ZIP+4 & Service Example']}}</div>
+        <table class="table table-uplod-csv" id="Upload-CSV-ZIP">
+          <tbody>
+            <tr>
+              <td>32137</td>
+              <td>7563</td>
+              <td>{{language['Yes']}}</td>
+            </tr>
+            <tr>
+              <td>32007</td>
+              <td>7160</td>
+              <td>{{language['No']}}</td>
+
+            </tr>
+            <tr>
+              <td>32127</td>
+              <td></td>
+              <td></td>
+
+            </tr>
+            <tr>
+              <td>32140</td>
+              <td>9118</td>
+              <td>{{language['No']}}</td>
+
+
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="mt-5 mb-3">
+      <button class="btn-default primary file-browse-btn mr-3" id="Browse-Zipcode-File">{{language.Browse}}
+        <input type="file" (change)="fileSelected($event, uploadZipcodeFilterName)" accept=".csv,.xlsx,.txt"
+          title="{{language['no file chosen']}}" />
+      </button>
+      <button class="btn-link primary" (click)="modal.close('Close click')">{{language.Cancel}}</button>
+    </div>
+  </div>
+</ng-template>
+<ng-template #uploadZipcodeFilterName let-modal>
+  <div class="w-100 py-3">
+    <button type="button" class="close mt-1" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span></span>
+    </button>
+  </div>
+  <div class="px-4">
+    <div class="ccl-admin-title mb-4" id="edit-zip-modal-title">{{language['ZIP Code Filter Name']}}</div>
+    <label>{{language['Name']}}</label>
+    <div class="ccl-form mb-2">
+      <input type="text" placeholder="{{language['Name']}}" [(ngModel)]="listName" minlength="1" maxlength="500"
+      trimSpace (blur)="removeUnwantedSpace('listName',listName)">
+    </div>
+    <div class="mt-5 mb-3">
+      <button *ngIf="listName.trim()" class="btn-default primary mr-3"
+        (click)='saveZipPlusCsv()'>{{language['Save']}}</button>
+      <button *ngIf="!listName.trim()" class="btn-default primary mr-3" disabled>{{language['Save']}}</button>
+      <button class="btn-link primary" (click)="modal.close('Close click')">{{language.Cancel}}</button>
+    </div>
+  </div>
+</ng-template>

@@ -1,0 +1,136 @@
+<div class="d-flex justify-content-end ccl-navbar">
+  <div class="col-xs-12">
+    <p class="mb-0 pl-4 pb-3">
+      <a class="w-s-nowrap addDeviceClass" routerLink="/support/netops-management/subscriber-management"
+        [queryParams]="{ searchText: searchText }" routerLinkActive="active">
+        <!-- <i class="fa fa-angle-left chevron" aria-hidden="true"></i> -->
+        <img src="assets/img/ic_close-44px.svg" alt="" />
+      </a>
+    </p>
+  </div>
+</div>
+<div class="w-100 alert alert alert-danger fade show"
+  *ngIf="isError || addDeviceObj.showModeErrorMsg || addDeviceObj.showDeviceIDErrorMsg">
+  <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+  <button type="button" class="close"
+    (click)="isError = false; addDeviceObj.showModeErrorMsg = false;addDeviceObj.showDeviceIDErrorMsg=false">
+    <span></span>
+  </button>
+  <div class="d-inline-flex" *ngIf="isError" [innerHtml]="errorMessage"></div>
+  <div class="d-inline-flex" *ngIf="addDeviceObj.showModeErrorMsg" [innerHtml]="language.Model_req"></div>
+  <div class="d-inline-flex" *ngIf="addDeviceObj.showDeviceIDErrorMsg" [innerHtml]="language.showDeviceIDErrorMsg">
+  </div>
+</div>
+<!-- <div class="w-100 alert alert alert-danger fade show" *ngIf="isError || addDeviceObj.showModelErrorMsg">
+  <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+  <button type="button" class="close" (click)="isError = false; addDeviceObj.showModelErrorMsg = false">
+    <span></span>
+  </button>
+  <div class="d-inline-flex" *ngIf="isError" [innerHtml]="errorMessage"></div>
+  <div class="d-inline-flex" *ngIf="addDeviceObj.showModelErrorMsg" [innerHtml]="language.Mode_req"></div>
+</div> -->
+
+<div class="w-100 alert alert-danger fade show my-3" *ngIf="error">
+  <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+  <button type="button" class="close" (click)="closeAlert()">
+    <span></span>
+  </button>
+  <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+</div>
+
+<div class="subscriber-wizard" id="subscriberWizard">
+  <span class="net-ops-secondary-title" id="addDevice">{{
+    language[pageTitle]
+    }}</span>
+  <section class="stepper-main mt-3">
+    <!--  <div class="stepper col-12 pl-0">
+      <div class=" step step--{{ i + 1 }}" *ngFor="let tab of addDeviceObj.addDeviceTab; let i = index"
+        (click)="onTabChange(i)" [ngClass]="{
+          'step-active': activeTab === tab,
+          '': addDeviceObj.addDeviceTab.length === 2,
+          'step-success': levelsPassed > i && activeTab !== tab
+        }">
+        {{ language[tab] }}
+      </div>
+    </div> -->
+    <!--new stepper-->
+
+    <ul class="stepper-ui">
+      <li *ngFor="let tab of addDeviceObj.addDeviceTab; let i = index">
+        <button title="{{ language[tab] }}" (click)="onTabChange(i)" [ngClass]="{
+              'step-current': activeTab === tab,
+              '': addDeviceObj.addDeviceTab.length === 2,
+              'step-done': levelsPassed > i && activeTab !== tab
+            }">
+          <span>{{ language[tab] }}</span></button>
+      </li>
+    </ul>
+
+    <!--new stepper end-->
+    <div class="pos-action-btn">
+      <button type="button" class="btn-arrow btn-arr-prev btn-grey mr-2 float-left" [disabled]="selectedTabIndex === 0"
+        [ngClass]="{ primary: selectedTabIndex !== 0 }" (click)="onTabChange(selectedTabIndex - 1)">
+        <img src="assets/img/ic_chevronleft_grey.svg"> {{ language.Previous }}
+      </button>
+      <button type="button" class="btn-arrow btn-arr-nxt primary"
+        *ngIf="selectedTabIndex + 1 !== addDeviceObj.addDeviceTab?.length" (click)="onTabChange(selectedTabIndex + 1)"
+        [disabled]="disableNextBtn">
+        {{ language.Next }}
+        <img src="assets/img/ic_chevron-r-w.svg">
+      </button>
+      <button type="button" class="btn-default primary px-3"
+        *ngIf="selectedTabIndex + 1 === addDeviceObj.addDeviceTab?.length"
+        [disabled]="disableFinishBtn || duplicateSbcrbrAscDevice" (click)="onSaveDeviceInfo()">
+        {{ language.Finish }}
+      </button>
+    </div>
+  </section>
+  <div class="loader" *ngIf="loader">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary">
+        <span class="sr-only">{{ language.Loading }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="py-3 warning-msg" *ngIf="deleteServicesAssociateWithSbscrbrMsg">
+    <span>
+      <h5>{{ language.Confirmation }}</h5>
+    </span>
+    <span>
+      {{ deleteServicesAssociateWithSbscrbrMsg }}
+    </span>
+
+    <div class="btn-con-sec float-right">
+      <button class="btn warn-btn mr-2" id="deleteServicesAssociateWithSbscrbrMsgCnfrmBtn"
+        (click)="confirmDeleteServicesAssociateWithSbscrbrMsg()">
+        {{ language.Confirm }}
+      </button>
+      <button class="btn warn-btn" (click)="closeDeleteServicesAssociateWithSbscrbrMsg()">
+        {{ language.Cancel }}
+      </button>
+    </div>
+
+  </div>
+
+  <div *ngIf="bSmbMode" class="alert alert-info margin-top-20 align-middle">
+    <span>{{language['This System is Running Under SmartBiz.']}}</span>
+  </div>
+  <div *ngIf="subscriberInfo">
+    <app-device-wizard [addDeviceObj]="addDeviceObj" [staticGroupList]="deviceDataList" [editMode]="editMode"
+      [isProvision]="isProvision" (tabChange)="onTabChange($event)" [deviceModels]="deviceModels" [_staticGrpError]="staticGrpError"
+      (onValidateExistingDevice)="onValidateExistingDevice($event)" (changedOpMode)="changedOpmode($event)"
+      [checkDeviceDiscovery]=deviceDiscovery (wifiSsidMngrStngs)="getWifiSsidMngrStngs($event)" [bSmbMode]="bSmbMode"
+      (bSmbModeEmit)="getbSmbMode($event)" *ngIf="activeTab === subscriberManagement.DEVICE_LABEL">
+    </app-device-wizard>
+    <app-service-wizard [addDeviceObj]="addDeviceObj" [isPRConfiguredOutside]="isPRConfiguredOutside"
+      *ngIf="activeTab === subscriberManagement.SERVICE_LABEL" [editMode]="editMode" [bSmbMode]="bSmbMode"
+      [wifiSsidMngrStngsValues]="wifiSsidMngrStngsValues" (disableFinish)="disableComplete($event)"
+      [tempWifiObj]="tempWifiObj" (disableNext)="disableNext($event)" (voiceStatussen)="voiceStatusres($event)" 
+      (wifiSsidMngrStngs)="getWifiSsidMngrStngs($event)">
+    </app-service-wizard>
+    <app-settings-wizard [addDeviceObj]="addDeviceObj" (disableFinish)="disableComplete($event)" *ngIf="activeTab === subscriberManagement.SETTINGS_LABEL">
+    </app-settings-wizard>
+  </div>
+
+</div>

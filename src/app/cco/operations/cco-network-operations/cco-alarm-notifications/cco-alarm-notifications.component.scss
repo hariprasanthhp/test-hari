@@ -1,0 +1,183 @@
+.alarm-notifications-table {
+
+  table {
+    width: 100%;
+
+    thead {
+      border-bottom: 1px solid #CCCCCC;
+    }
+
+    th {
+      // text-align: left;
+      padding: 8px;
+
+      word-break: break-all;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    td {
+      // text-align: left;
+      padding: 8px;
+
+      word-break: break-word;
+      font-size: 15px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 24px;
+      letter-spacing: 0em;
+    }
+
+    tr:nth-child(even) {
+      background-color: #F8F8FA;
+    }
+
+    th:nth-child(5) {
+      min-width: 100px;
+    }
+  }
+
+  .mt-15 {
+    margin-top: 15rem;
+  }
+}
+
+.dropleft .dropdown-toggle::before {
+  display: none !important;
+}
+
+.dropdown-toggle {
+  outline: none !important;
+  border: none !important;
+  background-color: transparent !important;
+}
+
+.dropdown {
+  .dropdown-menu {
+    border-radius: 16px;
+    box-shadow: 0px 5px 15px rgba(128, 128, 128, 0.25);
+    -webkit-box-shadow: 0px 5px 15px rgba(128, 128, 128, 0.25);
+    border-color: rgba(0, 0, 0, .05) !important;
+
+    button.dropdown-item {
+      width: 100% !important;
+      border-radius: 0px !important;
+      text-align: left;
+      padding: 10px 25px;
+
+      &:hover {
+        background-color: #EDF5FF !important;
+      }
+    }
+  }
+}
+
+.clickableRow {
+  a {
+    color: #0279FF;
+    cursor: pointer;
+  }
+
+  a:hover {
+    color: #0054b2;
+  }
+}
+
+.search-box {
+  width: 73%;
+  padding-right: 30px
+}
+
+.hide-close-search {
+  display: none;
+}
+
+.show-close-search {
+  color: #808080;
+  display: block;
+  position: absolute;
+  right: 40px;
+  font-size: 22px;
+  top: 2px;
+}
+
+.showHideTable {
+  visibility: hidden;
+}
+
+.cco-med-title {
+  font-weight: 300;
+  font-size: 24px;
+  line-height: 30px;
+  color: #1A1F22;
+  margin-bottom: 15px;
+}
+
+.min-width-500 {
+  min-width: 500px;
+}
+
+.warn-msg {
+  width: 100%;
+  word-wrap: break-word;
+  display: inline-block
+}
+
+.close-clear {
+  position: absolute;
+  top: 13px;
+  right: 25px;
+  cursor: pointer;
+}
+
+.close-clear button span {
+  width: 11.7px;
+  height: 11.7px;
+  background-size: 11.7px;
+}
+
+.min-w-200 {
+  min-width: 250px;
+}
+
+.filter-select {
+  min-width: 200px;
+}
+
+.notification-modal {
+  padding: 10px 38px 10px 38px;
+}
+
+.notification-list .form-check label,
+.notification-list p {
+  color: #1A1F22;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 18px;
+}
+
+.notification-list p {
+  color: #4C4C4C;
+}
+
+::ng-deep .notification-large-modal .modal-dialog {
+  max-width: 45.6% !important;
+}
+
+.min-w-50 {
+  min-width: 50px;
+}
+
+.min-w-230 {
+  min-width: 230px;
+}
+
+.select-muted-text {
+  color: #808080;
+}
+
+::ng-deep {
+  .ng-select-datasource .ng-dropdown-panel .ng-dropdown-panel-items .ng-option {
+    height: auto !important;
+  }
+}

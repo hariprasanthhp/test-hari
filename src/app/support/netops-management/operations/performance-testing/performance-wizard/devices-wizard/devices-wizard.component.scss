@@ -1,0 +1,57 @@
+
+ul.device-ul {
+    margin-bottom: 0px;
+    list-style: disc;
+    margin-left: 30px;
+}
+
+    .ng-select2{
+        height: 34px !important;
+ 
+}
+
+
+.custom-paste-input {
+    width: 100%;
+    min-height: 38px;
+    max-height: 700px;
+    line-height: inherit;
+    border-radius: 26px;
+    background: #f8f8fa;
+    padding: 0px 15px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #646363;
+    border: 1px solid transparent;
+    cursor: text;
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    .custom-paste-list {
+        width: fit-content;
+        min-height: 29px;
+        padding: 3px 2px 0px 2px;
+        font-size: 14px;
+        background-color: #e4e4e4;
+        border: 1px solid #aaa;
+        border-radius: 4px;
+        cursor: default;
+        margin: 3px;
+        word-break: break-all;
+
+        .remove-input-btn {
+            float: right;
+            margin-right: 5px;
+            cursor: pointer;
+        }
+    }
+    input {
+        width:100% !important;
+        border: none;
+        &:focus {
+            border: none !important;
+        }
+    }
+
+}

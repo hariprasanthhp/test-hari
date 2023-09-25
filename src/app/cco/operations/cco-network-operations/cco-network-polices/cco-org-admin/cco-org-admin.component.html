@@ -1,0 +1,246 @@
+<div class="w-100 alert alert alert-danger fade show" *ngIf="isError">
+  <span class="error-img" style="width: 50px; float: left; height: 100%"
+    ><img src="./assets/img/ic_error-36px.svg"
+  /></span>
+  <button
+    type="button"
+    class="btn-default primary ok float-right"
+    (click)="isError = false"
+  >
+    {{ language.OK }}
+  </button>
+  <span
+    class="d-inline-flex"
+    style="width: 85%; height: 100%"
+    [innerHtml]="warningMessage"
+  ></span>
+</div>
+
+<div class="w-100 alert alert-success fade show my-3" *ngIf="success">
+  <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+  <button type="button" class="close" (click)="success = false">
+    <span></span>
+  </button>
+  <div [innerHtml]="successInfo"></div>
+</div>
+
+<div class="warning-msg" *ngIf="doDelete">
+  <span class="error-img"><img src="./assets/img/warning-icon.svg" /></span>
+  <span> {{ confrimationMsg }}</span>
+  <div class="btn-con-sec float-right">
+    <button
+      class="btn warn-btn mr-2"
+      id="deletePFBtn"
+      (click)="removeAdminConfirmation()"
+    >
+      {{ language.Confirm }}
+    </button>
+    <button class="btn warn-btn" id="cancel-btn" (click)="cancelDelete()">
+      {{ language.Cancel }}
+    </button>
+  </div>
+</div>
+<!-- <div class="row">
+  <div class="col-md-6">
+    <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" novalidate>
+      <div class="ccl-form mb-2">
+        <label for="exampleInputEmail1">{{ language["Service Type"] }}</label>
+        <input
+          type="email"
+          class="form-control"
+          id="exampleInputEmail1"
+          aria-describedby="emailHelp"
+          placeholder="{{ language['Service Type'] }}"
+          formControlName="serviceType"
+        />
+        <div
+          *ngIf="submitted && modalForm.serviceType.errors"
+          class="errorMessage"
+        >
+          <label *ngIf="modalForm.serviceType.errors.required">
+            {{ language["This field is required"] }}
+          </label>
+        </div>
+      </div>
+      <div class="ccl-form mb-2">
+        <label for="exampleInputEmail1">{{ language["ONT Id Type"] }}</label>
+        <input
+          type="email"
+          class="form-control"
+          id="exampleInputEmail1"
+          aria-describedby="emailHelp"
+          placeholder="ONT Id Type"
+          formControlName="ontIdType"
+        />
+        <div
+          *ngIf="submitted && modalForm.ontIdType.errors"
+          class="errorMessage"
+        >
+          <label *ngIf="modalForm.ontIdType.errors.required">
+            {{ language["This field is required"] }}
+          </label>
+        </div>
+      </div>
+      <div class="ccl-form mb-2">
+        <label for="exampleInputEmail1">{{
+          language["ONT Name Format"]
+        }}</label>
+        <input
+          type="email"
+          class="form-control"
+          id="exampleInputEmail1"
+          aria-describedby="emailHelp"
+          placeholder="{{ language['ONT Name Format'] }}"
+          formControlName="ontNameFormat"
+        /> -->
+<!-- <span
+          *ngIf="
+            !signupForm.get('ontNameFormat').valid &&
+            signupForm.get('ontNameFormat').touched
+          "
+          class="help-block"
+          >Please enter ONT Name Format</span
+        > -->
+<!-- <div
+          *ngIf="submitted && modalForm.ontNameFormat.errors"
+          class="errorMessage"
+        >
+          <label *ngIf="modalForm.ontNameFormat.errors.required">
+            {{ language["This field is required"] }}
+          </label>
+        </div>
+      </div>
+      <div class="ccl-form mb-2">
+        <label for="exampleInputEmail1">{{
+          language["DHCP Server Type"]
+        }}</label>
+        <input
+          type="email"
+          class="form-control"
+          id="exampleInputEmail1"
+          aria-describedby="emailHelp"
+          placeholder="{{ language['DHCP Server Type'] }}"
+          formControlName="dhcpServerType"
+        /> -->
+<!-- <span
+          *ngIf="
+            !signupForm.get('dhcpServerType').valid &&
+            signupForm.get('dhcpServerType').touched
+          "
+          class="help-block"
+          >Please enter DHCP Server Type</span
+        > -->
+<!-- <div
+          *ngIf="submitted && modalForm.dhcpServerType.errors"
+          class="errorMessage"
+        >
+          <label *ngIf="modalForm.dhcpServerType.errors.required">
+            {{ language["This field is required"] }}
+          </label>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary mt-3">Submit</button>
+    </form>
+  </div>
+</div> -->
+
+<!-- <div class="row">
+  <div class="col-md-12">
+    <button
+      id="adminCreation"
+      type="submit"
+      class="btn btn-primary my-3"
+      (click)="createOrgAdmin()"
+    >
+      {{ language["Add Org Admin"] }}
+    </button>
+  </div>
+</div> -->
+
+<div class="row">
+  <div class="col-md-12">
+    <div
+      class="col-12 col-sm-12 col-md-2 mto-0"
+      style="position: absolute; z-index: 1111; right: 270px"
+    >
+      <div class="custom-selectbox" id="current-issues-interval">
+        <ng-select
+          [searchable]="false"
+          placeholder="{{ language.All }}"
+          [(ngModel)]="selectedServiceType"
+          (change)="getAdmins(true)"
+          id="srvcType"
+        >
+          <ng-option value="All">{{ language.All }}</ng-option>
+          <ng-option value="DATA">{{ language.DATA }}</ng-option>
+          <ng-option value="VIDEO">{{ language.VIDEO }} </ng-option>
+          <ng-option value="VOICE">{{ language.VOICE }} </ng-option>
+        </ng-select>
+        <!--<span *ngIf=testForm.get('testName').errors?.required?>Please fill this field</span>
+            <div *ngIf="frequency.errors?.required && (myForm.submitted|| frequency.touched)" id="frequency-error">
+            {{language['This field is required']}}
+          </div> -->
+      </div>
+    </div>
+    <div class="loader" *ngIf="loading">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+    <table
+      [hidden]="!tableAvailable"
+      datatable
+      [dtOptions]="dtOptions"
+      [dtTrigger]="dtTrigger"
+      id="ccoOrgAminTable"
+    >
+      <thead>
+        <tr>
+          <th scope="col">{{ language.Service_Type }}</th>
+          <th scope="col">{{ language["ONT Id Type"] }}</th>
+          <th scope="col">{{ language["ONT Name Format"] }}</th>
+          <th scope="col">{{ language["DHCP Server Type"] }}</th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let adminData of adminsData; let i = index">
+          <td>{{ adminData.serviceType }}</td>
+          <td>{{ adminData.ontIdType }}</td>
+          <td>{{ adminData.ontNameFormat }}</td>
+          <td>{{ adminData.dhcpServerType }}</td>
+          <td>
+            <div class="dropdown">
+              <button class="btn" type="button" data-toggle="dropdown">
+                ...
+              </button>
+              <div>
+                <ul class="dropdown-menu">
+                  <li>
+                    <button
+                      class="btn btn-white w-100 text-left"
+                      (click)="editAdmin(adminData, i + 1)"
+                    >
+                      {{ language.Edit }}
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      class="btn btn-white w-100 text-left"
+                      (click)="removeAdminDetail(adminData.serviceType)"
+                    >
+                      {{ language.Delete }}
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

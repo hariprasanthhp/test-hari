@@ -1,0 +1,28 @@
+<div class="col-md-12 mt-4" *ngIf="pageAvailable">
+
+    <div class="w-100 alert alert-danger  fade show my-3" *ngIf="error">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+        <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+        {{errorInfo}}
+    </div>
+
+    <div class="" style="height:auto;">
+        <!-- Filters Starts -->
+        <ngx-common-filter (loadData)="loadChartData($event)" [pageDetails]="page"></ngx-common-filter>
+        <!-- Filters Ends -->
+        <div class="fa-chart-wrapper chart-min-h" id="fa-chart-wrapper">
+            <div class="loader" *ngIf="loading">
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border text-primary">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
+            </div>
+            <div class="chart-sec" [ngClass]="!loading ? 'd-block' : 'd-none'">
+                <div class="fa-chart-container">
+                    <div id="container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

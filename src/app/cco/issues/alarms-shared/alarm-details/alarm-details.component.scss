@@ -1,0 +1,40 @@
+.stats-value-24{font-size: 24px !important;}
+.kbi-col{
+    margin-right: 23px;
+    margin-bottom: 16px;
+ .kbi-content{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    border-left: 1px solid #EBEAEF;
+    padding-left: 12px;
+ }
+}
+.support-key-value td{padding: 0px 12px 0px 0px !important;line-height: 24px;}
+.pl-12{padding-left: 12px;}
+
+table{
+   tbody{
+      tr{
+         td{
+             &:nth-child(1){
+               padding-right: 0 !important;
+               width: 153px !important;
+            }
+            &:nth-child(2){
+               padding-left: 56px !important;
+               width: calc(100% - 153px);
+            }
+         }
+      }
+   }
+}
+.modole-content-spacing{
+   padding: 17px 62px 44px 62px;
+}
+.button-padding{
+   margin-top: 11px;
+}
+.white-space-preline { 
+   white-space: pre-line;
+ }

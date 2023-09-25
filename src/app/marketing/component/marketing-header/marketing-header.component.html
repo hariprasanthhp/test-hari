@@ -1,0 +1,88 @@
+<header class="flex marketing-head">
+    <div class="header-left flex">
+        <div class="logo">
+            <a href="javascript:void(0)" (click)="setActiveTab('home')" [routerLink]="['/engagement/home']">
+                <img id="marketing-logo" src="assets/img/logo-engagement.svg">
+            </a>
+        </div>
+        <div customDropdown class="header-search dropdown"
+            *ngIf="!scopes.subscriberNoAccess && !scopes.campaignNoAccess">
+            <div dropdownToggle>
+                <input id="search-input" type="text" [ngModel]="searchText" (blur)="hideSearchDropDown()"
+                    (keydown.enter)="searchResults()" (focus)='search(searchText)' (ngModelChange)="search($event)"
+                    [ngModelOptions]="{standalone: true}"
+                    placeholder="{{language.Subscribers}},&nbsp;{{language.Campaigns}}">
+                <button id="search-btn" class="btn-round primary search-btn"
+                    (click)='isSearch ? searchResults() : search(searchText)'> <img
+                        src="assets/img/ic_search_white.svg"> </button>
+            </div>
+            <div class="search-dropdown1 header-search-z-index" dropdownMenu aria-labelledby="dropdownMenu">
+                <!-- <ng-scrollbar #scrollable track="all" pointerEventsMethod="scrollbar" height="300px"> -->
+                <div class="dropdown-container">
+                    <ng-container *ngIf="scopes.subscriberRead">
+                        <h3>{{language.Subscribers}}</h3>
+                        <ng-container *ngIf="subscriberDataAvailable">
+                            <table class="table" *ngFor="let item of marketingSearchTable">
+                                <tr (click)="subscriberInsights(item.subscriberId)" style="cursor: pointer;">
+                                    <!-- <td>{{item.name}}</td> -->
+                                    <td class="w-33" [innerHTML]="item.name | highlightMarket: searchText">{{item?.name !== undefined ? item.name : '-'}}
+                                    </td>
+                                    <td>{{item?.phone !== undefined ? item.phone : '-'}}</td>
+                                    <td>{{item?.serviceAddress !== undefined ? item.serviceAddress : '-'}}</td>
+                                </tr>
+                            </table>
+                        </ng-container>
+                        <ng-container *ngIf="!subscriberDataAvailable">
+                            <div id="no-data-available" class="text-center">
+                                <span>{{language['No matching records found']}}</span>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+                    <ng-container *ngIf="scopes.campaignRead">
+                        <h3>{{language.Campaigns}}</h3>
+                        <ng-container *ngIf="campaignDataAvailable">
+                            <table class="table" *ngFor="let item of marketingCampaignSearchTable">
+                                <tr (click)="selectCampaign(item)" style="cursor: pointer;">
+                                    <td [innerHTML]="item.name | highlightMarket: searchText">{{item.name}}</td>
+                                </tr>
+                            </table>
+                        </ng-container>
+                        <ng-container *ngIf="!campaignDataAvailable">
+                            <div id="no-data-available" class="text-center">
+                                <span>{{language['No matching records found']}}</span>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+
+                </div>
+                <!-- </ng-scrollbar> -->
+            </div>
+        </div>
+
+    </div>
+    <ul class="header-nav flex">
+        <li id="homeMarketingSection">
+            <a  href="javascript:void(0)"  (click)="setActiveTab('home')" [ngClass]="{'router-link-active' : getActiveTab === 'home' }"
+                routerLink="/engagement/home">{{language.Home}}</a>
+        </li>
+        <li *ngIf="scopes.exploredataRead" id="exploreDataMarketingSection">
+            <a  href="javascript:void(0)" (click)="setActiveTab('explore')" [ngClass]="{'router-link-active' : getActiveTab === 'explore' }"
+                routerLink="/engagement/explore-data">{{language.Explore_Data}}</a>
+        </li>
+        <li id="segmentsMarketingSection" *ngIf="scopes.exploredataRead">
+            <a  href="javascript:void(0)" (click)="setActiveTab('segment')" [ngClass]="{'router-link-active' : getActiveTab === 'segment' }"
+                routerLink="/engagement/segments">{{language.Segments}}</a>
+        </li>
+        <li *ngIf="scopes.campaignRead" id="campaignMarketingSection">
+            <a  href="javascript:void(0)" (click)="setActiveTab('campaign')" [ngClass]="{'router-link-active' : getActiveTab === 'campaign' }"
+                routerLink="/engagement/engagement-channel">{{language.Campaigns}}</a>
+        </li>
+        <!-- <li id="helpMarketingSection"><a href="javascript:void(0)">{{language.Help}}</a></li> -->
+        <li>
+            <app-grid></app-grid>
+        </li>
+        <li>
+            <app-dd-menu></app-dd-menu>
+        </li>
+    </ul>
+</header>

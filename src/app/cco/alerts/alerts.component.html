@@ -1,0 +1,157 @@
+<div role="alert" class="alert alert-warning" *ngIf="!hasPageAccess">
+    {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} </div>
+<section class="mb-4" *ngIf="hasPageAccess ">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-md-2 px-0 mobile-center">
+                <span class="cco-title">Alerts</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section [hidden]="!hasPageAccess">
+    <div class="container mp-0">
+        <div class="row mm-0">
+            <div class="m-center col-sm-12 col-md-12 px-0  mb-4">
+                <div class="ccl-tabs">
+                    <ul id="tabs" class="nav nav-tabs">
+                        <li class="nav-item" *ngFor="let menu of menuConfig|keyvalue: originalOrder">
+                            <a data-toggle="tab" class="nav-link" [routerLink]="menu?.value?.urls[0]"
+                                routerLinkActive="active" [ngClass]="{'active' : activeMenus[menu?.value?.route]}"
+                                aria-controls="alarms" aria-selected="true">
+                                {{menu?.value?.title}}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section *ngIf="!fullContainerView" [hidden]="!hasPageAccess">
+    <div class="container mp-0">
+        <div class="row mm-0">
+            <div class="col-12 col-md-2 pl-0 mpr-0" [ngClass]="isToggleSidebar ? 'd-none' : 'd-block'"
+                *ngIf="hasPageAccess">
+                <ul id="netops-list-menu" class="nav flex-column left-menu tab-view-style mbr-none">
+                    <li class="nav-item" *ngIf="menus['realtime']">
+                        <a class="list-group-item list-group-item-action"
+                            routerLink="/cco/alerts/{{type.toLowerCase()}}/realtime" id="pendo-cco-real-time-menu-title"
+                            routerLinkActive="active">{{ language['Real Time']
+                            }}</a>
+                    </li>
+                    <li class="nav-item" *ngIf="menus['active'] ">
+                        <a class="list-group-item list-group-item-action" id=""
+                            routerLink="/cco/alerts/{{type.toLowerCase()}}/active-reports"
+                            id="pendo-cco-active-reports-menu-title" routerLinkActive="active">{{ language["Active
+                            Reports"] }}</a>
+                    </li>
+                    <li class="nav-item" *ngIf="menus['history']">
+                        <a class="list-group-item list-group-item-action" id=""
+                            routerLink="/cco/alerts/{{type.toLowerCase()}}/history-reports"
+                            id="pendo-cco-historical-reports-menu-title" routerLinkActive="active">{{
+                            language["Historical Reports"]
+                            }}</a>
+                    </li>
+
+                    <li class="nav-item" *ngIf="menus['events']">
+                        <a class="list-group-item list-group-item-action"
+                            routerLink="/cco/alerts/{{type.toLowerCase()}}/view" routerLinkActive="active">System
+                            Events</a>
+                    </li>
+
+                </ul>
+            </div>
+            <div class="col-12 col-md-10 padl mp-0 mmt-3 pr-0 position-relative"
+                [ngClass]="isToggleSidebar ? 'col-12 col-md-12 px-0' : ''" [hidden]="!hasPageAccess">
+                <a class="sidebar-collapse" (click)="toggleSideBar()">
+                    <i class="fas" [ngClass]="isToggleSidebar ? 'fa-chevron-right' : 'fa-chevron-left'"></i>
+                </a>
+                <section *ngIf="hasPageAccess ">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="test-container" *ngIf="!isEventsPage">
+                                <div class="item" id="current-issues-Total-alarms">
+                                    <span class="stats-label">{{language['total_alarms']}}</span>
+                                    <div class="d-flex align-content-around flex-wrap">
+                                        <span class="stats-value">{{totalAlarms ? totalAlarms : 0}} </span>
+                                    </div>
+                                </div>
+                                <div class="item" id="current-issues-critical-alarms">
+                                    <span class="stats-label">{{language['Critical Alarms']}}</span>
+                                    <div class="d-flex align-content-around flex-wrap">
+                                        <span class="stats-value">{{criticalAlarms ? criticalAlarms : 0}} </span>
+                                    </div>
+                                </div>
+                                <div class="item" id="current-issues-major-alarms">
+                                    <span class="stats-label">{{language['Major Alarms']}}</span>
+                                    <div class="d-flex align-content-around flex-wrap">
+                                        <span class="stats-value"> {{majorAlarms ? majorAlarms : 0}} </span>
+                                    </div>
+                                </div>
+                                <div class="item" id="current-issues-minor-alarms">
+                                    <span class="stats-label">{{language['Minor Alarms']}}</span>
+                                    <div class="d-flex align-content-around flex-wrap">
+                                        <span class="stats-value">{{minorAlarms ? minorAlarms : 0}} </span>
+                                    </div>
+                                </div>
+
+                                <div class="item" id="current-issues-warning-alarms">
+                                    <span class="stats-label">{{language['Warning Alarms']}}</span>
+                                    <div class="d-flex align-content-around flex-wrap">
+                                        <span class="stats-value">{{countData && countData['warning'] ?
+                                            countData['warning']: 0
+                                            }}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="item" id="current-issues-info-alarms">
+                                    <span class="stats-label">{{language['Info Alarms']}}</span>
+                                    <div class="d-flex align-content-around flex-wrap">
+                                        <span class="stats-value">{{ countData && countData['info'] ? countData['info']:
+                                            0 }}</span>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="test-container" *ngIf="isEventsPage">
+                                <div class="item" id="historical-reports-Total-Events">
+                                    <span class="stats-label">{{language['total_events']}}</span>
+                                    <div class="d-flex align-content-around flex-wrap">
+                                        <span class="stats-value">{{ totalEvents ? totalEvents : 0 }}</span>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <router-outlet></router-outlet>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section *ngIf="fullContainerView" [hidden]="!hasPageAccess">
+    <div class="container mp-0 p-0">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="test-container" *ngIf="isEventsPage">
+                    <div class="item" id="historical-reports-Total-Events">
+                        <span class="stats-label">{{language['total_events']}}</span>
+                        <div class="d-flex align-content-around flex-wrap">
+                            <span class="stats-value">{{ totalEvents ? totalEvents : 0 }}</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <router-outlet></router-outlet>
+</section>

@@ -1,0 +1,253 @@
+<div class="alert alert-success alert-dismissible fade show" role="alert" *ngIf="showSuccess">
+  <div class="d-inline">
+    <span class="mr-2"><img src="../../../assets/img/ic_success-circle-outline.svg" /></span>
+    <strong class="mr-2">{{ createdWhiteLabel }}</strong>
+  </div>
+  <div class="d-inline">
+    <button type="button" class="close" (click)="hideSuccess()"><span></span></button>
+  </div>
+</div>
+
+<div class="alert alert-warning alert-dismissible fade show" role="alert" *ngIf="showError">
+  <strong>{{language.Error}}!</strong> {{ errorMsg }}.
+  <button type="button" class="close" (click)="hideError();">
+    <span aria-hidden="true"></span>
+  </button>
+</div>
+
+<div class="row">
+  <div class="col-md-12 text-right border-bottom pb-2 mb-2">
+    <a *ngIf="showUpdateBtn&&editvisibility"><button class="btn-default primary px-3" id="editbutton"
+        (click)="update()">
+        {{ language.campaign_Edit }}
+      </button></a>
+  </div>
+</div>
+
+
+
+
+<div class="whitelabel-sec">
+  <div *ngIf="addWhitelabel && showCreateBtn" class="label-link">
+    <a (click)="createWhiteLabel()" id="add-new-commandiq-label">
+      {{ language.Add_New_Whitelabel }}
+    </a>
+  </div>
+  <div *ngIf="addWhitelabel" class="nodata">
+    {{ language.No_Data_Found }} {{ SPID }}
+  </div>
+  <div class="row" *ngIf="showUpdateBtn&&editvisibility">
+    <div class="col-md-4">
+      <div class=" mb-2">
+        <label class="w-100">
+          {{ language.Service_Provider }}
+        </label>
+        {{ spidfromservice }}
+      </div>
+      <div class=" mb-2">
+        <label class="w-100">
+          {{ language.App_Name }}
+        </label>
+        {{ appname }}
+      </div>
+      <!-- <div class=" mb-2">
+        <label class="w-100">Primary Color</label>
+        {{ language.Primary }} :
+        <span class="box mx-2" [ngStyle]="{
+            'background-color': data.body.theme.primaryColor
+              ? data.body.theme.primaryColor
+              : null
+          }">
+        </span>{{ data.body.theme.primaryColor }}
+      </div>-->
+      <div class="form-input-field ccl-form">
+        <label class="label-control">{{ language.Primary_Color }}
+        </label>
+
+        <div class="input-field">
+
+          <input class="form-control" name="primaryColor" [style.background]="primarycolor" [(ngModel)]="primarycolor"
+            id="primaryColor" style="color: #faf9f5;" readonly />
+
+        </div>
+      </div>
+    </div>
+    <!--------------primary color-------------------------->
+
+
+    <!--------------logo-------------------------->
+    <div class="col-md-3">{{ language.Logo_Icon }}
+
+      <div class="form-input-field">
+
+        <div class="input-field">
+          <div id="logo-image-view-div" style="display: inline-block">
+            <img id="logo-image-view" style="max-width:250px;     background-color: #EBEAEF;
+        margin-bottom: 10px;" height="100px" width="200px" src="{{logo  + '?timestamp=' + timestamp}}" />
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+    <!--------------whitelogo-------------------------->
+
+    <div class="col-md-3">{{ language.White_Logo_Icon }}
+      <div class="form-input-field">
+
+        <div class="input-field">
+          <div id="white-logo-image-view-div" style="display: inline-block">
+            <img class="white-logo-image-box" id="white-logo-image-view" style="    background-color: #EBEAEF;
+        margin-bottom: 10px;  max-width:250px;" height="100px" width="200px"
+              src="{{appicon  + '?timestamp=' + timestamp}}" />
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <!---------------------------------------->
+
+
+
+    <!--<div class="col-md-4">
+      <div class="">
+        <label class="w-100">{{ language.Logo }}:</label>
+        <a class="link" href="{{ data.body.theme.logo }}">{{ language.Preview }}
+        </a>
+
+
+    </div>
+    <div class="col-md-4">
+      <div class="">
+        <label class="w-100"> {{ language.White_Logo }}:</label>
+        <a class="link" href="{{ data.body.appIcon }}">{{ language.Preview }}
+        </a>
+      </div>
+    </div>-->
+
+  </div>
+  <table *ngIf="!addWhitelabel" class="table table-bordered app-info" style="display: none;">
+    <thead>
+      <tr>
+        <th>{{ language.APP_Info }}</th>
+        <th>SPID</th>
+        <th>{{ language.Color }}</th>
+        <!-- <th>{{ language.Icon_Path }}</th> -->
+        <!-- <th>EULA</th>
+        <th>{{ language.About }}</th> -->
+        <th>{{ language.Action }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of whitelabellist">
+        <td>
+          <ul class="app-detail">
+            <!-- <li>{{ data.body.appName }}</li> -->
+            <li>{{ data.body.sellerName }}</li>
+            <li>
+              {{ language.Logo }}:
+              <a class="link" href="{{ data.body.theme.logo }}">{{ language.Preview }}
+              </a>
+            </li>
+            <li>
+              {{ language.White_Logo }}:
+              <a class="link" href="{{ data.body.appIcon }}">{{ language.Preview }}
+              </a>
+            </li>
+            <!-- <li> APP : GoPioneer SmartWiFi</li>
+            <li>Seller: GoPioneer Communications </li>
+            <li>Icon:<a class="link"> Preview </a></li> -->
+          </ul>
+        </td>
+        <!-- <td>
+          Pioneer_app
+        </td> -->
+        <td>{{ data.body.spId }}</td>
+        <td>
+          <ul class="color-detail">
+            <li>
+              {{ language.Primary }} :
+              <span class="box mx-2" [ngStyle]="{
+                  'background-color': data.body.theme.primaryColor
+                    ? data.body.theme.primaryColor
+                    : null
+                }">
+              </span>{{ data.body.theme.primaryColor }}
+            </li>
+            <!-- <li>
+              {{ language.Secondary }} :<span class="box" [ngStyle]="{
+                  'background-color': data.body.theme.secondaryColor
+                    ? data.body.theme.secondaryColor
+                    : null
+                }">
+              </span>{{ data.body.theme.secondaryColor }}
+            </li> -->
+            <!-- <li>{{data.body.theme.primaryColor}}</li>
+            <li>{{data.body.theme.secondaryColor}}</li> -->
+          </ul>
+        </td>
+        <!-- <td class="w-10">
+          <ul class="color-detail">
+            <a class="link" href="{{ data.body.theme.logo }}">
+              {{ language.Link }}
+            </a>
+          </ul>
+        </td> -->
+        <!-- <td>
+          <ul class="color-detail">
+            <li>
+              {{ language.Android_English }} :
+              <a class="link" href="{{ data.body.eulaAndroidEnglish }}">
+                {{ language.Link }}
+              </a>
+            </li>
+            <li>
+              {{ language.Android_French }} :
+              <a class="link" href="{{ data.body.eulaAndroidFrench }}">
+                {{ language.Link }}
+              </a>
+            </li>
+            <li>
+              {{ language.IOS_English }} :
+              <a class="link" href="{{ data.body.eulaIOSEnglish }}">
+                {{ language.Link }}
+              </a>
+            </li>
+            <li>
+              {{ language.IOS_French }} :
+              <a class="link" href="{{ data.body.eulaIOSFrench }}">
+                {{ language.Link }}
+              </a>
+            </li>
+          </ul>
+        </td>
+        <td>
+          <ul class="color-detail">
+            <li>
+              {{ language.English }} :
+              <a class="link" href="{{ data.body.aboutEnglish }}">
+                {{ language.Link }}
+              </a>
+            </li>
+            <li>
+              {{ language.French }} :
+              <a class="link" href="{{ data.body.aboutFrench }}">
+                {{ language.Link }}
+              </a>
+            </li>
+          </ul>
+        </td> -->
+        <td>
+          <a *ngIf="showUpdateBtn"><button class="btn-default primary px-3" id="updatebutton" (click)="update()">
+              {{ language.Update }}
+            </button></a>
+        </td>
+      </tr>
+      <tr *ngIf="hideAdd === true">
+        <td colspan="7">{{ language.No_White_label }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

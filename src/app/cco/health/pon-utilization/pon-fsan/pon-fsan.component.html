@@ -1,0 +1,56 @@
+<ng-template #showTopONTs let-modal class="">
+    <section class="modal-content" *ngIf="topONTs">
+      <div class="modal-header mb-3">
+        <div>
+          <div class="d-flex justify-content-between mb-3">
+            <button class="btn-default btn-dft mr-4" (click)="GoBack()">
+              <img src="assets/img/ic_chevronleft_grey.svg" alt=""> {{language['back']}}</button>
+              <button type="button" class="close" aria-label="Close" (click)="close()">
+                <span aria-hidden="true"></span>
+              </button>
+          </div>
+            <h2 class="modal-title">{{interface}} ({{name}})</h2>
+        </div>
+      </div>
+      <div class="modal-body">
+        <h3 class="user-name">{{language['Top 5 ONTs']}}</h3>
+        <p class="text-muted f-size-16px mb-2">{{language['Ranking based on upstream usage']}}</p>
+        <table class="w-100 border-bottom-none"  #table2 datatable [dtOptions]="dtOptionsONT" [dtTrigger]="dtTrigger1" >
+          <thead class="">
+            <tr>
+              <th class="after-dnone">{{language['ONT_ID']}}</th>
+              <th>{{language['Rate']}} (bps)</th>
+              <th>{{language['Total Octets']}}</th>
+              <th>{{language['Total Packets']}}</th>
+            </tr>
+            </thead>
+            <div class="loader" *ngIf="loading">
+              <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary" role="">
+                  <span class="sr-only">{{language.Loading}}</span>
+                </div>
+              </div>
+            </div>
+          <tbody>
+            <tr *ngIf="error">
+            <td colspan="4">
+              <div class="row">
+                <div class="w-100 alert alert-danger fade show my-3" >
+                  <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+                  <button type="button" class="close" (click)="error = false"><span></span></button>
+                  <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+                </div>
+              </div>
+            </td>
+            </tr>
+            <tr *ngFor="let data of TopONt; let i = index">
+              <td>{{data?.ontId}}</td>
+              <td>{{AddTotalRate(data?.ontUpstreamUsage?.rate,data?.ontDownstreamUsage?.rate)}} </td>
+              <td> {{data?.ontUpstreamUsage?.byteCount + data?.ontDownstreamUsage?.byteCount}}</td>
+              <td>{{data?.ontUpstreamUsage?.packetCount + data?.ontDownstreamUsage?.packetCount}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>  
+  </ng-template>

@@ -1,0 +1,20 @@
+<div class="page-wrapper" [hidden]="!tosAgreed">
+  <div class="maximus">
+    <app-support-header></app-support-header>
+  </div>
+
+  <div class="alert alert-warning" role="alert" [hidden]="showSupport">
+    {{
+    language[
+    "Access denied due to RBAC. Please consult your Organization Administrator for access."
+    ]
+    }}
+  </div>
+
+  <div class="maximus" [ngClass]="{ dashboardFrame: router.url == '/support/dashboard' }" [hidden]="!showSupport">
+    <p-toast *ngIf="false"></p-toast>
+
+    <router-outlet></router-outlet>
+  </div>
+</div>
+<app-support-footer [hidden]="!tosAgreed"></app-support-footer>

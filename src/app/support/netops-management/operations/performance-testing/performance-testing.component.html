@@ -1,0 +1,416 @@
+<div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess">
+  {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} </div>
+<div class="w-100 alert alert-danger fade show my-3" *ngIf="error && hasScopeAccess">
+  <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+  <button type="button" class="close" (click)="closeAlert()">
+    <span></span>
+  </button>
+  <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+</div>
+
+<div class="w-100 alert alert-success fade show my-3" *ngIf="success && hasScopeAccess">
+  <button type="button" class="close" (click)="closeAlert()">
+    <span></span>
+  </button>
+  <div [innerHtml]="successInfo"></div>
+</div>
+
+<div id="performance-testing" class="tab-pane" *ngIf="!addPerformance && !viewPerformanceTest && hasScopeAccess">
+  <div class="py-3 warning-msg dis-warning-msg" *ngIf="deleteId">
+    <span class="error-img"><img src="./assets/img/warning-icon.svg" /></span>
+    <span>
+      {{ language.Delete_Confimation }} "{{ testName }}" {{ language.test }}?
+    </span>
+    <div class="btn-con-sec float-right">
+      <button class="btn-default primary mr-2" id="deletePFBtn" [disabled]="btnDisabled" (click)="doDeleteTest()">
+        {{ language.Confirm }}
+      </button>
+      <button class="btn-default btn-dft py-1" (click)="cancelDelete()">
+        {{ language.Cancel }}
+      </button>
+    </div>
+  </div>
+  <div class="d-block my-3 d-sm-none ccl-Secondary-title mb-2 col-md-12 border-bottom">Performance Testing</div>
+  <div class="w-100 position-relative">
+    <div class="loader pt-5 align-items-start" *ngIf="loading">
+      <div class="d-flex align-items-start justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="flex-start">
+      <!-- <h4 class="mb-0"> {{language.Performance_Testing}} </h4> -->
+      <button *ngIf="hasWriteAccess" type="button" id="addNew-test" class="btn-default primary px-3 mt-3"
+        (click)="addForm()">
+        {{ language.New_Test }}
+      </button>
+    </div>
+
+    <div class="pb-2 mt-3">
+      <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"
+        class="performance-testing-table-info table row-border hover dataTable table-alter mb-5"
+        id="workflow-table_last">
+        <thead>
+          <tr>
+            <th class="performance-testing-name">{{ language.Name }}</th>
+            <th class="performance-testing-no-of-devices">
+              {{ language.No_of_devices }}
+            </th>
+            <th class="performance-testing-current-state">
+              {{ language.Current_State }}
+            </th>
+            <th class="performance-testing-start-date">
+              {{ language.Start_Date }}
+            </th>
+            <th class="performance-testing-number-of-days">
+              {{ language.No_Of_days }}
+            </th>
+            <th class="performance-testing-state">{{ language.Action }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of performanceDataGrid">
+            <td (click)="gotoViewTest(item._id)" class="pointer">
+              {{ item.name ? item.name : "" }}
+            </td>
+            <td (click)="gotoViewTest(item._id)" class="pointer">
+              {{ item.devices.length ? item.devices.length : "" }}
+            </td>
+            <td (click)="gotoViewTest(item._id)" class="pointer">
+              {{ item.status ? language[item.status] || item.status : "" }}
+            </td>
+            <td (click)="gotoViewTest(item._id)" class="pointer">
+              {{ item.startDate ? item.startDate : "" }}
+            </td>
+            <td (click)="gotoViewTest(item._id)" class="pointer">
+              {{ item.numberOfDays ? item.numberOfDays : "" }}
+            </td>
+            <td>
+              <div class="doc-dele-icon" *ngIf="hasWriteAccess">
+                <a (click)="cloneTest(item)" class="cursor-pointer" title="{{ language.Clone }}">
+                  <i class="fa fa-files-o mr-2" aria-hidden="true"></i>
+                </a>
+                <a (click)="deleteTest(item)" class="cursor-pointer" title="{{ language.Delete }}">
+                  <i class="fa fa-trash-o" aria-hidden="true"></i>
+                </a>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngIf="!performanceDataGrid.length">
+            <td class="text-center" colspan="6">{{ language["No data available in table"] }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div>
+  <div class="performance-wizard" id="performanceWizard"
+    *ngIf="addPerformance && !viewPerformanceTest && hasScopeAccess">
+    <!-- <div class="row">
+    <div class="col-md-12">
+      <h4 class="net-ops-secondary-title mb-0" id="addDevice">
+        {{ language.Wizard }}
+      </h4>
+    </div>
+  </div> -->
+
+    <section class="stepper-main mt-4 mb-4">
+      <!--  <div class="stepper col-12 pl-0 pr-0">
+      <div class="step step--1 max-w-22" (click)="setActiveTab('TestInstance')" id="stepper-TestInstance"
+        [ngClass]="{ 'step-active': activeTab === 'TestInstance' }">
+        {{ language.Test_Instance }}
+      </div>
+      <div class="step step--2 max-w-22" (click)="setActiveTab('Devices')" id="stepper-Devices"
+        [ngClass]="{ 'step-active': activeTab === 'Devices' }">
+        {{ language.List_Devices }}
+      </div>
+      <div class="step step--3 max-w-22" (click)="setActiveTab('TestServerDetails')" id="stepper-TestServerDetails"
+        [ngClass]="{ 'step-active': activeTab === 'TestServerDetails' }">
+        {{ language.Test_Server_Details }}
+      </div>
+      <div class="step step--4 max-w-22" (click)="setActiveTab('TestSchedule')" id="stepper-TestSchedule"
+        [ngClass]="{ 'step-active': activeTab === 'TestSchedule' }">
+        {{ language.Test_Schedule }}
+      </div>
+      <div class="step step--5 max-w-22" (click)="setActiveTab('Review')" id="stepper-Review"
+        [ngClass]="{ 'step-active': activeTab === 'Review' }">
+        {{ language.Review }}
+      </div>
+    </div> -->
+      <!--New Stepper start -->
+      <!--
+    step-active = step-current
+    step-success = step-done
+    -->
+
+      <ul class="stepper-ui">
+        <li><button title="{{ language.Test_Instance }}" class="step" (click)="setActiveTab('TestInstance')"
+            id="stepper-TestInstance" [ngClass]="{ 'step-current': activeTab === 'TestInstance' }">
+            <span>{{ language.Test_Instance }}</span></button></li>
+        <li><button title="{{ language.List_Devices }}" class="step" (click)="setActiveTab('Devices')"
+            id="stepper-Devices" [ngClass]="{ 'step-current': activeTab === 'Devices' }">
+            <span>{{ language.List_Devices }}</span></button></li>
+        <li><button title="{{ language.Test_Server_Details }}" class="step" (click)="setActiveTab('TestServerDetails')"
+            id="stepper-TestServerDetails" [ngClass]="{ 'step-current': activeTab === 'TestServerDetails' }">
+            <span>{{ language.Test_Server_Details }}</span></button></li>
+        <li><button title="{{ language.Test_Schedule }}" class="step" (click)="setActiveTab('TestSchedule')"
+            id="stepper-TestSchedule" [ngClass]="{ 'step-current': activeTab === 'TestSchedule' }">
+            <span>{{ language.Test_Schedule }}</span></button></li>
+        <li><button title="{{ language.Review }}" class="step" (click)="setActiveTab('Review')" id="stepper-Review"
+            [ngClass]="{ 'step-current': activeTab === 'Review' }">
+            <span> {{ language.Review }}</span></button></li>
+      </ul>
+
+      <!--New Stepper End -->
+    </section>
+    <section>
+      <app-instance-wizard *ngIf="activeTab === 'TestInstance'" [inputData]="inputData"
+        (outputData)="getStartData($event)" (activeTab)="getCurrentTab($event)"></app-instance-wizard>
+      <app-devices-wizard *ngIf="activeTab === 'Devices'" [inputData]="inputData" (outputData)="getDeviceData($event)"
+        (activeTab)="getCurrentTab($event)"></app-devices-wizard>
+      <app-server-details-wizard *ngIf="activeTab === 'TestServerDetails'" [inputData]="inputData"
+        (outputData)="getServerData($event)" (activeTab)="getCurrentTab($event)"></app-server-details-wizard>
+      <app-schedule-wizard *ngIf="activeTab === 'TestSchedule'" [inputData]="inputData"
+        (outputData)="getScheduleData($event)" (activeTab)="getCurrentTab($event)"></app-schedule-wizard>
+      <app-review-wizard *ngIf="activeTab === 'Review'" [inputData]="inputData" (outputData)="getReviewData($event)"
+        (activeTab)="getCurrentTab($event)">
+      </app-review-wizard>
+    </section>
+  </div>
+
+  <div class="revie-div" *ngIf="viewPerformanceTest && hasScopeAccess">
+    <div class="w-100 position-relative">
+      <div class="loader pt-5 align-items-start" *ngIf="loading">
+        <div class="d-flex align-items-start justify-content-center">
+          <div class="spinner-border text-primary">
+            <span class="sr-only">{{ language.Loading }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <a class="flex-end back-to pointer mb-2" (click)="
+      sso.redirectByUrl([
+        'support/netops-management/operations/performance-testing',
+        'cco/operations/cco-system-operations/performance-testing', '',
+        '/cco/operations/configuration/performance-testing'
+      ])
+    ">
+      <span id="netops-back-to-perf-test-btn ml1"><i class="fa fa-angle-left"></i>
+        {{ language.Back_Performance_Test }}</span>
+    </a>
+
+    <div class="review-sec">
+      <div class="view-performace-test" id="netops-review-perf-test-table-container">
+        <h3 class="f-size-18 f-w-600">{{ language.Performance_Testing }}</h3>
+        <div class="device-div mt-3">
+          <table class="table dataTable row-border hover table-alter">
+            <thead>
+              <tr>
+                <th>{{ language.Name }}</th>
+                <th>{{ language.description }}</th>
+                <th>{{ language.Current_State }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{ inputData.name }}</td>
+                <td>{{ inputData.description }}</td>
+                <td>{{ language[inputData.status] || inputData.status }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="device-div">
+          <h3 class="review-title">{{ language.List_Devices }}</h3>
+          <table class="table row-border dataTable hover table-alter w-100">
+            <thead>
+              <tr>
+                <th class="pl-2">{{ language.Systems}}</th>
+              </tr>
+            </thead>
+            <tbody *ngIf="inputData.devices && inputData.devices.length">
+              <tr *ngFor="let item of inputData.devices">
+                <td>{{ item }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="device-div performance-review-table overflow-auto">
+          <h3 class="review-title">{{ language.Test_Server_Details }}</h3>
+          <table class="table row-border dataTable hover table-alter">
+            <thead>
+              <tr>
+                <th *ngIf="inputData.primaryOoklaServerHostname">
+                  {{ language.Primary_ser_city }}
+                </th>
+                <th *ngIf="inputData.primaryOoklaServerHostname">
+                  {{ language.Primary_ser_host }}
+                </th>
+                <th *ngIf="inputData.primaryOoklaServerHostname">
+                  {{ language.Sec_ser_city }}
+                </th>
+                <th *ngIf="inputData.primaryOoklaServerHostname">
+                  {{ language.Sec_ser_host }}
+                </th>
+
+                <th *ngIf="inputData.downloadUrl">{{ language.downURL }}</th>
+                <th *ngIf="inputData.downloadUrl">{{ language.uploadURL }}</th>
+                <th *ngIf="inputData.downloadUrl">
+                  {{ language.Upload_File_Size_bytes }}
+                </th>
+
+                <th *ngIf="
+                  inputData.serviceTierUploadSpeed &&
+                  inputData.serviceTierDownloadSpeed
+                ">
+                  {{ language.Download }}
+                  {{ language.Speed }}
+                  {{ language.Tier }}
+                </th>
+                <th *ngIf="
+                  inputData.serviceTierUploadSpeed &&
+                  inputData.serviceTierDownloadSpeed
+                ">
+                  {{ language.Upload }}
+                  {{ language.Speed }}
+                  {{ language.Tier }}
+                </th>
+                <th *ngIf="
+                  inputData.serviceTierUploadSpeed &&
+                  inputData.serviceTierDownloadSpeed
+                ">
+                  {{ language.Speed }}
+                  {{ language.Threshold }}
+                </th>
+                <th *ngIf="
+                  inputData.serviceTierUploadSpeed &&
+                  inputData.serviceTierDownloadSpeed
+                ">
+                  {{ language.Latency }}
+                  {{ language.Threshold }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td *ngIf="inputData.primaryOoklaServerHostname">
+                  {{ inputData.primaryOoklaServerCityState }}
+                </td>
+                <td *ngIf="inputData.primaryOoklaServerHostname">
+                  {{ inputData.primaryOoklaServerHostname }}
+                </td>
+                <td *ngIf="inputData.primaryOoklaServerHostname">
+                  {{ inputData.secondaryOoklaServerCityState }}
+                </td>
+                <td *ngIf="inputData.primaryOoklaServerHostname">
+                  {{ inputData.secondaryOoklaServerHostname }}
+                </td>
+
+                <td *ngIf="inputData.downloadUrl">{{ inputData.downloadUrl }}</td>
+                <td *ngIf="inputData.downloadUrl">{{ inputData.uploadUrl }}</td>
+                <td *ngIf="inputData.downloadUrl">
+                  {{ inputData.uploadFileSize }}
+                </td>
+
+                <td *ngIf="
+                  inputData.serviceTierUploadSpeed &&
+                  inputData.serviceTierDownloadSpeed
+                ">
+                  {{
+                  inputData["serviceTierDownloadSpeed"] >= 1000 &&
+                  inputData["serviceTierUploadSpeed"] >= 1000
+                  ? inputData.serviceTierDownloadSpeed / 1000 + " Mbps"
+                  : inputData.serviceTierDownloadSpeed + " Kbps"
+                  }}
+                </td>
+                <td *ngIf="
+                  inputData.serviceTierUploadSpeed &&
+                  inputData.serviceTierDownloadSpeed
+                ">
+                  {{
+                  inputData["serviceTierDownloadSpeed"] >= 1000 &&
+                  inputData["serviceTierUploadSpeed"] >= 1000
+                  ? inputData.serviceTierUploadSpeed / 1000 + " Mbps"
+                  : inputData.serviceTierUploadSpeed + " Kbps"
+                  }}
+                </td>
+                <td *ngIf="
+                  inputData.serviceTierUploadSpeed &&
+                  inputData.serviceTierDownloadSpeed
+                ">
+                  {{ inputData.speedThreshold }} %
+                </td>
+                <td *ngIf="
+                  inputData.serviceTierUploadSpeed &&
+                  inputData.serviceTierDownloadSpeed
+                ">
+                  {{ inputData.latencyThreshold }} ms
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="device-div">
+          <h3 class="review-title">{{ language["Test Schedule"] }}</h3>
+          <table class="table row-border dataTable hover table-alter">
+            <thead>
+              <tr>
+                <th>{{ language.Timezone }}</th>
+                <th>{{ language.Start_Date }}</th>
+                <th>{{ language.No_Of_days }}</th>
+                <!-- <th>{{language.No_OStart_Hrf_days}}</th> -->
+                <th>{{ language.start_hour }}</th>
+                <th>{{ language.No_Of_hr }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{ inputData.timezone }}</td>
+                <td>{{ getDate(inputData.startDate) | date: "MM/dd/yyyy" }}</td>
+                <td>{{ inputData.numberOfDays }}</td>
+                <td>{{ inputData.startHour }}:00</td>
+                <td>{{ inputData.numberOfHours }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div *ngIf="inputData.primaryOoklaServerHostname" class="d-inline-flex w-100 p-0 flex-start mt-3 mb-2">
+          <div class="power-sec">
+            <a class="pointer" href="https://www.speedtest.net" target="_blank">
+              <img src="assets/img/speed_test_powered_icon.png" /></a>
+            <!-- <span class="x-small"><a href="https://www.speedtest.net/privacy" target="_blank">OOKLA Privacy
+                            Policy</a></span> -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="d-inline-flex w-100 p-0 flex-end mt-4 mb-5" *ngIf="hasWriteAccess">
+      <button type="button" class="btn-default primary mr-3" [disabled]="
+        inputData['status'] === 'Completed' ||
+        btnDisabled ||
+        inputData['status'] == 'In Progress'
+      " (click)="editTest()" id="netops-perf-test-edit-btn">
+        {{ language.Edit }}
+      </button>
+      <button type="button" class="btn-default primary mr-3" [disabled]="btnDisabled" (click)="downloadReport()"
+        id="netops-perf-test-download-btn" *ngIf="downloadAccess">
+        {{ language.Download_Report }}
+      </button>
+      <button type="button" class="btn-default primary mr-3 perfActionClass" [disabled]="btnDisabled"
+        *ngIf="!inputData['suspended'] && inputData['status'] !== 'Completed'" (click)="suspend(inputData['_id'])"
+        id="netops-perf-test-suspend-btn">
+        {{ language.Suspend }}
+      </button>
+
+      <button type="button" class="btn-default primary mr-3 perfActionClass" [disabled]="btnDisabled"
+        *ngIf="inputData['suspended'] && inputData['status'] !== 'Completed'" (click)="resume(inputData['_id'])"
+        id="netops-perf-test-resume-btn">
+        {{ language.Resume }}
+      </button>
+    </div>
+  </div>
+</div>

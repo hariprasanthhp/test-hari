@@ -1,0 +1,273 @@
+<div class="subscriber-details"> 
+    <!-- [ngClass]="pageVisible ? 'd-block' : 'd-none'" -->
+    <div role="alert" class="alert alert-warning alert-dismissible fade show" *ngIf="tsError"><span class="success-img"><img src="./assets/img/error-icon.svg"></span><div class="d-inline-flex w-75 text-left"> {{errorMsg}}</div><button type="button" data-dismiss="alert" aria-label="Close" class="close"><span aria-hidden="true"></span></button></div>
+    <div role="alert" class="alert alert-warning alert-dismissible fade show" *ngIf="pauseError"><span class="success-img"><img src="./assets/img/error-icon.svg"></span><div class="d-inline-flex w-75 text-left"> {{language['internalServerError']}}</div><button type="button" data-dismiss="alert" aria-label="Close" class="close"><span aria-hidden="true"></span></button></div>
+    <div>
+        <div class="subs-title">
+            <div class="st-header flex">
+                <div class="sth-left">
+                    <h2 class="greyaa content-wrap" *ngIf="campaignData">
+                        <span title="{{campaignData.name}}">{{campaignData.name}}</span>
+                        <div title="{{language[campaignStatusInfo]}}" class="i-info success">
+                            {{language[campaignStatusInfo]}}
+                        </div>
+                    </h2>
+                    <h2 class="greyaa" *ngIf="!campaignData && triggeredCampaign">{{language['New Triggered Campaign']}}</h2>
+                    <h2 class="greyaa" *ngIf="!campaignData && !triggeredCampaign">{{language['New_Campaign']}}</h2>
+                </div>
+                <div class="sth-rht flex">
+                    <button *ngIf="!isValid && (!deploy_tab && !result_tab) && hasScope"
+                        class="btn-default btn-dft m-w100p" (click)="saveAnyTime()">{{language.Save_Campaign}}</button>
+                    <span *ngIf="result_tab" class="cursor-pointer primary " id="serviceDataRefresh"
+                        (click)="refreshClick()">
+                        <i class="fas fa-sync refreshicon"></i>
+                    </span>
+                    <!-- <button *ngIf="result_tab && csvSelected || result_tab && csvDownloadOnly"
+                        class="btn-default btn-dft" style="min-width:20px;" (click)="csvDownload()">
+                        {{language.CSV_Download}}</button> -->
+                    <button class="btn-no m-w17p" (click)="clearClose()">
+                        <img src="assets/img/ic_removeall.svg" width="15px"> </button>
+                </div>
+            </div>
+        </div>
+        <div class="new-campaign">
+            <button *ngIf="result_tab && csvSelected || result_tab && csvDownloadOnly" class="btn-link m-w20p"
+                (click)="csvDownload()">
+                {{language.CSV_Download}}</button>
+              
+            <div class="flex nc-nav-row">
+                <!-- <div class="flex nc-nav">
+                    <button class="btn-default" [ngClass]="{'active': define_tab,'step-over':define_complet}"
+                        (click)="randomClickTab('define')"> <span>1</span> {{language.Define}}</button>
+                    <button class="btn-default btn-dft" [ngClass]="{'active': channel_tab,'step-over':channel_complet}"
+                        (click)="defineTriggerApiLoader('channel')"> <span>2</span> {{language.Channel}}</button>
+                    <button class="btn-default btn-dft"
+                        [ngClass]="{'active deploy-padding': deploy_tab,'step-over':deploy_complet}"
+                        (click)=" channelTriggerApiLoader('deploy')">
+                        <span>3</span> {{language.Deploy}}&nbsp;&nbsp;
+                      
+                    </button>
+                    <button class="btn-default btn-dft" [ngClass]="{'active': result_tab}"
+                        (click)="deploy2ndTriggerApiLoader('result','results')">
+                        <span>4</span> {{language.Results}}</button>
+                </div> -->
+
+                <section class="stepper-main">
+                    <ul class="stepper-ui">
+                        <li> <button title="{{language.Define}}" class="step"
+                                [attr.disabled]="!result_tab ? null : true"
+                                [ngClass]="{'step-current': define_tab,'step-done':define_complet}"
+                                (click)="randomClickTab('define')"> <span>1</span> {{language.Define}}</button>
+                        </li>
+                        <li>
+                            <button title="{{language.Channel}}" class="step"
+                                [attr.disabled]="!result_tab && active? null : true"
+                                [ngClass]="{'step-current': channel_tab,'step-done':channel_complet}"
+                                (click)="defineTriggerApiLoader('channel')"> <span>2</span>
+                                {{language.Channel}}</button>
+                        </li>
+                        <li> <button title="{{language.Deploy}}" class="step"
+                                [attr.disabled]="!result_tab && active? null : true"
+                                [ngClass]="{'step-current deploy-padding': deploy_tab,'step-done':deploy_complet}"
+                                (click)=" channelTriggerApiLoader('deploy')">
+                                <span>3</span> {{language.Deploy}}&nbsp;&nbsp;
+
+                            </button>
+                        </li>
+                        <li> <button title="{{language.Results}}" class="step" [ngClass]="{'step-current': result_tab, 'cursorPoint' : result_tab}">
+                                <span>4</span> {{language.Results}}</button></li>
+
+                    </ul>
+                    <!--nav-->
+                    <div class="nc-nav-rht mr-2" *ngIf="result_tab && triggeredCampaign">
+                        <button class="btn-default btn-primary mr-2" 
+                        (click)="pauseCampaign(pauseCampaignModal)" *ngIf="campaignStatusInfo == 'Active'" >
+                        {{language['Pause Campaign']}}
+                        </button>
+                        <button class="btn-default btn-primary" 
+                        (click)="unPauseCampaign(unpauseCampaignModal)" *ngIf="campaignStatusInfo == 'Paused'">
+                        {{language['Unpause Campaign']}}
+                        </button>
+                    </div>
+                    
+                    <div class="nc-nav-rht" *ngIf="hasScope">
+                        <button *ngIf="!define_tab && !result_tab" class="btn-arrow btn-arr-prev btn-grey"
+                            (click)="previous(active_tab)">
+                            <img src="assets/img/ic_chevronleft_grey.svg">
+                            {{language.Previous}}
+                        </button>&nbsp;&nbsp;
+                        <button class="btn-arrow btn-arr-nxt primary" *ngIf="!isValid && (!deploy_tab && !result_tab)"
+                            (click)='next(active_tab)'>
+                            {{language.Next}}
+                            <img src="assets/img/ic_chevron-r-w.svg">
+                        </button>
+                        <button class="deploy-btn" *ngIf="deploy_tab && !result_tab" (mousedown)="deploy('deploy')">
+                            <!-- {{language.Deploy}} -->
+                            {{language.send_campign}}
+                        </button>
+
+                    </div>
+
+                </section>  
+
+            </div>
+            <!--nav top-->
+        </div>
+        <!--new campaign-->
+        <div class="alert alert-warning alert-dismissible fade show" role="alert" *ngIf="definePostError">
+            <span class="success-img"><img src="./assets/img/error-icon.svg" /></span>
+            <div class="d-inline-flex w-75 text-left"> {{definePostErrorMsg}}.</div>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true" (click)='errorReset()'></span>
+            </button>
+        </div>
+        <div>
+            <div [ngClass]="active_tab == 'define' ? 'd-block' : 'd-none'">
+                <app-marketing-campaigns-define [MarketingCampaignsDeployComponent]="MarketingCampaignsDeployComponent"
+                    (defineDataValidation)="defineDataValidation($event)"
+                    (selectedSegmentItem)="selectedSegmentItem($event)" (segmentClicked)="segmentClicked($event)">
+                </app-marketing-campaigns-define>
+            </div>
+            <div [ngClass]="active_tab == 'channel' ? 'd-block' : 'd-none'">
+                <app-marketing-campaigns-channel (csvSelectData)="csvSelectData($event)"
+                    (channelSelectData)="channelSelectData($event)" [campaignChannelsData]="campaignChannelsDataArray"
+                    [deployPreviousClicked]="deployPreviousClicked" [selectedSegmentItemData]="selectedSegmentItemData"
+                    [selectedSegmentedType]="selectedSegmentedType"
+                    (nextButtonValidation)="nextButtonValidation($event)" (campaignStatus)="campaignStatus($event)"
+                    (resetChannelData)="resetChannelData()" [isSegmentClicked]="isSegmentClicked"
+                    [resetChannelSelctedData]="resetChannelSelctedData" >
+                </app-marketing-campaigns-channel>
+            </div>
+            <div [ngClass]="active_tab == 'deploy' ? 'd-block' : 'd-none'">
+                <app-marketing-campaigns-deploy [stageOneComplete]='stageOneComplete' [csvSelected]="csvSelected"
+                    [mobileNotificationSelected]="mobileNotificationSelected" [mailChimpSelected]="mailChimpSelected"
+                    [faceBookSelected]="faceBookSelected" [hubspotSelected]="hubspotSelected"
+                    [constantSelected]="constantSelected" [selectedSegmentedType]="selectedSegmentedType"
+                    [deployCampaignClicked]="deployCampaignClicked" (deployValidation)="deployValidation($event)"
+                    [deployPreviousClicked]="deployPreviousClicked" (attributesSelectOrNot)="attributesStatus($event)" (customFieldSuccess)="customFieldSuccess($event)" (deployedToSelectedChannelsModal)="deployModalChannels($event)">
+                </app-marketing-campaigns-deploy>
+            </div>
+            <div [ngClass]="active_tab == 'result' ? 'd-block' : 'd-none'">
+                <app-marketing-campaigns-result (csvDownloadValue)="csvDownloadValue($event)"
+                    (campaignStatus)="campaignStatus($event)">
+                </app-marketing-campaigns-result>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- <div class="text-center" [ngClass]="!pageVisible ? 'd-block' : 'd-none'">
+        <div class="flex overview-row">
+            <div class="spinner-border text-primary loader">
+                <span class="sr-only">{{language.Loading}}</span>
+            </div>
+        </div>
+    </div> -->
+</div>
+
+<ng-template #sendCampaignModal let-modal class="col-md-7">
+
+    <div class="modal-body">
+        <form class="custom-form">
+            <div class="row">
+                <div class="col-md-12 body-content">
+                    <div class="pl-modal">
+                        <div class="de-info-icon">
+                            <img src="../../../assets/img/ic_info.svg" class="w-40p">
+                        </div>
+                        <div>
+                            <div class="text-left pt-2">
+                                <span class="modal-title f-w300-imp" id="addModal">{{language.send_campign}}</span>
+                            </div>
+                            <div class="text-left">
+                                <p *ngIf="followAction">{{language.follow_action}}</p>
+                                <p *ngIf="followActions">{{language.follow_actions}}</p>
+                            </div>
+                            <ul class="popup_list">
+                                <li *ngIf="mobileNotificationSelected">
+                                    {{language.send_mobile}}
+                                </li>
+                                <br *ngIf="mailChimpSelected || hubspotSelected || constantSelected ">
+                                <li
+                                    *ngIf="(mailChimpSelected || hubspotSelected || constantSelected) && !triggeredCampaign && !cmcType"
+                                    [innerHtml]="language.deployToChannelsInModal(deployedModalSelectedChannels, this.attributesStatusInfo? this.language.attributes : '')">
+                                </li>
+                                <li *ngIf="mailChimpSelected && cmcType">
+                                     {{language.send_mailchimp}}
+                                </li>
+                                <li *ngIf="mailChimpSelected && triggeredCampaign">
+                                    {{language.audiance_mailchimp_note}}
+                                </li>
+                                <br *ngIf="faceBookSelected">
+                                <li *ngIf="faceBookSelected">
+                                    <span *ngIf="cmcType">{{language.send_facebook}}</span>
+                                   <span *ngIf="!cmcType">{{language['Segment will be sent to Facebook. This action may take up to 60 minutes']}}</span> 
+                                </li>
+                                <br *ngIf="csvSelected">
+                                <li *ngIf="csvSelected">
+                                    <span *ngIf="cmcType"> {{language.send_download}}</span>
+                                    <span *ngIf="!cmcType"[innerHtml]="language.deployToCsvInModal(this.attributesStatusInfo? this.language.attributes : '')">{{language['Segment will be made available in CSV file download']}}</span>
+                                </li>
+                                <br *ngIf="hubspotSelected">
+                                    <li *ngIf="hubspotSelected && cmcType">
+                                        {{language.send_hubspot}}
+                                    </li>
+                                    <br *ngIf="constantSelected">
+                                    <li *ngIf="constantSelected && cmcType">
+                                        {{language.send_constant}}
+                                    </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="title_with_bar border-none"></div>
+            <div class="btn_cont btn-send-camp">
+                <button id="deployCampaign" type="button" class="btn-default primary f-size-16px"
+                    (click)="deployCampaign()">{{language.send_campign}}</button>
+                <button type="button" class="btn-default btn-dft ml-3" data-dismiss="modal" #closeModel
+                    (click)="closeModal()">{{language.Cancel}}</button>
+            </div>
+        </form>
+    </div>
+</ng-template>
+
+<ng-template #pauseCampaignModal let-modal>
+    <div class="modal-cust-space">
+        <div class="modal-header">
+            <button type="button" class="close" aria-label="Close"
+                (click)="modal.dismiss('Cross click')"><span></span></button>
+        </div>
+        <div class="modal-body">
+            <h1 class="cco-title mb-3"  id="campaign-pause-title">{{language['Pause Campaign']}}</h1>
+            <p class="ccl-form-labe">{{language['Pause_Campaign_Msg']}}</p>
+        </div>
+        <div class="modal-footer justify-content-start mt-4 p-0">
+            <button type="button" (click)="pauseUnPause('Paused')"class="btn-default primary mr-2 ml-0" id="campaign-pause-btn">
+                {{language['Pause Campaign']}}
+            </button>
+            <button type="button" class="btn-default btn-dft py-1 my-0" id="campaign-cancel-btn"
+            (click)="closeModal()">{{language['cancel']}}</button>
+        </div>
+    </div>
+</ng-template>
+<ng-template #unpauseCampaignModal let-modal>
+    <div class="modal-cust-space">
+        <div class="modal-header">
+            <button type="button" class="close" aria-label="Close"
+                (click)="modal.dismiss('Cross click')"><span></span></button>
+        </div>
+        <div class="modal-body">
+            <h1 class="cco-title mb-3" id="campaign-unpause-title">{{language['Unpause Campaign']}}</h1>
+            <p class="ccl-form-labe">{{language['Unpause_Campaign_Msg']}}</p>
+        </div>
+        <div class="modal-footer justify-content-start mt-4 p-0">
+            <button type="button" (click)="pauseUnPause('Active')" class="btn-default primary mr-2 ml-0" id="campaign-unpause-btn">
+                {{language['Unpause Campaign']}}
+            </button>
+            <button type="button" class="btn-default btn-dft py-1" (click)="closeModal()" id="campaign-unpause-cancel-btn">
+                {{language['cancel']}}
+            </button>
+        </div>
+    </div>
+</ng-template>

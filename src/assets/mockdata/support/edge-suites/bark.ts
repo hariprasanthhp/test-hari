@@ -1,0 +1,87 @@
+export const barkgetaccount = {
+    "protectIQ":{
+    "subscribed":true,
+    "enabled":true,
+    "agentConnected":true
+    },
+    "experienceIQ":{
+    "subscribed":true,
+    "enabled":true,
+    "agentConnected":true
+    },
+    "arloSmart":{
+    "email":"bryan.mckenney@gmail.com",
+    "userId":"aa92cbc3-e07f-40f9-bad1-7da783d317b1",
+    "2kCameras":1,
+    "plan":"PARTNER_REGULAR"
+    },
+    "myCommunityIQ":{
+    "subscriber":{
+    "enable":true,
+    "communities":[
+    {
+    "micrositeId":"250eb5bd-6810-4cb7-b514-ac8f9affe6c7"
+    }
+    ]
+    },
+    "passpoint":{
+    "enable":true,
+    "communities":[
+    {
+    "micrositeId":"250eb5bd-6810-4cb7-b514-ac8f9affe6c7"
+    }
+    ],
+    "network":{
+    "type":"Route"
+    },
+    "prioritizeTraffic":true,
+    "status":{
+    "result":"succeeded",
+    "activate":true,
+    "hotspotConfig":true,
+    "myCommIQ":true
+    }
+    },
+    "network":{
+    "type":"Route"
+    },
+    "prioritizeTraffic":true
+    },
+    "bark":{
+    "email":"bryan.mckenney@gmail.com",
+    "userId":"01f0cbbd-b9c3-434e-a0f3-eb0748bc2d1b",
+    "planCode":"bark_premium"
+    },
+    "smallBizIQ":{
+    "enable":false,
+    "status":{
+    "result":"succeeded",
+    "smallBizIQ":true
+    }
+    }
+    }
+
+export const barkgethealth = {
+    "healths":[
+    {
+    "health_name":"Bark",
+    "status":true,
+    "statusName":"Operational",
+    "desc":null,
+    "created":1655145286141,
+    "updated":1655145340803
+    }
+    ]
+    }
+
+export const barkgetaccountmock = {
+    "userId":"01f0cbbd-b9c3-434e-a0f3-eb0748bc2d1b",
+    "email":"bryan.mckenney@gmail.com",
+    "firstName":"Rivet",
+    "lastName":"Kit",
+    "orgId":"102",
+    "planCode":"bark_premium",
+    "planDesc":"Bark Premium",
+    "status":"not completed",
+    "created":1657135962102
+    }

@@ -1,0 +1,279 @@
+<div class="container">
+    <div class="row">
+        <div class="success-meg-info d-flex justify-content-between" *ngIf="connectionSuccess">
+            <div class="success-meg d-flex align-items-center">
+                <div class="success-meg-icon">
+                    <img class="mr-2" src="../../../../../assets/img/success-icon.svg" alt="">
+                </div>
+                <div class="success-meg-content">
+                    <p>{{ language['Successfully Connected to Hotspot'] }}</p>
+                    <span>{{ language.WAN_failover_setup_msg }}</span>
+                </div>
+                <div class="success-meg-close">
+                    <img class="ml-2" src="../../../../../assets/img/close-icon.svg" alt=""
+                        (click)="connectionSuccess = false">
+                </div>
+            </div>
+        </div>
+
+        <div class="error-meg-info d-flex justify-content-between" *ngIf="connectionFailed">
+            <div class="error-meg d-flex align-items-center">
+                <div class="error-meg-icon">
+                    <img class="mr-2" src="../../../../../assets/img/error-icon.svg" alt="">
+                </div>
+                <div class="error-meg-content">
+                    <p>{{ language['Hotspot Connection Failed'] }}</p>
+                    <span>
+                        {{ language['Make sure the information entered is correct and try to connect again']}}
+                    </span>
+                </div>
+                <div class="error-meg-close">
+                    <img class="ml-2" src="../../../../../assets/img/close-icon.svg" alt=""
+                        (click)="connectionFailed = false">
+                </div>
+            </div>
+        </div>
+
+        <div class="w-100 alert alert alert-danger fade show" *ngIf="errorMessage">
+            <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+            <button type="button" class="close" (click)="errorMessage = ''">
+                <span></span>
+            </button>
+            <div class="d-inline-flex" [innerHtml]="errorMessage"></div>
+        </div>
+    </div>
+
+    <div class="position-relative">
+        <div class="loader" *ngIf="loading">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{ language.Loading }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row my-3">
+            <div class="col-md-12">
+                <button id="runsitescanbakwan" class="btn-default primary px-3 mr-20px" data-toggle="modal"
+                    data-target="#site-scan-result-modal" (click)="runSiteScan()">
+                    {{ language['Run_Site_Scan'] }}
+                </button>
+            </div>
+        </div>
+
+        <form [formGroup]="deviceConfigurationForm">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="d-flex justify-content-between border-bottom mb-3">
+                        <div id="device-details" class="cco-secondary-title">
+                            {{ language['Device_Details'] }}
+                        </div>
+                    </div>
+                    <p>{{language['Run a site scan to select device for failover device configuration']}}</p>
+
+
+                    <div class="ccl-form form-group">
+                        <label for="hotspot-name"> {{ language['Hotspot Name'] }}</label>
+                        <input id="hotspot-name" class="form-control" formControlName="ssid" name="hotspotName"
+                            type="text" aria-describedby="hotspotName" autocomplete="off"
+                            (change)="onHotspotNameChanged()" (onBlur)="onHotspotNameChanged()">
+                    </div>
+
+                    <div class="ccl-form form-group password-container">
+                        <label for="password">{{ language['Password'] }}</label>
+                        <input id="password" name="password" formControlName="password" (keyup)="onPasswordChange()"
+                            [placeholder]="language['Password']" [type]="showPassPhrase ? 'text' : 'password'"
+                            autocomplete="new-password" minlength="8" maxlength="63">
+                        <span class="pointer mt-1" [ngClass]="showPassPhrase ? 'password_view' : 'password_hide'"
+                            (click)="togglePasswordVisibility()">
+                            <img *ngIf="!showPassPhrase" src="../../../../assets/img/ic_hide.svg" alt="icon here" />
+                            <img *ngIf="showPassPhrase" src="../../../../assets/img/ic_view_blue.svg" alt="icon here" />
+                        </span>
+                        <div class="errorMessage"
+                            *ngIf="deviceConfigurationForm.touched && deviceConfigurationForm.dirty && deviceConfigurationForm.get('password').errors?.required">
+                            {{language['Enter Password']}}
+                        </div>
+                        <div class="errorMessage"
+                            *ngIf="deviceConfigurationForm.touched && deviceConfigurationForm.dirty && deviceConfigurationForm.get('password').errors?.minlength">
+                            {{language['Password must have at least eight characters']}}
+                        </div>
+                    </div>
+
+                    <div class="row my-3">
+                        <div class="col-md-12">
+                            <button id="test-hotspot-button" class="btn-default primary px-3 mr-20px"
+                                (click)="submitHotspotDetails(false)" *ngIf="hotspotButtonVisibility"
+                                [disabled]="!deviceConfigurationForm.valid">
+                                {{ language['Test Hotspot'] }}
+                            </button>
+                            <button id="end-hotspot-button" class="btn-default primary px-3 mr-20px"
+                                *ngIf="!hotspotButtonVisibility" (click)="endHotspot()">
+                                {{ language['End Hotspot Test'] }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Applied traffic start -->
+                <div class="col-md-6" formGroupName="appliedTraffic">
+                    <div class="d-flex justify-content-between border-bottom mb-3">
+                        <div id="bark-account-details" class="cco-secondary-title">
+                            {{ language['Network Access'] }}
+                        </div>
+                    </div>
+
+                    <div class="">
+                        <label for="name" class="col-form-label">
+                            {{ language['Primary Network'] }}
+                        </label>
+                        <div ng-reflect-ng-class="toggle-swtbtn checkbox switche"
+                            class="toggle-swtbtn checkbox switcher switch-disabled  mr-2">
+                            <label for="owner"> <input type="checkbox" name="owner" id="owner" formControlName="owner"
+                                    ng-reflect-model="true" ng-reflect-is-disabled="false"
+                                    class="ng-untouched ng-pristine ng-valid ng-dirty" disabled>
+                                <span class="mr-2"><small></small></span>
+                                {{ language['Enabled'] }}
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="">
+                        <label for="name" class="col-form-label">
+                            {{ language['Point of Sale Network'] }}
+                        </label>
+                        <div ng-reflect-ng-class="toggle-swtbtn checkbox switche"
+                            class="toggle-swtbtn checkbox switcher mr-2 switch-disabled">
+                            <label for="pointofsale">
+                                <input type="checkbox" name="pointofsale" id="pointofsale" formControlName="pos"
+                                    ng-reflect-model="true" ng-reflect-is-disabled="false"
+                                    class="ng-untouched ng-pristine ng-valid ng-dirty" disabled>
+                                <span class="mr-2"><small></small></span>
+                                {{ language['Enabled'] }}
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="">
+                        <label for="name" class="col-form-label">
+                            {{ language['Staff Network'] }}
+                        </label>
+                        <div ng-reflect-ng-class="toggle-swtbtn checkbox switche"
+                            class="toggle-swtbtn checkbox switcher mr-2">
+                            <label for="staff">
+                                <input type="checkbox" name="staff" id="staff" formControlName="staff"
+                                    ng-reflect-model="true" ng-reflect-is-disabled="false"
+                                    class="ng-untouched ng-pristine ng-valid ng-dirty"
+                                    (change)="submitHotspotDetails(true)">
+                                <span class="mr-2"><small></small></span>
+                                <span>
+                                    {{ staff ? language['Enabled'] : language['Disabled'] }}
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="">
+                        <label for="name" class="col-form-label">
+                            {{ language['Customer Portal'] }}
+                        </label>
+                        <div ng-reflect-ng-class="toggle-swtbtn checkbox switche"
+                            class="toggle-swtbtn checkbox switcher mr-2">
+                            <label for="customer">
+                                <input type="checkbox" name="customer" id="customer" formControlName="customer"
+                                    ng-reflect-model="true" ng-reflect-is-disabled="false"
+                                    class="ng-untouched ng-pristine ng-valid ng-dirty "
+                                    (change)="submitHotspotDetails(true)">
+                                <span class="mr-2"><small></small></span>
+                                <span>
+                                    {{ customer ? language['Enabled'] : language['Disabled'] }}
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <!-- Applied traffic end -->
+            </div>
+        </form>
+    </div>
+</div>
+<!-- Button trigger modal -->
+
+<!-- Modal -->
+<div class="modal fade" id="site-scan-result-modal" tabindex="-1" role="dialog"
+    aria-labelledby="siteScanResultModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"></span>
+                </button>
+                <div class="w-100">
+                    <div class="w-100 d-flex align-items-center">
+                        <h5 class="modal-title" id="siteScanResultModalLabel">
+                            {{ language['Site_Scan'] }}
+                        </h5>
+                        <span class="w-50">
+                            <img class="w-10 pointer ml-2" src="../../../../../assets/img/Refresh-icon.svg" alt=""
+                                (click)="runSiteScan()">
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-body wan-site-scan-table">
+                <div class="loader" *ngIf="siteScanLoading">
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border text-primary">
+                            <span class="sr-only">{{ language.Loading }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <table class="table table-striped site-scan-table">
+                    <thead>
+                        <tr>
+                            <th>SSID</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody *ngIf="!siteScanLoading">
+                        <tr *ngFor="let site of siteScanResult; let i = index">
+                            <td class="filterable-cell">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="exampleRadios"
+                                        id="exampleRadios1" value="option1"
+                                        (click)="siteSelected(site.ssid, site.securityType)">
+                                </div>
+                            </td>
+                            <td class="filterable-cell">{{ site.ssid }}</td>
+                            <td class="filterable-cell">
+                                <img src="../../../../assets/img/lock-icon.svg" alt="" *ngIf="site.securityType > 0">
+                            </td>
+                            <td class="filterable-cell">
+                                <img class="wifi-icon" [src]="signalStrength(site.signalStrength)" alt="">
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tbody *ngIf="!siteScanResult.length && !siteScanLoading">
+                        <tr>
+                            <td colspan="100" align="center"><strong>{{language['No data available']}}</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="modal-footer justify-content-start">
+                <button type="button" class="btn-default btn-primary mr-2" (click)="submitSelectedSSID()"
+                    data-dismiss="modal" [disabled]="disableSelect">
+                    {{ language['Select'] }}
+                </button>
+                <button type="button" class="btn-default btn-dft py-1" data-dismiss="modal">
+                    {{ language['Cancel'] }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

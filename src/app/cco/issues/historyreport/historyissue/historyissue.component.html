@@ -1,0 +1,1498 @@
+<!-- <pre>{{appliedFilters|json}}</pre> -->
+<section class="mb-2" *ngIf="hasScopeAccess">
+  <div class="container filter-elemnts">
+    <form [formGroup]="filtersForm">
+      <div class="row" id="historical-reports-filters">
+        <div class="col-md-12 pl-0 pr-0">
+          <div class="current-issue-menu-container flex-wrap">
+            <div *ngIf="appliedFilters['date']"
+              class="current-issue-menu-item col-12 col-sm-12 col-md-3 col-lg-3 mpl-1 m-w-170px">
+              <label for="Name" class="col-form-label select-font">{{language['Date']}}</label>
+              <div class="w-100" id="current-issues-interval">
+                <div class="ccl-form">
+                  <p-calendar #calendar formControlName="date" selectionMode="range" [readonlyInput]="true"
+                    (onClose)="changeStartDate()" placeholder="{{ language['Select Date'] }}" [showIcon]="true"
+                    [styleClass]="'p-cal-custom'" [maxDate]="maxDate" [minDate]="minDate"></p-calendar>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="appliedFilters['alarmType']" class="current-issue-menu-item col-12 col-sm-12 col-md-3 col-lg-3">
+              <label for="Name" class="col-form-label select-font">{{ language['Alarm Type'] }}</label>
+              <div class="custom-selectbox" class="w-100" id="current-issues-interval">
+                <ng-select [clearable]="false" [searchable]="false" formControlName="alarmType"
+                  (change)="selectAlarmType()" placeholder="{{ language['Alarm Type'] }}">
+                  <ng-option value="Alarm">{{ language.Alarm }}</ng-option>
+                  <ng-option value="Event">{{language.event}} </ng-option>
+                  <ng-option value="Both">{{ language.Both }}</ng-option>
+                </ng-select>
+              </div>
+            </div>
+            <div *ngIf="appliedFilters['region']" class="current-issue-menu-item col-12 col-sm-12 col-md-3 col-lg-3">
+              <label for="Name" class="col-form-label select-font">{{language.region}}</label>
+              <div class="custom-selectbox" class="w-100" id="current-issues-interval">
+                <ng-select formControlName="region" [multiple]="true" [items]="regionsDataArray" bindValue="id"
+                  bindLabel="name" class="selectboxwidth" [clearable]="false" [searchable]="true"
+                  placeholder="{{ language.region }}" (add)="validateRegion($event)"
+                  (remove)="loadLocationValue($event);loadSystemValue($event)">
+                </ng-select>
+              </div>
+            </div>
+            <div *ngIf="appliedFilters['location']" class="current-issue-menu-item col-12 col-sm-12 col-md-3 col-lg-3">
+              <label for="Name" class="col-form-label select-font">{{ language.Location }}</label>
+              <div class="custom-selectbox" class="w-100" id="current-issues-interval">
+                <ng-select formControlName="location" [multiple]="true" [items]="locationDataArray" bindValue="id"
+                  bindLabel="name" class="selectboxwidth" placeholder="{{ language.Location }}" [clearable]="false"
+                  [searchable]="true" (add)="validateLocation($event)" (remove)="loadSystemValue($event)">
+                </ng-select>
+              </div>
+            </div>
+            <div *ngIf="appliedFilters['system']" class="current-issue-menu-item col-12 col-sm-12 col-md-3 col-lg-3">
+              <label for="Name" class="col-form-label select-font">{{ language.System }}</label>
+              <div class="custom-selectbox" class="w-100" id="current-issues-interval">
+                <ng-select formControlName="system" [multiple]="true" [items]="systemDataArray" bindValue="uuid"
+                  bindLabel="name" (change)="selectSystem($event)" class="selectboxwidth"
+                  placeholder="{{ language.System }}" [clearable]="false" [searchable]="true"
+                  (add)="validateSystem($event)" (remove)="validateSystem($event)">
+                </ng-select>
+              </div>
+            </div>
+            <div *ngIf="appliedFilters['eventName']" class="current-issue-menu-item col-12 col-sm-12 col-md-3 col-lg-3">
+              <label for="Name" class="col-form-label select-font">{{ alarmType === 'Alarm' ? language['Alarm Name']:
+                language['Event Name']}}</label>
+              <div class="custom-selectbox w-100" id="current-issues-interval">
+                <!-- <input class="form-control" id="eventName" name="eventName" type="text"
+                  placeholder="{{language['Alarm/Event Name']}}" formControlName="eventName"
+                  (keydown)="validateAlarmName()" /> -->
+
+                <ng-select [searchable]="true" [multiple]="true" placeholder="{{language['Alarm/Event Name']}}"
+                  formControlName="eventName" id="eventName" [items]="alarmNames" bindValue="id" bindLabel="name"
+                  (change)="validateAlarmName($event)" (add)="validateAlarmEvent($event)"
+                  (remove)="validateAlarmEvent($event)">
+
+                </ng-select>
+
+              </div>
+            </div>
+            <!-- <div class="current-issue-menu-item col-12 col-sm-12 col-md-3 col-lg-3">
+              <label for="Name" class="col-form-label select-font">ONT SN</label>
+              <div class="w-100 ccl-form" id="current-issues-interval">
+                <input class="form-control" id="FSAN" name="FSAN" type="text" placeholder="ONT SN"
+                  formControlName="fsan" />
+
+              </div>
+            </div> -->
+
+            <div *ngIf="appliedFilters['fsan']" class="current-issue-menu-item col-12 col-sm-12 col-md-3 col-lg-3">
+              <label for="Name" class="col-form-label select-font">{{language.FSAN}}</label>
+              <div class="w-100 ccl-form" id="current-issues-interval">
+                <input class="form-control" id="FSAN" name="FSAN" type="text" placeholder="{{language.FSAN}}"
+                  maxlength="12" (keypress)="removespecialcharacter($event)" formControlName="fsan"
+                  (keyup)="validateFSAN()" />
+                <small class="vald-tag" *ngIf="fsanvalid">{{language['Invalid FSAN']}}</small>
+              </div>
+            </div>
+            <div class="current-issue-menu-item col-12 col-sm-12 col-md-3 col-lg-3"
+              *ngIf="appliedFilters['severity'] && showSeverity">
+              <label for="Name" class="col-form-label select-font">{{ language['Severity'] }}</label>
+              <div class="custom-selectbox" class="w-100" id="current-issues-interval">
+                <ng-select [clearable]="false" [searchable]="false" placeholder="{{ language['Severity'] }}"
+                  formControlName="severity" (change)="changeSeverity()" [multiple]="false">
+                  <ng-option value="All">{{ language.All }}</ng-option>
+                  <ng-option value="critical">{{ language.critical }}</ng-option>
+                  <ng-option value="major">{{ language.major }}</ng-option>
+                  <ng-option value="minor">{{ language.minor }}</ng-option>
+                  <ng-option value="warning">{{language.Warning}}</ng-option>
+                  <ng-option value="info">{{language.Info}}</ng-option>
+                </ng-select>
+              </div>
+            </div>
+            <div *ngIf="appliedFilters['category']" class="current-issue-menu-item col-12 col-sm-12 col-md-3 col-lg-3">
+              <label for="Name" class="col-form-label select-font" id="pendoCCOCategory">{{language.Category}}</label>
+              <div class="custom-selectbox" class="w-100" id="current-issues-interval">
+                <ng-select [searchable]="true" [multiple]="true" placeholder="{{language.Category}}"
+                  formControlName="category" [items]="categories" bindValue="id" bindLabel="name"
+                  (add)="validateCategory($event)" (remove)="validateCategory($event)">
+
+                </ng-select>
+              </div>
+            </div>
+
+            <div class="current-issue-menu-item col-12 col-sm-12 col-md-3 col-lg-3"
+              *ngIf="appliedFilters['customCategory'] && showAlarmGroup">
+              <label for="Name" class="col-form-label select-font" id="pendoCCOAlarmGroup">{{language['Alarm
+                Group']}}</label>
+              <div class="custom-selectbox" class="w-100" id="current-issues-interval">
+                <ng-select [clearable]="false" [searchable]="true" [multiple]="false"
+                  placeholder="{{language['Alarm Group']}}" formControlName="customCategory" [items]="customCategories"
+                  bindValue="id" bindLabel="name" (change)="changeCustomCategory($event)">
+
+                </ng-select>
+              </div>
+            </div>
+
+            <div class="current-issue-menu-item col-12 col-sm-12 col-md-3 col-lg-3"
+              *ngIf="appliedFilters['cco_ack'] && showAckShelve">
+              <label for="Name" class="col-form-label select-font" id="acknowledgedAlarms">
+                {{language['Acknowledged Alarms']}}</label>
+              <div class="custom-selectbox" class="w-100" id="current-issues-interval">
+                <ng-select [clearable]="false" [searchable]="true" [multiple]="false"
+                  placeholder="{{language['Acknowledged Alarms']}}" formControlName="cco_ack"
+                  [items]="acknowledgedAlarms" bindValue="id" bindLabel="name">
+                </ng-select>
+              </div>
+            </div>
+
+            <div class="current-issue-menu-item col-12 col-sm-12 col-md-3 col-lg-3"
+              *ngIf="appliedFilters['cco_shelv'] && showAckShelve">
+              <label for="Name" class="col-form-label select-font" id="shelvedAlarms">{{language['Shelved
+                Alarms']}}</label>
+              <div class="custom-selectbox" class="w-100" id="current-issues-interval">
+                <ng-select [clearable]="false" [searchable]="true" [multiple]="false"
+                  placeholder="{{language['Shelved Alarms']}}" formControlName="cco_shelv" [items]="shelvedAlarms"
+                  bindValue="id" bindLabel="name">
+                </ng-select>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+      <div class="row mt-3 pt-1">
+        <div class="col-md-12 text-left">
+          <div class="d-inline-flex">
+            <button type="button" class="btn-default primary mr-2" (click)="loadIntialData()">
+              {{ language.apply }}
+            </button>
+            <button type="button" class="btn-default btn-dft mr-2" (click)="clearFilter()">
+              {{ language.Clear_Filters }}
+            </button>
+
+            <button type="button" class="btn-default btn-dft" (click)="exportNew()" [disabled]="disableExportBtn">
+              {{ language.Export_but }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+
+<div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess">
+  {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} </div>
+
+<section class="mb-4" [ngClass]="!fullScreen ? 'd-block' : 'd-none'" *ngIf="hasScopeAccess">
+  <div class="container px-0" [ngClass]="!both ? 'd-block' : 'd-none'">
+    <div class="row my-3">
+      <div class="col-md-12">
+        <div class="issue-overview-wrapper">
+          <div class="issue-overview-item" id="historical-reports-Alarms-Severity"
+            [ngClass]="(alarmType == 'Alarm' || alarmType == 'Both') ? 'd-block' : 'd-none'">
+            <div class="d-flex justify-content-between">
+              <div class="mwc-header flex w-100 border-bottom">
+                <div class="cco-secondary-title">
+                  {{alarmType == 'Alarm' ? language["Alarm by Severity"] : language["Event by Severity"]}}
+                </div>
+                <div class="mwc-btns flex align-items-center">
+                  <button class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                    title="{{language.export}}" (click)="download('severity', 'alarm')"></button>
+                  <button id="SeverityExpandSection" (click)="gotoFullScreen('severity', 'Alarm')"
+                    class="btn-round btn-small-24 btn-grey btn-expand" data-toggle="tooltip"
+                    title="{{language.lossofpon_fullscreen_tip}}"></button>
+                </div>
+              </div>
+            </div>
+            <h5 class="heading-subtitle"> {{language["Select a severity to view all alarms of that severity"]}}</h5>
+            <div class="w-100 alert alert-danger  fade show my-3" *ngIf="errors['severity']">
+              <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+              <button type="button" class="close" (click)="errors['severity'] = ''"><span></span></button>
+              <div class="d-inline-flex" [innerHtml]="errors['severity']"></div>
+            </div>
+            <div class="img mb-2" [hidden]="errors['severity']">
+              <div class="mt-3" *ngIf="loaders['alarm']['severity']">
+                <div class="d-flex justify-content-center">
+                  <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mwc-content d-flex" *ngIf="!appliedParams['status']">
+                <div class="col-12 col-md-6">
+                  <div id="severityContainer" class="chart-box h-300px">
+                  </div>
+                </div>
+                <div class="col-12 col-md-6">
+                  <div id="severityClearedContainer" class="chart-box h-300px"></div>
+                </div>
+              </div>
+
+              <div class="mwc-content d-flex" *ngIf="appliedParams['status']">
+                <div class="col-12 col-md-12">
+                  <div id="severityAlarmsContainer" class="chart-box h-300px"></div>
+                </div>
+              </div>
+
+
+            </div>
+          </div>
+
+
+
+
+          <div class="issue-overview-item" id="historical-reports-Alarms-Day" *ngIf="alarmType !== 'Event'">
+            <div class="d-flex justify-content-between">
+              <div class="mwc-header flex w-100 border-bottom">
+                <div class="cco-secondary-title">
+                  {{alarmType == 'Alarm' ? language["Alarm by Days"] : language["Event by Days"]}}
+                </div>
+                <div class="mwc-btns flex align-items-center">
+                  <button class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                    title="{{language.export}}" (click)="download('byday', 'alarm')"></button>
+                </div>
+              </div>
+            </div>
+
+            <div class="img my-2">
+              <div class="w-100 alert alert-danger  fade show my-3" *ngIf="errors['byday']">
+                <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+                <button type="button" class="close" (click)=" errors['byday'] = ''"><span></span></button>
+                <div class="d-inline-flex" [innerHtml]="errors['byday']"></div>
+              </div>
+
+              <div class="mt-3" *ngIf="loaders['alarm']['byday']">
+                <div class="d-flex justify-content-center">
+                  <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mwc-content d-flex" [ngClass]="!loaders['alarm']['byday'] ? 'd-block md-block' : 'd-none'">
+                <div class="col-12 col-md-12" [hidden]="errors['byday']">
+                  <div id="event-alarm-line-chart-container" class="chart-box h-300px"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+
+
+
+          <div class="issue-overview-item" id="historical-reports-Alarm-System" [hidden]="!filterApplied">
+            <div class="d-flex justify-content-between">
+              <div class="mwc-header flex w-100 border-bottom">
+                <div class="cco-secondary-title">
+                  {{alarmType == 'Alarm' ? language["Alarm by System"] : language["Event by System"]}}
+                </div>
+                <div class="mwc-btns flex align-items-center">
+                  <button id="SystemExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+                    data-toggle="tooltip" title="{{language.lossofpon_fullscreen_tip}}"
+                    (click)="gotoFullScreen('system', alarmType == 'Alarm' ? 'Alarm' : 'Event')"></button>
+                </div>
+              </div>
+            </div>
+            <h5 class="heading-subtitle"> {{language["Historical_Reports_Alarms by System"]}}</h5>
+            <div class="w-100 alert alert-danger  fade show my-3" *ngIf="systemError">
+              <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+              <button type="button" class="close" (click)=" systemError = false"><span></span></button>
+              <div class="d-inline-flex" [innerHtml]="systemErrorInfo"></div>
+            </div>
+            <div class="img mb-2">
+              <div class="mt-3" *ngIf="loading">
+                <div class="d-flex justify-content-center">
+                  <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mwc-content" [ngClass]="!loading ? 'd-block md-block' : 'd-none'">
+                <div class="col-md-12">
+                  <div id="systemContainer" class="chart-box h-300px"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="issue-overview-item" id="historical-reports-Alarms-Region"
+            [hidden]="filterApplied || !loadRegionChart">
+            <div class="d-flex justify-content-between">
+              <div class="mwc-header flex w-100 border-bottom">
+                <div class="cco-secondary-title">
+                  {{alarmType == 'Alarm' ? language["Alarm by Region"] : language["Event by Region"]}}
+                </div>
+                <div class="mwc-btns flex align-items-center">
+                  <!-- <button id="locationAppModelOpen" class="btn-round btn-small-24 btn-grey btn-que"
+                    data-toggle="tooltip"></button> -->
+
+                  <button class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                    title="{{language.export}}"
+                    (click)="download('region', alarmType == 'Alarm' ? 'alarm' : 'event')"></button>
+
+                  <button id="LocationExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+                    data-toggle="tooltip" title="{{language.lossofpon_fullscreen_tip}}"
+                    (click)="gotoFullScreen('region', alarmType == 'Alarm' ? 'Alarm' : 'Event')"></button>
+                </div>
+              </div>
+            </div>
+            <h5 class="heading-subtitle"> {{language["Select a region to view locations in that region"]}}</h5>
+            <div class="w-100 alert alert-danger  fade show my-3" *ngIf="errors['region']">
+              <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+              <button type="button" class="close" (click)="errors['region'] = ''"><span></span></button>
+              <div class="d-inline-flex" [innerHtml]="errors['region']"></div>
+            </div>
+            <div class="img mb-2">
+              <div class="mt-5" *ngIf="loading">
+                <div class="d-flex justify-content-center">
+                  <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mwc-content" [hidden]="errors['region']">
+                <div class="col-12 col-md-12" [ngClass]="!loading ? 'd-block' : 'd-none'">
+                  <div id="regionContainer" class="chart-box h-300px"></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+
+          <div class="issue-overview-item" [hidden]="!loadLocationChart || filterApplied"
+            id="dynamic-location-chart-div">
+
+            <div class="d-flex justify-content-between">
+              <div class="mwc-header flex w-100 border-bottom">
+                <div class="cco-secondary-title">
+                  {{alarmType == 'Alarm' ? language["Alarm by Location"] : language["Event by Location"]}}
+                </div>
+                <div class="mwc-btns flex align-items-center">
+                  <button class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                    title="{{language.export}}"
+                    (click)="download('location', alarmType == 'Alarm' ? 'alarm' : 'event')"></button>
+                  <button id="LocationExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+                    data-toggle="tooltip" title="{{language.lossofpon_fullscreen_tip}}"
+                    (click)="gotoFullScreen('location', alarmType == 'Alarm' ? 'Alarm' : 'Event')"></button>
+                  <button type="button" class="close m-2" aria-label="Close"
+                    (click)="loadLocationChart = !loadLocationChart">
+                    <span aria-hidden="true"></span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <h5 class="heading-subtitle"> {{language["Select a location to view systems in that location"]}}</h5>
+
+            <div class="w-100 alert alert-danger  fade show my-3" *ngIf="errors['location']">
+              <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+              <button type="button" class="close" (click)="errors['location'] = ''"><span></span></button>
+              <div class="d-inline-flex" [innerHtml]="errors['location']"></div>
+            </div>
+            <div class="img mb-2">
+              <div class="mt-5" *ngIf="loaders['alarm']['location'] || loaders['event']['location']">
+                <div class="d-flex justify-content-center">
+                  <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mwc-content" *ngIf="loadLocationChart" [hidden]="errors['location']">
+                <div class="col-12 col-md-12"
+                  [ngClass]="!(loaders['alarm']['location'] || loaders['event']['location']) ? 'd-block' : 'd-none'">
+                  <div id="locationContainer" class="h-300px"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="issue-overview-item" [hidden]="!loadSystemChart || filterApplied" id="dynamic-system-chart-div">
+            <div class="d-flex justify-content-between">
+              <div class="mwc-header flex w-100 border-bottom">
+                <div class="cco-secondary-title">
+                  {{alarmType == 'Alarm' ? language["Alarm by System"] : language["Event by System"]}}
+                </div>
+                <div class="mwc-btns flex align-items-center">
+                  <button class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                    title="{{language.export}}"
+                    (click)="download('system', alarmType == 'Alarm' ? 'alarm' : 'event')"></button>
+                  <button id="SeverityExpandSection"
+                    (click)="gotoFullScreen('system', alarmType == 'Alarm' ? 'Alarm' : 'Event')"
+                    class="btn-round btn-small-24 btn-grey btn-expand" data-toggle="tooltip"
+                    title="{{language.lossofpon_fullscreen_tip}}"></button>
+                  <button type="button" class="close m-2" aria-label="Close"
+                    (click)="loadSystemChart = !loadSystemChart">
+                    <span aria-hidden="true"></span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- <div class="w-100 alert alert-danger  fade show my-3" *ngIf="serverityError">
+              <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+              <button type="button" class="close" (click)=" serverityError = false"><span></span></button>
+              <div class="d-inline-flex" [innerHtml]="serverityErrorInfo"></div>
+            </div> -->
+            <h5 class="heading-subtitle"> {{alarmType == 'Alarm' ? language["Select a system severity to view all alarms
+              of that
+              severity for that system"]: language['Select a system to view all events for that system']}}</h5>
+            <div class="w-100 alert alert-danger  fade show my-3" *ngIf="errors['system']">
+              <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+              <button type="button" class="close" (click)=" errors['system'] = ''"><span></span></button>
+              <div class="d-inline-flex" [innerHtml]="errors['system']"></div>
+            </div>
+            <div class="img mb-2">
+              <div class="mt-3" *ngIf="(loaders['alarm']['system'] || loaders['event']['system'])">
+                <div class="d-flex justify-content-center">
+                  <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mwc-content"
+                [ngClass]="!(loaders['alarm']['system'] || loaders['event']['system']) ? 'd-block md-block' : 'd-none'">
+                <div class="col-md-12" [hidden]="errors['system']">
+                  <div id="systemContainerByClick" class="chart-box h-300px"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <section class="mb-4" [ngClass]="fullScreen ? 'd-block' : 'd-none'">
+    <div class="container px-0">
+      <div class="row my-1">
+        <div class="col-md-12">
+          <div class="issue-overview-wrapper">
+            <div class="issue-overview-item">
+              <div class="d-flex justify-content-between">
+                <div class="mwc-header flex w-100 border-bottom">
+                  <div class="cco-secondary-title">
+                    {{fullScreenChartName}}
+                  </div>
+                  <div class="mwc-btns flex align-items-center">
+                    <button id="fullScreenExpandSection" (click)="fullScreenInvertFunction()"
+                      class="btn-round btn-small-24 btn-grey btn-expand-inv" data-toggle="tooltip"
+                      title="{{language.lossofpon_fullscreen_close_tip}}"></button>
+
+                  </div>
+                </div>
+              </div>
+              <h5 class="heading-subtitle"> {{fullScrenSubHeading}}</h5>
+              <div class="w-100 alert alert-danger  fade show my-3" *ngIf="errors['alarmevent']">
+                <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+                <button type="button" class="close" (click)=" errors['alarmevent'] = ''"><span></span></button>
+                <div class="d-inline-flex" [innerHtml]="errors['alarmevent']"></div>
+              </div>
+              <div class="img mb-2">
+                <div class="mt-5" *ngIf="loading">
+                  <div class="d-flex justify-content-center">
+                    <div class="spinner-border text-primary">
+                      <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="clickedAlarmTypeInBC || appliedParams['status']" class="mwc-content d-flex"
+                  [hidden]="errors['alarmevent']">
+                  <div class="col-12 col-md-12" *ngIf="showSevertiyFullChart">
+                    <div id="fullChartAlarmEventContainer" class="chart-box h-450px"></div>
+                  </div>
+                </div>
+
+
+                <div *ngIf="!(clickedAlarmTypeInBC || appliedParams['status'])" class="mwc-content d-flex"
+                  [hidden]="errors['alarmevent']">
+                  <div [ngClass]="!showSevertiyFullChart ? 'col-12 col-md-12' : 'col-12 col-md-6'">
+                    <div id="fullChartContainer" class="chart-box h-450px"></div>
+                  </div>
+                  <div class="col-12 col-md-6" *ngIf="showSevertiyFullChart">
+                    <div id="fullChartSeverityClearedContainer" class="chart-box h-450px"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+    <div class="container px-0">
+      <div class="row my-3">
+        <div class="col-md-8 offset-md-4 pr-0">
+          <div class="text-right flat-right">
+            <div class="row">
+              <div class="col-md-5">
+                <div class="d-inline-flex align-items-center">
+                  <div class="pr-1">{{language['Show']}}</div>
+                  <div class="custom-selectbox" class="min-w80px w-40">
+                    <ng-select [formControl]="entry" [searchable]="false" [multiple]="false" [items]="entries"
+                      bindValue="id" bindLabel="name" id="show-entries" [clearOnBackspace]="false">
+                    </ng-select>
+                  </div>
+                  <div class="pl-1 text-lowercase">{{language['entries']}}</div>
+                </div>
+
+              </div>
+              <div class="col-md-7">
+                <div class="ccl-form history-reports-list-search">
+                  <input type="text" [(ngModel)]="searchTerm" (keyup)="search($event.target.value)"
+                    (search)="search($event.target.value)" class="ccl-input" id="alarms-list-search-history"
+                    [placeholder]="(clickedAlarmType === 'Alarm' && alarmType !== 'Event') ? language['Search by Alarm name']: language['Search by Event name']">
+                  <i class="search-close fas fa-times" (click)="clearSearchInp()"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="row" *ngIf="!showNewPagination">
+        <div class="col-md-12 overflow-auto" *ngIf="showTable">
+
+          <table class="table table-borderless" datatable [dtOptions]="dtOptions">
+            <thead>
+              <tr>
+                <th class="sorting-th-custom">{{language['Reported Time']}}(UTC/{{timeZone}})</th>
+                <th>{{language['Synced Time']}} (UTC/{{timeZone}})</th>
+                <th class="min-98px">{{ clickedAlarmType === 'Alarm' && alarmType !== 'Event' ?
+                  language['Alarm Name']: language['Event Name'] }}
+                </th>
+                <th>{{ clickedAlarmType === 'Alarm' && alarmType !== 'Event' ? language['Category']:
+                  language['Category'] }}
+                </th>
+                <th>{{language.Resource}}</th>
+                <th class="col-severty" *ngIf="clickedAlarmType === 'Alarm' && alarmType !== 'Event'">
+                  {{language.Severity}}</th>
+                <th id="pendo_subscriber_impact">{{language["Subscriber Impact"]}}</th>
+                <th class="col-recom" *ngIf="(clickedAlarmType === 'Alarm' && alarmType !== 'Event')">
+                  {{language.Recommendation}}</th>
+                <th *ngIf="hasWriteAccess">{{language.Notes}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of list; let i = index" class="pointer" (click)="viewDetails(item, i)">
+                <td data-toggle="modal" data-target=".bd-example-modal-lg">{{ (item['subject'] &&
+                  item['subject']['timeRaised']) ?
+                  convertToDateTime(item['subject']['timeRaised']): '' }}</td>
+                <td data-toggle="modal" data-target=".bd-example-modal-lg">{{ item['time'] ?
+                  convertToDateTime(item['time']): '' }}</td>
+                <td data-toggle="modal" data-target=".bd-example-modal-lg">{{ item['subject'] ?
+                  item['subject'].alarmEventName: '' }}</td>
+                <td data-toggle="modal" data-target=".bd-example-modal-lg">{{ item['subject'] ?
+                  item['subject'].category: '' }}</td>
+                <td class="col-resource col-recom" data-toggle="modal" data-target=".bd-example-modal-lg">
+                  <div class="col-res-data subj-text"
+                    [innerHtml]="item['subject']['resourceForUI'] ? item['subject']['resourceForUI']: ''">
+
+                  </div>
+                </td>
+
+                <!-- <td>{{ item['subject'] ? item['subject'].region: '' }}/{{ item['subject'] ?
+                  item['subject'].location: '' }}/{{ item['subject'] ? item['subject'].system: '' }}
+                </td> -->
+                <td class="col-severty" data-toggle="modal" data-target=".bd-example-modal-lg"
+                  *ngIf="clickedAlarmType === 'Alarm' && alarmType !== 'Event'">
+                  <!-- <span
+                    [ngStyle]="{'color': (item['subject'] && item['subject'].perceivedSeverity && colors[item['subject'].perceivedSeverity]) ? colors[item['subject'].perceivedSeverity] : 'black' }">{{
+                    item['subject'] ? language[item['subject'].perceivedSeverity] || item['subject'].perceivedSeverity:
+                    '' }}</span> -->
+                  <div
+                    class="{{(item['subject'] && item['subject'].perceivedSeverity && colorClass[item['subject'].perceivedSeverity]) ? colorClass[item['subject'].perceivedSeverity] : 'black clear-sev-but'}}">
+                    <span class="dot"></span> {{
+                    item['subject'] ? language[item['subject'].perceivedSeverity] ||
+                    item['subject'].perceivedSeverity: '' }}
+                  </div>
+                </td>
+
+                <td>
+                  <div class="d-flex align-items-center">
+                    <!-- <div class="col-md-4 px-0">{{(item && item['subject'] &&
+                      item['subject'].serviceAffecting) ? 'Yes' : 'No'}} </div> -->
+
+                    <div class="action-info-u primary p-blue pointer" *ngIf="item?.subject?.impactedSubsCount">
+                      {{item?.subject?.impactedSubsCount }}
+                    </div>
+                    <div *ngIf="!(item?.subject?.impactedSubsCount)">
+                      {{(item?.subject?.serviceAffecting) ? 'Yes': 'No'}}
+                    </div>
+
+                  </div>
+                </td>
+                <td class="col-recom" *ngIf="(clickedAlarmType === 'Alarm' && alarmType !== 'Event')"
+                  data-toggle="modal" data-target=".bd-example-modal-lg">
+                  <div class="subj-text">{{ item['subject'] ?
+                    item['subject'].repairAction: '' }}</div>
+                </td>
+                <td class="text-center min-w70px" *ngIf="hasWriteAccess">
+                  <div *ngIf="!item['subject'].notes" class="d-inline-flex primary pointer" data-toggle="modal"
+                    (click)="openNotesModal(item['subject'].alarmId, item['subject'].notes ? item['subject'].notes : null, false, i)"
+                    data-target="bd-example-modal-sm">
+                    <img src="assets/img/add-note.png" class="pointer wh-20px">
+                  </div>
+
+                  <div *ngIf="item['subject'].notes" class="d-inline-flex mr-2 primary pointer" data-toggle="modal"
+                    (click)="openNotesModal(item['subject'].alarmId, item['subject'].notes ? item['subject'].notes : null, true, i)"
+                    data-target="bd-example-modal-sm">
+                    <img src="./assets/img/net-edit.svg" class="pointer" title="{{language.Edit}}">
+                  </div>
+
+                  <div *ngIf="item['subject'].notes" class="d-inline-flex primary pointer" data-toggle="modal"
+                    (click)="deleteConfirmModal(item['subject'].alarmId, i)" data-target="bd-example-modal-sm">
+                    <img src="./assets/img/net-delete.svg" class="pointer" title="{{language.Delete}}" />
+                  </div>
+
+                  <!-- <div *ngIf="item['subject'].notes" class="d-inline-flex mx-2 primary pointer"
+                                                          data-toggle="modal"
+                                                          (click)="openShowNotesModal(item['subject'].notes ? item['subject'].notes : null)"
+                                                          data-target="bd-example-modal-sm">
+                                                          <img src="assets/img/note-icon.svg" class="pointer mr-2" style="width: 25px;">
+                                                      </div> -->
+
+                </td>
+
+              </tr>
+
+            <tbody *ngIf="list.length === 0">
+              <tr>
+                <td colspan="9" class="no-data-available">{{language['No data available in
+                  table']}}
+                </td>
+              </tr>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+        <!--end-->
+
+        <!--end table-->
+      </div>
+
+      <div class="row" *ngIf="showNewPagination">
+        <div class="col-12 overflow-auto">
+          <div class="loader" *ngIf="paginateLoading">
+            <div class="d-flex justify-content-center">
+              <div class="spinner-border text-primary">
+                <span class="sr-only">{{ language.Loading }}</span>
+              </div>
+            </div>
+          </div>
+          <table class="table table-data">
+            <thead>
+              <tr>
+                <th class="sorting-th-custom">{{language['Reported Time']}}(UTC/{{timeZone}})</th>
+                <th>{{language['Synced Time']}} (UTC/{{timeZone}})</th>
+                <th class="min-98px">{{ clickedAlarmType === 'Alarm' && alarmType !== 'Event' ?
+                  language['Alarm Name']: language['Event Name'] }}
+                </th>
+                <th>{{ clickedAlarmType === 'Alarm' && alarmType !== 'Event' ? language['Category']:
+                  language['Category'] }}
+                </th>
+                <th>{{language.Resource}}</th>
+                <th class="col-severty" *ngIf="clickedAlarmType === 'Alarm' && alarmType !== 'Event'">
+                  {{language.Severity}}</th>
+                <th>{{language["Subscriber Impact"]}}</th>
+                <th class="col-recom" *ngIf="(clickedAlarmType === 'Alarm' && alarmType !== 'Event')">
+                  {{language.Recommendation}}</th>
+                <th *ngIf="hasWriteAccess">{{language.Notes}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of list; let i = index" class="pointer" (click)="viewDetails(item, i)">
+                <td data-toggle="modal" data-target=".bd-example-modal-lg">{{ (item['subject'] &&
+                  item['subject']['timeRaised']) ?
+                  convertToDateTime(item['subject']['timeRaised']): '' }}</td>
+                <td data-toggle="modal" data-target=".bd-example-modal-lg">{{ item['time'] ?
+                  convertToDateTime(item['time']): '' }}</td>
+                <td data-toggle="modal" data-target=".bd-example-modal-lg">{{ item['subject'] ?
+                  item['subject'].alarmEventName: '' }}</td>
+                <td data-toggle="modal" data-target=".bd-example-modal-lg">{{ item['subject'] ?
+                  item['subject'].category: '' }}</td>
+                <td class="col-resource col-recom" data-toggle="modal" data-target=".bd-example-modal-lg">
+                  <div class="col-res-data subj-text"
+                    [innerHtml]="item['subject']['resourceForUI'] ? item['subject']['resourceForUI']: ''">
+
+                  </div>
+                </td>
+
+                <!-- <td>{{ item['subject'] ? item['subject'].region: '' }}/{{ item['subject'] ?
+                              item['subject'].location: '' }}/{{ item['subject'] ? item['subject'].system: '' }}
+                            </td> -->
+                <td class="col-severty" data-toggle="modal" data-target=".bd-example-modal-lg"
+                  *ngIf="clickedAlarmType === 'Alarm' && alarmType !== 'Event'">
+                  <!-- <span
+                                [ngStyle]="{'color': (item['subject'] && item['subject'].perceivedSeverity && colors[item['subject'].perceivedSeverity]) ? colors[item['subject'].perceivedSeverity] : 'black' }">{{
+                                item['subject'] ? language[item['subject'].perceivedSeverity] || item['subject'].perceivedSeverity:
+                                '' }}</span> -->
+                  <div
+                    class="{{(item['subject'] && item['subject'].perceivedSeverity && colorClass[item['subject'].perceivedSeverity]) ? colorClass[item['subject'].perceivedSeverity] : 'black clear-sev-but'}}">
+                    <span class="dot"></span> {{
+                    item['subject'] ? language[item['subject'].perceivedSeverity] ||
+                    item['subject'].perceivedSeverity: '' }}
+                  </div>
+                </td>
+
+                <td>
+                  <div class="d-flex align-items-center">
+                    <!-- <div class="col-md-4 px-0">{{(item && item['subject'] &&
+                                  item['subject'].serviceAffecting) ? 'Yes' : 'No'}} </div> -->
+
+                    <div class="action-info-u subscriber-impact-red" *ngIf="item?.subject?.impactedSubsCount"
+                      data-toggle="modal" data-target=".bd-example-modal-lg">
+                      {{item?.subject?.impactedSubsCount }}
+                    </div>
+                    <div *ngIf="!(item?.subject?.impactedSubsCount)" data-toggle="modal"
+                      data-target=".bd-example-modal-lg">
+                      <span [ngClass]="(item?.subject?.serviceAffecting) ? 'subscriber-impact-red': ''">
+                        {{(item?.subject?.serviceAffecting) ? 'Yes': 'No'}}
+                      </span>
+                    </div>
+
+                  </div>
+                </td>
+                <td class="col-recom" *ngIf="(clickedAlarmType === 'Alarm' && alarmType !== 'Event')"
+                  data-toggle="modal" data-target=".bd-example-modal-lg">
+                  <div class="subj-text">{{ item['subject'] ?
+                    item['subject'].repairAction: '' }}</div>
+                </td>
+                <td class="text-center min-w70px" *ngIf="hasWriteAccess">
+                  <div *ngIf="!item['subject'].notes" class="d-inline-flex primary pointer" data-toggle="modal"
+                    (click)="openNotesModal(item['subject'].alarmId, item['subject'].notes ? item['subject'].notes : null, false, i)"
+                    data-target="bd-example-modal-sm">
+                    <img src="assets/img/add-note.png" class="pointer wh-20px">
+                  </div>
+
+                  <div *ngIf="item['subject'].notes" class="d-inline-flex mr-2 primary pointer" data-toggle="modal"
+                    (click)="openNotesModal(item['subject'].alarmId, item['subject'].notes ? item['subject'].notes : null, true, i)"
+                    data-target="bd-example-modal-sm">
+                    <img src="./assets/img/net-edit.svg" class="pointer" title="{{language.Edit}}">
+                  </div>
+
+                  <div *ngIf="item['subject'].notes" class="d-inline-flex primary pointer" data-toggle="modal"
+                    (click)="deleteConfirmModal(item['subject'].alarmId, i)" data-target="bd-example-modal-sm">
+                    <img src="./assets/img/net-delete.svg" class="pointer" title="{{language.Delete}}" />
+                  </div>
+
+                  <!-- <div *ngIf="item['subject'].notes" class="d-inline-flex mx-2 primary pointer"
+                                                                      data-toggle="modal"
+                                                                      (click)="openShowNotesModal(item['subject'].notes ? item['subject'].notes : null)"
+                                                                      data-target="bd-example-modal-sm">
+                                                                      <img src="assets/img/note-icon.svg" class="pointer mr-2" style="width: 25px;">
+                                                                  </div> -->
+
+                </td>
+
+              </tr>
+
+            <tbody *ngIf="!list?.length">
+              <tr>
+                <td colspan="9" class="no-data-available">{{language['No data available in
+                  table']}}
+                </td>
+              </tr>
+            <tbody>
+            </tbody>
+          </table>
+          <div class="table-pagination w-100 d-flex flex-wrap pb-2 justify-content-end pt-4">
+            <!-- <div class="page-entries-info">Showing 1 to 7 of 7 entries</div> -->
+            <div class="page-action-buttons">
+              <a class="page-navigate page-button" [ngClass]="{'page-disabled': !previousFlag}"
+                (click)="gotoPrevious()">{{language.Previous}}</a>
+              <!-- <span>
+                <a class="page-button page-current">1</a>
+                <a class="page-button">2</a>
+                <a class="page-button">3</a>
+                <a class="page-button">4</a>
+                <a class="page-button">5</a>
+                <span class="page-ellipsis">...</span>
+                <a class="page-button">50</a>
+              </span> -->
+              <a class="page-navigate page-button" [ngClass]="{'page-disabled': !nextFlag}"
+                (click)="gotoNext()">{{language.Next}}</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </section>
+</section>
+
+<section [ngClass]="!fullScreen ? 'd-block' : 'd-none'">
+  <div class="container px-0" [ngClass]="both ? 'd-block' : 'd-none'">
+    <div class="row my-3">
+      <div class="col-md-12">
+        <div class="issue-overview-wrapper">
+          <div class="issue-overview-item">
+            <div class="d-flex justify-content-between">
+              <div class="mwc-header flex w-100 border-bottom">
+                <div class="cco-secondary-title">
+                  {{language["Alarm by Severity"]}}
+                </div>
+                <div class="mwc-btns flex align-items-center">
+                  <button class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                    title="{{language.export}}" (click)="download('severity', 'alarm')"></button>
+                  <button id="SeverityAlarmExpandSection" (click)="gotoFullScreen('severity','Alarm')"
+                    class="btn-round btn-small-24 btn-grey btn-expand" data-toggle="tooltip"
+                    title="{{language.lossofpon_fullscreen_tip}}"></button>
+                </div>
+              </div>
+            </div>
+            <h5 class="heading-subtitle"> {{language["Select a severity to view all alarms of that severity"]}}</h5>
+            <div class="w-100 alert alert-danger  fade show my-3" *ngIf="serverityError">
+              <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+              <button type="button" class="close" (click)=" serverityError = false"><span></span></button>
+              <div class="d-inline-flex" [innerHtml]="serverityErrorInfo"></div>
+            </div>
+            <div class="img mb-2">
+              <div class="mt-3" *ngIf="loading">
+                <div class="d-flex justify-content-center">
+                  <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mwc-content d-flex" *ngIf="!appliedParams['status']">
+                <div class="col-12 col-md-6">
+                  <div id="severityAlarmContainer" class="chart-box h-300px"></div>
+                </div>
+                <div class="col-12 col-md-6">
+                  <div id="severityClearedAlarmContainer" class="chart-box h-300px"></div>
+                </div>
+              </div>
+
+              <div class="mwc-content d-flex" *ngIf="appliedParams['status']">
+                <div class="col-12 col-md-12">
+                  <div id="severityBothAlarmContainer" class="chart-box h-300px"></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="issue-overview-item" *ngIf="alarmType !== 'Event'">
+            <div class="d-flex justify-content-between">
+              <div class="mwc-header flex w-100 border-bottom">
+                <div class="cco-secondary-title">
+                  {{alarmType == 'Alarm' ? language["Alarm by Days"] : language["Alarm by Days"]}}
+                </div>
+                <div class="mwc-btns flex align-items-center">
+                  <button class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                    title="{{language.export}}" (click)="download('byday', 'alarm')"></button>
+                </div>
+              </div>
+            </div>
+
+            <div class="img my-2">
+              <div class="w-100 alert alert-danger  fade show my-3" *ngIf="errors['byday']">
+                <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+                <button type="button" class="close" (click)=" errors['byday'] = ''"><span></span></button>
+                <div class="d-inline-flex" [innerHtml]="errors['byday']"></div>
+              </div>
+              <div class="mt-3" *ngIf="loading">
+                <div class="d-flex justify-content-center">
+                  <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mwc-content d-flex" [ngClass]="!loading ? 'd-block md-block' : 'd-none'">
+                <div class="col-12 col-md-12" [hidden]="errors['byday']">
+                  <div id="both-event-alarm-line-chart-container" class="chart-box h-300px"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-12" id="both-regionwrapper" [hidden]="!bothRegion">
+        <div class="row issue-overview-wrapper">
+          <div class="col-md-6 issue-overview-item" [hidden]="!bothRegionAlarm">
+            <div class="d-flex justify-content-between">
+              <div class="mwc-header flex w-100 border-bottom">
+                <div class="cco-secondary-title">
+                  {{language['Alarm by Region']}}
+                </div>
+                <div class="mwc-btns flex align-items-center">
+                  <button class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                    title="{{language.export}}" (click)="download('region', 'alarm')"></button>
+                  <button class="btn-round btn-small-24 btn-grey btn-expand" data-toggle="tooltip"
+                    title="{{language.lossofpon_fullscreen_tip}}" (click)="gotoFullScreen('region','Alarm')"></button>
+                </div>
+              </div>
+            </div>
+            <h5 class="heading-subtitle"> {{language["Select a region to view locations in that region"]}}</h5>
+            <div class="w-100 alert alert-danger  fade show my-3" *ngIf="errors['region'] && !loadLocationChart">
+              <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+              <button type="button" class="close" (click)="errors['region'] = ''"><span></span></button>
+              <div class="d-inline-flex" [innerHtml]="errors['region']"></div>
+            </div>
+            <div class="img mb-2">
+              <div class="mt-5" *ngIf="loading">
+                <div class="d-flex justify-content-center">
+                  <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mwc-content">
+                <div class="col-12 col-md-12" [ngClass]="!loading ? 'd-block' : 'd-none'">
+                  <div id="region-alarm-container-both" class="chart-box h-300px"></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="col-md-6 issue-overview-item" [hidden]="!bothRegionEvent">
+            <div class="d-flex justify-content-between">
+              <div class="mwc-header flex w-100 border-bottom">
+                <div class="cco-secondary-title">
+                  {{ language['Event by Region'] }}
+                </div>
+                <div class="mwc-btns flex align-items-center">
+                  <button class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                    title="{{language.export}}" (click)="download('region', 'event')"></button>
+                  <button id="LocationExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+                    title="{{language.lossofpon_fullscreen_tip}}" data-toggle="tooltip"
+                    (click)="gotoFullScreen('region','Event')"></button>
+                </div>
+              </div>
+            </div>
+            <h5 class="heading-subtitle"> {{language["Select a region to view locations in that region"]}}</h5>
+            <div class="w-100 alert alert-danger  fade show my-3" *ngIf="regionError && !loadLocationChart">
+              <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+              <button type="button" class="close" (click)="regionError = false"><span></span></button>
+              <div class="d-inline-flex" [innerHtml]="regionErrorInfo"></div>
+            </div>
+            <div class="img mb-2">
+              <div class="mt-5" *ngIf="loading">
+                <div class="d-flex justify-content-center">
+                  <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mwc-content">
+                <div class="col-12 col-md-12" [ngClass]="!loading ? 'd-block' : 'd-none'">
+                  <div id="region-event-container-both" class="chart-box h-300px"></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="col-md-12" id="both-locationwrapper" [hidden]="!bothLocation">
+        <div class="row issue-overview-wrapper">
+          <div class="col-md-6 issue-overview-item" [hidden]="!bothLocationAlarm">
+            <div class="d-flex justify-content-between">
+              <div class="mwc-header flex w-100 border-bottom">
+                <div class="cco-secondary-title">
+                  {{language['Alarm by Location']}}
+                </div>
+                <div class="mwc-btns flex align-items-center">
+                  <button class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                    title="{{language.export}}" (click)="download('location', 'alarm')"></button>
+                  <button class="btn-round btn-small-24 btn-grey btn-expand" data-toggle="tooltip"
+                    title="{{language.lossofpon_fullscreen_tip}}" (click)="gotoFullScreen('location','Alarm')"></button>
+                </div>
+              </div>
+            </div>
+            <h5 class="heading-subtitle"> {{language["Select a location to view systems in that location"]}}</h5>
+            <div class="w-100 alert alert-danger  fade show my-3" *ngIf="errors['location']">
+              <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+              <button type="button" class="close" (click)="errors['location'] = ''"><span></span></button>
+              <div class="d-inline-flex" [innerHtml]="errors['location']"></div>
+            </div>
+            <div class="img mb-2">
+              <div class="mt-5" *ngIf="loaders['alarm']['location']">
+                <div class="d-flex justify-content-center">
+                  <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mwc-content">
+                <div class="col-12 col-md-12" [ngClass]="!loaders['alarm']['location'] ? 'd-block' : 'd-none'">
+                  <div id="location-alarm-container-both" class="chart-box h-300px"></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="col-md-6 issue-overview-item" [hidden]="!bothLocationEvent">
+            <div class="d-flex justify-content-between">
+              <div class="mwc-header flex w-100 border-bottom">
+                <div class="cco-secondary-title">
+                  {{ language['Event by Location'] }}
+                </div>
+                <div class="mwc-btns flex align-items-center">
+                  <button class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                    title="{{language.export}}" (click)="download('location', 'event')"></button>
+                  <button id="LocationExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+                    title="{{language.lossofpon_fullscreen_tip}}" data-toggle="tooltip"
+                    (click)="gotoFullScreen('location','Event')"></button>
+                </div>
+              </div>
+            </div>
+            <h5 class="heading-subtitle"> {{language["Select a location to view systems in that location"]}}</h5>
+            <div class="w-100 alert alert-danger  fade show my-3" *ngIf="errors['location-event']">
+              <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+              <button type="button" class="close" (click)="errors['location-event'] = ''"><span></span></button>
+              <div class="d-inline-flex" [innerHtml]="errors['location-event']"></div>
+            </div>
+            <div class="img mb-2">
+              <div class="mt-5" *ngIf="loaders['event']['location']">
+                <div class="d-flex justify-content-center">
+                  <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mwc-content">
+                <div class="col-12 col-md-12" [ngClass]="!loaders['event']['location'] ? 'd-block' : 'd-none'">
+                  <div id="location-event-container-both" class="chart-box h-300px"></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="col-md-12" id="both-systemwrapper" [hidden]="!bothSystem">
+        <div class="row issue-overview-wrapper">
+          <div class="col-md-6 issue-overview-item" [hidden]="!bothSystemAlarm">
+            <div class="d-flex justify-content-between">
+              <div class="mwc-header flex w-100 border-bottom">
+                <div class="cco-secondary-title">
+                  {{language['Alarm by System']}}
+                </div>
+                <div class="mwc-btns flex align-items-center">
+                  <button class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                    title="{{language.export}}" (click)="download('system', 'alarm')"></button>
+                  <button class="btn-round btn-small-24 btn-grey btn-expand" data-toggle="tooltip"
+                    title="{{language.lossofpon_fullscreen_tip}}" (click)="gotoFullScreen('system','Alarm')"></button>
+                </div>
+              </div>
+            </div>
+            <h5 class="heading-subtitle"> {{language["Select a system severity to view all alarms of that
+              severity for that system"]}}</h5>
+            <div class="w-100 alert alert-danger  fade show my-3" *ngIf="errors['system']">
+              <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+              <button type="button" class="close" (click)="errors['system'] = ''"><span></span></button>
+              <div class="d-inline-flex" [innerHtml]="errors['system']"></div>
+            </div>
+            <div class="img mb-2">
+              <div class="mt-5" *ngIf="loaders['alarm']['system']">
+                <div class="d-flex justify-content-center">
+                  <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mwc-content">
+                <div class="col-12 col-md-12" [ngClass]="!loaders['alarm']['system'] ? 'd-block' : 'd-none'">
+                  <div id="system-alarm-container-both" class="chart-box h-300px"></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="col-md-6 issue-overview-item" [hidden]="!bothSystemEvent">
+            <div class="d-flex justify-content-between">
+              <div class="mwc-header flex w-100 border-bottom">
+                <div class="cco-secondary-title">
+                  {{ language['Event by System'] }}
+                </div>
+                <div class="mwc-btns flex align-items-center">
+                  <button class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                    title="{{language.export}}" (click)="download('system', 'event')"></button>
+                  <button id="LocationExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+                    title="{{language.lossofpon_fullscreen_tip}}" data-toggle="tooltip"
+                    (click)="gotoFullScreen('system','Event')"></button>
+                </div>
+              </div>
+            </div>
+            <h5 class="heading-subtitle"> {{language["Select a system to view all events for that system"]}}</h5>
+            <div class="w-100 alert alert-danger  fade show my-3" *ngIf="errors['system-event']">
+              <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+              <button type="button" class="close" (click)="errors['system-event'] = ''"><span></span></button>
+              <div class="d-inline-flex" [innerHtml]="errors['system-event']"></div>
+            </div>
+            <div class="img mb-2">
+              <div class="mt-5" *ngIf="loaders['event']['system']">
+                <div class="d-flex justify-content-center">
+                  <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mwc-content">
+                <div class="col-12 col-md-12" [ngClass]="!loaders['event']['system'] ? 'd-block' : 'd-none'">
+                  <div id="system-event-container-both" class="chart-box h-300px"></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+
+      <!-- <div class="col-md-6">
+        <div class="issue-overview-wrapper">
+          <div class="issue-overview-item">
+            <div class="d-flex justify-content-between">
+              <div class="mwc-header flex w-100 border-bottom">
+                <div class="cco-secondary-title">
+                  {{alarmTitleInBoth}}
+                </div>
+                <div class="mwc-btns flex align-items-center">
+                  <button id="LocationExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+                    data-toggle="tooltip" (click)="gotoFullScreen(alarmChartType,'Alarm')"></button>
+                </div>
+              </div>
+            </div>
+
+            <div class="w-100 alert alert-danger  fade show my-3" *ngIf="regionError && !loadLocationChart">
+              <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+              <button type="button" class="close" (click)="regionError = false"><span></span></button>
+              <div class="d-inline-flex" [innerHtml]="regionErrorInfo"></div>
+            </div>
+            <div class="img my-2">
+              <div class="mt-5" *ngIf="loading">
+                <div class="d-flex justify-content-center">
+                  <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mwc-content">
+                <div class="col-12 col-md-12 p-2" [ngClass]="!loading ? 'd-block' : 'd-none'">
+                  <div id="alarm-container-both" class="chart-box" style="height: 300px"></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div> -->
+
+      <!-- <div class="col-md-6">
+        <div class="issue-overview-wrapper">
+          <div class="issue-overview-item">
+            <div class="d-flex justify-content-between">
+              <div class="mwc-header flex w-100 border-bottom">
+                <div class="cco-secondary-title">
+                  {{ eventTitleInBoth }}
+                </div>
+                <div class="mwc-btns flex align-items-center">
+                  <button id="LocationExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+                    data-toggle="tooltip" (click)="gotoFullScreen(eventChartType,'Event')"></button>
+                </div>
+              </div>
+            </div>
+
+            <div class="w-100 alert alert-danger  fade show my-3" *ngIf="regionError && !loadLocationChart">
+              <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+              <button type="button" class="close" (click)="regionError = false"><span></span></button>
+              <div class="d-inline-flex" [innerHtml]="regionErrorInfo"></div>
+            </div>
+            <div class="img my-2">
+              <div class="mt-5" *ngIf="loading">
+                <div class="d-flex justify-content-center">
+                  <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mwc-content">
+                <div class="col-12 col-md-12 p-2" [ngClass]="!loading ? 'd-block' : 'd-none'">
+                  <div id="event-container-both" class="chart-box" style="height: 300px"></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div> -->
+
+      <div class="col-md-12">
+        <div class="issue-overview-wrapper">
+          <div class="issue-overview-item" [hidden]="!loadLocationChart || filterApplied"
+            id="dynamic-location-chart-div">
+
+            <div class="d-flex justify-content-between">
+              <div class="mwc-header flex w-100 border-bottom">
+                <div class="cco-secondary-title">
+                  {{alarmTypeInBoth == 'Alarm' ? language["Alarm by Location"] : language["Event by Location"]}}
+                </div>
+                <div class="mwc-btns flex align-items-center">
+                  <button id="LocationExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+                    title="{{language.lossofpon_fullscreen_tip}}" data-toggle="tooltip"
+                    (click)="gotoFullScreen('location', alarmTypeInBoth == 'Alarm' ? 'Alarm' : 'Event')"></button>
+                  <button type="button" class="close m-2" aria-label="Close"
+                    (click)="loadLocationChart = !loadLocationChart">
+                    <span aria-hidden="true"></span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="w-100 alert alert-danger  fade show my-3" *ngIf="locationError && loadLocationChart">
+              <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+              <button type="button" class="close" (click)="locationError = false"><span></span></button>
+              <div class="d-inline-flex" [innerHtml]="locationErrorInfo"></div>
+            </div>
+            <div class="img my-2">
+              <div class="mt-5" *ngIf="loading">
+                <div class="d-flex justify-content-center">
+                  <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mwc-content" *ngIf="loadLocationChart">
+                <div class="col-12 col-md-12 p-2" [ngClass]="!loading ? 'd-block' : 'd-none'">
+                  <div id="location-both-container" class="chart-box h-300px"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-12">
+        <div class="issue-overview-wrapper">
+          <div class="issue-overview-item" [hidden]="!loadSystemChart || filterApplied"
+            id="both-dynamic-system-chart-div">
+            <div class="d-flex justify-content-between">
+              <div class="mwc-header flex w-100 border-bottom">
+                <div class="cco-secondary-title">
+                  {{alarmTypeInBoth == 'Alarm' ? language["Alarm by System"] : language["Event by System"]}}
+                </div>
+                <div class="mwc-btns flex align-items-center">
+                  <button id="SeverityExpandSection"
+                    (click)="gotoFullScreen('system', alarmTypeInBoth == 'Alarm' ? 'Alarm' : 'Event')"
+                    class="btn-round btn-small-24 btn-grey btn-expand" data-toggle="tooltip"
+                    title="{{language.lossofpon_fullscreen_tip}}"></button>
+                  <button type="button" class="close m-2" aria-label="Close"
+                    (click)="loadSystemChart = !loadSystemChart">
+                    <span aria-hidden="true"></span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="w-100 alert alert-danger  fade show my-3" *ngIf="systemError">
+              <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+              <button type="button" class="close" (click)=" systemError = false"><span></span></button>
+              <div class="d-inline-flex" [innerHtml]="systemErrorInfo"></div>
+            </div>
+            <div class="img my-2">
+              <div class="mt-3" *ngIf="loading">
+                <div class="d-flex justify-content-center">
+                  <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mwc-content" [ngClass]="!loading ? 'd-block' : 'd-none'">
+                <div class="col-12 col-md-12 p-2">
+                  <div id="bothSystemContainerByClick" class="chart-box h-300px"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<ng-template #showInfoModal let-modal class="col-md-12">
+  <div class="modal-header d-block">
+    <h5 class="modal-title" id="showInfoModal">{{ modalTitle }}</h5>
+
+    <div>
+      {{modalInfo}}
+    </div>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body add-device-model">
+    <button type="button" class="btn-default primary px-3 px-3" data-dismiss="modal"
+      (click)="modal.close('Save click')">
+      {{ language.Ok }}
+    </button>
+  </div>
+</ng-template>
+
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+  aria-hidden="true" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content p-0">
+      <app-alarm-details [fullData]="fullData" [showAckShelveBtn]="showAckShelveBtn" [hasWriteAccess]="hasWriteAccess"
+        (ackShelveData)="onAckShelve($event)" [hideSource]="hideSource" [connected]="true" [showNotes]="true"
+        (refreshAckShelveBtn)="onRefreshAckShelve($event)" [clickedAlarmType]="clickedAlarmType"
+        [alarmType]="alarmType">
+      </app-alarm-details>
+    </div>
+  </div>
+</div>
+
+
+<ng-template #addNotesModal let-modal class="col-md-12 custom-modal">
+  <div class="modal-header d-block">
+    <h5 class="modal-title" id="showInfoModal">{{language.Notes}}</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeNotes()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="row">
+    <div class="w-100 alert alert-danger  fade show my-3" *ngIf="noteError">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+      <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+      <div class="d-inline-flex" [innerHtml]="noteErrorInfo"></div>
+    </div>
+  </div>
+  <div class="modal-body add-device-model">
+    <div class="loader" *ngIf="noteSaveLoader">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="form-group ccl-form">
+      <!-- <label for="notes">Notes</label> -->
+      <textarea class="form-control" id="description" [formControl]="notes" placeholder="{{language.Notes}}.." rows="3"
+        trimSpace [formValue]="notes"></textarea>
+    </div>
+    <div class="col-md-12 pl-0 text-left mt-3">
+      <button *ngIf="!showEdit" type="submit" class="btn-default primary  px-3" (click)="addNotes()"
+        [disabled]="btnDisabled || notes === ''">
+        {{language.Add}} </button>
+      <button *ngIf="showEdit" type="submit" class="btn-default primary  px-3" (click)="addNotes()"
+        [disabled]="btnDisabled || notes === ''">
+        {{language.Update}} </button>
+      <button type="button" (click)="closeNotes()" class="btn-default transparant px-3 m-2">
+        {{language.Cancel}} </button>
+    </div>
+  </div>
+</ng-template>
+
+
+<ng-template #showNotesModal let-modal class="col-md-12 custom-modal">
+  <div class="modal-header d-block">
+    <h5 class="modal-title" id="showInfoModal">{{language.Notes}}</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeNotes()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body add-device-model">
+    <div class="form-group ccl-form">
+      {{notes}}
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #deleteModal let-data let-ref="dialogRef">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{ language.Delete }}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="closeNotes()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="loader" *ngIf="noteSaveLoader">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+    <p>
+      {{language['Are you sure you want to delete this notes']}}?
+    </p>
+  </div>
+  <div class="row">
+    <div class="w-100 alert alert-danger  fade show my-3" *ngIf="deleteError">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+      <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+      <div class="d-inline-flex" [innerHtml]="deleteErrorInfo"></div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary mr-2" (click)="deleteNotes()" [disabled]="btnDisabled">
+      {{ language.Yes }}
+    </button>
+    <button type="button" class="btn-default btn-dft" (click)="closeNotes()">
+      {{ language.No }}
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #addSubscriberInfoModel let-modal class="col-md-12 custom-modal">
+  <div class="modal-header d-block">
+    <h5 class="modal-title" id="showInfoModal">{{language['Subscriber Information']}}</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeNotes()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="row">
+    <div class="w-100 alert alert-danger  fade show my-3" *ngIf="error">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+      <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+      <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+    </div>
+  </div>
+  <div class="modal-body add-device-model">
+    <div class="expand-info-container" *ngIf="Infosub">
+      <div class="expand-info-item">
+        <label>{{language.Name}}</label>
+        <h3>{{subscriberInfo[0]?.name ? subscriberInfo[0]?.name :'-'}}</h3>
+      </div>
+      <div class="expand-info-item">
+        <label>{{language.Account}}</label>
+        <h3>{{subscriberInfo[0]?.account ?subscriberInfo[0]?.account:'-' }}</h3>
+      </div>
+      <div class="expand-info-item">
+        <label>{{language.Email}}</label>
+        <h3>{{subscriberInfo[0]?.email? subscriberInfo[0]?.email:'-'}}</h3>
+      </div>
+      <div class="expand-info-item">
+        <label>{{language.Location_ID}} </label>
+        <h3>{{subscriberInfo[0]?.subscriberLocationId ?subscriberInfo[0]?.subscriberLocationId:'-' }}</h3>
+      </div>
+      <div class="expand-info-item">
+        <label>{{language.Service_address}}</label>
+        <h3>{{subscriberInfo[0]?.serviceAddress ? subscriberInfo[0]?.serviceAddress:'-'}}</h3>
+      </div>
+      <div class="expand-info-item">
+        <label>{{language.Phone}}</label>
+        <h3>{{subscriberInfo[0]?.phone ? subscriberInfo[0]?.phone:'-'}}</h3>
+      </div>
+    </div>
+    <div *ngIf="!Infosub">
+      <p>{{language['No data available']}} </p>
+    </div>
+  </div>
+</ng-template>

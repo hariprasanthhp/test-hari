@@ -1,0 +1,114 @@
+<div class="service-data-info col-lg-6 col-xs-12 col-sm-12">
+    <div class="loader" *ngIf="loader">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">{{ language.Loading }}</span>
+            </div>
+        </div>
+    </div>
+    <div class="w-100 alert alert alert-danger fade show" *ngIf="isError">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+        <button type="button" class="close" (click)="isError = false">
+            <span></span>
+        </button>
+        <div class="d-inline-flex" [innerHtml]="alertMessage"></div>
+    </div>
+    <div class="row ml-3">
+        <div class="col-md-12 d-flex justify-content-start row" [ngClass]="{ stopAction: !gfastCollection.length }">
+            <!-- <div class="col-4 pl-0 border-bottom" *ngIf="gfastCollection.length > 1">
+                <h5 class="user-name my-2">{{ language.Wan_Status }}</h5>
+            </div> -->
+            <div class="col-3 p-0">
+                <span class="cursor-pointer primary mr-3" id="serviceGfastRefresh" (click)="gfastData()">
+                    <i class="fas fa-sync refreshicon"></i>
+                </span>
+            </div>
+            <div class="col-8 border-bottom" *ngIf="gfastCollection.length > 1">
+                <div class="d-flex justify-content-end arrow-down">
+                    <h5 class="" id="wanStatusSelectedId">
+                        Line 1
+                    </h5>
+                    <div class="cus-dd dropdown-button custom-dropdown-btn" ngbDropdown>
+                        <button class="mr-2" id="dropdownExchange" ngbDropdownToggle>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15.472" height="8.442"
+                                viewBox="0 0 15.472 8.442">
+                                <path id="ic_chevrondown"
+                                    d="M7.738,7.038.7,0,0,.7,7.034,7.742l.7.7.7-.7L15.472.7l-.7-.7Z" fill="#9e9e9e" />
+                            </svg>
+                        </button>
+                        <div ngbDropdownMenu aria-labelledby="dropdownExchange" class="wanDropDown pt-3 pb-3">
+                            <button ngbDropdownItem class="greyaa" (click)="gfastRecord = gfastCollection[i]"
+                                *ngFor="let wi of gfastCollection; let i = index">
+                                <span>Line {{ (i+1) }}</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 pl-0 border-bottom">
+                <h5 class="user-name my-2">
+                    DSL Line
+                </h5>
+            </div>
+        </div>
+
+        <div class="col-md-12 pl-0 support-key-value mb-4">
+            <table id="wanDevice" class="">
+                <tbody>
+                    <tr>
+                        <th scope="row">{{ language.Enabled }}</th>
+                        <td class="capitalize"
+                            [ngClass]="{'green' : (gfastRecord.Enabled == 'true'), 'red' : (gfastRecord.Enabled == 'false')}">
+                            {{ gfastRecord.Enabled || "-" }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Status</th>
+                        <td>{{ gfastRecord.Status || "-" }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Firmware Version</th>
+                        <td>{{ gfastRecord.FirmwareVersion || "-" }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Upstream (Mbps)</th>
+                        <td>{{ gfastRecord.Upstream || "-" }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Downstream (Mbps)</th>
+                        <td>{{ gfastRecord.Downstream || "-" }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="">
+        <div class="row ml-3">
+            <div class="col-md-12 pl-0 border-bottom">
+                <h5 class="user-name">DSL Stats</h5>
+            </div>
+            <div class="col-md-12 pl-0 support-key-value mb-4">
+                <table class="" id="wanConfigData">
+                    <tbody>
+                        <tr>
+                            <th scope="">Bytes Sent</th>
+                            <td>{{ gfastRecord?.Stats?.BytesSent || "-" }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="">Bytes Received</th>
+                            <td>{{ gfastRecord?.Stats?.BytesReceived || "-" }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="">Packets Sent</th>
+                            <td>{{ gfastRecord?.Stats?.PacketSent || "-" }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="">Packets Received</th>
+                            <td>{{ gfastRecord?.Stats?.PacketsReceived || "-" }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

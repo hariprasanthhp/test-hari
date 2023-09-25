@@ -1,0 +1,270 @@
+<div class="w-100 alert alert alert-danger fade show" *ngIf="isError">
+  <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+  <button type="button" class="close" (click)="isError = false">
+    <span></span>
+  </button>
+  <div class="d-inline-flex" [innerHtml]="warningMessage"></div>
+</div>
+<div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess">
+  {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}}
+</div>
+<div class="search-box border-bottom">
+  <div class="row my-3">
+    <div class="col-sm-12 col-md-12 col-lg-2 col-xl-2 smy-2" *ngIf="hasWriteAccess">
+      <button type="button" (click)="showModal(1)" id="addRegionId" class="btn-default primary px-3">
+        {{ language.AddRegion}}
+      </button>
+    </div>
+
+    <div class="col-sm-12 col-md-12 col-lg-8 col-xl-8">
+      <div class="form-inline form-group ccl-form m-0">
+        <label for="search" class="mr-10"></label>&ensp;
+        <div class="d-inline-flex align-items-center justify-content-between search-box-input">
+          <input name="search" type="search" id="search" class="pr-2" placeholder="{{ language.search_Region }}"
+            [(ngModel)]="searchText" #searchIp="ngModel" (search)="search($event.target.value)"
+            (keyup)="search($event.target.value)" />
+          <!-- CCL-56186 -->
+          <!-- <span class="mr-2"> <img src="../../../../assets/img/close-icon.svg" alt=""> </span> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<h2 class="title-second flex" *ngIf="showResult">
+  {{ showResult ? totalCount : totalCount }}
+  {{totalCount <= 0 || totalCount <=1 ? language["Result"] : language["Results"] }} {{ searchText ? language["for"] : ""
+    }} &nbsp;&nbsp; <strong class="ml-1">{{ searchText }}</strong>
+</h2>
+<div class="row">
+  <div class="col-md-12 subscriber-management-table">
+    <table id="managementTableId" class="management-table region-table results hover" width="100%" datatable
+      [dtOptions]="dtOptions">
+      <thead>
+        <tr>
+          <th>{{ language.Region}}</th>
+          <th>{{ language.Location}}</th>
+          <th>{{ language.Action}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of regionList; let i = index">
+          <td class="min-w-265">
+            <div class="d-inline-flex justify-content-between align-items-start">
+              <div class="left-content">
+                <span class="subscriber-name">
+                  {{data.name}}
+                  &nbsp;
+                  <span (click)="selectedRegion = data;showModal(2)" [title]="language.edit"
+                    class="cursor-pointer editIcon subscriberEdit f-size-16px" *ngIf="data.hasEdit && hasWriteAccess">
+                    <i class="fas fa-pencil-alt"></i>
+                  </span>
+                </span>
+              </div>
+            </div>
+          </td>
+          <td>
+            <p></p>
+            <br />
+            <p class="w-s-nowrap m-0" *ngFor="let loc of data.locations">
+              <span *ngIf="loc.name === ''">-</span>
+              <span *ngIf="loc.name !== ''">{{ loc.name }}</span>
+            </p>
+          </td>
+
+          <td class="text-center">
+            <div *ngIf="hasWriteAccess">
+              <p class="mb-0" *ngIf="data.hasEdit && hasWriteAccess">
+                <a class="action-info w-s-nowrap addDeviceClass" (click)="selectedRegion = data; showModal(4)">+
+                  {{language.AddLocation}}</a>
+              </p>
+              <p class="action-list mb-0" *ngFor="let loc of data.locations">
+                <a [title]="language.edit">
+                  <i class="editDeviceClass subscriber-edit cursor-pointer"
+                    (click)="selectedRegion = data;selectedLocation = loc;showModal(5)"
+                    *ngIf="data.hasEdit && hasWriteAccess">
+                    <i class="fas fa-pencil-alt"></i>
+                  </i>
+                </a>
+                <a [title]="language.delete" class="cursor-pointer secondary">
+                  <i (click)="selectedRegion = data;selectedLocation = loc;showModal(6)"
+                    *ngIf="data.hasEdit && hasWriteAccess" class="fa fa-trash-o cursor-pointer deleteDeviceClass"
+                     aria-hidden="true"></i>
+                </a>
+              </p>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+      <tbody *ngIf="regionList.length === 0">
+        <tr>
+          <td colspan="5" class="no-data-available">
+            {{filterAndSearchFlag ? language['No matching records found'] : language['No data available in table'] }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<ng-template #addRegionModal let-modal class="col-md-12">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="">
+        <h2 class="modal-title">
+          {{ language[popupTitle]}}
+        </h2>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="w-100 alert alert alert-danger fade show" *ngIf="showError">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+        <button type="button" class="close" (click)="closeAlert()">
+          <span></span>
+        </button>
+        <div class="d-inline-flex w-75"> {{ errorMessage }}</div>
+      </div>
+      <div class="py-0 d-flex justify-content-start alert alert alert-danger fade show" *ngIf="popupType===3">
+        <div class="align-self-center col-sm-7 px-1">
+          {{language.Areyousureyouwanttodeletethisregion}} ({{selectedRegion.name}})
+        </div>
+        <div class="align-self-start col-sm-5 text-right px-0">
+          <button type="button" [disabled]="loader" class="align-self-end btn-default primary m-2 px-3"
+            (click)="deleteRegion()">
+            {{ language.Confirm }}
+          </button>
+          <button type="button" [disabled]="loader" class="btn-default transparant px-3 m-2" (click)="closeModal()">
+            {{ language.cancel }}
+          </button>
+        </div>
+      </div>
+      <form [formGroup]="regionGroup" (ngSubmit)="submit()" novalidate *ngIf="popupType===1 || popupType===2">
+        <div class="form-group ccl-form row">
+          <label for="regionName" class="col-12 col-sm-4 col-form-label">{{ language.Name}} <span
+              class="error">*</span></label>
+          <div class="col-12 col-sm-8">
+            <input type="text" id="name" formControlName="regionName" placeholder="{{ language.Name}}" maxlength="40"
+              oninput="this.value = this.value.replace(/(?!\s)[^0-9A-Za-z_-]/g, '').replace(/(\..?)\../g, '$1')"
+              trimSpace [formValue]="regionGroup" />
+            <div *ngIf="submitted && regionForm.regionName.errors" class="errorMessage">
+              <label *ngIf="regionForm.regionName.errors.required">
+                {{ language["This field is required"] }}
+              </label>
+              <label *ngIf="regionForm.regionName.errors.pattern">
+                {{ language["This value is invalid"] }}
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="form-group ccl-form row" *ngIf="popupType===1">
+          <label class="col-12 col-sm-4 col-form-label">{{ language.Location}} <span class="error">*</span></label>
+          <div class="col-12 col-sm-8">
+            <ng-container *ngFor="let item of networkGroups; let i = index">
+              <span class="d-flex align-items-center">
+                <input type="text" readonly id="name{{i}}" [value]="networkGroups[i]" />
+                <a [title]="language.delete" (click)="removeNetworkGroup(i)" class="cursor-pointer">
+                  <i class="fa fa-trash-o cursor-pointer ml-2 secondary" aria-hidden="true"></i>
+                </a>
+              </span>
+              <br />
+            </ng-container>
+            <span *ngIf="!loader" class="d-flex align-items-center">
+              <input type="text" id="location" name="location" formControlName="locationName" (blur)="checkLocation()"
+                placeholder="{{ language.Location}}" maxlength="40"
+                oninput="this.value = this.value.replace(/(?!\s)[^0-9A-Za-z_-]/g, '').replace(/(\..?)\../g, '$1')"
+                trimSpace [formValue]="regionGroup" />
+              <a [title]="language.add" (click)="addNetworkGroup()" class="cursor-pointer">
+                <i class="fas fa-plus-circle ml-2 secondary" aria-hidden="true"></i>
+              </a>
+            </span>
+            <div *ngIf="noNetworkGroup && !regionGroup.value.locationName" class="errorMessage">
+              <label>
+                {{ language["This field is required"] }}
+              </label> 
+            </div>
+          </div>
+        </div>
+        <div class="form-group ccl-form row">
+          <button type="submit" id="submit" [disabled]="loader" class="btn-default primary m-2 px-3 px-3">
+            {{ language.submit }}
+          </button>
+          <button type="button" id="cancel" [disabled]="loader" class="btn-default transparant px-3 m-2"
+            (click)="closeModal()">
+            {{ language.cancel }}
+          </button>
+          <button type="button" id="delete" [disabled]="loader" class="btn-default primary m-2 px-3 px-3"
+            (click)="closeModal();showModal(3)" *ngIf="popupType===2">
+            {{ language.delete }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #addLocationModal let-modal class="col-md-12">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="">
+        <h2 class="modal-title">
+          {{ language[locationPopupTitle]}}
+        </h2>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="w-100 alert alert alert-danger fade show" *ngIf="showError">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+        <button type="button" class="close" (click)="closeAlert()">
+          <span></span>
+        </button>
+        <div class="d-inline-flex w-75"> {{ errorMessage }}</div>
+      </div>
+      <div class="py-0 d-flex justify-content-start alert alert alert-danger fade show" *ngIf="locationPopupType===3">
+        <div class="align-self-center col-sm-7 px-1">
+          {{ language.Areyousureyouwanttodeletethislocation}} ({{selectedLocation.name}})
+        </div>
+        <div class="align-self-start col-sm-5 text-right px-0">
+          <button type="button" [disabled]="loader" class="align-self-end btn-default primary m-2 px-3"
+            (click)="deleteLocation()">
+            {{ language.Confirm }}
+          </button>
+          <button type="button" [disabled]="loader" class="btn-default transparant px-3 m-2" (click)="closeModal()">
+            {{ language.cancel }}
+          </button>
+        </div>
+      </div>
+      <form [formGroup]="locationGroup" (ngSubmit)="locationSubmit()" novalidate
+        *ngIf="locationPopupType===1 || locationPopupType===2">
+        <div class="form-group ccl-form row">
+          <label for="locationName" class="col-12 col-sm-4 col-form-label">{{ language.Name}} <span
+              class="error">*</span></label>
+          <div class="col-12 col-sm-8">
+            <input type="text" id="name" formControlName="locationName" placeholder="{{ language.Name}}" maxlength="40"
+              trimSpace [formValue]="locationGroup" />
+            <div *ngIf="submitted && locationForm.locationName.errors" class="errorMessage">
+              <label *ngIf="locationForm.locationName.errors.required">
+                {{ language["This field is required"] }}
+              </label>
+              <label *ngIf="locationForm.locationName.errors.pattern">
+                {{ language["This value is invalid"] }}
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="form-group ccl-form row">
+          <button type="submit" [disabled]="loader" id="submit" class="btn-default primary m-2 px-3 px-3">
+            {{ language.submit }}
+          </button>
+          <button type="button" [disabled]="loader" id="cancel" class="btn-default transparant px-3 m-2"
+            (click)="closeModal()">
+            {{ language.cancel }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>

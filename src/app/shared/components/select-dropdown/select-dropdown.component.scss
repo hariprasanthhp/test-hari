@@ -1,0 +1,38 @@
+.dropdown {
+    width: 100%;
+    padding: 10px 15px;
+    border: none;
+    background: transparent;
+    outline: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    position: relative;
+    background: url(http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png) no-repeat right;
+    background-position:
+    calc(100% - 21px) calc(1em + 2px),
+    calc(100% - 16px) calc(1em + 2px),
+    100% 0;
+  background-size:
+    15px 15px,
+    15px 15px,
+    2.5em 2.5em;
+    line-height: 1.5em;
+    
+  }
+  
+  .dropdown:active {
+      box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+      border-radius: 30px !important;
+  }
+  
+  .dropdown option {
+      background: transparent !important;
+      outline: none !important;
+      border: none !important;
+      :hover {
+          background-color: #e5e5e5 !important;
+          outline: none !important;
+          border: none !important;
+      }
+  }
+  

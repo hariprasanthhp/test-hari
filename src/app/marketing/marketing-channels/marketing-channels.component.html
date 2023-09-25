@@ -1,0 +1,196 @@
+<div class="page-wrapper">
+  <div class="subscriber-details">
+    <div *ngIf="segmentPostErrorMsg" class="alert alert-warning alert-dismissible fade show" role="alert">
+      <strong>Error!</strong> {{ segmentPostErrorMsg }}.
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true" (click)="errorReset()"></span>
+      </button>
+    </div>
+    <div class="subs-title" style="width: 50%; display: inline-block">
+      <div class="st-header flex">
+        <div class="sth-left" style="width: 100% !important">
+          <h2 class="greyaa">{{ language.Marketing_Channels }}</h2>
+        </div>
+      </div>
+    </div>
+
+    <!-- <div class="tabs-wrapper add-sec" style="width:50%;display:inline-block;">
+
+            <div class="sth-rht flex" style="text-align: right;display: block;">
+                <button class="btn-default primary" (click)="showAddSubscriberModal()">{{language.Add}}</button>
+            </div>
+
+        </div> -->
+    <!-- <table [ngClass]="{ 'hide-table':  !showDataTable}" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"
+            class="row-border" style="width:100% !important;">
+            <thead>
+                <tr>
+                    <th>{{language.Name}}</th>
+                    <th class="text-right">
+                        {{language.Cost_per_sub}}
+                    </th>
+                    <th>{{language.Campaign_inprogress}}</th>
+                    <th>{{language.Campaign_scheduled}}</th>
+                    <th>{{language.Campaign_completed}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of marketingChannelTable">
+                    <td>
+                        <div class="lg-content-wrap" title="Mobile Message - CommandIQ">
+                            {{item.marketingChannel}}
+                        </div>
+                    </td>
+                    <td class="text-right">
+                        {{item.costPerSubscriber}}
+                    </td>
+                    <td class="text-center">
+                        {{item.inprogressCampaigns}}
+                    </td>
+                    <td class="text-center">
+                        {{item.scheduleCampaigns}}
+                    </td>
+                    <td class="text-center">
+                        {{item.completedCampaigns}}
+                    </td>
+
+                </tr>
+
+            </tbody>
+        </table> -->
+
+    <div class="row">
+      <div class="col-lg-4 col-md-6 col-md-12 pl-0">
+        <div class="camp-box">
+          <div class="top-box">
+            <div class="left-box">
+              <h6>{{ language["Command IQ Mobile Message"] }}</h6>
+              <button class="btn-default btn-dft">
+                <span class="a-status active"> </span>
+                {{ language.active }}
+              </button>
+            </div>
+            <div class="right-img">
+              <img src="assets/img/CalixCloud_Logo.svg" />
+            </div>
+          </div>
+          <button class="btn-default primary mt-3 mb-3">
+            {{ language["View Channel Results"] }}
+          </button>
+          <p class="f-s-12px">
+            {{ language["# of Calix segments in this channel"] }}
+          </p>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-6 col-md-12">
+        <div class="camp-box">
+          <div class="top-box">
+            <div class="left-box">
+              <h6>Facebook</h6>
+              <button class="btn-default btn-dft">
+                <span class="a-status inactive"> </span>
+                {{ language.InActive }}
+              </button>
+            </div>
+            <div class="right-img s-reduce">
+              <img src="assets/img/fb.png" />
+            </div>
+          </div>
+          <button class="btn-default primary mt-3 mb-3">
+            {{ language.configure }}
+          </button>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-6 col-md-12">
+        <div class="camp-box">
+          <div class="top-box">
+            <div class="left-box">
+              <h6>Mailchimp</h6>
+              <button class="btn-default btn-dft">
+                <span class="a-status inactive"> </span>
+                {{ language.InActive }}
+              </button>
+            </div>
+            <div class="right-img">
+              <img src="assets/img/Mailchimp-logo.png" />
+            </div>
+          </div>
+          <button class="btn-default primary mt-3 mb-3">
+            {{ language.configure }}
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="no-data" [ngClass]="{ 'hide-table': showDataTable }">
+      <div class="spinner-border text-primary">
+        <span class="sr-only">{{ language.Loading }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- // add channels model -->
+
+<ng-template #addSubscriberModal let-modal class="col-md-12">
+  <div class="modal-header">
+    <h5 class="modal-title" id="addModal">{{ language.Add_Mrktng_Channel }}</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form class="custom-form">
+      <div class="form-group ccl-form">
+        <label for="account" class="col-sm-12 col-form-label">{{ language.Name }} <span class="required-field"> *
+          </span></label>
+        <div class="col-sm-10">
+          <input type="text" id="account" placeholder="{{ language['Door Knocker'] }}" />
+        </div>
+      </div>
+
+      <div class="form-group ccl-form">
+        <label for="inputEmail3" class="col-sm-12 col-form-label">{{
+          language.Cost_per_item
+          }}</label>
+        <div class="col-sm-10">
+          <input type="text" id="inputinr" placeholder="$2" />
+        </div>
+      </div>
+      <button type="button" class="btn-default primary px-3 px-3">
+        {{ language.Add }}
+      </button>
+      <button type="button" class="btn-default btn-dft px-3 px-3 m-2" (click)="closeModal()" data-dismiss="modal">
+        {{ language.Cancel }}
+      </button>
+    </form>
+  </div>
+</ng-template>
+
+<!-- // edit model -->
+
+<ng-template #addEditModal let-modal class="col-md-12">
+  <div class="modal-header">
+    <h5 class="modal-title" id="addModal">Facebook</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form class="custom-form">
+      <div class="form-group ccl-form">
+        <label for="inputEmail3" class="col-sm-12 col-form-label">{{
+          language.Cost_per_sub
+          }}</label>
+        <div class="col-sm-10">
+          <input type="text" id="inputinr" placeholder="$2" />
+        </div>
+      </div>
+      <button type="button" class="btn-default primary px-3 px-3">
+        {{ language.Save }}
+      </button>
+      <button type="button" class="btn-default btn-dft px-3 px-3 m-2" (click)="closeModal()" data-dismiss="modal">
+        {{ language.Cancel }}
+      </button>
+    </form>
+  </div>
+</ng-template>

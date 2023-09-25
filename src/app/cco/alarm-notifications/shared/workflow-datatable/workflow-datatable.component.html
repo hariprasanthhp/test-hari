@@ -1,0 +1,149 @@
+<!-- <div class="row" style="margin: 17px 0px 0 0px">
+  <div class="col-md-12 pl-0" *ngIf="
+  alarmData?.table == 'individual'
+">
+    <label>
+      <b>{{language.Note}} : </b> {{language['Please select Category or Severity and search the alarms']}}.
+    </label>
+  </div>
+</div> -->
+<div class="row justify-content-between marg-27">
+
+  <div class="col-md-7 pl-0">
+
+    <!-- <div class="ccl-form">
+      <input
+        class="form-control mr-sm-2"
+        type="text"
+        class="ccl-from"
+        placeholder="{{ alarmData?.searchPlaceHolder }}"
+        aria-label="Search"
+      />
+
+      <span class="add-search-icon">
+        <img src="assets/img/ic_search_white.svg" id=""
+      /></span>
+    </div> -->
+    <div class="ccl-form search-ccl">
+      <input #searchAlarmsInput type="text" [(ngModel)]="searchAlarm" placeholder="{{
+          (alarmData && alarmData['searchPlaceHolder'] ? language[alarmData['searchPlaceHolder']] : (alarmData && alarmData['searchPlaceHolder'] ? alarmData['searchPlaceHolder'] : '')) ||
+            (alarmData && alarmData['searchPlaceHolder'] ? alarmData['searchPlaceHolder'] : '')
+        }}" class="ccl-input" id="org-list-search" />
+      <span *ngIf="searchAlarm && searchAlarm.length > 0" (click)="clearSearch()" aria-hidden="true"
+        class="custom-clear">×</span>
+      <!-- (paste)="searchAlarms($event.target.value, alarmData?.table)" -->
+      <!-- (search)="searchAlarms($event.target.value, alarmData?.table)" -->
+      <!-- (input)="searchAlarms($event.target.value, alarmData?.table)" -->
+      <!-- (ngModelChange)='searchAlarms($event, alarmData?.table)' -->
+      <!-- <input
+        
+        type="search"
+        [(ngModel)]="searchCategory"
+        (paste)="searchCategories($event.target.value)"
+        placeholder="{{ alarmData?.searchCategoryPlaceHolder }}"
+        (search)="searchCategories($event.target.value)"
+        class="ccl-input"
+        id="org-list-search"
+        (input)="searchCategories($event.target.value)"
+      /> -->
+    </div>
+  </div>
+  <div class="col-md-5 pr-0 text-right" *ngIf="alarmData?.tableType == 'non-monitored'">
+    <button type="button" [disabled]="!canAdd" id="nextbtn" class="btn-arrow btn-arr-nxt primary px-3 mr-2"
+      (click)="addRemoveSelectedAlarmList('add', alarmData?.table)">
+      {{ language["Add Selected"] }}
+      <img src="assets/img/ic_chevron-r-w.svg" />
+    </button>
+  </div>
+  <div class="col-md-5 text-right pr-0" *ngIf="alarmData?.tableType == 'monitored'">
+    <button type="button" [disabled]="!canRemove" id="nextbtn" class="btn-arrow btn-arr-nxt px-3 ml-2 primary"
+      (click)="addRemoveSelectedAlarmList('remove', alarmData?.table)">
+      <img class="mr-2 ml-0 transform-180" src="assets/img/ic_chevron-r-w.svg" />{{ language["Remove
+      Selected"] }}
+    </button>
+  </div>
+  <div class="col-md-6 pl-0 mt-3">
+    <div class="ccl-form" *ngIf="
+        alarmData?.table == 'individual' ||
+        alarmData?.table == 'monitoredIndividual'
+      ">
+      <ng-select [(ngModel)]="alarmData.searchCategory" (change)="searchAlarms($event, 'category')"
+        (input)="searchAlarms($event, 'category')" placeholder="{{ language[alarmData?.searchCategoryPlaceHolder] }}"
+        [items]="alarmData?.categoryList" bindValue="id" bindLabel="name">
+      </ng-select>
+    </div>
+  </div>
+  <div class="col-md-6 pr-0 mt-3">
+    <div class="ccl-form" *ngIf="
+        alarmData?.table == 'individual' ||
+        alarmData?.table == 'monitoredIndividual'
+      ">
+      <ng-select [searchable]="false" [(ngModel)]="alarmData.searchSeverity" placeholder="{{ language[alarmData?.searchSeverityPlaceHolder] }}"
+      (change)="searchAlarms($event, 'severity')"
+      (input)="searchAlarms($event, 'severity')">
+        <ng-option value="critical">{{ language.critical }}</ng-option>
+        <ng-option value="major">{{ language.major }}</ng-option>
+        <ng-option value="minor">{{ language.minor }}</ng-option>
+        <ng-option value="warning">{{language.Warning}}</ng-option>
+        <ng-option value="info">{{language.Info}}</ng-option>
+    </ng-select>
+      <!-- <ng-select [(ngModel)]="alarmData.searchSeverity"
+        placeholder="{{ language[alarmData?.searchSeverityPlaceHolder] }}" (change)="searchAlarms($event, 'severity')"
+        (input)="searchAlarms($event, 'severity')" [items]="alarmData?.severityList" bindValue="id" bindLabel="name">
+      </ng-select> -->
+    </div>
+  </div>
+</div>
+<div class="row mb-3" *ngIf="!canShowTableBody">
+  <div class="col-md-12">
+    <div class="loader mt-5">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="overflow-auto w-100">
+  <table [ngClass]="{ showHideTable: !canShowTableBody }" class="row-border hover alarm-table-alt table-alter dataTable"
+    datatable [dtTrigger]="dtTrigger" [dtOptions]="dtOptions">
+    <thead>
+      <tr>
+        <th scope="col">
+          <div class="form-check">
+            <input #checkAllViewChild type="checkbox" name="alarmCheckAll" id="alarmCheckAll"
+              (click)="checkUncheckAll(alarmData?.tableType, $event)"
+              [disabled]="(alarmData && alarmData.allSelected) || (alarmData && alarmData['data'] && alarmData['data'].length == 0)" />
+          </div>
+        </th>
+        <th scope="col">{{ language["Alarm Name"] }}</th>
+        <th scope="col">{{ language.Category }}</th>
+        <th scope="col">{{ language["Group Name"] }}</th>
+        <th scope="col">{{ language["Number of Alarms"] }}</th>
+        <th scope="col">{{ language["Severity"] }}</th>
+        <th scope="col">{{ language['Alarm Id'] }}</th>
+        <th scope="col">{{ language['Alarm Rule Id'] }}</th>
+        <th scope="col">{{ language['Group Id'] }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let alarm of alarmData?.data; let i = index">
+        <td>
+          <div class="form-check">
+            <input type="checkbox" (click)="onCheckRow(alarmData?.tableType, $event, i)" name="alarm_name"
+              [(ngModel)]="alarm['isChecked']" [disabled]="alarm['disabled']" />
+          </div>
+        </td>
+        <td>{{ alarm.alarm_name }}</td>
+        <td>{{ alarm.alarm_category }}</td>
+        <td class="text-break">{{ alarm.group_name }}</td>
+        <td>{{ alarm.no_of_alarms }}</td>
+        <td>{{ alarm["severity"] }}</td>
+        <td>{{ alarm["alarm_id"] }}</td>
+        <td>{{ alarm["alarmRuleId"] }}</td>
+        <td>{{ alarm["group_id"] }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,153 @@
+<div class="loader" *ngIf="loading">
+  <div class="d-flex justify-content-center">
+    <div class="spinner-border text-primary">
+      <span class="sr-only">{{ language.Loading }}</span>
+    </div>
+  </div>
+</div>
+<div *ngIf="errors.length">
+  <div class="w-100 alert alert-danger fade show mt-4" *ngFor="let errorInfo of errors; let i = index">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+    <button type="button" class="close" (click)="closeAlert(i)"><span></span></button>
+    <div class="error-info-sec d-inline-flex">
+      <h5>{{ language[errorInfo.title] || errorInfo.title }}</h5>
+      <ul class="device-ul">
+        <li *ngFor="let d of errorInfo.body">{{ language[d] || d }}</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="w-100 alert alert-success fade show mt-3 flex-space-between" *ngIf="success">
+  <!-- <button type="button" class="close" (click)="closeAlert()">&times;</button> -->
+  {{ successInfo }}
+  <button class="btn-default px-3 ok-btn" (click)="closeAlert()">
+    {{ language.Ok }}
+  </button>
+</div>
+
+<div class="device-wizard" id="deviceWizard">
+  <h4 class="per-titledeviceWizard"></h4>
+  <div class="mt-3">
+    <div class="warning-msg" *ngIf="deviceSN">
+      <span class="error-img"><img src="./assets/img/warning-icon.svg"></span>
+      <span>{{ language.Delete_Confimation }} "{{ deviceSN }}" ?</span>
+      <div class="btn-con-sec float-right">
+        <button class="btn warn-btn mr-2" id="deletePFBtn" (click)="doDeleteDevieSN()">
+          {{ language.Confirm }}
+        </button>
+        <button class="btn warn-btn" (click)="cancelDelete()">
+          {{ language.Cancel }}
+        </button>
+      </div>
+    </div>
+    <div class="loader" *ngIf="loading">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+    <section>
+      <!-- <div class="form-group ccl-form row">
+        <label class="col-2 control-label">{{ language.Device_ID }}</label>
+        <div class="col-8">
+          <ng-select2 id="device_input" [data]="selectData" [options]="options" [width]="500" [(ngModel)]="deviceData"
+            (valueChanged)="onChangeData($event)">
+          </ng-select2>
+          <p class="small-p">{{ language.EXOS_Systems }}</p>
+          <div *ngIf="saveClicked && !devicesAdded.length" id="device_input-error" class="errorMessage">
+            <p class="pl-3">
+              {{ language.Device_Serial_No_Validation }}
+            </p>
+          </div>
+        </div>
+        <div class="col-2">
+          <button type="button" class="btn-default primary float-right" [disabled]="btnDisabled"
+            id="netops-add-device-btn" (click)="addDevices()">
+            {{ language.Add }}
+          </button>
+        </div>
+      </div> -->
+      <div class="form-group ccl-form row">
+        <label class="col-2 control-label">{{ language.Device_ID }}
+          <span class="error">*</span>
+        </label>
+        <div class="col-8">
+          <div class="custom-paste-input" (click)="onCustomPasteClick($event);">
+            <div class="custom-paste-list" *ngFor="let item of deviceData; let i = index;">
+              {{item}}
+              <span class="remove-input-btn primary" data-key="" (click)="removeData(i)"><i
+                  class="fa fa-times"></i></span>
+            </div>
+
+            <input id="device_input" #device_input name="device_input" type="text" [(ngModel)]='inputBoxData' title=""
+              required="" (paste)="pasteMakeList($event)" (click)="makeList()" (keyup.Space)="makeList()"
+              (keyup.enter)="makeList()" aria-required="true" aria-describedby="device_input-error" trimSpace>
+          </div>
+          <p class="small-p">{{ language.EXOS_Systems }}</p>
+          <div *ngIf="saveClicked && !devicesAdded.length" id="device_input-error" class="errorMessage">
+            <p class="pl-3">
+              {{ language.Device_Serial_No_Validation }}
+            </p>
+          </div>
+        </div>
+        <div class="col-2">
+          <button type="button" class="btn-default primary float-right" [disabled]="btnDisabled"
+            id="netops-add-device-btn" (click)="addDevices()">
+            {{ language.Add }}
+          </button>
+        </div>
+      </div>
+    </section>
+    <div class="mt-5" [hidden]="!dataAvailable" id="netops-show-add-devices-table-list">
+      <table datatable [dtOptions]="tableOptions" [dtTrigger]="dtTrigger" class="row-border hover table-alter">
+        <thead>
+          <tr>
+            <th>{{ language.Device_ID }}</th>
+            <th>{{ language.Action }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="{{ item._id }}" *ngFor="let item of devicesAdded; let i = index">
+            <td>
+              {{ item }}
+            </td>
+            <td>
+              <div class="doc-dele-icon">
+                <a title="{{ language.Delete }}" class="cursor-pointer" (click)="deleteDevice(item, i)">
+                  <i aria-hidden="true" class="fa fa-trash-o"></i>
+                </a>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="!devicesAdded.length">
+            <td colspan="2">
+              <div class="text-center">
+                {{ language["No data available in table"] }}
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="d-inline-flex justify-content-start performance-testing-button">
+    <div>
+      <button type="button" class="btn-arrow btn-arr-prev btn-grey" (click)="gotoPrevious()"
+        id="netops-perftest-add-device-previous-btn">
+        <img src="assets/img/ic_chevronleft_grey.svg"> {{ language.Previous }}
+      </button>
+    </div>
+    <div>
+      <button type="button" class="btn-default btn-dft mx-2" (click)="reload()"
+        id="netops-perftest-add-device-cancel-btn">
+        {{ language.cancel }}
+      </button>
+      <button type="button" class="btn-arrow btn-arr-nxt primary" (click)="go_next()"
+        id="netops-perftest-add-device-next-btn">
+        {{ language.Next }} <img src="assets/img/ic_chevron-r-w.svg">
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,141 @@
+<app-subscriber-menu> </app-subscriber-menu>
+<section class="m-2">
+  <div class="row">
+    <!-- <div class="loader load" *ngIf="loading">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div> -->
+    <div class="w-100 alert alert alert-danger fade show" *ngIf="error">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+      <button type="button" class="close" (click)="closeAlert()">
+        <span></span>
+      </button>
+      <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+    </div>
+    <div class="col-md-12 ccl-tabs">
+      <ul id="tabs" class="nav nav-tabs">
+        <li class="nav-item" id="top-issue-tab">
+          <a routerLink="/{{ MODULE }}/overview/issues" (Click)="$event.preventDefault()" data-toggle="tab"
+            class="nav-link small" routerLinkActive="active">
+            <span class="big-text">{{language.Issues}}</span></a>
+        </li>
+
+        <li class="nav-item" id="top-topology-tab" *ngIf=showTopologyTab>
+          <a routerLink="/{{ MODULE }}/overview/topology" data-toggle="tab" class="nav-link small"
+            routerLinkActive="active">
+            <span class="big-text">{{language.Topology}}</span>
+          </a>
+        </li>
+        <li class="nav-item" id="top-qoe-tab" *ngIf="showQoeTab">
+          <a routerLink="/{{MODULE}}/overview/quality-of-experience" data-toggle="tab" class="nav-link small"
+            routerLinkActive="active">
+            <span class="big-text">{{language['Quality of Experience']}}</span>
+          </a>
+        </li>
+      </ul>
+      <div id="tabsContent" class="tab-content">
+        <div id="issue" class="tab-pane fade active show">
+          <div class="row pb-2"></div>
+        </div>
+        <div id="topology" class="tab-pane fade">
+          <div class="row pb-2"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="row" *ngIf=showTopologyTab>
+  <div class="col-md-12">
+    <div class="toggle-swtbtn checkbox switcher">
+      <div class="col-md-3">
+        <label class="refreshButton">
+          <span class="cursor-pointer primary" id="serviceDataRefresh" (click)="refreshClick()">
+            <i class="fas fa-sync refreshicon"></i>
+          </span>
+        </label>
+      </div>
+      <div class="col-md-9 pr-0">
+        <div class="accessPoint">
+          <div class="
+              d-inline-flex
+              align-items-center
+              justify-content-between
+              search-box-input
+            ">
+            <input name="search" id="mySearch" placeholder="{{language.Topology_Search}}" id="mySearch"
+              [(ngModel)]="searchText" (ngModelChange)="searchDiagram()" #searchValue />
+            <div class="search-box-icon">
+              <img id="searchSubscriberIcon" src="assets/img/ic_search_white.svg" class="search-icon primary"
+                (click)="searchDiagram()" />
+            </div>
+          </div>
+          <label for="showConnection" style="margin-top: 10px">
+            <input type="checkbox" id="showConnection" (change)="accessPoint()" />
+            <span><small></small></span>
+            {{language.Show_Connectivity}}
+          </label>
+          <div class="zoom">
+            <div class="cus-button">
+              <span id="ZoomIn" class="mr-2 pointer" (click)="changeScaleDiagram($event, 'decrease')"
+                style="font-size: 24px">
+                <img src="assets/images/iconmonstr-minus.svg" style="height: 25px" />
+              </span>
+              <span class="icon-hl" style="width: 70px">
+                <ng-select style="width: 75px; background-color: #ffffff; border: none" [(ngModel)]="zoomScale"
+                   bindLabel="factor" bindValue="value" [items]="zoomFactorList" [clearable]="false" [searchable]="false" [ngModelOptions]="{ standalone: true }"
+                  (ngModelChange)="changeScaleDiagram($event, 'dropDown')">
+                </ng-select>
+              </span>
+
+              <span id="ZoomOut" class="pointer" (click)="changeScaleDiagram($event, 'increase')"
+                style="font-size: 24px">
+                <img src="assets/images/iconmonstr-plus.svg" style="height: 25px" />
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="mainDiagram" *ngIf="!noData" #APDiagram class="diagram-info">
+      <div class="loader load" *ngIf="loading">
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border text-primary">
+            <span class="sr-only">{{language.Loading}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nodata-info" *ngIf="noData">{{ language.nodata }}</div>
+
+    <div *ngIf="rgArr?.length > 0 || clientArr?.length > 0" #issueBox>
+      <div class="topo-info-box" *ngIf="rgflag">
+        <p style="font-weight: 600; line-height: 0.4">{{language.issue}}:</p>
+        <div style="margin-left: 10px">
+          <div *ngFor="let rgErr of rgArr">
+
+            <p class="m-0">
+              <span style="font-weight: 600">{{ rgErr.name }}</span> -
+              <span>{{ rgErr.note }}</span>
+            </p>
+          </div>
+        </div>
+        <div *ngIf="selectedAPValue" style="margin-left: 10px">
+          <!-- <h4 style="font-size: 20px; font-weight: 600">
+            {{ selectedAPValue["hostname"] }}
+          </h4> -->
+          <div *ngFor="let clientErr of clientArr">
+            <p>
+              <span style="font-weight: 600">{{ clientErr.name }}</span> -
+              <span>{{ clientErr.note }}</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,246 @@
+button.md-btn {
+  font-size: 15px !important;
+  padding: 0.375rem 1.5rem !important;
+}
+
+span.user-name.mb-0 {
+  color: #4c4c4c !important;
+  font-size: 30px !important;
+  white-space: nowrap;
+  font-weight: 400 !important;
+}
+
+.margin-lft {
+  margin-left: -3rem;
+}
+
+.speed-text-process {
+  position: fixed;
+  width: 100%;
+  left: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 9;
+
+  h2 {
+    justify-content: flex-start;
+    align-items: center;
+    font-size: 36px;
+    font-weight: 400;
+    color: #fff;
+    padding: 20px 0;
+
+    img {
+      position: relative;
+      margin-left: 67px;
+      width: 72px;
+      height: 72px;
+    }
+  }
+}
+
+.f-size-14 {
+  font-size: 14px;
+}
+
+.alignWanSelector {
+  position: absolute;
+  right: 0;
+}
+
+.wanDropDown {
+  width: 100px !important;
+  transform: translate(15px, 26px) !important;
+}
+
+::ng-deep .dropdown-button.show .dropdown-menu.show .dropdown-item {
+  text-transform: inherit;
+}
+
+.flex-space-between .custom-dropdown-btn.dropdown-button.show .dropdown-menu.show {
+  top: 10px !important;
+  left: auto !important;
+  right: 0px !important;
+}
+
+.stopAction {
+  pointer-events: none;
+}
+
+.green {
+  color: #82BF00;
+}
+
+.red {
+  color: #C70000;
+}
+
+.orange {
+  color: orange;
+}
+
+.speedTestLogo {
+  width: 50px;
+  float: right;
+}
+
+.service-data-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+
+  .left-service-data-info {
+    width: 48%;
+
+  }
+
+  .right-service-data-info {
+    width: 48%;
+
+  }
+
+}
+
+.close {
+  button {
+    background: none;
+    border: none;
+  }
+}
+
+.service-data-info h5 {
+  font-size: 24px;
+}
+
+.link {
+  font-size: 13px;
+  color: #0279FF;
+  text-decoration: none !important;
+}
+
+.link:hover {
+  text-decoration: none !important;
+}
+
+.chartOrange {
+  color: rgba(252, 114, 53);
+}
+
+.support-key-value tr {
+  width: 100%;
+  border-bottom: 1px solid #EBEAEF;
+  line-height: 24px;
+}
+
+.st-grey {
+  color: grey;
+}
+
+.st-black {
+  color: black;
+}
+
+.st-highOpacity {
+  opacity: 1;
+}
+
+.st-lowOpacity {
+  opacity: 0.5;
+}
+
+.small-text-2 {
+  font-size: 12px;
+  line-height: 40px;
+}
+
+.dataTables_empty {
+  display: none;
+}
+
+
+.alert-note {
+  color: #1A1F22;
+  background-color: #F5FAFF;
+  border-color: #F5FAFF;
+}
+.data-loader {
+  z-index: 11;
+  position: absolute;
+  background-color: #178cd00d;
+  height: 100%;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 25px;
+}
+.h-400{
+  height: 400px;
+}
+.cursor-line{
+  cursor: pointer; line-height: normal;
+}
+.st-upl{width: 15px;height: 15px;;border-radius: 50px;background-color: black;}
+.st-speed{
+  width: 15px;height: 15px;/* border-radius: 50px; */background-color: black;
+}
+.chart-w-centre{height: 50px;text-align: center; width: 81%; margin: 0 auto;}
+.f-subtitle{font-size:14px;color:'#808080';font-Weight:400;font-Family:Source Sans Pro}
+.pol-icon{
+  float: right; width: 40%; text-align: center
+}
+.speed-test-fit{float: left; width: fit-content; text-align: center}
+.w-40-float{
+  width: 40px;float: left;height: 100%;
+}
+.tab-action-buttons{
+  button{
+    padding: 3px 20px;
+    background: #fff;
+    color: #0279ff;
+    line-height: 16px;
+    height: 24px;
+    font-size: 14px;
+    box-shadow: none;
+    border: 1px solid #0279ff;
+  }
+  .btn-active {
+    background: #0279ff;
+    color: #ffffff;
+  }
+  button:nth-child(1){
+    border-radius: 12px 0px 0px 12px;
+  }
+  button:nth-last-child(1){
+    border-radius: 0px 12px 12px 0px;
+  }
+  .active-borderradious,button:only-child{
+    border-radius : 12px !important; 
+  }
+}
+.btn-pub {
+  border-radius: 12px 0px 0px 12px;
+}
+.btn-prv {
+  border-radius: 0px 12px 12px 0px;
+}
+.dropdown {
+  .dropdown-menu {
+      border-radius: 16px;
+      box-shadow: 0px 5px 15px rgba(128, 128, 128, 0.25);
+      -webkit-box-shadow: 0px 5px 15px rgba(128, 128, 128, 0.25);
+      border-color: rgba(0, 0, 0, .05) !important;
+      min-width: 200px;
+      button.btn {
+          width: 100% !important;
+          border-radius: 0px !important;
+          text-align: left;
+          &:hover {
+              background-color: #EDF5FF !important;
+          }
+      }
+  }
+}

@@ -1,0 +1,87 @@
+<section *ngIf="!ssoLoading">
+    <div class="form-overall-container">
+        <div class="login-wrapper">
+            <div class="overlay" [ngClass]="bgimgloaded ? ' d-visible' : 'login-containter' ">
+            </div>
+            <div class="login-wrap">
+
+                <div class="logo" [ngClass]="bgimgloaded ? ' d-visible' : 'login-containter' ">
+                    <img src="assets/img/login-logo.svg">
+                </div>
+
+
+                <div [ngClass]="bgImageLoaded ? 'login-containter d-block' : 'login-containter' " id="content">
+                    <h2>{{language.Welcome}}</h2>
+                    <h3>{{language.Lets_Started}}</h3>
+                    <div class="form-container">
+                        <form #f="ngForm" class="form-input-field">
+                            <label class="lblLoginError text-red font-weight-bold" *ngIf="showError">{{errorMsg}}
+                            </label>
+                            <div class="input-effect">
+                                <input class="effect" type="text" required="required" type="email" id="username"
+                                    name="username" [(ngModel)]="username" (keyup.enter)="onSignin(f.value)">
+                                <label>{{language.Username}}</label>
+                                <span class="focus-border"></span>
+                                <span class="tick" *ngIf="isLocalUser"> <img src="assets/img/ic_checkmark.svg"> </span>
+                            </div>
+                            <div class="input-effect pwd-field" *ngIf="isLocalUser">
+                                <input class="effect" [attr.type]="showPassword?'text': 'password'" id="password"
+                                    name="password" ngModel placeholder="Password" (keyup.enter)="onSignin(f.value)"
+                                    [autofocus]="isLocalUser"><span class="password-eye-icon"
+                                    (click)="toggleShowPassword()">
+                                    <i *ngIf="!showPassword" class="fa fa-eye-slash" aria-hidden="true"></i>
+                                    <i *ngIf="showPassword" class="fa fa-eye" aria-hidden="true"></i>
+                                </span>
+                                <label>{{language.Password}}</label>
+                                <span class="focus-border"></span>
+                            </div>
+
+                            <button class="btn-large primary cursur" (click)="onSignin(f.value)" id="nextOrSubmitBtn"
+                                [disabled]="disabled">{{isLocalUser ? language.Sign_In: 'Next'}}</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <form class="mt-2" *ngIf="salesForceUser" [hidden]="true" action="{{actionUrl}}" method="GET" #salesUser>
+                <!-- <div class="form-group">
+                <input type="text" name="apikey" value="DxdUNK2FqCwe1GWDKG8yYkd4yXRvVVxl"
+                    class="form-control">
+            </div> -->
+                <div class="form-group">
+                    <input type="text" name="response_type" value="{{response_type}}" class="form-control">
+                </div>
+                <div class="form-group">
+                    <input type="text" name="username" value="{{salesForceUser}}" class="form-control">
+                </div>
+                <div class="form-group">
+                    <input type="text" name="scope" value="{{scope}}" class="form-control">
+                </div>
+                <div class="form-group">
+                    <input type="text" name="state" value="{{state}}" class="form-control">
+                </div>
+                <div class="form-group">
+                    <input type="text" name="redirect_uri" value="{{serviceUrl}}" class="form-control">
+                </div>
+                <div class="form-group">
+                    <input type="text" name="nonce" value="{{nonce}}" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <input type="text" name="client_id" value="{{ClientID}}" class="form-control">
+                </div>
+                <button id="form-submit" (click)="salesUser.submit()" class="button"
+                    type="submit">{{language.Sign_In}}</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+
+<div class="login-loader" *ngIf="ssoLoading">
+    <div class="text-center">
+        <div class="spinner-border">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+</div>

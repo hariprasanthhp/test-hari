@@ -1,0 +1,1566 @@
+<div class="subscriber-details">
+  <div class="w-100 alert alert alert-danger fade show" *ngIf="isError">
+    <span class="error-img"><img src="./assets/img/error-icon.svg" /></span>
+    <button type="button" class="btn-default primary float-right" (click)="isError = false">
+      {{ language.OK }}
+    </button>
+    <div class="d-inline-flex" [innerHtml]="alertMessage"></div>
+  </div>
+  <div class="alert alert-success alert-dismissible fade show" role="alert" *ngIf="successmsg">
+    <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+    <strong>{{ language.Success }}!</strong>
+    {{ language.Call_Disposition_Successfully }}
+    <button type="button" class="close" (click)="successmsg = !successmsg" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="w-100 alert alert-success fade show my-3" *ngIf="successEmail">
+    <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+    <button type="button" class="close" (click)="successEmail = false">
+      <span></span>
+    </button>
+    <div class="d-inline-flex" [innerHtml]="language[successInfo] || successInfo"></div>
+  </div>
+  <div class="w-100 warn-alert-overflow alert warning-msg fade show d-none" id="extUserCreateWarning">
+    <span class="success-img succ-img"><img src="./assets/img/warning-icon.svg" /></span>
+    <span class="text-break">{{language['Please create a Call Outcome record to visit selected page']}}</span>
+    <button type="button" class="close ml-2" (click)="toggleExtUserCreateWarning()">
+      <img src="assets/img/ic_close-44px.svg" />
+    </button>
+
+  </div>
+  <div class="w-100 warn-alert-overflow alert warning-msg fade show" *ngIf="incompleteDevice">
+    <span class="success-img succ-img"><img src="./assets/img/warning-icon.svg" /></span>
+    <span class="text-break">{{ language.User_info }} ({{ incompleteDevice }})
+      {{ language.User_info2 }}.</span>
+    <button type="button" class="close ml-2" (click)="incompleteDevice = ''">
+      <img src="assets/img/ic_close-44px.svg" />
+    </button>
+
+  </div>
+  <div class="w-100 alert warning-msg fade show" *ngIf="multipleRegId && multipleRegId?.length > 1">
+    <span class="success-img succ-img"><img src="./assets/img/warning-icon.svg" /></span>
+    <button type="button" class="close ml-2" (click)="multipleRegId = []">
+      <img src="assets/img/ic_close-44px.svg" />
+    </button>
+    <span>{{ language.multipleRegInfo }}{{ multipleRegId[0]['registrationId'] }}{{ language.multipleRegInfo2 }}{{
+      regFsan() }}{{
+      language.multipleRegInfo3 }}</span>
+  </div>
+  <div class="w-100 alert warning-msg fade show" *ngIf="isoutageError">
+    <span class="success-img succ-img float-none pr-2"><img src="./assets/img/warning-icon.svg" /></span>
+    <span class="text-break">{{language["This subscriber is experiencing a service disruption"]}}.</span>
+    <button type="button" class="close ml-2 mr-1" (click)="isoutageErrorShowing()">
+      <img src="assets/img/ic_close-44px.svg" />
+    </button>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <div class="loader" *ngIf="loader">
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border text-primary" role="">
+            <span class="sr-only">{{ language.Loading }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="row my-2">
+
+        <div class="col-md-7 subscriber-name-info">
+          <div class="sub-name" data-toggle="tooltip" data-placement="top"
+            title='{{ subscriberInfoResult?.name || "-" }}' id="subs-info-title">{{ subscriberInfoResult?.name || "-" }}
+            <span [ngClass]="bSmbMode ? 'suspended-but' : ''" *ngIf="bSmbMode">{{language['Business']}}</span>
+          </div>
+        </div>
+        <div class="col-md-5 text-right subscriber-name-info-button" *ngIf="!successEmailSent">
+          <!-- New Call Outcome -->
+          <!-- <button type="button" class="btn-default primary mr-2" data-toggle="modal"
+            data-target=".bd-example-modal-lg">New Call
+            Outcome</button> -->
+          <!-- Call History -->
+          <!-- <button type="button" class="btn-default primary mr-2" data-toggle="modal"
+            data-target=".new-call-history"> new Call History</button> -->
+
+          <!-- <button type="button" class="btn-default btn-alt primary mr-2"
+            *ngIf="scopeFlag.subscriberCORead && sso.getCscType() !== 'DME'"
+            (click)="openPopUpModal(callHistoryModel)">{{language['Call History']}}</button> -->
+
+          <!--<button style="margin-right: 20px;" *ngIf="showSSIDButton && scopeFlag.wifiRead" id="ssidManagerBtnId"
+              class="btn-default primary px-3" (click)="gotoSSIDManager()">
+              {{ language.SSID_Manager }}
+            </button>-->
+          <button *ngIf="(showSSIDButton && scopeFlag.wifiRead)" id="ssidManagerBtnId"
+            class="btn-default primary px-3 mr-20px" (click)="gotoSSIDManager()">
+            {{ language.SSID_Manager }}
+          </button>
+          <!-- <button style="margin-right: 20px;" id="callOutcomeBtnId" class="btn-default btn-dft mr-2"
+            (click)="calloutcome(); openOutModal(callout)"
+            *ngIf="scopeFlag.subscriberCOWrite && sso.getCscType() !== 'DME'">
+            {{ language.Call_Outcome }}
+          </button> -->
+
+          <button type="button" id="callOutcomeBtnId" class="btn-default btn-dft mr-20px"
+            *ngIf="scopeFlag.subscriberCOWrite && sso.getCscType() !== 'DME'"
+            (click)="getCallOutComeData(); openPopUpModal(callOutComeModel)"> {{ language.Call_Outcome }}</button>
+
+
+
+          <div class="subscriber-more-but">
+            <div class="dropdown">
+              <button class="dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                ...
+              </button>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" href="javascript:void(0)"
+                  *ngIf="scopeFlag.subscriberCORead && sso.getCscType() !== 'DME'"
+                  (click)="callHistoryOpenPopUpModal(callHistoryModel,'callHistoryModel')"> {{language['Call History']}}
+                </a>
+                <!--- !endPointIdFlage is used for hideing the support insights if subscriber is not there -->
+                <a class="dropdown-item" href="javascript:void(0)" (click)="marketingDetail()" *ngIf="
+                  sso.getCscType() !== 'DME' &&
+                  isCMCAvailable &&
+                  sso.getSubscriberEndpointId() &&
+                  scopeFlag.marketingRead &&
+                  !endPointIdFlage
+                ">{{language['Service Insights']}}
+                </a>
+                <!--- !endPointIdFlage is used for hideing the support insights if subscriber is not there -->
+                <a class="dropdown-item Edit-sub" href="javascript:void(0)" *ngIf="showCommandInvite"
+                  (click)="openmodalLog(auditLog)"> {{language['Send CommandIQ Invite']}}
+                </a>
+                <a class="dropdown-item Edit-sub" href="javascript:void(0)"
+                  *ngIf="subscriberInfoResult?._id && scopeFlag.subMgmtWrite"
+                  [routerLink]="['/support/netops-management/subscriber-management/manage']"
+                  (contextmenu)="newTab($event)" (click)="newTab($event)"> {{language['Edit
+                  Subscriber']}}
+                </a>
+                <a class="dropdown-item PR-data" href="javascript:void(0)"
+                  *ngIf="subscriberInfoResult?._id && showProvisionRecord && scopeFlag.subMgmtWrite"
+                  [routerLink]="['/support/netops-management/subscriber-management/manage']"
+                  (contextmenu)="newTab($event)" (click)="newTab($event)">
+                  {{language['Provisioning Record']}}
+                </a>
+
+                <a class="dropdown-item Manage-sub" href="javascript:void(0)"
+                  *ngIf="subscriberInfoResult?._id && scopeFlag.subMgmtWrite"
+                  [routerLink]="['/support/netops-management/subscriber-management/manage']"
+                  (contextmenu)="newTab($event)" (click)="newTab($event)"> {{language['Manage Subscriber']}}
+                </a>
+                <!-- *ngIf="scopeFlag.canWriteEditingCommandIQalert || scopeFlag.canReadEditingCommandIQalert"? -->
+                <a class="dropdown-item" href="javascript:void(0)"
+                  *ngIf="subscriberInfoResult?.commandIQ.email && (subscriberInfoResult?._id && scopeFlag.subMgmtIQWrite || scopeFlag.subSearchIQWrite || scopeFlag.subOnboardedIQWrite)"
+                  (click)="openModalEditCommandIq(editingCommandIQalert)">
+                  {{ bSmbMode ? language['Edit CommandWorx Email(s)'] : language['Edit CommandIQ Email(s)']}}
+                </a>
+                <a class="dropdown-item Del-sub" href="javascript:void(0)"
+                  *ngIf="subscriberInfoResult?._id && scopeFlag.subMgmtWrite"
+                  [routerLink]="['/support/netops-management/subscriber-management/manage']"
+                  (contextmenu)="newTab($event)" (click)="newTab($event)">
+                  {{language.Delete_Subscriber}}
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- <button type="button" style="margin-right: 20px;" id="callOutcomeBtnId" class="btn-default btn-dft mr-2"
+            *ngIf="scopeFlag.subscriberCOWrite && sso.getCscType() !== 'DME'" data-toggle="modal"
+            data-target=".bd-example-modal-lg"> {{ language.Call_Outcome }}</button> -->
+
+          <!-- <button id="marketing-insibtnId" class="btn-default btn-dft" (click)="marketingDetail()" *ngIf="
+              sso.getCscType() !== 'DME' &&
+              isCMCAvailable &&
+              sso.getSubscriberEndpointId() &&
+              scopeFlag.marketingRead
+            ">
+            {{ language.mark_insight }}
+          </button> -->
+        </div>
+        <div class="col-md-5 subscriber-name-info-button" *ngIf="successEmailSent">
+          <div class="w-100 alert alert-success fade show d-flex justify-content-around align-items-baseline m-0">
+            <span class="success-img"><img src="./assets/img/ic_success-circle-outline.svg" /></span>
+            <div class="w-80 d-flex flex-column">
+              <h4 class="m-0">{{language['CommandIQ Invite Sent']}}</h4>
+              <span class="m-0">{{language['The invite email was successfully sent to the subscriber']}}</span>
+            </div>
+            <button type="button" class="close" (click)="closeSuccessMsg()">
+              <span></span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-40px">
+        <div class="sub-account-details">
+          <div class="sub-account-details-info">
+            <div class="sub-accounts-info">
+              <table class="sub-account-details-table">
+                <tbody>
+                  <tr>
+                    <td>{{ language.Account }}</td>
+                    <td>{{ subscriberInfoResult?.account || "-" }}</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      {{ language.Location_ID }}
+                    </td>
+                    <td>
+                      {{ subscriberInfoResult?.subscriberLocationId || "-" }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      {{ language.Phone_No }}
+                    </td>
+                    <td>{{ subscriberInfoResult?.phone || "-" }}</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      {{ language.Email }}
+                    </td>
+                    <td>{{ subscriberInfoResult?.email || "-" }}</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      {{ language.Address }}
+                    </td>
+                    <td>{{ subscriberInfoResult?.serviceAddress || "-" }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="sub-account-details-info">
+            <p>{{ language.Data }}</p>
+            <span class="sub-info-details">{{
+              subscriberInfoResult?.service?.data || "-"
+              }}</span>
+
+            <p>{{ language.Voice }}</p>
+            <span class="sub-info-details">{{
+              subscriberInfoResult?.service?.voice || "-"
+              }}</span>
+
+            <p>{{language.Video}}</p>
+            <span class="sub-info-details">{{
+              subscriberInfoResult?.service?.video || "-"
+              }}</span>
+          </div>
+          <div class="sub-account-details-info">
+            <p>{{ language["IPv4 Address"] }}</p>
+            <span class="sub-info-details">
+              {{
+              checkIpAddress(
+              subscriberInfoResult?.ipInfo?.ipAddress.join(", "),
+              "v4"
+              ) ||
+              checkIpAddress(
+              subscriberInfoResult?.ipInfo?.secondIpAddress.join(", "),
+              "v4"
+              ) ||
+              "-"
+              }}</span>
+            <p>{{ language["IPv6 Address"] }}</p>
+            <span class="sub-info-details">
+              {{
+              checkIpAddress(
+              subscriberInfoResult?.ipInfo?.ipAddress.join(", "),
+              "v6"
+              ) ||
+              checkIpAddress(
+              subscriberInfoResult?.ipInfo?.secondIpAddress.join(", "),
+              "v6"
+              ) ||
+              "-"
+              }}</span>
+            <p>{{ language.PPPoE_Username }}</p>
+            <span class="sub-info-details">
+              {{
+              subscriberInfoResult?.ipInfo?.pppUsername.join(", ") || "-"
+              }}</span>
+          </div>
+          <div class="sub-account-details-info">
+            <p>{{ language["Calls in last 30d"] }}</p>
+            <span class="sub-info-details">
+              {{ subscriberInfoResult?.pastMonthCall || "-" }}</span>
+            <p>{{ bSmbMode ? 'CommandWorx' : language.CommandIQ}}</p>
+            <span class="sub-info-details" id="commandIQEmailId"
+              *ngIf="!subscriberInfoResult?.commandIQ?.fduser; else nullValue">{{
+              showPrimaryEmail(subscriberInfoResult?.commandIQ.email) || "-"
+              }}</span>
+            <!-- <div
+              *ngIf="!subscriberInfoResult?.commandIQ?.fduser && subscriberInfoResult?.commandIQ.secondaryUsers?.length !== 0; else nullValue">
+              <div *ngIf=" subscriberInfoResult?.commandIQ?.secondaryUsers[0]?.email">
+                {{ subscriberInfoResult?.commandIQ?.secondaryUsers[0]?.email || "-" }}
+              </div>
+            </div> -->
+            <div class="sub-info-details" id="secondaryEmailId"
+              *ngIf="!subscriberInfoResult?.commandIQ?.fduser; else nullValue ">
+              <span *ngFor="let secondary of subscriberInfoResult?.commandIQ?.secondaryUsers">
+                <span *ngIf="secondary.status !== 'PENDING' ">{{secondary.email|| "-" }}
+                </span>
+                <span *ngIf="secondary.status == 'PENDING' ">-</span>
+              </span>
+              <span *ngIf="!subscriberInfoResult?.commandIQ?.secondaryUsers"> - </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!--title-->
+      <div class="subs-nav flex">
+        <a *ngIf="sso.getCscType() !== 'DME'" id="overviewTabId" class="overview-nv" href="javascript:void(0)"
+          routerLinkActive="active" [routerLink]="['/' + MODULE + '/overview']"
+          [state]="{ searchText: searchText || '' }" [routerLinkActiveOptions]="{ exact: false }"
+          (contextmenu)="openNewTab()" (click)="overviewClick()">
+          <div class="nwloader" *ngIf="nwLoader || issueLoader">
+            <div class="d-flex">
+              <div class="spinner-border text-primary" role="">
+                <span class="sr-only">{{ language.Loading }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="sub-refresh-icon" *ngIf="!nwLoader && !issueLoader">
+            <i class="fa fa-refresh" aria-hidden="true" (click)="refreshStatus($event)"></i>
+          </div>
+
+          <!-- <div class="sub-refresh-icon"><i class="fa fa-refresh"{{totalwarning?language.Warnings:" "}} aria-hidden="true"></i></div>{{totalissues?language.Issues:" "}} -->
+          <div class="sn-ico"></div>
+          <h4 class="listlabels greyaa mb0">{{ language.Overview }}</h4>
+          <p *ngIf="nwLoader" class="greyaa  mb-0">
+            {{
+            totalissues
+            ? totalissues + " " + language.issue
+            : "-
+            " + language.issue
+            }}
+          </p>
+          <p *ngIf="nwLoader" class="greyaa mb-0">
+            {{
+            totalwarning
+            ? totalwarning + " " + language.warning
+            : "-
+            " + language.warning
+            }}
+          </p>
+          <p *ngIf="!nwLoader" class="greyaa mb-0">
+            {{
+            totalissues
+            ? totalissues + " " + language.issue
+            : "0
+            " + language.issue
+            }}
+          </p>
+          <p *ngIf="!nwLoader" class="greyaa mb-0">
+            {{
+            totalwarning
+            ? totalwarning + " " + language.warning
+            : "0
+            " + language.warning
+            }}
+          </p>
+          <!-- <p *ngIf="!nwLoader && isQoeDevice && qoeStatus && qoeStatus>0"
+            class="greyaa mb-0 d-flex align-items-center justify-content-center">
+            <span
+              [ngClass]="{'qoe-high' : qoeStatus > 3, 'qoe-medium' : qoeStatus == 3, 'qoe-low' : qoeStatus < 3 }"></span>
+
+            <span>{{ qoeStatus > 0 ? " QoE Score" : " " }}</span>
+          </p> -->
+        </a>
+        <a *ngIf="scopeFlag.serviceTabRead" id="serviceTabId" class="service-nv" href="javascript:void(0)"
+          routerLinkActive="active" [routerLink]="['/' + MODULE + '/service']"
+          [state]="{ searchText: searchText || '' }" [routerLinkActiveOptions]="{ exact: false }"
+          (contextmenu)="openNewTab()">
+          <div class="nwloader" *ngIf="nwLoader">
+            <div class="d-flex">
+              <div class="spinner-border text-primary" role="">
+                <span class="sr-only">{{ language.Loading }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="sub-refresh-icon" *ngIf="!nwLoader">
+            <i class="fa fa-refresh" aria-hidden="true" (click)="refreshStatus($event)"></i>
+          </div>
+
+          <div class="error-iss" *ngIf="iserrorService">
+            <!-- <img src="assets/img/outline-error-red.svg">  -->
+            <button class="errbtn" (mouseover)="mouseHover = 'service'">
+              <span *ngIf="Sissusecount"><img src="assets/img/error-icon-24px.svg" /></span>
+              <span *ngIf="!Sissusecount"><img src="assets/img/warning-icon-24px.svg" /></span>
+            </button>
+          </div>
+          <div *ngIf="mouseHover == 'service'" class="info-tooltip" (mouseleave)="mouseHover = 'false'">
+            <span *ngIf="Sissusecount">{{ Sissusecount ? Sissusecount + " " + language.issue : " "
+              }}<br /></span>
+            <span *ngIf="Sissuewarning">{{
+              Sissuewarning ? Sissuewarning + " " + language.warning : " "
+              }}</span>
+            <!-- <div *ngFor="let data of issueDataJson;" class="listlabels">
+                        <div *ngIf="data.type == 'Service'">{{data.reason}}
+                            <hr />
+                        </div>
+                    </div> -->
+          </div>
+
+          <div class="sn-ico"></div>
+          <h4 class="listlabels greyaa mb-0">{{ language.Service }}</h4>
+          <h6 class="greyaa" *ngIf="
+              sso.getCscType() !== 'DME' &&
+              modelName != '813G-2' &&
+              modelName != '812G-2' &&
+              nwLoader
+            ">
+            <span class="text-right" id="serviceDownloadLatest">{{
+              language[serviceTabInfo?.down] || "-"
+              }}</span>
+            <span class="arrow-img arrow-img-d"></span>
+            <span class="text-left"> {{ language.down }}</span>
+          </h6>
+          <h6 class="greyaa" *ngIf="
+              sso.getCscType() !== 'DME' &&
+              modelName != '813G-2' &&
+              modelName != '812G-2' &&
+              nwLoader
+            ">
+            <span class="text-right" id="serviceUploadLatest">{{
+              language[serviceTabInfo?.up] || "-"
+              }}</span>
+            <span class="arrow-img arrow-img-u"></span>
+            <span class="text-left"> {{ language.up }}</span>
+          </h6>
+          <h6 class="greyaa" *ngIf="
+              sso.getCscType() !== 'DME' &&
+              modelName != '813G-2' &&
+              modelName != '812G-2' &&
+              !nwLoader
+            ">
+            <span class="text-right" id="serviceDownloadLatest">{{
+              language[serviceTabInfo?.down] || "-"
+              }}</span>
+            <span class="arrow-img arrow-img-d"></span>
+            <span class="text-left"> {{ language.down }}</span>
+          </h6>
+          <h6 class="greyaa" *ngIf="
+              sso.getCscType() !== 'DME' &&
+              modelName != '813G-2' &&
+              modelName != '812G-2' &&
+              !nwLoader
+            ">
+            <span class="text-right" id="serviceUploadLatest">{{
+              language[serviceTabInfo?.up] || "-"
+              }}</span>
+            <span class="arrow-img arrow-img-u"></span>
+            <span class="text-left"> {{ language.up }}</span>
+          </h6>
+          <p class="chartno greyaa mb0" id="serviceTimeLatest"
+            *ngIf="language.fileLanguage == 'en' && sso.getCscType() !== 'DME'">
+            <!-- {{ serviceTabInfo?.speedMessage || "" }}-->
+            {{ serviceTabInfo?.speedMessage ? language.Speed_Test_ran_sentence:''}} {{ serviceTabInfo?.speedMessage ?
+            serviceTabInfo?.speedMessage:''}} {{connectime ? language[connectime] :''}} {{ serviceTabInfo?.speedMessage
+            ? language.Ago:""}}
+          </p>
+          <p class="chartno greyaa mb0" id="serviceTimeLatest"
+            *ngIf="sso.getCscType() !== 'DME' && language.fileLanguage != 'en'">
+            <!-- {{ serviceTabInfo?.speedMessage || "" }}-->
+            {{ serviceTabInfo?.speedMessage ? language.Speed_Test_ran_sentence:''}} {{ serviceTabInfo?.speedMessage ?
+            serviceTabInfo?.speedMessage:''}} {{connectime ? language[connectime] :''}}
+          </p>
+
+          <!--<p class="chartno greyaa mb0" id="serviceTimeLatest" *ngIf="sso.getCscType() !== 'DME'">
+           <!-- {{ serviceTabInfo?.speedMessage || "" }}-->
+          <!--  {{ serviceTabInfo?.speedMessage ? language.Speed_Test_ran:''}} {{overtimecheck ? language.Over :''}} {{ serviceTabInfo?.speedMessage ? serviceTabInfo?.speedMessage:''}} {{connectime ? language[connectime] :''}} {{ serviceTabInfo?.speedMessage ? language.Ago:""}}
+          </p>
+          <p class="chartno greyaa mb0"> {{language.fileLanguage =='fr'?'fr':'en'}}</p>-->
+          <p class="chartno greyaa mb0" id="serviceLatencyTime" *ngIf="false">
+            {{ latencyTabInfo?.latencyMessage || "" }}
+          </p>
+        </a>
+
+        <a id="routerTabId" class="router-nv" href="javascript:void(0)" routerLinkActive="active"
+          [routerLink]="['/' + MODULE + '/router']" [state]="{ searchText: searchText || '' }"
+          [ngClass]="{'disableTile' : onlyOntWoEntitl}" [routerLinkActiveOptions]="{ exact: false }"
+          *ngIf="scopeFlag.routerTabRead" (contextmenu)="openNewTab()">
+          <div class="nwloader" *ngIf="nwLoader">
+            <div class="d-flex">
+              <div class="spinner-border text-primary" role="">
+                <span class="sr-only">{{ language.Loading }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="sub-refresh-icon" *ngIf="!nwLoader">
+            <i class="fa fa-refresh" aria-hidden="true"
+              (click)="subId ? getUpdatedSubInfo() : refreshStatus($event)"></i>
+          </div>
+          <div class="error-iss" *ngIf="iserrorRouter && sso.getCscType() !== 'DME'">
+            <button class="errbtn" (mouseover)="mouseHover = 'router'">
+              <span *ngIf="Rissusecount"><img src="assets/img/error-icon-24px.svg" /></span>
+              <span *ngIf="!Rissusecount"><img src="assets/img/warning-icon-24px.svg" /></span>
+            </button>
+          </div>
+          <div *ngIf="mouseHover == 'router'" class="info-tooltip" (mouseleave)="mouseHover = 'false'">
+            <span *ngIf="Rissusecount">{{
+              Rissusecount
+              ? Rissusecount + "
+              " + language.issue
+              : " "
+              }}<br /></span>
+            <span *ngIf="Rissuewarning">
+              {{
+              Rissuewarning ? Rissuewarning + " " + language.warning : " "
+              }}</span>
+
+            <!-- <div *ngFor="let data of issueDataJson;" class="listlabels">
+                        <div *ngIf="data.type == 'ROUTER'">{{data.reason}}
+                            <hr />
+                        </div>
+                    </div> -->
+          </div>
+
+          <div class="sn-ico"></div>
+          <h4 class="listlabels greyaa mb0">{{ language.System }}</h4>
+          <!-- <p class="greyaa m-0 issue-warn-s" *ngFor="let device of routerDevices | slice: 0:2">
+            <span *ngIf="!device._id && device.ont">
+              ONT-{{ device.modelName }}
+            </span>
+            <span *ngIf="device._id">
+              {{device.hasOwnProperty('ont') ? 'ONT/' : ''}}{{
+              (device.opMode || '')
+              .replace("WAP-IGMP", "Mesh(SAT)")
+              .replace("WAP", "Mesh(SAT)")
+              }}
+              {{ (device.opMode || '').indexOf("WAP") > -1 ? "-" : "-"
+              }}{{ device.modelName }}
+            </span>
+          </p> -->
+
+          <div>
+            <div *ngIf="!isSwapedDevice ">
+              <p class="greyaa m-0 issue-warn-s" *ngFor="let device of routerDevices | slice: 0:2">
+                <span *ngIf="!device._id && device.ont">
+                  ONT-{{ device.modelName }}
+                </span>
+                <span *ngIf="device._id">
+                  {{device.hasOwnProperty('ont') ? 'ONT/' : ''}}{{
+                  (device.opMode || '')
+                  .replace("WAP-IGMP", "Mesh(SAT)")
+                  .replace("WAP", "Mesh(SAT)")
+                  }}
+                  {{ (device.opMode || '').indexOf("WAP") > -1 ? "-" : "-"
+                  }}{{ device.modelName }}
+                </span>
+              </p>
+            </div>
+            <div *ngIf="isSwapedDevice">
+              <p class="greyaa m-0 issue-warn-s" *ngFor="let device of routerDevices | slice: 0:1">
+                <span *ngIf="!device._id && device.ont">
+                  ONT-{{ device.modelName }}
+                </span>
+                <span *ngIf="device._id">
+                  {{device.hasOwnProperty('ont') ? 'ONT/' : ''}}{{
+                  (device.opMode || '')
+                  .replace("WAP-IGMP", "Mesh(SAT)")
+                  .replace("WAP", "Mesh(SAT)")
+                  }}
+                  {{ (device.opMode || '').indexOf("WAP") > -1 ? "-" : "-"
+                  }}{{ device.modelName }}
+                </span>
+              </p>
+            </div>
+            <div class="suspended-but w-75 mt-2 mx-auto" *ngIf="isSwapedDevice"><span class="dot"></span>
+              {{language['Swap in Progress']}}</div>
+          </div>
+          <div *ngIf="routerDevices?.length > 2 && !isSwapedDevice">
+            <div class="deviceSerials">
+              <span class="errbtn" id="routerErrbtn" (click)="hideShowClass()"><i class="fa fa-angle-down"
+                  aria-hidden="true"></i></span>
+              <div class="info-tooltip">
+                <p class="listlabels" *ngFor="let device of routerDevices | slice: 2:routerDevices?.length">
+                  {{device.hasOwnProperty('ont') ? 'ONT/' : ''}}{{
+                  (device.opMode || '')
+                  .replace("WAP-IGMP", "Mesh(SAT)")
+                  .replace("WAP", "Mesh(SAT)")
+                  }}
+                  {{ (device.opMode || '').indexOf("WAP") > -1 ? "-" : "-"
+                  }}{{ device.modelName }}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="routerDevices?.length > 1 && isSwapedDevice">
+            <div class="deviceSerials">
+              <span class="errbtn" id="routerErrbtn" (click)="hideShowClass()"><i class="fa fa-angle-down"
+                  aria-hidden="true"></i></span>
+              <div class="info-tooltip">
+                <p class="listlabels" *ngFor="let device of routerDevices | slice: 1:routerDevices?.length">
+                  {{device.hasOwnProperty('ont') ? 'ONT/' : ''}}{{
+                  (device.opMode || '')
+                  .replace("WAP-IGMP", "Mesh(SAT)")
+                  .replace("WAP", "Mesh(SAT)")
+                  }}
+                  {{ (device.opMode || '').indexOf("WAP") > -1 ? "-" : "-"
+                  }}{{ device.modelName }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </a>
+        <a id="wifiTabId" class="wifi-nv" href="javascript:void(0)" (contextmenu)="openNewTab()" [routerLink]="[
+            WIFIRouting
+          ]" [class.active]="router.isActive('/' + MODULE + '/wifi', false)" *ngIf="scopeFlag.wifiRead && wifiShow"
+          [ngClass]="
+            wifiDisabled || (0 && tabInfo && !tabInfo?.ssidCount)
+              ? 'wifi-nv-disable'
+              : ''
+          ">
+          <div class="nwloader" *ngIf="nwLoader">
+            <div class="d-flex">
+              <div class="spinner-border text-primary" role="">
+                <span class="sr-only">{{ language.Loading }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="sub-refresh-icon" *ngIf="!nwLoader">
+            <i class="fa fa-refresh" id="wifiRefreshIcon" aria-hidden="true" (click)="refreshStatus($event)"></i>
+          </div>
+          <div class="error-iss" *ngIf="iserrorwifi && sso.getCscType() !== 'DME'">
+            <button class="errbtn" (mouseover)="mouseHover = 'wifi'">
+              <span *ngIf="Wissusecount"><img src="assets/img/error-icon-24px.svg" /></span>
+              <span *ngIf="!Wissusecount"><img src="assets/img/warning-icon-24px.svg" /></span>
+            </button>
+          </div>
+          <div *ngIf="mouseHover == 'wifi'" class="info-tooltip" (mouseleave)="mouseHover = 'false'">
+            <span *ngIf="Wissusecount">{{ Wissusecount ? Wissusecount + " " + language.issue : " "
+              }}<br /></span>
+            <span *ngIf="Wissuewarning">{{
+              Wissuewarning ? Wissuewarning + " " + language.warning : " "
+              }}</span>
+            <!-- <div *ngFor="let data of issueDataJson;" class="listlabels">
+                        <div *ngIf="data.type == 'Wi-Fi'">{{data.reason}}
+                            <hr />
+                        </div>
+                    </div> -->
+          </div>
+
+          <div class="sn-ico"></div>
+          <h4 class="listlabels greyaa">{{ language.Wifi }}</h4>
+          <p class="greyaa mb-0 issue-warn-s ssidcount" *ngIf="nwLoader">
+            {{ tabInfo?.ssidCount || "-" }}
+          </p>
+          <p class="greyaa mb-0 issue-warn-s ssidcount" *ngIf="!nwLoader">
+            {{ tabInfo?.ssidCount || "0" }}
+          </p>
+          <p class="greyaa mb-0">{{ language.SSIDs }}</p>
+        </a>
+        <a id="deviceTabId" class="device-nv" href="javascript:void(0)" routerLinkActive="active"
+          [routerLink]="['/' + MODULE + '/device']" (contextmenu)="openNewTab()"
+          [state]="{ searchText: searchText || '' }" (click)="deviceClick()"
+          [state]="{ onboarding: subscriberInfoResult.commandIQ.onboarded }"
+          [routerLinkActiveOptions]="{ exact: false }" *ngIf="scopeFlag.devicesRead">
+          <div class="nwloader" *ngIf="nwLoader">
+            <div class="d-flex">
+              <div class="spinner-border text-primary" role="">
+                <span class="sr-only">{{ language.Loading }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="sub-refresh-icon" *ngIf="!nwLoader">
+            <i class="fa fa-refresh" aria-hidden="true" (click)="refreshStatus($event)"></i>
+          </div>
+          <div class="error-iss" *ngIf="iserrorDevice && sso.getCscType() !== 'DME'">
+            <button class="errbtn" (mouseover)="mouseHover = 'device'">
+              <span *ngIf="Dissusecount"><img src="assets/img/error-icon-24px.svg" /></span>
+              <span *ngIf="!Dissusecount"><img src="assets/img/warning-icon-24px.svg" /></span>
+            </button>
+          </div>
+          <div *ngIf="mouseHover == 'device'" class="info-tooltip" (mouseleave)="mouseHover = 'false'">
+            <span *ngIf="Dissusecount">{{ Dissusecount ? Dissusecount + " " + language.issue : " "
+              }}<br /></span>
+            <span *ngIf="Dissuewarning">{{
+              Dissuewarning ? Dissuewarning + " " + language.warning : " "
+              }}</span>
+            <!-- <div *ngFor="let data of issueDataJson;" class="listlabels">
+                        <div *ngIf="data.type == 'Devices'">{{data.reason}}
+                            <hr />
+                        </div>
+                    </div> -->
+          </div>
+
+          <div class="sn-ico"></div>
+          <h4 class="listlabels greyaa">{{ language.DevicesLabel }}</h4>
+          <!-- <p class="greyaa mb-0 issue-warn-s" *ngIf="nwLoader">
+            {{ nwLoader ? '-' : (tabInfo?.connectedDevice ? tabInfo?.connectedDevice : "0") }}
+          </p> -->
+
+          <p class="greyaa mb-0 issue-warn-s" *ngIf="nwLoader">
+            {{ tabInfo?.connectedDevice ? tabInfo?.connectedDevice : "-" }}
+          </p>
+          <p class="greyaa mb-0 issue-warn-s" *ngIf="!nwLoader">
+            {{ tabInfo?.connectedDevice ? tabInfo?.connectedDevice : "0" }}
+          </p>
+          <p class="listlabels greyaa mb-0">{{ language.Connected }}</p>
+        </a>
+
+        <a id="applicationTabId" [attr.isArlo]="tabInfo?.isArlo" [attr.isServify]="tabInfo?.isServify"
+          [attr.isMyComm]="tabInfo?.isMyComm" [attr.isBark]="tabInfo?.isBark" [attr.isCaptive]="tabInfo?.isCaptive"
+          [attr.isSmartBiz]="tabInfo?.isSmartBiz" class="app-nv" href="javascript:void(0)" routerLinkActive="active"
+          [ngClass]="{'pe-none' : (!tabInfo.isLoaded && nwLoader)}" *ngIf="isAppTabAvailable()"
+          [routerLink]="['/' + MODULE + '/application']" (contextmenu)="openNewTab()"
+          [state]="{ searchText: (searchText || ''), containGS : containsGS.length }"
+          [routerLinkActiveOptions]="{ exact: false }">
+
+          <div class="loader" *ngIf="!tabInfo.isLoaded && nwLoader">
+            <div class="d-flex justify-content-center">
+              <div class="spinner-border text-primary">
+                <span class="sr-only">{{ language.Loading }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="nwloader" *ngIf="nwLoader">
+            <div class="d-flex">
+              <div class="spinner-border text-primary" role="">
+                <span class="sr-only">{{ language.Loading }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="sub-refresh-icon" *ngIf="!nwLoader">
+            <i class="fa fa-refresh" aria-hidden="true" (click)="refreshStatus($event)"></i>
+          </div>
+          <div class="error-iss" *ngIf="iserrorApplication">
+            <button class="errbtn" (mouseover)="mouseHover = 'application'">
+              <span *ngIf="Aissusecount"><img src="assets/img/error-icon-24px.svg" /></span>
+              <span *ngIf="!Aissusecount"><img src="assets/img/warning-icon-24px.svg" /></span>
+            </button>
+          </div>
+          <div *ngIf="mouseHover == 'application'" class="info-tooltip" id="yes" (mouseleave)="mouseHover = 'false'">
+            <span *ngIf="Aissusecount">{{ Aissusecount ? Aissusecount + " " + language.issue : " "
+              }}<br /></span>
+            <span *ngIf="Aissuewarning">{{
+              Aissuewarning ? Aissuewarning + " " + language.warning : " "
+              }}</span>
+            <!-- <div *ngFor="let data of issueDataJson;" class="listlabels">
+                        <div *ngIf="data.type == 'Application'">{{data.reason}}
+                            <hr />
+                        </div>
+                    </div> -->
+          </div>
+
+          <div class="sn-ico"></div>
+          <h4 class="listlabels greyaa mb-0">{{ language.Managed_Services }}</h4>
+          <p class="greyaa mb-0 mt-1">
+            <span class="issue-warn-s" id="appSubscribedId">
+              {{
+              tabInfo?.appCount ? tabInfo.appCount : nwLoader ? "-" : "0"
+              }}&nbsp;
+            </span><br>
+            {{ language.Subscribed }}
+          </p>
+          <!-- <p class="greyaa mb-0">
+            <span class="issue-warn-s" id="appInstalledId">
+              {{
+              tabInfo?.appEnabled ? tabInfo.appEnabled : nwLoader ? "-" : "0"
+              }}&nbsp;
+            </span>
+            {{ language.Enabled }}
+          </p> -->
+          <!-- <p class="listlabels greyaa mb-0"></p> -->
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #callout let-modal>
+  <div class="modal-header border-none">
+    <h5 class="modal-title" id="addModal">{{ language.Call_Outcome }}<br /></h5>
+    <!-- <h5 class="modal-title" id="addModal">Call Outcome{{subscriberInfoResult.name}}<br />
+            {{subscriberInfoResult.account}}</h5> -->
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body notes-modal-body">
+    <div *ngIf="currActive === 0">
+      <!-- Please select one of the following: -->
+      <div class="flex call-out-rad" fxLayoutAlign="space-around center">
+        <div *ngFor="let user of Reasontype; let i = index">
+          <div class="cor-col">
+            <input type="radio" id="resolved{{ i }}" name="radio-group" [value]="user" [(ngModel)]="radio1"
+              (change)="statusoption()" />
+            <label for="resolved{{ i }}" class="greyaa">
+              {{ language[user] }}
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="currActive === 1">
+      <div>{{ language.Select_Following }}: <br /></div>
+      <div class="flex call-out-rad" fxLayoutAlign="space-around center">
+        <div *ngFor="let user of status; let i = index">
+          <div class="cor-col">
+            <input type="radio" id="resolved2{{ i }}" [value]="user" [(ngModel)]="radio2" checked />
+            <label for="resolved2{{ i }}" class="greyaa">{{
+              language[user]
+              }}</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="currActive === 2">
+      <div>{{ language.Select_Following }}:<br /></div>
+      <div class="flex call-out-rad" fxLayout="row" fxLayoutAlign="space-around center">
+        <div class="cor-col" *ngFor="let user of subreason; let i = index">
+          <input type="radio" id="resolved3{{ i }}" [value]="user" [(ngModel)]="radio3" />
+          <label for="resolved3{{ i }}" class="greyaa">{{
+            language[user]
+            }}</label>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="currActive === 3">
+      <div>{{ language.You_selected }} ...</div>
+      <br />
+      <div class="cor-col">
+        {{ language[radio1] }} {{ radio2 ? "--> " + language[radio2] : ""
+        }}{{ radio3 ? "--> " + language[radio3] : "" }}
+      </div>
+    </div>
+
+    <div class="add-bnt float-left">
+      <button type="button" class="btn-default transparant ml-2 br-26" [disabled]="currActive == 0" (click)="onPrev()">
+        {{ language.Previous }}
+      </button>
+      <button *ngIf="nextbutton != displaysubmit" type="button" class="btn-default primary ml-2 br-26"
+        (click)="onNext()">
+        {{ language.Next }}
+      </button>
+      <button *ngIf="displaysubmit || currActive == 3" type="button" class="btn-default primary ml-2 br-26"
+        (click)="modal.dismiss('Cross click'); Submitvalue()">
+        {{ language.submit }}
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="addModal">{{ language.Call_Outcome }}</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body notes-modal-body">
+    <form>
+      <div class="flex call-out-rad">
+        <div class="cor-col">
+          <input type="radio" id="resolved" name="radio-group" checked />
+          <label for="resolved" class="greyaa">{{ language.Resolved }}</label>
+        </div>
+        <div class="cor-col">
+          <input type="radio" id="escalated" name="radio-group" checked />
+          <label for="escalated" class="greyaa">{{ language.Escalated }}</label>
+        </div>
+        <div class="cor-col">
+          <input type="radio" id="truck" name="radio-group" checked />
+          <label for="truck" class="greyaa">{{ language.Truck_Roll }}</label>
+        </div>
+        <div class="cor-col">
+          <input type="radio" id="account" name="radio-group" checked />
+          <label for="account" class="greyaa">{{
+            language.Account_Inquiry
+            }}</label>
+        </div>
+      </div>
+      <!-- <div class="reason-select">
+                <p class="listdata greyaa">Reason for escalation{{language.Reason_for_escalation}}</p>
+                <input type="text" class="text-input">
+            </div> -->
+
+      <div class="form-group ccl-form">
+        <label for="account" class="col-sm-12 col-form-label">{{ language.Reason_for_escalation }}
+        </label>
+        <input type="text" id="account" />
+      </div>
+      <div class="flex call-out-rad call-out-rad-add">
+        <div class="cor-col">
+          <input type="radio" id="addtask" name="radio-group" checked />
+          <label for="addtask" class="greyaa">{{ language.Add_Task }}</label>
+        </div>
+        <div class="cor-col">
+          <input type="radio" id="addnote" name="radio-group" checked />
+          <label for="addnote" class="greyaa">{{ language.Add_Note }}</label>
+        </div>
+      </div>
+      <div class="mb-3">
+        <div class="dropdown-button custom-dropdown-btn" ngbDropdown>
+          <div class="mr-2" id="dropdownPeriod" ngbDropdownToggle aria-haspopup="true" aria-expanded="false">
+            <p class="listdata mb0">
+              {{language.Time_period}}
+              <span></span>
+            </p>
+          </div>
+
+          <div ngbDropdownMenu aria-labelledby="dropdownPeriod">
+            <button ngbDropdownItem class="greyaa">{{ language.Name }}</button>
+            <button ngbDropdownItem class="greyaa">
+              {{ language.Address }}
+            </button>
+            <button ngbDropdownItem class="greyaa">
+              {{ language.Pincode }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-responsive event-details-table">
+        <div class="table-responsive table-data-no notes-table">
+          <table datatable class="row-border hover" width="100%">
+            <thead>
+              <tr>
+                <th>{{ language.Steps_taken }}</th>
+                <th>{{ language.Status }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{ language.Change }} SSID</td>
+                <td>{{ language.Updated }}</td>
+              </tr>
+              <tr>
+                <td>{{ language.Run_Speed_Test }}</td>
+                <td>{{ language.Failed }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="add-bnt">
+        <button type="button" class="btn-default primary" (click)="modal.close('Save click')">
+          {{ language.submit }}
+        </button>
+        <button type="button" class="btn-default transparant ml-2 br-26" (click)="modal.close('Save click')">
+          {{ language.Cancel }}
+        </button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+<ng-template #notes let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="addModal">{{ language.Add_Notes }}</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body notes-modal-body">
+    <form>
+      <textarea class="form-control" row="3"></textarea>
+
+      <div class="add-bnt mt-2 justify-content-end">
+        <button type="button" class="btn btn-primary br-26" (click)="modal.close('Save click')">
+          {{ language.Add_Notes }}
+        </button>
+        <button type="button" class="btn btn-default transparant ml-2 br-26" (click)="modal.close('Save click')">
+          {{ language.Cancel }}
+        </button>
+      </div>
+    </form>
+    <div class="table-responsive">
+      <table datatable [dtOptions]="tableOptions" class="row-border hover table-alter">
+        <!-- <table> -->
+        <thead>
+          <tr>
+            <th>{{ language.Date }}</th>
+            <th>{{ language.Notes }}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>08-22-2020</td>
+            <td>Lorem ipsum dolor amet lorem ipsum</td>
+            <td>
+              <button type="button" class="btn-sm btn-primary br-26 b-none"
+                (click)="modal.close(); openOutModal(resolve)">
+                {{ language.Resolve }}
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td>08-22-2020</td>
+            <td>Lorem ipsum dolor amet lorem ipsum</td>
+            <td>
+              <button type="button" class="btn-sm btn-primary br-26 b-none"
+                (click)="modal.close(); openOutModal(resolve)">
+                {{ language.Resolve }}
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td>08-22-2020</td>
+            <td>Lorem ipsum dolor amet lorem ipsum</td>
+            <td>
+              <button type="button" class="btn-sm btn-primary br-26 b-none"
+                (click)="modal.close(); openOutModal(resolve)">
+                {{ language.Resolve }}
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td>08-22-2020</td>
+            <td>Lorem ipsum dolor amet lorem ipsum</td>
+            <td>
+              <button type="button" class="btn-sm btn-primary br-26 b-none"
+                (click)="modal.close(); openOutModal(resolve)">
+                {{ language.Resolve }}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</ng-template>
+<ng-template #resolve let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="addModal">{{ language.Add_Notes }}</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body notes-modal-body">
+    <!-- <div class="d-inline-flex align-items-center">
+        <a href="" class="all-notes-btn mr-3">All notes</a>
+        <button type="button" class="btn btn-primary listdataem br-26" (click)="modal.close('Save click')">Resolve</button>
+        </div> -->
+
+    <p class="">
+      Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+      Lorem Ipsum has been the industry's standard dummy text ever since the
+      1500s, when an unknown printer took a galley of type and scrambled it to
+      make a type specimen book
+    </p>
+
+    <form>
+      <textarea class="form-control" row="3"></textarea>
+      <div class="add-bnt mt-3">
+        <button type="button" class="btn btn-primary br-26" (click)="modal.close('Save click')">
+          {{ language.Add }}
+        </button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+<ng-template #CommandIQ let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="addModal">{{language['CommandIQ Invite']}}</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="modal.close('Close click')">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body notes-modal-body">
+    <p class="">
+      {{language['A CommandIQ download link will be sent to the subscriber via the following email address']}}
+    </p>
+    <label for="">{{language['Email Address']}}</label>
+    <div class=" mb-3 ccl-form">
+      <div class="commandIQ-invite d-flex align-items-center">
+        <p *ngIf="showInputEmail">{{commandIqInviteEmail}}</p>
+        <input type="text" calss="form-control" *ngIf="!showInputEmail" placeholder="{{language['Enter email address']}}"
+          (input)="ValidateEmail1($event)">
+        <a class="text-nowrap text-decoration-none pointer mb-auto ml-auto" *ngIf="updateEmailButton && showInputEmail"
+          (click)="updateEmail()">{{language['Update Email']}}</a>
+      </div>
+      <p *ngIf="!commandIqInviteEmailFormat" class="errorMessage mt-2">
+        {{ language["Please enter a valid email address"] }}
+      </p>
+    </div>
+
+    <div class="d-flex">
+      <button class="btn-default btn-primary mr-3" (click)="sendInvite()">{{language['Send Invite']}}</button>
+      <button class="btn-default btn-dft" (click)="modal.close('Close click')">{{language['Cancel']}}</button>
+    </div>
+  </div>
+</ng-template>
+<ng-template #nullValue>
+  <span class="sub-info-details d-block" id="secondaryEmailId"> - </span>
+</ng-template>
+
+<!--------- New-Call-Outcome --------->
+
+<ng-template #callOutComeModel let-modal class="col-md-12 custom-modal">
+  <!-- <div class="modal-header">
+
+  </div> -->
+  <div class="modal-body pt-0">
+
+    <div class="loader" *ngIf="modalLoader">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+
+    <form name="saveStatusFrm" id="saveStatusFrm">
+      <div class="modal-content py-0">
+        <div class="net-ops-title" id="callOutcome-modal-title"> {{language['Call Outcome']}}</div>
+        <button type="button" class="close close-pos" data-dismiss="modal" aria-label="Close"
+          (click)="closeCalloutModal()">
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+      <div class="modal-content overflow-auto py-0 max-h-370">
+        <div class="d-flex flex-wrap justify-content-between mt-4 mb-3">
+          <div class="flex-basics-15">
+            <div class="w-100" *ngIf="callOutComeTicketID">
+              <label class="mb-0" id="ch-tick-no">{{language['Ticket No']}}</label>
+              <div class="w-100 mb-3">
+                <label class="f-s-14px">{{callOutComeTicketID}}</label>
+              </div>
+            </div>
+            <div class="w-100">
+              <label class="mb-0" id="ch-call-type">{{language['Call Type']}}</label>
+            </div>
+            <div class="w-100">
+              <input type="radio" id="test11" name="radio-group" value="Inbound" (change)="changeCallType($event)"
+                checked>
+              <label for="test11">{{language.Inbound}}</label>
+            </div>
+            <div class="w-100">
+              <input type="radio" id="test22" name="radio-group" value="Outbound" (change)="changeCallType($event)">
+              <label for="test22">{{language.Outbound}}</label>
+            </div>
+          </div>
+          <div class="flex-basics-25 pr-4">
+            <div class="w-100">
+              <label class="mb-0" id="ch-status">{{language.Status}}</label>
+            </div>
+            <div class="max-300">
+              <form action="#">
+                <div class="w-100 d-flex" *ngFor="let item of callOutComeStatuses;let i=index">
+                  <input type="radio" id="rdbCallOutComeStatus{{i}}" name="radio-group" [value]="item.name"
+                    (change)="callOutComeStatusChange(item)" [(ngModel)]="selectedStatusName">
+                  <label for="rdbCallOutComeStatus{{i}}">{{language[item.name] || item.name}}</label>
+                </div>
+              </form>
+            </div>
+
+          </div>
+          <div class="flex-basics-60">
+            <div class="w-100">
+              <label class="mb-1" id="ch-notes">{{language.Notes}}</label>
+            </div>
+            <div class="d-flex mb-3">
+              <div class="col-md-5 call-outcome-select pl-0">
+                <p-multiSelect styleClass="custom-multiselect" [maxSelectedLabels]="1" [showHeader]="false"
+                  name="ddlAutomatedNotes" (onChange)="changeAutomatedNotes($event)"
+                  placeholder="{{language['Automated_Note']}}" [selectedItemsLabel]="selectedItemsLabel"
+                  [options]="automatedNotes" [(ngModel)]="selectedAutomatedNotes" optionLabel="name" optionValue="Id">
+                </p-multiSelect>
+              </div>
+              <div class="col-md-5 call-outcome-select" *ngIf="showDevices">
+                <!-- <p-multiSelect styleClass="custom-multiselect" [showHeader]="false" [options]="deviceList"
+                  placeholder="Select Devices" name="ddlDevices" [(ngModel)]="selectedDevices"
+                  (onChange)="changeAutomatedNotesforDevices($event)" optionLabel="name" optionValue="Id">
+                </p-multiSelect> -->
+                <p-multiSelect styleClass="custom-multiselect" [showHeader]="false" [options]="deviceList"
+                  placeholder="{{language['Select Devices']}}" name="ddlDevices" [(ngModel)]="selectedDevices"
+                  (onChange)="changeAutomatedNotesforDevices($event)" optionLabel="name" optionValue="Id"
+                  emptyFilterMessage="{{language['noresults']}}">
+                  <ng-template let-item pTemplate="item">
+                    <div class="country-item">
+                      <div>{{item.name}}</div>
+                      <!-- <span class="device-ip">{{item.IPAddress}}</span> -->
+                      <span class="device-ip" *ngIf="item.IPAddress">{{item.IPAddress}}</span>
+                      <!-- <span *ngIf="item.IPAddress && item.MACAddress">,</span> -->
+                      <span class="device-ip" *ngIf="item.MACAddress">, {{item.MACAddress}}</span>
+                    </div>
+                  </ng-template>
+                </p-multiSelect>
+              </div>
+            </div>
+            <div class="form-group ccl-form" [ngClass]="[disablecCallOutComeSavebutton ? 'noteErrorMessage': '']">
+
+              <textarea class="form-control round-textarea" id="exampleFormControlTextarea1" rows="6"
+                name="callOutComeDatanotes" [(ngModel)]="callOutComeData.notes"
+                placeholder="{{language['Enter the notes maximum 3500 characters']}}"
+                (ngModelChange)="checkNotesLimit($event,null)" trimSpace [formValue]="callOutComeData"></textarea>
+              <!-- <div class="text-right-gray my-2">
+                  <div>
+                    
+                  </div>
+                  <div class="p-2 text-right">
+                    {{notesLength}}/4000
+                  </div>
+                  
+                </div> -->
+              <div class="text-right-gray">
+                <div class="p-2 text-right">
+                  {{notesLength}}/3500
+                </div>
+
+              </div>
+
+              <div *ngIf="disablecCallOutComeSavebutton" class="noteErrorMessage">
+                <label>{{language['Text must be under 3500 characters']}}</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+
+        <div class="row" *ngIf="callOutComeSubTitle!=null">
+          <div class="col-md-12">
+            <div class="call-outcome-sub-title">{{language[callOutComeSubTitle] || callOutComeSubTitle}}</div>
+          </div>
+        </div>
+
+        <div *ngIf="callOutComeData.selection=='multiple'" class="row root-cause-category-container mb-left">
+          <div class="col-md-6 col-sm-12 mb-3"
+            [ngClass]="{'col-lg-12' : callOutComeData.categories.length == 1, 'col-lg-6': [2,3,4].includes(callOutComeData.categories.length), 'col-lg-4': [5,6,7].includes(callOutComeData.categories.length), 'col-lg-3' : callOutComeData.categories.length > 7 }"
+            *ngFor="let data of callOutComeData.categories;let i=index">
+            <div class="call-outcome-small-title">{{language[data.categoryName] || data.categoryName}}</div>
+            <div class="form-check" *ngFor="let item of data.subCategories;let j=index">
+
+              <input type="checkbox" class="form-check-input" [value]="item" name="chkSubCategoryName_{{j+'_'+i}}"
+                id="chkSubCategoryName_{{j+'_'+i}}" (change)="checkValue($event,data,i,j)" [(ngModel)]="item.isSelected"
+                [checked]="item.isSelected">
+              <label class="form-check-label" for="chkSubCategoryName_{{j+'_'+i}}">{{language[item.sName] ||
+                item.sName}}</label>
+
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <div *ngIf="callOutComeData.selection=='single'" class="mb-32px">
+          <div class="row">
+            <div class="col-lg-3" *ngFor="let item of callOutComeData.categories;let i=index">
+              <input type="radio" id="rdbCustomerOnPhone{{i}}" name="radio-group_single" [value]="item.sName"
+                [(ngModel)]="selectedSingleCategoryName">
+              <label for="rdbCustomerOnPhone{{i}}">{{language[item.sName] || item.sName }}</label>
+
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </form>
+
+
+
+    <div class="row">
+      <div class="col-md-12 pl-5">
+        <button type="button" id="calloutcome-save-btn" class="btn-default primary mr-3" (click)="saveStatus()"
+          [disabled]="disablecCallOutComeSavebutton">{{language.save}}</button>
+        <button id="calloutcome-cancel-btn" class="btn-default btn-dft" data-dismiss="modal"
+          (click)="closeCalloutModal()">{{language.Cancel}}</button>
+      </div>
+    </div>
+
+  </div>
+
+</ng-template>
+
+<!--------- New-Call-Outcome End --------->
+
+
+<ng-template #callHistoryModel let-modal class="col-md-12 custom-modal">
+  <div class="modal-header">
+    <div class="ccl-Secondary-title" id="callHistory-moadl-title">{{language['Call History']}}</div>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+      <span aria-hidden="true"></span>
+    </button>
+
+  </div>
+  <div class="modal-body">
+    <div class="loader" *ngIf="modalLoader">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="w-100 alert alert alert-danger fade show" *ngIf="isModalError">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+      <button type="button" id="modalError-btn" class="close" (click)="isModalError = false">
+        <span></span>
+      </button>
+      <div class="d-inline-flex" [innerHtml]="modalWarningMessage"></div>
+    </div>
+
+
+
+    <div class="call-outcome-history">
+      <table id="eventTable" width="100%" class="row-border hover table-alter" datatable [dtOptions]="dtOptions1"
+        [hidden]="callHistoryDatatableVisible">
+        <thead>
+          <tr>
+            <!-- class="clsTicketNumber" class="min-w-120" -->
+            <th scope="col" class="w-15">{{language.date}}</th>
+            <th scope="col" class="w-10">{{language['Ticket Number']}}</th>
+            <th scope="col" class="w-10">{{language.Type}}</th>
+            <th scope="col" class="w-15">{{language.Representative}}</th>
+            <th scope="col" class="w-15">{{language.Status}}</th>
+            <th scope="col" class="w-25">{{language['Root Cause']}} / {{language.Details}}</th>
+            <th scope="col" class="w-10"></th>
+          </tr>
+        </thead>
+        <tbody *ngIf="CHTableData?.length != 0">
+          <tr *ngFor="let item of CHTableData;let i=index">
+            <!-- <td class="w-25"> {{item.createdDate}} </td> -->
+            <!-- <td class="w-25"> {{item.ctime !=null ? callHistoryDateFormate(item.ctime,true):
+              callHistoryDateFormate(item.createdDate,false)}} </td> -->
+
+            <td class="w-15"> {{callHistoryDateFormate(item.ctime,true)}}</td>
+            <td class="w-10"> {{item.showTicketIdNumber ? (item.extref ? item.extref : '-') : '-'}}</td>
+            <td class="w-10"> {{item.callType!=null ? item.callType : '-'}}</td>
+            <td class="w-15"> {{item.csrName}}</td>
+            <td class="w-15"> {{item.status}}</td>
+
+            <td class="w-25">
+              <div> {{item.rootcause}}
+                <div class="showme" *ngIf="item.subRootcause!=null && item.subRootcause!=''">{{item.subRootcause}}</div>
+              </div>
+
+            </td>
+            <td class="w-10 cus-pop-style bottom-right">
+
+              <ng-template #popContent>
+                <div>
+                  <p>{{language.Notes}}</p>
+                  <textarea class="form-control h-190" id="txtNotes" rows="5" name="Notes" [(ngModel)]="item.note"
+                    [disabled]="isNotesReadAndWrite"
+                    placeholder="{{language['Enter the notes maximum 3500 characters']}}"
+                    (ngModelChange)="checkNotesLimit($event,item.id)" trimSpace [formValue]="item"></textarea>
+
+                  <div *ngIf="disablecCallOutComeSavebutton" class="noteErrorMessage">
+                    <label>{{language['Text must be under 3500 characters']}}</label>
+                  </div>
+
+                  <div>
+                    <button class="btn btn-primary" [disabled]="disablecCallOutComeSavebutton || isNotesReadAndWrite"
+                      type="button" (click)="UpdateNotes(item,p,i)">{{language.Save}}</button>
+                  </div>
+                </div>
+              </ng-template>
+
+              <a class="btn btn-link" [ngbPopover]="popContent" placement="bottom-right" [autoClose]="'outside'"
+                triggers="manual" (click)="openPopOver(item,p,i)" #p="ngbPopover" currentValue="item.currentValue">
+                <i class="fas fa-book primary"></i>
+              </a>
+
+              <!-- <div class="showhim"><i class="fas fa-book primary"></i>
+                <div class="note-showme" *ngIf="item.note!=null && item.note!=''">
+                  <p>Notes</p>
+                  {{item.note}}
+                </div>
+              </div> -->
+            </td>
+
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+</ng-template>
+
+<ng-template #editingCommandIQalert let-modal>
+  <div class="modal-body">
+    <div class="w-100 alert-box">
+      <button class="close" aria-label="Close" (click)="modal.dismiss('Cross click'); closePopupedit();">
+        <span></span>
+      </button>
+      <div class="box-content">
+        <div class="al-icon">
+          <img src="../../../../assets/img/ic_warning-36px.svg" alt="icon here" />
+        </div>
+        <div class="content">
+          <h3>{{bSmbMode ? language['Edit_CommandWorx_Verification'] : (language['Edit_CIQEmail_Verification'])}}</h3>
+          <div class="table-responsive">
+            <table class="table table-borderless">
+              <thead>
+                <tr>
+                  <th>{{language['Account']}}</th>
+                  <th>{{language['Phone No']}}</th>
+                  <th>{{bSmbMode ? language['Primary CommandWorx Email'] : language['Primary CommandIQ Email']}}</th>
+                  <th>{{language['Address']}}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{{ subscriberInfoResult?.account || "-" }}</td>
+                  <td>{{ subscriberInfoResult?.phone || "-" }}</td>
+                  <td>{{subscriberInfoResult?.commandIQ.email}}</td>
+                  <td>{{ subscriberInfoResult?.serviceAddress || "-" }} </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="mt-3">
+            <div class="d-inline-flex">
+              <div class="form-check pl-0 mr-2">
+                <input type="checkbox" [(ngModel)]="subscribercommandIQemail" [ngModelOptions]="{ standalone: true }"
+                  (change)="emailCheckBox($event)" />
+              </div>
+              <p>{{language['confirm_msg_commandIQ_edit']}}</p>
+            </div>
+          </div>
+          <div class="w-100 mt-4 pt-2">
+            <button type="button" id="editCIqWarnBtn" class="btn-default primary mr-3" [disabled]="commandIQEdit"
+              (click)="openEditCiqEmailsModal(editCiqEmailsModal)">
+              {{bSmbMode ? language['Edit CommandWorx Email(s)'] : language['Edit CommandIQ Email(s)']}}
+            </button>
+            <button type="button" id="cancelCIqWarnBtn" class="btn-default btn-dft py-1" aria-label="Close"
+              (click)="modal.dismiss('Cross click'); closePopupedit();">
+              {{ language.Cancel }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<ng-template #auditLog let-modal>
+  <div class="modal-body">
+    <div class="w-100 alert-box">
+      <button class="close" aria-label="Close" (click)="modal.dismiss('Cross click');">
+        <span></span>
+      </button>
+      <div class="box-content">
+        <div class="al-icon">
+          <img src="../../../../assets/img/ic_warning-36px.svg" alt="icon here" />
+        </div>
+        <div class="content">
+          <h3>{{language['Ask the subscriber to verify some of the following information before sending CommandIQ email invite']}}</h3>
+          <div class="table-responsive">
+            <table class="table table-borderless">
+              <thead>
+                <tr>
+                  <th>{{language['Account']}}</th>
+                  <th>{{language['Phone No']}}</th>
+                  <th>{{language['CommandIQ Email']}}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{{ subscriberInfoResult?.account || "-" }}</td>
+                  <td>{{ subscriberInfoResult?.phone || "-" }}</td>
+                  <td>{{subscriberInfoResult?.commandIQ.email || "-"}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="mt-3">
+            <div class="d-inline-flex">
+              <div class="form-check pl-0 mr-2">
+                <input type="checkbox" [(ngModel)]="subscribercommandIQInviteEmail" [ngModelOptions]="{ standalone: true }"
+                  (change)="emailCheckBox($event)" />
+              </div>
+              <p>{{language['confirm_msg_commandIQ_edit']}}</p>
+            </div>
+          </div>
+          <div class="w-100 mt-4 pt-2">
+            <button type="button" id="editCIqWarnBtn" class="btn-default primary mr-3" [disabled]="commandIQInvite"
+              (click)="openmodal(CommandIQ);">
+              {{language['Send CommandIQ Invite Email']}}
+            </button>
+            <button type="button" id="cancelCIqWarnBtn" class="btn-default btn-dft py-1" aria-label="Close"
+              (click)="modal.dismiss('Cross click');">
+              {{ language.Cancel }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+
+<ng-template #editCiqEmailsModal let-modal>
+  <div class="w-100 py-3">
+    <button type="button" class="close mt-1" aria-label="Close"
+      (click)="modal.dismiss('Cross click'); closePopupedit();">
+      <span></span>
+    </button>
+  </div>
+  <div class="px-4">
+    <div class="ccl-admin-title mb-4" id="edit-ciq-modal-title">{{bSmbMode ? language['Edit CommandWorx Email(s)'] :
+      language['Edit CommandIQ Email(s)']}}</div>
+    <div class="d-flex flex-column w-100">
+      <div class="ccl-form w-100 mb-3 email-info">
+        <label>{{language['Primary Email']}}</label>
+        <input type="text" [(ngModel)]="NewEmail" (input)="ValidateEmail($event)" />
+        <span class="email-close-icon cursor-pointer" (click)="NewEmail= null"><img
+            src="../../../../../assets/img/ic_close-44px.svg" alt=""></span>
+        <div *ngIf="!validatingPrimaryEmail" class="errorMessage">
+          <small *ngIf="!validatingPrimaryEmail">
+            {{ language["Please enter a valid email address"] }}
+          </small>
+        </div>
+      </div>
+      <div class="ccl-form w-100 mb-3 email-info">
+        <label>{{language['Secondary Email']}}</label>
+        <input *ngIf="showSeconadryEmailField" type="text" [(ngModel)]="NewSecondaryEmail"
+          (input)="ValidateSecondaryEmail($event)" [disabled]="!showSeconadryEmailField"
+          [ngClass]="!showSeconadryEmailField ? 'cursornallow' : ''" />
+        <div class="command-email" *ngIf="!showSeconadryEmailField">{{bSmbMode ? language['Secondary admin has not been
+          added in CommandWorx'] :language['Secondary admin has not been added in CommandIQ']}}</div>
+        <span *ngIf="showSeconadryEmailField" class="email-close-icon cursor-pointer" (click)="NewSecondaryEmail= null"
+          [ngClass]="!showSeconadryEmailField ? 'cursornallow' : ''"><img
+            src="../../../../../assets/img/ic_close-44px.svg" alt=""></span>
+        <div *ngIf="!validatingSecondaryEmail" class="errorMessage">
+          <small *ngIf="!validatingSecondaryEmail">
+            {{ language["Please enter a valid email address"] }}
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-3 mb-3">
+      <button class="btn-default primary mr-3"
+        [disabled]="!validatingPrimaryEmail || !validatingSecondaryEmail || !isEmailChange()"
+        (click)="accesspopupedit()">{{language['Save Changes']}}</button>
+      <button class="btn-default btn-dft mr-3"
+        (click)="modal.close('Close click'); closePopupedit();">{{language.Cancel}}</button>
+      <!-- <button class="btn-default primary" (click)="accesspopupdelete()">{{language.delete}}</button> -->
+    </div>
+  </div>
+</ng-template>
+<!-- updateCommandIQEmails -->
+<!-- (click)="updateCommandIQEmails()" -->
+<!-- (click)="openWarnModalSave(warnModalSave)" -->
+<!-- (click)="deleteCommandIQEmail()" -->
+<ng-template #warnModalSave let-modal>
+  <div class="modal-body">
+    <div class="w-100 alert-box">
+      <button class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span></span>
+      </button>
+      <div class="box-content">
+        <div class="al-icon">
+          <img src="../../../../assets/img/ic_warning-36px.svg" alt="icon here" />
+        </div>
+        <div class="content">
+          <h3>{{language['You don’t have permission to edit CommandIQ email addresses']}}</h3>
+          <p>{{language['Talk to your administrator for access']}}.</p>
+          <div class="w-100 mt-4 pt-2">
+            <button type="button" class="btn-default primary mr-3" (click)="modal.close('Close click')">
+              {{language["Okay"]}}
+            </button>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

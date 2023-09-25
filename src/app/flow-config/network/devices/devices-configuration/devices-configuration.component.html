@@ -1,0 +1,569 @@
+<div class="container px-0 position-relative">
+ <div class="loader" *ngIf="loading">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary">
+        <span class="sr-only">Loading...</span>
+      </div>
+    </div>
+  </div> 
+    <!-- <div class="tab-content" id="deviceTabsContent">
+        <div id="device-configuration" class="tab-pane fade active show" 
+        role="tabpanel" aria-labelledby="device-configuration"> -->
+      <div class="row py-4" *ngIf="buttonVisible">
+        <div class="col-md-9">
+          <div class="d-flex">
+            <div>
+              <button id="create-btn" class="btn-default primary mr-2 px-2" (click)="create()">{{language.create}}</button>
+            </div>
+            <div>
+              <button id="export-btn" class="btn-default primary  mx-2 px-2" (click)="export()">{{language.export}}</button>
+            </div>
+    
+            <div class="upload-btn-wrapper">
+              <button class="btn-default primary mx-2 px-2" (click)="fullImportUpload()">{{language.fullImport}}</button>
+              <input #fullImportValue type="file" accept=".csv" id="fullImportUpload" style="display:none"
+                (click)="fullImportValue.value = null" (change)="fullImport('FullImport',$event)" />
+            </div>
+            <div class="upload-btn-wrapper">
+              <label for="inc-import" class="btn-default primary mx-2 px-2 cursor-pointer">{{language.incrementalImport}}
+              </label>
+              <input #incrementalImportValue type="file" id="inc-import" accept=".csv"
+                (click)="incrementalImportValue.value = null" (change)="fullImport('IncImport',$event)"
+                style="display:none" />
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-3 align-self-end d-none">
+          <div class="ccl-form">
+            <input type="search" name="searchbox" class="input-sm" placeholder="">
+            <button class="serach-but btn-default primary btn-icon-md inline">
+              <i class="fa fa-search" aria-hidden="true"></i></button>
+          </div>
+        </div>
+    
+    
+    
+      </div>
+    
+      <section *ngIf="formVisible">
+        <div class="row">
+          <div class="col-md-8 offset-md-2">
+    
+            <form>
+              <div class="ccl-form row my-2">
+                <label for="name" class="col-sm-4 col-form-label">{{language.name}}</label>
+                <div class="col-sm-8">
+                  <input id="name" type="text" class="" [(ngModel)]="name" [ngModelOptions]="{standalone: true}" 
+                  trimSpace (blur)="removeUnwantedSpace('name',name)">
+                </div>
+              </div>
+              <!-- <div class="ccl-form row my-2">
+                <label for="hostName" class="col-sm-4 col-form-label">{{language.hostName}}</label>
+                <div class="col-sm-8">
+                  <input id="hostName" type="text" class="" [(ngModel)]="hostName" [ngModelOptions]="{standalone: true}">
+                </div>
+              </div> -->
+              <div class="ccl-form row my-2">
+                <label for="deviceIPV4" class="col-sm-4 col-form-label">{{language.deviceipv4}}
+                  <!-- <span class="error">*</span> -->
+                  <span><i class="fas fa-info-circle" title="{{language.deviceiptooltip}}"></i></span>
+    
+                </label>
+                <div class="col-sm-8">
+                  <input id="deviceIPV4" type="text" class="" [(ngModel)]="deviceIPV4"
+                    [ngModelOptions]="{standalone: true}" trimSpace (blur)="removeUnwantedSpace('deviceIPV4',deviceIPV4)">
+                </div>
+              </div>
+              <div class="ccl-form row my-2">
+                <label for="deviceIPV6" class="col-sm-4 col-form-label">{{language.deviceipv6}}
+                  <span><i class="fas fa-info-circle" title="{{language.deviceiptooltip}}"></i></span>
+                </label>
+                <div class="col-sm-8">
+                  <input id="deviceIPV6" type="text" class="" [(ngModel)]="deviceIPV6"
+                    [ngModelOptions]="{standalone: true}" trimSpace (blur)="removeUnwantedSpace('deviceIPV6',deviceIPV6)">
+                </div>
+              </div>
+              <div class="ccl-form row my-2">
+                <label for="ignoreUpStream" class="col-sm-4 col-form-label text-nowrap">{{language.ignoreUpstream}}
+                  <span><i class="fas fa-info-circle" title="{{language.ignoreupstreamtooltip}}"></i></span>
+                </label>
+                <div class="col-sm-8">
+                  <ng-select id="ignoreUpStream" [items]="selectOptions" bindLabel="name" bindValue="value"
+                    [multiple]="false" placeholder="" [(ngModel)]="ignoreUpStream" [ngModelOptions]="{standalone: true}"
+                    [clearable]="false" [searchable]="false">
+                  </ng-select>
+                </div>
+              </div>
+              <div class="ccl-form row my-2">
+                <label for="ignoreDownStream" class="col-sm-4 col-form-label text-nowrap">{{language.ignoreDownstream}}
+                  <span><i class="fas fa-info-circle" title="{{language.ignoredownstreamtooltip}}"></i></span>
+                </label>
+                <div class="col-sm-8">
+                  <ng-select id="ignoreDownStream" [items]="selectOptions" bindLabel="name" bindValue="value"
+                    [multiple]="false" placeholder="" [(ngModel)]="ignoreDownStream" [ngModelOptions]="{standalone: true}"
+                    [clearable]="false" [searchable]="false">
+                  </ng-select>
+                </div>
+              </div>
+              <div class="ccl-form row my-2">
+                <label for="ignoreLocal" class="col-sm-4 col-form-label">{{language.ignoreLocal}}
+                  <span><i class="fas fa-info-circle" title="{{language.ignoreinternal}}"></i></span>
+                </label>
+                <div class="col-sm-8">
+                  <ng-select id="ignoreLocal" [items]="selectOptions" bindLabel="name" bindValue="value" [multiple]="false"
+                    placeholder="" [(ngModel)]="ignoreLocal" [ngModelOptions]="{standalone: true}" [clearable]="false"
+                    [searchable]="false">
+                  </ng-select>
+                </div>
+              </div>
+              <!-- CCL-37642 & CCL-39112 -->
+              <!-- <div class="ccl-form row my-2">
+                <label for="observationDomain"
+                  class="col-sm-4 col-form-label text-nowrap">{{language.observationDomain}}</label>
+                <div class="col-sm-8">
+                  <input id="observationDomain" type="text" class="" [(ngModel)]="observationDomain"
+                    [ngModelOptions]="{standalone: true}">
+                </div>
+              </div> -->
+              <div class="ccl-form row my-2">
+                <label for="samplingLimit" class="col-sm-4 col-form-label">{{language.sampling}} <span
+                    class="error">*</span>
+                  <span><i class="fas fa-info-circle" title="{{language.samplingRateToolTip}}"></i></span>
+                </label>
+                <div class="col-sm-8">
+                  <input id="samplingLimit" type="number" min="1" max="65535" class="" [(ngModel)]="samplingLimit"
+                    (keypress)="inputValidator($event)" [ngModelOptions]="{standalone: true}">
+                </div>
+              </div>
+              <!--<div class="ccl-form row my-2">
+                <label for="geoCoordinate" class="col-sm-4 col-form-label">{{language.geoCoordinates}}</label>
+                <div class="col-sm-8">
+                  <input id="geoCoordinate" type="text" class="" [(ngModel)]="geoCoordinate"
+                    [ngModelOptions]="{standalone: true}">
+                </div>
+              </div>
+              <div class="ccl-form row my-2">
+                <label for="address" class="col-sm-4 col-form-label">{{language.address}}</label>
+                <div class="col-sm-8">
+                  <input id="address" type="text" class="" [(ngModel)]="address" [ngModelOptions]="{standalone: true}">
+                </div>
+              </div>-->
+    
+    
+            </form>
+    
+          </div>
+    
+        </div>
+    
+        <div class="row my-4">
+          <div class="col-md-8 offset-md-4">
+            <button class="btn-default primary px-3 mx-3" (click)="submit()">{{language.submit}}</button>
+            <button class="btn-default btn-dft py-1 px-3" (click)="cancel()">{{language.Cancel}}</button>
+          </div>
+        </div>
+      </section>
+    
+      <section *ngIf="tablePreview">
+        <div class="row" *ngIf="tablePreview">
+          <div class="col-md-12 my-3 ccl-admin-table">
+    
+            <table id="example" datatable [dtOptions]="importTableOptions" class="row-border hover table-alter">
+              <thead>
+                <tr>
+                  <th>{{language.action}}</th>
+                  <th>{{language.name}}</th>
+                  <th>{{language.old}} {{this.language.name}}</th>
+                  <th>{{language.deviceipv4}}</th>
+                  <th>{{language.deviceipv6}}</th>
+                  <th>{{language.sampling}}</th>
+                  <th>{{language.old}} {{this.language.sampling}}</th>
+                  <!-- CCL-37642 & CCL-39112 -->
+                  <!-- <th>{{language.observationDomain}}</th> -->
+                  <!-- <th>{{language.old}} {{this.language.observationDomain}}</th> -->
+                  <th>{{language.hostName}}</th>
+                  <!-- <th>{{language.old}} {{this.language.hostName}}</th> -->
+                  <th>{{language.listeningPort}}</th>
+                  <th>{{language.old}} {{this.language.listeningPort}}</th>
+                  <th>{{language.flowType}}</th>
+                  <th>{{language.old}} {{this.language.flowType}}</th>
+                  <!--<th>{{language.geoCoordinates}}</th>
+                  <th>{{language.old}} {{this.language.geoCoordinates}}</th>
+                  <th>{{language.address}}</th>
+                  <th>{{language.old}} {{this.language.address}}</th>-->
+                  <th>{{language.ignoreUpstream}}</th>
+                  <th>{{language.old}} {{this.language.ignoreUpstream}}</th>
+                  <th>{{language.ignoreDownstream}}</th>
+                  <th>{{language.old}} {{this.language.ignoreDownstream}}</th>
+                  <th>{{language.ignoreLocal}}</th>
+                  <th>{{language.old}} {{this.language.ignoreLocal}}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let obj of previewTableBody">
+                  <td>{{obj.action}}</td>
+                  <td>{{obj.name}}</td>
+                  <td>{{obj["Old name"]}}</td>
+                  <td>{{obj.deviceIpV4}}</td>
+                  <td>{{obj.deviceIpV6}}</td>
+                  <td>{{obj.samplingRate}}</td>
+                  <td>{{obj["Old samplingRate"]}}</td>
+                  <!-- CCL-37642 & CCL-39112 -->
+                  <!-- <td>{{obj.observationId}}</td> -->
+                  <!-- <td>{{obj["Old observationId"]}}</td> -->
+                  <!-- <td>{{obj.hostName}}</td> -->
+                  <td>{{obj["Old hostName"]}}</td>
+                  <td>{{obj.receivingPort}}</td>
+                  <td>{{obj["Old receivingPort"]}}</td>
+                  <td>{{obj.flowType}}</td>
+                  <td>{{obj["Old flowType"]}}</td>
+                  <!--<td>{{obj.geoCoordinates}}</td>
+                  <td>{{obj["Old geoCoordinates"]}}</td>
+                  <td>{{obj.address}}</td>
+                  <td>{{obj["Old address"]}}</td>-->
+                  <td>{{obj.ignoreUpstream}}</td>
+                  <td>{{obj["Old ignoreUpstream"]}}</td>
+                  <td>{{obj.ignoreDownstream}}</td>
+                  <td>{{obj["Old ignoreDownstream"]}}</td>
+                  <td>{{obj.ignoreInternal}}</td>
+                  <td>{{obj["Old ignoreInternal"]}}</td>
+                </tr>
+              </tbody>
+            </table>
+    
+          </div>
+        </div>
+    
+        <div class="row my-4">
+          <div class="col-md-8 offset-md-4">
+            <button class="btn-default primary px-3 mx-3" (click)="importSubmit()"
+              [disabled]="!enableImportSubmit">{{language.submit}}</button>
+            <button class="btn-default btn-dft py-1 px-3" (click)="cancel()">{{language.Cancel}}</button>
+          </div>
+        </div>
+      </section>
+      <div class="row">
+        <div class="col-md-12 ccl-admin-table" [hidden]="!dataAvailable">
+          <table id="device-table"  width="100%" class="row-border hover table-alter" datatable
+            [dtTrigger]="dtTrigger" [dtOptions]="tableOptions">
+            <thead>
+              <tr>
+                <th class="w-nowrap-150">
+                  <div class="d-flex justify-content-end">
+                    <div class="d-flex align-items-center">
+                      <div [hidden]="editOnValue" class="addOrg">
+                        <input type="checkbox" class="" value="" id="selectDeselectAll"
+                          (change)="selectDeselectAll($event.target.checked)"
+                          [disabled]="deviceData?.length == 0 || currentTableRowCount == 0">
+                        <span class="checkbox-ui" id="selectDeselectAll-span" (click)="showAllInnerCheckBox($event)"
+                          style="display: none;"></span>
+                      </div>
+                    </div>
+                    <div>
+                      <div [hidden]="editOnValue" class="text-center justify-content-center">
+                        <button [disabled]="!deviceData?.length || !deleteIds?.length" id="delete-selected-btn"
+                          (click)="deleteAllSelected()" class="btn-default primary px-2 mx-2"
+                          title="{{language['Delete selected']}}">
+                          <i class="far fa-trash-alt"></i> {{language.selected}}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </th>
+                <th class="min-w-250">{{language.name}}</th>
+                <th class="min-w-250">{{language.deviceipv4}}</th>
+                <th class="min-w-250">{{language.deviceipv6}}</th>
+                <th class="min-w-170">{{language.sampling}}</th>
+                <!-- CCL-37642 & CCL-39112 -->
+                <!-- <th style="min-width:170px">{{language.observationDomain}}</th> -->
+                <th class="min-w-250">{{language.hostName}}</th>
+                <th class="min-w-130">{{language.listeningPort}}</th>
+                <th class="min-w-130">{{language.flowType}}</th>
+                <!--<th style="min-width:170px">{{language.geoCoordinates}}</th>
+                <th style="min-width:170px">{{language.address}}</th>-->
+                <th class="min-w-130">{{language.ignoreUpstream}}</th>
+                <th class="min-w-130">{{language.ignoreDownstream}}</th>
+                <th class="min-w-130">{{language.ignoreLocal}}</th>
+    
+              </tr>
+            </thead>
+            <tbody>
+              <tr id="{{item._id}}" *ngFor="let item of deviceData">
+                <td class="w-nowrap">
+    
+                  <div *ngIf="editOnValue != item._id" class="editable-td text-center f-size13">
+                    <div class="ccl-fc-table-icon">
+                      <span class="pr-2">
+                        <div (click)="edit(item)" id="edit-btn{{item._id}}" class="primary" title="{{language['Edit']}}">
+                          <i class="fas fa-pencil-alt"></i>
+                        </div>
+                      </span>
+                      <span class="pr-2">
+                        <input type="checkbox" value="{{item._id}}" name="delete_device_id_{{item._id}}"
+                          class="delete_device_id_{{item._id}}" id="delete_deviceip_{{item._id}}"
+                          (click)="getDeleteIds($event, item);" title="{{language['Select']}}">
+                      </span>
+                      <span class="pr-2">
+                        <div (click)="delete(item)" class="primary " id="delete-btn{{item._id}}"
+                          title="{{language['Delete']}}">
+                          <i class="far fa-trash-alt"></i>
+                        </div>
+                      </span>
+                    </div>
+                  </div>
+    
+                  <div *ngIf="editOnValue == item._id" class="save-cancel-btn-group d-flex justify-content-center">
+                    <div class="ccl-fc-table-icon">
+                      <span class="pr-1">
+                        <div (click)="updateSave()" id="save-btn{{item._id}}" class="primary mx-3 ">
+                          <i class="fas fa-check"></i>
+                        </div>
+                      </span>
+                      <span class="pr-1">
+                        <div (click)="updateCancel()" id="cancel-btn{{item._id}}" class="primary">
+                          <i class="fas fa-times"></i>
+                        </div>
+                      </span>
+                    </div>
+                  </div>
+                </td>
+                <td class="text-break">
+                  <div *ngIf="editOnValue != item._id">
+                    <!-- {{item.name ? item.name.slice(0,25) : ''}}{{(item.name && item.name.length > 25 ) ? '...' : ''}} -->
+                    <!-- CCL-43019 -->
+                    {{item.name}}
+                  </div>
+                  <div *ngIf="editOnValue == item._id" class="ccl-form">
+                    <input type="text" class="edit-text w-200px" [(ngModel)]="editName"
+                      [ngModelOptions]="{standalone: true}" value="{{item.name}}" trimSpace (blur)="removeUnwantedSpace('editName',editName)">
+                  </div>
+                </td>
+    
+    
+                <td class="textnowrap">
+                  <div *ngIf="editOnValue != item._id">
+                    {{item.deviceIpV4}} &nbsp;
+                  </div>
+                  <div *ngIf="editOnValue == item._id" class="ccl-form">
+                    <input type="text" class="edit-text w-200px" [(ngModel)]="editDeviceIPV4"
+                      [ngModelOptions]="{standalone: true}" value="{{item.deviceIpV4}}" 
+                      trimSpace (blur)="removeUnwantedSpace('editDeviceIPV4',editDeviceIPV4)">
+                  </div>
+                </td>
+                <td class="textnowrap">
+                  <div *ngIf="editOnValue != item._id">
+                    {{item.deviceIpV6}} &nbsp;
+                  </div>
+                  <div *ngIf="editOnValue == item._id" class="ccl-form">
+                    <input type="text" class="edit-text w-200px" [(ngModel)]="editDeviceIPV6"
+                      [ngModelOptions]="{standalone: true}" value="{{item.deviceIpV6}}" 
+                      trimSpace (blur)="removeUnwantedSpace('editDeviceIPV6',editDeviceIPV6)">
+                  </div>
+                </td>
+                <td>
+                  <div *ngIf="editOnValue != item._id">
+                    {{item.samplingRate}}
+                  </div>
+                  <div *ngIf="editOnValue == item._id" class="ccl-form">
+                    <input type="number" min="0" max="65535" class="edit-text w-150px" value="{{item.samplingRate}}"
+                      [(ngModel)]="editSamplingLimit" [ngModelOptions]="{standalone: true}" >
+                  </div>
+    
+                </td>
+                <!-- CCL-37642 & CCL-39112 -->
+                <!-- <td>
+                  <div *ngIf="editOnValue != item._id">
+                    {{item.observationId ? item.observationId.slice(0,25) : ''}}{{(item.observationId &&
+                    item.observationId.length > 25 ) ? '...' : ''}}
+                  </div>
+    
+                  <div *ngIf="editOnValue == item._id" class="ccl-form">
+                    <input type="text" class="edit-text" [(ngModel)]="editObservationDomain"
+                      [ngModelOptions]="{standalone: true}" value="{{item.observationId}}" style="width: 150px;">
+                  </div>
+                </td> -->
+                <td>
+                  {{item.hostName ? item.hostName.slice(0,25) : ''}}{{(item.hostName && item.hostName.length > 25 ) ?
+                  '...' : ''}}
+                  <!-- <div *ngIf="editOnValue != item._id">
+                    {{item.hostName ? item.hostName.slice(0,25) : ''}}{{(item.hostName && item.hostName.length > 25 ) ?
+                    '...' : ''}}
+                  </div>
+                  <div *ngIf="editOnValue == item._id" class="ccl-form">
+                    <input type="text" class="edit-text" [(ngModel)]="editHostName" [ngModelOptions]="{standalone: true}"
+                      value="{{item.hostName}}" style="width: 200px;">
+                  </div> -->
+                </td>
+                <td>
+                  {{(item.receivingPort || item.receivingPort == 0) ? item.receivingPort : ''}}
+                </td>
+                <td>
+                  {{item.flowType ? item.flowType : ''}}
+                </td>
+    
+    
+    
+                <!--<td>
+                  <div *ngIf="editOnValue != item._id">
+                    {{item.geoCoordinate ? item.geoCoordinate : ''}}
+                  </div>
+                  <div *ngIf="editOnValue == item._id" class="ccl-form">
+                    <input type="text" class="edit-text" value="{{item.tenantId}}" [(ngModel)]="editGeoCoordinate"
+                      [ngModelOptions]="{standalone: true}" style="width:150px">
+                  </div>
+    
+                </td>
+                <td>
+                  <div *ngIf="editOnValue != item._id">
+                    {{item.address}}
+                  </div>
+                  <div *ngIf="editOnValue == item._id" class="ccl-form">
+                    <input type="text" class="edit-text" value="{{item.tenantId}}" [(ngModel)]="address"
+                      [ngModelOptions]="{standalone: true}" style="width:150px">
+                  </div>
+    
+                </td>-->
+                <td>
+                  <div *ngIf="editOnValue != item._id">
+                    {{item.ignoreUpstream ? 'Yes':'No'}}
+                  </div>
+                  <div *ngIf="editOnValue == item._id">
+                    <ng-select [items]="selectOptions" class="select-custom-top w-100px" bindLabel="name" bindValue="value"
+                      [multiple]="false" placeholder="" [(ngModel)]="editIgnoreUpStream"
+                      [ngModelOptions]="{standalone: true}" [clearable]="false" [searchable]="false" appendTo="body">
+                    </ng-select>
+                  </div>
+    
+                </td>
+                <td>
+                  <div *ngIf="editOnValue != item._id">
+                    {{item.ignoreDownstream ? 'Yes':'No'}}
+                  </div>
+                  <div *ngIf="editOnValue == item._id">
+                    <ng-select [items]="selectOptions" class="select-custom-top w-100px" bindLabel="name" bindValue="value"
+                      [multiple]="false" placeholder="" [(ngModel)]="editIgnoreDownStream"
+                      [ngModelOptions]="{standalone: true}" [clearable]="false" [searchable]="false" appendTo="body">
+                    </ng-select>
+                  </div>
+                </td>
+                <td>
+                  <div *ngIf="editOnValue != item._id">
+                    {{item.ignoreInternal ? 'Yes':'No'}}
+                  </div>
+                  <div *ngIf="editOnValue == item._id">
+                    <ng-select [items]="selectOptions" bindLabel="name" bindValue="value" [multiple]="false" placeholder=""
+                      [(ngModel)]="editIgnoreLocal" [ngModelOptions]="{standalone: true}" [clearable]="false"
+                      [searchable]="false" class="select-custom-top w-100px" appendTo="body"></ng-select>
+                  </div>
+                </td>
+    
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <!-- </div> -->
+
+    <!-- </div> -->
+    </div>
+
+<!-- Modals -->
+<ng-template #infoModal let-data let-ref="dialogRef">
+
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">{{infoTitle}}</h4>
+      <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p class="f-size-16px">{{invalidImportDevice.length ? language['Note']+' - '+language['No device imported'] : ''}}
+      </p>
+      <div class="w-100">
+        <p class="f-size-16px">{{infoBody}}</p>
+        <ul class="list-two" *ngIf="invalidImportDevice.length">
+          <li class="text-break" *ngFor="let device of invalidImportDevice">{{device.name}}</li>
+        </ul>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-default primary px-3" data-dismiss="modal"
+        (click)="closeModal()">{{language['Okay']}}</button>
+    </div>
+  </ng-template>
+  
+  <ng-template #deleteModal let-data let-ref="dialogRef">
+  
+    <ng-container>
+      <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{infoTitle}}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="cancelDelete()">
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <table class="w-100">
+          <tr>
+            <td>{{deleteData.name ? deleteData.name : ''}}</td>
+            <td>{{deleteData.deviceIpV4 ? deleteData.deviceIpV4 : (deleteData.deviceIpV6 ? deleteData.deviceIpV6 : '')}}
+            </td>
+            <td>{{deleteData.hostName ? deleteData.hostName : ''}}</td>
+          </tr>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-default primary px-3" data-dismiss="modal"
+          (click)="confirmDelete()">{{language['Okay']}}</button>
+        <button type="button" class="btn-default btn-dft py-1 px-3" data-dismiss="modal"
+          (click)="cancelDelete()">{{language['Cancel']}}</button>
+      </div>
+    </ng-container>
+  
+  </ng-template>
+  
+  <ng-template #multiDeleteModal let-data let-ref="dialogRef">
+  
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">{{infoTitle}}</h4>
+      <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <!-- <table [innerHtml]="infoBody">
+      </table> -->
+      <table class="w-100">
+        <tr *ngFor="let item of deviceIps; let i=index;">
+          <td width="33%">{{ deleteDevices[i].name ? deleteDevices[i].name : ''}}</td>
+          <td width="33%">{{item ? item : ''}}</td>
+          <td width="33%">{{ deleteDevices[i].hostName ? deleteDevices[i].hostName : ''}}</td>
+        </tr>
+      </table>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-default primary px-3" data-dismiss="modal"
+        (click)="confirmDeleteSecleted()">{{language['Okay']}}</button>
+      <button type="button" class="btn-default btn-dft py-1 px-3" data-dismiss="modal"
+        (click)="closeModal()">{{language['Cancel']}}</button>
+    </div>
+  </ng-template>
+  
+  <ng-template #importModal let-data let-ref="dialogRef">
+  
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">{{infoTitle}}</h4>
+      <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <table [innerHtml]="infoBody"></table>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-default primary px-3" data-dismiss="modal"
+        (click)="proceedImport()">{{language['Okay']}}</button>
+      <button type="button" class="btn-default btn-dft py-1 px-3" data-dismiss="modal"
+        (click)="closeModal()">{{language['Cancel']}}</button>
+    </div>
+  </ng-template>
+  <!-- Modals -->

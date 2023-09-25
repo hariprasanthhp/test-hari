@@ -1,0 +1,104 @@
+
+<section>
+    <div class="container px-0" >
+        <div class="d-flex justify-content-between" *ngIf="scope['write']">
+            <div><button type="button" class="btn-default primary px-3 mb-3" (click)="gotoAdd()">{{language['Add_Profile']}}
+                </button></div>
+        </div>
+    </div>
+</section>
+<div class="w-100 alert alert-danger fade show my-3" *ngIf="error">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+    <button type="button" class="close" (click)="closeAlert()">
+        <span></span>
+    </button>
+    <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+</div>
+
+<div class="w-100 alert alert-success fade show my-3" *ngIf="success">
+    <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+    <button type="button" class="close" (click)="success = false">
+        <span></span>
+    </button>
+    <div class="d-inline-flex" [innerHtml]="language[successInfo] || successInfo"></div>
+</div>
+<section>
+    <div class="loader" *ngIf="loader" >
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">{{ language.Loading }}</span>
+            </div>
+        </div>
+    </div>
+    <div class="py-3 warning-msg" *ngIf="deletedata">
+        <span class="error-img"><img src="./assets/img/warning-icon.svg"></span>
+        <span class="di-inline-wrap">
+          {{ language["Are you sure you want to delete"] }}
+          <b>{{ modalInfo }}</b>?
+        </span>
+        <div class="btn-con-sec float-right">
+  
+          <button class="btn-default btn-primary mr-2" id="deletePFBtn" 
+            (click)="DeleteProfile()">
+            {{ language.Confirm}}
+          </button>
+          <button class="btn-default btn-dft py-1 " (click)="closeModal()"> {{ language.Cancel}}</button>
+        </div>
+      </div>
+    <div class="text-right ccl-form position-relative" >
+        <input type="text" placeholder="Search" class="max-w-227px pr-4" [(ngModel)]="searchtext" (keyup)="search($event.target.value)"
+        (search)="search($event.target.value)" id="data-filter-input" >
+        <span class="pointer close-pointer clear-icon" [ngClass]="showcloseicon ? '' : ''"
+        (click)="closeicon($event.target.value)"><img *ngIf="searchtext" src="../../../assets/img/close-icon.svg"
+          alt=""></span>
+    </div>
+    <table class="w-100" id="subscriber-template" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+        <thead>
+            <tr>
+                <th class="w-25">{{language['Name']}}</th>
+                <th>{{language['Decription']}}</th>
+                <th class="migration-col">{{language['Migration Type']}}</th>
+                <th class="w-20">{{language['Service_Type']}}</th>
+                <th [hidden]="!scope['write']">{{language['Action']}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of profileList">
+                <td class="text-break" (click)="showdetails(data, data?.deviceType ? data?.deviceType:data?.ontSMP?.deviceType ?data?.ontSMP?.deviceType:'-' )"><a href="javascript:void(0)" class="text-decoration-none" >{{data?.rgSMP?.name ? data?.rgSMP?.name:data?.ontSMP?.name ?data?.ontSMP?.name:''}}</a></td>
+                <td class="description-text text-break">{{data?.rgSMP?.description ? data?.rgSMP?.description:data?.ontSMP?.description ?data?.ontSMP?.description:''}}</td>
+                <td>{{data?.deviceType ? data?.deviceType:data?.ontSMP?.deviceType ?data?.ontSMP?.deviceType:'-' }}</td>
+                <td>{{data?.rgSMP?.serviceType ==='DATA' ? 'Data': data?.rgSMP?.serviceType==='VIDEO'? 'Video':data?.rgSMP?.serviceType==='VOICE'?'Voice':data?.ontSMP?.serviceType ==='DATA' ? 'Data': data?.ontSMP?.serviceType==='VIDEO'? 'Video':data?.ontSMP?.serviceType==='VOICE'?'Voice':'-'}}</td>
+                <td class="" [hidden]="!scope['write']">
+                    <div class="dropdown dropleft">
+
+                        <button class="list-button" type="button" data-boundary="viewport"
+                            data-toggle="dropdown">
+                            ...
+                        </button>
+                        <div class="text-left">
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <button class="btn btn-white" (click)="editProfile(data, data?.deviceType)">
+                                        {{language['Edit']}}
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="btn btn-white" (click)="deleteProfile(data, data?.deviceType)">
+                                     {{language.Delete}}
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+        <tbody *ngIf="profileList?.length === 0">
+            <tr>
+                <td colspan="8" class="no-data-available"> No migration 
+                    profile added
+                </td>
+            </tr>
+        <tbody>
+    </table>
+</section>

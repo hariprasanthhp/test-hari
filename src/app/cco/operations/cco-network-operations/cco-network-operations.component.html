@@ -1,0 +1,85 @@
+<div class="row">
+  <div class="col-sm-12 col-md-2 col-lg-2 pr-0 ccl-tabs">
+    <ul id="netops-list-menu" class="nav flex-column left-menu tab-view-style">
+      <!-- <li class="nav-item">
+                <a class="list-group-item list-group-item-action" routerLink="./secure-onboard" id="secure-onboard"
+                    routerLinkActive="active">
+                    {{ language.Secure_Onboarding }}
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="list-group-item list-group-item-action" routerLink="./self-heal" id="self-heal"
+                    routerLinkActive="active">
+                    {{ language.Self_Heal }}
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="list-group-item list-group-item-action" routerLink="./stale-device" id="stale-device"
+                    routerLinkActive="active">
+                    {{ language.Stale_Device_Purge }}
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="list-group-item list-group-item-action" id="subProfile" routerLink="./configuration-files"
+                    routerLinkActive="active">
+                    {{ language.configuration_Files }}
+                </a>
+            </li> -->
+      <!-- <li class="nav-item" *ngIf="menus['policies']">
+        <a class="list-group-item list-group-item-action" id="subProfile" routerLink="./cco-network-polices"
+          routerLinkActive="active">
+          {{ language.Polices }}
+        </a>
+      </li> -->
+      <!-- <li class="nav-item" *ngIf="isDev"> -->
+
+      <!-- <li class="nav-item">
+        <a class="list-group-item list-group-item-action" routerLink="./cco-alarm-groups" routerLinkActive="active">
+          {{language['Alarm Category Subgroups']}}
+        </a>
+      </li> -->
+      <li class="nav-item" *ngIf="menus['transformed-alarm-rules']">
+        <a class="list-group-item list-group-item-action" routerLink="./cco-alarm-rules" routerLinkActive="active">
+          <!-- {{language['Alarm Rules']}} -->
+          {{language['Transform Alarm Rules']}}
+        </a>
+      </li>
+
+
+      <!-- </li> -->
+
+      <li class="nav-item" *ngIf="menus['alarm-notifications']">
+        <a class="list-group-item list-group-item-action" id="subProfile" routerLink="./cco-alarm-notifications"
+          [ngClass]="{'active' : emailNtfcnActive}">{{language['Email Notifications']}}</a>
+      </li>
+      <!-- <li class="nav-item" *ngIf="isDev">
+        <a class="list-group-item list-group-item-action" routerLink="./traffic-workflow" routerLinkActive="active">
+          Traffic Workflow
+        </a>
+      </li> -->
+      <!-- <li class="nav-item">
+        <a
+          class="list-group-item list-group-item-action"
+          id="subProfile"
+          routerLink="./cco-org-admin"
+          routerLinkActive="active"
+        >
+          {{ language["Org Admin"] }}
+        </a>
+      </li> -->
+      <!-- <li class="nav-item">
+        <a
+          class="list-group-item list-group-item-action"
+          id="subProfile"
+          routerLink="./workflows"
+          routerLinkActive="active"
+        >
+          {{ language.Workflows }}
+        </a>
+      </li> -->
+    </ul>
+  </div>
+  <div class="col-sm-12 col-md-10 col-lg-10 pl-4">
+    <router-outlet></router-outlet>
+  </div>
+</div>

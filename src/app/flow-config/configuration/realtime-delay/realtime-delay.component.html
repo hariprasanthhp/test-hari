@@ -1,0 +1,138 @@
+<div class="container position-relative">
+    <div class="loader" *ngIf="loading">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">{{language.Loading}}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row my-3">
+        <div class="col-md-12">
+            <form class="fw100">
+                <div class="form-group row ">
+                    <label class="col-sm-2" for="age">{{language['Current Real-Time Delay']}} <span class="error">*</span></label>
+                    <div class="col-sm-10">
+                        <div class="row">
+                            <div class="ccl-form col-sm-3">
+                                <input type="number" id="delay" class="" placeholder="" name="delay" [(ngModel)]="delay"  maxlength="1"
+                                    min="1" max="5" (keyup)="changeDelay($event)" (change)="changeDelay($event)" >
+                            </div>
+                            <div class="col-sm-9 pl-0">
+                                <div class="d-inline-flex align-items-center">
+                                    <label class="age-out-days-text pt-1 mr-2">{{language['Minute(s)']}}</label>
+                                    <button type="button" class="btn-default btn-primary px-2 mr-2" id="apply-btn"
+                                        (click)="validateTimeDelay()" [disabled]="!showButton">{{language.submit}}
+                                    </button>
+                                    <div class="error"  *ngIf="warningmsg">{{language['Success, please refresh the real time dashboard and check the later flow table after 5 minutes.']}} </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <!-- <small id="" class="form-text text-muted">({{language.byDefault}})</small> -->
+                    </div>
+
+                </div>
+
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="late-flow-table">
+                <button id="refresh-data" class="icon-btn"
+                                                (click)="getDelayData(false,true)">
+                                                <i class="fa fa-refresh primary" aria-hidden="true"></i>
+                                            </button>
+                <table id="realtime-dt" width="100%" class="row-border hover table-alter" datatable
+                    [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+                    
+                    <thead>
+                        <tr>
+                            <th>
+                                {{language.lateMinute}}
+                            </th>
+                            <th>
+                                {{language['Late 5 mins']}}
+                            </th>
+                            <th>
+                                {{language['Late 10 mins']}}
+                            </th>
+                            <th>
+                                {{language['Late 15 mins']}}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let list of delaydata?.summarize">
+                            <td>
+                                <b>{{list?.interval}}</b>
+                            </td>
+                            <td>
+                                <b>{{list?.window5}}</b> {{language.packets(bitsToSize(list?.window5Packet,false,2))}}
+                            </td>
+                            <td>
+                                <b>{{list?.window10}}</b> {{language.packets(bitsToSize(list?.window10Packet,false,2))}}
+                            </td>
+                            <td>
+                                <b>{{list?.window15}}</b> {{language.packets(bitsToSize(list?.window15Packet,false,2))}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row col-md-12">
+        <div>{{language['Last Reported Time']}}: {{delaydata?.lastUpdateTime ?
+            getChartFormat(delaydata?.lastUpdateTime):''}}</div>
+    </div>
+    <div class="row col-md-12">
+        <div>{{language['Effective Real-time delay']}}: {{this.delaydata?.curDelay ?
+            this.delaydata?.curDelay:''}}</div>&nbsp;
+            <div class="col-sm-6 pl-0">
+                <label class="age-out-days-text">{{language['Minute(s)']}}</label>
+            </div>  
+    </div>
+</div>
+
+<!-- Modals -->
+<ng-template #infoModal let-data let-ref="dialogRef">
+
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{infoTitle}}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        {{infoBody}}
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn-default primary px-3" data-dismiss="modal"
+            (click)="closeModal()">{{language['Okay']}}</button>
+    </div>
+</ng-template>
+
+<ng-template #confirmModal let-data let-ref="dialogRef">
+
+    <ng-container>
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">{{infoTitle}}</h4>
+            <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+                <span aria-hidden="true"></span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div [innerHtml]="infoBody"></div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-default primary px-3" data-dismiss="modal"
+                (click)="save()">{{language['Okay']}}</button>
+            <button type="button" class="btn-default btn-dft py-1 px-3" data-dismiss="modal"
+            (click)="closeModal()">{{language['Cancel']}}</button>
+        </div>
+    </ng-container>
+
+</ng-template>
+<!-- Modals -->

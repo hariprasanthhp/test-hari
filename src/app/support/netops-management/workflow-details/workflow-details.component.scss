@@ -1,0 +1,86 @@
+.review-table-sec h5 {
+    font-weight: 600;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.review-wizard {
+    border: 1px solid #ccc;
+    padding: 15px;
+    border-radius: 5px;
+    position: relative;
+}
+
+.review-table-sec {
+    margin: 10px 0px 40px;
+}
+
+.no-data-available {
+    text-align: center;
+}
+
+.workflow-policy-sec h5 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 30px;
+}
+
+.workflow-policy .timelabel {
+    font-weight: 600;
+    padding-left: 30px;
+}
+
+
+.form-control:disabled,
+.form-control[readonly],
+input:disabled {
+    cursor: not-allowed;
+}
+
+
+.daily-check .ccl-form.number-input {
+    width: 50%;
+    margin-left: 10px;
+}
+
+.daily-check .number-input input {
+    padding-right: 5px;
+    color: #222;
+}
+
+.workflow-oneline input {
+    width: 9%;
+    margin-right: 5px;
+    padding-right: 5px;
+}
+
+.mont-list .ccl-form {
+    width: 20%;
+    display: flex;
+    align-items: center;
+}
+
+.mont-list .ccl-form input {
+    width: 50%;
+    padding-right: 5px;
+    color: #646363;
+}
+
+.mont-list .ccl-form span {
+    padding-left: 10px;
+}
+
+.mont-list label.radio-inline {
+    margin-right: 9px;
+}
+
+.close-wizard {
+    position: absolute;
+    top: -35px;
+    right: -5px;
+}
+
+.Workflw-detail-page{
+    position: relative;
+    min-height: 300px;
+}

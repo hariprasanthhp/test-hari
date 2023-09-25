@@ -1,0 +1,40 @@
+<h2 class="net-ops-title" id="net-ops-operations">{{language.Operations}}</h2>
+<div class="ccl-tabs">
+  <ul id="tabs" class="nav nav-tabs sub-tab">
+    <li *ngIf="showDeviceGrps" class="nav-item">
+      <a routerLink="/support/netops-management/operations/devices-groups" (Click)="$event.preventDefault()"
+        class="nav-link small" id="deviceGroupTabId" routerLinkActive="active" data-toggle="tab"
+        class="nav-link">{{language.Device_groups}}</a>
+    </li>
+    <li *ngIf="showProfiles" class="nav-item">
+      <a routerLink="/support/netops-management/operations/profiles" data-toggle="tab" class="nav-link"
+        (Click)="$event.preventDefault()" class="nav-link small" id="profileTabId"
+        routerLinkActive="active">{{language.Profiles}}</a>
+    </li>
+    <li *ngIf="showConfigFiles" class="nav-item">
+      <a routerLink="/support/netops-management/operations/configuration-files-list" (Click)="$event.preventDefault()"
+        class="nav-link small" id="configFileTabId"
+        [ngClass]="[(router.url.includes('configuration-files-list')|| router.url.includes('configuration-files-form'))  ? 'active' : '']"
+        data-toggle="tab" class="nav-link">{{language.Config_Files}}</a>
+    </li>
+    <li *ngIf="showSoftwareImage" class="nav-item">
+      <a routerLink="/support/netops-management/operations/software-images-list" (Click)="$event.preventDefault()"
+        class="nav-link small" id="swImgTabId"
+        [ngClass]="[(router.url.includes('software-images-list')|| router.url.includes('software-images-form'))  ? 'active' : '']"
+        data-toggle="tab" class="nav-link">{{language.Software_Images}}</a>
+    </li>
+    <li *ngIf="showWorkFlow" class="nav-item">
+      <a data-toggle="tab" class="nav-link" routerLink="/support/netops-management/operations/workflows"
+        (Click)="$event.preventDefault()" class="nav-link small" id="workflowsTabId"
+        routerLinkActive="active">{{language.Work_Flows}}</a>
+    </li>
+    <li *ngIf="showPerfTest && sso.getEntitlementsArr().indexOf('131') > -1" class="nav-item">
+      <a data-toggle="tab" class="nav-link" routerLink="/support/netops-management/operations/performance-testing"
+        (Click)="$event.preventDefault()" class="nav-link small" id="performanceTestingTabId"
+        routerLinkActive="active">{{language.Performance_Testing}}</a>
+    </li>
+  </ul>
+
+
+</div>
+<router-outlet></router-outlet>

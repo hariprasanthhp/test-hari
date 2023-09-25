@@ -1,0 +1,146 @@
+<div class="w-100 alert alert alert-danger fade show d-flex justify-content-between align-items-center" *ngIf="warningMessage">
+  <div class="error-img"><img src="./assets/img/ic_error-36px.svg" /></div>
+  <div class="d-inline-flex wrn-msg">{{ language[warningMessage] || warningMessage }}</div>
+  <button type="button" class="btn-default primary ok" (click)="warningMessage = ''">{{ language.OK }}</button>
+</div>
+<div class="row" id="details" role="tab" aria-labelledby="details">
+  <div class="loader" *ngIf="loading || advLoading">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary">
+        <span class="sr-only">{{ language.Loading }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6 px-0 col-md-12 col-sm-12">
+    <div class="Protect-iq-table">
+      <div class="border-bottom">
+        <div class="ccl-Secondary-title" id="detail-settings">
+          {{ language.Settings }}
+        </div>
+      </div>
+
+      <!-- Subscription section -->
+      <section>
+        <div class="col-12 col-lg-12 pl-1 mt-3 font-weight-bold">
+          {{language.Subscription}}
+        </div>
+
+        <div class="col-12 col-lg-12 pl-1">
+          <div class="form-check form-check-inline">
+            <input type="radio" id="materialInline3" name="subscribed" [(ngModel)]="deviceSubscription" [value]="true"
+              (click)="toggleSubscription(true)" [disabled]="!scopeFlag.configWrite || smbEnabled">
+            <label class="form-check-label mx-2" for="materialInline3">
+              {{ language.Subscribed }}
+            </label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input type="radio" id="materialInline4" name="subscribed" [(ngModel)]="deviceSubscription" [value]="false"
+              (click)="toggleSubscription(false)"
+              [disabled]="!scopeFlag.configWrite || ((isSmartTownActivated || isEduroamEnable) ? false : smbOrSmarttownEnabled) || smbEnabled">
+            <label class="form-check-label mx-2" for="materialInline4">
+              {{language.Unsubscribed }}
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- Service section -->
+      <section>
+        <div class="col-12 col-lg-12 pl-1 mt-3 font-weight-bold">
+          {{ language['SERVICE'] }}
+        </div>
+        <div class="col-12 col-lg-12 pl-1">
+          <div class="form-check form-check-inline">
+            <input type="radio" id="materialInline10" name="enabled" [(ngModel)]="deviceStatus" [value]="true"
+              (click)="toggleEnable(true)"
+              [disabled]="!scopeFlag.enableWrite || !deviceSubscription || !deviceInfo || isSmartTownActivated || smbEnabled">
+            <label class="form-check-label mx-2" for="materialInline10">
+              {{ language.enabled }}
+            </label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input type="radio" id="materialInline11" name="enabled" [(ngModel)]="deviceStatus" [value]="false"
+              (click)="toggleEnable(false)"
+              [disabled]="!scopeFlag.enableWrite || !deviceSubscription || !deviceInfo || isSmartTownActivated || smbOrSmarttownEnabled || smbEnabled">
+            <label class="form-check-label mx-2" for="materialInline11">
+              {{ language.Disabled }}
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <table class="detail-list mt-3 d-none">
+        <tbody>
+          <tr *ngIf="scopeFlag.configRead">
+            <th scope="row" class="">{{ language.Subscribed }}</th>
+            <td class="">
+              <div
+                [ngClass]="!deviceSubscription?'toggle-swtbtn checkbox switcher-disabld mb-2':'toggle-swtbtn checkbox switcher mb-2'">
+                <label for="selfHealCheckbox">
+                  <input type="checkbox" id="selfHealCheckbox" [checked]="deviceSubscription"
+                    (change)="toggleSubscription(true)" [(ngModel)]="deviceSubscription"
+                    [disabled]="!scopeFlag.configWrite" />
+                  <span [ngClass]="!scopeFlag.configWrite ? 'toggleDisabled' : ''"><small></small></span>
+                </label>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="scopeFlag.configRead">
+            <th scope="row" class="">{{ language.enabled }}</th>
+            <td class="">
+              <div
+                [ngClass]="!deviceStatus?'toggle-swtbtn checkbox switcher-disabld mb-2':'toggle-swtbtn checkbox switcher mb-2'">
+                <label for="selfHealCheckbox1">
+                  <input type="checkbox" id="selfHealCheckbox1" [checked]="deviceSubscription"
+                    (change)="onSubscription(true)" [(ngModel)]="deviceSubscription" [disabled]="true" />
+                  <span class="toggleDisabled"><small></small></span>
+                </label>
+              </div>
+            </td>
+          </tr>
+          <ng-template #noSubScription>
+            <tr></tr>
+          </ng-template>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="col-lg-6 col-md-12 col-sm-12" *ngIf="showDetail && deviceStatus && deviceSubscription">
+    <div class="Protect-iq-table">
+      <div class="flex-space-between border-bottom">
+        <div class="ccl-Secondary-title" id="details-status">{{ language.Status }}</div>
+        <a href="javascript:void(0)" (click)="showStatusNotification()"><i class="fas fa-sync refreshicon"></i></a>
+      </div>
+      <table class="detail-list detail-list-table" id="Protect-iq-status-table">
+        <tbody>
+          <tr>
+            <th scope="row" class="">{{ language.Uptime}}:</th>
+            <td class="">{{ loading ? '-' : protectIQ_Uptime }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{{ language.Last_Updated }}:</th>
+            <td>{{ loading ? '-' : lastUpdated | date: "MMM dd yyyy, hh:mm:ss a" }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{{ language.Packets_Analyzed_Today }}:</th>
+            <td>{{ loading ? '-' : packetsAnalyzedToday }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{{ language.Total_Virus_Detected }}:</th>
+            <td>{{ loading ? '-' : totalVirusDetected }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{{ language.Total_Intrusions }}:</th>
+            <td>{{ loading ? '-' : totalIntrusions }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{{ language.Total_Web_Threats }}:</th>
+            <td>{{ loading ? '-' : totalWebThreats }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,75 @@
+<div class="row" [formGroup]="form">
+    <div class="col-md-6">
+        <div class="ccl-form form-group">
+            <label for="title">{{language['Message']}}</label>
+            <input type="text" id="title" class="form-control" name="title" formControlName="title" (blur)="submit()"
+                (keydown)="validateString($event)" (paste)="validateString($event)" aria-describedby="title" trimSpace
+                [formValue]="form">
+            <div class="error" *ngIf="form.touched && form.dirty && form.get('title').errors?.maxlength">
+                {{ language['Character length should not exceed 512 characters'] }}
+            </div>
+        </div>
+        <div class="d-flex">
+            <div class="w-50 mr-2">
+                <div>
+                    {{language['Cover Photo']}}
+                    <div class="form-input-field">
+                        <div class="input-field">
+                            <div id="logo-image-view-div" class="logo-image-view">
+                                <img id="logo-image-view" class="default-cover-image" [src]="coverImage || ' '">
+                            </div>
+                            <span class="error" id="coverUploadError" *ngIf="errorValidation.coverImage">
+                                {{language['Upload valid image file']}}
+                            </span>
+                        </div>
+                        <div class="upload-btn-wrapper mt-2 pointer">
+                            <label for="coverImage" class="btn" [title]="language['Upload Image']">
+                                {{language['Upload Image']}}
+                            </label>
+                            <input type="file" id="coverImage"
+                                accept=".jpeg, .JPEG, .PNG, .jpg, .png, .JPG, .img, .IMG, .bin, .BIN"
+                                (change)="uploadCoverImage($event)" />
+                        </div>
+                        <span class="ml-2 mt-2 position-absolute" *ngIf="coverImage" (click)="deleteCoverImage()">
+                            <a href="javascript:void(0)" class="primary link-pointer">{{language.delete}}</a>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="w-50">
+                <span>{{language['Cover Photo Guidelines']}}</span>
+                <div class="guidelines">
+                    <ul>
+                        <li>
+                            <span class="text-capitalize">{{language['Max File size']}}</span>:20MB
+                        </li>
+                        <li>{{language['Max Width']}}:1080px</li>
+                        <li>{{language['Max Height']}}:360px</li>
+                        <li>{{language['Supported Formats']}}: .png, .jpeg/.jpg</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="ccl-form form-group">
+            <label for="terms-url">{{language['Terms of Service']}}</label>
+            <input id="terms-url" formControlName="termsUrl" (keyup)="validateUrl()" (blur)="submit()"
+                class="form-control" name="termsUrl" type="text" aria-describedby="termsUrl" trimSpace
+                [formValue]="form">
+            <span class="error" *ngIf="invalidURL">
+                {{ language['Please Enter a valid URL'] }}
+            </span>
+        </div>
+        <div class="ccl-form form-group">
+            <label for="button-text">{{language['Submit Button Text']}}</label>
+            <input type="text" id="button-text" class="form-control" formControlName="buttonText" (blur)="submit()"
+                (keydown)="validateString($event)" (paste)="validateString($event)" name="buttonText"
+                aria-describedby="buttonText" trimSpace [formValue]="form">
+            <div class="error" *ngIf="form.touched && form.dirty && form.get('buttonText').errors?.maxlength">
+                {{ language['Character length should not exceed 128 characters'] }}
+            </div>
+        </div>
+    </div>
+</div>

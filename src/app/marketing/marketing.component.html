@@ -1,0 +1,18 @@
+<div class="page-wrapper" [hidden]="!tosAgreed">
+  <div class="maximus">
+    <app-marketing-header></app-marketing-header>
+    <p-toast *ngIf="false"></p-toast>
+    <div class="alert alert-warning" role="alert" [hidden]="showMarketing">
+      {{
+      language[
+      "Access denied due to RBAC. Please consult your Organization Administrator for access."
+      ]
+      }}
+    </div>
+    <div [hidden]="!showMarketing">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>
+
+<app-marketing-footer [hidden]="!tosAgreed"></app-marketing-footer>

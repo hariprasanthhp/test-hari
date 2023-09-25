@@ -1,0 +1,344 @@
+<div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess">
+  {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} </div>
+<div id="state-device-purge" class="tab-pane position-relative" *ngIf="hasScopeAccess">
+
+  <div class="w-100 alert alert alert-danger  fade show" *ngIf="showError">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+    <button type="button" class="close" id="hide-error-btn" (click)="hideError()"><span></span></button>
+    <div class="d-inline-flex" [innerHtml]="errorMsg"></div>
+  </div>
+
+  <div class="w-100 alert alert alert-success  fade show" *ngIf="showSuccess">
+    <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+    <div class="d-inline">
+      <strong>
+        <div class="d-inline" [innerHtml]="successMsg"></div>
+      </strong>
+    </div>
+
+    <div class="d-inline">
+      <button type="button" id="hide-successs-btn" class="close" (click)="hideSuccess()"><span></span></button>
+    </div>
+  </div>
+
+  <div class="loader" *ngIf="loading">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary"> 
+        <span class="sr-only">{{language.Loading}}</span>
+      </div>
+    </div>
+  </div>
+  <div class="d-block d-sm-none ccl-Secondary-title mb-2 col-md-12 border-bottom">{{language['Stale System Purge']}}
+  </div>
+  <div class="row">
+    <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 pt-3">
+      <div class="title border-bottom" id="ssp-configuration"> {{language.configuration}}</div>
+      <form #myForm="ngForm" id="stale-device-purge-form" (ngSubmit)="myForm.form.valid && onSubmit()" novalidate
+        class="form-group ccl-form">
+        <div *ngIf="staleDevicePurgeObj._id" class="form-group row ccl-form">
+          <label for="name" class="col-md-12 col-form-label">{{language.Status}}</label>
+          <div class="float-left px-3">
+            <div class="checkbox switcher">
+              <label for="status">
+                <input type="checkbox" [disabled]="!hasWriteAccess || !showStaleDevicePurgeForm" name="status"
+                  (change)="OnToggleChange()" [(ngModel)]="policyStatus" id="status">
+                <span
+                  [ngClass]="(hasWriteAccess && showStaleDevicePurgeForm) ? '' : 'opacity-50'"><small></small></span>
+              </label>&nbsp;&nbsp;&nbsp;&nbsp;
+              <label>{{ policyStatus?language.Enabled: language.Disabled }}</label>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row ccl-form required">
+          <label for="name" class="col-md-12 col-form-label">{{language.Name}} <span class="error">*</span></label>
+          <div class="col-md-12"
+            [ngClass]="[(name.errors?.required && ( myForm.submitted || name.touched ))  ? 'errorMessage' : '']">
+            <input class="form-control" id="name" #name="ngModel" type="text" name="name"
+              [(ngModel)]="staleDevicePurgeObj.name" required aria-required="true" aria-describedby="name-error"
+              aria-invalid="true" autocomplete="new-password" trimSpace [formValue]="staleDevicePurgeObj"/>
+            <span class="input-close"><img src="assets/img/ic_close-44px.svg" (click)="staleDevicePurgeObj.name= null"
+                alt=""> </span>
+
+            <div class="errorMessage" *ngIf="( name.touched || myForm.submitted)  &&  name.errors?.required"
+              id="name-error">
+              {{language['This field is required']}}</div>
+
+          </div>
+        </div>
+        <div class="form-group row ccl-form">
+          <label for="description" class="col-md-12 col-form-label">{{language.description}} <span
+              class="error">*</span></label>
+          <div class="col-md-12"
+            [ngClass]="[(description.errors?.required && ( myForm.submitted || description.touched ))  ? 'errorMessage' : '']">
+            <input class="form-control" #description="ngModel" id="description" type="text" name="description"
+              [(ngModel)]="staleDevicePurgeObj.description" required trimSpace [formValue]="staleDevicePurgeObj"/>
+            <span class="input-close"><img src="assets/img/ic_close-44px.svg"
+                (click)="staleDevicePurgeObj.description= null" alt=""> </span>
+          </div>
+          <div class="errorMessage pl-3"
+            *ngIf="( description.touched || myForm.submitted)  &&  description.errors?.required" id="description-error">
+            {{language['This field is required']}}</div>
+        </div>
+        <div class="form-group row ccl-form required">
+          <label for="InactivityPeriod" class="col-md-12 col-form-label">{{language.Inactivity_Period}} <span
+              class="error">*</span> </label>
+          <div class="col-md-12"
+            [ngClass]="[((InactivityPeriod.errors?.required || InactivityPeriod.errors?.customNumMin || InactivityPeriod.errors?.customNeg) && (myForm.submitted || InactivityPeriod.touched))  ? 'errorMessage' : '']">
+            <input class="form-control" id="InactivityPeriod" #InactivityPeriod="ngModel" type="" required
+              customNumMin="1" customNeg name="InactivityPeriod" [(ngModel)]="staleDevicePurgeObj.maxInactiveDays"
+              data-toggle="tooltip" data-placement="bottom" title="{{language.No_Of_Days_Device_Inactive}}"
+              aria-required="true" aria-describedby="InactivityPeriod-error" aria-invalid="true"
+              autocomplete="new-password" trimSpace [formValue]="staleDevicePurgeObj">
+            <span class="input-close"><img src="assets/img/ic_close-44px.svg"
+                (click)="staleDevicePurgeObj.maxInactiveDays= null" alt=""> </span>
+            <div class="errorMessage"
+              *ngIf="InactivityPeriod.errors?.required && (myForm.submitted || InactivityPeriod.touched)"
+              id="InactivityPeriod-error">
+              {{language['This field is required']}}
+            </div>
+            <div class="errorMessage"
+              *ngIf="(InactivityPeriod.errors?.customNumMin || InactivityPeriod.errors?.customNeg) && (myForm.submitted || InactivityPeriod.touched)"
+              id="InactivityPeriod-error">
+              {{language['Please enter a value greater than or equal to 1.']}}
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group row ccl-form required">
+          <label class="col-md-12 col-form-label" for="frequency">{{language.Frequency}}</label>
+          <div class="col-md-12"
+            [ngClass]="[(frequency.errors?.required && (myForm.submitted || frequency.touched))  ? 'errorMessage' : '']">
+            <ng-select required aria-required="true" aria-describedby="InactivityPeriod-error" aria-invalid="true"
+              autocomplete="new-password" data-toggle="tooltip" data-placement="bottom"
+              title="{{language.Weekly_Policy}}" #frequency="ngModel" (change)="onFrequencyChange()"
+              [searchable]="false" id="frequency" name="frequency" [items]="staleDeviceFrequency"
+              placeholder="{{language.Select_Frequency}}" bindLabel="name" bindValue="id" [clearable]="false"
+              [(ngModel)]="staleDevicePurgeObj.schedule.frequency" aria-required="true"
+              aria-describedby="frequency-error" aria-invalid="true">
+
+              <ng-template ng-label-tmp let-item="item">
+                {{language[item.name] }}
+              </ng-template>
+              <ng-template ng-option-tmp let-item="item" let-index="index">
+                {{language[item.name] }}
+              </ng-template>
+            </ng-select>
+            <span *ngIf="frequency.errors?.required && (myForm.submitted|| frequency.touched)" id="frequency-error">
+              {{language['This field is required']}}
+            </span>
+            <!-- <span class="dropdown-close"><img src="assets/img/ic_close-44px.svg"
+                (click)="staleDevicePurgeObj.schedule.frequency= null" alt=""> </span> -->
+          </div>
+        </div>
+        <div class="form-group row ccl-form required"
+          *ngIf="staleDevicePurgeObj.schedule.frequency == 'Weekly';else monthlyBlock">
+          <label class="col-md-12 col-form-label" for="dayofweek">{{language.Day_of_Week}} <span class="error">*</span></label>
+          <div class="col-md-12"
+            [ngClass]="[(dayOfWeek.errors?.required && (myForm.submitted || dayOfWeek.touched))  ? 'errorMessage' : '']">
+            <ng-select required data-toggle="tooltip" data-placement="bottom" title="{{language.Day_Policy}}"
+              #dayOfWeek="ngModel" id="dayOfWeek" name="dayofweek" [items]="daysOfWeek"
+              placeholder="{{language.Select_Days_Week}}" bindLabel="name" bindValue="id" [clearable]="false"
+              [(ngModel)]="staleDevicePurgeObj.schedule.days" [searchable]="false" aria-required="true"
+              aria-describedby="dayOfWeek-error" aria-invalid="true">
+              <ng-template ng-label-tmp let-item="item">
+                {{language[item.name] }}
+              </ng-template>
+              <ng-template ng-option-tmp let-item="item" let-index="index">
+                {{language[item.name] }}
+              </ng-template>
+            </ng-select>
+            <span *ngIf="dayOfWeek.errors?.required && (myForm.submitted || dayOfWeek.touched)" id="dayOfWeek-error">
+              {{language['This field is required']}}
+            </span>
+            <span class="dropdown-close"><img src="assets/img/ic_close-44px.svg"
+                (click)="staleDevicePurgeObj.schedule.days= null" alt=""> </span>
+          </div>
+
+        </div>
+        <ng-template #monthlyBlock>
+          <div class="form-group row ccl-form required">
+            <label class="col-md-12 col-form-label" for="dayOfMonth">{{language.Day_of_Month}}<span class="error">*</span></label>
+            <div class="col-md-12"
+              [ngClass]="[(dayOfMonth.errors?.required && (myForm.submitted || dayOfMonth.touched))  ? 'errorMessage' : '']">
+              <ng-select required data-toggle="tooltip" data-placement="bottom"
+                title="{{language.Day_Month_Policy_Executes}}" #dayOfMonth="ngModel" id="dayOfMonth" name="dayofMonth"
+                [searchable]="false" [items]="daysOfMonth" placeholder="Select Days of month" bindLabel="id"
+                bindValue="id" [clearable]="false" [(ngModel)]="staleDevicePurgeObj.schedule.days" aria-required="true"
+                aria-describedby="dayOfMonth-error" aria-invalid="true">
+
+              </ng-select>
+              <span *ngIf="dayOfMonth.errors?.required  && (myForm.submitted || dayOfMonth.touched)"
+                id="dayOfMonth-error">
+                {{language['This field is required']}}
+              </span>
+              <span class="dropdown-close"><img src="assets/img/ic_close-44px.svg"
+                  (click)="staleDevicePurgeObj.schedule.days= null" alt=""> </span>
+            </div>
+
+          </div>
+        </ng-template>
+        <div class="form-group row ccl-form required">
+          <label for="startTime" class="col-md-12 col-form-label">{{language.Start_Time}} <span
+              class="error">*</span></label>
+          <div class="col-md-12"
+            [ngClass]="[(Time.errors?.required && (myForm.submitted || Time.touched))  ? 'errorMessage' : '']">
+            <div class="custom-datepicker">
+              <p-calendar required name="startTime" #Time="ngModel" data-toggle="tooltip" data-placement="bottom"
+                title="{{language.Policy_Start_Time}}" id="startTime" hourFormat="12"
+                (onSelect)="onSelectStartTime($event)" readonlyInput="true" [(ngModel)]="startTime" [showIcon]="true"
+                timeOnly="true" aria-required="true" aria-describedby="Time-error" aria-invalid="true"></p-calendar>
+            </div>
+            <div *ngIf="Time.errors?.required && (myForm.submitted || Time.touched)" id="Time-error">
+              {{language['This field is required']}}
+            </div>
+            <span class="dropdown-close mr-3"><img src="assets/img/ic_close-44px.svg" (click)="startTime = null" alt="">
+            </span>
+          </div>
+        </div>
+        <div class="form-group row ccl-form required">
+          <label class="col-md-12 col-form-label" for="timeZone">{{language['Time Zone']}} <span
+              class="error">*</span></label>
+          <div class="col-md-12"
+            [ngClass]="[(timezone.errors?.required && (myForm.submitted || timezone.touched))  ? 'errorMessage' : '']">
+            <ng-select id="timezone" name="timeZOne" required data-toggle="tooltip" data-placement="bottom"
+              title="{{language['Time Zone']}}" #timezone="ngModel" [items]="timeZone" placeholder="{{language['select_timezone']}}"
+              bindLabel="name" bindValue="name" [searchable]="false" [clearable]="false"
+              [(ngModel)]="staleDevicePurgeObj.schedule.timezone" aria-required="true" aria-describedby="Time-error"
+              aria-invalid="true">
+            </ng-select>
+            <span *ngIf="timezone.errors?.required && (myForm.submitted || timezone.touched)">
+              {{language['This field is required']}}
+            </span>
+            <span class="dropdown-close"><img src="assets/img/ic_close-44px.svg"
+                (click)="staleDevicePurgeObj.schedule.timezone = null" alt=""> </span>
+          </div>
+        </div>
+
+        <div class="form-group row ccl-form required">
+          <div class="col-md-12">
+            <p>{{language['Include Associated Systems']}}</p>
+          </div>
+
+          <div class="col-md-12"
+            [ngClass]="[(associateDevices.errors?.required && (myForm.submitted || associateDevices.touched))  ? 'errorMessage' : '']">
+            <div class="custom01">
+              <input type="radio" #associateDevices="ngModel" id="radio02-02" name="associateDevices"
+                [(ngModel)]="associateDeviceValue" (change)="changeRadio($event)" value="No" />
+              <label class="mr-3" for="radio02-02" data-toggle="tooltip" data-placement="bottom"
+                title="{{language.Force_Device_Delete}}"> {{language.No}}</label>
+              <input type="radio" #associateDevices="ngModel" id="radio02-01" required name="associateDevices"
+                [(ngModel)]="associateDeviceValue" (change)="changeRadio($event)" value="Yes" />
+              <label class="mr-3" for="radio02-01" data-toggle="tooltip" data-placement="bottom"
+                title="{{language.Force_Device_Delete}}"> {{language.Yes}}</label>
+              <span *ngIf="associateDevices.invalid && (myForm.submitted || associateDevices.touched)">
+                {{language['This field is required']}}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-sm-12 text-md-left">
+            <button *ngIf="hasWriteAccess && showStaleDevicePurgeForm" type="submit" id="submit-btn"
+              class="btn-default primary px-3 mr-3">{{language.submit}}</button>
+            <!--  <button type="button" id="cancel-btn" class="btn-default btn-dft"
+              (click)="onCancel()">{{language.cancel}}</button>-->
+          </div>
+        </div>
+      </form>
+      <!-- <div *ngIf="staleDevicePurgeObj._id">
+
+        <div class="form-group row">
+          <label for="status" class="col-sm-3 col-form-label">{{language.Status}}</label>
+          <div class="ccl-form col-sm-9">
+            <input class="form-control" id="status" type="text" name="status" [(ngModel)]="policyStatus" readonly>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-sm-12 text-md-left">
+            <div class="d-inline">
+              <div class="d-inline" *ngIf="hasWriteAccess">
+                <button type="button" *ngIf="policyStatus == 'Suspended'; else elseBlock" id="resume-btn"
+                  class="btn-default primary px-3 mr-3" (click)="resumePolicy()">{{language.Resume}}</button>
+                <ng-template #elseBlock>
+                  <button type="button" class="btn-default primary px-3 mr-3" id="Suspend-btn"
+                    (click)="suspendPolicy()">{{language.Suspend}}</button>
+                </ng-template>
+              </div>
+              <button (click)="toggleExecutionLog()" id="exc-log-btn" [disabled]="viewExecutionLog" type="button"
+                class="btn-default primary px-3">{{language.Execution_Log}}</button>
+            </div>
+
+
+          </div>
+        </div>
+      </div> -->
+    </div>
+    <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 pt-3">
+      <div class="title border-bottom" id="execution-log"> {{language.Execution_Log}}</div>
+
+      <div class="table-responsive" *ngIf="viewExecutionLog" class="form-group ccl-form">
+        <!-- <h4 class="net-ops-secondary-title m-0" id="execution-log-label"> {{language.Execution_Log}} </h4> -->
+        <table datatable [dtOptions]="tableOptions" id="excLogTable" class="table table-hover table-striped">
+          <thead>
+            <tr>
+              <th scope="col">{{language.Time}}</th>
+              <th scope="col">{{language.Success}}</th>
+              <th scope="col">{{language.Failed}}</th>
+              <th scope="col">{{language.Details}}</th>
+              <th scope="col"> </th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let excLog of excLogPolicObj; let i = index">
+
+              <tr id="accordionTable" class="accordion-toggle collapsed" [attr.id]="'accordion_'+i">
+                <td>{{ excLog.startTime }}<br>
+                  {{ staleDevicePurgeObj.schedule.timezone }} </td>
+                <td>{{ excLog?.successPurgeCount }}</td>
+                <td>{{ excLog?.failurgePurgeCount }}</td>
+                <td>{{ excLog?.details }}</td>
+                <td class="align-middle">
+                  <a class="dropdown-toggle align-middle" data-toggle="collapse" [attr.data-parent]="'#accordion_'+i"
+                    [attr.href]="'#collapseOne_'+i">
+                  </a>
+                </td>
+              </tr>
+
+              <tr class="hide-table-padding">
+                <td>
+                  <div [attr.id]="'collapseOne_'+i" class="collapse in p-3">
+                    <div class="row">
+                      <div class="col-2 ignorewhitespace">{{language.Successfully_Purged}}</div>
+                    </div>
+                    <br>
+                    <div *ngFor="let device of excLog.devices" class="row">
+                      <div class="col-2 ignorewhitespace">{{ device }}</div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-2 ignorewhitespace">{{language.Failures_Purge}}</div>
+                    </div>
+                    <br>
+                    <div *ngFor="let device of excLog.failures" class="row">
+                      <div class="col-2 ignorewhitespace">{{ device }}</div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+          <tbody *ngIf="tableCount == 0">
+            <tr>
+              <td colspan="5" class="no-data-available">{{language['No data available in table']}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+
+
+</div>

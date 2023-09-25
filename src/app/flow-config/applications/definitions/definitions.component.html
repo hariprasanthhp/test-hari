@@ -1,0 +1,1425 @@
+<div class="container position-relative" *ngIf="pageAvailable">
+  <div class="loader" *ngIf="loading">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary">
+        <span class="sr-only">{{ language.Loading }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CCL-50447 -->
+  <!-- <div class="row py-4" *ngIf="false">
+    <div class="col-md-9">
+      <div class="d-flex">
+        <div>
+          <button id="create-btn" class="btn-default primary mx-2" (click)="showCreate()">
+            {{ language.create }}
+          </button>
+        </div>
+        <div *ngIf="isSysAdmin">
+          <button *ngIf="isSysAdmin" id="export-btn-gbl" class="btn-default primary mx-2 px-3"
+            (click)="export('global')">
+            {{ language.exportglobal }}
+          </button>
+        </div>
+        <div class="upload-btn-wrapper" *ngIf="isSysAdmin">
+          <label for="inc-import-global" class="btn-default primary mx-2 px-3 cursor-pointer">{{ language.importglobal
+            }}
+          </label>
+          <input type="file" id="inc-import-global" accept=".csv" #importGlobalInput
+            (change)="fullImport('global', $event)" style="display: none" />
+        </div>
+        <div>
+          <button id="export-btn-lcl" class="btn-default primary mx-2 px-3" (click)="export()">
+            {{ language.exportlocal }}
+          </button>
+        </div>
+
+        <div class="upload-btn-wrapper">
+          <label for="inc-import-local" class="btn-default primary mx-2 px-3 cursor-pointer">{{ language.importlocal }}
+          </label>
+          <input type="file" id="inc-import-local" accept=".csv" #importLocalInput
+            (change)="fullImport('local', $event)" style="display: none" />
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-3 align-self-end d-none">
+      <div class="ccl-form">
+        <input type="search" name="searchbox" class="input-sm" placeholder="" />
+        <button class="serach-but btn-default primary btn-icon-md inline">
+          <i class="fa fa-search" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+  </div> -->
+  <!-- <div class="d-flex w-100 alert alert-success alert-dismissible fade show col-10 mb-0"  *ngIf="showEditLookUpSuccess" >
+    <span class="success-img"><img src="../../../../assets/img/ic_success-circle-outline.svg" alt=""></span>
+    <div class="w-80">
+      <strong>Domain name lookup successful</strong>
+      <p>The fields below have been populated with information returned by the Domain Lookup.</p>
+    </div>
+    <button type="button" class="close" id="" (click)="showEditLookUpSuccess = false; "><span></span></button>
+  </div>  -->
+
+
+  <div class="row justify-content-between pt-3 pb-4" *ngIf="buttonVisible">
+    <div class="">
+      <button id="dreate-definition-btn" class="btn-default primary mr-3" (click)="createAppModalOpen()">
+        {{language['Create Definition']}}
+      </button>
+      <div class="btn-group dropdown dropright">
+        <button type="button" class="btn-default btn-dft dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+          aria-expanded="false">
+          <span>...</span>
+        </button>
+        <div class="dropdown-menu">
+          <ul class="list-group">
+            <li class="dropdown-item" *ngIf="isSysAdmin">
+              <a *ngIf="isSysAdmin" id="export-btn-gbl" (click)="export('global')"> {{ language.exportglobal }}</a>
+            </li>
+            <li class="dropdown-item pb-1" *ngIf="isSysAdmin">
+              <div class="upload-btn-wrapper">
+                <label for="inc-import-global" class="mb-0 cursor-pointer">{{ language.importglobal
+                  }}
+                </label>
+                <input type="file" id="inc-import-global" accept=".csv" (click)="importGlobalInput.value = null"
+                  #importGlobalInput (change)="fullImport('global', $event)" style="display: none" />
+              </div>
+            </li>
+            <li class="dropdown-item">
+              <a id="export-btn-lcl" (click)="export()">
+                {{ language.exportlocal }}
+              </a>
+            </li>
+            <li class="dropdown-item pb-1">
+              <div class="upload-btn-wrapper">
+                <label for="inc-import-local" class="mb-0 cursor-pointer">{{ language.importlocal }}
+                </label>
+                <input type="file" id="inc-import-local" accept=".csv" (click)="importLocalInput.value = null"
+                  #importLocalInput (change)="fullImport('local', $event)" style="display: none" />
+              </div>
+            </li>
+             <li class="dropdown-item pb-1" *ngIf="isSysAdmin && hideDpiAsmfeatures">
+              <div class="upload-btn-wrapper">
+                <label for="inc-import-dpi" class="mb-0 cursor-pointer">{{language.import_ipfix_app_id}}
+                </label>
+                <input type="file" id="inc-import-dpi" (click)="importDpiInput.value = null"
+                  (change)="importDPI($event)" accept=".xml" #importDpiInput style="display: none" />
+              </div>
+            </li> 
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <button class="btn-default primary mr-3" (click)="routeToAudit()" *ngIf="showAudit">{{language.Audit}}</button>
+        <button class="btn-default primary mr-3" (click)="deleteAllSelected()"
+          *ngIf="showDelete">{{language.delete}}</button>
+      </div>
+      <div class="ccl-form position-relative min-w-220px">
+        <input type="text" placeholder="{{language['Search']}}" (input)="search($event.target.value)"
+          [(ngModel)]="searchText" />
+        <span *ngIf="searchText" class="search-close" (click)="clearSearch()">
+          <img src="assets/img/ic_close-44px.svg">
+        </span>
+      </div>
+    </div>
+  </div>
+  <!-- CCL-50447 -->
+  <!-- <section *ngIf="createView">
+    <div class="row my-3 py-3">
+      <div class="col-md-12">
+        <form>
+          <div class="row form-inline" *ngIf="isSysAdmin">
+            <div class="form-group mb-2 col-md-3 align-self-start">
+              <label for="staticEmail2" class="">{{ language.type }}</label>
+            </div>
+            <div class="ccl-form mx-sm-3 mb-2 align-self-end">
+              <ng-select class="min-w-250px" id="createApp" [items]="types" bindLabel="label" bindValue="value"
+                [multiple]="false" placeholder="" [(ngModel)]="createTypeSelected"
+                [ngModelOptions]="{ standalone: true }" [clearable]="false" [searchable]="false">
+              </ng-select>
+            </div>
+          </div>
+          <div class="row form-inline">
+            <div class="form-group mb-2 col-md-3 align-self-start">
+              <label for="staticEmail2" class="">{{ language.applicationname }} <span class="error">*</span></label>
+            </div>
+            <div class="ccl-form mx-sm-3 mb-2 align-self-end">
+              <label for="inputPassword2" class="sr-only"></label>
+              <input type="text" id="createName" class="w-250px" placeholder="" name="createName"
+                [(ngModel)]="createName"  trimSpace (blur)="removeUnwantedSpace('createName',createName)"/>
+            </div>
+          </div>
+
+          <div class="row form-inline">
+            <div class="form-group mb-2 col-md-3 align-self-start">
+              <label for="staticEmail2" class="">{{
+                language.applicationAddressIPV4
+                }}</label>
+            </div>
+            <div class="ccl-form mx-sm-3 mb-2 align-self-end">
+              <div class="" *ngIf="!createSubnetsV4.length">
+                <p>{{ language.addAddress }}</p>
+              </div>
+              <div class="w-100" *ngFor="let subnet of createSubnetsV4; let i = index">
+                <span class="w-75">{{ subnet }}</span>
+                <span class="w-25 cursor-pointer" (click)="removeSubnetV4(i)"><i class="fa fa-times primary"
+                    aria-hidden="true"></i></span>
+              </div>
+              <label for="inputPassword2" class="sr-only"></label>
+              <input type="text" id="createSubnetV4" class="w-250px" placeholder="IPv4" name="createSubnetV4"
+                [(ngModel)]="createSubnetV4"  trimSpace (blur)="removeUnwantedSpace('createSubnetV4',createSubnetV4)"/>
+            </div>
+            <button type="submit" class="mb-2 btn-default btn-primary align-self-end" (click)="addSubnet('v4')">
+              {{ language.Add }}
+            </button>
+          </div>
+          <div class="row form-inline">
+            <div class="form-group mb-2 col-md-3 align-self-start">
+              <label for="staticEmail2" class="">{{
+                language.applicationAddressIPV6
+                }}</label>
+            </div>
+            <div class="ccl-form mx-sm-3 mb-2 align-self-end">
+              <div class="" *ngIf="!createSubnetsV6.length">
+                <p>{{ language.addAddress }}</p>
+              </div>
+              <div class="w-100" *ngFor="let subnet of createSubnetsV6; let i = index">
+                <span class="w-75">{{ subnet }}</span>
+                <span class="w-25 cursor-pointer" (click)="removeSubnetV6(i)"><i class="fa fa-times primary"
+                    aria-hidden="true"></i></span>
+              </div>
+              <label for="inputPassword2" class="sr-only"></label>
+              <input type="text" id="createSubnetV6" class="w-250px" placeholder="IPv6" name="createSubnetV6"
+                [(ngModel)]="createSubnetV6"  trimSpace (blur)="removeUnwantedSpace('createSubnetV6',createSubnetV6)"/>
+            </div>
+            <button type="submit" class="mb-2 btn-default btn-primary align-self-end" (click)="addSubnet('v6')">
+              {{ language.Add }}
+            </button>
+          </div>
+
+          <div class="row form-inline">
+            <div class="form-group mb-2 col-md-3 align-self-start">
+              <label for="staticEmail2" class="">{{
+                language.applicationPorts
+                }}</label>
+            </div>
+            <div class="ccl-form mx-sm-3 mb-2 align-self-end">
+              <div class="" *ngIf="!createPorts.length">
+                <p>{{ language.portLabeladd }}</p>
+              </div>
+              <div class="w-100" *ngFor="let port of createPorts; let i = index">
+                <span class="w-75">{{ port }}</span>
+                <span class="w-25 cursor-pointer" (click)="removePort(i)"><i class="fa fa-times primary"
+                    aria-hidden="true"></i></span>
+              </div>
+              <label for="inputPassword2" class="sr-only"></label>
+              <input type="text" id="createCurrentPorts" class="w-250px" placeholder="" name="createCurrentPorts"
+                [(ngModel)]="createCurrentPorts" (keypress)="portInputChanges($event)"/>
+            </div>
+            <button type="submit" class="mb-2 btn-default btn-primary align-self-end" (click)="addPort()">
+              {{ language.Add }}
+            </button>
+          </div>
+
+          <div class="row form-inline">
+            <div class="form-group mb-2 col-md-3 align-self-start">
+              <label for="staticEmail2" class="">{{
+                language.rangedPortsProtocol
+                }}</label>
+            </div>
+            <div class="ccl-form mx-sm-3 mb-2 align-self-end">
+              <div class="" *ngIf="!createRPorts.length">
+                <p>{{ language.rangedportAdd }}</p>
+              </div>
+              <div class="w-100" *ngFor="let rp of createRPorts; let i = index">
+                <span class="w-75">{{ rp }}</span>
+                <span class="w-25 cursor-pointer" (click)="removeRangePort(i)"><i class="fa fa-times primary"
+                    aria-hidden="true"></i></span>
+              </div>
+              <label for="inputPassword2" class="sr-only"></label>
+              <input type="text" id="createCurrentRPorts" class="w-250px" placeholder="" name="createCurrentRPorts"
+                [(ngModel)]="createCurrentRPorts" (keypress)="portInputChanges($event)"/>
+            </div>
+            <button type="submit" class="mb-2 btn-default btn-primary align-self-end" (click)="addRangePort()">
+              {{ language.Add }}
+            </button>
+          </div>
+
+          <div class="row form-inline my-3">
+            <div class="form-group mb-2 col-md-3">
+              <label for="staticEmail2" class="sr-only"></label>
+            </div>
+            <button type="submit" class="btn-default btn-primary mx-4" id="new-group-sub-btn" (click)="submit()">
+              {{ language.submit }}
+            </button>
+            <button type="submit" class="btn-default btn-dft ml-2" id="new-group-clear-btn" (click)="cancel()">
+              {{ language.Cancel }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section> -->
+
+  <section *ngIf="tablePreview">
+    <div class="row" *ngIf="tablePreview">
+      <div class="col-md-12 ccl-admin-table application-definition-table">
+        <table id="example" datatable [dtOptions]="importTableOptions" class="row-border hover table-alter">
+          <thead>
+            <tr>
+              <th>{{ language.action }}</th>
+              <th class="min-w-180px">{{ language.applicationname }}</th>
+              <th class="min-w-180px">{{language.Domain_Name}}</th>
+              <th>{{ language.old }} {{language.Domain_Name}}</th>
+              <!-- <th>{{language.old}} {{this.language.name}}</th> -->
+              <th class="min-max-breakall">{{ language.applicationAddressIPV4 }}</th>
+              <th class="min-max-breakall">{{ language.old }} {{ this.language.applicationAddressIPV4 }}</th>
+              <th class="min-max-breakall">{{ language.applicationAddressIPV6 }}</th>
+              <th class="min-max-breakall">{{ language.old }} {{ this.language.applicationAddressIPV6 }}</th>
+              <th class="min-w-230px">{{ language.applicationPorts }}</th>
+              <th class="min-w-230px">{{ language.old }} {{ this.language.applicationPorts }}</th>
+              <th class="min-w-230px">{{ language.rangedports }}</th>
+              <th class="min-w-230px">{{ language.old }} {{ this.language.rangedports }}</th>
+              <ng-container *ngIf="hideDpiAsmfeatures">
+              <th class="min-w-nowrap">{{ language.ignore_ipfix_app_id }}</th>
+              <th class="min-w-nowrap">{{ language.old }} {{language.ignore_ipfix_app_id}}</th>
+            </ng-container>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="{{ item._id }}" *ngFor="let item of importTableData">
+              <td>{{ item.action }}</td>
+              <td class="min-w-180px">{{ item.name ? item.name : "" }}</td>
+              <td class="min-w-180px">{{ item.domainName ? item.domainName : "" }}</td>
+              <td class="min-w-180px">{{ item.domainName_old ? item.domainName_old : "" }}</td>
+              <!-- <td></td> -->
+              <td class="min-max-breakall">{{ item.addressesV4 ? item.addressesV4 : "" }}</td>
+              <td class="min-max-breakall">{{ item.addressesV4_old ? item.addressesV4_old : "" }}</td>
+              <td class="min-max-breakall">{{ item.addressesV6 ? item.addressesV6 : "" }}</td>
+              <td class="min-max-breakall">{{ item.addressesV6_old ? item.addressesV6_old : "" }}</td>
+              <td class="min-w-230px">{{ item.ports ? item.ports : "" }}</td>
+              <td class="min-w-230px">{{ item.ports_old ? item.ports_old : "" }}</td>
+              <td class="min-w-230px">{{ item.rangePorts ? item.rangePorts : "" }}</td>
+              <td class="min-w-230px">{{ item.rangePorts_old ? item.rangePorts_old : "" }}</td>
+              <ng-container *ngIf="hideDpiAsmfeatures">
+              <td class="min-w-nowrap">{{ item.overrideDpi ? language.Yes : language.No }}</td>
+              <td class="min-w-nowrap">{{ item.overrideDpi_old ? language.Yes : language.No }}</td>
+              </ng-container>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="row my-4">
+      <div class="col-md-8 offset-md-4">
+        <button class="btn-default primary px-3 mx-3" [disabled]="!enableImportSubmit" (click)="importSubmit(false)">
+          {{ language.submit }}
+        </button>
+        <button class="btn-default btn-dft py-1 px-3" (click)="closeImport()">
+          {{ language.Cancel }}
+        </button>
+      </div>
+    </div>
+  </section>
+  <div class="row">
+    <div class="col-md-12 ccl-admin-table application-definition-table overflow-auto" *ngIf="dataAvailable"
+      [hidden]="tableHidden">
+
+      <table id="app-definitions-table" width="100%" class="row-border hover table-alter definitions-table w-100"
+        datatable [dtOptions]="tableOptions">
+        <thead>
+          <tr>
+            <th class="min-w-nowrap">
+              <div class="ccl-fc-table-icon justify-content-start">
+                <div [hidden]="editOnValue" class="d-flex align-items-center">
+                  <input [hidden]="editOnValue" type="checkbox" class="" value="" id="selectDeselectAll"
+                    (change)="selectDeselectAll($event.target.checked)"
+                    [disabled]="!isAnyCheckboxAvailable()"/>
+                  <span [hidden]="editOnValue" class="checkbox-ui" id="selectDeselectAll-span"
+                    (click)="showAllInnerCheckBox($event)" style="display: none"></span>
+                </div>
+                <!-- <div [hidden]="editOnValue" class="text-center justify-content-center">
+                  <button id="delete-selected-btn" (click)="deleteAllSelected()" class="btn-default primary px-2 mx-2"
+                    [disabled]="!definitionData?.length || !deleteIds?.length">
+                    <i class="far fa-trash-alt"></i> {{ language.selected }}
+                  </button>
+                </div> -->
+              </div>
+            </th>
+            <th class="min-w-180px">{{ language.applicationname }}</th>
+            <!-- <th>{{language.addresses}}</th> -->
+            <th class="min-w-180px">{{language.Domain_Name}}</th>
+            <th class="min-w-230px">{{ language.applicationAddressIPV4 }}</th>
+            <th class="min-w-230px">{{ language.applicationAddressIPV6 }}</th>
+            <th class="min-w-230px">{{ language.applicationPorts }}</th>
+            <th class="min-w-230px">{{ language.rangedports }}</th>
+            <th class="min-w-80px">{{ language.type }}</th>
+            <ng-container *ngIf="hideDpiAsmfeatures">
+               <th class="min-w-80px">{{ language.App_ID }}</th>
+              <th class="min-w-80px">{{ language.Protocol_ID }}</th>
+              <!-- <th>{{language.protocolType}}</th> -->
+              <th class="min-width-135">{{language.ignore_ipfix_app_id}}</th></ng-container>
+           
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="{{ item._id }}" *ngFor="let item of definitionData">
+            <td class="min-w110-nowrap">
+              <div *ngIf="
+                              editOnValue != item._id &&
+                              (item.type == 'Local' || isSysAdmin)
+                            " class="editable-td text-center f-s-13px">
+                <div class="ccl-fc-table-icon justify-content-start">
+
+                  <span class="pr-2">
+                    <input type="checkbox" value="{{ item._id }}" name="delete_id_{{ item._id }}"
+                    class="test_check delete_id_{{ item._id }}"
+                    (click)="getDeleteIds($event, item)" />
+                  </span>
+                  <span class="pr-2 cursor-default">
+                    <!-- <button class="app-edit-btn"> -->
+                    <button (click)="edit(item)" id="edit-btn" [disabled]="!item.v4s[0] && !item.v6s[0]"
+                      class="primary app-edit-btn" title="{{ language['Edit'] }}">
+                      <i class="fas fa-pencil-alt"></i>
+                    </button>
+                    <!-- </button> -->
+                  </span>
+                  <span class="pr-2">
+                    <div (click)="delete(item)" id="delete-btn" class="primary" title="{{ language['Delete'] }}">
+                      <i class="far fa-trash-alt"></i>
+                    </div>
+                  </span>
+                </div>
+              </div>
+
+              <div *ngIf="
+                              editOnValue == item._id &&
+                              (item.type == 'Local' || isSysAdmin)
+                            " class="save-cancel-btn-group d-flex ml-3">
+                <div class="ccl-fc-table-icon">
+                  <span class="pr-1">
+                    <div (click)="updateSave(item._id)" id="save-btn" class="primary">
+                      <i class="fas fa-check pl-1"></i>
+                    </div>
+                  </span>
+                  <span class="pr-1">
+                    <div (click)="updateCancel()" id="cancel-btn" class="primary">
+                      <i class="fas fa-times"></i>
+                    </div>
+                  </span>
+                </div>
+              </div>
+            </td>
+            <td class="min-w-180px">
+              <div class="ellipsis-text" *ngIf="editOnValue != item._id">
+                {{ item.name ? item.name : "" }}
+              </div>
+              <div *ngIf="editOnValue == item._id" class="ccl-form">
+                <input type="text" class="max-w-155" [(ngModel)]="editname" [ngModelOptions]="{ standalone: true }"
+                  trimSpace (blur)="removeUnwantedSpace('editname',editname)" />
+              </div>
+            </td>
+            <td class="text-break min-w-180px">
+              <span *ngIf="editOnValue != item._id">{{item.domainName? item.domainName : ""}}</span>
+              <div class="form-group row fw100 m-0"
+                *ngIf="editOnValue == item._id && (item.type == 'Local' || isSysAdmin)"
+                class="save-cancel-btn-group d-flex">
+                <div class="ccl-form input-group flex-nowrap align-items-center">
+                  <input type="text" class="max-w-155 add-subnet-input mr-2" [(ngModel)]="editDomainame" placeholder=""
+                    trimSpace />
+                  <!-- <button class="btn-default primary " (click)="fetchLookUp(editDomainame,'editLook')">{{language['Lookup']}}</button> -->
+                </div>
+              </div>
+            </td>
+
+            <td class="min-w-230px">
+              <div *ngIf="editOnValue != item._id && item.v4s.length == 1">
+                {{ item.v4s[0] ? item.v4s[0] : "" }}
+              </div>
+              <div *ngIf="editOnValue != item._id && item.v4s.length > 1">
+                <div class="collapse-btn w-nowrap" role="button" [attr.id]="'collapse-btn-v4-' + item._id"
+                  data-toggle="collapse" [attr.data-target]="'#collapse-v4-' + item._id" aria-expanded="false"
+                  [attr.aria-controls]="'collapse-v4-' + item._id">
+                  <i class="fa fa-chevron-right collapse-icon" id="'collapse-icon-v4-' + item._id"></i>
+                  <i class="fa fa-chevron-down collapse-icon" id="'collapse-icon-v4-' + item._id"></i>
+                  &nbsp;&nbsp;(
+                  <span class="sxa-bold f-style-italic">{{
+                    item.v4s.length
+                    }}</span>
+                  )
+                  <span [attr.id]="'collapse-address-v4-' + item._id" class="collapse-address">&nbsp;&nbsp;{{
+                    item.v4s[0] }}</span>
+                </div>
+                <div class="collapse multi-collapse max-h-225px" [attr.id]="'collapse-v4-' + item._id">
+                  <ng-container *ngFor="let adds of item.v4s">
+                    {{ adds }}<br />
+                  </ng-container>
+                </div>
+                <!-- {{item.addressesV4}} -->
+              </div>
+              <div *ngIf="editOnValue == item._id">
+                <!-- <div class="form-group">
+                                    <ng-container>
+                                        <ul class="nav flex-column" *ngFor="let subnet of editSubnets4; let i = index">
+                                            <li class="nav-item  subnet-value-size">{{subnet}}
+                                                <span class="remove-subnet-btn btn-default btn-sm" data-key=""
+                                                    (click)="removeEditSubnet(i,'ip4')"><i
+                                                        class="fa fa-times"></i></span>
+                                            </li>
+                                        </ul>
+                                    </ng-container>
+                                </div>
+
+                                <div class="form-group row fw100" style="margin: 0px;">
+                                    <div class="input-group flex-nowrap mb-3">
+                                        <input style="min-width: 150px;" type="text" class=" add-subnet-input"
+                                            name="editSubnet4" [(ngModel)]="editSubnet4" placeholder="">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text model-addon" (click)="addEditSubnet('ip4')"><i
+                                                    class="fa fa-plus"></i></span>
+                                        </div>
+                                    </div>
+                                </div> -->
+                                
+                                <ng-container *ngIf="editSubnets4.length === 1">
+                                  <div
+                                  *ngIf="modifyDataInfo?.index == undefined || (modifyDataInfo?.index != 0 || modifyDataInfo?.type != 'ip4')"
+                                 >
+                                  <span class="pointer" (click)="showEditDataInput(0, 'ip4')" title="Click to edit">  {{ editSubnets4[0] }}</span>
+                                  <span class="remove-subnet-btn primary f-right-22px" data-key=""
+                                  (click)="removeEditSubnet(0, 'ip4')"><i class="fa fa-times"></i></span>
+                                </div>
+                                  <div *ngIf="modifyDataInfo?.type == 'ip4' && modifyDataInfo?.index == 0"
+                                  class="my-2 position-relative">
+                                  <div class="ccl-form">
+                                    <input type="text" name="new-edit-subnet" [(ngModel)]="newEditDataValue" placeholder=""
+                                      class="min-w170-r55px" trimSpace
+                                      (blur)="removeUnwantedSpace('newEditDataValue',newEditDataValue)">
+                                    <div class="pos-abs-right20">
+                                      <i class="fas fa-check primary d-inline-flex mr-2 pointer" (click)="modifyEditData();"></i>
+                                      <i class="fas fa-times primary d-inline-flex pointer" (click)="hideEditDataInput();"></i>
+                                    </div>
+                                  </div>
+                                </div>
+                                </ng-container>
+                 <div *ngIf="editSubnets4.length > 1">
+                <div class="collapse-btn w-nowrap" role="button" [attr.id]="'collapse-btn-v4-' + item._id"
+                  data-toggle="collapse" [attr.data-target]="'#collapse-v4-' + item._id" aria-expanded="false"
+                  [attr.aria-controls]="'collapse-v4-' + item._id"
+                  *ngIf="editSubnets4 && editSubnets4.length && editSubnets4.length != 0">
+                  <i class="fa fa-chevron-right collapse-icon" id="'collapse-icon-v4-' + item._id"></i>
+                  <i class="fa fa-chevron-down collapse-icon" id="'collapse-icon-v4-' + item._id"></i>
+                  &nbsp;&nbsp;(
+                  <span class="sxa-bold f-style-italic">{{
+                     editSubnets4.length }}</span>
+                  )
+                  <span [attr.id]="'collapse-address-v4-' + item._id" class="collapse-address">&nbsp;&nbsp;{{language['added']}}</span>
+                </div>
+                <div class="collapse multi-collapse max-h-225px" [attr.id]="'collapse-v4-' + item._id">
+                  <ng-container>
+                    <ul class="nav flex-column" *ngFor="let subnet of editSubnets4; let i = index">
+                      <li
+                        *ngIf="modifyDataInfo?.index == undefined || (modifyDataInfo?.index != i || modifyDataInfo?.type != 'ip4')"
+                        class="nav-item subnet-value-size">
+                        <span class="pointer" (click)="showEditDataInput(i, 'ip4')" title="Click to edit"> {{ subnet
+                          }}</span>
+                        <span class="remove-subnet-btn primary f-right-22px" data-key=""
+                          (click)="removeEditSubnet(i, 'ip4')"><i class="fa fa-times"></i></span>
+                      </li>
+
+                      <div *ngIf="modifyDataInfo?.type == 'ip4' && modifyDataInfo?.index == i"
+                        class="my-2 position-relative">
+                        <div class="ccl-form">
+                          <input type="text" name="new-edit-subnet" [(ngModel)]="newEditDataValue" placeholder=""
+                            class="min-w170-r55px" trimSpace
+                            (blur)="removeUnwantedSpace('newEditDataValue',newEditDataValue)">
+                          <div class="pos-abs-right20">
+                            <i class="fas fa-check primary d-inline-flex mr-2 pointer" (click)="modifyEditData();"></i>
+                            <i class="fas fa-times primary d-inline-flex pointer" (click)="hideEditDataInput();"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </ul>
+                  </ng-container>
+                </div>
+                 </div>
+                <div class="form-group row fw100 m-0">
+                  <div class="ccl-form input-group flex-nowrap">
+                    <input type="text" class="add-subnet-input max-w-155" name="editSubnet4" [(ngModel)]="editSubnet4"
+                      placeholder="" trimSpace (blur)="removeUnwantedSpace('editSubnet4',editSubnet4)" />
+                    <span class="ccl-fc-add-icon align-self-center mx-2" (click)="addEditSubnet('ip4')"><i
+                        class="fa fa-plus"></i>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </td>
+
+            <td class="min-w-230px">
+              <div *ngIf="editOnValue != item._id && item.v6s.length == 1">
+                {{ item.v6s[0] ? item.v6s[0] : "" }}
+              </div>
+              <div *ngIf="editOnValue != item._id && item.v6s.length > 1">
+                <div class="collapse-btn w-nowrap" role="button" [attr.id]="'collapse-btn-v6-' + item._id"
+                  data-toggle="collapse" [attr.data-target]="'#collapse-v6-' + item._id" aria-expanded="false"
+                  [attr.aria-controls]="'collapse-v6-' + item._id">
+                  <i class="fa fa-chevron-right collapse-icon" id="'collapse-icon-v6-' + item._id"></i>
+                  <i class="fa fa-chevron-down collapse-icon" id="'collapse-icon-v6-' + item._id"></i>
+                  &nbsp;&nbsp;(
+                  <span class="sxa-bold f-style-italic">{{
+                    item.v6s.length
+                    }}</span>
+                  )
+                  <span [attr.id]="'collapse-address-v6-' + item._id" class="collapse-address">&nbsp;&nbsp;{{
+                    item.v6s[0] }}</span>
+                </div>
+                <div class="collapse multi-collapse max-h-225px" [attr.id]="'collapse-v6-' + item._id">
+                  <ng-container *ngFor="let adds of item.v6s">
+                    {{ adds }}<br />
+                  </ng-container>
+                </div>
+                <!-- {{item.addressesV6}} -->
+              </div>
+              <div *ngIf="editOnValue == item._id">
+                <!-- <div class="form-group">
+                                    <ng-container>
+                                        <ul class="nav flex-column" *ngFor="let subnet of editSubnets6; let i = index">
+                                            <li class="nav-item  subnet-value-size">{{subnet}}
+                                                <span class="remove-subnet-btn btn-default btn-sm" data-key=""
+                                                    (click)="removeEditSubnet(i,'ip4')"><i
+                                                        class="fa fa-times"></i></span>
+                                            </li>
+                                        </ul>
+                                    </ng-container>
+                                </div>
+
+                                <div class="form-group row fw100" style="margin: 0px;">
+                                    <div class="input-group flex-nowrap mb-3">
+                                        <input style="min-width: 150px;" type="text" class=" add-subnet-input"
+                                            name="editSubnet6" [(ngModel)]="editSubnet6" placeholder="">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text model-addon" (click)="addEditSubnet('ip6')"><i
+                                                    class="fa fa-plus"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div> -->
+
+                                <ng-container *ngIf="editSubnets6.length === 1">
+                                  <div
+                                  *ngIf="modifyDataInfo?.index == undefined || (modifyDataInfo?.index != 0 || modifyDataInfo?.type != 'ip6')"
+                                 >
+                                  <span class="pointer" (click)="showEditDataInput(0, 'ip6')" title="Click to edit">  {{ editSubnets6[0] }}</span>
+                                  <span class="remove-subnet-btn primary f-right-22px" data-key=""
+                                  (click)="removeEditSubnet(0, 'ip6')"><i class="fa fa-times"></i></span>
+                                </div>
+                                  <div *ngIf="modifyDataInfo?.type == 'ip6' && modifyDataInfo?.index == 0"
+                                  class="my-2 position-relative">
+                                  <div class="ccl-form">
+                                    <input type="text" name="new-edit-subnet" [(ngModel)]="newEditDataValue" placeholder=""
+                                      class="min-w170-r55px" trimSpace
+                                      (blur)="removeUnwantedSpace('newEditDataValue',newEditDataValue)">
+                                    <div class="pos-abs-right20">
+                                      <i class="fas fa-check primary d-inline-flex mr-2 pointer" (click)="modifyEditData();"></i>
+                                      <i class="fas fa-times primary d-inline-flex pointer" (click)="hideEditDataInput();"></i>
+                                    </div>
+                                  </div>
+                                </div>
+                                </ng-container>
+
+                                <div *ngIf="editSubnets6.length > 1">
+
+                <div class="collapse-btn w-nowrap" role="button" [attr.id]="'collapse-btn-v6-' + item._id"
+                  data-toggle="collapse" [attr.data-target]="'#collapse-v6-' + item._id" aria-expanded="false"
+                  [attr.aria-controls]="'collapse-v6-' + item._id"   *ngIf="editSubnets6 && editSubnets6.length && editSubnets6.length != 0">
+                  <i class="fa fa-chevron-right collapse-icon" id="'collapse-icon-v6-' + item._id"></i>
+                  <i class="fa fa-chevron-down collapse-icon" id="'collapse-icon-v6-' + item._id"></i>
+                  &nbsp;&nbsp;(
+                  <span class="sxa-bold f-style-italic">{{
+                    editSubnets6.length}}</span>
+                  )
+                  <span [attr.id]="'collapse-address-v6-' + item._id" class="collapse-address">&nbsp;&nbsp;{{language['added']}}</span>
+                </div>
+                <div class="collapse multi-collapse max-h-225px" [attr.id]="'collapse-v6-' + item._id">
+                  <ng-container>
+                    <ul class="nav flex-column" *ngFor="let subnet of editSubnets6; let i = index">
+                      <li
+                        *ngIf="modifyDataInfo?.index == undefined || (modifyDataInfo?.index != i || modifyDataInfo?.type != 'ip6')"
+                        class="nav-item subnet-value-size">
+                        <span class="pointer" (click)="showEditDataInput(i, 'ip6')" title="Click to edit"> {{ subnet
+                          }}</span>
+                        <span class="remove-subnet-btn primary f-right-22px" data-key=""
+                          (click)="removeEditSubnet(i, 'ip6')"><i class="fa fa-times"></i></span>
+                      </li>
+
+                      <div *ngIf="modifyDataInfo?.type == 'ip6' && modifyDataInfo?.index == i"
+                        class="my-2 position-relative">
+                        <div class="ccl-form">
+                          <input type="text" name="new-edit-subnet" [(ngModel)]="newEditDataValue" placeholder=""
+                            class="min-w170-r55px" trimSpace
+                            (blur)="removeUnwantedSpace('newEditDataValue',newEditDataValue)">
+                          <div class="pos-abs-right20">
+                            <i class="fas fa-check primary d-inline-flex mr-2 pointer" (click)="modifyEditData();"></i>
+                            <i class="fas fa-times primary d-inline-flex pointer" (click)="hideEditDataInput();"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </ul>
+                  </ng-container>
+                </div>
+                  <!-- <ng-container *ngFor="let subnet of editSubnets6; let i = index">
+                                  {{ subnet }}<br />
+                                </ng-container> -->
+                </div>
+
+
+
+
+                <div class="form-group row fw100 m-0">
+                  <div class="ccl-form input-group flex-nowrap">
+                    <input type="text" class="max-w-155 add-subnet-input" name="editSubnet6" [(ngModel)]="editSubnet6"
+                      placeholder="" trimSpace (blur)="removeUnwantedSpace('editSubnet6',editSubnet6)" />
+
+                    <span class="ccl-fc-add-icon align-self-center mx-2" (click)="addEditSubnet('ip6')"><i
+                        class="fa fa-plus"></i>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="min-w-230px">
+              <!-- <div *ngIf="editOnValue != item._id">
+                                  {{item.ports}}
+                                </div> -->
+              <div *ngIf="editOnValue != item._id && item.newPorts.length == 1">
+                {{ item.newPorts[0] ? item.newPorts[0] : "" }}
+              </div>
+              <div *ngIf="editOnValue != item._id && item.newPorts.length > 1">
+                <div class="collapse-btn w-nowrap" role="button" [attr.id]="'collapse-btn-ports-' + item._id"
+                  data-toggle="collapse" [attr.data-target]="'#collapse-ports-' + item._id" aria-expanded="false"
+                  [attr.aria-controls]="'collapse-ports-' + item._id">
+                  <i class="fa fa-chevron-right collapse-icon" id="'collapse-icon-ports-' + item._id"></i>
+                  <i class="fa fa-chevron-down collapse-icon" id="'collapse-icon-ports-' + item._id"></i>
+                  &nbsp;&nbsp;(
+                  <span class="sxa-bold f-style-italic">{{
+                    item.newPorts.length
+                    }}</span>
+                  )
+                  <span [attr.id]="'collapse-address-ports-' + item._id" class="collapse-address">&nbsp;&nbsp;{{
+                    item.newPorts[0] }}</span>
+                </div>
+                <div class="collapse multi-collapse" [attr.id]="'collapse-ports-' + item._id">
+                  <ng-container *ngFor="let ps of item.newPorts">
+                    {{ ps }}<br />
+                  </ng-container>
+                </div>
+              </div>
+              <div *ngIf="editOnValue == item._id">
+                <!-- <input type="text" [(ngModel)]="editport" [ngModelOptions]="{standalone: true}"> -->
+                <!-- <div class="form-group">
+                                    <ng-container>
+                                        <ul class="nav flex-column" *ngFor="let subnet of editPortList; let i = index">
+                                            <li class="nav-item  subnet-value-size">{{subnet}}
+                                                <span class="remove-subnet-btn btn-default btn-sm" data-key=""
+                                                    (click)="removePort(i,'edit')"><i class="fa fa-times"></i></span>
+                                            </li>
+                                        </ul>
+                                    </ng-container>
+                                </div>
+
+                                <div class="form-group row fw100" style="margin: 0px;">
+                                    <div class="input-group flex-nowrap mb-3">
+                                        <input style="min-width: 150px;" type="text" class=" add-subnet-input"
+                                            name="editPort" [(ngModel)]="editPort" placeholder="">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text model-addon" (click)="addPort('edit')"><i
+                                                    class="fa fa-plus"></i></span>
+                                        </div>
+                                    </div>
+                                </div> -->
+                                <ng-container *ngIf="editPortList.length === 1">
+                                  <div
+                                  *ngIf="modifyDataInfo?.index == undefined || (modifyDataInfo?.index != 0 || modifyDataInfo?.type != 'port')"
+                                 >
+                                  <span class="pointer" (click)="showEditDataInput(0, 'port')" title="Click to edit">  {{ editPortList[0] }}</span>
+                                  <span class="remove-subnet-btn primary f-right-22px" data-key=""
+                                  (click)="removePort(0, 'edit')"><i class="fa fa-times"></i></span>
+                                </div>
+                                  <div *ngIf="modifyDataInfo?.type == 'port' && modifyDataInfo?.index == 0"
+                                  class="my-2 position-relative">
+                                  <div class="ccl-form">
+                                    <input type="text" name="new-edit-subnet" [(ngModel)]="newEditDataValue" placeholder=""
+                                      class="min-w170-r55px" trimSpace
+                                      (blur)="removeUnwantedSpace('newEditDataValue',newEditDataValue)">
+                                    <div class="pos-abs-right20">
+                                      <i class="fas fa-check primary d-inline-flex mr-2 pointer" (click)="modifyEditData();"></i>
+                                      <i class="fas fa-times primary d-inline-flex pointer" (click)="hideEditDataInput();"></i>
+                                    </div>
+                                  </div>
+                                </div>
+                                </ng-container>
+
+<div *ngIf="editPortList.length > 1">                                
+                <div class="form-group">
+                  <div class="collapse-btn w-nowrap" role="button" [attr.id]="'collapse-btn-ports-' + item._id"
+                    data-toggle="collapse" [attr.data-target]="'#collapse-ports-' + item._id" aria-expanded="false"
+                    [attr.aria-controls]="'collapse-ports-' + item._id"
+                    *ngIf="editPortList && editPortList.length && editPortList.length != 0">
+                    <i class="fa fa-chevron-right collapse-icon" id="'collapse-icon-ports-' + item._id"></i>
+                    <i class="fa fa-chevron-down collapse-icon" id="'collapse-icon-ports-' + item._id"></i>
+                    &nbsp;&nbsp;(
+                    <span class="sxa-bold f-style-italic">{{
+                      editPortList.length 
+                      }}</span>
+                    )
+                    <span [attr.id]="'collapse-address-ports-' + item._id"
+                      class="collapse-address">&nbsp;&nbsp;{{language['added']}}</span>
+                  </div>
+                  <div class="collapse multi-collapse max-h-225px" [attr.id]="'collapse-ports-' + item._id">
+                    <ng-container>
+                      <ul class="nav flex-column" *ngFor="let port of editPortList; let i = index">
+                        <li
+                          *ngIf="modifyDataInfo?.index == undefined || (modifyDataInfo?.index != i || modifyDataInfo?.type != 'port')"
+                          class="nav-item subnet-value-size">
+                          <span class="pointer" (click)="showEditDataInput(i, 'port')" title="Click to edit"> {{ port
+                            }}</span>
+                          <span class="remove-subnet-btn primary f-right-22px" data-key=""
+                            (click)="removePort(i, 'edit')"><i class="fa fa-times"></i></span>
+                        </li>
+
+                        <div *ngIf="modifyDataInfo?.type == 'port' && modifyDataInfo?.index == i"
+                          class="my-2 position-relative">
+                          <div class="ccl-form">
+                            <input type="text" name="new-edit-subnet" [(ngModel)]="newEditDataValue" placeholder=""
+                              class="min-w170-r55px" trimSpace
+                              (blur)="removeUnwantedSpace('newEditDataValue',newEditDataValue)">
+                            <div class="pos-abs-right20">
+                              <i class="fas fa-check primary d-inline-flex mr-2 pointer"
+                                (click)="modifyEditData();"></i>
+                              <i class="fas fa-times primary d-inline-flex pointer" (click)="hideEditDataInput();"></i>
+                            </div>
+                          </div>
+                        </div>
+                      </ul>
+                    </ng-container>
+                  </div>
+                </div>
+</div>
+                <!-- <div class="form-group">
+                  <span *ngIf="editPortList && editPortList.length && editPortList.length > 1">
+                    (<span class="sxa-bold f-style-italic">{{editPortList.length }}</span>)
+                  </span>
+                  <ng-container class="">
+                    <ul class="nav flex-column" *ngFor="let port of editPortList; let i = index">
+                      <li
+                        *ngIf="modifyDataInfo?.index == undefined || (modifyDataInfo?.index != i || modifyDataInfo?.type != 'port')"
+                        class="nav-item subnet-value-size">
+                        <span class="pointer" (click)="showEditDataInput(i, 'port')" title="Click to edit"> {{ port
+                          }}</span>
+                        <span class="remove-subnet-btn primary f-right-22px" data-key=""
+                          (click)="removePort(i, 'edit')"><i class="fa fa-times"></i></span>
+                      </li>
+                      <div *ngIf="modifyDataInfo?.type == 'port' && modifyDataInfo?.index == i"
+                        class="my-2 position-relative">
+                        <div class="ccl-form">
+                          <input type="text" name="new-edit-subnet" [(ngModel)]="newEditDataValue" placeholder=""
+                            class="min-w170-r55px"  trimSpace (blur)="removeUnwantedSpace('newEditDataValue',newEditDataValue)">
+                          <div class="pos-abs-right20">
+                            <i class="fas fa-check primary d-inline-flex mr-2 pointer" (click)="modifyEditData();"></i>
+                            <i class="fas fa-times primary d-inline-flex pointer" (click)="hideEditDataInput();"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </ul>
+                  </ng-container>
+                </div> -->
+
+                <div class="form-group row fw100 m-0">
+                  <div class="ccl-form input-group flex-nowrap">
+                    <input type="text" class="add-subnet-input max-w-155" name="editPort" [(ngModel)]="editPort"
+                      placeholder="" trimSpace (blur)="removeUnwantedSpace('editPort',editPort)" />
+
+                    <span class="ccl-fc-add-icon align-self-center mx-2" (click)="addPort('edit')"><i
+                        class="fa fa-plus"></i>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="min-w-230px">
+              <div *ngIf="editOnValue != item._id && item.newRPorts.length == 1">
+                {{ item.newRPorts[0] ? item.newRPorts[0] : "" }}
+              </div>
+              <div *ngIf="editOnValue != item._id && item.newRPorts.length > 1">
+                <div class="collapse-btn w-nowrap" role="button" [attr.id]="'collapse-btn-ports-' + item._id"
+                  data-toggle="collapse" [attr.data-target]="'#collapse-rports-' + item._id" aria-expanded="false"
+                  [attr.aria-controls]="'collapse-rports-' + item._id">
+                  <i class="fa fa-chevron-right collapse-icon" id="'collapse-icon-ports-' + item._id"></i>
+                  <i class="fa fa-chevron-down collapse-icon" id="'collapse-icon-ports-' + item._id"></i>
+                  &nbsp;&nbsp;(
+                  <span class="sxa-bold f-style-italic">{{
+                    item.newRPorts.length
+                    }}</span>
+                  )
+                  <span [attr.id]="'collapse-address-ports-' + item._id" class="collapse-address">&nbsp;&nbsp;{{
+                    item.newRPorts[0] }}</span>
+                </div>
+                <div class="collapse multi-collapse" [attr.id]="'collapse-rports-' + item._id">
+                  <ng-container *ngFor="let rps of item.newRPorts; let i = index">
+                    {{ rps }}<br />
+                  </ng-container>
+                </div>
+              </div>
+
+              <div *ngIf="editOnValue == item._id">
+                <!-- <input type="text" [(ngModel)]="editrport" [ngModelOptions]="{standalone: true}"> -->
+                <!-- <div class="form-group">
+                                    <ng-container>
+                                        <ul class="nav flex-column" *ngFor="let subnet of editRPortList; let i = index">
+                                            <li class="nav-item  subnet-value-size">{{subnet}}
+                                                <span class="remove-subnet-btn btn-default btn-sm" data-key=""
+                                                    (click)="removeRangePort(i,'edit')"><i
+                                                        class="fa fa-times"></i></span>
+                                            </li>
+                                        </ul>
+                                    </ng-container>
+                                </div>
+
+                                <div class="form-group row fw100" style="margin: 0px;">
+                                    <div class="input-group flex-nowrap mb-3">
+                                        <input style="min-width: 150px;" type="text" class=" add-subnet-input"
+                                            name="editRPort" [(ngModel)]="editRPort" placeholder="">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text model-addon" (click)="addRangePort('edit')"><i
+                                                    class="fa fa-plus"></i></span>
+                                        </div>
+                                    </div>
+                                </div> -->
+                             
+                                <ng-container *ngIf="editRPortList.length === 1">
+                                  <div
+                                  *ngIf="modifyDataInfo?.index == undefined || (modifyDataInfo?.index != 0 || modifyDataInfo?.type != 'rport')"
+                                 >
+                                  <span class="pointer" (click)="showEditDataInput(0, 'rport')" title="Click to edit">  {{ editRPortList[0] }}</span>
+                                  <span class="remove-subnet-btn primary f-right-22px" data-key=""
+                                  (click)="removePort(0, 'edit')"><i class="fa fa-times"></i></span>
+                                </div>
+                                  <div *ngIf="modifyDataInfo?.type == 'rport' && modifyDataInfo?.index == 0"
+                                  class="my-2 position-relative">
+                                  <div class="ccl-form">
+                                    <input type="text" name="new-edit-subnet" [(ngModel)]="newEditDataValue" placeholder=""
+                                      class="min-w170-r55px" trimSpace
+                                      (blur)="removeUnwantedSpace('newEditDataValue',newEditDataValue)">
+                                    <div class="pos-abs-right20">
+                                      <i class="fas fa-check primary d-inline-flex mr-2 pointer" (click)="modifyEditData();"></i>
+                                      <i class="fas fa-times primary d-inline-flex pointer" (click)="hideEditDataInput();"></i>
+                                    </div>
+                                  </div>
+                                </div>
+                                </ng-container>
+      <div *ngIf="editRPortList.length > 1">
+                        <div class="form-group">
+                  <div class="collapse-btn w-nowrap" role="button" [attr.id]="'collapse-btn-ports-' + item._id"
+                    data-toggle="collapse" [attr.data-target]="'#collapse-rports-' + item._id" aria-expanded="false"
+                    [attr.aria-controls]="'collapse-rports-' + item._id"
+                    *ngIf="editRPortList && editRPortList.length && editRPortList.length != 0">
+                    <i class="fa fa-chevron-right collapse-icon" id="'collapse-icon-ports-' + item._id"></i>
+                    <i class="fa fa-chevron-down collapse-icon" id="'collapse-icon-ports-' + item._id"></i>
+                    &nbsp;&nbsp;(
+                    <span class="sxa-bold f-style-italic">{{
+                      editRPortList.length
+                      }}</span>
+                    )
+                    <span [attr.id]="'collapse-address-ports-' + item._id"
+                      class="collapse-address">&nbsp;&nbsp;{{language['added']}}</span>
+                  </div>
+                  <div class="collapse multi-collapse max-h-225px" [attr.id]="'collapse-rports-' + item._id">
+                    <ng-container>
+                      <ul class="nav flex-column" *ngFor="let port of editRPortList; let i = index">
+                        <li
+                          *ngIf="modifyDataInfo?.index == undefined || (modifyDataInfo?.index != i || modifyDataInfo?.type != 'rport')"
+                          class="nav-item subnet-value-size">
+                          <span class="pointer" (click)="showEditDataInput(i, 'rport')" title="Click to edit"> {{ port
+                            }}</span>
+                          <span class="remove-subnet-btn primary f-right-22px" data-key=""
+                            (click)="removeRangePort(i, 'edit')"><i class="fa fa-times"></i></span>
+                        </li>
+
+                        <div *ngIf="modifyDataInfo?.type == 'rport' && modifyDataInfo?.index == i"
+                          class="my-2 position-relative">
+                          <div class="ccl-form">
+                            <input type="text" name="new-edit-subnet" [(ngModel)]="newEditDataValue" placeholder=""
+                              class="min-w170-r55px" trimSpace
+                              (blur)="removeUnwantedSpace('newEditDataValue',newEditDataValue)">
+                            <div class="pos-abs-right20">
+                              <i class="fas fa-check primary d-inline-flex mr-2 pointer"
+                                (click)="modifyEditData();"></i>
+                              <i class="fas fa-times primary d-inline-flex pointer" (click)="hideEditDataInput();"></i>
+                            </div>
+                          </div>
+                        </div>
+                      </ul>
+                    </ng-container>
+                  </div>
+                </div>
+      </div>
+
+
+
+                <!-- <span *ngIf="editRPortList && editRPortList.length && editRPortList.length > 1">
+                    (<span class="sxa-bold f-style-italic">{{editRPortList.length }}</span>)
+                  </span>
+                  <ng-container class="">
+                    <ul class="nav flex-column" *ngFor="let port of editRPortList; let i = index">
+                      <li
+                        *ngIf="modifyDataInfo?.index == undefined || (modifyDataInfo?.index != i || modifyDataInfo?.type != 'rport')"
+                        class="nav-item subnet-value-size">
+                        <span class="pointer" (click)="showEditDataInput(i, 'rport')" title="Click to edit"> {{ port
+                          }}</span>
+                        <span class="remove-subnet-btn primary f-right-22px" data-key=""
+                          (click)="removeRangePort(i, 'edit')"><i class="fa fa-times"></i></span>
+                      </li>
+                      <div *ngIf="modifyDataInfo?.type == 'rport' && modifyDataInfo?.index == i"
+                        class="my-2 position-relative">
+                        <div class="ccl-form">
+                          <input type="text" name="new-edit-subnet" [(ngModel)]="newEditDataValue" placeholder=""
+                            class="min-w170-r55px" trimSpace
+                            (blur)="removeUnwantedSpace('newEditDataValue',newEditDataValue)">
+                          <div class="pos-abs-right20">
+                            <i class="fas fa-check primary d-inline-flex mr-2 pointer" (click)="modifyEditData();"></i>
+                            <i class="fas fa-times primary d-inline-flex pointer" (click)="hideEditDataInput();"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </ul>
+                  </ng-container>
+                </div> -->
+
+                <div class="form-group row fw100 m-0">
+                  <div class="ccl-form input-group flex-nowrap">
+                    <input type="text" class="max-w-155 add-subnet-input" name="editRPort" [(ngModel)]="editRPort"
+                      placeholder="" trimSpace (blur)="removeUnwantedSpace('editRPort',editRPort)" />
+
+                    <span class="ccl-fc-add-icon align-self-center mx-2" (click)="addRangePort('edit')"><i
+                        class="fa fa-plus"></i>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="min-w-80px">
+              {{ item.type ? item.type : "" }}
+            </td>
+            <ng-container *ngIf="hideDpiAsmfeatures"> 
+              
+    <td class="min-w-80px" >
+              {{ item.extAppEnum ? item.extAppEnum : "-" }}
+            </td>
+            <td class="min-w-80px">
+              {{ item.extProtocolId ? item.extProtocolId : "-" }}
+            </td>
+            <td class="min-width-135">
+              <ng-container *ngIf="item.extProtocolId || item.extAppEnum">
+                -
+              </ng-container>
+              <ng-container *ngIf="!item.extProtocolId && !item.extAppEnum">
+                <div class="toggle-swtbtn checkbox switcher">
+                  <label class="f-s-14px">
+                    <input type="checkbox" [disabled]="!isSysAdmin && item.type == 'Global'"
+                      (change)="updateOverrideDpi($event.target.checked, item._id, item.orgId)"
+                      [checked]="item.overrideDpi" id="overrideDPIswitch" />
+                    <span class="mr-1 opacity-50"
+                      [class.opacity-50]="!isSysAdmin && item.type == 'Global'"><small></small></span>
+                    {{item.overrideDpi ? language.Yes : language.No}}
+                  </label>
+                </div>
+              </ng-container>
+            </td>
+</ng-container>
+                    </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modals -->
+<ng-template #infoModal let-data let-ref="dialogRef">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{ infoTitle }}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body modal-scrll">
+    <p class="f-size-16px">{{invalidImportDefinitation.length ? language['Note']+' - '+language['No application name
+      imported'] : ''}}</p>
+    <div class="w-100">
+      <p class="f-size-16px" [innerHTML]="infoBody"></p>
+      <ul class="list-two" *ngIf="invalidImportDefinitation.length">
+        <li class="text-break" *ngFor="let definitation of invalidImportDefinitation">{{definitation.name}}</li>
+      </ul>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn-default primary px-3" data-dismiss="modal" (click)="closeModal()">
+      {{ language["Okay"] }}
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #deleteModal let-data let-ref="dialogRef">
+  <ng-container>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">{{ infoTitle }}?</h4>
+      <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <table [innerHtml]="infoBody"></table>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-default primary px-3" data-dismiss="modal" (click)="confirmDelete()">
+        {{ language["Okay"] }}
+      </button>
+      <button type="button" class="btn-default btn-dft py-1 px-3" data-dismiss="modal" (click)="closeModal()">
+        {{ language["Cancel"] }}
+      </button>
+    </div>
+  </ng-container>
+</ng-template>
+
+<ng-template #multiDeleteModal let-data let-ref="dialogRef">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{ infoTitle }}?</h4>
+    <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body modal-scrll">
+    <table [innerHtml]="infoBody"></table>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn-default primary px-3" data-dismiss="modal" (click)="confirmDeleteSecleted()">
+      {{ language["Okay"] }}
+    </button>
+    <button type="button" class="btn-default btn-dft py-1 px-3" data-dismiss="modal" (click)="closeModal()">
+      {{ language["Cancel"] }}
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #createDefinitionModal let-modal>
+  <div class="loader" *ngIf="lookupLoading">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary">
+        <span class="sr-only">{{ language.Loading }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="modal-header">
+    <button type="button" class="close" aria-label="Close" (click)="cancel(true)">
+      <span></span>
+    </button>
+  </div>
+  <form class="modal-form">
+
+    <div class="modal-body">
+      <div class="form-group">
+        <div class="ccl-admin-title">{{language['Create Application Definition']}}</div>
+      </div>
+      <div class="d-flex w-100 alert alert-success alert-dismissible fade show" *ngIf="showLookUpSuccess">
+        <span class="success-img"><img src="../../../../assets/img/ic_success-circle-outline.svg" alt=""></span>
+        <div class="w-80">
+          <strong>{{language['Domain name lookup successful']}}</strong>
+          <p>{{language['Domain-name-lookup-successful-info']}}</p>
+        </div>
+        <button type="button" class="close p-0" id="" (click)="showLookUpSuccess = false; "><span></span></button>
+      </div>
+      <div class="w-100 alert alert-danger  fade show my-3" *ngIf="errorLookUpMsg">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+        <button type="button" class="close" (click)="errorLookUpMsg = ''"><span></span></button>
+        <div class="d-inline-flex" [innerHtml]="errorLookUpMsg"></div>
+    </div>
+      <div class="form-group" *ngIf="isSysAdmin">
+        <label for="staticEmail2" class="mb-0">{{ language.type }}</label>
+        <div class="ccl-form">
+          <div class="row w-100">
+            <div class="col">
+              <ng-select class="min-w-250px" id="createApp" [items]="types" bindLabel="label" bindValue="value"
+                [multiple]="false" placeholder="" [(ngModel)]="createTypeSelected"
+                [ngModelOptions]="{ standalone: true }" [clearable]="false" [searchable]="false">
+              </ng-select>
+            </div>
+            <div class="col-auto min-w70"></div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="staticEmail2" class="mb-0">{{ language.applicationname }} <span class="error">*</span></label>
+        <div class="ccl-form">
+          <div class="row w-100">
+            <div class="col">
+              <input type="text" id="createName" name="createName" [(ngModel)]="createName" />
+            </div>
+            <div class="col-auto min-w70"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="form-group">
+        <label for="staticEmail2" class="mb-0">{{ language.Domain_Name }}</label>
+        <div class="ccl-form">
+          <div class="row w-100">
+            <div class="col mb-2">
+              <input type="text" [(ngModel)]="domainName" id="Domain_Name" placeholder="" name="Domain_Name" />
+            </div>
+            <div class="col-auto mb-2 px-0">
+              <button type="submit" class=" btn-default btn-dft" [disabled]="!domainName"
+                (click)="fetchLookUp(domainName)" (change)="domainName.trim()">
+                {{language.Lookup}}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="staticEmail2" class="mb-0">{{ language.applicationAddressIPV4 }}</label>
+        <div class="row">
+          <div class="ccl-form col-8">
+            <div class="row w-100">
+              <div class="col mb-2">
+                <input type="text" id="createSubnetV4" placeholder="IPv4" name="createSubnetV4"
+                  [(ngModel)]="createSubnetV4" />
+              </div>
+              <div class="col-auto mb-2 px-0">
+                <button type="submit" class="btn-default btn-dft" (click)="addSubnet('v4')">{{ language.Add }}</button>
+              </div>
+            </div>
+          </div>
+          <div class="col-4 p-0">
+            <ng-container   *ngIf="createSubnetsV4.length === 1"> 
+              <p class="m-0 d-flex justify-content-between"> <span> {{ createSubnetsV4[0] }} </span> <span
+                class="w-25 cursor-pointer" (click)="removeSubnetV4(0)"><i class="fa fa-times primary"
+                  aria-hidden="true"></i></span>
+            </p>
+            </ng-container>
+            <div  *ngIf="createSubnetsV4.length > 1" >
+            <div class="collapse-btn w-nowrap collapse-ip-addrs" role="button" id="collapsible-btn-ip"
+              *ngIf="createSubnetsV4.length!='0'" data-toggle="collapse" data-target="#collapsible-ip1"
+              aria-expanded="false" aria-controls="collapsible-ip1">
+              <span class="d-flex"><i class="fa fa-chevron-right text-gray"></i> <span class="ml-3">{{
+                  createSubnetsV4.length }} {{language['added']}}</span></span>
+            </div>
+            <div class="collapse multi-collapse max-h-225px" id="collapsible-ip1">
+              <ng-container *ngFor="let subnet of createSubnetsV4;  let i = index">
+                <p class="m-0 d-flex justify-content-between"> <span>{{ subnet }}</span><span
+                    class="w-25 cursor-pointer" (click)="removeSubnetV4(i)"><i class="fa fa-times primary"
+                      aria-hidden="true"></i></span>
+                </p>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+
+      <div class="form-group">
+        <label for="staticEmail2" class="mb-0">{{
+          language.applicationAddressIPV6
+          }}</label>
+        <div class="row">
+          <div class="ccl-form col-8">
+            <!-- <div class="" *ngIf="!createSubnetsV6.length">
+                <p class="mb-0">{{ language.addAddress }}</p>
+              </div> -->
+            <div class="row w-100">
+              <div class="col mb-2">
+                <input type="text" id="createSubnetV6" placeholder="IPv6" name="createSubnetV6"
+                  [(ngModel)]="createSubnetV6" />
+              </div>
+              <div class="col-auto mb-2 px-0">
+                <button type="submit" class="btn-default btn-dft" (click)="addSubnet('v6')">{{ language.Add }}</button>
+              </div>
+            </div>
+          </div>
+          <div class="col-4 p-0">
+            <ng-container   *ngIf="createSubnetsV6.length === 1"> 
+              <p class="m-0 d-flex justify-content-between"> <span> {{ createSubnetsV6[0] }} </span> <span
+                class="w-25 cursor-pointer" (click)="removeSubnetV6(0)"><i class="fa fa-times primary"
+                  aria-hidden="true"></i></span>
+            </p>
+            </ng-container>
+            
+    <div *ngIf="createSubnetsV6.length > 1 ">
+            <div class="collapse-btn w-nowrap collapse-ip-addrs" role="button" id="collapsible-btn-ip"
+              *ngIf="createSubnetsV6.length!='0'" data-toggle="collapse" data-target="#collapsible-ip2"
+              aria-expanded="false" aria-controls="collapsible-ip2">
+              <span class="d-flex"><i class="fa fa-chevron-right text-gray"></i> <span class="ml-3">{{
+                  createSubnetsV6.length }} {{language['added']}}</span></span>
+            </div>
+            <div class="collapse multi-collapse max-h-225px" id="collapsible-ip2">
+              <ng-container *ngFor="let subnet of createSubnetsV6; let i = index">
+                <p class="m-0 d-flex justify-content-between"> <span> {{ subnet }} </span> <span
+                    class="w-25 cursor-pointer" (click)="removeSubnetV6(i)"><i class="fa fa-times primary"
+                      aria-hidden="true"></i></span>
+                </p>
+              </ng-container>
+            </div>
+           </div>
+          </div>
+        </div>
+      </div>
+
+
+
+      <div class="form-group">
+        <label for="staticEmail2" class="mb-0">{{
+          language.applicationPorts
+          }}</label>
+        <div class="row">
+          <div class="ccl-form col-8">
+            <!-- <div class="" *ngIf="!createPorts.length">
+                <p class="mb-0">{{ language.portLabeladd }}</p>
+              </div> -->
+            <div class="row w-100">
+              <div class="col mb-2">
+                <input type="text" id="createCurrentRPorts" placeholder="" name="createCurrentRPorts"
+                  [(ngModel)]="createCurrentPorts" (click)="portInputChanges($event)" />
+              </div>
+              <div class="col-auto mb-2 px-0">
+                <button type="submit" class="btn-default btn-dft" (click)="addPort()">{{ language.Add }}</button>
+              </div>
+            </div>
+          </div>
+          <div class="col-4 p-0">
+            <ng-container   *ngIf="createPorts.length === 1"> 
+              <p class="m-0 d-flex justify-content-between"> <span> {{ createPorts[0] }} </span> <span
+                class="w-25 cursor-pointer" (click)="removePort(0)"><i class="fa fa-times primary"
+                  aria-hidden="true"></i></span>
+            </p>
+            </ng-container>
+            <div  *ngIf="createPorts.length > 1">
+            <div class="collapse-btn w-nowrap collapse-ip-addrs" role="button" id="collapsible-btn-ip"
+              *ngIf="createPorts.length!='0'" data-toggle="collapse" data-target="#collapsible-ip3"
+              aria-expanded="false" aria-controls="collapsible-ip3">
+              <span class="d-flex"><i class="fa fa-chevron-right text-gray"></i> <span
+                  class="ml-3">{{createPorts.length}} {{language['added']}}</span></span>
+            </div>
+            <div class="collapse multi-collapse max-h-225px" id="collapsible-ip3">
+              <ng-container *ngFor="let port of createPorts; let i = index">
+                <p class="m-0 d-flex justify-content-between"> <span> {{ port }} </span> <span
+                    class="w-25 cursor-pointer" (click)="removePort(i)"><i class="fa fa-times primary"
+                      aria-hidden="true"></i></span></p>
+              </ng-container>
+            </div>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+      <div class="form-group">
+        <label for="staticEmail2" class="mb-0">{{
+          language.rangedPortsProtocol
+          }}</label>
+        <div class="row">
+          <div class="ccl-form col-8">
+            <!-- <div class="" *ngIf="!createRPorts.length">
+                <p class="mb-0">{{ language.rangedportAdd }}</p>
+              </div> -->
+            <div class="row w-100">
+              <div class="col mb-2">
+                <input type="text" id="createCurrentRPorts" placeholder="" name="createCurrentRPorts"
+                  [(ngModel)]="createCurrentRPorts" (keypress)="portInputChanges($event)" />
+              </div>
+              <div class="col-auto mb-2 px-0">
+                <button type="submit" class="btn-default btn-dft" (click)="addRangePort()">
+                  {{ language.Add }}
+                </button>
+              </div>
+            </div>
+
+          </div>
+          <div class="col-4 p-0">
+            <ng-container   *ngIf="createRPorts.length === 1"> 
+              <p class="m-0 d-flex justify-content-between"> <span> {{ createRPorts[0] }} </span> <span
+                class="w-25 cursor-pointer" (click)="removeRangePort(0)"><i class="fa fa-times primary"
+                  aria-hidden="true"></i></span>
+            </p>
+            </ng-container>
+            <div *ngIf="createRPorts.length > 1">
+            <div class="collapse-btn w-nowrap collapse-ip-addrs" role="button" id="collapsible-btn-ip"
+              *ngIf="createRPorts.length!='0'" data-toggle="collapse" data-target="#collapsible-ip4"
+              aria-expanded="false" aria-controls="collapsible-ip4">
+              <span class="d-flex"><i class="fa fa-chevron-right text-gray mt-2"></i> <span
+                  class="ml-3">{{createRPorts.length}} {{language['added']}}</span></span>
+            </div>
+            <div class="collapse multi-collapse max-h-225px" id="collapsible-ip4">
+              <ng-container *ngFor="let rp of createRPorts; let i = index">
+                <p class="m-0 d-flex justify-content-between"> <span> {{ rp }} </span> <span class="w-25 cursor-pointer"
+                    (click)="removeRangePort(i)"><i class="fa fa-times primary" aria-hidden="true"></i></span></p>
+              </ng-container>
+            </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <!--          
+         
+          <div class="w-100" *ngFor="let rp of createRPorts; let i = index">
+            <span class="w-75">{{ rp }}</span>
+            <span class="w-25 cursor-pointer" (click)="removeRangePort(i)"><i class="fa fa-times primary"
+                aria-hidden="true"></i></span>
+          </div>
+          <div class="row w-100">
+            <div class="col mb-2">
+              <input type="text" id="createCurrentRPorts" placeholder="" name="createCurrentRPorts"
+                [(ngModel)]="createCurrentRPorts" (keypress)="portInputChanges($event)" />
+            </div>
+            <div class="col-auto mb-2 px-0">
+              <button type="submit" class="btn-default btn-dft" (click)="addRangePort()">
+                {{ language.Add }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div> -->
+      <div *ngIf="hideDpiAsmfeatures">
+        <label for="staticEmail2" class="mb-0">{{language.ignore_ipfix_app_id}}</label>
+        <div class="toggle-swtbtn checkbox switcher">
+          <label class="f-s-14px">
+            <input type="checkbox" (change)="changeOverrideDpi($event.target.checked)" id="overrideDEFswitch"
+              [checked]="overrideDEFswitchEnabled" />
+            <span class="mr-1"><small></small></span>
+            {{overrideDEFswitchEnabled? language.Yes : language.No }}
+          </label>
+
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer justify-content-start pl-0">
+      <div class="row mx-0">
+        <div class="col-md-12 p-0">
+          <button type="submit" class="btn-default btn-primary mr-3" id="new-group-sub-btn" (click)="submit()">
+            {{language['Create Definition']}}
+          </button>
+          <button type="submit" class="btn-default btn-dft" id="new-group-clear-btn" (click)="cancel(true)">
+            {{ language.Cancel }}
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </form>
+</ng-template>
+<!-- Modals -->

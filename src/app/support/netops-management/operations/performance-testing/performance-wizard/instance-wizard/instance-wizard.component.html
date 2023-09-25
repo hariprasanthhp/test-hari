@@ -1,0 +1,61 @@
+<div class="loader" *ngIf="loading">
+    <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+            <span class="sr-only">{{language.Loading}}</span>
+        </div>
+    </div>
+</div>
+<div class="w-100 alert alert-danger  fade show my-3" *ngIf="error">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+    <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+    <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+</div>
+
+<div class="w-100 alert alert-success fade show my-3" *ngIf="success">
+    <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+    <div [innerHtml]="successInfo"></div>
+</div>
+
+<!-- <div class="device-wizard" id="deviceWizard">
+    <h4 class="net-ops-secondary-title per-title m-0">{{language.Step_1}}- {{language.Name_Instance}}</h4>
+</div> -->
+<div class="margin-top-20">
+
+
+    <section>
+        <div class="form-group ccl-form row m-0">
+            <label class="col-lg-2 col-md-2  control-label">{{language.Name}} <span class="error">*</span></label>
+            <div class="col-lg-10 col-md-10 col-sm-10 " [ngClass]="{'error-occure': saveClicked && !name}">
+                <input id="name_input" name="name_input" placeholder="{{language.Name}}" type="text" [(ngModel)]='name'
+                    required="" aria-required="true" aria-describedby="name_input-error" trimSpace (blur)="removeUnwantedSpace('name',name)">
+                <div id="name_input-error" class="errorMessage">
+                    <p>
+                        {{language.Enter_A_Value}}
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="form-group ccl-form row m-0">
+            <label class="col-lg-2 col-md-2 control-label">{{language.description}}
+                <span class="small-tag small"> {{language.optional}}</span></label>
+            <div class="col-lg-10 col-md-10 col-sm-10 ">
+                <input class="" id="decription_input" name="description" placeholder="{{language.description}}" type="text"
+                    [(ngModel)]='inputData.description' trimSpace [formValue]="inputData">
+            </div>
+        </div>
+    </section>
+</div>
+<div class="d-inline-flex justify-content-start performance-testing-button">
+    <div>
+        <button type="button" disabled class="btn-arrow btn-arr-prev btn-grey"
+            id="netops-perftest-instance-wizard-previous-btn"><img
+                src="assets/img/ic_chevronleft_grey.svg">{{language.Previous}}</button>
+    </div>
+    <div>
+        <button type="button" class="btn-default btn-dft mx-2" (click)="reload();"
+            id="netops-perftest-instance-wizard-cancel-btn">{{language.cancel}}</button>
+        <button type="button" class="btn-arrow btn-arr-nxt primary" (click)='go_next()'
+            id="netops-perftest-instance-wizard-next-btn">{{language.Next}}
+            <img src="assets/img/ic_chevron-r-w.svg"></button>
+    </div>
+</div>

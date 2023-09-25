@@ -1,0 +1,10 @@
+<div class="flow-config-sub-tab" *ngIf="pageAvailable">
+
+  <ul class="nav">
+    <li class="nav-item" *ngFor="let menu of menus">
+      <a class="nav-link" id="{{menu.title}}" routerLink="{{menu.link}}"
+        [routerLinkActive]="['active']">{{menu.title}}</a>
+    </li>
+  </ul>
+</div>
+<router-outlet (activate)="onActivate($event)"></router-outlet>

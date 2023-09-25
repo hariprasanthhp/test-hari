@@ -1,0 +1,31 @@
+<app-subscriber-menu></app-subscriber-menu>
+<section class="m-2">
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <ul id="tabs" class="nav nav-tabs">
+                <li class="nav-item"><a routerLink="/support/traffic-reports/current" (Click)="$event.preventDefault()" data-toggle="tab"
+                        class="nav-link small active">Martin’s Router CXNK007A3F8E Routed Gateway</a></li>
+                <li class="nav-item"><a routerLink="/support/traffic-reports/historical" (Click)="$event.preventDefault()"  data-toggle="tab" class="nav-link small">GM23465
+                        CXNK006B3C1X
+
+                        Mesh Extender </a></li>
+            </ul>
+            <br>
+            <div id="tabsContent" class="tab-content">
+                <div id="issue" class="tab-pane fade active show">
+                    <div class="row pb-2">
+                        Martin’s Router CXNK007A3F8E Routed Gateway
+                    </div>
+                </div>
+                <div id="topology" class="tab-pane fade">
+                    <div class="row pb-2">
+                        GM23465
+                        CXNK006B3C1X
+
+                        Mesh Extender
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

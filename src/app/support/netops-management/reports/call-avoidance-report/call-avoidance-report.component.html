@@ -1,0 +1,184 @@
+<div class="loader load" *ngIf="loading">
+  <div class="d-flex justify-content-center">
+    <div class="spinner-border text-primary">
+      <span class="sr-only">{{ language.Loading }}</span>
+    </div>
+  </div>
+</div>
+<br />
+<div class="alert alert-success alert-dismissible fade show" role="alert" *ngIf="successmsg">
+  <strong>Success!</strong> Report Successfully added
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close" id="Call_Error_Alert">
+    <span aria-hidden="true" (click)="(successmsg != successmsg)"></span>
+  </button>
+</div>
+<div class="alert alert-danger alert-dismissible fade show" role="alert" *ngIf="error">
+  <span class="error-img"><img src="./assets/img/error-icon.svg" /></span>
+  <strong> {{ ErrorMsg }}</strong>
+  <button type="button" class="close" (click)="(error != error)" data-dismiss="alert" aria-label="Close"
+    id="Call_Success_Alert">
+    <span aria-hidden="true"></span>
+  </button>
+</div>
+<!-- <br/><div class="py-3 flex-space-between warning-msg " style="display:inline-block " *ngIf="isModalError" id="confirmDelete">
+  <button type="button" id="close-error-btn" class="close" data-dismiss="alert" aria-label="Close"
+    (click)="isModalError = !isModalError">&times;
+  </button>
+  <div [innerHtml]="modalWarningMessage"></div>
+</div> -->
+<div class="call-avoid-report row flex-align-center">
+  <div class="col-lg-10 col-md-10 col-sm-12">
+    <div class="flex-space-between title-part">
+      <div class="dropright">
+        <h4 class="dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true"
+          aria-expanded="false">
+          Call Avoidance Report
+        </h4>
+      </div>
+      <div class="right-sec-part w-30">
+        <div class="right-part-sort" id="Call_sorting">
+          <span class="sort-by pr-2"> Sort by </span>
+          <div class="custom-selectbox">
+            <ng-select [searchable]="false" (change)="sort($event)" ngModel="Date Created">
+              <ng-option value="0">Date Created</ng-option>
+              <ng-option value="1">Name</ng-option>
+              <ng-option value="2">Count</ng-option>
+              <ng-option value="3">Last Run</ng-option>
+              <ng-option value="4">Subscribers Matched</ng-option>
+            </ng-select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-2 col-md-2 col-12">
+    <button id="report-add-btn" class="btn-default primary px-3" (click)="addReport()" id="Call_AddReport">
+      <span> <i class="fa fa-plus"></i> </span> Add Report
+    </button>
+  </div>
+</div>
+<!-- datatable [dtOptions]="dtOptions" -->
+<table id="report-list-table" class="dataTable hover table-alter avoid-table" *ngIf="reporttableshow">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th align="center">Subscribers Matched</th>
+      <th>Last Run</th>
+      <th>Next Run</th>
+      <th>Run Count</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr *ngFor="let list of reportLists; let i = index" class="handsyb">
+      <td (click)="reportDetails(list)">
+        <div class="tab-name">
+          {{ list.name ? list.name : "--" }}
+          <span (click)="reportDetails(list)"><i class="fa fa-fw fa-info-circle info pointer primary" aria-hidden="true"
+              data-toggle="tooltip" title="{{ list.description }}"></i></span>
+        </div>
+      </td>
+      <td (click)="reportDetails(list)">
+        <div class="sub-count">
+          <p class="count-subscriber text-center">
+            {{
+            list.statistic.latestResult
+            ? list.statistic.latestResult.subscriberCount
+            : "--"
+            }}
+          </p>
+          <p class="padding-hit">
+            Subscribers Matched
+            <br />On Last Run
+          </p>
+        </div>
+      </td>
+      <td (click)="reportDetails(list)">
+        <div class="last-run">
+          {{
+          list.statistic.lastRun
+          ? (list.statistic.lastRun | date: "MMM d")
+          : "--"
+          }}
+        </div>
+      </td>
+      <td>
+        <div class="next-run">
+          {{
+          list.statistic.nextRun
+          ? list.statistic.nextRun != "{}"
+          ? (list.statistic.nextRun | date: "MMM d")
+          : "--"
+          : "
+          --"
+          }}
+        </div>
+      </td>
+      <td (click)="reportDetails(list)">
+        <div class="run-count">
+          {{ list.statistic.runCount ? list.statistic.runCount : "--" }}
+        </div>
+      </td>
+      <td>
+        <div class="action-tab-btn">
+          <button (click)="editReport(list)" id="report-edit-btn" class="primary" data-toggle="tooltip"
+            title="{{ language.Edit }}" style="
+              background-color: transparent;
+              font-size: 13.5px;
+              border: none;
+            ">
+            <i class="fas fa-pencil-alt"></i>
+          </button>
+          <button (click)="CopyReport(list)" id="report-view-btn" class="primary" data-toggle="tooltip"
+            title="{{ language.Copy }}" style="
+              background-color: transparent;
+              font-size: 13.5px;
+              border: none;
+            ">
+            <i class="fas fa-copy"></i>
+          </button>
+          <!-- <button  (click)="stopConfirmation(list)" id="report-delete-btn" class="" data-toggle="tooltip"
+                    title="Delete" style="background-color: transparent;font-size: 13.5px;border: none;">
+                    <i class="fas fa-trash-alt"></i>
+                  </button> -->
+          <button (click)="displayWaringMessageModels(deletePopup, list)" id="report-delete-btn" class="primary"
+            data-toggle="tooltip" title="Delete" style="
+              background-color: transparent;
+              font-size: 13.5px;
+              border: none;
+            ">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<ng-template #deletePopup let-modal class="col-md-12">
+  <div>
+    <div class="modal-header">
+      <h5 class="modal-title" id="deletePopup">Delete Report</h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="modal.close('Save click')"
+        id="Call_delete_Close">
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="d-flex">
+        <span>
+          <h5>Do you want to delete this report ?</h5>
+        </span>
+      </div>
+      <button type="button" (click)="modal.close('Save click'); removeDevice()" id="removereportConfirm"
+        class="btn-default primary px-3 mr-3 mt-5">
+        Delete
+      </button>
+      <button type="button" (click)="modal.close('Save click')" id="removereportCancel"
+        class="btn-default transparant px-3 mr-3 mt-5">
+        {{ language.cancel }}
+      </button>
+    </div>
+  </div>
+</ng-template>

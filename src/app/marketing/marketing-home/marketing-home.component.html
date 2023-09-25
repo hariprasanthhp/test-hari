@@ -1,0 +1,911 @@
+<div class="alert alert-warning alert-dismissible fade show" role="alert" *ngIf="scopes.allNoAccess">
+    {{ language["Access Denied"] }}!.
+</div>
+<!--Alert Warning-->
+<div *ngIf="faceError">
+    <div class="w-100 alert alert-warning fade show my-3" *ngIf="facebookError">
+        <button type="button" class="close" (click)="close()">
+            <span></span>
+        </button>
+        <span class="warning-icon"><img src="../../../assets/img/warning-icon.svg" /></span>
+        <span>
+            <div class="alert-title">
+                {{language.Facebook_API_Expired_Msg}}
+
+            </div>
+            <a class="primary cursor-pointer"
+                routerLink="/engagement/channels/facebook">{{language.Facebook_Configuration_Settings}}
+            </a>
+        </span>
+    </div>
+</div>
+
+<div class="home-wrapper flex row" *ngIf="!scopes.allNoAccess">
+    <div class="home-left col-xl-8 col-md-12">
+        <div class="thoughtspot" *ngIf="(isThoughspotAvailable && iscmc) || (isThoughspotAvailable && !iscmc)">
+            <div class="title-second greyaa border-bottom mb-3 pb-2" id="InsightsId">
+                {{language.Insight}}
+            </div>
+            <div class="overview" *ngIf="scopes.exploredataRead">
+                <!-- <div class="over-tit flex">
+
+            <div class="ot-rht flex">
+                <p class="listdataem mb0 greyaa" id="Past30daysId">{{ language.Past_30days }}</p>
+                <button class="btn-round info-round d-none">
+                    <img src="assets/img/ic_info_grey.svg" />
+                </button>
+            </div>
+            </div> -->
+                <div class="text-center" *ngIf="thoughtSpotLoading">
+                    <div class="flex overview-row">
+                        <div class="spinner-border text-primary loader">
+                            <span class="sr-only">{{ language.Loading }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class=" col-lg-12 col-md-12 col-sm-12 alert alert-warning alert-dismissible fade show" role="alert"
+                    *ngIf="thoughtSpotError">
+                    <span class="success-img"><img src="./assets/img/error-icon.svg" /></span>
+                    <div class="d-inline-flex text-left w-75">{{language['Error']}}! {{thoughtSpotError}}.</div>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true" (click)='errorReset()'></span>
+                    </button>
+                </div>
+                <div [ngClass]="insightTS ? 'd-block' : 'd-none'">
+                    <div class="flex overview-row">
+                        <div class="ov-col">
+                            <p class="listlabels greyaa" id="subscribersHomeId">{{ language.Subscribers }}</p>
+                            <h2 class="primary">
+                                {{ AllSubscriberDataTs }}
+                                <sub [ngClass]="{
+                      error: !AllSubscriberDataSuccessTs,
+                      success: AllSubscriberDataSuccessTs
+                    }">
+                                    <span *ngIf="!subsciberPercentValueIsZeroTs && !AllSubscriberDataSuccessTs"><i
+                                            class="fa fa-arrow-down" aria-hidden="true"></i></span>
+                                    <span *ngIf="!subsciberPercentValueIsZeroTs && AllSubscriberDataSuccessTs"><i
+                                            class="fas fa-arrow-up"></i></span>
+                                    {{ AllSubscriberDataPercentTs }}</sub>
+                            </h2>
+                        </div>
+                        <div class="ov-col">
+                            <p class="listlabels greyaa" id="streamingHomeId">{{ language.Streaming }}</p>
+                            <h2 class="primary">
+                                {{ streamerDataTs }}
+                                <sub [ngClass]="{
+                      error: !streamerDataSuccessTs,
+                      success: streamerDataSuccessTs
+                    }">
+                                    <span *ngIf="!streamerPercentValueIsZeroTs && !streamerDataSuccessTs"><i
+                                            class="fa fa-arrow-down" aria-hidden="true"></i></span>
+                                    <span *ngIf="!streamerPercentValueIsZeroTs && streamerDataSuccessTs"><i
+                                            class="fas fa-arrow-up"></i>
+                                    </span>
+                                    {{ streamerDataPercentTs }}</sub>
+                            </h2>
+                        </div>
+                        <div class="ov-col">
+                            <p class="listlabels greyaa" id="gamingHomeId">{{ language.Gaming }}</p>
+                            <h2 class="primary">
+                                {{ gamerDataTs }}
+                                <sub [ngClass]="{
+                      error: !gamerDataSuccessTs,
+                      success: gamerDataSuccessTs
+                    }">
+                                    <span *ngIf="!gamerPercentValueIsZeroTs && !gamerDataSuccessTs"><i
+                                            class="fa fa-arrow-down" aria-hidden="true"></i></span>
+                                    <span *ngIf="!gamerPercentValueIsZeroTs && gamerDataSuccessTs"><i
+                                            class="fas fa-arrow-up"></i></span>
+                                    {{ gamerDataPercentTs }}</sub>
+                            </h2>
+                        </div>
+
+                        <div class="ov-col">
+                            <p class="listlabels greyaa" id="wfhHomeId">{{ language.Wfh }}</p>
+                            <h2 class="primary">
+                                {{ workFromHomeDataTs }}
+                                <sub [ngClass]="{
+                              error: !workFromHomeDataSuccessTs,
+                              success: workFromHomeDataSuccessTs
+                            }">
+                                    <span *ngIf="!wfhPercentValueIsZeroTs && !workFromHomeDataSuccessTs"><i
+                                            class="fa fa-arrow-down" aria-hidden="true"></i></span>
+                                    <span *ngIf="!wfhPercentValueIsZeroTs && workFromHomeDataSuccessTs">
+                                        <i class="fas fa-arrow-up"></i>
+                                    </span>
+                                    {{ workFromHomeDataPercentTs }}</sub>
+                            </h2>
+                        </div>
+                        <div class="ov-col">
+                            <p class="listlabels greyaa" id="acquisitionHomeId">{{ language.Acquisition_Rate }}</p>
+                            <h2 class="primary">
+                                {{ acquisitionRateDataTs }}
+                                <sub [ngClass]="{
+                              error: !acquisitionRateDataSuccessTs,
+                              success: acquisitionRateDataSuccessTs
+                            }">
+                                    <span *ngIf="!acquisitionPercentValueIsZeroTs && !acquisitionRateDataSuccessTs"><i
+                                            class="fa fa-arrow-down" aria-hidden="true"></i></span>
+                                    <span *ngIf="!acquisitionPercentValueIsZeroTs && acquisitionRateDataSuccessTs"><i
+                                            class="fas fa-arrow-up"></i></span>
+                                    {{ acquisitionRateDataPercentTs }}</sub>
+                            </h2>
+                        </div>
+                        <div class="ov-col">
+                            <p class="listlabels greyaa" id="churnRateHomeId">{{ language.Chum_Rate }}</p>
+                            <h2 class="primary">
+                                {{ chumRateDataTs }}
+                                <sub [ngClass]="{
+                              error: churnRateDataSuccessTs,
+                              success: !churnRateDataSuccessTs
+                            }">
+                                    <span *ngIf="!churnPercentValueIsZeroTs && !churnRateDataSuccessTs"><i
+                                            class="fa fa-arrow-down" aria-hidden="true"></i></span>
+                                    <span *ngIf="!churnPercentValueIsZeroTs && churnRateDataSuccessTs">
+                                        <i class="fas fa-arrow-up"></i>
+                                    </span>
+                                    {{ chumRateDataPercentTs }}</sub>
+                            </h2>
+                        </div>
+                        <div class="ov-col" *ngIf="scopes.revenueRead ||scopes.revenueWrite">
+                            <p class="listlabels greyaa" id="arpuHomeId">{{ language.ARPU }}</p>
+                            <h2 class="primary">
+                                {{ ARPUDataTs }}
+                                <sub [ngClass]="{
+                              error: !ARPUDataSuccessTs,
+                              success: ARPUDataSuccessTs
+                            }">
+                                    <span *ngIf="!ARPUDataPercentValueIsZeroTs && !ARPUDataSuccessTs"><i
+                                            class="fa fa-arrow-down" aria-hidden="true"></i></span>
+                                    <span *ngIf="!ARPUDataPercentValueIsZeroTs && ARPUDataSuccessTs">
+                                        <i class="fas fa-arrow-up"></i>
+                                    </span>
+                                    {{ ARPUDataPercentTs }}</sub>
+                            </h2>
+                        </div>
+                        <div class="ov-col">
+                            <p class="listlabels greyaa" id="newSubsHomeId">{{ language.New_Subs2per }}</p>
+                            <h2 class="primary">
+                                {{ NewSubsPerDayDataTs}}
+                                <!-- <sub style="color: black;">{{NewSubsPerDayDataPercent}}</sub> -->
+                                <!-- <sub
+                                            [ngClass]="{'error': !NewSubsPerDayDataSuccess,'success':NewSubsPerDayDataSuccess}">
+                                            {{NewSubsPerDayDataPercent}}</sub> -->
+                            </h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="" *ngIf="(!isThoughspotAvailable && !iscmc) || (!isThoughspotAvailable && iscmc)">
+            <div class="title-second greyaa border-bottom mb-3 pb-2" id="InsightsId">
+                {{language.Insight}}
+            </div>
+            <div class="overview" *ngIf="scopes.exploredataRead">
+                <!-- <div class="over-tit flex">
+
+            <div class="ot-rht flex">
+                <p class="listdataem mb0 greyaa" id="Past30daysId">{{ language.Past_30days }}</p>
+                <button class="btn-round info-round d-none">
+                    <img src="assets/img/ic_info_grey.svg" />
+                </button>
+            </div>
+            </div> -->
+                <div class="text-center" *ngIf="loading">
+                    <div class="flex overview-row">
+                        <div class="spinner-border text-primary loader">
+                            <span class="sr-only">{{ language.Loading }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class=" col-lg-12 col-md-12 col-sm-12 alert alert-warning alert-dismissible fade show" role="alert"
+                    *ngIf="inSightError">
+                    <span class="success-img"><img src="./assets/img/error-icon.svg" /></span>
+                    <div class="d-inline-flex text-left w-75">{{language['Error']}}! {{inSightErrorMsg}}.</div>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true" (click)='errorReset()'></span>
+                    </button>
+                </div>
+                <div [ngClass]="qlickDataAvailable ? 'd-block' : 'd-none'">
+                    <div class="flex overview-row">
+                        <div class="ov-col">
+                            <p class="listlabels greyaa" id="subscribersHomeId">{{ language.Subscribers }}</p>
+                            <h2 class="primary">
+                                {{ AllSubscriberData }}
+                                <sub [ngClass]="{
+                      error: !AllSubscriberDataSuccess,
+                      success: AllSubscriberDataSuccess
+                    }">
+                                    <span *ngIf="!subsciberPercentValueIsZero && !AllSubscriberDataSuccess"><i
+                                            class="fa fa-arrow-down" aria-hidden="true"></i></span>
+                                    <span *ngIf="!subsciberPercentValueIsZero && AllSubscriberDataSuccess"><i
+                                            class="fas fa-arrow-up"></i></span>
+                                    {{ AllSubscriberDataPercent }}</sub>
+                            </h2>
+                        </div>
+                        <div class="ov-col">
+                            <p class="listlabels greyaa" id="streamingHomeId">{{ language.Streaming }}</p>
+                            <h2 class="primary">
+                                {{ streamerData }}
+                                <sub [ngClass]="{
+                      error: !streamerDataSuccess,
+                      success: streamerDataSuccess
+                    }">
+                                    <span *ngIf="!streamerPercentValueIsZero && !streamerDataSuccess"><i
+                                            class="fa fa-arrow-down" aria-hidden="true"></i></span>
+                                    <span *ngIf="!streamerPercentValueIsZero && streamerDataSuccess"><i
+                                            class="fas fa-arrow-up"></i>
+                                    </span>
+                                    {{ streamerDataPercent }}</sub>
+                            </h2>
+                        </div>
+                        <div class="ov-col">
+                            <p class="listlabels greyaa" id="gamingHomeId">{{ language.Gaming }}</p>
+                            <h2 class="primary">
+                                {{ gamerData }}
+                                <sub [ngClass]="{
+                      error: !gamerDataSuccess,
+                      success: gamerDataSuccess
+                    }">
+                                    <span *ngIf="!gamerPercentValueIsZero && !gamerDataSuccess"><i
+                                            class="fa fa-arrow-down" aria-hidden="true"></i></span>
+                                    <span *ngIf="!gamerPercentValueIsZero && gamerDataSuccess"><i
+                                            class="fas fa-arrow-up"></i></span>
+                                    {{ gamerDataPercent }}</sub>
+                            </h2>
+                        </div>
+
+                        <div class="ov-col">
+                            <p class="listlabels greyaa" id="wfhHomeId">{{ language.Wfh }}</p>
+                            <h2 class="primary">
+                                {{ workFromHomeData }}
+                                <sub [ngClass]="{
+                              error: !workFromHomeDataSuccess,
+                              success: workFromHomeDataSuccess
+                            }">
+                                    <span *ngIf="!wfhPercentValueIsZero && !workFromHomeDataSuccess"><i
+                                            class="fa fa-arrow-down" aria-hidden="true"></i></span>
+                                    <span *ngIf="!wfhPercentValueIsZero && workFromHomeDataSuccess">
+                                        <i class="fas fa-arrow-up"></i>
+                                    </span>
+                                    {{ workFromHomeDataPercent }}</sub>
+                            </h2>
+                        </div>
+                        <div class="ov-col">
+                            <p class="listlabels greyaa" id="acquisitionHomeId">{{ language.Acquisition_Rate }}</p>
+                            <h2 class="primary">
+                                {{ acquisitionRateData }}
+                                <sub [ngClass]="{
+                              error: !acquisitionRateDataSuccess,
+                              success: acquisitionRateDataSuccess
+                            }">
+                                    <span *ngIf="!acquisitionPercentValueIsZero && !acquisitionRateDataSuccess"><i
+                                            class="fa fa-arrow-down" aria-hidden="true"></i></span>
+                                    <span *ngIf="!acquisitionPercentValueIsZero && acquisitionRateDataSuccess"><i
+                                            class="fas fa-arrow-up"></i></span>
+                                    {{ acquisitionRateDataPercent }}</sub>
+                            </h2>
+                        </div>
+                        <div class="ov-col">
+                            <p class="listlabels greyaa" id="churnRateHomeId">{{ language.Chum_Rate }}</p>
+                            <h2 class="primary">
+                                {{ chumRateData }}
+                                <sub [ngClass]="{
+                              error: churnRateDataSuccess,
+                              success: !churnRateDataSuccess
+                            }">
+                                    <span *ngIf="!churnPercentValueIsZero && !churnRateDataSuccess"><i
+                                            class="fa fa-arrow-down" aria-hidden="true"></i></span>
+                                    <span *ngIf="!churnPercentValueIsZero && churnRateDataSuccess">
+                                        <i class="fas fa-arrow-up"></i>
+                                    </span>
+                                    {{ chumRateDataPercent }}</sub>
+                            </h2>
+                        </div>
+                        <div class="ov-col" *ngIf="scopes.revenueRead ||scopes.revenueWrite">
+                            <p class="listlabels greyaa" id="arpuHomeId">{{ language.ARPU }}</p>
+                            <h2 class="primary">
+                                {{ ARPUData }}
+                                <sub [ngClass]="{
+                              error: !ARPUDataSuccess,
+                              success: ARPUDataSuccess
+                            }">
+                                    <span *ngIf="!ARPUDataPercentValueIsZero && !ARPUDataSuccess"><i
+                                            class="fa fa-arrow-down" aria-hidden="true"></i></span>
+                                    <span *ngIf="!ARPUDataPercentValueIsZero && ARPUDataSuccess">
+                                        <i class="fas fa-arrow-up"></i>
+                                    </span>
+                                    {{ ARPUDataPercent }}</sub>
+                            </h2>
+                        </div>
+                        <div class="ov-col">
+                            <p class="listlabels greyaa" id="newSubsHomeId">{{ language.New_Subs2per }}</p>
+                            <h2 class="primary">
+                                {{ NewSubsPerDayData | number }}
+                                <!-- <sub style="color: black;">{{NewSubsPerDayDataPercent}}</sub> -->
+                                <!-- <sub
+                                            [ngClass]="{'error': !NewSubsPerDayDataSuccess,'success':NewSubsPerDayDataSuccess}">
+                                            {{NewSubsPerDayDataPercent}}</sub> -->
+                            </h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--overview-->
+        <div class="insigts-row flex">
+            <!-- table -->
+            <div *ngIf="scopes.campaignRead" class="table-responsive campaigns-home">
+                <div class="insts-col mark-wiz-col markwiz-col">
+                    <div class="mwc-header mwc-ins flex border-bottom">
+                        <div class="campaigns-title-container d-flex justify-content-between">
+                            <div class="campaigns-title-item ">
+                                <h3 class="title-second" id="home-campaigns-title"> <span class="cursor-pointer"
+                                        (click)="campaignsNewPage()">{{
+                                        language.Campaigns
+                                        }}</span></h3>
+                            </div>
+                            <div class="campaigns-title-button ">
+
+                                <span class="text-decoration-none primary cursor-pointer">
+                                    <a href="https://calix.force.com/idp/login?app=0sp4u0000008OKk" target="_blank">
+                                        <span class="f-12 ">{{language["Electronic Content Builder"]
+                                            }} <img src="./assets/img/Preview-icon.svg"></span></a>
+                                </span>
+                                <!-- <button *ngIf="scopes.campaignWrite" id="campaigns-new-btn"
+                                    class="btn-small primary float-right ml-1" (click)="newCampaign()">
+                                    {{ language.New }}
+                                </button> -->
+                                <button *ngIf="scopes.campaignWrite" id="campaigns-new-btn"
+                                class="btn-small primary float-right ml-1" data-toggle="dropdown">
+                                {{ language.New }}
+                                <div class="dropdown dropleft position-static">
+                                    <ul class="dropdown-menu">
+                                      <li>
+                                        <button class="btn btn-white w-100 text-left h-auto" (click)="newCampaign(1)">
+                                          {{language['Scheduled Campaign']}}
+                                        </button>
+                                      </li>
+                                      <li>
+                                        <button class="btn btn-white w-100 text-left h-auto" (click)="newCampaign(0)">
+                                          {{language['Triggered Campaign']}}
+                                        </button>
+                                      </li>
+                                    </ul>
+                                </div>
+                            </button>
+                            </div>
+                        </div>
+
+                        <!-- <div class="mwc-btns flex ">
+                            <button id="campaigns-info" class="btn-round btn-small-24 btn-grey btn-que home-but">
+                            </button>
+                        </div> -->
+                    </div>
+                    <!--header-->
+                    <div class="text-center" *ngIf="!campaigndataAvailable && campaignLoader">
+                        <div class="flex overview-row">
+                            <div class="spinner-border text-primary loader">
+                                <span class="sr-only">{{ language.Loading }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class=" col-lg-12 col-md-12 col-sm-12 alert alert-warning alert-dismissible fade show"
+                        role="alert" *ngIf="campaignError">
+                        <span class="success-img"><img src="./assets/img/error-icon.svg" /></span>
+                        <div class="d-inline-flex text-left w-75">{{language['Error']}}! {{campaignErrorMsg}}.</div>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true" (click)='errorReset()'></span>
+                        </button>
+                    </div>
+                    <div class="insts-col w-100" *ngIf="!campaigndataAvailable && !campaignLoader && !campaignError">
+                        <a href="javascript:void(0)" (click)="newCampaign(0)"><img
+                                src="assets/img/insight-img-1.png" /></a>
+                    </div>
+                </div>
+                <div *ngIf="campaigndataAvailable && !campaignLoader" class="tabs-wrapper mb-4">
+                    <div class="tabs flex">
+                        <a id="campaign-user" href="javascript:void(0)" [ngClass]="{ active: Campaigns }">{{
+                            language.recent }}</a>
+                    </div>
+                    <table id="campaigns-table"
+                        class="table-data-no mb-0 pb-0 row-border hover table-alter smal table-striped home-table">
+                        <thead>
+                            <tr>
+                                <th>{{ language.Name }}</th>
+                                <th>{{ language.Status }}</th>
+                                <th>{{ language.Type }}</th>
+                                <th class="text-right">{{ language.Subscribers }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of marketingCampaignTable">
+                                <td>
+                                    <a (click)="selectCampaign(item)" class="content-wrap campaign-link campaign_limit"
+                                        title="{{ item.name }}"><span>{{ item.name }}</span></a>
+                                </td>
+                                <td>{{ item.status }}</td>
+                                <td><span *ngIf="item.campaignType != 'Triggered'">{{item.segmentType}}</span> 
+                                    <span *ngIf="item.campaignType == 'Triggered'">{{item.campaignType}}</span> 
+                                   </td>
+                                <td class="text-right">{{ item.segmentSize | number }}</td>
+                            </tr>
+                        </tbody>
+                        <tbody *ngIf="campaignError">
+                            <tr>
+                                <td colspan="4" class="text-center req-text">
+                                    {{ campaignErrorMsg }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="text-center" *ngIf="!marketingCampaignTable">
+                        <div class="flex overview-row">
+                            <div class="spinner-border text-primary loader">
+                                <span class="sr-only">{{ language.Loading }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tabs-wrapper segments-home" *ngIf="scopes.exploredataRead">
+                <div class="insts-col mark-wiz-col markwiz-col">
+                    <div class="mwc-header mwc-ins flex border-bottom">
+                        <h3 class="title-second" id="home-segments-title">
+                            <span class="cursor-pointer" (click)="segments()">{{
+                                language.Segments
+                                }}</span>
+                            <button *ngIf="scopes.exploredataWrite" id="segments-new-btn"
+                                class="btn-small primary float-right" (click)="newSegments()">
+                                {{ language.New }}
+                            </button>
+                        </h3>
+                        <!-- <div class="mwc-btns flex">
+                            <button id="segments-info" class="btn-round btn-small-24 btn-grey btn-que home-but">
+                            </button>
+                        </div> -->
+                    </div>
+
+                    <div class="insts-col w-100" *ngIf="segmentImageShow && recommendImageShow">
+                        <a href="javascript:void(0)" (click)="newSegments()"><img
+                                src="assets/img/insight-img-2.png" /></a>
+                    </div>
+
+                </div>
+                <div *ngIf="(!segmentImageShow && !recommendImageShow) || (!segmentImageShow && recommendImageShow) || (segmentImageShow && !recommendImageShow)">
+                    <div class="tabs flex">
+                        <a id="segmnents-recommended" href="javascript:void(0)" [ngClass]="{ active: recommended }"
+                            (click)="segmentsTableSwitch('recommended')">{{ language.Recommended }}</a>
+                        <a id="segmnents-saved" href="javascript:void(0)" [ngClass]="{ active: saved }"
+                            (click)="segmentsTableSwitch('saved')">{{ language.Saved }}</a>
+                    </div>
+
+                    <div class="table-responsive table-data-no pb-0 min-h-217" *ngIf="recommended">
+                        <table *ngIf="recommendedSegmentArray" id="segmnents-recommended-table"
+                            class="row-border smal mb-0 table table-striped home-table">
+                            <thead>
+                                <tr>
+                                    <th>{{ language.Name }}</th>
+                                    <th>{{ language.Type }}</th>
+                                    <th class="text-right">{{ language.Count }}</th>
+                                </tr>
+                            </thead>
+                            <tbody *ngIf="recommendedSegmentArray">
+                                <tr *ngFor="let item of recommendedSegmentArray">
+                                    <td class="segement_limit">
+                                        <span>{{ item.segmentName }}</span>
+                                    </td>
+                                    <td>{{ item.segmentType }}</td>
+                                    <td class="text-right">
+                                        {{ item.subscriberCount | number }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody *ngIf="noDataRecomended">
+                                <tr>
+                                    <td colspan="3" class="text-center">{{ language.nodata }}</td>
+                                </tr>
+                            </tbody>
+
+                        </table>
+                        <div class=" col-lg-12 col-md-12 col-sm-12 alert alert-warning alert-dismissible fade show"
+                            role="alert" *ngIf="recomendedError">
+                            <span class="success-img"><img src="./assets/img/error-icon.svg" /></span>
+                            <div class="d-inline-flex text-left w-75">{{language['Error']}}! {{recomendedErrorMsg}}.
+                            </div>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true" (click)='errorResetRecomended()'></span>
+                            </button>
+                        </div>
+                        <div class="text-center overflow-hid" *ngIf="!recommendedSegmentArray && recomendedLoader">
+                            <div class="flex overview-row overflow-hid">
+                                <div class="spinner-border text-primary loader overflow-hid">
+                                    <span class="sr-only overflow-hid">{{
+                                        language.Loading
+                                        }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive table-data-no pb-0 min-h-217" *ngIf="saved">
+                        <table *ngIf="savedSegmentArray" id="segmnents-saved-table"
+                            class="row-border mb-0 smal table table-striped home-table">
+                            <thead>
+                                <tr>
+                                    <th>{{ language.Name }}</th>
+                                    <th>{{ language.Type }}</th>
+                                    <th class="text-right">{{ language.Count }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of savedSegmentArray">
+                                    <td>
+                                        <a (click)="selectSegments(item)"
+                                            class="content-wrap campaign-link segement_limit"
+                                            title="{{ item.segmentName }}"><span>{{ item.segmentName }}</span></a>
+                                    </td>
+                                    <td>{{ item.segmentType }}</td>
+                                    <td class="text-right">
+                                        {{ item.subscriberCount | number }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody *ngIf="noDataSaved">
+                                <tr>
+                                    <td colspan="3" class="text-center">{{ language.nodata }}</td>
+                                </tr>
+                            </tbody>
+
+                        </table>
+                        <div class=" col-lg-12 col-md-12 col-sm-12 alert alert-warning alert-dismissible fade show"
+                            role="alert" *ngIf="savedError">
+                            <span class="success-img"><img src="./assets/img/error-icon.svg" /></span>
+                            <div class="d-inline-flex text-left w-75">{{language['Error']}}! {{savedErrorMsg}}.</div>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true" (click)='errorResetSaved()'></span>
+                            </button>
+                        </div>
+                        <div class="text-center" *ngIf="!savedSegmentArray && savedLoader">
+                            <div class="flex overview-row overflow-hid">
+                                <div class="spinner-border text-primary loader overflow-hid">
+                                    <span class="sr-only overflow-hid">{{
+                                        language.Loading
+                                        }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--col-->
+            <div class="insts-col mark-wiz-col" *ngIf="scopes.exploredataRead">
+                <div class="mwc-header flex border-bottom">
+                    <h3 class="title-second greyaa" id="ServTierTechId">{{language.home_subscriber}}</h3>
+                    <div class="mwc-btns flex">
+                        <button class="btn-round btn-small-24 btn-grey btn-que d-none"
+                            (click)="campaignAndSegmentsModalOpen(language.Serv_Tier_Tech)" data-toggle="tooltip"
+                            title="{{ language.serviceTier_content_tip }}"></button>
+                        <button class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                            title="{{ language.subs_download_tip }}"
+                            (click)="downloadFunction(language.Serv_Tier_Tech)"></button>
+                    </div>
+                </div>
+                <!--header-->
+                <div class="mwc-content">
+                    <div id="subscriber-tier-home-chart" class="chart-box chartbox-h"
+                        *ngIf="!subscriberTierTechDataError"></div>
+                    <div class="req-text text-center" *ngIf="subscriberTierTechDataError">
+                        <div class="loader loader-msg social-heatmap-bg">
+                            {{subscriberTierTechDataErrorMsg}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--col-->
+            <!-- <div class="insts-col mark-wiz-col ">
+                <div class="mwc-header flex">
+                    <h3 class="title-second greyaa mb0">{{language.Top_Application}}</h3>
+                    <div class="mwc-btns flex">
+                        <button class="btn-round btn-small-24 btn-grey btn-que"
+                            (click)="campaignAndSegmentsModalOpen('Top Applications')" data-toggle="tooltip"
+                            title="{{language.TopGamingApp_Info}}"></button>
+                        <button class="btn-round btn-small-24 btn-grey btn-dload"
+                            (click)="downloadFunction('Top Applications')"></button>
+                    </div>
+                </div>
+                <div class="mwc-content">
+                    <table style="display: table;width: 98%;"
+                        class="table-responsive row-border hover table-alter smal  table-striped">
+                        <thead>
+                            <tr>
+                                <th class="greyaa insight-table-font">{{language.Application}}</th>
+                                <th class="text-right greyaa insight-table-font">{{language.Avg_Sub}}</th>
+                                <th class="text-right greyaa insight-table-font">{{language.Percentage}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of topAppDataArray">
+                                <td class="primary insight-table-font">{{item.application}}</td>
+                                <td class="text-right insight-table-font">{{item.average | number}}</td>
+                                <td class="text-right insight-table-font">{{item.percentage}} %</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div> -->
+            <div class="insts-col mark-wiz-col" *ngIf="scopes.exploredataRead">
+                <div class="mwc-header flex border-bottom">
+                    <h3 class="title-second greyaa" id="socialHeatMapHomeId">{{ language.SocialHeatMap }}</h3>
+                    <div class="mwc-btns flex">
+                        <button id="socialHeatModelOpen" class="btn-round btn-small-24 btn-grey btn-que d-none"
+                            (click)="campaignAndSegmentsModalOpen(language.SocialHeatMap)" data-toggle="tooltip"
+                            title="{{ language.Heat_Map_ShowInfo }}"></button>
+                        <button id="socialHeatDownloadSection" class="btn-round btn-small-24 btn-grey btn-dload"
+                            (click)="downloadFunction(language.SocialHeatMap)" data-toggle="tooltip"
+                            title="{{ language.subs_download_tip }}"></button>
+                    </div>
+                </div>
+                <div class="col-sm-3 my-2 p-0" [ngClass]="socialChannels ? 'd-block' : 'd-none'">
+                    <ng-select [(ngModel)]="socialChannelSelected" (ngModelChange)="selectSocialChannel($event)"
+                        [items]="socialChannels" bindLabel="name" bindValue="name" class="selectboxwidth"
+                        placeholder="socialChannelSelected" [ngModelOptions]="{ standalone: true }" [clearable]="false"
+                        [searchable]="true" [disabled]="!socialHeatMapDataAvailable">
+                    </ng-select>
+                </div>
+                <div class="mwc-content">
+                    <div id="social-heat-map" class="chart-box h-300px" *ngIf="!socialHeatMapDataError"></div>
+                    <div class="req-text text-center" *ngIf="socialHeatMapDataError">
+                        <div class="loader loader-msg social-heatmap-bg">
+                            {{socialHeatMapDataErrorMsg}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="home-right col-xl-4 col-md-12">
+        <div class="insts-col mark-wiz-col" *ngIf="scopes.exploredataRead">
+            <div class="mwc-header flex border-bottom">
+                <h3 class="title-second greyaa" id="SubscriberTrendsId">{{ language.New_Subscribers_home }}</h3>
+                <div class="mwc-btns flex">
+                    <button class="btn-round btn-small-24 btn-grey btn-que d-none"
+                        (click)="campaignAndSegmentsModalOpen(language.New_Subscribers_home)" data-toggle="tooltip"
+                        title="{{ language.AcquisitionRateAndInsights_Info }}"></button>
+                    <button class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                        title="{{ language.subs_download_tip }}" data-toggle="tooltip"
+                        title="{{ language.subs_download_tip }}"
+                        (click)="downloadFunction(language.New_Subscribers_home)"></button>
+                </div>
+            </div>
+            <div class="req-text text-center" *ngIf="homeacquisitionsError">
+                <div class="loader loader-msg">
+                    {{homeacquisitionsErrorMsg}}
+                </div>
+            </div>
+            <div class="mwc-content">
+                <div id="home-acquisitions-chart" class="chart-box chartbox-h"></div>
+            </div>
+        </div>
+        <!--col-->
+        <div class="insts-col mark-wiz-col m-t32px" *ngIf="scopes.exploredataRead">
+            <div class="mwc-header flex border-bottom">
+                <h3 class="title-second greyaa" id="ChurnTrendsId">{{ language.Churn_Trends }}</h3>
+                <div class="mwc-btns flex">
+                    <button class="btn-round btn-small-24 btn-grey btn-que d-none"
+                        (click)="campaignAndSegmentsModalOpen(language.Churn_Trends)" data-toggle="tooltip"
+                        title="{{ language.Churn_Info }}"></button>
+                    <button class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                        title="{{ language.subs_download_tip }}"
+                        (click)="downloadFunction(language.Churn_Trends)"></button>
+                </div>
+            </div>
+            <div class="req-text text-center" *ngIf="churnTrendsDataError">
+                <div class="loader loader-msg">
+                    {{churnTrendsErrorMsg}}
+                </div>
+            </div>
+            <!--header-->
+            <div class="mwc-content">
+                <div id="churn-Home-Trends" class="chart-box chartbox-h"></div>
+            </div>
+        </div>
+        <!--col-->
+        <!-- <div class="customer-service resources-faq">
+            <div class="cs-tit flex">
+                <h2 class="title-second flex">{{language.Resources_faqs}}</h2>
+                <a href="javascript:void(0)" class="formlabels primary">{{language.Ask_calix}}</a>
+            </div>
+            <div class="res-faq">
+                <div class="resfaq-row flex">
+                    <div class="rf-img"> <img src="assets/img/rf-img1.jpg"> </div>
+                    <h4 class="listdata $greyaa">{{language.Calix_Training_Video}}: “Lorem Ipsum Dollar”</h4>
+                </div>
+                <div class="resfaq-row flex">
+                    <div class="rf-img"> <img src="assets/img/rf-img2.jpg"> </div>
+                    <h4 class="listdata $greyaa">{{language.Calix_Trending_Posts}}</h4>
+                </div>
+                <div class="resfaq-row flex">
+                    <div class="rf-img"> <img src="assets/img/rf-img3.jpg"> </div>
+                    <h4 class="listdata $greyaa">{{language.Training_video_added}}</h4>
+                </div>
+                <div class="resfaq-row flex">
+                    <div class="rf-img"> <img src="assets/img/rf-img4.jpg"> </div>
+                    <h4 class="listdata $greyaa">{{language.Webinar_Available}}</h4>
+                </div>
+                <div class="resfaq-row flex">
+                    <div class="rf-img"> <img src="assets/img/rf-img5.jpg"> </div>
+                    <h4 class="listdata $greyaa">Lorem ipsum deul seuter dolar</h4>
+                </div>
+            </div>
+        </div> -->
+        <!--row-->
+    </div>
+    <!--right-->
+</div>
+
+<!-- top application -->
+<ng-template #applicationTopAppChartModal let-modal class="col-md-12">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addModal">{{ popup_heading }}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form class="custom-form">
+            <div class="form-group ccl-form">
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>{{ language.social_channel_popup1 }}</p>
+                        <p>{{ language.social_channel_popup2 }}</p>
+                        <ul class="list-block">
+                            <li>{{ language.social_channel_popup3 }}</li>
+                            <li>{{ language.social_channel_popup4 }}</li>
+                            <li>{{ language.social_channel_popup5 }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- <button type="button" class="btn-default primary px-3 px-3">{{language.Save}}</button> -->
+            <button type="button" class="btn-default btn-dft px-3 px-3 m-2" (click)="closeModal()" data-dismiss="modal">
+                {{ language.Cancel }}
+            </button>
+        </form>
+    </div>
+</ng-template>
+<!-- service tier -->
+<ng-template #serviceChartModal let-modal class="col-md-12">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addModal">{{ popup_heading }}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form class="custom-form">
+            <div class="form-group ccl-form">
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>{{ language.service_tier_popup1 }}</p>
+                        <p>{{ language.service_tier_popup2 }}</p>
+                        <ul class="list-block">
+                            <li>{{ language.service_tier_popup3 }}</li>
+                            <li>{{ language.service_tier_popup4 }}</li>
+                            <li>{{ language.service_tier_popup5 }}</li>
+                            <li>{{ language.service_tier_popup6 }}</li>
+                            <li class="ml-20px">
+                                <span>{{ language.service_tier_popup7 }}</span>
+                                {{ language.service_tier_popup10 }}
+                            </li>
+                            <li class="ml-20px">
+                                <span>{{ language.service_tier_popup8 }}</span>
+                                {{ language.service_tier_popup11 }}
+                            </li>
+                            <li>{{ language.service_tier_popup9 }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- <button type="button" class="btn-default primary px-3 px-3">{{language.Save}}</button> -->
+            <button type="button" class="btn-default btn-dft px-3 px-3 m-2" (click)="closeModal()" data-dismiss="modal">
+                {{ language.Cancel }}
+            </button>
+        </form>
+    </div>
+</ng-template>
+<!-- acquisation Trends -->
+<ng-template #acquisationTrendsModal let-modal class="col-md-12">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addModal">{{ popup_heading }}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form class="custom-form">
+            <div class="form-group ccl-form">
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>{{ language.new_rate_popup1 }}</p>
+                        <p>{{ language.new_rate_popup2 }}</p>
+                        <ul class="list-block">
+                            <li>{{ language.new_rate_popup3 }}</li>
+                            <li>{{ language.new_rate_popup4 }}</li>
+                            <li>{{ language.new_rate_popup5 }}</li>
+                            <li>{{ language.new_rate_popup6 }}</li>
+                            <li>{{ language.new_rate_popup7 }}</li>
+                            <li class="ml-20px">
+                                <span>{{ language.new_rate_popup8 }}</span>
+                                {{ language.new_rate_popup11 }}
+                            </li>
+                            <li class="ml-20px">
+                                <span>{{ language.new_rate_popup9 }}</span>
+                                {{ language.new_rate_popup12 }}
+                            </li>
+                            <li>{{ language.new_rate_popup10 }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- <button type="button" class="btn-default primary px-3 px-3">{{language.Save}}</button> -->
+            <button type="button" class="btn-default btn-dft px-3 px-3 m-2" (click)="closeModal()" data-dismiss="modal">
+                {{ language.Cancel }}
+            </button>
+        </form>
+    </div>
+</ng-template>
+<!-- churn rate -->
+<ng-template #churnTrendsModal let-modal class="col-md-12">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addModal">{{ popup_heading }}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form class="custom-form">
+            <div class="form-group ccl-form">
+                <!--<p>Content Come here</p>-->
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>{{ language.churn_rate_popup1 }}</p>
+                        <p>{{ language.churn_rate_popup2 }}</p>
+                        <ul class="list-block">
+                            <li>{{ language.churn_rate_popup3 }}</li>
+                            <li>{{ language.churn_rate_popup4 }}</li>
+                            <li>{{ language.churn_rate_popup5 }}</li>
+                            <li>{{ language.churn_rate_popup6 }}</li>
+                            <li>{{ language.churn_rate_popup7 }}</li>
+                            <li class="ml-20px">
+                                <span>{{ language.churn_rate_popup8 }}</span>
+                                {{ language.churn_rate_popup12 }}
+                            </li>
+                            <li class="ml-20px">
+                                <span>{{ language.churn_rate_popup9 }}</span>
+                                {{ language.churn_rate_popup13 }}
+                            </li>
+                            <li class="ml-20px">
+                                <span>{{ language.churn_rate_popup10 }}</span>
+                                {{ language.churn_rate_popup14 }}
+                            </li>
+                            <li class="ml-20px">
+                                <span>{{ language.churn_rate_popup11 }}</span>
+                                {{ language.churn_rate_popup15 }}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- <button type="button" class="btn-default primary px-3 px-3">{{language.Save}}</button> -->
+            <button type="button" class="btn-default btn-dft px-3 px-3 m-2" (click)="closeModal()" data-dismiss="modal">
+                {{ language.Cancel }}
+            </button>
+        </form>
+    </div>
+</ng-template>

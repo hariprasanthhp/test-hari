@@ -1,0 +1,2471 @@
+<div class="w-100 alert alert alert-danger fade show" *ngIf="error">
+  <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+  <button type="button" class="close" (click)="error = false">
+      <span></span>
+  </button>
+  <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+</div>
+
+<div class="w-100 position-relative">
+<div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess">
+  {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} 
+</div>
+<div id="work-flows" class="tab-pane" *ngIf="hasScopeAccess">
+  <div class="container" *ngIf="showIobFlow">
+    <div class="row">
+      <div class="col-md-11 px-0">
+        <span class="net-ops-secondary-title" id="Initial-Onboarding">{{language['Default Onboarding Workflow']}}</span>
+      </div>
+      <div class="col-md-1">
+        <button type="button" (click)="closeini();" class="close mt-2" aria-label="Close">
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 px-0">
+        <div class="profile-wizard position-relative" id="profileWizard">
+          <!-- <section class="stepper-main">
+            <div class="stepper col-12 pl-0">
+              <button class="step step--1" (click)="setActiveTab('Software Images')" [ngClass]="{
+                'step-active': activeTab === 'Software Images'
+              }" id="wk-start">
+                {{ language["Software Images"] }}
+              </button>
+              <button class="step step--2" (click)="setActiveTab('Subnet Configuration')" [ngClass]="{
+                'step-active': activeTab === 'Subnet Configuration'
+              }" id="wk-device">
+                {{ language["Subnet Configuration"] }}
+              </button>
+              <button class="step step--3" (click)="setActiveTab('Onboarding Workflow')" [ngClass]="{
+                'step-active': activeTab === 'Onboarding Workflow'
+              }" id="wk-opr">
+                {{ language["Onboarding Workflow"] }}
+              </button>
+            </div>
+           
+
+          </section> -->
+          <!--New Stepper start -->
+
+
+
+          <!--New Stepper end-->
+          <section>
+            <ul class="stepper-ui mt-3">
+              <li><button title="{{ language['Software Images'] }}" class="" (click)="setActiveTab('Software Images')"
+                  [ngClass]="{
+                          'step-current': activeTab === 'Software Images','step-done': activeTab !== 'Software Images'}"
+                  id="wk-start">
+                  <span>{{ language["Software Images"] }}</span></button></li>
+              <li><button title="{{ language['Subnet Configuration'] }}" class=""
+                  (click)="setActiveTab('Subnet Configuration')"
+                  [ngClass]="{
+                          'step-current': activeTab === 'Subnet Configuration','step-done': activeTab !== 'Subnet Configuration'}" id="wk-device">
+                  <span>{{ language["Subnet Configuration"] }}</span></button></li>
+              <li><button title="{{ language['Onboarding Workflow'] }}" class=""
+                  (click)="setActiveTab('Onboarding Workflow')"
+                  [ngClass]="{
+                          'step-current': activeTab === 'Onboarding Workflow','step-done': activeTab !== 'Onboarding Workflow'}" id="wk-opr">
+                  <span>{{ language["Onboarding Workflow"] }}</span></button></li>
+
+            </ul>
+          </section>
+          <div id="SoftwareImages" *ngIf="activeTab == 'Software Images'">
+            <div class="col-md-12 px-0 my-3" *ngIf="hasWriteAccess && !flowLimited_readOnly">
+              <button id="add-software-images-btn " *ngIf="!newSoftwareImage" (click)="addNewSoftwareImage()"
+                type="button" class="btn-default primary px-3">
+                {{ language.Add_SW_Image }}
+              </button>
+            </div>
+            <div class="loader-wrapper-info" *ngIf="loader">
+              <div class="loader">
+                <div class="d-flex justify-content-center">
+                  <div class="spinner-border text-primary">
+                    <span class="sr-only">{{ language.Loading }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-12 px-0" *ngIf="!newSoftwareImage">
+              <div class="w-100 alert alert alert-danger fade show" *ngIf="showError">
+                <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+                <button type="button" id="hide-error-btn" class="close" (click)="hideError()">
+                  <span></span>
+                </button>
+                <div class="d-inline-flex" [innerHtml]="errorMsg"></div>
+              </div>
+              <div class="py-3 warning-msg" *ngIf="softwareImageOfficial">
+                <span class="error-img"><img src="./assets/img/ic_warning-36px.svg" /></span>
+                <span> {{ language.Confirmation }}, </span>
+                {{ swConfrmMsg }}
+                <strong class="f-size-18">{{
+                  selectedSubnetObj?.subnet
+                  }}</strong>
+
+
+                <div class="btn-con-sec float-right">
+                  <button type="button" class="btn-default btn-primary px-3 mr-2" ngbAutofocus id="confirm-btn"
+                    (click)="swOfficialConfirmation()">
+                    {{ language.Confirm }}
+                  </button>
+                  <button type="button" class="btn-default btn-dft py-1" id="cancel-btn" (click)="closeswOfficialConfirmation()">
+                    {{ language.Cancel }}
+                  </button>
+                </div>
+              </div>
+              <div class="overflow-x-auto">
+                <table *ngIf="datatableVisible && !newSoftwareImage" id="software-images-table" datatable
+                  [dtOptions]="softwareTableOptions"
+                  class="software-images-table-info row-border hover table-alter w-100">
+                  <thead>
+                    <tr>
+                      <th *ngIf="hasWriteAccess && !flowLimited_readOnly" class="max-width-100px">{{ language['Official Status'] }}</th>
+                      <th class="nameWidth">{{ language.Name }}</th>
+                      <th>{{ language.model }}</th>
+                      <th class="descriptionWidth">
+                        {{ language.description }}
+                      </th>
+                      <th>{{ language.Version }}</th>
+
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr id="{{ file._id }}" *ngFor="let file of softwareImageObj; let i = index">
+                      <td *ngIf="hasWriteAccess && !flowLimited_readOnly">
+                        <div class="checkbox switcher" *ngIf="file.isOfficialImageEligible">
+                          <label [for]="file.name">
+                            <input type="checkbox" [checked]="file.isOfficialImage" [(ngModel)]="file.isOfficialImage"
+                              (change)="onSoftwareChange(file)" [id]="file.name" [disabled]="softwareImageOfficial" />
+                            <span><small></small></span>
+                          </label>
+                        </div>
+                      </td>
+                      <td>{{ file.name }}</td>
+                      <td *ngIf="file?.officialImageModels">
+                        <div *ngFor="let model of file.models">
+                          {{model}}
+                          <!-- <span
+                          *ngIf="file?.officialImageModels?.indexOf(model)!=-1?true:false">(official)</span> -->
+                        </div>
+                      </td>
+                      <td *ngIf="!file?.officialImageModels">
+                        <div *ngFor="let model of file.models">
+                          {{model}}
+                        </div>
+                      </td>
+                      <td>{{ file.description }}</td>
+                      <td>{{ file.version }}</td>
+
+                    </tr>
+                  </tbody>
+                  <tbody *ngIf="softwareImageObj?.length == 0">
+                    <tr>
+                      <td colspan="5" class="no-data-available">
+                        {{ language["No data available in table"] }}
+                      </td>
+                    </tr>
+                  </tbody>
+
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+            <div *ngIf="newSoftwareImage">
+              <div class="w-100 alert alert alert-danger fade show" *ngIf="showError">
+                <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+                <button type="button" id="hide-error-btn" class="close" (click)="hideError()">
+                  <span></span>
+                </button>
+                <div class="d-inline-flex" [innerHtml]="errorMsg"></div>
+              </div>
+
+              <div class="w-100 alert alert alert-success fade show" *ngIf="showSuccess">
+                <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+                <button type="button" class="close" id="hide-success-btn" (click)="hideSuccess()">
+                  <span></span>
+                </button>
+                <div class="d-inline-flex" [innerHtml]="successMsg"></div>
+              </div>
+
+              <div class="py-3 warning-msg warning-msg-dis" *ngIf="updateData.name">
+                <span class="error-img float-left"><img src="./assets/img/warning-icon.svg"></span>
+                <span class="error-info-span">
+                  <b>{{ modalInfo }}</b>{{ language.The_Software_Image }} "{{ swFileObj.name }}"{{
+                  language.Overwrite_Confirmation
+                  }}
+                </span>
+                <div class="btn-con-sec float-right">
+                  <button class="btn-default btn-primary px-3 mr-2" id="confirm-btn" (click)="confirmUpdateSecleted()">
+                    {{ language.Confirm }}
+                  </button>
+                  <button class="btn-default btn-dft py-1" (click)="closeModal()">
+                    {{ language.Cancel }}
+                  </button>
+                </div>
+              </div>
+              <div class="loader" *ngIf="swLoading">
+                <div class="d-flex justify-content-center">
+                  <div class="spinner-border text-primary">
+                    <span class="sr-only">{{ language.Loading }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="py-3 warning-msg" *ngIf="softwareImageOfficial">
+                <span class="error-img"><img src="./assets/img/ic_warning-36px.svg" /></span>
+                <span> {{ language.Confirmation }}, </span>
+                {{ swConfrmMsg }}
+                <strong class="f-size-18">{{
+                  selectedSubnetObj?.subnet
+                  }}</strong>
+
+
+                <div class="btn-con-sec float-right">
+                  <button type="button" class="btn-default btn-primary px-3 mr-2" ngbAutofocus id="confirm-btn"
+                    (click)="onSWFileSubmit()">
+                    {{ language.Confirm }}
+                  </button>
+                  <button type="button" class="btn-default btn-dft py-1" id="cancel-btn" (click)="closeswOfficialConfirmation()">
+                    {{ language.Cancel }}
+                  </button>
+                </div>
+              </div>
+              <form class="my-3" id="software-images-form" novalidate #myForm="ngForm"
+                (ngSubmit)="checkForOfficialImage()">
+                <div class="form-group browse-file ccl-form row">
+                  <div class="input-group">
+                    <label class="col-sm-2 col-form-label">{{ language.File }} <span class="error">*</span>
+                      <span class="required-field"> </span></label>
+                    <div class="col-sm-10">
+                      <input type="file" accept=".bin,.oneimage,.img" class="custom-file-input  cursor-pointer" id="importFile"
+                        name="importFile" (change)="onFileChange($event.target.files)" />
+                      <label class="custom-file-label" *ngIf="!fileToUpload; else elseFile" for="importFile">{{
+                        language.File }}</label>
+                      <ng-template #elseFile>
+                        <label class="custom-file-label" for="importFile">{{ fileToUpload.name }}</label>
+                      </ng-template>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group ccl-form row">
+                  <label for="inputModel" class="col-sm-2 col-form-label">{{ language.Models }}</label>
+                  <div class="col-sm-10">
+                    <input type="text" id="Model" name="model" class="form-control" [(ngModel)]="swFileObj.models"
+                      readonly placeholder="{{ language.Models }}" />
+                  </div>
+                </div>
+
+                <div class="form-group ccl-form row">
+                  <label for="inputVersion" class="col-sm-2 col-form-label">{{ language.Version }}</label>
+                  <div class="col-sm-10">
+                    <input type="text" id="Version" name="version" class="form-control" [(ngModel)]="swFileObj.version"
+                      readonly placeholder="{{ language.Version }}" />
+                  </div>
+                </div>
+                <div class="form-group ccl-form row">
+                  <label for="inputName" class="col-sm-2 col-form-label">{{ language.Name }}<span
+                      class="error">*</span></label>
+                  <div class="col-sm-10">
+                    <input type="text" id="name" #name="ngModel" name="name" class="form-control"
+                      [(ngModel)]="swFileObj.name" required placeholder="{{ language.Name }}" />
+                    <p *ngIf="name.invalid && (name.dirty || name.touched)">
+                      <small class="errorMsg" *ngIf="name.errors.required">
+                        {{ language.Name_Is_Required }}
+                      </small>
+                    </p>
+                  </div>
+                </div>
+                <div class="form-group ccl-form row">
+                  <label for="inputdes" class="col-sm-2 col-form-label">{{ language.Decription
+                    }}<small>{{ language.optional }}</small></label>
+                  <div class="col-sm-10">
+                    <input type="text" id="description" name="description" [(ngModel)]="swFileObj.description"
+                      placeholder="{{ language.Decription }}" trimSpace [formValue]="swFileObj"/>
+                  </div>
+                </div>
+                <div class="form-group ccl-form row">
+                  <label class="col-sm-2 col-form-label">
+                    {{ language["official Image"] }}<span class="error">*</span>
+                  </label>
+                  <div class="col-sm-10">
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" [(ngModel)]="officialImage"
+                        name="officialImageRadioOptions" id="officialRadio" [value]="true" [checked]="officialImage" />
+                      <label class="form-check-label" for="officialRadio">{{ language.Enabled }}</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" [(ngModel)]="officialImage"
+                        name="officialImageRadioOptions" id="officialRadio1" [value]="false"
+                        [checked]="!officialImage" />
+                      <label class="form-check-label" for="officialRadio1">{{ language.Disabled }}</label>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <div class="mt-3 mb-4">
+                    <button *ngIf="hasWriteAccess" type="submit" id="submit-btn" class="btn-default primary px-3 mr-2"
+                      [disabled]="(!myForm.valid || !fileRequired)">
+                      {{ language.submit }}
+                    </button>
+                    <button type="button" id="cancel-btn" class="btn-default btn-dft px-3 ml-2 mr-3"
+                      (click)="newSoftwareImage = !newSoftwareImage;getSwImagesListCout()">
+                      {{ language.cancel }}
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class="pos-abs-right">
+              <button type="button" id="nextbtn" (click)="activeTab = 'Subnet Configuration'"
+                class="btn-default primary px-3 mr-2">
+                {{ language.Next }}
+              </button>
+            </div>
+          </div>
+          <div id="SubnetConfiguration" *ngIf="activeTab === 'Subnet Configuration'">
+            <app-subnet-config></app-subnet-config>
+            <button type="button" id="previousbtn" (click)="activeTab = 'Software Images'"
+              class="btn-default btn-dft pos-abs-prev px-3 mr-2">
+              {{ language.Previous }}
+            </button>
+            <button type="button" id="nextbtn"
+              (click)="activeTab = 'Onboarding Workflow'; setActiveTab('Onboarding Workflow')"
+              class="btn-default primary pos-abs-right px-3 mr-2">
+              {{ language.Next }}
+            </button>
+          </div>
+          <div id="onboarding" *ngIf="activeTab === 'Onboarding Workflow'">
+            <div class="row">
+              <div class="w-100 alert alert alert-danger fade show" *ngIf="showErrorini">
+                <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+                <button type="button" id="hide-error-btn" class="close" (click)="hideError()">
+                  <span></span>
+                </button>
+                <div class="d-inline-flex" [innerHtml]="errorMsg"></div>
+              </div>
+              <div class="col-md-6 pr-4">
+                <div class="cco-secondary-title border-bottom">
+                  {{ language["Service User Credentials"] }}
+                </div>
+                <form class="ccl-form needs-validation" novalidate #myForm2="ngForm">
+                  <div class="form-group">
+                    <label class="col-form-label">
+                      {{ language.User_Name }} <span class="error">*</span></label>
+                    <input class="form-control" id="UserName" #UserName="ngModel" type="text" name="UserName"
+                      [(ngModel)]="hsiModel.userCredentials.Username" required trimSpace [formValue]="hsiModel"/>
+                    <p *ngIf="UserName.invalid && (UserName.dirty || UserName.touched || submitWorflow)" >
+                      <small class="errorMsg" *ngIf="UserName.errors.required">
+                        {{ language["This field is required"]}}
+                      </small>
+                    </p>
+                  </div>
+                  <div class="form-group position-relative">
+                    <label class="col-form-label">
+                      {{ language.Password }}<span class="error">*</span></label>
+                    <input [type]="secretEyeIcon?'text':'password'" class="form-control" id="name2"
+                      pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{16,24}$" #pwd="ngModel"
+                      type="text" name="name" required [(ngModel)]="hsiModel.userCredentials.Password" />
+                      <span class="mt-2 pointer" [ngClass]="secretEyeIcon ?'password_view' : 'password_hide'" (click)="secretEyeIcon = !secretEyeIcon"></span>
+                    <p *ngIf="pwd.invalid && (pwd.dirty || pwd.touched || submitWorflow)">
+                      <small class="errorMsg" *ngIf="pwd.errors.required">
+                        {{ language["This field is required"]}}
+                      </small>
+                      <small class="errorMsg" *ngIf="pwd.errors?.pattern">
+                        {{language.workflow_error_msg}}
+                      </small>
+                    </p>
+                  </div>
+                </form>
+                <!--<form class="ccl-form needs-validation" novalidate #myForm1="ngForm">
+                  <div class="cco-secondary-title border-bottom">
+                    Wi-Fi
+                    <div class="col-md-12 px-0 my-3">
+                      <button type="submit" id="ssidDone" *ngIf="scopeFlag.initialonboarding"
+                        [disabled]="selectedSSID.WlanIndex=='' || !isEditSSid"
+                        (click)="myForm1.valid?onSubmitSSID():'';changeWifiSsid();"
+                        class="btn-default primary px-3 mr-2">
+                        {{ language.Done }}
+                      </button>
+                      <button type="submit" id="ssidDiscard" *ngIf="scopeFlag.initialonboarding"
+                        [disabled]="selectedSSID.WlanIndex=='' || !isEditSSid"
+                        (click)="onDiscardSSID('discard');changeWifiSsid();" class="btn-default primary px-3 mr-2">
+                        {{ language.Discard }}
+                      </button>
+                    </div>
+                  </div>
+                  <div class="form-group inline-input">
+                    <label class="col-form-label"> Select SSID*</label>
+                    <div class="custom-selectbox-opr">
+                      <div class="w-100">
+                        <ng-select id="Encryption" name="SSIDDropdown" [items]="wifiSsidExosType" bindLabel="SSIDNAME"
+                          bindValue="id" [multiple]="false" placeholder="select SSID" [clearable]="false"
+                          #SSIDDropdown="ngModel" [searchable]="false" [(ngModel)]="selectedSSID.WlanIndex"
+                          (change)="selectedDropdownSSID($event)"
+                          [required]="hsiModel.wifiSsidExos.length==0?true:false">
+                        </ng-select>
+                        <p
+                          *ngIf="(SSIDDropdown.invalid &&  (SSIDDropdown.dirty || SSIDDropdown.touched)) || submitWorflow">
+                          <small class="errorMsg" *ngIf="SSIDDropdown.errors?.required">
+                            {{ language["This field is required"]}}
+                          </small>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-12 px-0 my-2" *ngIf="selectedSSID.WlanIndex!=''">
+                    <label class="col-form-label">
+                      {{ language.Service }}
+                    </label>
+                  </div>
+                  <div class="col-md-12 px-0 my-2" *ngIf="selectedSSID.WlanIndex!=''">
+                    <div class="form-check form-check-inline">
+                      <input #inputs class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1"
+                        [value]="true" [checked]="selectedSSID.Enable" [(ngModel)]="selectedSSID.Enable"
+                        (change)="EnableShow(selectedSSID.Enable);changeWifiSsid();" />
+                      <label class="form-check-label" for="inlineRadio1">{{ language.Enabled }}</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input #inputs class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2"
+                        [value]="false" [(ngModel)]="selectedSSID.Enable" [checked]="selectedSSID.Enable"
+                        (change)="EnableShow(selectedSSID.Enable);changeWifiSsid();" />
+                      <label class="form-check-label" for="inlineRadio2">{{ language.Disabled }}</label>
+                    </div>
+                  </div>
+
+                  <div class="form-group my-2" *ngIf="Shown">
+                    <label class="col-form-label">
+                      {{ language.Name }}</label>
+                    <input class="form-control" id="ssidName" type="text" [(ngModel)]="selectedSSID.SSID"
+                      name="ssidName" (change)="changeWifiSsid();" />
+                  </div>
+
+                  <div class="col-md-12 px-0 my-2" *ngIf="Shown">
+                    <label class="col-form-label">
+                      {{ language.Broadcasting }}
+                    </label>
+                  </div>
+                  <div class="col-md-12 px-0 my-2" *ngIf="Shown">
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="BroadCastRadioOptions" id="inlineRadio3"
+                        [value]="true" (change)="changeWifiSsid();" [checked]="selectedSSID.SSIDAdvertisementEnabled"
+                        [(ngModel)]="
+                        selectedSSID.SSIDAdvertisementEnabled
+                      " />
+                      <label class="form-check-label" for="inlineRadio3">{{ language.Enabled }}</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="BroadCastRadioOptions" id="inlineRadio4"
+                        [value]="false" (change)="changeWifiSsid();" [checked]="selectedSSID.SSIDAdvertisementEnabled"
+                        [(ngModel)]="
+                        selectedSSID.SSIDAdvertisementEnabled
+                      " />
+                      <label class="form-check-label" for="inlineRadio4">{{ language.Disabled }}</label>
+                    </div>
+                  </div>
+                  <div class="form-group inline-input my-2" *ngIf="Shown">
+                    <label class="col-form-label">
+                      Security
+                    </label>
+                    <div class="custom-selectbox-opr">
+                      <div class="w-100">
+                        <ng-select id="Security" [items]="securityitem" bindLabel="name" bindValue="id"
+                          [multiple]="false" placeholder="Security Off" name="securityValue"
+                          [(ngModel)]="selectedSSID.BeaconType" [clearable]="false"
+                          (change)="selectedSecuritySSID($event,'drop');changeWifiSsid();" [searchable]="false"
+                          required>
+                        </ng-select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group inline-input my-2" *ngIf="Shown && selectedSSID.BeaconType!='Basic'">
+                    <label class="col-form-label">
+                      Encryption
+                    </label>
+                    <div class="custom-selectbox-opr">
+                      <div class="w-100">
+                        <ng-select id="encryption" [items]="encryptionitem" bindLabel="name" bindValue="id"
+                          [multiple]="false" name="encryptionValue" (change)="changeWifiSsid();"
+                          [(ngModel)]="selectedSSID.IEEE11iEncryptionModes" [clearable]="false" [searchable]="false"
+                          required>
+                        </ng-select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group my-2" *ngIf="Shown && selectedSSID.BeaconType!='Basic'"
+                    style="position: relative;">
+                    <label class="col-form-label">
+                      {{ language.Passphrase }}</label>
+                    <div class="col-sm-12 p-0">
+                      <input class="form-control" id="KeyPassphrase" (change)="changeWifiSsid();"
+                        #KeyPassphrase="ngModel" type="text" [(ngModel)]="
+                                                                        selectedSSID.PreSharedKey[1].KeyPassphrase
+                                                                      " name="KeyPassphrase" minlength="8"
+                        autocomplete="new-password" />
+                      <p *ngIf="KeyPassphrase.invalid && (KeyPassphrase.dirty || KeyPassphrase.touched)">
+                        <small class="errorMsg" *ngIf="KeyPassphrase.errors.minlength">
+                          Please enter at least 8 characters.
+                        </small>
+                      </p>
+                    </div>
+                  </div>
+                  <!--<div class="col-md-12 px-0 my-2" *ngIf="Shown">
+                    <label class="col-form-label">
+                      {{ language['MAC Authentication'] }}
+                    </label>
+                  </div>
+                  <div class="col-md-12 px-0 my-2" *ngIf="Shown">
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="MacRadioOptions" id="inlineRadio5"
+                        [value]="true" [checked]="selectedSSID.MACAddressControlEnabled" [(ngModel)]="
+                        selectedSSID.MACAddressControlEnabled
+                      " />
+                      <label class="form-check-label" for="inlineRadio5">{{ language.Enabled }}</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="MacRadioOptions" id="inlineRadio6"
+                        [value]="false" [checked]="selectedSSID.MACAddressControlEnabled" [(ngModel)]="
+                        selectedSSID.MACAddressControlEnabled
+                      " />
+                      <label class="form-check-label" for="inlineRadio6">{{ language.Disabled }}</label>
+                    </div>
+                  </div>
+
+                  <div class="col-md-12 px-0 my-2" *ngIf="Shown">
+                    <label class="col-form-label">
+                      {{ language['Split Horizon (Inter-BSS Isolation)'] }}
+                    </label>
+                  </div>
+                  <div class="col-md-12 px-0 my-2" *ngIf="Shown">
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="SplitRadioOptions" id="inlineRadio7"
+                        [value]="true" [checked]="selectedSSID.X_000631_SplitHorizon" [(ngModel)]="
+                        selectedSSID.X_000631_SplitHorizon
+                      " />
+                      <label class="form-check-label" for="inlineRadio7">{{ language.Enabled }}</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="SplitRadioOptions" id="inlineRadio8"
+                        [value]="false" [checked]="selectedSSID.X_000631_SplitHorizon" [(ngModel)]="
+                        selectedSSID.X_000631_SplitHorizon
+                      " />
+                      <label class="form-check-label" for="inlineRadio8">{{ language.Disabled }}</label>
+                    </div>
+                  </div>
+
+                  <div class="col-md-12 px-0 my-2" *ngIf="Shown">
+                    <label class="col-form-label">
+                      {{ language['Intra-BSS Isolation'] }}
+                    </label>
+                  </div>
+                  <div class="col-md-12 px-0 my-2" *ngIf="Shown">
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="IntraRadioOptions" id="inlineRadio9"
+                        [value]="true" [checked]="selectedSSID.X_000631_IntraSsidIsolation" [(ngModel)]="
+                        selectedSSID.X_000631_IntraSsidIsolation
+                      " />
+                      <label class="form-check-label" for="inlineRadio9">{{ language.Enabled }}</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="IntraRadioOptions" id="inlineRadio10"
+                        [value]="false" [checked]="selectedSSID.X_000631_IntraSsidIsolation" [(ngModel)]="
+                        selectedSSID.X_000631_IntraSsidIsolation
+                      " />
+                      <label class="form-check-label" for="inlineRadio10">{{ language.Disabled }}</label>
+                    </div>
+                  </div>-->
+                <!--</form>-->
+              </div>
+              <div class="col-md-6 pl-4">
+                <div class="cco-secondary-title border-bottom">
+                  {{ language["Time Zone"] }}
+                </div>
+                <form class="ccl-form needs-validation" novalidate #myForm="ngForm">
+                  <div class="form-group inline-input">
+                    <label class="col-form-label">
+                      {{ language["Time Zone"] }}<span class="error">*</span>
+                    </label>
+                    <div class="custom-selectbox-opr">
+                      <div class="w-100">
+                        <ng-select id="Time" name="TmeZone" #tz="ngModel" [items]="timeZone" bindLabel="displayName"
+                          bindValue="value" [multiple]="false" placeholder="Select TimeZone" [clearable]="false"
+                          [searchable]="true" [(ngModel)]="selectedTimeZone" (change)="onTimeZoneChange($event)"
+                          required>
+                        </ng-select>
+                        <p *ngIf="tz.invalid && (tz.dirty || tz.touched || submitWorflow)">
+                          <small class="errorMsg" *ngIf="tz.errors.required">
+                            {{ language["This field is required"]}}
+                          </small>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-12 px-0 my-2">
+                    <label class="col-form-label">
+                      {{ language["Network Time"] }} <span class="error">*</span>
+                    </label>
+                  </div>
+                  <div class="col-md-12 px-0 my-3">
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" [(ngModel)]="hsiModel.timezonePosix.NTPEnable"
+                        name="networkRadioOptions" (change)="EnableTZ()" id="networkRadio" [value]="true"
+                        [checked]="hsiModel.timezonePosix.NTPEnable" />
+                      <label class="form-check-label" for="networkRadio">{{ language.Enabled }}</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" [(ngModel)]="hsiModel.timezonePosix.NTPEnable"
+                        name="networkRadioOptions" id="networkRadio1" (change)="EnableTZ()" [value]="false"
+                        [checked]="hsiModel.timezonePosix.NTPEnable" />
+                      <label class="form-check-label" for="networkRadio1">{{ language.Disabled }}</label>
+                    </div>
+                  </div>
+                  <div *ngIf="hsiModel.timezonePosix.NTPEnable">
+                    <div class="cco-secondary-title border-bottom">
+                      {{ language["NTP Servers"] }}
+                    </div>
+
+                    <div class="form-group">
+                      <label class="col-form-label">
+                        {{ language["1st NTP Server"] }}<span class="error">*</span></label>
+                      <input class="form-control" #ntpServer1="ngModel" id="ntpServer1"
+                        [(ngModel)]="hsiModel.timezonePosix.NTPServer1" type="text" name="ntpServer1"
+                        [required]="hsiModel.timezonePosix.NTPEnable"  trimSpace [formValue]="hsiModel"/>
+                      <p *ngIf="ntpServer1.invalid && (ntpServer1.dirty || ntpServer1.touched || submitWorflow)">
+                        <small class="errorMsg" *ngIf="ntpServer1.errors.required">
+                          {{ language["This field is required"]}}
+                        </small>
+                      </p>
+                    </div>
+                    <div class="form-group">
+                      <label class="col-form-label">
+                        {{ language["2nd NTP Server"] }}</label>
+                      <input class="form-control" [(ngModel)]="hsiModel.timezonePosix.NTPServer2" id="ntpServer2"
+                        type="text" name="ntpServer2"  trimSpace [formValue]="hsiModel"/>
+                    </div>
+                    <div class="form-group">
+                      <label class="col-form-label">
+                        {{ language["3rd NTP Server"] }}</label>
+                      <input class="form-control" [(ngModel)]="hsiModel.timezonePosix.NTPServer3" id="ntpServer3"
+                        type="text" name="ntpServer3" trimSpace [formValue]="hsiModel"/>
+                    </div>
+                    <div class="form-group">
+                      <label class="col-form-label">{{ language["4th NTP Server"] }}</label>
+                      <input class="form-control" id="ntpServer4" [(ngModel)]="hsiModel.timezonePosix.NTPServer4"
+                        type="text" name="ntpServer4" trimSpace [formValue]="hsiModel"/>
+                    </div>
+                    <!--<div class="form-group">
+                      <label class="col-form-label">{{ language["5th NTP Server"] }}</label>
+                      <input class="form-control" id="ntpServer5" type="text" name="ntpServer5"
+                        [(ngModel)]="hsiModel.timezonePosix.NTPServer5" />
+                    </div>-->
+                  </div>
+                </form>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12 mt-3">
+                <!--<button type="submit" *ngIf="scopeFlag.initialonboarding" class="btn btn-primary"
+                  (click)="onSaveWorkFlow(!myForm.valid || !myForm1.valid || !myForm2.valid)">
+                  {{ language["Save Workflow"] }}
+                </button>-->
+                <!-- <button type="submit" *ngIf="hasWriteAccess" class="btn btn-primary"
+                  (click)="onSaveWorkFlow(!myForm.valid || !myForm2.valid);closeini();">
+                  {{ language["Save Workflow"] }}
+                </button> -->
+                <button type="submit" *ngIf="hasWriteAccess" class="btn btn-primary"
+                  (click)="onSaveWorkFlow(!myForm.valid || !myForm2.valid);">
+                  {{ language["Save Workflow"] }}
+                </button>
+              </div>
+            </div>
+            <hr />
+            <div class="pos-abs-right">
+              <button type="button" id="previousbtn" (click)="activeTab = 'Subnet Configuration'"
+                class="btn-default btn-dft px-3 mr-2">
+                {{ language.Previous }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row my-3" *ngIf="showWorkflow">
+    <div class="col-md-12">
+
+      <!-- <button data-toggle="modal" data-target=".bd-example-modal-lg" type="button"
+        *ngIf="router.url.includes('cco-foundation') && hasWriteAccess" class="btn-default primary px-3 mx-2"
+        (click)="getSwImagesListCout(); activeTab = 'Software Images';" id="workflow-setup ">
+        workflow
+        setup
+      </button> -->
+
+      <button type="button" class="btn-default primary px-3" (click)="addWorkflow()"
+        *ngIf="hasWriteAccess && router.url.includes('cco-foundation');else NewWorkFLowBlock" id="add_workflow">
+        {{ language.AddWorkflow }}
+      </button>
+      <ng-template #NewWorkFLowBlock>
+        <button type="button" class="btn-default primary px-3"
+          (click)="(orgId == '12967001' && baseUrl.includes('/dev.api.calix.ai')  && router.url.includes('cco/operations/cco-subscriber-operations/operations/workflows'))?addAlarmWorkflow():addWorkflow()"
+          *ngIf="hasWriteAccess" id="add_workflow">
+          {{ language.Add_Workflow }}
+        </button>
+      </ng-template>
+
+      <!--<button type="button" *ngIf="router.url.includes('cco-foundation') && hasWriteAccess"
+        class="btn-default primary px-3 mx-2"
+        (click)="getSwImagesListCout(); activeTab = 'Software Images'; showIobFlow = true; showWorkflow = false;"
+        id="initial workflow">
+        {{ language["Initial Onboarding"] }}
+      </button>-->
+      <!-- 
+      <button type="button" *ngIf="router.url.includes('cco-foundation')&& hasWriteAccess"
+        class="btn-default primary px-3 mx-2" (click)="addOfficialImageWorkflow()" id="Default initial workflow">
+        {{ language["Default Image"] }}
+      </button> -->
+
+      <ng-template class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog"
+        aria-labelledby="myLargeModalLabel" aria-hidden="true" #initialWorkflow>
+        <div class="modal-header">
+          <div class="cco-secondary-title mb-3" id="exampleModalLongTitle"></div>
+          <button type="button" class="close" (click)="closeModal()" aria-label="Close">
+            <span aria-hidden="true"></span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="profile-wizard" id="profileWizard">
+                <section class="stepper-main">
+                  <!--   <div class="stepper col-12 pl-0">
+                    <button class="step step--1" (click)="setActiveTab('Software Images')" [ngClass]="{
+                        'step-active': activeTab === 'Software Images'
+                      }" id="wk-start">
+                      {{ language["Software Images"] }}
+                    </button>
+                    <button class="step step--2" (click)="setActiveTab('Subnet Configuration')" [ngClass]="{
+                        'step-active': activeTab === 'Subnet Configuration'
+                      }" id="wk-device">
+                      {{ language["Subnet Configuration"] }}
+                    </button>
+                    <button class="step step--3" (click)="setActiveTab('Onboarding Workflow')" [ngClass]="{
+                        'step-active': activeTab === 'Onboarding Workflow'
+                      }" id="wk-opr">
+                      {{ language["Onboarding Workflow"] }}
+                    </button>
+                  </div> -->
+                  <!--New Stepper start -->
+
+                  <ul class="stepper-ui">
+                    <li><button title="{{ language['Software Images'] }}" class="step"
+                        (click)="setActiveTab('Software Images')" [ngClass]="{
+                                  'step-current': activeTab === 'Software Images'}" id="wk-start">
+                        <span>{{ language["Software Images"] }}</span></button></li>
+                    <li><button title="{{ language['Subnet Configuration'] }}" class="step"
+                        (click)="setActiveTab('Subnet Configuration')" [ngClass]="{
+                                  'step-current': activeTab === 'Subnet Configuration'}" id="wk-device">
+                        <span>{{ language["Subnet Configuration"] }}</span></button></li>
+                    <li><button title="{{ language['Onboarding Workflow'] }}" class="step"
+                        (click)="setActiveTab('Onboarding Workflow')" [ngClass]="{
+                                  'step-current': activeTab === 'Onboarding Workflow'}" id="wk-opr">
+                        <span>{{ language["Onboarding Workflow"] }}</span></button></li>
+                  </ul>
+
+                  <!--New Stepper End -->
+                </section>
+                <div id="SoftwareImages" *ngIf="activeTab == 'Software Images'">
+                  <div class="col-md-12 px-0 my-3" *ngIf="hasWriteAccess && !flowLimited_readOnly">
+                    <button id="add-software-images-btn " *ngIf="!newSoftwareImage"
+                      (click)="newSoftwareImage = !newSoftwareImage" type="button" class="btn-default primary px-3">
+                      {{ language.Add_SW_Image }}
+                    </button>
+                  </div>
+                  <div class="col-md-12 px-0" *ngIf="!newSoftwareImage">
+                    <div class="w-100 alert alert alert-danger fade show" *ngIf="showError">
+                      <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+                      <button type="button" id="hide-error-btn" class="close" (click)="hideError()">
+                        <span></span>
+                      </button>
+                      <div class="d-inline-flex" [innerHtml]="errorMsg"></div>
+                    </div>
+                    <div class="py-3 warning-msg" *ngIf="softwareImageOfficial">
+                      <span class="error-img"><img src="./assets/img/ic_warning-36px.svg" /></span>
+                      <span> {{ language.Confirmation }}, </span>
+                      {{ swConfrmMsg }}
+                      <strong class="f-size-18">{{
+                        selectedSubnetObj?.subnet
+                        }}</strong>
+                      ?
+
+                      <div class="btn-con-sec float-right">
+                        <button type="button" class="btn-default btn-primary px-3 mr-2" ngbAutofocus id="confirm-btn"
+                          (click)="swOfficialConfirmation()">
+                          {{ language.Confirm }}
+                        </button>
+                        <button type="button" class="btn-default btn-dft py-1" id="cancel-btn"
+                          (click)="closeswOfficialConfirmation()">
+                          {{ language.Cancel }}
+                        </button>
+                      </div>
+                    </div>
+                    <table *ngIf="datatableVisible && !newSoftwareImage" id="software-images-table" datatable
+                      [dtOptions]="softwareTableOptions"
+                      class="software-images-table-info row-border hover table-alter w-100">
+                      <thead>
+                        <tr>
+                          <th class="nameWidth">{{ language.Name }}</th>
+                          <th>{{ language.model }}</th>
+                          <th class="descriptionWidth">
+                            {{ language.description }}
+                          </th>
+                          <th>{{ language.Version }}</th>
+                          <th>{{ language.status }}</th>
+                          <th class="min-width-70px">{{language.Size}}</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr id="{{ file._id }}" *ngFor="let file of softwareImageObj; let i = index">
+                          <td>{{ file.name }}</td>
+                          <td>
+                            <div *ngFor="let model of file.models">
+                              {{ model }}
+                            </div>
+                          </td>
+                          <td>{{ file.description }}</td>
+                          <td>{{ file.version }}</td>
+                          <td>{{ ((file.size/1024)/1024) | number : '1.2-2'}} MB</td>
+                          <th>
+                            <div class="checkbox switcher">
+                              <label [for]="file.name">
+                                <input type="checkbox" [checked]="file.isOfficialImage"
+                                  [(ngModel)]="file.isOfficialImage" (change)="onSoftwareChange(file)"
+                                  [id]="file.name" />
+                                <span><small></small></span>
+                              </label>
+                            </div>
+                          </th>
+                        </tr>
+                      </tbody>
+                      <tbody *ngIf="softwareImageObj?.length == 0">
+                        <tr>
+                          <td colspan="5" class="no-data-available">
+                            {{ language["No data available in table"] }}
+                          </td>
+                        </tr>
+                      </tbody>
+
+                      <tbody></tbody>
+                    </table>
+                  </div>
+                  <div *ngIf="newSoftwareImage">
+                    <div class="w-100 alert alert alert-danger fade show" *ngIf="showError">
+                      <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+                      <button type="button" id="hide-error-btn" class="close" (click)="hideError()">
+                        <span></span>
+                      </button>
+                      <div class="d-inline-flex" [innerHtml]="errorMsg"></div>
+                    </div>
+
+                    <div class="w-100 alert alert alert-success fade show" *ngIf="showSuccess">
+                      <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+                      <button type="button" class="close" id="hide-success-btn" (click)="hideSuccess()">
+                        <span></span>
+                      </button>
+                      <div class="d-inline-flex" [innerHtml]="successMsg"></div>
+                    </div>
+
+                    <div class="py-3 warning-msg warning-msg-dis" *ngIf="updateData.name">
+                      <span class="error-img float-left"><img src="./assets/img/warning-icon.svg"></span>
+                      <span class="error-info-span">
+                        <b>{{ modalInfo }}</b>{{ language.The_Software_Image }} "{{ swFileObj.name }}"{{
+                        language.Overwrite_Confirmation
+                        }}
+                      </span>
+                      <div class="btn-con-sec float-right">
+                        <button class="btn-default btn-primary px-3 mr-2" id="confirm-btn" (click)="confirmUpdateSecleted()">
+                          {{ language.Confirm }}
+                        </button>
+                        <button class="btn-default btn-dft py-1" (click)="closeModal()">
+                          {{ language.Cancel }}
+                        </button>
+                      </div>
+                    </div>
+                    <div class="loader" *ngIf="swLoading">
+                      <div class="d-flex justify-content-center">
+                        <div class="spinner-border text-primary">
+                          <span class="sr-only">{{ language.Loading }}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <form class="my-3" id="software-images-form" novalidate #myForm="ngForm"
+                      (ngSubmit)="onSWFileSubmit()">
+                      <div class="form-group browse-file ccl-form row">
+                        <div class="input-group">
+                          <label class="col-sm-2 col-form-label">{{ language.File }} <span class="error">*</span>
+                            <span class="required-field"> </span></label>
+                          <div class="col-sm-10">
+                            <input type="file" accept=".bin,.oneimage,.img" class="custom-file-input" id="importFile"
+                              name="importFile" (change)="onFileChange($event.target.files)" />
+                            <label class="custom-file-label" *ngIf="!fileToUpload; else elseFile" for="importFile">{{
+                              language.File }}</label>
+                            <ng-template #elseFile>
+                              <label class="custom-file-label" for="importFile">{{ fileToUpload.name }}</label>
+                            </ng-template>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-group ccl-form row">
+                        <label for="inputModel" class="col-sm-2 col-form-label">{{ language.Models }}</label>
+                        <div class="col-sm-10">
+                          <input type="text" id="Model" name="model" class="form-control" [(ngModel)]="swFileObj.models"
+                            readonly placeholder="{{ language.Models }}" />
+                        </div>
+                      </div>
+
+                      <div class="form-group ccl-form row">
+                        <label for="inputVersion" class="col-sm-2 col-form-label">{{ language.Version }}</label>
+                        <div class="col-sm-10">
+                          <input type="text" id="Version" name="version" class="form-control"
+                            [(ngModel)]="swFileObj.version" readonly placeholder="{{ language.Version }}" />
+                        </div>
+                      </div>
+                      <div class="form-group ccl-form row">
+                        <label for="inputName" class="col-sm-2 col-form-label">{{ language.Name }} <span
+                            class="error">*</span></label>
+                        <div class="col-sm-10">
+                          <input type="text" id="name" #name="ngModel" name="name" class="form-control"
+                            [(ngModel)]="swFileObj.name" required placeholder="{{ language.Name }}" />
+                          <p *ngIf="name.invalid && (name.dirty || name.touched)">
+                            <small class="errorMsg" *ngIf="name.errors.required">
+                              {{ language.Name_Is_Required }}
+                            </small>
+                          </p>
+                        </div>
+                      </div>
+                      <div class="form-group ccl-form row">
+                        <label for="inputdes" class="col-sm-2 col-form-label">{{ language.Decription
+                          }}<small>{{ language.optional }}</small></label>
+                        <div class="col-sm-10">
+                          <input type="text" id="description" name="description" [(ngModel)]="swFileObj.description"
+                            placeholder="{{ language.Decription }}" trimSpace [formValue]="swFileObj"/>
+                        </div>
+                      </div>
+                      <div class="form-group ccl-form row">
+                        <label class="col-sm-2 col-form-label">
+                          {{ language["official Image"] }} <span class="error">*</span>
+                        </label>
+                        <div class="col-sm-10">
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" [(ngModel)]="officialImage"
+                              name="officialImageRadioOptions" id="officialRadio" [value]="true"
+                              [checked]="officialImage" />
+                            <label class="form-check-label" for="officialRadio">{{ language.Enabled }}</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" [(ngModel)]="officialImage"
+                              name="officialImageRadioOptions" id="officialRadio1" [value]="false"
+                              [checked]="officialImage" />
+                            <label class="form-check-label" for="officialRadio1">{{ language.Disabled }}</label>
+                          </div>
+                        </div>
+                      </div>
+                      <div>
+                        <div class="mt-3 mb-4">
+                          <button *ngIf="hasWriteAccess" type="submit" id="submit-btn"
+                            class="btn-default primary px-3 mr-2" [disabled]="(!myForm.valid || !fileRequired)">
+                            {{ language.submit }}
+                          </button>
+                          <button type="button" id="cancel-btn" class="btn-default primary px-3 ml-2 mr-3"
+                            (click)="newSoftwareImage = !newSoftwareImage">
+                            {{ language.cancel }}
+                          </button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                  <div class="pos-abs-right">
+                    <button type="button" id="nextbtn" (click)="activeTab = 'Subnet Configuration'"
+                      class="btn-default primary px-3 mr-2">
+                      {{ language.Next }}
+                    </button>
+                  </div>
+                </div>
+                <div id="SubnetConfiguration" *ngIf="activeTab === 'Subnet Configuration'">
+                  <app-subnet-config></app-subnet-config>
+                  <button type="button" id="previousbtn" (click)="activeTab = 'Software Images'"
+                    class="btn-default btn-dft pos-abs-prev px-3 mr-2">
+                    {{ language.Previous }}
+                  </button>
+                  <button type="button" id="nextbtn"
+                    (click)="activeTab = 'Onboarding Workflow'; setActiveTab('Onboarding Workflow')"
+                    class="btn-default primary pos-abs-right px-3 mr-2">
+                    {{ language.Next }}
+                  </button>
+                </div>
+                <div id="onboarding" *ngIf="activeTab === 'Onboarding Workflow'">
+                  <div class="row">
+                    <div class="w-100 alert alert alert-danger fade show" *ngIf="showErrorini">
+                      <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+                      <button type="button" id="hide-error-btn" class="close" (click)="hideError()">
+                        <span></span>
+                      </button>
+                      <div class="d-inline-flex" [innerHtml]="errorMsg"></div>
+                    </div>
+                    <div class="col-md-6 pr-4">
+                      <div class="cco-secondary-title border-bottom">
+                        {{ language["Service User Credentials"] }}
+                      </div>
+                      <div class="form-group">
+                        <label class="col-form-label">
+                          {{ language.User_Name }}*</label>
+                        <input class="form-control" id="UserName" type="text" name="UserName"
+                          [(ngModel)]="hsiModel.userCredentials.Username" required trimSpace [formValue]="hsiModel"/>
+                      </div>
+                      <div class="form-group">
+                        <label class="col-form-label">
+                          {{ language.Password }}*</label>
+                        <input class="form-control" id="name2" type="text" name="name" required
+                          [(ngModel)]="hsiModel.userCredentials.Password" />
+                      </div>
+
+                      <form class="ccl-form needs-validation" novalidate #myForm1="ngForm">
+                        <div class="cco-secondary-title border-bottom">
+                          {{language['WiFi']}}
+                        </div>
+                        <div class="form-group inline-input">
+                          <label class="col-form-label"> {{language['Select SSID']}} <span class="error">*</span>
+                          </label>
+                          <div class="custom-selectbox-opr">
+                            <div class="w-100">
+                              <ng-select id="Encryption" name="SSIDDropdown" [items]="wifiSsidExosType"
+                                bindLabel="SSIDNAME" bindValue="id" [multiple]="false"
+                                placeholder="{{language['Select SSID']}}" [clearable]="false" #SSIDDropdown="ngModel"
+                                [searchable]="false" [(ngModel)]="selectedSSID.WlanIndex"
+                                (change)="selectedDropdownSSID($event)" required>
+                              </ng-select>
+                              <p
+                                *ngIf="(SSIDDropdown.invalid &&  (SSIDDropdown.dirty || SSIDDropdown.touched)) || ssidMandatory">
+                                <small class="errorMsg" *ngIf="SSIDDropdown.errors.required">
+                                  {{ language["This field is required"]}}
+                                </small>
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-12 px-0 my-2">
+                          <label class="col-form-label">
+                            {{ language.Service }}
+                          </label>
+                        </div>
+                        <div class="col-md-12 px-0 my-2">
+                          <div class="form-check form-check-inline">
+                            <input #inputs class="form-check-input" type="radio" name="inlineRadioOptions"
+                              id="inlineRadio1" [value]="true" [checked]="selectedSSID.Enable"
+                              [(ngModel)]="selectedSSID.Enable" (change)="EnableShow(selectedSSID.Enable)" />
+                            <label class="form-check-label" for="inlineRadio1">{{ language.Enabled }}</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input #inputs class="form-check-input" type="radio" name="inlineRadioOptions"
+                              id="inlineRadio2" [value]="false" [(ngModel)]="selectedSSID.Enable"
+                              [checked]="selectedSSID.Enable" (change)="EnableShow(selectedSSID.Enable)" />
+                            <label class="form-check-label" for="inlineRadio2">{{ language.Disabled }}</label>
+                          </div>
+                        </div>
+
+                        <div class="form-group my-2" *ngIf="Shown">
+                          <label class="col-form-label">
+                            {{ language.Name }}</label>
+                          <input class="form-control" id="ssidName" type="text" [(ngModel)]="selectedSSID.SSID"
+                            name="ssidName" />
+                        </div>
+
+                        <div class="col-md-12 px-0 my-2" *ngIf="Shown">
+                          <label class="col-form-label">
+                            {{ language.Broadcasting }}
+                          </label>
+                        </div>
+                        <div class="col-md-12 px-0 my-2" *ngIf="Shown">
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="BroadCastRadioOptions" id="inlineRadio3"
+                              [value]="true" [checked]="selectedSSID.SSIDAdvertisementEnabled" [(ngModel)]="
+                                selectedSSID.SSIDAdvertisementEnabled
+                              " />
+                            <label class="form-check-label" for="inlineRadio3">{{ language.Enabled }}</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="BroadCastRadioOptions" id="inlineRadio4"
+                              [value]="false" [checked]="selectedSSID.SSIDAdvertisementEnabled" [(ngModel)]="
+                                selectedSSID.SSIDAdvertisementEnabled
+                              " />
+                            <label class="form-check-label" for="inlineRadio4">{{ language.Disabled }}</label>
+                          </div>
+                        </div>
+                        <div class="form-group inline-input my-2" *ngIf="Shown">
+                          <label class="col-form-label">
+                            {{language.Security}}
+                          </label>
+                          <div class="custom-selectbox-opr">
+                            <div class="w-100">
+                              <ng-select id="Security" [items]="securityitem" bindLabel="name" bindValue="id"
+                                [multiple]="false" placeholder="Security Off" name="securityValue"
+                                [(ngModel)]="selectedSSID.BeaconType" [clearable]="false"
+                                (change)="selectedSecuritySSID($event,'drop')" [searchable]="false" required>
+                              </ng-select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="form-group inline-input my-2" *ngIf="Shown && selectedSSID.BeaconType!='Basic'">
+                          <label class="col-form-label">
+                            {{language.Encryption}}
+                          </label>
+                          <div class="custom-selectbox-opr">
+                            <div class="w-100">
+                              <ng-select id="encryption" [items]="encryptionitem" bindLabel="name" bindValue="id"
+                                [multiple]="false" name="encryptionValue"
+                                [(ngModel)]="selectedSSID.IEEE11iEncryptionModes" [clearable]="false"
+                                [searchable]="false" required>
+                              </ng-select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="form-group my-2 position-relative"
+                          *ngIf="Shown && selectedSSID.BeaconType!='Basic'">
+                          <label class="col-form-label">
+                            {{ language.Passphrase }}</label>
+                          <input class="form-control" id="passPhrase1" type="text" [(ngModel)]="
+                              selectedSSID.PreSharedKey[1].KeyPassphrase
+                            " name="passPhrase1" />
+                        </div>
+                        <!--<div class="col-md-12 px-0 my-2" *ngIf="Shown">
+                          <label class="col-form-label">
+                            {{ language['MAC Authentication'] }}
+                          </label>
+                        </div>
+                        <div class="col-md-12 px-0 my-2" *ngIf="Shown">
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="MacRadioOptions" id="inlineRadio5"
+                              [value]="true" [checked]="selectedSSID.MACAddressControlEnabled" [(ngModel)]="
+                                selectedSSID.MACAddressControlEnabled
+                              " />
+                            <label class="form-check-label" for="inlineRadio5">{{ language.Enabled }}</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="MacRadioOptions" id="inlineRadio6"
+                              [value]="false" [checked]="selectedSSID.MACAddressControlEnabled" [(ngModel)]="
+                                selectedSSID.MACAddressControlEnabled
+                              " />
+                            <label class="form-check-label" for="inlineRadio6">{{ language.Disabled }}</label>
+                          </div>
+                        </div>
+
+                        <div class="col-md-12 px-0 my-2" *ngIf="Shown">
+                          <label class="col-form-label">
+                            {{ language['Split Horizon (Inter-BSS Isolation)'] }}
+                          </label>
+                        </div>
+                        <div class="col-md-12 px-0 my-2" *ngIf="Shown">
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="SplitRadioOptions" id="inlineRadio7"
+                              [value]="true" [checked]="selectedSSID.X_000631_SplitHorizon" [(ngModel)]="
+                                selectedSSID.X_000631_SplitHorizon
+                              " />
+                            <label class="form-check-label" for="inlineRadio7">{{ language.Enabled }}</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="SplitRadioOptions" id="inlineRadio8"
+                              [value]="false" [checked]="selectedSSID.X_000631_SplitHorizon" [(ngModel)]="
+                                selectedSSID.X_000631_SplitHorizon
+                              " />
+                            <label class="form-check-label" for="inlineRadio8">{{ language.Disabled }}</label>
+                          </div>
+                        </div>
+
+                        <div class="col-md-12 px-0 my-2" *ngIf="Shown">
+                          <label class="col-form-label">
+                            {{ language['Intra-BSS Isolation'] }}
+                          </label>
+                        </div>
+                        <div class="col-md-12 px-0 my-2" *ngIf="Shown">
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="IntraRadioOptions" id="inlineRadio9"
+                              [value]="true" [checked]="selectedSSID.X_000631_IntraSsidIsolation" [(ngModel)]="
+                                selectedSSID.X_000631_IntraSsidIsolation
+                              " />
+                            <label class="form-check-label" for="inlineRadio9">{{ language.Enabled }}</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="IntraRadioOptions" id="inlineRadio10"
+                              [value]="false" [checked]="selectedSSID.X_000631_IntraSsidIsolation" [(ngModel)]="
+                                selectedSSID.X_000631_IntraSsidIsolation
+                              " />
+                            <label class="form-check-label" for="inlineRadio10">{{ language.Disabled }}</label>
+                          </div>
+                        </div>-->
+                      </form>
+                      <div class="col-md-12 px-0 my-3">
+                        <button type="submit" id="ssidDone" [disabled]="!myForm1.valid" (click)="onSubmitSSID()"
+                          class="btn-default primary mr-2">
+                          {{ language.Done }}
+                        </button>
+                        <button type="submit" id="ssidDiscard" [disabled]="ssidMandatory" (click)="onDiscardSSID()"
+                          class="btn-default primary mr-2">
+                          {{ language.Discard }}
+                        </button>
+                      </div>
+                    </div>
+                    <div class="col-md-6 pl-4">
+                      <div class="cco-secondary-title border-bottom">
+                        {{ language["Time Zone"] }}
+                      </div>
+                      <form class="ccl-form needs-validation" novalidate #myForm="ngForm">
+                        <div class="form-group inline-input">
+                          <label class="col-form-label">
+                            {{ language["Time Zone"] }}*
+                          </label>
+                          <div class="custom-selectbox-opr">
+                            <div class="w-100">
+                              <ng-select id="Time" name="TmeZone" [items]="timeZone" bindLabel="displayName"
+                                bindValue="value" [multiple]="false" placeholder="Select TimeZone" [clearable]="false"
+                                [searchable]="true" [(ngModel)]="selectedTimeZone" (change)="onTimeZoneChange($event)"
+                                required>
+                              </ng-select>
+                              <!-- <div *ngIf="frequency.errors?.required && (myForm.submitted|| frequency.touched)" id="frequency-error">
+                                                                          {{language['This field is required']}}
+                                                                        </div> -->
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-12 px-0 my-2">
+                          <label class="col-form-label">
+                            {{ language["Network Time"] }} *
+                          </label>
+                        </div>
+                        <div class="col-md-12 px-0 my-3">
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" [(ngModel)]="hsiModel.timezonePosix.NTPEnable"
+                              name="networkRadioOptions" id="networkRadio" [value]="true"
+                              [checked]="hsiModel.timezonePosix.NTPEnable" />
+                            <label class="form-check-label" for="networkRadio">{{ language.Enabled }}</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" [(ngModel)]="hsiModel.timezonePosix.NTPEnable"
+                              name="networkRadioOptions" id="networkRadio1" [value]="false"
+                              [checked]="hsiModel.timezonePosix.NTPEnable" />
+                            <label class="form-check-label" for="networkRadio1">{{ language.Disabled }}</label>
+                          </div>
+                        </div>
+                        <div *ngIf="hsiModel.timezonePosix.NTPEnable">
+                          <div class="cco-secondary-title border-bottom">
+                            {{ language["NTP Servers"] }}
+                          </div>
+
+                          <div class="form-group">
+                            <label class="col-form-label">
+                              {{ language["1st NTP Server"] }}*</label>
+                            <input class="form-control" #ntpServer1="ngModel" id="ntpServer1"
+                              [(ngModel)]="hsiModel.timezonePosix.NTPServer1" type="text" name="ntpServer1" required  trimSpace [formValue]="hsiModel"/>
+                            <p *ngIf="ntpServer1.invalid && (ntpServer1.dirty || ntpServer1.touched)">
+                              <small class="errorMsg" *ngIf="ntpServer1.errors.required">
+                                {{ language["This field is required"]}}
+                              </small>
+                            </p>
+                          </div>
+                          <div class="form-group">
+                            <label class="col-form-label">
+                              {{ language["2nd NTP Server"] }}</label>
+                            <input class="form-control" [(ngModel)]="hsiModel.timezonePosix.NTPServer2" id="ntpServer2"
+                              type="text" name="ntpServer2" trimSpace [formValue]="hsiModel"/>
+                          </div>
+                          <div class="form-group">
+                            <label class="col-form-label">
+                              {{ language["3rd NTP Server"] }}</label>
+                            <input class="form-control" [(ngModel)]="hsiModel.timezonePosix.NTPServer3" id="ntpServer3"
+                              type="text" name="ntpServer3" trimSpace [formValue]="hsiModel"/>
+                          </div>
+                          <div class="form-group">
+                            <label class="col-form-label">{{ language["4th NTP Server"] }}</label>
+                            <input class="form-control" id="ntpServer4" [(ngModel)]="hsiModel.timezonePosix.NTPServer4"
+                              type="text" name="ntpServer4" trimSpace [formValue]="hsiModel"/>
+                          </div>
+                          <div class="form-group">
+                            <label class="col-form-label">{{ language["5th NTP Server"] }}</label>
+                            <input class="form-control" id="ntpServer5" type="text" name="ntpServer5"
+                              [(ngModel)]="hsiModel.timezonePosix.NTPServer5" />
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12 mt-3">
+                      <button type="submit" [disabled]="!myForm.valid" class="btn btn-primary">
+                        {{ language["Save Workflow"] }}
+                      </button>
+                    </div>
+                  </div>
+                  <hr />
+                  <div class="pos-abs-right">
+                    <button type="button" id="previousbtn" (click)="activeTab = 'Subnet Configuration'"
+                      class="btn-default btn-dft px-3 mr-2">
+                      {{ language.Previous }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>
+
+<div class="container" *ngIf="showWorkflow && hasScopeAccess">
+  <div class="loader" *ngIf="false">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary">
+        <span class="sr-only">{{ language.Loading }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success  -->
+  <div class="w-100 alert alert-success fade show flex-space-between" *ngIf="success">
+    <div [innerHtml]="successInfo"></div>
+    <button class="btn-default px-3 ok-btn" (click)="closeAlert()" id="success-ok">
+      {{ language.Ok }}
+    </button>
+  </div>
+  <!-- Success  -->
+
+  <!-- Inprogress Warning -->
+  <div class="warning-msg" *ngIf="inprpwarn">
+<div class="warning-msg-info align-items-center">
+  <div class="">
+    <span class="error-img"><img src="./assets/img/ic_warning-36px.svg" /></span>
+  </div>
+  <div class="msg-details">
+    <span [innerHtml]="inprpwarnInfo"></span>
+  </div>
+  
+  <div class="">
+    <button class="btn-default px-3 ok-btn float-right" (click)="closeAlert()" id="inprpwarn-ok">
+      {{ language.ok}}
+    </button>
+  </div>
+  </div>
+  </div>
+  <!-- Inprogress Warning -->
+
+  <!-- Warning  -->
+  <div class="warning-msg" *ngIf="warning">
+    <span class="error-img"><img src="./assets/img/ic_warning-36px.svg" /></span>
+    <span [innerHtml]="warningInfo"></span>
+    <div class="btn-con-sec float-right">
+      <button class="btn-default btn-primary px-3 mr-2" id="warning-cnf" (click)="confirm()">
+        {{ language.Confirm }}
+      </button>
+      <button class="btn-default btn-dft py-1" (click)="closeAlert()" id="warning-cancel">
+        {{ language.Cancel }}
+      </button>
+    </div>
+  </div>
+  <!-- Warning  -->
+
+  <!-- Delete -->
+  <div class="warning-msg" *ngIf="delete">
+    <span class="error-img"><img src="./assets/img/ic_warning-36px.svg" /></span>
+    <span [innerHtml]="deleteInfo"></span>
+    <div class="btn-con-sec float-right">
+      <button class="btn-default btn-primary px-3 mr-2" id="deleteBtn" (click)="confirmDeleteSecleted()">
+        {{ language.Confirm }}
+      </button>
+      <button class="btn-default btn-dft py-1" (click)="closeAlert()" id="cancelBtn">
+        {{ language.Cancel }}
+      </button>
+    </div>
+  </div>
+  <!-- Delete -->
+  <div class="row">
+    <div class="loader pt-5" *ngIf="loading">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-12 px-0">
+      <div>
+        <table id="workflow-table" width="100%" datatable [dtOptions]="workFlowtableOptions"
+          class="workflow-table-info row-border hover table-alter">
+          <thead>
+            <tr>
+              <th class="workflow-name">{{ language.Name }}</th>
+              <th class="workflow-description">{{ language.description }}</th>
+              <th class="workflow-state">{{ language.Current_State }}</th>
+              <th class="workflow-start-time">{{ language.Start_Time }}</th>
+              <th class="workflow-end-time">{{ language.End_Time }}</th>
+              <th class="workflow-edit-play-icon"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="cursor-pointer" id="{{ item._id }}" *ngFor="let item of wrkflwTableData">
+              <td id="name1" *ngIf="!router.url.includes('cco-foundation') && !this.router.url.includes('cco/operations')" (click)="getWokflowDetails(item)">
+                {{ item.name ? item.name : "" }}
+              </td>
+              <td id="name2" *ngIf="router.url.includes('cco-foundation') || this.router.url.includes('cco/operations')">
+                <span class="primary" (click)="getWokflowDetails(item)">
+                  {{ item.name ? item.name : "" }}
+                </span>
+              </td>
+              <td (click)="getWokflowDetails(item)">
+                {{ item.description ? item.description : "" }}
+              </td>
+              <td class="status-col" (click)="getWokflowDetails(item)">
+                <!-- <div *ngIf="router.url.includes('cco-foundation');else stateBlock"> -->
+                  <div *ngIf="  item.state  &&  item.state == 'Suspended' " class="suspended-but"><span
+                      class="dot"></span> {{language['Suspended']}} </div>
+                  <div *ngIf="  item.state  &&  item.state == 'Scheduled' " class="scheduled-but"><span
+                      class="dot"></span> {{language['scheduled']}} </div>
+                  <div *ngIf="  item.state  &&  item.state == 'In Progress'" class="progress-but"><span
+                      class="dot"></span> {{language['In progress']}} </div>
+                  <div *ngIf="  item.state  &&  item.state == 'Completed'" class="complete-but"><span
+                      class="dot"></span> {{language['Complete']}}</div>
+                  <div *ngIf="  item.state  &&  item.state == 'Error'" class="error-but"><span class="dot"></span>
+                    {{language['Error']}}
+                  </div>
+                <!-- </div> -->
+                <ng-template #stateBlock>
+                  <span [hidden]="item.state === 'Scheduled'">{{
+                    language.Schedule
+                    }}</span>
+                  {{ language[item.state] ? language[item.state] : "" }}
+                </ng-template>
+              </td>
+              <td (click)="getWokflowDetails(item)">
+                {{
+                item?.execPolicy?.initialTrigger?.type?(item.execPolicy.initialTrigger.type === "CPE Event"
+                ? (item.start | date: "MM/dd/yyyy hh:mm:ss a")
+                : (item.execPolicy.window.startDateTime
+                | date: "MM/dd/yyyy hh:mm:ss a")):""
+                }}
+              </td>
+              <td (click)="getWokflowDetails(item)">
+                {{
+                item.end ? (item.end | date: "MM/dd/yyyy hh:mm:ss a") : "N/A"
+                }}
+              </td>
+              <td class="actions white-space-nowrap">
+                <div *ngIf="!router.url.includes('cco-foundation');else dropdownBlock" class="action-tab-btn">
+                  <button id="wk-edit-btn" class="btn-delete-icon" data-toggle="tooltip" title="{{ language.Edit }}"
+                    (click)="editWorkflow(item,item?.type == 'Onboarding Discovery'? true:false)">
+                    <i class="fas fa-pencil-alt" *ngIf="
+                    (item.state === 'Suspended' || item.editable ) && hasWriteAccess
+                      "></i>
+                  </button>
+                  <button id="wk-status-btn" class="btn-delete-icon" data-toggle="tooltip" *ngIf="item._id != 0"
+                    title="{{ language.Status }}">
+                    <i class="fas fa-list" (click)="showStatus(item)"></i>
+                  </button>
+                  <button id="wk-fn-btn" class="btn-delete-icon">
+                    <i class="fas fa-pause" data-toggle="tooltip" title="{{ language.Suspend }}"
+                      (click)="suspendWrkflw(item)" *ngIf="
+                        item.state !== 'Suspended' &&
+                        item.state !== 'Completed' &&
+                        hasWriteAccess && item._id != 0
+                      "></i>
+                    <i class="fas fa-play" data-toggle="tooltip" title="{{ language.Resume }}"
+                      (click)="resumeWrkflw(item)" *ngIf="
+                        item.state === 'Suspended' &&
+                        item.state !== 'Completed' &&
+                        hasWriteAccess && item._id != 0
+                      "></i>
+                  </button>
+                  <button id="wk-delete-btn" class="btn-delete-icon" (click)="deleteWrkflw(item)" data-toggle="tooltip"
+                    title="{{ language.Delete }}"
+                    *ngIf="item?.type == 'Onboarding Discovery'? false:true && hasWriteAccess && item._id != 0 && item?.type != 'Onboarding Scheduler'">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </div>
+                <ng-template #dropdownBlock class="dropdown">
+                  <div class="dropdown-toggle text-right" id="dropdownMenuButton" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                    ...
+                  </div>
+                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" [hidden]="item._id == 0">
+                    <a class="dropdown-item" *ngIf="hasWriteAccess  && (item.state === 'Suspended' || item.editable) "
+                      (click)="editWorkflow(item,item?.type == 'Onboarding Discovery'? true:false)">{{language['Edit
+                      Workflow']}}</a>
+                    <a class="dropdown-item" *ngIf="item._id != 0" (click)="showStatus(item)">{{language['View Workflow
+                      Status']}}</a>
+                    <a class="dropdown-item" (click)="suspendWrkflw(item)" *ngIf="
+                    item.state !== 'Suspended' &&
+                    item.state !== 'Completed' &&
+                    item._id != 0 &&
+                    hasWriteAccess">
+                      {{language['Pause Workflow']}}</a>
+                    <a class="dropdown-item" (click)="resumeWrkflw(item)" *ngIf="
+                      item.state === 'Suspended' &&
+                      item.state !== 'Completed' &&
+                      item._id != 0 &&
+                      hasWriteAccess">
+                      {{language['Resume Workflow']}}</a>
+                    <a class="dropdown-item"
+                      *ngIf="item?.type == 'Onboarding Discovery'? false:true && hasWriteAccess && item._id != 0 && item?.type != 'Onboarding Scheduler' "
+                      (click)="deleteWrkflw(item)">
+                      {{language['Delete Workflow']}}</a>
+                  </div>
+                </ng-template>
+              </td>
+            </tr>
+          </tbody>
+          <tbody *ngIf="wrkflwTableData?.length == 0">
+            <tr>
+              <td colspan="5" class="no-data-available">
+                {{ language["No data available in table"] }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<!-- work-flows setup modal content-->
+<ng-template class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+  aria-hidden="true" #initOnboardingModel let-modal>
+  <div class="row mb-3">
+    <div class="col-md-11 col-sm-10">
+      <span class="cco-title" id="Initial-Onboarding"> {{language['Default Onboarding Workflow']}}</span>
+    </div>
+    <button type="button" class="close mt-2" (click)="closeAllModal()" aria-label="Close">
+      <span aria-hidden="true"></span>
+    </button>
+    <!-- <div class="col-md-1 col-sm-2">
+              <button type="button" class="close mt-2" (click)="closeAllModal()" aria-label="Close">
+                <span aria-hidden="true"></span>
+              </button>
+            </div> -->
+  </div>
+  <div class="modal-body">
+    <div class="col-md-12">
+      <div class="profile-wizard" id="profileWizard">
+        <!-- <section class="stepper-main">
+                        <div class="stepper col-12 pl-0">
+                          <button class="step step--1" (click)="setActiveTab('Software Images')" [ngClass]="{
+                              'step-active': activeTab === 'Software Images'
+                            }" id="wk-start">
+                            {{ language["Software Images"] }}
+                          </button>
+                          <button class="step step--2" (click)="setActiveTab('Subnet Configuration')" [ngClass]="{
+                              'step-active': activeTab === 'Subnet Configuration'
+                            }" id="wk-device">
+                            {{ language["Subnet Configuration"] }}
+                          </button>
+                          <button class="step step--3" (click)="setActiveTab('Onboarding Workflow')" [ngClass]="{
+                              'step-active': activeTab === 'Onboarding Workflow'
+                            }" id="wk-opr">
+                            {{ language["Onboarding Workflow"] }}
+                          </button>
+                          <button class="step step--4" (click)="setActiveTab('Summary')" *ngIf="showSummaryStep" [ngClass]="{
+                            'step-active': activeTab === 'Summary'
+                          }" id="wk-summary">
+                            Summary
+                          </button>
+                        </div>
+
+        </section> -->
+        <!--New Stepper start -->
+
+        <section>
+          <ul class="stepper-ui mt-3">
+            <li><button title="{{ language['Software Images'] }}" class="" (click)="setActiveTab('Software Images')"
+                [ngClass]="{
+                                  'step-current': activeTab === 'Software Images','step-done': activeTab !== 'Software Images'}"
+                id="wk-start">
+                <span>{{ language["Software Images"] }}</span></button></li>
+            <li><button title="{{ language['Subnet Configuration'] }}" class=""
+                (click)="setActiveTab('Subnet Configuration')"
+                [ngClass]="{
+                                  'step-current': activeTab === 'Subnet Configuration','step-done': activeTab !== 'Subnet Configuration'}" id="wk-device">
+                <span>{{ language["Subnet Configuration"] }}</span></button></li>
+            <li><button title="{{ language['Onboarding Workflow'] }}" class=""
+                (click)="setActiveTab('Onboarding Workflow')"
+                [ngClass]="{
+                                  'step-current': activeTab === 'Onboarding Workflow','step-done': activeTab !== 'Onboarding Workflow'}" id="wk-opr">
+                <span>{{ language["Onboarding Workflow"] }}</span></button></li>
+            <li><button title="{{language['Summary']}}" class="step" (click)="setActiveTab('Summary')" *ngIf="showSummaryStep"
+                [ngClass]="{
+                                                                    'step-current': activeTab === 'Summary'}"
+                id="wk-summary"><span> {{language["Summary"]}} </span></button>
+            </li>
+          </ul>
+        </section>
+
+        <!--New Stepper End -->
+        <div id="SoftwareImages" *ngIf="activeTab == 'Software Images'">
+          <div class="col-md-12 px-0 my-3" *ngIf="hasWriteAccess && !flowLimited_readOnly">
+            <button id="add-software-images-btn " *ngIf="!newSoftwareImage" (click)="addNewSoftwareImage()"
+              type="button" class="btn-default primary px-3">
+              {{ language.Add_SW_Image }}
+            </button>
+          </div>
+          <div class="col-md-12 px-0" *ngIf="!newSoftwareImage">
+            <div class="w-100 alert alert alert-danger fade show" *ngIf="showError">
+              <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+              <button type="button" id="hide-error-btn" class="close" (click)="hideError()">
+                <span></span>
+              </button>
+              <div class="d-inline-flex" [innerHtml]="errorMsg"></div>
+            </div>
+            <div class="py-3 warning-msg" *ngIf="softwareImageOfficial">
+              <span class="error-img"><img src="./assets/img/ic_warning-36px.svg" /></span>
+              <span> {{ language.Confirmation }}, </span>
+              {{ swConfrmMsg }}
+              <strong class="f-size-18">{{
+                selectedSubnetObj?.subnet
+                }}</strong>
+
+
+              <div class="btn-con-sec float-right">
+                <button type="button" class="btn-default btn-primary px-3 mr-2" ngbAutofocus id="confirm-btn"
+                  (click)="swOfficialConfirmation()">
+                  {{ language.Confirm }}
+                </button>
+                <button type="button" class="btn-default btn-dft py-1" id="cancel-btn" (click)="closeswOfficialConfirmation()">
+                  {{ language.Cancel }}
+                </button>
+              </div>
+            </div>
+            <div class="row">
+              <div class="loader-wrapper-info" *ngIf="loader">
+                <div class="loader">
+                  <div class="d-flex justify-content-center">
+                    <div class="spinner-border text-primary">
+                      <span class="sr-only">{{ language.Loading }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-12 overflow-x-auto">
+                <table *ngIf="datatableVisible && !newSoftwareImage" id="software-images-table" datatable
+                  [dtOptions]="softwareTableOptions"
+                  class="software-images-table-info no-data-available-table row-border hover table-alter w-100">
+                  <thead>
+                    <tr>
+                      <th *ngIf="hasWriteAccess && !flowLimited_readOnly" class="max-width-100px">{{ language['Official Status'] }}</th>
+                      <th class="nameWidth">{{ language.Name }}</th>
+                      <th>{{ language.model }}</th>
+                      <th class="descriptionWidth">
+                        {{ language.description }}
+                      </th>
+                      <th>{{ language.Version }}</th>
+
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr id="{{ file._id }}" *ngFor="let file of softwareImageObj; let i = index">
+                      <td *ngIf="hasWriteAccess && !flowLimited_readOnly">
+                        <div class="checkbox switcher" *ngIf="file.isOfficialImageEligible">
+                          <label [for]="file.name">
+                            <input type="checkbox" [checked]="file.isOfficialImage" [(ngModel)]="file.isOfficialImage"
+                              (change)="onSoftwareChange(file)" [id]="file.name" [disabled]="softwareImageOfficial" />
+                            <span><small></small></span>
+                          </label>
+                        </div>
+                      </td>
+                      <td>{{ file.name }}</td>
+                      <td *ngIf="file?.officialImageModels">
+                        <div *ngFor="let model of file.models">
+                          {{model}}
+                          <!-- <span
+                                                                                                                                                                      *ngIf="file?.officialImageModels?.indexOf(model)!=-1?true:false">(official)</span> -->
+                        </div>
+                      </td>
+                      <td *ngIf="!file?.officialImageModels">
+                        <div *ngFor="let model of file.models">
+                          {{model}}
+                        </div>
+                      </td>
+                      <td>{{ file?.description == 'Calix Uploaded Release Image' ? language["Calix Uploaded Release Image"] : file.description }}</td>
+                      <td>{{ file.version }}</td>
+
+                    </tr>
+                  </tbody>
+                  <tbody *ngIf="softwareImageObj?.length == 0">
+                    <tr>
+                      <td colspan="5" class="no-data-available">
+                        {{ language["No data available in table"] }}
+                      </td>
+                    </tr>
+                  </tbody>
+
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+          <div *ngIf="newSoftwareImage">
+            <div class="w-100 alert alert alert-danger fade show" *ngIf="showError">
+              <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+              <button type="button" id="hide-error-btn" class="close" (click)="hideError()">
+                <span></span>
+              </button>
+              <div class="d-inline-flex" [innerHtml]="errorMsg"></div>
+            </div>
+
+            <div class="w-100 alert alert alert-success fade show" *ngIf="showSuccess">
+              <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+              <button type="button" class="close" id="hide-success-btn" (click)="hideSuccess()">
+                <span></span>
+              </button>
+              <div class="d-inline-flex" [innerHtml]="successMsg"></div>
+            </div>
+
+            <div class="py-3 warning-msg warning-msg-dis" *ngIf="updateData.name">
+              <span class="error-img float-left"><img src="./assets/img/warning-icon.svg"></span>
+              <span class="error-info-span">
+                <b>{{ modalInfo }}</b>{{ language.The_Software_Image }} "{{ swFileObj.name }}"{{
+                language.Overwrite_Confirmation
+                }}
+              </span>
+              <div class="btn-con-sec float-right">
+                <button class="btn-default btn-primary px-3 mr-2" id="confirm-btn" (click)="confirmUpdateSecleted()">
+                  {{ language.Confirm }}
+                </button>
+                <button class="btn-default btn-dft py-1" (click)="closeModal()">
+                  {{ language.Cancel }}
+                </button>
+              </div>
+            </div>
+            <div class="loader" *ngIf="swLoading">
+              <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary">
+                  <span class="sr-only">{{ language.Loading }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="py-3 warning-msg" *ngIf="softwareImageOfficial">
+              <span class="error-img"><img src="./assets/img/ic_warning-36px.svg" /></span>
+              <span> {{ language.Confirmation }}, </span>
+              {{ swConfrmMsg }}
+              <strong class="f-size-18">{{
+                selectedSubnetObj?.subnet
+                }}</strong>
+
+
+              <div class="btn-con-sec float-right">
+                <button type="button" class="btn-default btn-primary px-3 mr-2" ngbAutofocus id="confirm-btn"
+                  (click)="onSWFileSubmit()">
+                  {{ language.Confirm }}
+                </button>
+                <button type="button" class="btn-default btn-dft py-1" id="cancel-btn" (click)="closeswOfficialConfirmation()">
+                  {{ language.Cancel }}
+                </button>
+              </div>
+            </div>
+            <form class="my-3" id="software-images-form" novalidate #myForm="ngForm"
+              (ngSubmit)="checkForOfficialImage()">
+              <div class="form-group browse-file ccl-form row">
+                <div class="input-group">
+                  <label class="col-sm-2 col-form-label">{{ language.File }} <span class="error">*</span>
+                    <span class="required-field"> </span></label>
+                  <div class="col-sm-10">
+                    <input type="file" accept=".bin,.oneimage,.img" class="custom-file-input  cursor-pointer" id="importFile"
+                      name="importFile" (change)="onFileChange($event.target.files)" />
+                    <label class="custom-file-label" *ngIf="!fileToUpload; else elseFile" for="importFile">{{
+                      language.File }}</label>
+                    <ng-template #elseFile>
+                      <label class="custom-file-label" for="importFile">{{ fileToUpload.name }}</label>
+                    </ng-template>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group ccl-form row">
+                <label for="inputModel" class="col-sm-2 col-form-label">{{ language.Models }}</label>
+                <div class="col-sm-10">
+                  <input type="text" id="Model" name="model" class="form-control" [(ngModel)]="swFileObj.models"
+                    readonly placeholder="{{ language.Models }}" />
+                </div>
+              </div>
+
+              <div class="form-group ccl-form row">
+                <label for="inputVersion" class="col-sm-2 col-form-label">{{ language.Version }}</label>
+                <div class="col-sm-10">
+                  <input type="text" id="Version" name="version" class="form-control" [(ngModel)]="swFileObj.version"
+                    readonly placeholder="{{ language.Version }}" />
+                </div>
+              </div>
+              <div class="form-group ccl-form row">
+                <label for="inputName" class="col-sm-2 col-form-label">{{ language.Name }} <span
+                    class="error">*</span></label>
+                <div class="col-sm-10">
+                  <input type="text" id="name" #name="ngModel" name="name" class="form-control"
+                    [(ngModel)]="swFileObj.name" required placeholder="{{ language.Name }}" />
+                  <p *ngIf="name.invalid && (name.dirty || name.touched)">
+                    <small class="errorMsg" *ngIf="name.errors.required">
+                      {{ language.Name_Is_Required }}
+                    </small>
+                  </p>
+                </div>
+              </div>
+              <div class="form-group ccl-form row">
+                <label for="inputdes" class="col-sm-2 col-form-label">{{ language.Decription
+                  }}<small>{{ language.optional }}</small></label>
+                <div class="col-sm-10">
+                  <input type="text" id="description" name="description" [(ngModel)]="swFileObj.description"
+                    placeholder="{{ language.Decription }}" trimSpace [formValue]="swFileObj"/>
+                </div>
+              </div>
+              <div class="form-group ccl-form row">
+                <label class="col-sm-2 col-form-label">
+                  {{ language["official Image"] }} <span class="error">*</span>
+                </label>
+                <div class="col-sm-10">
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" [(ngModel)]="officialImage"
+                      name="officialImageRadioOptions" id="officialRadio" [value]="true" [checked]="officialImage" />
+                    <label class="form-check-label" for="officialRadio">{{ language.Enabled }}</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" [(ngModel)]="officialImage"
+                      name="officialImageRadioOptions" id="officialRadio1" [value]="false" [checked]="officialImage" />
+                    <label class="form-check-label" for="officialRadio1">{{ language.Disabled }}</label>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="mt-3 mb-4">
+                  <button *ngIf="hasWriteAccess" type="submit" id="submit-btn" class="btn-default primary px-3 mr-2"
+                    [disabled]="(!myForm.valid || !fileRequired)">
+                    {{ language.submit }}
+                  </button>
+                  <button type="button" id="cancel-btn" class="btn-default btn-dft px-3 ml-2 mr-3"
+                    (click)="newSoftwareImage = !newSoftwareImage">
+                    {{ language.cancel }}
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="pos-abs-right">
+            <button type="button" id="nextbtn" (click)="activeTab = 'Subnet Configuration'"
+              class="btn-default primary px-3 mr-3">
+              {{ language.Next }}
+            </button>
+          </div>
+        </div>
+        <div id="SubnetConfiguration" *ngIf="activeTab === 'Subnet Configuration'">
+          <app-subnet-config></app-subnet-config>
+          <button type="button" id="previousbtn" (click)="activeTab = 'Software Images'"
+            class="btn-default btn-dft pos-abs-prev px-3 mr-2">
+            {{ language.Previous }}
+          </button>
+          <button type="button" id="nextbtn"
+            (click)="activeTab = 'Onboarding Workflow'; setActiveTab('Onboarding Workflow')"
+            class="btn-default primary pos-abs-right px-3 mr-3">
+            {{ language.Next }}
+          </button>
+        </div>
+        <div id="SubnetConfiguration" *ngIf="activeTab === 'Summary'">
+          <section id='details_wizrd' class="review-wizard" *ngIf='dataAvailable'>
+            <div class="loader" *ngIf="loading">
+              <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary">
+                  <span class="sr-only">{{language.Loading}}</span>
+                </div>
+              </div>
+            </div>
+            <!-- Workflow data Start -->
+            <div class="review-table-sec">
+              <div class="net-ops-secondary-title title2">{{language.Workflow}}</div>
+
+              <div class="table-responsive mb-3" id='Workflow_div'>
+                <table datatable [dtOptions]="tableRevOptions" class="row-border dataTable hover table-alter">
+                  <thead>
+                    <tr>
+                      <th>{{language.Name}}</th>
+                      <th>{{language.description}}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>{{workflowData?.name ? workflowData?.name : ''}}</td>
+                      <td>{{workflowData?.description ? workflowData?.description : ''}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <!-- Workflow data End -->
+
+            <!-- Device Group Table Start -->
+            <div class="review-table-sec">
+              <div class="net-ops-secondary-title title2">{{language.Device_Groups}}</div>
+
+              <div class="table-responsive mb-3" id='devicegrp_div'>
+                <table datatable [dtOptions]="tableRevOptions"
+                  class="row-border dataTable hover table-alter no-data-available-table">
+                  <thead>
+                    <tr>
+                      <th>{{language.Name}}</th>
+                      <th>{{language.description}}</th>
+                      <th>{{language.Type}}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of deviceArray">
+                      <td>{{item.name ? item.name : ''}}</td>
+                      <td>{{item.description ? item.description : ''}}</td>
+                      <td>{{item.type === 'dynamic' ? language.Dynamic : language.Static }}</td>
+                    </tr>
+                  </tbody>
+                  <tbody *ngIf="deviceArray?.length == 0">
+                    <tr>
+                      <td colspan="8" class="no-data-available">{{language['No data available in table']}}
+                      </td>
+                    </tr>
+                  <tbody>
+                </table>
+              </div>
+            </div>
+            <!-- Device Group Table End -->
+
+            <!-- Operation Parameter Table Start  -->
+            <div class="review-table-sec">
+              <div class="net-ops-secondary-title title2">{{language.Operation_Parameters}}</div>
+
+              <div class="table-responsive mb-3" id='opr_div'>
+                <table datatable [dtOptions]="tableRevOptions"
+                  class="row-border dataTable hover table-alter no-data-available-table">
+                  <thead>
+                    <tr>
+                      <th>{{language.Type}}</th>
+                      <th>{{language.Name}}</th>
+                      <th>{{language.Condition}}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of workflowData?.actions">
+                      <td>{{item.actionType ? item.actionType : ''}}</td>
+                      <td class="w-50" *ngIf="item.actionType!='Edge Suites Bulk Activation'">{{ item.profileName ?
+                        item.profileName : "" }}
+                      </td>
+                      <td class="w-50" *ngIf="item.actionType=='Edge Suites Bulk Activation'">{{ item.appType ?
+                        item.appType
+                        : "" }}</td>
+                      <td>{{item.conditionLogic ? item.conditionLogic : ''}}</td>
+                    </tr>
+                  </tbody>
+                  <tbody *ngIf="workflowData?.actions.length == 0">
+                    <tr>
+                      <td colspan="8" class="no-data-available">{{language['No data available in table']}}
+                      </td>
+                    </tr>
+                  <tbody>
+                </table>
+              </div>
+            </div>
+            <!-- Operation Parameter Table End  -->
+
+            <!-- Select Trigger Start -->
+            <div class="row workflow-policy-sec">
+              <div class="col-xs-12 col-12 col-md-12 col-lg-12">
+
+                <div class="net-ops-secondary-title mb-2">{{language.Select_Trigger}}</div>
+                <div *ngIf='workflowData?.execPolicy?.initialTrigger?.type === "CPE Event"'
+                  class="net-ops-secondary-title mb-2">
+                  {{language.Triggered_CPE_discovered}}</div>
+
+
+                <form class="workflow-policy" *ngIf='workflowData?.execPolicy?.initialTrigger?.type !== "CPE Event"'>
+
+                  <!-- Start Time -->
+                  <div class="form-group ccl-form row">
+                    <label class="col-2 timelabel" title="TimeZone as Local">{{language.Start_Time}}</label>
+                    <div class="col-10 calender">
+                      <p-calendar id="start_date" [style]="{'width': '100%','height': '36px'  }"
+                        [inputStyle]="{'height': '36px'}" appendTo="body" [autoZIndex]="true" placeholder='Select Time'
+                        disabled [(ngModel)]="startDateTime" [showIcon]="true" [ngModelOptions]="{standalone: true}"
+                        timeOnly="true" hourFormat="12">
+                      </p-calendar>
+                    </div>
+                  </div>
+                  <!-- Start Time End -->
+
+                  <!-- Time window -->
+                  <div class="form-group ccl-form row">
+                    <label for="windowlength" class="col-2 timelabel" title="">{{language.Time_window}}</label>
+                    <div class="col-10 input-group">
+                      <input class="set-due-date form-control" type="text" id="windowlength" name="windowlength"
+                        disabled [(ngModel)]='windowlength'>
+                    </div>
+                  </div>
+                  <!-- Time window End -->
+
+                  <!-- Recurrence Pattern -->
+                  <div class="form-group ccl-form row">
+                    <label for="windowlength" class="col-2 timelabel" title="">{{language['Recurrence
+                      Pattern']}}</label>
+                    <!-- daily -->
+                    <div class="col-10 input-group" [hidden]="workflowData?.execPolicy?.window?.type !== 'daily'">
+                      <label class="radio-inline col-12 p-0">{{language.Daily}}</label>
+                      <div class="daily-check flex-start">
+                        <label class="radio-inline pr-0 mb-0">{{language.Every}}</label>
+                        <div class="ccl-form ml-2 number-input">
+                          <input type="number" [(ngModel)]='frequency' disabled class="col-2"
+                            id="daily-pattern-frequence" name="daily-pattern-frequence">
+                          <span> {{language.Day_s}} </span>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- weekly -->
+                    <div class="col-10 input-group" [hidden]="workflowData?.execPolicy?.window?.type !== 'weekly'">
+                      <label class="radio-inline col-12 p-0">{{language.Weekly}}</label>
+                      <div class="daily-check flex-start">
+                        <label class="radio-inline pr-0 mb-0">{{language.Recur_every}}</label>
+                        <div class="ccl-form ml-2 number-input">
+                          <input type="number" class="col-2" id="week-pattern-frequence" name="week-pattern-frequence"
+                            [(ngModel)]='frequency'>
+                          <span> {{language.weeks_on}}: </span>
+                        </div>
+                      </div>
+                      <label class="radio-inline col-12 p-0">
+                        {{weekdays}}
+                      </label>
+                    </div>
+                    <!-- month  -->
+                    <div class="col-10 input-group" [hidden]="workflowData?.execPolicy?.window?.type !== 'monthly'">
+                      <div class="mont-list flex-start">
+                        <label class="radio-inline mb-0 pr-0">{{language.Day}}</label>
+                        <div class="ccl-form">
+                          <input type="number" id="month-days-pattern-frequence" name="month-days-pattern-frequence"
+                            [(ngModel)]='frequency'>
+                          <span> {{language.of_every}}</span>
+                        </div>
+                        <div class="ccl-form">
+                          <input type="number" id="month-pattern-frequence" name="month-pattern-frequence"
+                            [(ngModel)]='noOfDays'>
+                          <span> {{language['month(s)']}}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Recurrence Pattern End-->
+
+                  <!-- Start date -->
+                  <div class="form-group">
+                    <div class="row ccl-form">
+                      <label class="col-2 timelabel" title="TimeZone as Local">{{language.START_DATE}}</label>
+                      <div class="col-10 calender">
+                        <p-calendar id="start_date_1" [style]="{'width': '100%','height': '36px'  }"
+                          [inputStyle]="{'height': '36px'}" appendTo="body" [autoZIndex]="true"
+                          placeholder='Select Date' [(ngModel)]="startDateTime" [showIcon]="true"
+                          [ngModelOptions]="{standalone: true}" dateFormat="mm/dd/yy" disabled>
+                        </p-calendar>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="row ccl-form">
+                      <label class="col-2 timelabel" title="TimeZone as Local"></label>
+                      <div class="col-10 calender">
+                        <label class="radio-inline col-12 p-0"
+                          [hidden]='workflowData?.execPolicy?.window?.recurrence'>{{language.End_by}}</label>
+                        <label class="radio-inline col-3 p-0"
+                          [hidden]='!workflowData?.execPolicy?.window?.recurrence'>{{language.End_after}}</label>
+                        <p-calendar id="start_date_1" [style]="{'width': '100%','height': '36px'  }"
+                          [hidden]='workflowData?.execPolicy?.window?.recurrence' [inputStyle]="{'height': '36px'}"
+                          appendTo="body" [autoZIndex]="true" placeholder='Select Date' [(ngModel)]="customEndRange"
+                          [showIcon]="true" [ngModelOptions]="{standalone: true}" dateFormat="mm-dd-yy" disabled>
+                        </p-calendar>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group ccl-form row" [hidden]='!workflowData?.execPolicy?.window?.recurrence'>
+                    <label class="col-2 timelabel"></label>
+                    <div class="col-10 workflow-oneline">
+                      <input type="number" id="range-occurrence"
+                        [(ngModel)]='workflowData?.execPolicy.window.recurrence' class="col-2" name="range-occurrence"
+                        disabled>
+                      <label class="period-padding">{{language.Occurrences}}</label>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label class="col-2 timelabel ">{{language.Prioritization}}</label>
+                    <div class="col-10">
+                      <input type="checkbox" id="priortize" placeholder="#" class="mr-3"
+                        [checked]="workflowData?.fullGroupExecute" name="range-occurrence" disabled><span>
+                        {{language.Ex_fullgrps}}
+                      </span>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <!-- Select Trigger End -->
+          </section>
+          <button type="button" id="previousbtn"
+            (click)="activeTab = 'Onboarding Workflow'; setActiveTab('Onboarding Workflow')"
+            class="btn-default btn-dft pos-abs-right px-3 mr-3">
+            {{ language.Previous }}
+          </button>
+        </div>
+        <div id="onboarding" *ngIf="activeTab === 'Onboarding Workflow'">
+          <div class="row mt-4">
+            <div class="w-100 alert alert alert-danger fade show" *ngIf="showErrorini">
+              <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+              <button type="button" id="hide-error-btn" class="close" (click)="hideError()">
+                <span></span>
+              </button>
+              <div class="d-inline-flex" [innerHtml]="errorMsg"></div>
+            </div>
+            <div class="col-md-6 pr-4">
+              <div class="cco-secondary-title border-bottom">
+                {{ language["Service User Credentials"] }}
+              </div>
+              <form class="ccl-form needs-validation" novalidate #myForm2="ngForm">
+                <div class="form-group">
+                  <label class="col-form-label">
+                    {{ language.User_Name }} <span class="error">*</span></label>
+                  <input class="form-control" id="UserName" #UserName="ngModel" type="text" name="UserName"
+                    [(ngModel)]="hsiModel.userCredentials.Username" required trimSpace [formValue]="hsiModel"/>
+                  <p *ngIf="UserName.invalid && (UserName.dirty || UserName.touched || submitWorflow)">
+                    <small class="errorMsg" *ngIf="UserName.errors.required">
+                      {{ language["This field is required"]}}
+                    </small>
+                  </p>
+                </div>
+                <div class="form-group position-relative" >
+                  <label class="col-form-label">
+                    {{ language.Password }}<span class="error">*</span></label>
+                  <input class="form-control" id="name2" [type]="secretEyeIcon ? 'text' : 'password'"
+                    pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{16,24}$" #pwd="ngModel"
+                    type="text" name="name" required [(ngModel)]="hsiModel.userCredentials.Password" />
+                    <span class="position-absolute mt-1 pointer" (click)="secretEyeIcon = !secretEyeIcon" 
+                    [ngClass]="secretEyeIcon ?'password_view' : 'password_hide'"></span>
+                  <p *ngIf="pwd.invalid && (pwd.dirty || pwd.touched || submitWorflow)">
+                    <small class="errorMsg" *ngIf="pwd.errors.required">
+                      {{ language["This field is required"]}}
+                    </small>
+                    <small class="errorMsg" *ngIf="pwd.errors?.pattern">
+                      {{language.workflow_error_msg}}
+                    </small>
+                  </p>
+                </div>
+              </form>
+              <!--<form class="ccl-form needs-validation" novalidate #myForm1="ngForm">
+                                      <div class="cco-secondary-title border-bottom">
+                                        Wi-Fi
+                                        <div class="col-md-12 px-0 my-3">
+                                          <button type="submit" id="ssidDone" *ngIf="scopeFlag.initialonboarding"
+                                            [disabled]="selectedSSID.WlanIndex=='' || !isEditSSid"
+                                            (click)="myForm1.valid?onSubmitSSID():'';changeWifiSsid();"
+                                            class="btn-default primary px-3 mr-2">
+                                            {{ language.Done }}
+                                          </button>
+                                          <button type="submit" id="ssidDiscard" *ngIf="scopeFlag.initialonboarding"
+                                            [disabled]="selectedSSID.WlanIndex=='' || !isEditSSid"
+                                            (click)="onDiscardSSID('discard');changeWifiSsid();" class="btn-default primary px-3 mr-2">
+                                            {{ language.Discard }}
+                                          </button>
+                                        </div>
+                                      </div>
+                                      <div class="form-group inline-input">
+                                        <label class="col-form-label"> Select SSID*</label>
+                                        <div class="custom-selectbox-opr">
+                                          <div class="w-100">
+                                            <ng-select id="Encryption" name="SSIDDropdown" [items]="wifiSsidExosType" bindLabel="SSIDNAME"
+                                              bindValue="id" [multiple]="false" placeholder="select SSID" [clearable]="false"
+                                              #SSIDDropdown="ngModel" [searchable]="false" [(ngModel)]="selectedSSID.WlanIndex"
+                                              (change)="selectedDropdownSSID($event)"
+                                              [required]="hsiModel.wifiSsidExos.length==0?true:false">
+                                            </ng-select>
+                                            <p
+                                              *ngIf="(SSIDDropdown.invalid &&  (SSIDDropdown.dirty || SSIDDropdown.touched)) || submitWorflow">
+                                              <small class="errorMsg" *ngIf="SSIDDropdown.errors?.required">
+                                                {{ language["This field is required"]}}
+                                              </small>
+                                            </p>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div class="col-md-12 px-0 my-2" *ngIf="selectedSSID.WlanIndex!=''">
+                                        <label class="col-form-label">
+                                          {{ language.Service }}
+                                        </label>
+                                      </div>
+                                      <div class="col-md-12 px-0 my-2" *ngIf="selectedSSID.WlanIndex!=''">
+                                        <div class="form-check form-check-inline">
+                                          <input #inputs class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1"
+                                            [value]="true" [checked]="selectedSSID.Enable" [(ngModel)]="selectedSSID.Enable"
+                                            (change)="EnableShow(selectedSSID.Enable);changeWifiSsid();" />
+                                          <label class="form-check-label" for="inlineRadio1">{{ language.Enabled }}</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                          <input #inputs class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2"
+                                            [value]="false" [(ngModel)]="selectedSSID.Enable" [checked]="selectedSSID.Enable"
+                                            (change)="EnableShow(selectedSSID.Enable);changeWifiSsid();" />
+                                          <label class="form-check-label" for="inlineRadio2">{{ language.Disabled }}</label>
+                                        </div>
+                                      </div>
+                    
+                                      <div class="form-group my-2" *ngIf="Shown">
+                                        <label class="col-form-label">
+                                          {{ language.Name }}</label>
+                                        <input class="form-control" id="ssidName" type="text" [(ngModel)]="selectedSSID.SSID"
+                                          name="ssidName" (change)="changeWifiSsid();" />
+                                      </div>
+                    
+                                      <div class="col-md-12 px-0 my-2" *ngIf="Shown">
+                                        <label class="col-form-label">
+                                          {{ language.Broadcasting }}
+                                        </label>
+                                      </div>
+                                      <div class="col-md-12 px-0 my-2" *ngIf="Shown">
+                                        <div class="form-check form-check-inline">
+                                          <input class="form-check-input" type="radio" name="BroadCastRadioOptions" id="inlineRadio3"
+                                            [value]="true" (change)="changeWifiSsid();" [checked]="selectedSSID.SSIDAdvertisementEnabled"
+                                            [(ngModel)]="
+                                            selectedSSID.SSIDAdvertisementEnabled
+                                          " />
+                                          <label class="form-check-label" for="inlineRadio3">{{ language.Enabled }}</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                          <input class="form-check-input" type="radio" name="BroadCastRadioOptions" id="inlineRadio4"
+                                            [value]="false" (change)="changeWifiSsid();" [checked]="selectedSSID.SSIDAdvertisementEnabled"
+                                            [(ngModel)]="
+                                            selectedSSID.SSIDAdvertisementEnabled
+                                          " />
+                                          <label class="form-check-label" for="inlineRadio4">{{ language.Disabled }}</label>
+                                        </div>
+                                      </div>
+                                      <div class="form-group inline-input my-2" *ngIf="Shown">
+                                        <label class="col-form-label">
+                                          Security
+                                        </label>
+                                        <div class="custom-selectbox-opr">
+                                          <div class="w-100">
+                                            <ng-select id="Security" [items]="securityitem" bindLabel="name" bindValue="id"
+                                              [multiple]="false" placeholder="Security Off" name="securityValue"
+                                              [(ngModel)]="selectedSSID.BeaconType" [clearable]="false"
+                                              (change)="selectedSecuritySSID($event,'drop');changeWifiSsid();" [searchable]="false"
+                                              required>
+                                            </ng-select>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div class="form-group inline-input my-2" *ngIf="Shown && selectedSSID.BeaconType!='Basic'">
+                                        <label class="col-form-label">
+                                          Encryption
+                                        </label>
+                                        <div class="custom-selectbox-opr">
+                                          <div class="w-100">
+                                            <ng-select id="encryption" [items]="encryptionitem" bindLabel="name" bindValue="id"
+                                              [multiple]="false" name="encryptionValue" (change)="changeWifiSsid();"
+                                              [(ngModel)]="selectedSSID.IEEE11iEncryptionModes" [clearable]="false" [searchable]="false"
+                                              required>
+                                            </ng-select>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div class="form-group my-2" *ngIf="Shown && selectedSSID.BeaconType!='Basic'"
+                                        style="position: relative;">
+                                        <label class="col-form-label">
+                                          {{ language.Passphrase }}</label>
+                                        <div class="col-sm-12 p-0">
+                                          <input class="form-control" id="KeyPassphrase" (change)="changeWifiSsid();"
+                                            #KeyPassphrase="ngModel" type="text" [(ngModel)]="
+                                                                                            selectedSSID.PreSharedKey[1].KeyPassphrase
+                                                                                          " name="KeyPassphrase" minlength="8"
+                                            autocomplete="new-password" />
+                                          <p *ngIf="KeyPassphrase.invalid && (KeyPassphrase.dirty || KeyPassphrase.touched)">
+                                            <small class="errorMsg" *ngIf="KeyPassphrase.errors.minlength">
+                                              Please enter at least 8 characters.
+                                            </small>
+                                          </p>
+                                        </div>
+                                      </div>
+                                      <!--<div class="col-md-12 px-0 my-2" *ngIf="Shown">
+                                        <label class="col-form-label">
+                                          {{ language['MAC Authentication'] }}
+                                        </label>
+                                      </div>
+                                      <div class="col-md-12 px-0 my-2" *ngIf="Shown">
+                                        <div class="form-check form-check-inline">
+                                          <input class="form-check-input" type="radio" name="MacRadioOptions" id="inlineRadio5"
+                                            [value]="true" [checked]="selectedSSID.MACAddressControlEnabled" [(ngModel)]="
+                                            selectedSSID.MACAddressControlEnabled
+                                          " />
+                                          <label class="form-check-label" for="inlineRadio5">{{ language.Enabled }}</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                          <input class="form-check-input" type="radio" name="MacRadioOptions" id="inlineRadio6"
+                                            [value]="false" [checked]="selectedSSID.MACAddressControlEnabled" [(ngModel)]="
+                                            selectedSSID.MACAddressControlEnabled
+                                          " />
+                                          <label class="form-check-label" for="inlineRadio6">{{ language.Disabled }}</label>
+                                        </div>
+                                      </div>
+                    
+                                      <div class="col-md-12 px-0 my-2" *ngIf="Shown">
+                                        <label class="col-form-label">
+                                          {{ language['Split Horizon (Inter-BSS Isolation)'] }}
+                                        </label>
+                                      </div>
+                                      <div class="col-md-12 px-0 my-2" *ngIf="Shown">
+                                        <div class="form-check form-check-inline">
+                                          <input class="form-check-input" type="radio" name="SplitRadioOptions" id="inlineRadio7"
+                                            [value]="true" [checked]="selectedSSID.X_000631_SplitHorizon" [(ngModel)]="
+                                            selectedSSID.X_000631_SplitHorizon
+                                          " />
+                                          <label class="form-check-label" for="inlineRadio7">{{ language.Enabled }}</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                          <input class="form-check-input" type="radio" name="SplitRadioOptions" id="inlineRadio8"
+                                            [value]="false" [checked]="selectedSSID.X_000631_SplitHorizon" [(ngModel)]="
+                                            selectedSSID.X_000631_SplitHorizon
+                                          " />
+                                          <label class="form-check-label" for="inlineRadio8">{{ language.Disabled }}</label>
+                                        </div>
+                                      </div>
+                    
+                                      <div class="col-md-12 px-0 my-2" *ngIf="Shown">
+                                        <label class="col-form-label">
+                                          {{ language['Intra-BSS Isolation'] }}
+                                        </label>
+                                      </div>
+                                      <div class="col-md-12 px-0 my-2" *ngIf="Shown">
+                                        <div class="form-check form-check-inline">
+                                          <input class="form-check-input" type="radio" name="IntraRadioOptions" id="inlineRadio9"
+                                            [value]="true" [checked]="selectedSSID.X_000631_IntraSsidIsolation" [(ngModel)]="
+                                            selectedSSID.X_000631_IntraSsidIsolation
+                                          " />
+                                          <label class="form-check-label" for="inlineRadio9">{{ language.Enabled }}</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                          <input class="form-check-input" type="radio" name="IntraRadioOptions" id="inlineRadio10"
+                                            [value]="false" [checked]="selectedSSID.X_000631_IntraSsidIsolation" [(ngModel)]="
+                                            selectedSSID.X_000631_IntraSsidIsolation
+                                          " />
+                                          <label class="form-check-label" for="inlineRadio10">{{ language.Disabled }}</label>
+                                        </div>
+                                      </div>-->
+              <!--</form>-->
+            </div>
+            <div class="col-md-6 pl-4">
+              <div class="cco-secondary-title border-bottom">
+                {{ language["Time Zone"] }}
+              </div>
+              <form class="ccl-form needs-validation" novalidate #myForm="ngForm">
+                <div class="form-group inline-input">
+                  <label class="col-form-label">
+                    {{ language["Time Zone"] }}<span class="error">*</span>
+                  </label>
+                  <div class="custom-selectbox-opr">
+                    <div class="w-100">
+                      <ng-select id="Time" name="TmeZone" #tz="ngModel" [items]="timeZone" bindLabel="displayName"
+                        bindValue="value" [multiple]="false" placeholder="Select TimeZone" [clearable]="false"
+                        [searchable]="true" [(ngModel)]="selectedTimeZone" (change)="onTimeZoneChange($event)" required>
+                      </ng-select>
+                      <p *ngIf="tz.invalid && (tz.dirty || tz.touched || submitWorflow)">
+                        <small class="errorMsg" *ngIf="tz.errors.required">
+                          {{ language["This field is required"]}}
+                        </small>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-12 px-0 my-2">
+                  <label class="col-form-label">
+                    {{ language["Network Time"] }} <span class="error">*</span>
+                  </label>
+                </div>
+                <div class="col-md-12 px-0 my-3">
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" [(ngModel)]="hsiModel.timezonePosix.NTPEnable"
+                      name="networkRadioOptions" (change)="EnableTZ()" id="networkRadio" [value]="true"
+                      [checked]="hsiModel.timezonePosix.NTPEnable" />
+                    <label class="form-check-label" for="networkRadio">{{ language.Enabled }}</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" [(ngModel)]="hsiModel.timezonePosix.NTPEnable"
+                      name="networkRadioOptions" id="networkRadio1" (change)="EnableTZ()" [value]="false"
+                      [checked]="hsiModel.timezonePosix.NTPEnable" />
+                    <label class="form-check-label" for="networkRadio1">{{ language.Disabled }}</label>
+                  </div>
+                </div>
+                <div *ngIf="hsiModel.timezonePosix.NTPEnable">
+                  <div class="cco-secondary-title border-bottom">
+                    {{ language["NTP Servers"] }}
+                  </div>
+
+                  <div class="form-group">
+                    <label class="col-form-label">
+                      {{ language["1st NTP Server"] }}<span class="error">*</span></label>
+                    <input class="form-control" #ntpServer1="ngModel" id="ntpServer1"
+                      [(ngModel)]="hsiModel.timezonePosix.NTPServer1" type="text" name="ntpServer1"
+                      [required]="hsiModel.timezonePosix.NTPEnable"  trimSpace [formValue]="hsiModel"/>
+                    <p *ngIf="ntpServer1.invalid && (ntpServer1.dirty || ntpServer1.touched || submitWorflow)">
+                      <small class="errorMsg" *ngIf="ntpServer1.errors.required">
+                        {{ language["This field is required"]}}
+                      </small>
+                    </p>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-form-label">
+                      {{ language["2nd NTP Server"] }}</label>
+                    <input class="form-control" [(ngModel)]="hsiModel.timezonePosix.NTPServer2" id="ntpServer2"
+                      type="text" name="ntpServer2" trimSpace [formValue]="hsiModel" />
+                  </div>
+                  <div class="form-group">
+                    <label class="col-form-label">
+                      {{ language["3rd NTP Server"] }}</label>
+                    <input class="form-control" [(ngModel)]="hsiModel.timezonePosix.NTPServer3" id="ntpServer3"
+                      type="text" name="ntpServer3" trimSpace [formValue]="hsiModel"/>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-form-label">{{ language["4th NTP Server"] }}</label>
+                    <input class="form-control" id="ntpServer4" [(ngModel)]="hsiModel.timezonePosix.NTPServer4"
+                      type="text" name="ntpServer4" trimSpace [formValue]="hsiModel"/>
+                  </div>
+                  <!--<div class="form-group">
+                                                                                                                          <label class="col-form-label">{{ language["5th NTP Server"] }}</label>
+                                                                                                                          <input class="form-control" id="ntpServer5" type="text" name="ntpServer5"
+                                                                                                                            [(ngModel)]="hsiModel.timezonePosix.NTPServer5" />
+                                                                                                                        </div>-->
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 mt-3">
+              <!--<button type="submit" *ngIf="scopeFlag.initialonboarding" class="btn btn-primary"
+                                                                                                              (click)="onSaveWorkFlow(!myForm.valid || !myForm1.valid || !myForm2.valid)">
+                                                                                                              {{ language["Save Workflow"] }}
+                                                                                                            </button>-->
+              <button type="submit" *ngIf="hasWriteAccess" class="btn btn-primary"
+                (click)="onSaveWorkFlow(!myForm.valid || !myForm2.valid)">
+                {{ language["Save Workflow"] }}
+              </button>
+            </div>
+          </div>
+          <hr />
+          <div class="pos-abs-right">
+            <button type="button" id="previousbtn" (click)="activeTab = 'Subnet Configuration'"
+              class="btn-default btn-dft px-3 mr-2">
+              {{ language.Previous }}
+            </button>
+            <button type="button" id="nextbtn" *ngIf="showSummaryStep" (click)="activeTab = 'Summary';"
+              class="btn-default primary px-3 mr-3">
+              {{ language.Next }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

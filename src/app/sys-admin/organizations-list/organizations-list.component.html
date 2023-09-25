@@ -1,0 +1,141 @@
+<div class="container position-relative">
+    <div class="loader" *ngIf="loading">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">{{language.Loading}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="w-100 alert alert-danger  fade show" *ngIf="error">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+        <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+        <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+    </div>
+
+    <div class="w-100 alert alert-success fade show" *ngIf="success">
+        <div class="success-alert-wrapper">
+
+            <div class="success-alert-icon"><img src="../../../assets/img/success-icon.svg" alt=""></div>
+            <div class="success-alert-msg"><span [innerHtml]="successInfo"></span></div>
+            <div class="success-alert-close"> <button type="button" class="close"
+                    (click)="closeAlert()"><span></span></button>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col ccl-title">{{language.allOrganizations}}</div>
+    </div>
+    <div class="row my-3">
+        <div class="col-md-6 offset-md-6 pr-0">
+            <div class="text-right flat-right">
+                <div class="row">
+                    <div class="col-md-5">
+                        <button class="btn-default primary px-3" *ngIf="!fromOrphanDevice"
+                            (click)="addOrg()">{{language.addOrganization}}</button>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="ccl-form">
+                            <input type="text" [(ngModel)]="searchTerm" (paste)="search($event.target.value)" #searchBar
+                                placeholder="{{language.searchOrganizations}}" (search)="search($event.target.value)"
+                                class="ccl-input" id="org-list-search" (input)="search($event.target.value)"
+                                placeholder="">
+                                <span class="clear-icon" [hidden]="!searchClearable" (click)="onSearchClearing(searchBar)"> <img src="assets/img/close-icon.svg"></span>
+                            <!-- <button class="serach-but btn-default primary btn-icon-md inline"><i class="fa fa-search"
+                                                                aria-hidden="true"></i></button> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row my-3 mh-65">
+        <div class="col-md-12" *ngIf="countReceived" [hidden]="!dataAvailable">
+            <table id="organizations-table" width="100%" datatable [dtOptions]="tableOptions"
+                class="row-border hover table-alter">
+                <!-- <table id="subnet-table" width="100%" datatable [dtOptions]="tableOptions" class="table-bordered row-border table-striped"> -->
+                <thead>
+                    <tr>
+                        <th *ngIf="fromOrphanDevice"></th>
+                        <th>{{language.organizationName}}</th>
+                        <th>{{language.accountNumber}}</th>
+                        <th>{{language.oracleId}}</th>
+                        <th>{{language.orgId}}</th>
+                        <th *ngIf="!fromOrphanDevice">{{language.Action}}</th>
+                    </tr>
+                </thead>
+                <tbody *ngIf="orgsTableData?.length !=0">
+                    <tr id="{{item._id}}" *ngFor="let item of orgsTableData">
+                        <td *ngIf="fromOrphanDevice">
+                            <input class="ml-2" type="radio" [(ngModel)]="selectedOrg" id="orgListSelection"
+                                value="{{item.id}}" />
+                        </td>
+                        <td>
+                            {{item.name ? item.name : ''}}
+                        </td>
+                        <td>
+                            {{item.externalOrgRef ? item.externalOrgRef : ''}}
+                        </td>
+                        <td>
+                            {{item.oracleId ? item.oracleId : ''}}
+                        </td>
+                        <td>
+                            {{item.id ? item.id : ''}}
+                        </td>
+                        <td class="actions" *ngIf="!fromOrphanDevice">
+                            <button *ngIf="showSecureAccess" class="btn-user-access" (click)="gotoSecuredAccess(item)" 
+                            title="{{language['securedaccess']}}">
+                                <img src="assets/images/user_secure_access_icon.png">
+                            </button>
+                            <button id="org-detail-btn" class="btn-action-icon" (click)="gotoOrgDetail(item)" 
+                            title="{{language['entitlements']}}">
+                                <i class="fas fa-pencil-alt primary"></i>
+                            </button>
+                            <button id="users-btn" class="btn-action-icon" (click)="gotoUsers(item)" 
+                            title="{{language['users']}}">
+                                <i class="fas fa-user primary"></i>
+                            </button>
+                            <button id="delete-org-btn" class="btn-action-icon" (click)="deleteOrg(item)" 
+                            title="{{language['Delete']}}">
+                                <i class="fas fa-trash-alt primary"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+                <tbody
+                    *ngIf="(orgsTableData?.length == 0 || (orgsCount != undefined && orgsCount === 0) || (filterCount != undefined && filterCount === 0))">
+                    <tr>
+                        <td colspan="5" class="no-data-available">{{language['No matching records found']}}</td>
+                    </tr>
+                <tbody>
+            </table>
+
+            <button *ngIf="fromOrphanDevice" id="assignOrg" class="btn-default primary px-3 mt-3" (click)="assignOrg()">
+                {{language['Assign']}}
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modals -->
+<ng-template #deleteModal let-data let-ref="dialogRef">
+
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{modalTitle}}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        {{language['Are you sure you want to delete']}} {{ modalInfo }}?
+    </div>
+    <div class="modal-footer">
+
+        <button type="button" class="btn-default primary px-3" data-dismiss="modal"
+            (click)="confirmDeleteSecleted()">{{language.yes}}</button>
+        <button type="button" class="btn-default btn-dft py-1 px-3" data-dismiss="modal"
+            (click)="closeModal()">{{language.no}}</button>
+    </div>
+</ng-template>
+<!-- Modals -->

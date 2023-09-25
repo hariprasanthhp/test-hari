@@ -1,0 +1,23 @@
+<section class="m-2">
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <ul id="tabs" class="nav nav-tabs">
+                <li class="nav-item"><a href="" data-target="#issue" data-toggle="tab" class="nav-link small active" (click) = "tabChange()">{{language.Issues}}</a></li>
+                <li class="nav-item"><a href="" data-target="#topology" data-toggle="tab" class="nav-link small" (click) = "tabChange()"> {{language.Topology}}</a></li>
+            </ul>
+            <br>
+            <div id="tabsContent" class="tab-content">
+                <div id="issue" class="tab-pane fade active show">
+                    <div class="row pb-2">
+                        {{language.Issues}}
+                    </div>
+                </div>
+                <div id="topology" class="tab-pane fade">
+                    <div class="row pb-2">
+                        {{language.Topology}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

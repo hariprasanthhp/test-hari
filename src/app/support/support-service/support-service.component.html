@@ -1,0 +1,57 @@
+<app-subscriber-menu [responseFromIssuse]="apiCallDone"></app-subscriber-menu>
+<section class="mr-2">
+  <div class="row ">
+    <div class="col-md-12 ccl-tabs">
+
+      <ul id="tabs" class="nav nav-tabs">
+        <li *ngIf="showDataService" class="nav-item" id="serviceDataTabId">
+          <a routerLink="/{{MODULE}}/service/data" (Click)="$event.preventDefault()" data-toggle="tab"
+            class="nav-link small " routerLinkActive="active"><span class="big-text">{{language.Datas}}</span></a>
+        </li>
+        <li *ngIf="showVideoService && (objectExistence(metaData?.VideoMulticastSystems) || videoWan)" class="nav-item"
+          id="serviceVideoTabId">
+          <a routerLink="/{{MODULE}}/service/video" data-toggle="tab" class="big-text nav-link small"
+            routerLinkActive="active"><span class="big-text">{{language.Video}}</span></a>
+        </li>
+
+        <li *ngIf="showVoiceService && (objectExistence(metaData?.VoiceStatus) || voiceWan)" id="serviceVoiceTabId"
+          class="nav-item">
+          <a routerLink="/{{MODULE}}/service/voice" data-toggle="tab" class="nav-link small"
+            routerLinkActive="active"><span class="big-text">{{language.Voice}}</span></a>
+        </li>
+        <li id="serviceXdslTabId" class="nav-item" *ngIf="objectExistence(metaData?.XDSL)">
+          <a routerLink="/{{MODULE}}/service/xdsl" data-toggle="tab" class="nav-link small" routerLinkActive="active">
+            <span class="big-text">{{language.XDSL}}</span>
+          </a>
+        </li>
+        <li id="serviceXdslTabId" class="nav-item" *ngIf="objectExistence(metaData?.GFAST)">
+          <a routerLink="/{{MODULE}}/service/gfast" data-toggle="tab" class="nav-link small" routerLinkActive="active">
+            <span class="big-text">{{language.gfast}}</span>
+          </a>
+        </li>
+      </ul>
+
+      <div id="tabsContent" class="tab-content">
+        <!-- <div class="loader" *ngIf="loader1 || loader2">
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+              <span class="sr-only">{{language.Loading}}</span>
+            </div>
+          </div>
+        </div> -->
+        <div id="issue" class="tab-pane fade active show">
+          <div class="row pb-2">
+
+          </div>
+        </div>
+        <div id="topology" class="tab-pane fade">
+          <div class="row pb-2">
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<router-outlet></router-outlet>

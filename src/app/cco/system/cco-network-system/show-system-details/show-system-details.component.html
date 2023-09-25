@@ -1,0 +1,310 @@
+<div role="alert" class="alert alert-warning" *ngIf="!loading && !hasScopeAccess">
+   {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} 
+   <span class="close-icon pointer pointer-auto float-right" (click)="gotoList();"><img src="assets/img/close-icon.svg"
+      alt="" /></span>
+   </div>
+<section>
+   <div class="loader-wrapper-info" *ngIf="loading">
+      <div class="loader">
+         <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+            <span class="sr-only">{{ language.Loading }}</span>
+            </div>
+         </div>
+      </div>
+   </div>
+</section>
+<div class="container" [ngClass] = "{'cursornallow' : loading}" *ngIf="hasScopeAccess">
+      <div class="w-100 alert alert-danger fade show my-3" *ngIf="error">
+         <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+         <button type="button" class="close" (click)="closeAlert()">
+            <span></span>
+         </button>
+         <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+      </div>
+      <!-- <div class="loader-wrapper-info" *ngIf="loading">
+         <div class="loader">
+            <div class="d-flex justify-content-center">
+               <div class="spinner-border text-primary">
+                  <span class="sr-only">{{language.loading}}</span>
+               </div>
+            </div>
+         </div>
+      </div> -->
+      <div class="row">
+         <div class="col-md-12 flat-right text-right pl-0 pr-2">
+            <div class="w-100 border-bottom-gray d-flex justify-content-between align-items-center pb-3">
+               <div class="cco-title f-weight-300 col text-left px-0" *ngIf="systemInfo">
+                  {{systemInfo.ui_modified_name}}
+                  <span class="icon-btn icon-btn-inline ml-3" (click)="setApiToCall('refresh')">
+                     <img class="position-absolute" [ngClass]="loading ? 'spin-animation' : ''"
+                        src="../../../../../assets/img/ic_refresh.svg" />
+                  </span>
+               </div>
+               <div>
+                  <button *ngIf="hasWriteAccess && canShowHeaderButtons && (!systemInfo?.parentuuid && systemInfo?.deviceModel !=='CMS')" type="text"
+                     (click)="gotoEdit();" class="my-2 mr-3 btn-default primary">
+                     {{language.Edit}}
+                  </button>
+                  <button *ngIf="hasWriteAccess && canShowHeaderButtons && systemInfo.type === 'MGMT_SYSTEM'" type="text" (click)="gotoEdit();"
+                     class="my-2 mr-3 btn-default primary">
+                     {{language.Edit}}
+                  </button>
+                  <button *ngIf="canShowHeaderButtons && systemInfo?.type !== 'MGMT_SYSTEM'" class="btn-default btn-dft mr-4" (click)="goToActiveAlarms();">{{language['Active System Alarms']}}</button>
+                  <span class="close-icon pointer pointer-auto" (click)="gotoList();"><img src="assets/img/close-icon.svg"
+                        alt="" /></span>
+               </div>
+            </div>
+
+         </div>
+      </div>
+      <section [ngClass]="{ 'hide-container':  !canShowHeaderPages}">
+         <ng-container>
+            <div class="row mt-3" [ngClass]="{ 'hide-container':  showInterfaceDetails && systemInfo?.type !== 'MGMT_SYSTEM'}">
+               <div class="mb-4" [ngClass]="systemInfo?.type == 'MGMT_SYSTEM' ? 'col-lg-6 col-md-6' :'col-lg-4 col-md-6 '">
+                  <div class="d-flex justify-content-between border-bottom mb-3 pb-2">
+                     <div class="cco-secondary-title" id="system-inform-status">
+                        {{language['System Information']}}
+                     </div>
+                  </div>
+                  <div class="pl-3">
+                     <table class="table show-sysinfo-table">
+                        <tbody>
+                           <tr>
+                              <td>{{ language['Name'] }}</td>
+                              <td><span class="text-break">{{systemInfo.name || '-'}}</span></td>
+                           </tr>
+                           <tr>
+                              <td>{{ language.region }}</td>
+                              <td>{{systemInfo.regionName || '-'}}</td>
+                           </tr>
+                           <tr>
+                              <td>{{ language.Location }}</td>
+                              <td>{{systemInfo.locationName || '-'}}</td>
+                           </tr>
+                           <tr>
+                              <td class="min-width-100">{{language["Address/Coordinates"]}}</td>
+                              <td [innerHtml]="systemInfo && systemInfo.ui_modified_service_address? systemInfo.ui_modified_service_address : '-'"></td>
+                           </tr>
+                           <tr>
+                              <td>{{ language.MAC_Address }}</td>
+                              <td>{{systemInfo.macAddress || '-'}}</td>
+                           </tr>
+                           <tr>
+                              <td>{{ language.Software_Version }}</td>
+                              <td>{{systemInfo.swVersion || '-'}}</td>
+                           </tr>
+                           <tr>
+                              <td>{{ language.Model }}</td>
+                              <td>{{systemInfo.deviceModel || '-'}}</td>
+                           </tr>
+                           <tr>
+                              <td>{{ language.Serial_Number }}</td>
+                              <td>{{systemInfo.serialNumber || '-'}}</td>
+                           </tr>
+   
+                        </tbody>
+                     </table>
+                  </div>
+               </div>
+               <div class="mb-4" [ngClass]="systemInfo?.type == 'MGMT_SYSTEM' ? 'col-lg-6 col-md-6' :'col-lg-4 col-md-6 '">
+                  <div class="d-flex justify-content-between border-bottom mb-3 pb-2">
+                     <!-- {{language['Status Information']}} -->
+                     <div class="cco-secondary-title text-truncate w-100" id="card-sync-config-info"
+                        title="{{language['Sync and Configuration Information']}}">
+                        {{language['Sync and Configuration Information']}}
+                     </div>
+                  </div>
+                  <div class="pl-3">
+                     <table class="table show-sysinfo-table">
+                        <tbody>
+                           <tr>
+                              <td>{{language.Connection}}</td>
+                              <td>{{systemInfo?.ui_modified_communication_state || '-'}}</td>
+                           </tr>
+                           <tr>
+                              <td>{{ language.Configuration }}</td>
+                              <td>{{systemInfo?.cmSyncStatus || '-'}}</td>
+                           </tr>
+                           <tr>
+                              <td>{{ language['Alarm'] }}</td>
+                              <td>{{systemInfo?.fmSyncStatus || '-'}}</td>
+                           </tr>
+                           <tr>
+                              <td>{{ language['IPFIX Status'] }}</td>
+                              <td>{{systemInfo?.ipfixExportConfigurationStatus || '-'}}</td>
+                           </tr>
+                        </tbody>
+                     </table>
+                  </div>
+               </div>
+               <div class="col-lg-4 col-md-6 mb-4" *ngIf="systemInfo?.type !== 'MGMT_SYSTEM'">
+                  <!-- <div class="loader-wrapper-info" *ngIf="sytsemControllerloader">
+                     <div class="loader">
+                        <div class="d-flex justify-content-center">
+                           <div class="spinner-border text-primary" role="">
+                              <span class="sr-only">{{language.sytsemControllerloader}}</span>
+                           </div>
+                        </div>
+                     </div>
+                  </div> -->
+                  <div class="d-flex justify-content-between border-bottom mb-3 pb-2">
+                     <div class="cco-secondary-title" id="card-system-controller-status">
+                       {{language['System Controller']}}
+                     </div>
+                  </div>
+                  <div class="pl-3 overflow-auto">
+                     <table class="table show-sysinfo-table controller-table">
+                        <tbody>
+                           <ng-container *ngFor="let cols of systemControllerColumns | keyvalue : unsorted">
+                              <tr>
+                                 <td class="min-w40">{{language[cols.key] || cols.key}}</td>
+                                 <ng-container
+                                    *ngIf="systemControllerData && systemControllerData[cols.key] && systemControllerData[cols.key].length > 0">
+                                    <ng-container *ngFor="let system of systemControllerData[cols.key]">
+                                       <td>{{system ? (cols.key != 'Intake Temperature' ? system : system + ' &deg;' + 'C') : '-'}}</td>
+                                    </ng-container>
+                                 </ng-container>
+                                 <ng-container *ngIf = "!systemControllerData || (systemControllerData && !systemControllerData[cols.key])">
+                                    <td class="min-width-70">-</td>
+                                 </ng-container>
+                              </tr>
+                           </ng-container>
+                        </tbody>
+                     </table>
+                  </div>
+               </div>
+            </div>
+            <div class="row mb-3" [ngClass]="{ 'hide-container':  showInterfaceDetails && systemInfo?.type !== 'MGMT_SYSTEM'}" *ngIf="systemInfo?.type !== 'MGMT_SYSTEM'">
+               <div class="col-md-12 position-relative">
+               <!-- <div class="loader-wrapper-info" *ngIf="cardsTableLoader">
+                  <div class="loader">
+                     <div class="d-flex justify-content-center">
+                        <div class="spinner-border text-primary" role="">
+                           <span class="sr-only">{{language.cardsTableLoader}}</span>
+                        </div>
+                     </div>
+                  </div>
+               </div> -->
+               <div class="d-flex justify-content-between border-bottom w-100 mb-2 pb-2">
+                  <div class="cco-secondary-title" id="cards-system-table">
+                     {{language['Cards']}}
+                  </div>
+               </div>
+               <div class="table-wrapper w-100">
+                  <div class="loader-wrapper-info" *ngIf="interfaceSummaryLoader">
+                     <div class="loader">
+                        <div class="d-flex justify-content-center">
+                           <div class="spinner-border text-primary" role="">
+                              <span class="sr-only">{{language.interfaceSummaryLoader}}</span>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <table class="table tbl-common dataTable w-100" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+                     <thead>
+                        <tr>
+                          <th class="p-0 w-100">
+                           <div class="d-flex">
+                              <div class="header width-20">{{language['Card']}}</div>
+                              <div class="header width-10">{{language['Ports']}}</div>
+                              <div class="header width-10">{{language['Status']}}</div>
+                              <div class="header width-20">{{language['Card Type']}}</div>
+                              <div class="header width-20">{{language['Provisioned Type']}}</div>
+                              <div class="header width-20">{{language.Serial_Number}}</div>
+                           </div>
+                           <!-- <table class="table w-100 table-custom-header">
+                              <tr>
+                                
+                              </tr>
+                           </table> -->
+                          </th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        <tr class="table-card-row" *ngFor="let card of cardsList; let i = index">
+                           <td class="p-0 w-100">
+                              <table class="table table-header dataTable w-100 tbl-common">
+                                 <tbody>
+                                    <tr class="table-header-row" [ngClass]="card.isExpanded ? 'table-header-selected':''">
+                                       <td class="header width-20" id="cardName">
+                                          <a class="primary cursor-pointer text-decoration-none"
+                                             (click)="getCardInterfaceSummary(i, card)">
+                                             <!-- *ngIf="cardList.hasChild" -->
+                                             <!-- (click)="cardList.isExpanded = !cardList.isExpanded"> -->
+   
+                                             {{ card.card }}
+                                             <span class="cardex-down" [ngClass]="card.isExpanded ? 'cardex-up':''">
+                                                <img src="../../../../../assets/img/ic_chevron_circle_blue.svg" />
+                                             </span>
+                                          </a>
+                                          <!-- <a class="primary text-decoration-none" *ngIf="!cardList.hasChild">
+                                    {{ cardList.card }}
+                                 </a> -->
+                                       </td>
+                                       <td class="header width-10" id="cardPONs">{{ card?.portCount }}</td>
+                                       <td class="header width-10" id="cardStatus">{{ card?.cardState }}</td>
+                                       <td class="header width-20" id="cardCtype">{{ card?.cardType }}</td>
+                                       <td class="header width-20" id="cardPtype">{{ card?.provisionType }}</td>
+                                       <td class="header width-20" id="cardSno">{{ card?.serialNo }}</td>
+                                    </tr>
+                                 </tbody>
+                              </table>
+                              
+                              <div *ngIf="card?.isExpanded" class="expandable-row">
+                                 <div class="table-container pl-20">
+                                    <div class="d-flex">
+                                       <div class="col px-0 mr-12">
+                                          <table class="table w-100">
+                                             <ng-container *ngIf="card['cardsSummary'] && card['cardsSummary'].length > 0">
+                                                <thead>
+                                                   <tr>
+                                                      <td>{{language['port']}} </td>
+                                                      <td>ONTs</td>
+                                                      <td>{{language['Admin_State']}} </td>
+                                                      <td>{{language['Operational State']}} </td>
+                                                   </tr>
+                                                </thead>
+                                                <tbody>
+                                                   <tr *ngFor="let item of card['cardsSummary']">
+                                                      <td><a class="primary cursor-pointer"
+                                                            (click)="goToInterfacePage(item,card)">{{item.name}}</a></td>
+                                                      <td>{{item.ontCount}}</td>
+                                                      <td [ngClass]="item.adminStatus?.toLowerCase() == 'up' || item.adminStatus?.toLowerCase()?.includes('enable') ? 'green-text':'red-text'">
+                                                         {{language[item.adminStatus] || item.adminStatus}}</td>
+                                                      <td [ngClass]="item.operStatus?.toLowerCase() == 'up' || item.operStatus?.toLowerCase()?.includes('enable') ? 'green-text':'red-text'">
+                                                         {{language[item.operStatus] || item.operStatus}}</td>
+                                                   </tr>
+                                                </tbody>
+                                             </ng-container>
+                                             
+                                             <tbody
+                                                *ngIf="!card['cardsSummary'] || (card['cardsSummary'] && card['cardsSummary'].length == 0)">
+                                                <tr>
+                                                   <td colspan="4" class="no-data-available">{{language['No Data Available']}}
+                                                   </td>
+                                                </tr>
+                                             </tbody>
+                                          </table>
+   
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </td>
+                        </tr>
+                     </tbody>
+                  </table>
+   
+               </div>
+               </div>
+            </div>
+         </ng-container>
+      </section>
+      
+</div>
+<section [ngClass]="{ 'hide-container':  !canShowHeaderPages}">
+   <ng-container *ngIf="hasScopeAccess && showInterfaceDetails && systemInfo?.type !== 'MGMT_SYSTEM'">
+      <app-card-details (goToCardPage)="goToCardPage()" [cardDetails]="cardInterfaceObj"></app-card-details>
+   </ng-container>
+</section>

@@ -1,0 +1,20 @@
+.wip {
+	height: fit-content;
+    width: fit-content;
+	position: absolute;
+	top:0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+  	
+	margin: auto;
+}
+input[type=checkbox] + .check-intermediate{
+    position: absolute !important;
+	left: 0px !important;
+    top: 11px !important;
+}
+input[type=checkbox] + .checkbox-ui {
+    width: 13px !important;
+    height: 13px !important;
+}

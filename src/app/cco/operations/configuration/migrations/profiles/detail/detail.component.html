@@ -1,0 +1,456 @@
+<div class="profile-review-wizard" >
+    <div class="col-md-12 mt-3"><button type="button" class="close page-close-btn" (click)="closeDetail()"><span
+          class="close1"></span></button></div>
+    <div class="review-container pb-4">
+      <span class="net-ops-secondary-title ml-3">{{ language.Profile }}</span>
+      <hr class="my-2" />
+
+      <div class="loader" *ngIf="loader">
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border text-primary">
+            <span class="sr-only">{{ language.Loading }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="container">
+        <div class="row">
+          <label class="col-md-7 pr-3">{{ language.Name }} </label>
+          <div class="col-md-3 word-brk">{{detail?.name?detail?.name:"--"}}</div>
+        </div>
+        <hr class="my-3" />
+        <div class="row">
+          <label class="col-md-7 pr-3">{{ language["Migration Type"] }}</label>
+          <div class="col-md-3 word-brk">{{deviceType?deviceType:"--"}}</div>
+        </div>
+        <hr class="my-3" />
+        <div class="row">
+          <label class="col-md-7 pr-3">{{language.Decription}}</label>
+          <div class="col-md-3 word-brk">{{detail?.description?detail?.description:"--"}}</div>
+        </div>
+      </div>
+      <div class="row my-4">
+        <div class="col-md-12">
+          <div class="accordion" id="accordionExample">
+            <div class="card">
+              <div class="card-header" id="headingOne" data-toggle="collapse" [attr.href]="'#collapseOne'"
+                data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                <div class="row mb-0">
+                  <div class="col-md-11 text-left pl-10px">
+                    <span>{{language['Service Migration Profile']}}({{detail?.serviceType ==='DATA' ? 'Data': detail?.serviceType==='VIDEO'? 'Video':detail?.serviceType==='VOICE'?'Voice':'-'}})</span>
+                  </div>
+                  <div class="col-md-1 ccl-accordion-icon text-right"></div>
+                </div>
+
+              </div>
+
+              <div id="collapseOne" class="accordion-collaps collapse show" *ngIf="this.deviceType !=='RG'" aria-labelledby="headingOne"
+                data-parent="#accordionExample">
+                <div class="card-body">
+                  <div class="row space-list">
+                    <div class="support-key-value">
+                      <table class="">
+                        
+                        <tr *ngIf="detail?.serviceType==='VOICE'">
+                          <td>{{language['VoIP Protocol']}}</td>
+                          <td>
+                            {{detail?.voiceServiceType ?detail?.voiceServiceType:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.h248Profile">
+                          <td>{{language['Primary H248 GW Controller (voice)']}}</td>
+                          <td>
+                            {{detail?.h248Profile?detail?.h248Profile:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.sipProfile">
+                          <td>{{language['SIP Proxy Server Address']}}</td>
+                          <td>
+                            {{detail?.sipProfile?detail?.sipProfile:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.dialPlan">
+                          <td>{{language['Dial_Plan']}}</td>
+                            <td>
+                              {{detail?.dialPlan?detail?.dialPlan:"--"}}</td>
+                          </tr>
+                          <tr *ngIf="detail?.serviceType==='VIDEO'">
+                            <td>{{language['Multicast Profile']}}</td>
+                            <td>
+                              {{detail?.multicastProfile?detail?.multicastProfile:"--"}}</td>
+                          </tr>
+                          <tr *ngIf="detail?.serviceType==='VIDEO'">
+                            <td>{{language['igmp Profile']}}</td>
+                            <td>
+                              {{detail?.igmpProfile?detail?.igmpProfile:"--"}}</td>
+                          </tr> 
+                          <tr>
+                            <td>{{language['Bandwidth_Profile']}}</td>
+                            <td>
+                              {{detail?.bandwidthProfile?detail?.bandwidthProfile:"--"}}</td>
+                          </tr>
+                          <tr>
+                            <td>{{language['Tag Action']}}</td>
+                            <td>
+                              {{detail?.tagAction?detail?.tagAction:"--"}}</td>
+                          </tr>
+                          <tr>
+                            <td>{{language['Service Definition Template']}}</td>
+                            <td>
+                              {{detail?.serviceDefinitionName?detail.serviceDefinitionName:"--"}}</td>
+                          </tr>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div id="collapseOne" class="accordion-collaps collapse show" *ngIf="this.deviceType =='RG'" aria-labelledby="headingOne"
+                data-parent="#accordionExample">
+                <div class="card-body">
+                  <div class="row space-list">
+                    <div class="support-key-value">
+                      <table class="">
+                        <tr >
+                          <td>{{language['RG Service Profile']}}</td>
+                          <td>
+                            {{detail?.cscProfileName ? detail?.cscProfileName:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VOICE'">
+                          <td>{{language['VoIP Protocol']}}</td>
+                          <td>
+                            {{detail?.voiceServiceType==='X_000631_TDMGW' ? 'TDM GW':detail?.voiceServiceType?detail?.voiceServiceType:"--"}}</td>
+                        </tr>
+                       
+                        <tr *ngIf="detail?.serviceType==='DATA'">
+                          <td>{{language['Product Family']}}</td>
+                          <td>
+                            {{detail?.dataProfile?.ProductFamily==='EXOS' ? language['EXOS-Powered GigaSpire']:detail?.dataProfile?.ProductFamily=='GigaCenter'?language['GigaCenter and GigaHub']:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='DATA'">
+                          <td>{{language['Mode']}}</td>
+                          <td>
+                            {{detail?.dataProfile?.Mode =='RG Routed' ?language['RG - Routed']:detail?.dataProfile?.Mode=='RG L2 Bridged'?language['RG - L2 Bridged']:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='DATA' && detail?.dataProfile?.Mode !=='RG L2 Bridged'">
+                          <td>{{language['Default WAN']}}</td>
+                          <td>
+                            {{detail?.dataProfile?.defaultConnectionService ? 'Yes':'No'}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='DATA' && detail?.dataProfile?.Mode !=='RG L2 Bridged'">
+                          <td>{{language['WAN Connection Framing Type']}}</td>
+                          <td>
+                            {{detail?.dataProfile?.FramingType ?detail?.dataProfile?.FramingType:"--"}}</td>
+                        </tr>
+                        <!-- <tr *ngIf="detail?.serviceType==='DATA'">
+                          <td>{{language['Max Downstream Rate']}}</td>
+                          <td>
+                            {{downloadCIRData ?downloadCIRData:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='DATA'">
+                          <td>{{language['Max Upstream Rate']}}</td>
+                          <td>
+                            {{uploadCIRData ?uploadCIRData:"--"}}</td>
+                        </tr> -->
+                        <tr *ngIf="detail?.serviceType==='DATA' && (detail?.dataProfile?.FramingType == 'IPoE' ||(detail?.dataProfile.FramingType == 'PPPoE' &&detail?.dataProfile.ProductFamily == 'EXOS')) && detail?.dataProfile?.Mode !=='RG L2 Bridged'">
+                          <td>{{language['IP Version/Deployment Mode']}}</td>
+                          <td>
+                            {{detail?.dataProfile?.version==="v4" ?'IPv4 Only':detail?.dataProfile?.version==='dualStack'?'IPv6 + IPv4 Dual-Stack':detail?.dataProfile?.version==="v6"?'IPv6 Only':detail?.dataProfile?.version==="6rd"?'IPv6 Rapid Deployment (IPv6 via IPv4, aka 6rd)':"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='DATA'">
+                          <td>{{language['VLAN Tag Action']}}</td>
+                          <td>
+                            {{detail?.dataProfile?.VlanTagAction==true ?'Tagged':'Un-tagged'}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='DATA' && detail?.dataProfile?.VlanTagAction == true">
+                          <td>{{language['VLAN ID']}}</td>
+                          <td>
+                            {{detail?.dataProfile?.VLANID ?detail?.dataProfile?.VLANID:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='DATA'">
+                          <td>{{language['Priority (P-bits)']}}</td>
+                          <td>
+                            {{detail?.dataProfile?.X_000631_VlanMux8021p == '-1' ? '' : detail?.dataProfile?.X_000631_VlanMux8021p}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='DATA' && detail?.dataProfile?.Mode !=='RG L2 Bridged'">
+                          <td>{{language['IPv4 NAT']}}</td>
+                          <td>
+                            {{detail?.dataProfile?.NATEnabled ? 'ON':'OFF'}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VIDEO'">
+                          <td>{{language['Product Family']}}</td>
+                          <td>
+                            {{detail?.videoProfile?.ProductFamily==='EXOS' ?language['EXOS-Powered GigaSpire']:detail?.videoProfile?.ProductFamily==='GigaCenter'?language['GigaCenter and GigaHub']:"--"}} </td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VIDEO'">
+                          <td>{{language['Mode']}}</td>
+                          <td>
+                            {{detail?.videoProfile?.Mode =='RG Routed' ?language['RG - Routed']:detail?.videoProfile?.Mode=='RG L2 Bridged'?language['RG - L2 Bridged']:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VIDEO'">
+                          <td>{{language['VLAN Tag Action']}}</td>
+                          <td>
+                            {{detail?.videoProfile?.VlanTagAction==true  ?'Tagged':'Un-tagged'}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VIDEO' && detail?.videoProfile?.VlanTagAction == true">
+                          <td>{{language['VLAN ID']}}</td>
+                          <td>
+                            {{detail?.videoProfile?.VLANID ?detail?.videoProfile?.VLANID:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VIDEO'">
+                          <td>{{language['Priority (P-bits)']}}</td>
+                          <td>
+                            {{detail?.videoProfile?.X_000631_VlanMux8021p == '-1' ? '' : detail?.videoProfile?.X_000631_VlanMux8021p}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VIDEO'">
+                          <td>{{language['IGMP Query Interval (in seconds)']}}</td>
+                          <td>
+                            {{detail?.videoProfile?.QueryInterval ?detail?.videoProfile?.QueryInterval:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VIDEO'">
+                          <td>{{language['Maximum # of Multicast Streams']}}</td>
+                          <td>
+                            {{detail?.videoProfile?.MaxStreams ?detail?.videoProfile?.MaxStreams:"--"}}</td>
+                        </tr>
+                        <!-- <tr *ngIf="detail?.serviceType==='VIDEO'">
+                          <td>{{language['Max Downstream Rate']}}</td>
+                          <td>
+                            {{downloadCIR ?downloadCIR:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VIDEO'">
+                          <td>{{language['Max Upstream Rate']}}</td>
+                          <td>
+                            {{uploadCIR ?uploadCIR:"--"}}</td>
+                        </tr> -->
+                        <tr *ngIf="detail?.serviceType==='VIDEO'">
+                          <td>{{language['Total Number of Multicast Filter Entries']}}</td>
+                          <td>
+                            {{detail?.videoProfile?.mcastFilterProfile?.RangeNumberOfEntries ?detail?.videoProfile?.mcastFilterProfile?.RangeNumberOfEntries:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VIDEO'">
+                          <td>{{language['Multicast Filter Name']}}</td>
+                          <td>
+                            {{detail?.videoProfile?.mcastFilterProfile?.Name ?detail?.videoProfile?.mcastFilterProfile?.Name:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VIDEO'">
+                          <td>{{language['Multicast Range Name']}}</td>
+                          <td>
+                            {{detail?.videoProfile?.mcastFilterProfile?.RangeName ?detail?.videoProfile?.mcastFilterProfile?.RangeName:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VIDEO'">
+                          <td>{{language['Multicast Range Start']}}</td>
+                          <td>
+                            {{detail?.videoProfile?.mcastFilterProfile?.RangeStart ?detail?.videoProfile?.mcastFilterProfile?.RangeStart:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VIDEO'">
+                          <td>{{language['Multicast Range End']}}</td>
+                          <td>
+                            {{detail?.videoProfile?.mcastFilterProfile?.RangeEnd ?detail?.videoProfile?.mcastFilterProfile?.RangeEnd:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VIDEO'">
+                          <td>{{language['Default VLAN']}}</td>
+                          <td>
+                            {{detail?.videoProfile?.mvrProfile?.DefaultVLAN ?detail?.videoProfile?.mvrProfile?.DefaultVLAN:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VIDEO'">
+                          <td>{{language['Total Number of Multivlan Range Filters']}}</td>
+                          <td>
+                            {{detail?.videoProfile?.mvrProfile?.RangeNumberOfEntries ?detail?.videoProfile?.mvrProfile?.RangeNumberOfEntries:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VIDEO'">
+                          <td>{{language['Range VLAN']}}</td>
+                          <td>
+                            {{detail?.videoProfile?.mvrProfile?.RangeVLAN ?detail?.videoProfile?.mvrProfile?.RangeVLAN:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VIDEO'">
+                          <td>{{language['Multivlan Range Start']}}</td>
+                          <td>
+                            {{detail?.videoProfile?.mvrProfile?.RangeStart ?detail?.videoProfile?.mvrProfile?.RangeStart:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VIDEO'">
+                          <td>{{language['Multivlan Range End']}}</td>
+                          <td>
+                            {{detail?.videoProfile?.mvrProfile?.RangeEnd ?detail?.videoProfile?.mvrProfile?.RangeEnd:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VOICE' && detail?.voiceServiceType ==='SIP'" >
+                          <td>{{language['Product Family']}}</td>
+                          <td>
+                            {{detail?.voiceSIPProfile?.ProductFamily ==='GigaCenter'?language['GigaCenter & GigaHub & GigaSpire(GS4227E,GS4220E,GS4227,GS4227W,GS4237)']:detail?.voiceSIPProfile?.ProductFamily ==='T-Series'?language['T-Series']:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VOICE' && detail?.voiceServiceType ==='SIP'" >
+                          <td>{{language['WAN Connection Framing Type']}}</td>
+                          <td>
+                            {{detail?.voiceSIPProfile?.ServiceFramingType ?detail?.voiceSIPProfile?.ServiceFramingType:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VOICE' && detail?.voiceServiceType ==='SIP' && detail?.voiceSIPProfile?.ServiceFramingType == 'IPoE'" >
+                          <td>{{language['IP Type (For EXOS Only)']}}</td>
+                          <td>
+                            {{detail?.voiceSIPProfile?.ipType ?detail?.voiceSIPProfile?.ipType:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VOICE' && detail?.voiceServiceType ==='SIP'" >
+                          <td>{{language['VLAN Tag Action']}}</td>
+                          <td>
+                            {{detail?.voiceSIPProfile?.VlanTagAction==true ?'Tagged':'Un-tagged'}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VOICE' && detail?.voiceServiceType ==='SIP' && detail?.voiceSIPProfile?.VlanTagAction == true" >
+                          <td>{{language['VLAN ID']}}</td>
+                          <td>
+                            {{detail?.voiceSIPProfile?.VLANID ?detail?.voiceSIPProfile?.VLANID:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VOICE' && detail?.voiceServiceType ==='SIP'" >
+                          <td>{{language['Priority (P-bits)']}}</td>
+                          <td>
+                            {{detail?.voiceSIPProfile?.X_000631_VlanMux8021p == '-1' ? '' : detail?.voiceSIPProfile?.X_000631_VlanMux8021p}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VOICE' && detail?.voiceServiceType ==='SIP'" >
+                          <td>{{language['Proxy Server']}}</td>
+                          <td>
+                            {{detail?.voiceSIPProfile?.ProxyServer ?detail?.voiceSIPProfile?.ProxyServer:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VOICE' && detail?.voiceServiceType ==='SIP'" >
+                          <td>{{language['Proxy Server Port']}}</td>
+                          <td>
+                            {{detail?.voiceSIPProfile?.ProxyServerPort ?detail?.voiceSIPProfile?.ProxyServerPort:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VOICE' && detail?.voiceServiceType ==='SIP'" >
+                          <td>{{language['Primary DNS Server']}}</td>
+                          <td>
+                            {{detail?.voiceSIPProfile?.DNSPrimary ?detail?.voiceSIPProfile?.DNSPrimary:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VOICE' && detail?.voiceServiceType ==='SIP'" >
+                          <td>{{language['Secondary DNS Server']}}</td>
+                          <td>
+                            {{detail?.voiceSIPProfile?.DNSSecondary ?detail?.voiceSIPProfile?.DNSSecondary:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VOICE' && detail?.voiceServiceType ==='H.248'" >
+                          <td>{{language['Product Family']}}</td>
+                          <td>
+                            {{detail?.voiceH248Profile?.ProductFamily ==='GigaCenter'?language['GigaCenter & GigaHub & GigaSpire(GS4227E,GS4220E,GS4227,GS4227W,GS4237)']:detail?.voiceH248Profile?.ProductFamily ==='T-Series'?language['T-Series']:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VOICE' && detail?.voiceServiceType ==='H.248'" >
+                          <td>{{language['WAN Connection Framing Type']}}</td>
+                          <td>
+                            {{detail?.voiceH248Profile?.ServiceFramingType ?detail?.voiceH248Profile?.ServiceFramingType:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VOICE' && detail?.voiceServiceType ==='H.248' && detail?.voiceH248Profile?.ServiceFramingType == 'IPoE'" >
+                          <td>{{language['IP Type (For EXOS Only)']}}</td>
+                          <td>
+                            {{detail?.voiceH248Profile?.ipType ?detail?.voiceH248Profile?.ipType:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VOICE' && detail?.voiceServiceType ==='H.248'" >
+                          <td>{{language['VLAN Tag Action']}}</td>
+                          <td>
+                            {{detail?.voiceH248Profile?.VlanTagAction==true  ?'Tagged':'Un-tagged'}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VOICE' && detail?.voiceServiceType ==='H.248' && detail?.voiceH248Profile?.VlanTagAction == true" >
+                          <td>{{language['VLAN ID']}}</td>
+                          <td>
+                            {{detail?.voiceH248Profile?.VLANID ?detail?.voiceH248Profile?.VLANID:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VOICE' && detail?.voiceServiceType ==='H.248'" >
+                          <td>{{language['Priority (P-bits)']}}</td>
+                          <td>
+                            {{detail?.voiceH248Profile?.X_000631_VlanMux8021p == '-1' ? '' : detail?.voiceH248Profile?.X_000631_VlanMux8021p}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VOICE' && detail?.voiceServiceType ==='H.248'" >
+                          <td>{{language['RTP Base Port']}}</td>
+                          <td>
+                            {{detail?.voiceH248Profile?.RTPBasePort ?detail?.voiceH248Profile?.RTPBasePort:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VOICE' && detail?.voiceServiceType ==='H.248'" >
+                          <td>{{language['Primary GW Controller']}}</td>
+                          <td>
+                            {{detail?.voiceH248Profile?.PrimaryGWController ?detail?.voiceH248Profile?.PrimaryGWController:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VOICE' && detail?.voiceServiceType ==='H.248'" >
+                          <td>{{language['Secondary GW Controller']}}</td>
+                          <td>
+                            {{detail?.voiceH248Profile?.SecondaryGWController ?detail?.voiceH248Profile?.SecondaryGWController:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VOICE' && detail?.voiceServiceType ==='MGCP'" >
+                          <td>{{language['Product Family']}}</td>
+                          <td>
+                         {{detail?.voiceMGCPProfile?.ProductFamily ==='GigaCenter'?language['GigaCenter & GigaHub & GigaSpire(GS4227E,GS4220E,GS4227,GS4227W,GS4237)']:detail?.voiceMGCPProfile?.ProductFamily ==='T-Series'?language['T-Series']:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VOICE' && detail?.voiceServiceType ==='MGCP'" >
+                          <td>{{language['WAN Connection Framing Type']}}</td>
+                          <td>
+                            {{detail?.voiceMGCPProfile?.ServiceFramingType ?detail?.voiceMGCPProfile?.ServiceFramingType:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VOICE' && detail?.voiceServiceType ==='MGCP' && detail?.voiceMGCPProfile?.ServiceFramingType == 'IPoE'" >
+                          <td>{{language['IP Type (For EXOS Only)']}}</td>
+                          <td>
+                            {{detail?.voiceMGCPProfile?.ipType ?detail?.voiceMGCPProfile?.ipType:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VOICE' && detail?.voiceServiceType ==='MGCP'" >
+                          <td>{{language['VLAN Tag Action']}}</td>
+                          <td>
+                              {{detail?.voiceMGCPProfile?.VlanTagAction==true ?'Tagged':'Un-tagged'}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VOICE' && detail?.voiceServiceType ==='MGCP' && detail?.voiceMGCPProfile?.VlanTagAction == true" >
+                          <td>{{language['VLAN ID']}}</td>
+                          <td>
+                            {{detail?.voiceMGCPProfile?.VLANID ?detail?.voiceMGCPProfile?.VLANID:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VOICE' && detail?.voiceServiceType ==='MGCP'" >
+                          <td>{{language['Priority (P-bits)']}}</td>
+                          <td>
+                            {{detail?.voiceMGCPProfile?.X_000631_VlanMux8021p == '-1' ? '' :detail?.voiceMGCPProfile?.X_000631_VlanMux8021p}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VOICE' && detail?.voiceServiceType ==='MGCP'" >
+                          <td>{{language['Primary Call Agent']}}</td>
+                          <td>
+                            {{detail?.voiceMGCPProfile?.PrimaryCallMainAgent ?detail?.voiceMGCPProfile?.PrimaryCallMainAgent:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VOICE' && detail?.voiceServiceType ==='MGCP'" >
+                          <td>{{language['Secondary Call Agent']}}</td>
+                          <td>
+                            {{detail?.voiceMGCPProfile?.SecondaryCallMainAgent ?detail?.voiceMGCPProfile?.SecondaryCallMainAgent:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VOICE' && detail?.voiceServiceType ==='X_000631_TDMGW'" >
+                          <td>{{language['Product Family']}}</td>
+                          <td>
+                           {{detail?.voiceTDMGWProfile?.ProductFamily ==='GigaCenter'?language['GigaCenter & GigaHub & GigaSpire(GS4227E,GS4220E,GS4227,GS4227W,GS4237)']:detail?.voiceTDMGWProfile?.ProductFamily ==='T-Series'?language['T-Series']:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VOICE' && detail?.voiceServiceType ==='X_000631_TDMGW'" >
+                          <td>{{language['WAN Connection Framing Type']}}</td>
+                          <td>
+                            {{detail?.voiceTDMGWProfile?.ServiceFramingType ?detail?.voiceTDMGWProfile?.ServiceFramingType:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VOICE' && detail?.voiceServiceType ==='X_000631_TDMGW' && detail?.voiceTDMGWProfile?.ServiceFramingType == 'IPoE'" >
+                          <td>{{language['IP Type (For EXOS Only)']}}</td>
+                          <td>
+                            {{detail?.voiceTDMGWProfile?.ipType ?detail?.voiceTDMGWProfile?.ipType:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VOICE' && detail?.voiceServiceType ==='X_000631_TDMGW'" >
+                          <td>{{language['VLAN Tag Action']}}</td>
+                          <td>
+                            {{detail?.voiceTDMGWProfile?.VlanTagAction==true  ?'Tagged':'Un-tagged'}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VOICE' && detail?.voiceServiceType ==='X_000631_TDMGW' && detail?.voiceTDMGWProfile?.VlanTagAction == true" >
+                          <td>{{language['VLAN ID']}}</td>
+                          <td>
+                            {{detail?.voiceTDMGWProfile?.VLANID ?detail?.voiceTDMGWProfile?.VLANID:"--"}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VOICE' && detail?.voiceServiceType ==='X_000631_TDMGW'" >
+                          <td>{{language['Priority (P-bits)']}}</td>
+                          <td>
+                            {{detail?.voiceTDMGWProfile?.X_000631_VlanMux8021p == '-1' ? '' : detail?.voiceTDMGWProfile?.X_000631_VlanMux8021p}}</td>
+                        </tr>
+                        <tr *ngIf="detail?.serviceType==='VOICE' && detail?.voiceServiceType ==='X_000631_TDMGW'" >
+                          <td>{{language['Server IP']}}</td>
+                          <td>
+                            {{detail?.voiceTDMGWProfile?.ServerIP ?detail?.voiceTDMGWProfile?.ServerIP:"--"}}</td>
+                        </tr>
+                        
+                        <tr>
+                          <td>{{language['Service Definition Template']}}</td>
+                          <td>
+                            {{detail?.serviceDefinitionName?detail.serviceDefinitionName:"--"}}</td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

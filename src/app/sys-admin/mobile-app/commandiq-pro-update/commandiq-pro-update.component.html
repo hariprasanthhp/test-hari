@@ -1,0 +1,150 @@
+<div class="position-relative">
+<div class="loader" *ngIf="loader">
+	<div class="d-flex justify-content-center">
+		<div class="spinner-border text-primary" role="">
+			<span class="sr-only">{{ language.Loading }}</span>
+		</div>
+	</div>
+</div>
+<div class="w-100">
+	<div class="alert alert-warning alert-dismissible fade show" role="alert" *ngIf="showError">
+		<span class="mr-2"><img src="../../../assets/img/ic_error-outline.svg"/></span>
+		<strong>{{ language.Error }}!</strong> {{ errorMsg }}.
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="validateError()">
+			<span aria-hidden="true"></span>
+		</button>
+	</div>
+	
+	<div class="row detail-view my-3">
+		<div class="col-md-12">
+		  <form>
+			<div class="text-right d-flex align-items justify-content-end white-form pb-1 ">
+			  <!-- <div class="whitelabel-name">{{ language['Update CommandIQ Biz'] }}
+				</div> -->
+			  <div class="d-inline-flex align-items-center">
+				<button class="btn-default primary px-3" id="savebuttonCiqBizCreate" (click)="add()">
+				  {{ language.Save }}
+				</button>
+				<button class="close ml-3 px-0" (click)="cancel()">
+				  <span></span>
+				</button>
+			  </div>
+			</div>
+		  </form>
+		  
+		</div>
+		<div class="col-md-12 mb-2">
+		  <div class="toggle-swtbtn checkbox switcher">
+			<label class="f-s-14px">
+			  <input type="checkbox" name="Status" id="CiqBizCreateStatus" [(ngModel)]="isActive" [attr.checked]="isActive" />
+			  <span class="mr-1"><small></small></span>
+			  {{ isActive ? language.Enabled : language.Disabled }}
+			</label>
+	
+		  </div>
+		</div>
+		<div class="col-sm-4 col-md-3 col-lg-3 col-xl-3">
+		  <div class="form-group">
+			<label class="ccl-form-label mb-0">{{ language.Service_Provider }}</label>
+			<p class="value-text">{{ calixspid }}</p>
+		  </div>
+		  <div class="form-group ccl-form">
+			<label class="ccl-form-label mb-0">{{ language.App_Name }}<span class="error">*</span></label>
+			<div class="position-relative">
+			  <input id="CiqBizappName" type="text" class="clearable-input" name="appName" [(ngModel)]="appName" 
+			  trimSpace (blur)="removeUnwantedSpace('appName',appName)" (keyup)="hideError()"/>
+			  <button *ngIf="appName" class="close btn-custom-close" (click)="clearInput('App Name')"><span></span></button>
+			</div>
+		  </div>
+		  <div class="form-group">
+			<label class="ccl-form-label mb-0">{{ language.Primary_Color }}</label>
+			<div class="d-flex justify-content-between w-100">
+			  <div class="position-relative ccl-form min-w-135">
+				<input type="text" class="clearable-input" [(ngModel)]="primaryColor" [value]="primaryColor"  (keyup)="hideError()"/>
+				<button class="close btn-custom-close" (click)="clearInput('Primary Color')" *ngIf="primaryColor">
+				  <span></span>
+				</button>
+			  </div>
+			  <input class="form-control color-box" name="primaryColor" [(colorPicker)]="primaryColor"
+				[(ngModel)]="primaryColor" id="primaryColor" [cpOutputFormat]="'hex'" [style.background]="primaryColor"
+				autocomplete="off" trimSpace (blur)="removeUnwantedSpace('primaryColor',primaryColor)" />
+			</div>
+		  </div>
+		</div>
+	
+		<div class="col-sm-4 col-md-3 col-lg-3 col-xl-3">
+		  <div class="form-group">
+			<label class="ccl-form-label mb-0">{{ language['Primary_Logo'] }}</label>
+		  </div>
+		  <div *ngIf="dataAvailable">
+			<div class="logo-box" *ngIf="updatelogo">
+				<img id="logo-image-view" src="{{updatelogo + '?timestamp=' + timestamp}}" />
+			  </div>
+			  <div class="logo-box" *ngIf="!updatelogo">
+				<img id="logo-image-view" src=" " />
+			  </div>
+			  <label for="logo" class="custom-file-upload btn-sm btn-light ml-0">
+				<a (click)="hidelogo()">
+					{{language['Replace_Image']}}
+				</a>
+			  </label>
+			  <input type="file" name="logo" id="logo" class="white-logo-input" #logo
+				(change)="readURL(logo, 'logo')"  accept= ".jpeg, .JPEG, .PNG, .jpg, .png, .JPG, .img, .IMG, .bin, .BIN"  />
+		  </div>
+		</div>
+	
+		<div class="col-sm-4 col-md-3 col-lg-3 col-xl-3">
+		  <div class="form-group">
+			<label class="ccl-form-label mb-0">{{ language['White_Logo'] }}</label>
+		  </div>
+		  <div *ngIf="dataAvailable">
+			<div class="logo-box" *ngIf="updateWhiteLogo">
+				<img id="white-logo-image-view" src="{{updateWhiteLogo + '?timestamp=' + timestamp}}" />
+			  </div>
+			  <div class="logo-box" *ngIf="!updateWhiteLogo">
+				<img id="white-logo-image-view" src=" " />
+			  </div>
+			  <label for="white_logo" class="custom-file-upload btn-sm btn-light ml-0">
+				<a (click)="hidelogo()">
+					{{language['Replace_Image']}}
+				</a>
+			  </label>
+			  <input type="file" name="white_logo" id="white_logo" class="white-logo-input" #white_logo
+				(change)="readURL(white_logo, 'white_logo')"  accept= ".PNG, .png"  />
+		  </div>
+		</div>
+		<div class="col-sm-4 col-md-3 col-lg-3 col-xl-3">
+		  <div class="form-group">
+			<label class="ccl-form-label mb-0">{{ language.Logo_Guidelines }}</label>
+		  </div>
+		  <div class="logo-guidelines">
+			<ul class="ml-4">
+			  <li>{{language['Max File size']}}: 250KB</li>
+			  <li>{{language['Max-Width']}}: 1080px</li>
+			  <li>{{language['Max-Height']}}: 180px</li>
+			  <li>
+				<p class="m-0">{{language['Primary Logo Format']}}:</p>
+				<p class="m-0">.png, .jpeg, img, bin</p>
+			  </li>
+			  <li>
+				<p class="m-0">{{language['White Logo Format']}}: .png</p>
+			  </li>
+			  <li>
+				<p class="m-0">{{language['Transparent background recommended']}}</p>
+			  </li>
+			</ul>
+		  </div>
+		</div>
+	  </div>
+	<!-- <form>
+		<div class="white-form my-3">
+			<button class="btn-default primary px-3" (click)="add()">
+				{{ language.Save }}
+			</button>
+			<button class="btn-default btn-dft py-1 ml-3 px-3" (click)="cancel()">
+				{{ language.Cancel }}
+			</button>
+		</div>
+	</form> -->
+</div>
+</div>

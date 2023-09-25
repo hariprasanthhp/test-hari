@@ -1,0 +1,144 @@
+@import "~src/assets/variables";
+.page-wrapper {
+  .home-wrapper {
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-top: 44px;
+    .home-left {
+      width: calc(100% - 388px);
+      padding-right: 32px;
+      .home-subscriber-row {
+        margin-bottom: 77px;
+        h2 {
+          margin-bottom: 40px;
+        }
+
+      }
+    }
+    .home-right {
+      width: 388px;
+    }
+  }
+}
+@media (max-width: 1300px) {
+  .page-wrapper {
+    header {
+      .header-left {
+        .logo {
+          margin-right: 10px;
+        }
+      }
+      .header-nav {
+        li {
+          a {
+            margin-left: 10px;
+          }
+        }
+      }
+    }
+  }
+}
+
+
+
+
+@media (max-width: 1100px) {
+  .page-wrapper {
+    .home-wrapper {
+      .home-left {
+        .overview {
+          .overview-row{
+            .ov-col {
+              width: 33%;
+              margin-bottom: 20px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+@media (max-width: 900px) {
+  .page-wrapper {
+    header {
+      .header-left {
+        .header-search {
+          width: 220px;
+        }
+      }
+      .header-nav {
+        li {
+          a {
+            font-size: 14px;
+            &.dash-drop {
+              width: 42px;
+              height: 42px;
+            }
+            &.avatar-profile {
+              margin-left: 10px;
+              width: 42px;
+              height: 42px;
+            }
+          }
+        }
+      }
+    }
+    .home-wrapper {
+      .home-left {
+        width: calc(100% - 300px);
+        .overview {
+          .overview-row{
+            .ov-col {
+              width: 50%;
+            }
+          }
+        }
+      }
+      .home-right {
+        width: 300px;
+      }
+    }
+  }
+}
+@media (max-width: 800px) {
+  .page-wrapper {
+    .home-wrapper {
+      .home-left {
+        width: 100%;
+        .overview {
+          .overview-row{
+            .ov-col {
+              width: 25%;
+            }
+          }
+        }
+      }
+      .home-right {
+        width: 100%;
+      }
+    }
+  }
+}
+a:hover {
+  text-decoration: none;
+}
+
+
+.left-menu li a.active {
+  color: #4C4C4C;
+  font-weight: 600;
+  border-bottom: 1px solid #0279FF !important;
+  background: none;
+
+}
+.left-menu li a .fa{
+  padding-right: 10px;
+}
+
+.dblock {
+display: block;
+}
+
+.dnone {
+display: none;
+}

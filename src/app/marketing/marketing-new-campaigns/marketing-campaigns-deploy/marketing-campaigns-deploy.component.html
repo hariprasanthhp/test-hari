@@ -1,0 +1,493 @@
+<div *ngIf="loading" class="no-data">
+    <div class="spinner-border text-primary">
+        <span class="sr-only">{{language.Loading}}</span>
+    </div>
+</div>
+<div class=" col-lg-5 col-md-12 col-sm-12 alert alert-warning alert-dismissible fade show" role="alert"
+    *ngIf="deployError">
+    <span class="success-img"><img src="./assets/img/error-icon.svg" /></span>
+    <div class="d-inline-flex text-left w-75"> Error! {{deployErrorMsg}}.</div>
+
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true" (click)='errorReset()'></span>
+    </button>
+</div>
+<div class="alert alert-success alert-dismissible fade show" role="alert" *ngIf="deploySuccess">
+    <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+    <div class="d-inline-flex">{{deploySuccessMsg}}.</div>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true" (click)='errorReset()'></span>
+    </button>
+</div>
+<div class="deploy-container">
+    <div class="col-lg-12 p-0 cus-bottom" *ngIf="mobileNotificationSelected ">
+        <h2 class="title-second mb0 greyaa" id="deploy-mobile-notification">{{ indexValue }}.
+            {{language.Mobile_Notification}}
+            <!-- {{channelPostObject.marketingChannel}} *ngIf="channelPostObject"-->
+        </h2>
+    </div>
+    <div class="col-md-12 p-0">
+        <div class="row">
+            <div class="col-lg-4 col-md-4 col-sm-12" *ngIf="mobileNotificationSelected ">
+                <form class="custom-form">
+                    <div class="form-group ccl-form ">
+                        <label for="account" class="col-sm-12 col-form-label">{{language.notificationname}}<span
+                                class="required-field"> *
+                            </span>
+                        </label>    
+                        <div class="ccl">
+                            <textarea maxlength="178" autocomplete="off" id="notification-name"
+                                placeholder="{{language.notificationname}}" [(ngModel)]="notificationName"
+                                (ngModelChange)="notificationNameChange($event)" class="form-control cus-selctbox"
+                                [ngModelOptions]="{standalone: true}" trimSpace (blur)="removeUnwantedSpace('notificationName',notificationName)"></textarea>
+                            <div class="word-counter" id="counter">
+                                <span id="current">0</span>
+                                <span id="maximum">/ 178</span>
+                            </div>
+                        </div>
+                        <!-- Error -->
+                        <div *ngIf="notificationNameError">
+                            <span class="mandatory-msg req-text">{{notificationNameErrorMsg ? notificationNameErrorMsg :
+                                language.notificationNameRequiredErrorMsg}}</span>
+                        </div>
+                    </div>
+                    <div class="form-group ccl-form ">
+                        <label for="account" class="col-sm-12 col-form-label">{{language.Link}}
+                            <!-- <span class="required-field">
+                        *
+                    </span> -->
+                        </label>
+                        <input type="url" autocomplete="off" id="campaign-link" placeholder="{{language.Campaign_Link}}"
+                            [(ngModel)]="campaignLink" (ngModelChange)="campaignLinkChange($event)"
+                            class="selectboxwidth" [ngModelOptions]="{standalone: true}" trimSpace (blur)="removeUnwantedSpace('campaignLink',campaignLink)">
+                        <!-- Error -->
+                        <div *ngIf="campaignLinkError">
+                            <span class="mandatory-msg req-text">{{language.Enter_valid_URL}}</span>
+                        </div>
+                    </div>
+
+                    <div class=" form-group browse-file">
+                        <label for="account" class="col-sm-12 col-form-label">{{language.Image}}
+                            <!-- <span class="required-field"> *
+                </span> -->
+                        </label>
+                        <label for="file-upload" class="btn-default active custom-file-upload">
+                            {{language.Browse}}
+                        </label>
+                        <input #imageupload id="file-upload" (change)="campaignImageUploader($event)" type="file"
+                            accept="image/*" hidden="hidden" />
+                        <!-- Error -->
+                        <div *ngIf="campaignImageError">
+                            <span class="mandatory-msg req-text">{{campaignImageErrorMsg ? campaignImageErrorMsg :
+                                ''}}</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group tab-reg" *ngIf="!triggeredCampaign">
+                        <label for="account" class="col-sm-12 col-form-label">{{language.Schedule}}
+                            <span class="required-field"> *</span>
+                        </label>
+                        <ng-select id="scheduleId" [(ngModel)]="scheduleSelected"
+                            (ngModelChange)="selectSchedule($event)" placeholder="{{language.Select_Schedule}}"
+                            [items]="scheduleArray" class="selectboxwidth" [ngModelOptions]="{standalone: true}"
+                            [clearable]="false">
+                        </ng-select>
+
+                    </div>
+                    <ng-container *ngIf="campaignError && !triggeredCampaign">
+                        <div>
+                            <span
+                                class="mandatory-msg req-text"><i>{{language.campignErrorMsg}}</i> <b><i>{{language.campignErrorMsg2}}</i></b> <i>{{language.campignErrorMsg1}} {{startDate}}</i></span>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="scheduleSelected == 'Event-Driven' && !triggeredCampaign">
+                        <div class="form-group tab-reg">
+                            <label for="account" class="col-sm-12 col-form-label">{{language.Event}}
+                                <span class="required-field"> *</span>
+                            </label>
+                            <ng-select id="eventId" [(ngModel)]="eventSelected" (ngModelChange)="selectEvent($event)"
+                                placeholder="{{language.Select_Event_Type}}" bindLabel="name" bindValue="id"
+                                [items]="eventTypeDataArray" class="selectboxwidth"
+                                [ngModelOptions]="{standalone: true}" [clearable]="false">
+                            </ng-select>
+                            <!-- Error -->
+                            <div *ngIf="evenTypeError">
+                                <span class="mandatory-msg req-text">{{language.Event}} {{language.Required}}.</span>
+                            </div>
+                        </div>
+                        <div class="form-group ccl-form ">
+                            <label for="account" class="col-sm-12 col-form-label">{{language.Threshold}} <span
+                                    class="required-field"> *
+                                </span>
+                            </label>
+                            <input type="number" autocomplete="off" id="campaign-threshold"
+                                placeholder="{{language.Threshold}}" [(ngModel)]="thresholdValue"
+                                (ngModelChange)="thresholdChange($event)" class="selectboxwidth"
+                                [ngModelOptions]="{standalone: true}">
+                            <!-- Error -->
+                            <div *ngIf="thresHoldError">
+                                <span class="mandatory-msg req-text">{{language.Threshold}} {{language.Required}}.</span>
+                            </div>
+                            <div *ngIf="maxlenght && !thresHoldError">
+                                <span class="mandatory-msg req-text">{{language.Valid_Threshold_Value}}</span>
+                            </div>
+                        </div>
+                        <div *ngIf="scheduleSelected != 'Immediate'" class="form-group tab-reg">
+                            <label for="account" class="col-sm-12 col-form-label">{{language.TimeZone}}
+                                <span class="required-field"> *</span>
+                            </label>
+                            <ng-select id="timeZoneId" [(ngModel)]="timeZoneSelected"
+                                (ngModelChange)="selectTimeZone($event)" placeholder="{{language.Select_Timezone}}"
+                                [items]="timeZoneDataArray" class="selectboxwidth" [ngModelOptions]="{standalone: true}"
+                                [clearable]="false">
+                            </ng-select>
+                            <!-- Error -->
+                            <div *ngIf="timeZoneError">
+                                <span class="mandatory-msg req-text">{{language.TimeZone}} {{language.Required}}.</span>
+                            </div>
+                        </div>
+                        <div class="form-group ccl-form position-not-time">
+                            <label for="account" class="col-sm-12 col-form-label">{{language.Notification_Time}} <span
+                                    class="required-field"> *
+                                </span>
+                            </label>
+                            <p-calendar id="notify_time" #notifyTimePicker
+                                [style]="{'width': '100%','height': '36px'  }" [inputStyle]="{'height': '36px'}"
+                                appendTo="body" [autoZIndex]="true" [(ngModel)]="notificationTime" [showIcon]="false"
+                                (ngModelChange)="notificationTimeChange($event)"
+                                (onFocus)="notificationDateTimeFocus($event, notifyTimePicker)"
+                                [ngModelOptions]="{standalone: true}" timeOnly="true" showTime="true" hourFormat="12"
+                                [utc]="true">
+                            </p-calendar>
+
+                            <div class="pos-abs-clock">
+                                <i class="fa fa-clock"></i>
+                            </div>
+                            <!-- Error -->
+                            <div *ngIf="notificationTimeError">
+                                <span class="mandatory-msg req-text">{{language.Notification_Time}} {{language.Required}}.</span>
+                            </div>
+
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="scheduleSelected == 'Scheduled' && !triggeredCampaign">
+                        <div class="form-group ccl-form  position-not-time">
+                            <label for="account" class="col-sm-12 col-form-label">{{language.Notification_Date_Time}}
+                                <span class="required-field"> *
+                                </span>
+                            </label>
+                            <p-calendar #notifyCalendar id="notify_time" [style]="{'width': '100%','height': '36px'  }"
+                                [inputStyle]="{'height': '36px'}" appendTo="body" [autoZIndex]="true"
+                                [(ngModel)]="notificationDateTime" [showIcon]="false" [minDate]="minimumDate"
+                                (ngModelChange)="notificationDateTimeChange($event)"
+                                (onFocus)="notificationDateTimeFocus($event, notifyCalendar)"
+                                [ngModelOptions]="{standalone: true}" showTime="true" hourFormat="12" [utc]="true">
+                            </p-calendar>
+
+                            <div class="pos-abs-clock">
+                                <i class="far fa-clock"></i>
+                            </div>
+                            <!-- Error -->
+                            <div *ngIf="notificationDateTimeError">
+                                <span class="mandatory-msg req-text">{{language.Notification_Date_Time}}
+                                    {{language.Required}}.</span>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="triggeredCampaign">
+                        <div class="form-group tab-reg">
+                            <label for="account" class="col-sm-12 col-form-label">{{language.TimeZone}}
+                                <span class="required-field"> *</span>
+                            </label>
+                            <ng-select id="timeZoneId" [(ngModel)]="timeZoneSelected"
+                                (ngModelChange)="selectTimeZone($event)" placeholder="{{language.Select_Timezone}}"
+                                [items]="timeZoneDataArray" class="selectboxwidth" [ngModelOptions]="{standalone: true}"
+                                [clearable]="false">
+                            </ng-select>
+                            <!-- Error -->
+                            <div *ngIf="timeZoneError">
+                                <span class="mandatory-msg req-text">{{language.TimeZone}} {{language.Required}}.</span>
+                            </div>
+                        </div>
+                        <div class="form-group ccl-form position-not-time">
+                            <label for="account" class="col-sm-12 col-form-label">{{language.Notification_Time}} <span
+                                    class="required-field"> *
+                                </span>
+                            </label>
+                            <p-calendar id="notify_time" #notifyTimePicker
+                                [style]="{'width': '100%','height': '36px'  }" [inputStyle]="{'height': '36px'}"
+                                appendTo="body" [autoZIndex]="true" [(ngModel)]="notificationTime" [showIcon]="false"
+                                (ngModelChange)="notificationTimeChange($event)"
+                                (onFocus)="notificationDateTimeFocus($event, notifyTimePicker)"
+                                [ngModelOptions]="{standalone: true}" timeOnly="true" showTime="true" hourFormat="12"
+                                [utc]="true">
+                            </p-calendar>
+
+                            <div class="pos-abs-clock">
+                                <i class="fa fa-clock"></i>
+                            </div>
+                            <!-- Error -->
+                            <div *ngIf="notificationTimeError">
+                                <span class="mandatory-msg req-text">{{language.Notification_Time}} {{language.Required}}.</span>
+                            </div>
+
+                        </div>
+                    </ng-container>
+
+                </form>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-12 mobile-prev" *ngIf="mobileNotificationSelected">
+                <div class="img-flex-box">
+                    <img *ngIf="campaignImage" [src]="campaignImageFile">
+                    <div id="img-container" *ngIf="!campaignImage " [ngClass]="!campaignImage ? 'img-bg-color': ''">
+                        <h3 class="title-second primary imagePreview" id="text">
+                            <span>
+                                {{language.Image}}
+                            </span>
+                            <span>
+                                {{language.Preview}}
+                            </span>
+
+                        </h3><br>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-12 p-0 mobile-frame" *ngIf="mobileNotificationSelected ">
+                <div class="mobile-box">
+                    <div class="icon-bar">
+                        <img src="../../../../assets/img/phone_bar.svg" />
+                    </div>
+                    <div class="icon-time-lock text-center">
+                        <div class="mb-4">
+                            <img src="../../../../assets/img/lock.svg" />
+                        </div>
+                        <img src="../../../../assets/img/phone_time.svg" />
+                    </div>
+                    <div class="info-box">
+                        <div class="info-title">
+                            <div class="left-el">
+                                <span class="icon"><img src="../../../../assets/img/ic_home.svg" /></span>
+                                <span class="caption">{{language['COMMANDIQ']}}</span>
+                            </div>
+                            <span class="time-int">2 {{language.min_ago}}</span>
+                        </div>
+                        <div class="info-conent">
+                            <p *ngIf="isEnteredText">{{language['Notification message received from CommandIQ']}}</p>
+                            <div class="info-msg">{{enteredText}}</div>
+                            <div class="img-icon-prv">
+                                <img *ngIf="campaignImage" [src]="campaignImageFile">
+                                <!-- <img src="../../../assets/images/CalixCloud_logo.png" /> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p class="disclaimer-text">
+                    {{language.push_notification}}
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12 col-md-12 col-sm-12"
+     *ngIf="(mailChimpSelected || constantSelected || csvSelected  || hubspotSelected) && !cmcType">
+    <!-- 
+    <div class="col-lg-5 col-md-12 col-sm-12 alert alert-warning alert-dismissible fade show" role="alert"
+         *ngIf="deployError && mailChimpSelected">
+        <span class="success-img"><img src="./assets/img/error-icon.svg" /></span>
+        <div class="d-inline-flex text-left w-75"> Error! {{deployErrorMsg}}.</div>
+
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true" (click)='errorReset()'></span>
+        </button>
+    </div>
+    -->
+    <div class="cus-bottom">
+        <h2 class="title-second mb0 greyaa" id="deploy-mailchimp">
+            <span>{{ indexValue1 }}.</span>
+            <span *ngIf="mailChimpSelected">{{ language.Mailchimp }}</span>
+            <span *ngIf="hubspotSelected">
+                <ng-container *ngIf="mailChimpSelected">, </ng-container>{{ language.HubSpot }}
+            </span>
+            <span *ngIf="constantSelected">
+                <ng-container *ngIf="mailChimpSelected || hubspotSelected">, </ng-container>{{ language.constantcontact }}
+            </span>
+            <span *ngIf="csvSelected">
+                <ng-container *ngIf="mailChimpSelected || hubspotSelected || constantSelected">, </ng-container>{{ language.CSVDownload }}
+            </span>
+        </h2>
+    </div>
+     
+    <div class="form-group ccl-form mb-2" *ngIf="triggeredCampaign">
+        <label for="account" class="col-sm-12 col-form-label px-0">{{language['Mailchimp Event Name']}}
+            <span class="required-field">*</span>
+        </label>
+        <div class="position-relative col-4 p-0">
+            <input autocomplete="off" id="milchimptrig" class="selectboxwidth" placeholder="Event_Name"
+                [ngModelOptions]="{standalone: true}" (ngModelChange)="notificationNameMailChange($event)"
+                [(ngModel)]="notificationMailName" type="text" title="" (keypress)="onKeypressEvent($event)">
+            <span class="input-close clear" *ngIf="notificationMailName" (click)="search_Text_Valuefun()"><img
+                    src="assets/img/ic_close-44px.svg" alt=""></span>
+        </div>
+        <div *ngIf="notificationNameMailError && triggeredCampaign">
+            <span class="mandatory-msg req-text">{{notificationNameMailErrorMsg ? notificationNameMailErrorMsg :
+                language['Mailchimp Event Name is Required']}}</span>
+        </div>
+        <div>
+            <span class="text-gray">{{language['Must match Mailchimp campaign trigger ‘Event Name’ exactly']}}.</span>
+        </div>
+    </div>
+
+    <!-- 
+    <div class="chk-group" *ngIf="cmcType && !triggeredCampaign">
+        <input class="mr-1" type="checkbox" name="" id="Mailchimp" [checked]="mailchimpMsg" (change)="showMailChimpMsg()">
+        <label class="cursor-pointer" for="Mailchimp">Include additional Direct Mail Only audience list</label>
+    </div>
+    -->
+    <p class="mb-2" *ngIf="!cmcType && !triggeredCampaign"><b>{{selectedSegmentData}}&nbsp;</b>
+         <span [innerHtml]="language.deployToChannels(channelNames)"></span></p>
+
+    <p class="mb-2" *ngIf="triggeredCampaign"><b>{{triggeredEventType}} - {{ selectedSegmentData}} </b>{{language['will
+        be deployed to Mailchimp when you click “Deploy Campaign.”']}}</p>
+    <!-- 
+    <div class="" *ngIf="mailchimpMsg && cmcType">
+        <p class="" [innerHtml]="language['selectedMailchimpDataLang'](campaignname)"></p>
+    </div>
+    -->
+
+    <p class="mb-2" *ngIf="triggeredCampaign"><b>{{language.Note}} :</b> {{language.note_hint}}</p>
+    <p class="mb-2">{{language['Required attributes (Name, Service Address, Email, Phone) will always be sent.']}}</p>
+    <p class="mb-2">{{language['Select additional attributes to send for personalization.']}}</p>
+
+    <p-treeTable [value]="tableData" [columns]="cols" selectionMode="checkbox" [(selection)]="selectedNodes">
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th *ngFor="let col of columns" [ttSortableColumn]="col.field">
+                    {{ col.header }}
+                    <p-treeTableSortIcon *ngIf="col.sortable" sortAscIcon="pi-sort-up 1" sortDescIcon="pi-sort-down 2"
+                        sortNoneIcon="pi-sort 3" [field]="col.field"></p-treeTableSortIcon>
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
+            <tr>
+                <td>
+                    <p-treeTableToggler  [rowNode]="rowNode"></p-treeTableToggler>
+                    <p-treeTableCheckbox [value]="rowNode" (click)="checkboxSelect($event,rowNode)"></p-treeTableCheckbox>
+                    <span class="pl-2">{{ rowData.attributes }}</span>
+                </td>
+                <td>
+                    <div *ngIf="selectedRows.includes(rowNode.node.key) && rowNode.node.data.parameters && rowNode.node.data.parameters.length > 0"
+                        class="dropdown-button-select">
+                        <div class="dropdown-button" ngbDropdown>
+                            <button class="mr-2 w-auto" id="dropdownPeriod" ngbDropdownToggle aria-haspopup="true"
+                                aria-expanded="false">
+                                <p class="listdata mb0">{{ selectedParameters[rowNode.node.key] ?
+                                    selectedParameters[rowNode.node.key] : rowNode.node.data.parameters[0]}}<span></span></p>
+                            </button>
+                            <ul ngbDropdownMenu aria-labelledby="dropdownPeriod" class="dropdownPeriod p-3">
+                                <ng-container *ngFor="let parameter of rowNode.node.data.parameters">
+                                    <li (click)="selectTimeFrame(rowNode.node.key, parameter)" ngbDropdownItem
+                                        class="py-3 border-bottom f-size-16 pointer">{{ parameter }}</li>
+                                </ng-container>
+                            </ul>
+                        </div>
+                    </div>
+                </td>
+                <td>{{ rowData.dataExample }}</td>
+            </tr>
+        </ng-template>
+    </p-treeTable>
+
+    <div class="d-flex mb-2">
+        <button class="btn-default btn-dft mr-3 btn-mid" (click)="selectAll()">{{language['Select All']}}</button>
+        <button class="btn-default btn-dft btn-mid" (click)="deselectAll()">{{language['Deselect All']}}</button>
+    </div>
+
+    <p>{{language['Electronic Content Builder can help you to design your collateral.']}}</p>
+
+    <button type="button" id="#" class="btn-default btn-dft mr-2 mb-4" (click)="electronicLink()">{{language["Electronic
+        Content Builder"]}} <span><img class="mx-1" src="../../../assets/img/arrow-up-right-from-square.svg" alt=""></span>
+    </button>
+</div>
+
+    <div class="col-lg-12 col-md-12 col-sm-12" *ngIf="mailChimpSelected && cmcType">
+        <!-- <div class="col-lg-5 col-md-12 col-sm-12 alert alert-warning alert-dismissible fade show" role="alert"
+                    *ngIf="deployError && mailChimpSelected">
+                    <span class="success-img"><img src="./assets/img/error-icon.svg" /></span>
+                    <div class="d-inline-flex text-left w-75"> Error! {{deployErrorMsg}}.</div>
+        
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true" (click)='errorReset()'></span>
+                    </button>
+                </div> -->
+        <div class="cus-bottom">
+            <h2 class="title-second mb0 greyaa" id="deploy-mailchimp"> {{ indexValue1 }}. {{ language.Mailchimp }}
+            </h2>
+        </div> 
+        <div class="chk-group" *ngIf="cmcType && !triggeredCampaign">
+            <input class="mr-1" type="checkbox" name="" id="Mailchimp" [checked]="mailchimpMsg"
+                (change)="showMailChimpMsg()">
+            <label class="cursor-pointer" for="Mailchimp">{{language['Include additional Direct Mail Only audience list']}}</label>
+        </div>
+        <div class="" *ngIf="mailchimpMsg && cmcType">
+            <p class="" [innerHtml]="language['selectedMailchimpDataLang'](campaignname)"></p>
+        </div>
+        <p>{{ language.electronic_content_mail}} {{language.Mailchimp}}.</p>
+    
+        <button type="button" id="#" class="btn-default btn-dft mr-2 mb-4" (click)="electronicLink()">{{language["Electronic
+            Content Builder"]}} <span><img class="mx-1" src="../../../assets/img/arrow-up-right-from-square.svg" alt="">
+            </span></button>
+    </div>
+    <div class="col-lg-12 col-md-12 col-sm-12" *ngIf="faceBookSelected">
+        <div class="cus-bottom">
+            <h2 class="title-second mb0 greyaa" id="deploy-facebook"> {{ indexValue2 }}. {{ language.Facebook }}
+            </h2>
+        </div> 
+        <p><b>{{ selectedSegmentData}}</b> {{language.facebook_dep}}</p>
+        <p *ngIf="!cmcType">{{language['Personalization not available (only targeting attributes will be sent).']}}</p>
+        <p>{{ language.electronic_content_mail}} {{language.Facebook}}.</p>
+        <button type="button" id="#" class="btn-default btn-dft mr-2 mb-4"  (click)="electronicLink()"  >{{language["Electronic Content Builder"]}} <span><img
+                    class="mx-1" src="../../../assets/img/arrow-up-right-from-square.svg" alt=""> </span></button>
+
+    </div>
+    <div class="col-lg-12 col-md-12 col-sm-12" *ngIf="hubspotSelected && cmcType">
+        <div class="cus-bottom">
+            <h2 class="title-second mb0 greyaa" id="deploy-hubspot"> {{ indexValue3 }}. {{ language.HubSpot }}
+            </h2>
+        </div> 
+        <div class="chk-group" *ngIf="cmcType && !triggeredCampaign">
+            <input class="mr-1" type="checkbox" name="" [checked]="hubSpotMsg" id="HubSpot" (change)="showHubspotMsg()">
+            <label class="cursor-pointer" for="HubSpot">{{language['Include additional Direct Mail Only audience list']}}</label>
+        </div>
+        <p *ngIf="!cmcType && !triggeredCampaign"><b>{{ selectedSegmentData}}</b> {{language.hubspot_dep}}</p>
+        <div class="" *ngIf="hubSpotMsg && cmcType">
+            <p class="" [innerHtml]="language['selectedMailchimpDataLang'](campaignname)"></p>
+        </div>
+        <p>{{ language.electronic_content_mail}} {{language.HubSpot}}.</p>
+        
+        <button type="button" id="#" class="btn-default btn-dft mr-2 mb-4"  (click)="electronicLink()" >{{language["Electronic Content Builder"]}} <span><img
+                    class="mx-1" src="../../../assets/img/arrow-up-right-from-square.svg" alt=""> </span></button>
+
+    </div>
+
+    <div class="col-lg-12 col-md-12 col-sm-12" *ngIf="csvSelected && cmcType">
+        <div class="sth-left cus-bottom">
+            <h2 class="title-second mb0 greyaa" id="deploy-csv-download"> {{ indexValue4 }}. {{ language.CSVDownload }}
+            </h2>
+        </div> 
+        <p><b>{{ selectedSegmentData}}</b> {{language.csvfile}}</p>
+        <button class="btn-arrow btn-arr-nxt" (click)="csvDownload()">
+            {{language['CSV_Download']}}
+        </button>
+    </div>
+    <div class="col-lg-12 col-md-12 col-sm-12" *ngIf="constantSelected && cmcType">
+        <div class="cus-bottom">
+            <h2 class="title-second mb0 greyaa" id="deploy-constant-contact"> {{ indexValue5 }}. {{language.constantcontact}}
+            </h2>
+        </div> 
+        <p><b>{{ selectedSegmentData}}</b> {{language.constant_dep}}</p>
+        <p>{{ language.electronic_content_mail}} {{language.constantcontact}}.</p>
+        <button type="button" id="#" class="btn-default btn-dft mr-2 mb-4"  (click)="electronicLink()"  >{{language["Electronic Content Builder"]}} <span><img
+                    class="mx-1" src="../../../assets/img/arrow-up-right-from-square.svg" alt=""> </span></button>
+    </div>
+</div>

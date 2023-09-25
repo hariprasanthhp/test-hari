@@ -1,0 +1,247 @@
+<section>
+    <div class="container ">
+        <div class="row">
+            <div class="success-meg-info d-flex justify-content-between" *ngIf="successmsg">
+                <div class="success-meg d-flex align-items-center">
+                    <div class="success-meg-icon">
+                        <img class="mr-2" src="../../../../../assets/img/success-icon.svg" alt="">
+                    </div>
+                    <div class="success-meg-content">
+                        <p>{{ language['Successfully Connected to Hotspot'] }}</p>
+                        <span>{{ language.WAN_failover_setup_msg }}</span>
+                    </div>
+                    <div class="success-meg-close">
+                        <img class="ml-2" src="../../../../../assets/img/close-icon.svg" alt="" (click)="successmsg = false">
+                    </div>
+                </div>
+            </div>
+    
+    
+            <div class="error-meg-info d-flex justify-content-between" *ngIf="failedmsg">
+                <div class="error-meg d-flex align-items-center">
+                    <div class="error-meg-icon">
+                        <img class="mr-2" src="../../../../../assets/img/error-icon.svg" alt="">
+                    </div>
+                    <div class="error-meg-content">
+                        <p>{{ language['Hotspot Connection Failed'] }}</p>
+                        <span>{{ language['Make sure the information entered is correct and try to connect again'] }}</span>
+                    </div>
+                    <div class="error-meg-close">
+                        <img class="ml-2" src="../../../../../assets/img/close-icon.svg" alt="" (click)="failedmsg = false">
+                    </div>
+                </div>
+            </div>
+            <div class="w-100 alert alert alert-danger fade show" *ngIf="isError">
+                <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+                <button type="button" class="close" (click)="isError = false">
+                  <span></span>
+                </button>
+                <div class="d-inline-flex" [innerHtml]="errorMsg"></div>
+            </div>
+        </div>
+        <div class="position-relative">
+            <div class="loader" *ngIf="formloader">
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border text-primary">
+                        <span class="sr-only">{{ language.Loading }}</span>
+                    </div>
+                </div>
+            </div>
+
+        <div class="row my-3">
+            <div class="col-md-12">
+                <button id="runsitescanbakwan" class="btn-default primary px-3 mr-20px" data-toggle="modal"
+                data-target="#exampleModal" (click)="runSiteScan()"> {{ language['Run_Site_Scan'] }}
+            </button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                
+                <div class="d-flex justify-content-between border-bottom mb-3">
+                    <div id="bark-account-details" class="cco-secondary-title"> {{ language['Device_Details'] }}</div>
+                    <div class="w-24"><img src="../../../../assets/img/Refresh-icon.svg" class="refresh-icon"></div>
+                </div>
+                <p>
+                    {{language['Run a site scan to select device for failover device configuration']}} 
+               </p>
+
+                <form>
+
+                    <div class="ccl-form form-group">
+                        <label for="exampleInputEmail1"> {{ language['Hotspot Name'] }}</label>
+                        <input type="text" class="form-control" name="hotspotname"  [(ngModel)]="selectedssidname" id="HotspotName" aria-describedby="emailHelp"
+                        autocomplete="new-password"   [disabled]="hotspotnamedisable">
+
+                    </div>
+                    <div class="ccl-form form-group password-container">
+
+
+                        <label for="exampleInputPassword1">{{ language['Password'] }}</label>
+                        <input type="password" placeholder="{{ language['Password'] }}" id="password" [type]="showPassPhrase ? 'text' : 'password'"
+                        name="showPassPhrase" [(ngModel)]="password" autocomplete="new-password" [disabled]="passworddisable" (keyup)="onKeyPhraseChange($event)" minlength="8" maxlength="63" >
+                        <span class="pointer mt-1" [ngClass]="showPassPhrase ?'password_view' : 'password_hide'" (click)="showPassPhrasefun()">
+                            <!-- <i *ngIf="!show" class="fa fa-eye-slash" aria-hidden="true"></i>
+                                              <i *ngIf="show" class="fa fa-eye" aria-hidden="true"></i> -->
+                            <img *ngIf="!showPassPhrase" src="../../../../assets/img/ic_hide.svg" alt="icon here" />
+                            <img *ngIf="showPassPhrase" src="../../../../assets/img/ic_view_blue.svg" alt="icon here" />
+                          </span>
+                       <!--<span class="pointer" id="eye" (click)="password()"><img
+                                src="../../../../../../assets/img/ic_hide.svg" alt="icon here" /></span>
+                       -->
+                       <div class="errorMessage"
+            *ngIf="passlengthcheck">
+          {{language['Password must have at least eight characters']}}
+              
+          </div>
+                       <div class="row my-3">
+                        
+                    <div class="col-md-12">
+                        <button id="testhotspotbutton" class="btn-default primary px-3 mr-20px" (click)="testhotspotclick()"
+                            *ngIf=hotspotbuttonvisibility [disabled]="testhotspotdisable"> {{ language['Test Hotspot'] }}
+                        </button>
+                        <button id="endhotspotbutton" class="btn-default primary px-3 mr-20px" *ngIf=!hotspotbuttonvisibility
+                            (click)="endhotspotclick()"> {{ language['End Hotspot Test'] }}
+                        </button>
+                        </div>
+                        </div>
+                    </div>
+
+
+                </form>
+
+
+            </div>
+            <div class="col-md-4">
+                <div class="d-flex justify-content-between border-bottom mb-3">
+                    <div id="bark-account-details" class="cco-secondary-title">{{ language['Network Access'] }} </div>
+                    <div class="w-24"><img src="../../../../assets/img/Refresh-icon.svg" class="refresh-icon"></div>
+                </div>
+
+                <div class="">
+                    <label for="name" class="col-form-label">{{ language['Primary Network'] }}</label>
+                    <div ng-reflect-ng-class="toggle-swtbtn checkbox switche"
+                        class="toggle-swtbtn checkbox switcher switch-disabled  mr-2">
+                        <label for="primarynetwork"> <input type="checkbox" name="primarynetwork" id="primarynetwork" [checked]="Primarynetwork"
+                            [(ngModel)]="Primarynetwork"  ng-reflect-model="true" ng-reflect-is-disabled="false" disabled
+                            class="ng-untouched ng-pristine ng-valid ng-dirty " [disabled]="primarynetworkdisable">
+                            <span class="mr-2"><small></small></span>{{ language['Enabled'] }}</label>
+                    </div>
+
+                </div>
+                <div class="">
+                    <label for="name" class="col-form-label">{{ language['Point of Sale Network'] }}</label>
+                    <div ng-reflect-ng-class="toggle-swtbtn checkbox switche"
+                        class="toggle-swtbtn checkbox switcher mr-2 switch-disabled">
+                        <label for="pointofsale">  <input type="checkbox" name="pointofsale" id="pointofsale" [checked]="POS"
+                            [(ngModel)]="POS"  ng-reflect-model="true" ng-reflect-is-disabled="false"
+                            class="ng-untouched ng-pristine ng-valid ng-dirty " [disabled]="posdisable"><span
+                                class="mr-2"><small></small></span>{{ language['Enabled'] }}</label>
+                    </div>
+
+                </div>
+                <div class="">
+                    <label for="name" class="col-form-label">{{ language['Staff Network'] }}</label>
+                    <div ng-reflect-ng-class="toggle-swtbtn checkbox switche"
+                        class="toggle-swtbtn checkbox switcher mr-2">
+                        <label for="staffnetwork">  <input type="checkbox" name="staffnetwork" id="staffnetwork" [checked]="Staffnetwork"
+                            [(ngModel)]="Staffnetwork"  [disabled]="!selectedssidname" ng-reflect-model="true" ng-reflect-is-disabled="false"
+                            class="ng-untouched ng-pristine ng-valid ng-dirty " (change)="updateStaffnetworkwhiletoggle($event)"><span
+                                class="mr-2"><small></small></span><span *ngIf=Staffnetwork>{{ language['Enabled'] }}</span> <span *ngIf=!Staffnetwork>{{ language['Disabled'] }}</span></label>
+                    </div>
+
+                </div>
+                <div class="">
+                    <label for="name" class="col-form-label">{{ language['Customer Portal'] }}</label>
+                    <div ng-reflect-ng-class="toggle-swtbtn checkbox switche"
+                        class="toggle-swtbtn checkbox switcher mr-2">
+                        <label for="captiveportal">  <input type="checkbox" name="captiveportal" id="captiveportal" [checked]="Captiveportal"
+                            [(ngModel)]="Captiveportal"  [disabled]="!selectedssidname" ng-reflect-model="true" ng-reflect-is-disabled="false"
+                            class="ng-untouched ng-pristine ng-valid ng-dirty "  (change)="updateCaptiveportalwhiletoggle($event)"><span
+                                class="mr-2"><small></small></span><span *ngIf=Captiveportal>{{ language['Enabled'] }}</span> <span *ngIf=!Captiveportal>{{ language['Disabled'] }}</span></label>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        </div>
+        </div>
+</section>
+<!-- Button trigger modal -->
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"></span>
+                </button>
+                <div class="w-100">
+                    <div class="w-100 d-flex align-items-center ">
+                        <h5 class="modal-title" id="exampleModalLabel">{{ language['Site_Scan'] }}</h5> <span><img
+                                class="w-10 pointer ml-2" src="../../../../assets/img/Refresh-icon.svg" alt="" (click)="selectoverlay()" > </span>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-body wan-site-scan-table">
+                <div class="loader" *ngIf="overlayloader">
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border text-primary">
+                            <span class="sr-only">{{ language.Loading }}</span>
+                        </div>
+                    </div>
+                </div>
+                <table class="table table-striped site-scan-table">
+                    <thead>
+                        <tr>
+                            <th>SSID</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody *ngIf="
+                    sitescanres && sitescanres?.length;
+                    else nodataavailable">
+                        <tr *ngFor="let sitescanres of sitescanres; let i = index">
+                            <td class="filterable-cell">
+                                <div class="form-check">
+                                       <!-- <input class="form-check-input" type="radio" name="sitescanselect" checked
+                                        id="sitescanselect" value="true" [(ngModel)]="selectssid" (click)="selectssidfun(true,sitescanres.ssid)" >-->
+                                        <!--<input  formControlName="sitescanres" type="radio" [value]="sitescanres.id" />-->
+                                        <input class="form-check-input" type="radio" name="exampleRadios"
+                                        id="exampleRadios1" value="option1" (click)="selectssidfun(true,sitescanres.ssid,sitescanres.securityType)">
+
+                                       <!-- <input  class="form-check-input" type="radio" id="sitescanselect" [value]="sitescanres.id"  (click)="selectedssidname=sitescanres.ssid"/>-->
+                                </div>
+                            </td>
+                            <td class="filterable-cell">{{ sitescanres.ssid }}</td>
+                            <td class="filterable-cell"> <img src="../../../../assets/img/lock-icon.svg" alt="" *ngIf="sitescanres?.securityType > 0"></td>
+                            
+                            <td class="filterable-cell"><img class="wifi-icon" [src]='SignalStrength(sitescanres.signalStrength)' alt=""> </td>
+                            
+                        </tr>
+                        
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="modal-footer justify-content-start">
+                <button type="button" class="btn-default btn-primary mr-2" (click)="selectssidoverlay()" data-dismiss="modal" [disabled]="selectdisable" >{{ language['Select'] }} </button>
+                <button type="button" class="btn-default btn-dft py-1" data-dismiss="modal">{{ language['Cancel'] }}</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #nodataavailable>
+    <tbody>
+      <tr>
+        <td colspan="100" align="center"><strong>{{language['No data available']}}</strong></td>
+      </tr>
+    </tbody>
+  </ng-template>

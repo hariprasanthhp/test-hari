@@ -1,0 +1,355 @@
+<div class="device-wizard p-0" id="deviceWizard">
+  <!-- <h3 class="net-ops-secondary-title step-header">
+    {{ language.Step_1 }}- {{ language.Device }}
+  </h3> -->
+
+  <div *ngIf="wapModeWarning" class="wap-alert modal-warning alert-warning alert-dismissible fade show">
+    <div class="Warning-content">
+      <strong>{{ language.Device_Reboot_warning }}</strong>
+    </div>
+  </div>
+  <div class="w-100 alert alert-danger fade show my-3" *ngIf="error">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+    <button type="button" class="close" (click)="closeAlert()">
+      <span></span>
+    </button>
+    <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+  </div>
+
+  <div class="loader" *ngIf="loader || fpLoader">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary">
+        <span class="sr-only">{{ language.Loading }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="margin-top-20">
+    <div class="w-100 alert alert-success fade show" *ngIf="successInfo">
+      <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+      <button type="button" class="close" (click)="successInfo = ''">
+        <span></span>
+      </button>
+      <div class="d-inline-flex" [innerHtml]="language[successInfo] || successInfo"></div>
+    </div>
+    <section class="pb-2">
+      <div class="form-group ccl-form row">
+        <label class="col-12 col-lg-3">
+          <div class="pt-20">{{ language.Reg }}ID/FSAN/{{ language.MAC_Address }}/SN
+            <span class="error">*</span>
+          </div>
+
+        </label>
+        <div class="col-12 col-lg-9 pt-3">
+          <!--   <input type="text" id="fsan" name="fsan" (blur)="onValidateExisitingDevice()" [disabled]="editMode"
+            (keypress)="clsAlphaNoOnly($event);maxLength(regId,$event)" (keydown)="maxLength1($event)"
+            [ngClass]="{ 'inp-disabled': editMode }" [(ngModel)]="regId" placeholder="{{ language.Enter }} Reg ID/FSAN/{{
+              language.MAC_Address
+            }}/SN" /> -->
+          <input type="text" id="fsan" name="fsan" (blur)="onValidateExisitingDevice()" [disabled]="editMode"
+            (keypress)="clsAlphaNoOnly($event)" (keyup)="maxLength1($event);" (paste)="onPasteValidation($event);"
+            (keydown)="preventKeypress($event,regId)" [ngClass]="{ 'inp-disabled': editMode }" [(ngModel)]="regId"
+            placeholder="{{ language.Enter }} Reg ID/FSAN/{{
+              language.MAC_Address
+            }}/SN" />
+          <p>
+            <small class="sm-text">{{ language.Reg_Id }}&nbsp; &amp; &nbsp;{{
+              language.EXOS
+              }}&nbsp; &nbsp;<span class="gotorouter"><a
+                  *ngIf="hasWriteAccessForDevice && (name || addDeviceObj?.device?.subscriberId)&&  (addDeviceObj?.device.deviceMode  === 'RG' ||addDeviceObj?.device.deviceMode  === 'Managed ONT') "
+                  data-toggle="modal" data-target="#replaceDevice"
+                  (click)="
+                  assignDeviceReplace(addDeviceObj?.device?.regId, addDeviceObj?.device?.subscriberId, addDeviceObj?.device, addDeviceObj)"
+                  title="{{language.Replace}}">{{language.Replace}}</a></span></small><br>
+            <span class="error" *ngIf="showError1">{{language['Please enter a number up to 36 characters']}}</span>
+          </p>
+        </div>
+      </div>
+    </section>
+    <section class="pb-4">
+      <div class="row">
+        <label for="deviceModel" class="col-12 col-lg-3">{{
+          language.Model
+          }}
+          <span class="error">*</span>
+        </label>
+        <div class="col-12 col-lg-9 state-success"
+          [ngClass]="{ 'btn-notallowed': addDeviceObj?.device.isDisableModel }">
+          <ng-select (change)="onModelChange($event)" [disabled]="addDeviceObj?.device.isDisableModel"
+            [ngClass]="{ disableDropDown: addDeviceObj?.device.isDisableModel }"
+            [(ngModel)]="addDeviceObj?.device.selectedModel" name="deviceModel"
+            placeholder="{{ language['System Model'] }}">
+            <ng-option *ngFor="let mode of deviceModels" autofocus [value]="mode">{{ mode }}</ng-option>
+          </ng-select>
+        </div>
+        <!-- <em *ngIf="!addDeviceObj.device.selectedModel" id="mode-error" class="">This field is required</em> -->
+      </div>
+    </section>
+    <section class="pb-4" *ngIf="addDeviceObj?.device?.selectedModel">
+      <div class="row">
+        <label class="col-12 col-lg-3 control-label">{{ language.Mode }}</label>
+        <div class="col-12 col-lg-9 pl-0">
+
+          <!-- <label *ngIf="isRgBtnShow" class="radio-inline col-2">
+            <input type="radio" name="optionGroupDeviceMode" value="RG" (change)="handleModeChange($event)"
+              [(ngModel)]="isONT ? false:addDeviceObj.device.deviceMode" class="mr-2" />{{
+            language.RG }}
+          </label> -->
+
+          <label *ngIf="isRgBtnShow && !hideRadioButton" class="radio-inline col-3"
+            [ngClass]="{'cursornotallow': bSmbMode}">
+            <input type="radio" value="RG" (change)="handleModeChange($event)" [disabled]="bSmbMode"
+              [(ngModel)]="isONT ? false:addDeviceObj?.device.deviceMode" class="mr-2" />{{ language.RG }}
+          </label>
+
+          <label *ngIf="isRgBtnShow && hideRadioButton" class="radio-inline col-3"
+            [ngClass]="{'cursornotallow': bSmbMode}">
+            <input value="RG" [hidden]="isRgBtnShow && hideRadioButton" (change)="handleModeChange($event)"
+              [(ngModel)]="isONT ? false:addDeviceObj?.device.deviceMode" class="mr-2" [disabled]="bSmbMode" />{{
+            language.RG }}
+          </label>
+
+          <!-- <label *ngIf="isWapBtnShow && !isONT" class="radio-inline col-3">
+            <input type="radio" name="optionGroupDeviceMode" value="WAP" (change)="handleModeChange($event)"
+              [(ngModel)]="addDeviceObj.device.deviceMode" class="mr-2" />{{
+            language.WAP }}
+          </label> -->
+          <label *ngIf="isWapBtnShow && !hideRadioButton  && !isONT" class="radio-inline col-3"
+            [ngClass]="{'cursornotallow': bSmbMode}">
+            <input type="radio" value="WAP" (change)="handleModeChange($event)"
+              [(ngModel)]="addDeviceObj?.device.deviceMode" class="mr-2" [disabled]="bSmbMode" />{{language.WAP }}
+          </label>
+
+          <label *ngIf="isWapBtnShow && hideRadioButton  && !isONT" class="radio-inline col-3"
+            [ngClass]="{'cursornotallow': bSmbMode}">
+            <input value="WAP" [hidden]="isWapBtnShow && hideRadioButton" (change)="handleModeChange($event)"
+              [(ngModel)]="addDeviceObj?.device.deviceMode" class="mr-2" [disabled]="bSmbMode" />{{
+            language.WAP }}
+          </label>
+
+          <!-- <label *ngIf="isWapIGMPBtnShow && !isONT" class="radio-inline col-3">
+            <input type="radio" name="optionGroupDeviceMode" value="WAP-IGMP" (change)="handleModeChange($event)"
+              [(ngModel)]="addDeviceObj.device.deviceMode" class="mr-2" />{{
+            language.WAP }}
+          </label> -->
+          <label *ngIf="isWapIGMPBtnShow && !hideRadioButton  && !isONT" class="radio-inline col-3"
+            [ngClass]="{'cursornotallow': bSmbMode}">
+            <input type="radio" value="WAP-IGMP" (change)="handleModeChange($event)"
+              [(ngModel)]="addDeviceObj?.device.deviceMode" class="mr-2" [disabled]="bSmbMode" />{{language.WAP }}
+          </label>
+
+          <label *ngIf="isWapIGMPBtnShow && hideRadioButton  && !isONT" class="radio-inline col-3"
+            [ngClass]="{'cursornotallow': bSmbMode}">
+            <input value="WAP-IGMP" [hidden]="isWapIGMPBtnShow && hideRadioButton" (change)="handleModeChange($event)"
+              [(ngModel)]="addDeviceObj?.device.deviceMode" class="mr-2" [disabled]="bSmbMode" />{{
+            language.WAP }}
+          </label>
+
+          <label *ngIf="isMangeBtnShow && !isONT" class="radio-inline col-3" [ngClass]="{'cursornotallow': bSmbMode}">
+            <input type="radio" name="optionGroupDeviceMode" value="Managed ONT" (change)="handleModeChange($event)"
+              [(ngModel)]="addDeviceObj?.device.deviceMode" class="mr-2" [disabled]="bSmbMode" />{{
+            language.Managed_ONT }}
+          </label>
+          <!-- <label *ngIf="isModemBtnShow && !isONT" class="radio-inline col-3">
+            <input type="radio" name="optionGroupDeviceMode" value="Modem" (change)="handleModeChange($event)"
+              [(ngModel)]="addDeviceObj.device.deviceMode" class="mr-2" />{{
+            language.Modem }}
+          </label> -->
+          <label *ngIf="isModemBtnShow && !hideRadioButton  && !isONT" class="radio-inline col-3"
+            [ngClass]="{'cursornotallow': bSmbMode}">
+            <input type="radio" value="Modem" (change)="handleModeChange($event)"
+              [(ngModel)]="addDeviceObj?.device.deviceMode" class="mr-2" [disabled]="bSmbMode" />{{language.Modem }}
+          </label>
+
+          <label *ngIf="isModemBtnShow && hideRadioButton  && !isONT" class="radio-inline col-3"
+            [ngClass]="{'cursornotallow': bSmbMode}">
+            <input value="Modem" [hidden]="isModemBtnShow && hideRadioButton" (change)="handleModeChange($event)"
+              [(ngModel)]="addDeviceObj?.device.deviceMode" class="mr-2" [disabled]="bSmbMode" />{{
+            language.Modem }}
+          </label>
+        </div>
+      </div>
+    </section>
+    <section class="pb-4">
+      <div class="row">
+        <label class="col-12 col-lg-3 control-label">{{
+          language.Add_Staticgrps
+          }}
+          <span class="error">*</span>
+        </label>
+        <div class="col-12 col-lg-9 pl-0">
+          <label class="radio-inline col-3">
+            <input type="radio" name="optionGroupsRadios" value="Yes" [(ngModel)]="addDeviceObj?.device.isStaticGroup"
+              class="mr-2" (change)="checkIsStaticGroup();isStaticGroup = true " />{{ language.Yes }}
+          </label>
+          <label class="radio-inline col-3">
+            <input type="radio" name="optionGroupsRadios" value="No" [(ngModel)]="addDeviceObj?.device.isStaticGroup"
+              class="mr-2" (change)="checkIsStaticGroup()" />{{ language.No }}
+          </label>
+        </div>
+      </div>
+    </section>
+    <div class="ccl-form row" *ngIf="addDeviceObj?.device?.isStaticGroup === 'Yes'">
+      <label for="staticGroups" class="col-3 control-label">{{
+        language.Static_Groups
+        }}</label>
+      <div class="col-9">
+        <ng-select [searchable]="false" [clearable]="false" [items]="staticGroupList" bindLabel="name" bindValue="_id"
+          [(ngModel)]="addDeviceObj?.device.selectedStaticGroup" class="custom" [multiple]="true" [searchable]="true"
+          id="staticGroups"
+          (change)="staticGrpError = addDeviceObj?.device?.selectedStaticGroup.length >= 1 ? false: true">
+        </ng-select>
+        <span class="error" *ngIf="staticGrpError">{{language['Please add at least one static group']}}</span>
+        <!-- <select id="staticGroups" multiple="" tabindex="-1" class="select2-hidden-accessible"
+                    aria-hidden="true">
+                    <option *ngFor="let group of staticGroupList" value="{{group.value}}">{{group.label}}</option>
+                </select> -->
+
+        <!--<ng-select [items]="staticGroupList" bindLabel="name" autofocus bindValue="id" placeholder="Static Groups">
+                </ng-select>-->
+
+        <!-- <span class="select2 select2-container select2-container--default select2-container--above" dir="ltr">
+                    <span class="selection"><span class="select2-selection select2-selection--multiple" role="combobox"
+                            aria-haspopup="true" aria-expanded="false" tabindex="-1">
+                            <ul class="select2-selection__rendered">
+                                <li class="select2-selection__choice" title="static_for_auto">
+                                    <span class="select2-selection__choice__remove" role="presentation">
+                                        ×
+                                    </span>
+                                    static_for_auto
+                                </li>
+                                <li class="select2-search select2-search--inline">
+                                    <input class="select2-search__field" type="search" tabindex="0" autocomplete="off"
+                                        autocorrect="off" autocapitalize="off" spellcheck="false" role="textbox"
+                                        aria-autocomplete="list" placeholder="">
+                                </li>
+                            </ul>
+                        </span>
+                    </span>
+                    <span class="dropdown-wrapper" aria-hidden="true">
+                    </span>
+                </span> -->
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="replaceDevice" tabindex="-1" role="dialog" aria-labelledby="replaceDevice"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content padl-m">
+        <div class="modal-header">
+          <span class="net-ops-modal-title modal-title" id="replaceDevice">
+            {{ language.Replace_Device }}
+          </span>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true"></span>
+          </button>
+        </div>
+
+        <div class="progressbar-wrapper"></div>
+        <div class="modal-body">
+          <div class="py-3 alert alert-danger" *ngIf="isModalError">
+            <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+            <button type="button" id="close-error-btn" class="close" data-dismiss="alert" aria-label="Close"
+              (click)="isModalError = !isModalError">
+              <span></span>
+            </button>
+            <div class="d-inline-flex" [innerHtml]="modalWarningMessage"></div>
+          </div>
+          <div class="loader" *ngIf="modalLoader">
+            <div class="d-flex justify-content-center">
+              <div class="spinner-border text-primary">
+                <span class="sr-only">{{ language.Loading }}</span>
+              </div>
+            </div>
+          </div>
+          <form>
+            <div class="form-group ccl-form row">
+              <label for="registered-id" class="col-12 col-form-label">{{ language.Registered }} ID/FSAN/MAC
+                Address /SN</label>
+              <div class="col-12">
+                <input type="text" class="replaceDeviceField" id="registered-id" [(ngModel)]="replaceDeviceId"
+                  name="replaceDeviceId" />
+                <small>{{ language.Registered_Exos }}</small>
+              </div>
+            </div>
+            <div class="form-group ccl-form">
+              <button type="button" class="btn-default primary px-3 m-2" (click)="
+              replaceDevice(
+                addDeviceObj.device?.subscriberId,
+                addDeviceObj?.device?.regId
+              )
+            ">
+                {{ language.Replace }}
+              </button>
+              <button type="button" class="btn-default transparant px-3 m-2" data-dismiss="modal">
+                {{ language.cancel }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- <ng-template #replaceConfirm let-modal class="col-md-12">
+  <div>
+    <div class="modal-header">
+      <h5 class="modal-title" id="replaceConfirmLabel">
+        {{ language['Unable to Apply Wi-Fi Configurations'] }}
+      </h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="modal.close('Save click')">
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="content">
+        <p>{{
+          language["Wi-Fi Configurations msg"]
+          }}</p>
+      </div>
+      <button type="button"
+        (click)="doPerformReplaceDevice(addDeviceObj?.device?.subscriberId, addDeviceObj?.device?.regId, replaceDeviceId.trim(), true)"
+        id="replaceConfirm" class="btn-default primary px-3 mr-3 mt-5">
+        {{ language.Confirm }}
+      </button>
+      <button type="button" (click)="modal.close('Save click')" id="replaceConfirmCancel"
+        class="btn-default transparant px-3 mr-3 mt-5">
+        {{ language.cancel }}
+      </button>
+    </div>
+  </div>
+</ng-template> -->
+<ng-template #replaceConfirm let-modal class="col-md-12">
+  <div class="modal-body">
+    <button type="button" class="clx-modal-dismiss" data-dismiss="modal" aria-label="Close"
+      (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true"></span>
+    </button>
+    <div class="modal-body-content">
+      <div class="clx-warning-wrapper">
+        <div class="clx-warning-icon">
+          <span></span>
+        </div>
+        <div class="clx-warning-content">
+          <div class="text-break cco-secondary-title mb-3" id="DevicereplaceConfirmTitle">
+            {{language['Unable to Apply Wi-Fi Configurations']}}
+          </div>
+          <div class="d-flex w-100">
+            <p class="m-0">{{language['Wi-Fi Configurations msg new']}}</p>
+          </div>
+          <div class="mt-3">
+            <button type="button" class="btn-default btn-primary mr-3"
+              (click)="doPerformReplaceDevice(addDeviceObj?.device?.subscriberId, addDeviceObj?.device?.regId, replaceDeviceId.trim(), true); modal.close('Close click')"
+              id="DeviceconfirmContinuBtn">
+              {{language['Continue']}}
+            </button>
+            <button type="button" class="btn-default btn-dft" aria-label="Close" (click)="modal.close('Close click')">
+              {{language['Cancel']}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

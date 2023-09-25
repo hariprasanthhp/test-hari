@@ -1,0 +1,23 @@
+<div class="traffic-search-area d-flex align-items-end" *ngIf="showEndpointSearch">
+    <div class="invalid-msg" id="ep-search-error" *ngIf="epSearchError">{{language['Not found']}}</div>
+
+    <app-favorite-endpoints class="mb-2" [pageType]="'Traffic'"
+        [showSensitiveInfo]="showSensitiveInfo"></app-favorite-endpoints>
+
+    <div class="d-inline-flex align-items-center justify-content-between search-box-input">
+        <input name="search" id="search" ng-reflect-name="search" placeholder="{{language['IP Address, End Points']}}"
+            autocomplete="off" class="ng-pristine ng-valid ng-touched" [(ngModel)]="searchText"
+            (keyup)="searchByCharacters($event);" (keyup.enter)="performSearch()">
+        <button class="search-box-icon" [disabled]="loading" (click)="performIconSearch()"><img
+                id="searchSubscriberIcon" src="assets/img/ic_search_white.svg" class="search-icon primary">
+        </button>
+        <div *ngIf="searchText && searchText.length >= 2 && searchData.length > 0"
+            class="search-result-dropdown overflow-auto">
+            <ul *ngIf="searchData.length > 0">
+                <li *ngFor="let item of searchData; let i = index" (click)="gotoEndpoint(item)">{{item.endPointName ?
+                    item.endPointName
+                    : item.name ? item.name : item.ipAddress }}</li>
+            </ul>
+        </div>
+    </div>
+</div>

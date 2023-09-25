@@ -1,0 +1,26 @@
+.center {
+    text-align: center;
+}
+.info-masg {
+    // height: 100vh;
+    align-items: center;
+    text-align: center;
+    font-weight: 400;
+    font-size: 24px;
+    margin-top: 50px;
+}
+.loader {
+    z-index: 11;
+    position: relative;
+    background: none;
+    height: 100%;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 32px;
+    margin-top: 40px;
+}

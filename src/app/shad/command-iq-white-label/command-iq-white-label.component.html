@@ -1,0 +1,141 @@
+<div class="w-100 alert alert-success fade show my-3" *ngIf="success">
+    <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+    <button type="button" class="close" (click)="success = false">
+        <span></span>
+    </button>
+    <span [innerHtml]="language[successInfo] || successInfo"></span>
+</div>
+<div class="w-100 alert alert-danger fade show" [hidden]="!isError">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+    <button type="button" class="close" (click)="closeAlert()">
+        <span></span>
+    </button>
+    <div class="d-inline-flex" [innerHtml]="warningMessage"></div>
+</div>
+<div class="position-relative">
+    <h4 class="pr-2">{{language['CommandIQ Support Information']}}</h4>
+    <!-- <p>{{language['Empty fields will not appear in mobile app']}}</p> -->
+    <div class="loader" *ngIf="loading">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">{{ language.Loading }}</span>
+            </div>
+        </div>
+    </div>
+    <form>
+        <div [formGroup]="CommanDIQForm">
+            <!-- <div class="form-group ccl-form row">
+                <label for="name" class="col-sm-2 col-form-label">{{language['Company Address']}}
+                </label>
+                <div class="col-sm-10">
+                    <input type="text" id="name" placeholder="{{language['Company Address']}}"
+                        style="color: #646363 !important" formControlName="companyAddress" />
+                </div>
+            </div> -->
+            <div class="form-group ccl-form row mt-3">
+                <label for="address" class="col-sm-2 col-form-label py-0">{{language['Support Phone Number']}}
+                </label>
+                <div class="col-sm-10">
+                    <input type="text" id="address" placeholder="{{language['Support Phone Number']}}" (keypress)="clsAlphaNoOnly($event)"
+                        (input)="allowNumersOnly()"
+                        oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..?)\../g, '$1')"
+                        formControlName="supportPhoneNumber" />
+
+                </div>
+            </div>
+            <div class="form-group ccl-form row">
+                <label for="PhoneNumber" class="col-sm-2 col-form-label">{{language['Support Email']}}
+                </label>
+                <div class="col-sm-10">
+                    <input type="text" (keyup)="Emailchange(email.value)" #email
+                        placeholder="{{language['Support Email']}}"
+                        oninput="this.value = this.value.replace(/[^a-zA-Z0-9!@#:/\$%\^\&*\)\(+=._-]/g, '').replace(/(\..?)\../g, '$1')"
+                         formControlName="supportEmail" />
+                    <!-- <div *ngIf="submitted && !CommanDIQForm.value.supportEmail" class="errorMessage">
+                        <label *ngIf="!CommanDIQForm.value.supportEmail">
+                            {{ language["This field is required"] }}
+                        </label>
+                    </div> -->
+                    <div *ngIf="emailerror">
+                        <p class="mandatory-msg mb-0">{{language[emailmsg]}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group ccl-form row">
+                <label for="email" class="col-sm-2 col-form-label">{{language['Support URL']}}
+                </label>
+                <div class="col-sm-10">
+                    <input type="url" #url placeholder="{{language['Support URL']}}"
+                        oninput="this.value = this.value.replace(/[^a-zA-Z0-9!@#:/\$%\^\&*\)\(+=._-]/g, '').replace(/(\..?)\../g, '$1')"
+                        formControlName="supportUrl" (keyup)="urlValidation(url.value, 'supportUrl')" />
+                    <!-- <div *ngIf="submitted && !CommanDIQForm.value.supportUrl" class="errorMessage">
+                        <label *ngIf="!CommanDIQForm.value.supportUrl">
+                            {{ language["This field is required"] }}
+                        </label>
+                    </div> -->
+                    <div *ngIf="UrLError">
+                        <p class="mandatory-msg mb-0">{{language['Please Enter a valid URL']}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group ccl-form row">
+                <label for="email" class="col-sm-2 col-form-label">{{language['Billing URL']}}
+                </label>
+                <div class="col-sm-10">
+                    <input type="url" #Billurl placeholder="{{language['Billing URL']}}"
+                        oninput="this.value = this.value.replace(/[^a-zA-Z0-9!@#:/\$%\^\&*\)\(+=._-]/g, '').replace(/(\..?)\../g, '$1')"
+                        formControlName="billingUrl" (keyup)="urlValidation(Billurl.value, 'billingUrl')" />
+                    <div *ngIf="UrLErrorForBilling">
+                        <p class="mandatory-msg mb-0">{{language['Please Enter a valid URL']}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </form>
+    <div class="mt-4 pt-2">
+
+        <button type="submit" class="btn-default primary mr-3" (click)="updateInfo()" id="ccoOrgAdminSubmitBtn">
+            {{language.Update}}
+        </button>
+        
+        <button type="button" class="btn-default btn-dft" (click)="openDeletemodel()" id="ccoOrgAdminCancelBtn">
+            {{language.Cancel}}
+        </button>
+    </div>
+</div>
+
+
+<ng-template #removecommandInfoModal let-modal class="col-md-12">
+    <div class="modal-header d-block">
+        <h5 class="modal-title" id="addModal">{{language['Delete Support Information']}}</h5>
+
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+            (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="loader" *ngIf="loading">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{ language.Loading }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="ccl-form my-2">
+            <div class="del-dev">
+                {{language['Are you sure you want to delete Support information']}} ?
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn-default primary px-3 px-3" (click)="DeleteInfo()">
+            {{language.Delete}}
+        </button>
+        <button type="button" class="btn-default btn-dft px-3 px-3 m-2" data-dismiss="modal"
+            (click)="modal.close('Save click')">
+            {{ language.Cancel }}
+        </button>
+    </div>
+</ng-template>

@@ -1,0 +1,31 @@
+<ng-template #showPonModel let-modal class="">
+    <section class="modal-content" [hidden]="!ponCapacitytd">
+      <div class="modal-header mb-3">
+        <h2 class="modal-title eillips-text">{{language['PON Capacity Hits']}}</h2>
+        <button type="button" class="close" aria-label="Close" (click)="close()">
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+      <div class="modal-body" >
+        <table class="w-100" #table1 datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+          <thead class="">
+            <tr><th>{{language['System']}}</th>
+              <th>{{language['Affected Interfaces']}}</th>
+            </tr>
+            </thead>
+            <div class="loader" [hidden]="!loading">
+              <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary" role="">
+                  <span class="sr-only">{{language.Loading}}</span>
+                </div>
+              </div>
+            </div>
+          <tbody [hidden]="!ponCapacitytd || loading">
+            <tr *ngFor="let item of affectedPorts; let i = index">
+              <td>{{item?.system}}</td>
+              <td><a class="text-decoration-none cursor-pointer" (click)="showTopONTs(item?.systemId ,item?.interface, item?.system)">{{item?.interface}}</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section> 
+  </ng-template>

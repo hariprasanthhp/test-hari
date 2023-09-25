@@ -1,0 +1,26 @@
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 col-md-12 col-lg-1 p-0 ccl-tabs mpr-0">
+                <ul id="netops-list-menu" class="nav flex-column left-menu tab-view-style">
+                    <li class="nav-item" *ngIf="menus['realtime']">
+                        <a class="list-group-item list-group-item-action" routerLink="/cco/traffic/locations/realtime"
+                            id="policies" routerLinkActive="active">
+                            {{language['Real Time']}}
+                        </a>
+                    </li>
+                    <li class="nav-item" *ngIf="menus['report']">
+                        <a class="list-group-item list-group-item-action" id="subNet"
+                            routerLink="/cco/traffic/locations/reports" routerLinkActive="active">
+                            {{language.TReports}}
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
+            <div class="col-sm-12 col-md-12 col-lg-11">
+                <router-outlet></router-outlet>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,12 @@
+#ext-file-server a:hover{
+    color: #fff;
+    text-decoration: none;
+}
+
+:host ::ng-deep .dataTables_empty {
+    display: none;
+  }
+
+  .no-data-available {
+    text-align: center;
+  }

@@ -1,0 +1,63 @@
+<!-- <h2 class="net-ops-title">{{ language.Configuration }}</h2> -->
+<div class="ccl-tabs">
+    <ul id="tabs" class="nav nav-tabs sub-tab">
+        <li class="nav-item" *ngIf="showSiteScan">
+            <a class="nav-link"
+                routerLink="/cco/operations/cco-subscriber-operations/configurations/background-site-scan"
+                (Click)="$event.preventDefault()" class="nav-link" id="autoSiteScanTabId" routerLinkActive="active">{{
+                language.Site_Scan }}</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" routerLink="/cco/operations/cco-subscriber-operations/configurations/dial-plan"
+                (Click)="$event.preventDefault()" class="nav-link" id="dialPlanTabId" routerLinkActive="active">{{
+                language.Dial_Plan }}</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link"
+                routerLink="/cco/operations/cco-subscriber-operations/configurations/external-file-server-list"
+                (Click)="$event.preventDefault()" class="nav-link" id="externalFileServerTabId"
+                routerLinkActive="active" [ngClass]="[
+          router.url.includes('external-file-server-list') ||
+          router.url.includes('external-file-server-form')
+            ? 'active'
+            : ''
+        ]">{{ language.External_File_Server }}</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" routerLink="/cco/operations/cco-subscriber-operations/configurations/secure-onboarding"
+                (Click)="$event.preventDefault()" class="nav-link" id="secureOnboardingTabId"
+                routerLinkActive="active">{{
+                language.Secure_Onboarding }}</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" routerLink="/cco/operations/cco-subscriber-operations/configurations/self-heal"
+                (Click)="$event.preventDefault()" class="nav-link" id="selfHealTabId" routerLinkActive="active">{{
+                language.Self_Heal }}</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" routerLink="/cco/operations/cco-subscriber-operations/configurations/stale-device-purge"
+                (Click)="$event.preventDefault()" class="nav-link" id="staleDeviceOurgeTabId"
+                routerLinkActive="active">{{
+                language['Stale System Purge'] }}</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link"
+                routerLink="/cco/operations/cco-subscriber-operations/configurations/subnet-configuration"
+                (Click)="$event.preventDefault()" class="nav-link" id="subnetConfigTabId" routerLinkActive="active">{{
+                language.Subnet_Configuration }}</a>
+        </li>
+        <li class="nav-item" *ngIf="sso.getEntitlementsArr().indexOf('118') > -1">
+            <a class="nav-link" routerLink="/cco/operations/cco-subscriber-operations/configurations/speed-test"
+                (Click)="$event.preventDefault()" class="nav-link" id="speedTestTabId" routerLinkActive="active">{{
+                language.Speed_Test }}</a>
+        </li>
+        <!-- <li class="nav-item">
+            <a *ngIf="(sso.getEntitlementsArr().indexOf('203') > -1 || sso.getEntitlementsArr().indexOf('204') > -1 || sso.getEntitlementsArr().indexOf('205') > -1)"
+                class="nav-link" routerLink="/cco/operations/cco-subscriber-operations/configurations/edge-suites"
+                (Click)="$event.preventDefault()" class="nav-link" id="edgeSuiteTabId"
+                routerLinkActive="active">{{language['EDGE Suites Bulk Provisioning']}}</a>
+        </li> -->
+    </ul>
+</div>
+
+<router-outlet></router-outlet>

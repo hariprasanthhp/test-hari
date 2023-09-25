@@ -1,0 +1,110 @@
+.red{
+    color: #C70000;
+}
+.issue-left-menu{
+width: 100%;
+}
+.issue-right-content{
+    width: 100%;
+    border-left: 1px solid #dedede;
+    padding: 10px;
+}
+.current-issue-menu-container {
+  display: flex;
+  margin: 20px 0px;
+  justify-self: start;
+}
+
+.current-issue-menu-item {
+  flex-grow: 0;
+  
+}
+
+.current-issue-menu-item + .current-issue-menu-item {
+  margin-left: 1%;
+}
+.btn-secondary {
+    color: #5f6165 !important;
+    background-color: #f7f8fa !important;
+    border-color: #888888 !important;
+}
+
+.current-issues-table{
+    width: 100%;
+}
+.current-issues-table table{
+    width: 100%;
+}
+.current-issues-table table {
+        width: 100%;
+}
+.current-issues-table table thead{
+    font-size: 14px;
+}
+.current-issues-table table tbody {
+font-size: 14px;
+}
+
+@media screen and (max-width: 767px){
+  .cco-title {
+    font-size: 42px;
+    line-height: 60px;
+    font-weight: 300;
+    margin: 0;
+}
+.mobile-center{
+  text-align: center;
+}
+.mp-0{
+    padding: 0 !important;
+}
+.mm-0{
+  margin: 0 !important;
+}
+.mpr-0{
+  padding-right: 0 !important;
+}
+.mbr-none{
+  border-right: none !important;
+}
+.mmt-3{
+  margin-top: 15px !important;
+}
+#netops-list-menu li.nav-item{
+  margin-right: 0 !important;
+}
+#netops-list-menu .list-group-item{
+  text-align: center;
+}
+}
+.padl{
+  padding-left: 32px;
+}
+.sidebar-collapse{
+    position: absolute;
+    top: 170px;
+    background: #fff;
+    width: 25px;
+    height: 25px;
+    border: 1px solid #d3d3d3;
+    border-radius: 50%;
+    text-align: center;
+    left: -12px;
+    cursor: pointer;
+}
+.test-container {
+  display: flex;
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.item {
+  flex-grow: 1;
+  border-left: 1px solid #EBEAEF;
+  padding-left: 12px;
+  width: calc(100% / 4);
+}
+
+.item+.item {
+  margin-left: 2%;
+}

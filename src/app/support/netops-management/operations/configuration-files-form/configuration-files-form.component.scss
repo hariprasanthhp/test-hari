@@ -1,0 +1,55 @@
+ ::ng-deep .ng-input>input {
+    cursor: not-allowed !important;
+}
+
+.errorMsg{
+    color: #C70000;
+    margin-left: 15px;
+}
+.custom-file-label{
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 1;
+    height: calc(1.5em + .75rem + 2px);
+    padding: .375rem .75rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #f8f8fa !important; 
+    border: 1px solid #ced4da;
+    border-radius: 20px !important;
+        margin: 0px 14px;
+        font-size: 14px;
+
+            &:hover{
+      border-color:#CCCCCC;
+    }
+
+    &:focus , &:active {
+       border:1px solid #0278FF;
+    }
+
+    
+}
+.browse-text {
+    position        : absolute;
+    top             : 1px;
+    right           : 15px;
+    bottom          : 0;
+    z-index         : 2;
+    display         : block;
+    height: 33px;
+    padding: 0.375rem 0.75rem;
+    line-height     : 1.5;
+    color           : #495057;
+    background-color: #e9ecef;
+    border-left     : inherit;
+    border-radius   : 20px !important;
+
+}
+.custom-file-label::after{
+    display: none;
+}
+.custom-file-input{cursor: pointer;}

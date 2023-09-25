@@ -1,0 +1,343 @@
+/*toggle style*/
+// colors
+$blue    : #269bff;
+$bg-light: #f2f2f2;
+$bg-med  : #eee;
+
+::ng-deep{
+  .ngselect-opr-type .ng-select-container {
+    cursor: not-allowed !important;
+  }
+}
+
+.example-handle-ic {
+  cursor: move;
+  // width:5px;
+}
+.cdk-drag{
+  border-radius: 5px;
+  background-color: #efefef;
+  z-index: 1;
+}
+
+.cdk-drag-preview{
+  width: 100%;
+  td{display: inline-block;}
+  td:first-child{width: 30% !important;}
+  td:nth-child(2){width: 50% !important;}
+  td:nth-child(3){
+    width: 20% !important;
+    text-align: right !important; padding-right: 10px;
+  }
+  // td:nth-child(4){width: 10% !important;
+  // // text-align: right !important; padding-right: 10px;
+  // }
+}
+
+// the magic
+div.checkbox.switcher,
+div.radio.switcher {
+  float: right;
+
+  label {
+    padding: 0;
+    cursor: pointer;
+
+    * {
+      vertical-align: middle;
+    }
+
+    input {
+      display: none;
+
+      &+span {
+        position     : relative;
+        display      : inline-block;
+        width        : 45px;
+        height       : 25px;
+        background   : #ffffff;
+        border       : 1px solid #0279ff;
+        border-radius: 50px;
+        transition   : all 0.3s ease-in-out;
+        padding      : 5px;
+
+        small {
+          position     : absolute;
+          display      : block;
+          width        : 20px;
+          height       : 19px;
+          background   : #0279ff;
+          border-radius: 50%;
+          transition   : all 0.3s ease-in-out;
+          left         : 2px;
+          top          : 2px;
+        }
+      }
+
+      &:checked+span {
+        background  : $blue;
+        border-color: $blue;
+
+        small {
+          left      : 50%;
+          background: #ffffff;
+        }
+      }
+    }
+  }
+}
+
+$btn-color      : #2078fa;
+$btn-hover-color: #1454b2;
+$btn-disabled   : #c0ddfd;
+
+$btn-sec-color      : #f8f8fa;
+$btn-sec-hover-color: #ebeaef;
+$btn-sec-disabled   : #fcfcfd;
+
+@mixin shadow {
+  box-shadow: 0 0px 0px 0 rgba(0, 0, 0, 0.16), 0 0px 5px 0 rgba(0, 0, 0, 0.16) !important
+}
+
+form {
+  width: 100%;
+}
+
+.f-w-600 {
+  font-weight: 600;
+}
+
+[type=radio]:checked,
+[type=radio]:not(:checked) {
+  position: relative !important;
+  left    : unset !important;
+  cursor  : pointer;
+}
+
+// .dropdown {
+//     width: 100%;
+//     padding: 5px 15px;
+//     border: none;
+//     background: transparent;
+//     outline: none;
+//     -moz-appearance: none;
+//     -webkit-appearance: none;
+//     position: relative;
+//     background: url(http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png) no-repeat right;
+//     background-position:
+//     calc(100% - 11px) calc(1em + -6px), calc(100% - 16px) calc(1em + 2px), 100% 0;
+//   background-size:
+//     15px 15px,
+//     15px 15px,
+//     2.5em 2.5em;
+//     line-height: 1.5em;
+//     border: 1px solid #ced4da;
+//     border-radius: 3px;
+
+//   }
+
+//   .dropdown:active {
+//       @include shadow;
+//       border-radius: 25px 25px 0 0 !important;
+//   }
+
+//   select * {
+//       background: #ffffff !important;
+//       outline: none !important;
+//       border: none !important;
+//       color: #495057;
+//       line-height: 1.5em;
+//       :hover {
+//           background-color: #e5e5e5 !important;
+//           outline: none !important;
+//           border: none !important;
+//       }
+//   }
+
+
+// select{
+//     width: 100%;
+//     border: 1px solid #dadada;
+//     height: 34px;
+//     padding: 0 10px;
+//     border-radius: 26px;
+// }
+.pr-46 {
+  padding-right: 46px;
+}
+
+.br-26 {
+  border-radius: 26px;
+}
+
+.new-profile-table {
+  margin: 10px 0px;
+}
+
+
+
+.profile-table {
+  margin: 10px 0px;
+}
+
+// .ng-dropdown-panel{
+//       width: 96%;
+//       left: 15px;
+// }
+
+.delete-org-btn i:hover {
+  color: red
+}
+
+
+.custom-selectbox-opr .ng-dropdown-panel {
+  z-index: 1;
+
+  width         : 100%;
+  padding-top   : 10px;
+  padding-bottom: 10px;
+  border-radius : 10px !important;
+  min-height    : auto;
+  max-height    : 260px;
+  overflow-y    : auto;
+  font-size     : 14px;
+  transition    : 0.5s ease;
+}
+.max-w-450{max-width: 450px;}
+td.max-w-450 {word-break: break-word;}
+.text-indent-17{text-indent: 17px}
+.text-indent-9{text-indent: 9px;}
+.delete-org-btn{
+  background-color: transparent;
+  font-size: 13.5px;
+  border: none;
+}
+.pencil-alt-btn{
+  background-color: transparent;
+  font-size: 13.5px;
+  border: none;
+}
+.title-border {
+  border-bottom: 1px solid #CCCCCC;
+  margin-top: 8px;
+  margin-bottom: 16px;
+}
+
+.btn-transparent {
+
+  color: #0279FF;
+  border: none;
+  background: none;
+  font-size: 14px;
+}
+
+::ng-deep{
+  .selected-communities-alert .modal-dialog {max-width: 45.33% !important;}
+  .selected-communities-alert .modal-content{background: #FFF9F5 !important;}
+}
+.warn-icon-min{
+  min-width: 73px;
+  padding-right: 25px;
+  img{width: 48px;}
+}
+.warn-icon-24{min-width: 40px;img{width: 24px;}}
+.selected-communities-warn{
+padding: 0px 20px 15px 15px;
+p{
+  color: #4C4C4C;
+}
+}
+.ng-multiselect-grow{
+  flex-grow: 1;
+}
+.smart-rg-member {}
+
+.smart-eduroam {}
+
+.smart-town-Title {
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 20px;
+}
+
+.smart-town-wifi-Title {
+  font-style: normal;
+  font-weight: 300;
+  font-size: 24px;
+  line-height: 30px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #CCCCCC;
+  margin-bottom: 16px;
+}
+.select-communitie-warpper {
+  width: 100%;
+  display: flex;
+}
+
+.select-communitie {
+  width: 50%;
+
+}
+.c-red{
+  color: #C70000;
+}
+.select-communitie-button {
+  width: 50%;
+}
+
+.select-communitie-table {
+  margin-top: 27px;
+
+  table {
+    width: 100%;
+
+    thead {
+      tr {
+        border-bottom: 1px solid #CCCCCC;
+
+        th {
+          width: 50%;
+          font-weight: 600;
+          font-size: 14px;
+          line-height: 18px;
+        }
+      }
+    }
+
+    tbody {
+      tr {
+        td {
+          width: 50%;
+          font-weight: 400;
+          font-size: 15px;
+          line-height: 24px;
+        }
+      }
+    }
+  }
+}
+.secret-pass-icon {
+  position: relative;
+
+}
+
+.pass-icon {
+
+  position: absolute;
+  top: 40px;
+  right: 14px;
+}
+
+.w-40px{width: 40px;}
+.w-5{width: 5%;}
+.w-45{width: 45%;}
+
+.c-red{
+  color: #C70000;
+}
+.pl-20px{padding-left: 20px;}
+.pr-np1{padding-right: 3px;}
+
+#wk-static-table thead tr th{
+  vertical-align: bottom !important;
+}

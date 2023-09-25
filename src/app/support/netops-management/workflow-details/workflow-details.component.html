@@ -1,0 +1,262 @@
+<div id='details_wizrd' class="mt-5 Workflw-detail-page">
+    <div class="loader" *ngIf="loading && !dataAvailable">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    </div>
+    <section class="review-wizard" *ngIf='dataAvailable'>
+        <div class="loader" *ngIf="loading || micrositeLoading">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+        </div>
+        <!--Close Icon-->
+        <div class="close-wizard">
+            <button type="button" class="close" (click)="close()"><span></span></button>
+        </div>
+        <!-- Workflow data Start -->
+        <!-- <div class="row">
+            <div class="col-md-12 justify-content-end"><button type="button" class="close mt-2"><span></span></button></div>
+        </div> -->
+        <div class="review-table-sec">
+            <h5>{{language.Workflow}}</h5>
+            <div class="table-responsive" id='Workflow_div'>
+                <table datatable [dtOptions]="tableRevOptions" class="row-border dataTable hover table-alter">
+                    <thead>
+                        <tr>
+                            <th>{{language.Name}}</th>
+                            <th>{{language.description}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{workflowData.name ? workflowData.name : ''}}</td>
+                            <td>{{workflowData.description ? workflowData.description : ''}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Workflow data End -->
+    
+        <!-- Device Group Table Start -->
+        <div class="review-table-sec">
+            <h5>{{language.Device_Groups}}</h5>
+            <div class="table-responsive" id='devicegrp_div'>
+                <table datatable [dtOptions]="tableRevOptions" class="row-border dataTable hover table-alter">
+                    <thead>
+                        <tr>
+                            <th>{{language.Name}}</th>
+                            <th>{{language.description}}</th>
+                            <th>{{language.Type}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of deviceArray">
+                            <td>{{item.name ? item.name : ''}}</td>
+                            <td>{{item.description ? item.description : ''}}</td>
+                            <td>{{item.type === 'dynamic' ? language.Dynamic : language.Static}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Device Group Table End -->
+    
+        <!-- Operation Parameter Table Start  -->
+        <div class="review-table-sec">
+            <h5>{{language.Operation_Parameters}}</h5>
+            <div class="table-responsive" id='opr_div'>
+                <table datatable [dtOptions]="tableRevOptions" class="row-border dataTable hover table-alter">
+                    <thead>
+                        <tr>
+                            <th class="col-4">{{language.Type}}</th>
+                            <th class="col-4">{{language.Name}}</th>
+                            <th class="col-4">{{language.Condition}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of workflowData.actions">
+                            <td *ngIf="item.actionType == 'Add to Static Device Group'">{{language['Add to Static Device
+                                Group']}}</td>
+                            <td *ngIf="item.actionType != 'Add to Static Device Group'">{{item.actionType ?
+                                language[item.actionType] || item.actionType
+                                : ''}}</td>
+                            <td *ngIf="item.actionType == 'myCommunityIQ Bulk Activation'">
+                                <div *ngIf="item.actionType == 'myCommunityIQ Bulk Activation' && communityArr.length  && item?.passpointConfig">
+                                    <span> {{language.System_Membership}}: {{(item?.passpointConfig?.enable)?'True':'False'}}<span
+                                        *ngIf="item?.passpointConfig?.communities?.length">,&nbsp;</span></span>
+                                <span class="pr-1"
+                                    *ngFor="let communitiesItem of item?.passpointConfig?.communities;let i=index">{{showMicroSiteName(communitiesItem.micrositeId)}}<span
+                                        *ngIf="i != item?.passpointConfig?.communities?.length-1">,</span></span>
+                                </div>
+                               <div>
+                                <span *ngIf="item.actionType == 'myCommunityIQ Bulk Activation'  && (item?.eduroam)">
+                                    <span>Eduroam: {{(item?.eduroam?.enable)?'True':'False'}}<span>{{item?.eduroam?.primaryServer ? ',':''}}&nbsp;</span></span><span class="pr-1">{{item?.eduroam?.primaryServer}}{{item?.eduroam?.secondaryServer ? ',':''}}&nbsp;{{item?.eduroam?.secondaryServer}}</span>
+                                </span>
+                               </div>
+                                
+                            </td>
+                            
+                            <td
+                                *ngIf="item.actionType!='Edge Suites Bulk Activation' && item.actionType != 'myCommunityIQ Bulk Activation'">
+                                {{ item.profileName ?
+                                language[item.profileName]||item.profileName  : "" }}
+                                <p *ngIf="item?.bulkActivationConfig"> {{language['Subscribe']}} : {{item?.bulkActivationConfig?.subscribe ?  language.Enable : language.Disable }}, {{language['Deploy Container']}} : {{item?.bulkActivationConfig?.enable ? language.Enable : language.Disable}}
+                                </p>
+                            </td>
+    
+                            <td *ngIf="item.actionType=='Edge Suites Bulk Activation'">{{ item.appType ?
+                                language[item.appType] || item.appType
+                                : "" }}</td>
+                            <!-- <td *ngIf="communityArr.length">{{item.conditionLogic ? item.conditionLogic : ''}}</td> -->
+                            <td>{{item.conditionLogic ? item.conditionLogic : ''}}</td>
+                        </tr>
+                    </tbody>
+    
+                </table>
+            </div>
+        </div>
+        <!-- Operation Parameter Table End  -->
+    
+        <!-- Select Trigger Start -->
+        <div class="row workflow-policy-sec">
+            <div class="col-xs-12 col-12 col-md-12 col-lg-12">
+                <h5>{{language.Select_Trigger}}</h5>
+                <h5 *ngIf="workflowData?.execPolicy.initialTrigger.type === 'CPE Event' && workflowData?.execPolicy?.initialTrigger?.cpeEvent === 'CC EVENT - New CPE Discovered'">
+                    {{language.Triggered_CPE_discovered}}
+                </h5>
+                <h5 *ngIf="workflowData?.execPolicy.initialTrigger.type === 'CPE Event' && workflowData?.execPolicy?.initialTrigger?.cpeEvent === 'CC EVENT - On Boot'">
+                    {{ language.Triggered_CPE_Boot }}
+                </h5>
+                <form class="workflow-policy" *ngIf='workflowData.execPolicy.initialTrigger.type !== "CPE Event"'>
+    
+                    <!-- Start Time -->
+                    <div class="form-group ccl-form row">
+                        <label class="col-2 timelabel" title="TimeZone as Local">{{language['Start Time']}}</label>
+                        <div class="col-10 calender">
+                            <p-calendar id="start_date" [style]="{'width': '100%','height': '36px'  }"
+                                [inputStyle]="{'height': '36px'}" appendTo="body" [autoZIndex]="true"
+                                placeholder="{{language['Select Date']}}" disabled [(ngModel)]="startDateTime"
+                                [showIcon]="true" [ngModelOptions]="{standalone: true}" timeOnly="true" hourFormat="12">
+                            </p-calendar>
+                        </div>
+                    </div>
+                    <!-- Start Time End -->
+    
+                    <!-- Time window -->
+                    <div class="form-group ccl-form row">
+                        <label for="windowlength" class="col-2 timelabel" title="">{{language.Time_window}}</label>
+                        <div class="col-10 input-group">
+                            <input class="set-due-date form-control" type="text" id="windowlength" name="windowlength"
+                                disabled [(ngModel)]='windowlength'>
+                        </div>
+                    </div>
+                    <!-- Time window End -->
+    
+                    <!-- Recurrence Pattern -->
+                    <div class="form-group ccl-form row">
+                        <label for="windowlength" class="col-2 timelabel" title="">{{language.Recurrence_Pattern}}</label>
+                        <!-- daily -->
+                        <div class="col-10 input-group" [hidden]="workflowData.execPolicy.window.type !== 'daily'">
+                            <label class="radio-inline col-12 p-0">{{language.Daily}}</label>
+                            <div class="daily-check flex-start">
+                                <label class="radio-inline pr-0 mb-0">{{language.Every}}</label>
+                                <div class="ccl-form ml-2 number-input">
+                                    <input type="number" [(ngModel)]='frequency' disabled class="col-2"
+                                        id="daily-pattern-frequence" name="daily-pattern-frequence">
+                                    <span> {{language.days_s}} </span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- weekly -->
+                        <div class="col-10 input-group" [hidden]="workflowData.execPolicy.window.type !== 'weekly'">
+                            <label class="radio-inline col-12 p-0">{{language.Weekly}}</label>
+                            <div class="daily-check flex-start">
+                                <label class="radio-inline pr-0 mb-0">{{language.Recur_every}}</label>
+                                <div class="ccl-form ml-2 number-input">
+                                    <input type="number" class="col-2" id="week-pattern-frequence" disabled
+                                        name="week-pattern-frequence" [(ngModel)]='frequency'>
+                                    <span> {{language.weeks_on}}: </span>
+                                </div>
+                            </div>
+                            <label class="radio-inline col-12 p-0">
+                                {{weekdays}}
+                            </label>
+                        </div>
+                        <!-- month  -->
+                        <div class="col-10 input-group" [hidden]="workflowData.execPolicy.window.type !== 'monthly'">
+                            <div class="mont-list flex-start">
+                                <label class="radio-inline mb-0 pr-0">Day</label>
+                                <div class="ccl-form">
+                                    <input type="number" id="month-days-pattern-frequence" disabled
+                                        name="month-days-pattern-frequence" [(ngModel)]='noOfDays'>
+                                    <span> {{language.of_every}}</span>
+                                </div>
+                                <div class="ccl-form">
+                                    <input type="number" id="month-pattern-frequence" name="month-pattern-frequence"
+                                        disabled [(ngModel)]='frequency'>
+                                    <span> {{language['month(s)']}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Recurrence Pattern End-->
+    
+                    <!-- Start date -->
+                    <div class="form-group">
+                        <div class="row ccl-form">
+                            <label class="col-2 timelabel" title="TimeZone as Local">{{language.Start_Date}}</label>
+                            <div class="col-10 calender">
+                                <p-calendar id="start_date_1" [style]="{'width': '100%','height': '36px'  }"
+                                    [inputStyle]="{'height': '36px'}" appendTo="body" [autoZIndex]="true"
+                                    placeholder="{{language['Select Date']}}" [(ngModel)]="startDateTime" [showIcon]="true"
+                                    [ngModelOptions]="{standalone: true}" dateFormat="mm/dd/yy" disabled>
+                                </p-calendar>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row ccl-form">
+                            <label class="col-2 timelabel" title="TimeZone as Local"></label>
+                            <div class="col-10 calender">
+                                <label class="radio-inline col-12 p-0"
+                                    [hidden]='workflowData.execPolicy.window.recurrence'>{{language.End_by}}</label>
+                                <label class="radio-inline col-3 p-0"
+                                    [hidden]='!workflowData.execPolicy.window.recurrence'>{{language.End_after}}</label>
+                                <p-calendar id="start_date_1" [style]="{'width': '100%','height': '36px'  }"
+                                    [hidden]='workflowData.execPolicy.window.recurrence' [inputStyle]="{'height': '36px'}"
+                                    appendTo="body" [autoZIndex]="true" placeholder="{{language['Select Date']}}"
+                                    [(ngModel)]="customEndRange" [showIcon]="true" [ngModelOptions]="{standalone: true}"
+                                    dateFormat="mm-dd-yy" disabled>
+                                </p-calendar>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group ccl-form row" [hidden]='!workflowData.execPolicy.window.recurrence'>
+                        <label class="col-2 timelabel"></label>
+                        <div class="col-10 workflow-oneline">
+                            <input type="number" id="range-occurrence"
+                                [(ngModel)]='workflowData.execPolicy.window.recurrence' class="col-2"
+                                name="range-occurrence" disabled>
+                            <label class="period-padding">{{language.Occurrences}}</label>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-2 timelabel ">{{language.Prioritization}}</label>
+                        <div class="col-10">
+                            <input type="checkbox" id="priortize" placeholder="#" class="mr-3"
+                                [checked]="workflowData.fullGroupExecute" name="range-occurrence"
+                                disabled><span>{{language.Ex_fullgrps}}</span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- Select Trigger End -->
+    </section>
+</div>

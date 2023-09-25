@@ -1,0 +1,363 @@
+<div class="loader" *ngIf="loading">
+  <div class="d-flex justify-content-center">
+    <div class="spinner-border text-primary">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
+</div>
+<div *ngIf="hubspotPostError" class="alert alert-warning alert-dismissible fade show"
+role="alert">
+<strong>Error!</strong> {{hubspotPostErrorMsg}}
+<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true" (click)='errorResetTab()'></span>
+</button>
+</div>
+<!-- <div class="alert alert-success alert-dismissible fade show" role="alert" *ngIf="successmsg">
+    <strong>{{ language.Success }}!</strong>
+    {{ language.Call_Disposition_Successfully }}
+    <button type="button" class="close" (click)="successmsg = !successmsg closeModal()" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true"></span>
+    </button>
+  </div> -->
+<div class="page-wrapper" [hidden]="loading">
+  <div class="subscriber-details">
+    <div class="subs-title">
+      <div class="st-header border-bottom">
+        <div class="sth-left" style="position: relative;">
+          <div class="ccl-mktg-large-title greyaa" style="padding-bottom: 24px;" id="HubSpot-Config-title">
+            {{language.HubSpot_Marketing_Channel_Configuration}}</div>
+          <span style="position: absolute;right: 0;top: 36px;z-index: 100;">
+            <div class="sth-rht flex">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeComponent()">
+                <span style="right: 5% !important;" aria-hidden="true"></span>
+              </button>
+            </div>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="alert alert-success alert-dismissible fade show" role="alert" *ngIf="audiencePostSuccess">
+      {{language.Audience}}&nbsp;{{message}}&nbsp;
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true" (click)='errorReset()'></span>
+      </button>
+    </div>
+    <!-- <section class='FlexContainer'>
+        <div>Test Connection</div>
+        <div>Instructions</div>
+      </section> -->
+
+
+
+
+
+    <div class="hubspot-Config-container">
+      <div class="hubspot-Config-left">
+        <div class="conf-sec mb-4 " *ngIf="!validHubSpotToken">
+          <div class="ccl-mktg-title border-bottom" style="margin-top: 24px; margin-bottom: 16px;">
+            {{language.Configure_HubSpot}} </div>
+          <button class="btn-default primary" (click)="hubspotModalOpen()"> {{language.Connect_HubSpot}} </button>
+        </div>
+        <div class="conf-sec" *ngIf="validHubSpotToken">
+          <div class="ccl-mktg-title border-bottom" id="hs-test-con" style="margin-bottom: 16px; margin-top: 24px;">1.
+            {{language.Test_Connection}} <span class="d-inline-flex float-right" style="margin-right: 20px;">
+              <div class="view-data">
+                <div class="dropdown-button dot-drop" ngbDropdown>
+                  <button class="mr-2" id="dropdownPeriod" ngbDropdownToggle>
+                    <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+                      xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512"
+                      style="enable-background:new 0 0 512 512;" xml:space="preserve">
+                      <g>
+                        <g>
+                          <g>
+                            <circle cx="256" cy="256" r="64" />
+                            <circle cx="256" cy="448" r="64" />
+                            <circle cx="256" cy="64" r="64" />
+                          </g>
+                        </g>
+                      </g>
+
+                    </svg>
+
+                  </button>
+                  <div ngbDropdownMenu aria-labelledby="dropdownPeriod">
+                    <button ngbDropdownItem class="greyaa"
+                      (click)="errorMailModalOpen()">{{language.remove_conection}}</button>
+
+                  </div>
+                </div>
+              </div>
+            </span></div>
+
+          <!-- <div class="col-lg-6 col-md-6 col-sm-12">
+              <hr>
+            </div> -->
+          <button class="btn-default primary" (mousedown)="testConnection()" #testConnectionBlur style="margin-bottom: 32px;">
+            {{language.Test_Connection}} </button>
+        </div>
+        <!-- <div class="mb-5" *ngIf="validHubSpotToken && !hasAudienceList"
+            style="display: flex;flex-wrap: wrap;margin-right: -15px;">
+  
+            <label style="width: 97%;border-bottom: 1px solid #dee2e6!important;" class="ccl-mktg-title">2.
+              {{language.Select_HubSpot}}
+              <span style="float: right;margin-right: 7%;cursor: pointer;"  id="serviceDataRefresh"  class="refresh-icon" (click)="getAudience(0)">
+                <img src="assets/img/Refresh-icon.svg"  (click)="refreshAudience(0)" class="primary mr-1">
+              </span>
+            </label>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+  
+            </div>
+  
+  
+  
+            <div class="conf-sec" style="width: 97%;">
+              <label>{{language.Audience}} <span class="alert-icon">*</span> </label>
+              <div class="flex-start ">
+                <ng-select id="statusId" placeholder="{{language.SelectAudience}}" (ngModelChange)="selectstatus($event)"
+                  [items]="statusData" bindLabel="name" [(ngModel)]="statusSelected"
+                  class="selectboxwidth d-inline-flex w-100" [clearable]="false">
+                </ng-select>
+              </div>
+              <p style="color: red;" *ngIf="checkValid">*{{language.audiencelist}}</p>
+              <p class="text-muted mt-2">{{language.audiencecreate_HubSpot}}</p>
+  
+              <button class="btn-default mr-3 primary" (click)="saveAudi()"> {{language.Save_Audience}} </button>
+  
+            </div>
+          </div>
+          <div class="mb-5" *ngIf="validHubSpotToken && hasAudienceList" style="flex-wrap: wrap;">
+            <label style="width: 100%;border-bottom:1px solid #dee2e6!important;" class="ccl-mktg-title">2. Select HubSpot
+              Audience</label>
+            <div class="conf-sec">
+              <label class="hubspot-audience-lable">{{language.audiencecreate_HubSpot}}</label>
+              <div class="flex-start">
+  
+                <input id="updateId" class="d-inline-flex w-100" placeholder="Calix Audience" readonly
+                  style="color: #a3a2a2" [(ngModel)]="audienceSelected">
+              </div>
+              <button style="margin-top: 16px;" class="btn-default btn-dft  mr-3" (click)="updateAudi()">
+                {{language.Update_Audience}}
+              </button>
+            </div>
+          </div> -->
+      </div>
+      <div class="hubspot-Config-right">
+        <div class="conf-sec">
+          <div class="ccl-mktg-title border-bottom" id="hs-instr" style="margin-top: 24px;"> {{language.Instructions}}
+          </div>
+
+          <div class="container">
+
+            <div class="row">
+              <div class="col-lg-12 col-md-12 col-sm-12 px-0">
+
+                <p class="hubspot_inst">{{language.hubspot_ins_1}}&nbsp;<a href="https://www.hubspot.com/"
+                    target="_blank">{{language.hubspot_ins_1_2}}</a>.</p>
+                <ol class="hubspot-configuration-li mb-0" style="margin-left: 25px;text-align: justify;">
+                  <li>
+                    {{language.hubspot_ins_2}}<b>&nbsp;{{language.hubspot_ins_2_1}}</b>
+                    {{language.hubspot_ins_2_2}}
+                  </li>
+                  <li>
+                    {{language.hubspot_ins_3}}<b>&nbsp;{{language.hubspot_ins_3_1}}</b>
+                    {{language.hubspot_ins_3_2}}
+                  </li>
+                  <li>
+                    {{language.hubspot_ins_4}}
+                  </li>
+                  <li>
+                    {{language.hubspot_ins_5}}
+                  </li>
+                </ol>
+                <p> {{language.hubspot_ins_6_1}}<a href="https://community.calix.com/s/"
+                    target="_blank">&nbsp;{{language.hubspot_ins_6}}.</a></p>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+
+  </div>
+</div>
+
+<ng-template #hubspotModal let-modal class="col-md-12 small-model">
+  <div style="text-align:center">
+    <h5>{{language.Connection_configuration}}</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-header">
+    <div class="mail-chimp">
+      <img src="assets/img/Hubspot_Logo.png" style="width:80%">
+      <!-- <h2 id="mail-chimp-span">{{language.HubSpot}}</h2> -->
+    </div>
+
+  </div>
+  <div class="modal-body flex-center">
+    <button class="btn-default primary" (click)="openHubSpot()">
+      {{language.Log_in_HubSpot}} </button>
+  </div>
+</ng-template>
+
+<ng-template #successConnectModal let-modal class="col-md-12 small-model">
+  <div class="modal-header">
+    <h2>{{ language.testConnection }}</h2>
+    <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+      <span aria-hidden="true"></span>
+    </button> -->
+
+  </div>
+  <div class="modal-body">
+    <div class="text-center msg-content">
+      <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
+        <circle class="path circle" fill="none" stroke="#73AF55" stroke-width="6" stroke-miterlimit="10" cx="65.1"
+          cy="65.1" r="62.1" />
+        <polyline class="path check" fill="none" stroke="#73AF55" stroke-width="6" stroke-linecap="round"
+          stroke-miterlimit="10" points="100.2,40.2 51.5,88.8 29.8,67.5 " />
+      </svg>
+
+
+      <h3> {{language.Successful_Connection}}</h3>
+      <!-- <p>{{language.success_configured_HubSpot}}</p>
+      <p>{{language.success_configured_HubSpot_derived}}</p> -->
+
+
+      <button class="btn-default primary" (click)="closeModal()"> {{language.camapign_ok}} </button>
+    </div>
+
+  </div>
+</ng-template>
+<ng-template #successConnectErrorModal let-modal class="col-md-12 small-model">
+  <div class="modal-header">
+
+
+  </div>
+  <div class="modal-body">
+    <div class="text-center msg-content">
+      <!-- // success svg  -->
+      <!-- <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
+          <circle class="path circle" fill="none" stroke="#73AF55" stroke-width="6" stroke-miterlimit="10" cx="65.1"
+            cy="65.1" r="62.1" />
+          <polyline class="path check" fill="none" stroke="#73AF55" stroke-width="6" stroke-linecap="round"
+            stroke-miterlimit="10" points="100.2,40.2 51.5,88.8 29.8,67.5 " />
+        </svg> -->
+
+      <!-- // error svg  -->
+
+      <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
+        <circle class="path circle" fill="none" stroke="#D06079" stroke-width="6" stroke-miterlimit="10" cx="65.1"
+          cy="65.1" r="62.1" />
+        <line class="path line" fill="none" stroke="#D06079" stroke-width="6" stroke-linecap="round"
+          stroke-miterlimit="10" x1="34.4" y1="37.9" x2="95.8" y2="92.3" />
+        <line class="path line" fill="none" stroke="#D06079" stroke-width="6" stroke-linecap="round"
+          stroke-miterlimit="10" x1="95.8" y1="38" x2="34.4" y2="92.2" />
+      </svg>
+
+      <h3> {{language.error_configured}}</h3>
+      <button class="btn-default primary" (click)="closeModal()"> {{language.ok}} </button>
+    </div>
+
+  </div>
+</ng-template>
+
+
+<ng-template #errorMailModal let-modal class="col-md-12 small-model">
+  <div class="modal-header">
+
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="msg-content">
+      <!-- // success svg  -->
+      <!-- <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
+          <circle class="path circle" fill="none" stroke="#73AF55" stroke-width="6" stroke-miterlimit="10" cx="65.1"
+            cy="65.1" r="62.1" />
+          <polyline class="path check" fill="none" stroke="#73AF55" stroke-width="6" stroke-linecap="round"
+            stroke-miterlimit="10" points="100.2,40.2 51.5,88.8 29.8,67.5 " />
+        </svg> -->
+
+      <!-- // error svg  -->
+
+      <!-- <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
+          <circle class="path circle" fill="none" stroke="#D06079" stroke-width="6" stroke-miterlimit="10" cx="65.1"
+            cy="65.1" r="62.1" />
+          <line class="path line" fill="none" stroke="#D06079" stroke-width="6" stroke-linecap="round"
+            stroke-miterlimit="10" x1="34.4" y1="37.9" x2="95.8" y2="92.3" />
+          <line class="path line" fill="none" stroke="#D06079" stroke-width="6" stroke-linecap="round"
+            stroke-miterlimit="10" x1="95.8" y1="38" x2="34.4" y2="92.2" />
+        </svg> -->
+      <div class="">
+        <div class="" style="width: 50px; height: 100%; float: left;"><img src="assets/img/warning-icon-36px.svg"
+            alt="" /></div>
+        <div class="" style="width: 80%; float: left; height: 100%;">
+          <b> {{language.removemsg_HubSpot}}</b>
+          <br>
+          {{language.removeerrormsg_HubSpot}}
+        </div>
+
+      </div>
+      <div class="text-center"> <button class=" mt-2 btn-default primary" (click)="remove_connection()">
+          {{language.remove_conection}} </button></div>
+
+    </div>
+
+  </div>
+</ng-template>
+
+
+<ng-template #saveConnectModal let-modal class="col-md-12 small-model">
+
+  <div class="modal-body">
+    <div class="text-center msg-content">
+      <!-- // success svg  -->
+      <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
+        <circle class="path circle" fill="none" stroke="#73AF55" stroke-width="6" stroke-miterlimit="10" cx="65.1"
+          cy="65.1" r="62.1" />
+        <polyline class="path check" fill="none" stroke="#73AF55" stroke-width="6" stroke-linecap="round"
+          stroke-miterlimit="10" points="100.2,40.2 51.5,88.8 29.8,67.5 " />
+      </svg>
+
+      <!-- // error svg  -->
+
+      <!-- <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
+          <circle class="path circle" fill="none" stroke="#D06079" stroke-width="6" stroke-miterlimit="10" cx="65.1" cy="65.1" r="62.1"/>
+          <line class="path line" fill="none" stroke="#D06079" stroke-width="6" stroke-linecap="round" stroke-miterlimit="10" x1="34.4" y1="37.9" x2="95.8" y2="92.3"/>
+          <line class="path line" fill="none" stroke="#D06079" stroke-width="6" stroke-linecap="round" stroke-miterlimit="10" x1="95.8" y1="38" x2="34.4" y2="92.2"/>
+        </svg> -->
+
+      <h3>{{language.Audience}}&nbsp;{{language.Save_Message}}&nbsp;</h3>
+      <button class="btn-default primary" (click)="openMarketingChannel()">{{language.camapign_ok}} </button>
+    </div>
+
+  </div>
+</ng-template>
+
+<ng-template #successLoadingModal let-modal class="col-md-12 small-model">
+  <div class="modal-header">
+    <h2>{{ language.testConnection }}</h2>
+    <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+      <span aria-hidden="true"></span>
+    </button> -->
+
+  </div>
+  <div class="modal-body">
+    <div class="text-center msg-content">
+      <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;">
+        <span class="sr-only">Loading...</span>
+      </div>
+      <br><br>
+      <h6><b>{{language.Few_Moments}}</b></h6>
+    </div>
+
+  </div>
+</ng-template>

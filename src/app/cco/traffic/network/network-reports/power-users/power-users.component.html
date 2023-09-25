@@ -1,0 +1,107 @@
+<div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess"> Access denied due to RBAC. Please consult
+    your
+    Organization Administrator
+    for access.
+</div>
+<div class="col-md-12 mt-4" *ngIf="pageAvailable  && hasScopeAccess">
+    <div class="w-100 alert alert-danger  fade show my-3" *ngIf="error">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+        <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+        <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+    </div>
+    <!-- <div class="loader" *ngIf="Initialloading">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">{{language.Loading}}</span>
+            </div>
+        </div>
+    </div> -->
+    <div class="h-auto">
+        <div class="row justify-content-end " *ngIf="dataAvailable">
+            <div class="col-md-3 px-0 text-right">
+                <div class="cus-dd dropdown-button float-right" placement="bottom-right" ngbDropdown>
+                    <button class="float-right" id="dropdownExchange" ngbDropdownToggle>
+                        <p class="listdata bar-label mb0">
+                            <i class="fa fa-bars mr-2"></i>{{language.export}}
+                        </p>
+                    </button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownExchange" id="supportListId">
+                        <button ngbDropdownItem class="greyaa">
+                            <span (click)="downloadPdf();">{{language.exportPdf}}</span>
+                        </button>
+                        <button ngbDropdownItem class="greyaa">
+                            <span (click)="downloadCSV();">{{language.exportCsv}}</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="text-margin-30" *ngIf="runClicked">
+            <p class="chart-main-title">
+                {{language.powerUsersTitle}}
+            </p>
+            <p class="hc-chart-subtitle" id="criteriaTextLine1">
+                {{language.direction}}:
+                {{filters.directionSelected ? language[filters.directionSelected] : ''}} &nbsp;
+                {{language.bandwidth}}: {{filters.peakRateFrom >= 0 ? filters.peakRateFrom : ''}} Mbps {{language.to}}
+                {{filters.peakRateFrom >= 0 ? filters.peakRateTo : ''}} Mbps</p>
+            <p class="hc-chart-subtitle" id="criteriaTextLine2">
+                {{language.timeWindow}}:
+                <span *ngIf="startEndDates && startEndDates?.start">{{startEndDates.start | date: "MM/dd/yyyy"}}</span>
+                {{language.to}} <span *ngIf="startEndDates && startEndDates?.end">{{startEndDates.end | date:
+                    "MM/dd/yyyy"}}</span> [{{timezoneName}}]
+            </p>
+        </div>
+
+        <div class=" fa-chart-wrapper chart-min-h" id="fa-chart-wrapper">
+            <div class="loader" *ngIf="loading">
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border text-primary">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row my-3" *ngIf="0">
+                <div class="col-md-6 offset-md-6">
+                    <div class="text-right flat-right">
+                        <div class="row">
+                            <div class="col-md-4">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="ccl-form">
+                                    <input type="search" name="searchbox" class="input-sm"
+                                        placeholder="{{language.searchAdmins}}" (keyup)="search($event.target.value)"
+                                        (search)="search($event.target.value)">
+                                    <button class="serach-but btn-default primary btn-icon-md inline"><i
+                                            class="fa fa-search" aria-hidden="true"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row my-3 min-height-65" *ngIf="pageAvailable">
+                <div class="col">
+                    <table [hidden]="!dataAvailable" id="power-users-table" width="100%"
+                        class="row-border hover table-alter " datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+                        <thead class="">
+                            <tr>
+                                <th>{{language.Subscriber}}</th>
+                                <th>{{language.maxRate}}(Mbps)</th>
+                                <th>{{language.hitCount}}</th>
+                            </tr>
+                        </thead>
+                        <tbody *ngIf="tableData?.length !=0">
+                            <tr id="{{item._id}}" class="testing" *ngFor="let item of tableData">
+                                <td>{{item.name ? item.name : ''}}</td>
+                                <td>{{item.maxBps ? convertBytes(item.maxBps) : ''}}</td>
+                                <td>{{item.hitCount ? item.hitCount : ''}}</td>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

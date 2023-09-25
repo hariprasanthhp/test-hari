@@ -1,0 +1,543 @@
+<section>
+  <form [formGroup]="workFlowConditionsData?.workFlowConditionsForm">
+    <div class="container px-0">
+      <div class="row">
+        <div class="col-12">
+          <div class="w-100">
+               <label class="mb-0">{{language['Notification Trigger']}}</label>
+          </div>
+          <div [ngClass] = "{'cursornallow' : workFlowConditionsData['workFlowStatus'] == 'PAUSE'}">
+            <div class="w-100 mb-3" [ngClass] = "{'diable-div' : workFlowConditionsData['workFlowStatus'] == 'PAUSE'}">
+              <ng-container *ngFor="let trigger of triggerType; let i = index">
+                <div class="form-check d-inline-flex mr-3" [ngClass] = "{
+                  'mr-3':
+                  trigger.name == 'immediately'}">
+                  <input formControlName="immediate" class="form-check-input" type="radio" name="immediate" id="{{ trigger.value }}"
+                  value="{{ trigger.value }}" />
+                  <label class="form-check-label" for="{{ trigger.value }}">
+                    {{ language[trigger['name']] }}
+                  </label>
+                </div>
+              </ng-container>
+             
+            </div>
+          </div>
+        </div> 
+        <!--end-->
+      </div>
+      <ng-container
+          *ngIf="
+          workFlowConditionsData?.workFlowConditionsForm.controls['immediate']
+              ?.value == 'true'
+          "
+        >
+      <div class="row mb-3">
+        <div class="col-sm-6 col-md-4 col-lg-4 col-xl-4">
+          <div class="heading-4">{{language['Alarm']}} {{language['Quantity Threshold']}}<span class="error">*</span></div>
+          <div class="info-text" [innerHtml]="language.quantity_threshold_description">
+            <!-- {{language.numberAlarmTriggerNotifaication}} -->
+          </div>
+          <div class="my-3">
+            <div class="ccl-form row">
+              <div class="col-sm-5">
+                <input class="form-control" [min]="workFlowConditionsData.minRaiseThreshold-1 != 0?workFlowConditionsData.minRaiseThreshold-1:workFlowConditionsData.minRaiseThreshold" [max] = "10000" id="wf_raiseThreshold" name="wf_raiseThreshold" type="number"
+                  (keyup)="enforceMinMax($event, 'raiseThreshold')" (keydown)="avoidInvalidValues($event)" formControlName="raiseThreshold" aria-required="true"
+                  aria-describedby="wf_raiseThreshold-error" placeholder="1" />
+              </div>
+              <label for="wf_raiseThreshold" class="col-form-label">{{language['Alarm(s)']}}</label>
+              <!-- <div class="raise-note note-clear form-check-label info-text" [innerHTML]="language.clearThreshold(workFlowConditionsData?.minRaiseThreshold)">
+              </div> -->
+              <div class="errorMessage w-100" *ngIf="workFlowConditionsData?.workFlowConditionsForm?.controls[
+              'raiseThreshold'
+            ]?.errors?.max">
+                {{ language['Please enter value less than or equal to'] }} 10000.
+              </div> 
+              <div class="errorMessage w-100" *ngIf="workFlowConditionsData?.workFlowConditionsForm?.controls[
+              'raiseThreshold'
+            ]?.errors?.min">
+                {{ language['Please enter value greater than or equal to'] }} 1.
+              </div> 
+              <div class="errorMessage w-100" *ngIf="
+                  (workFlowConditionsData?.workFlowConditionsForm?.controls[
+                    'raiseThreshold'
+                  ]?.touched &&
+                  (workFlowConditionsData?.workFlowConditionsForm?.controls[
+                    'raiseThreshold'
+                  ]?.invalid ||
+                    workFlowConditionsData?.workFlowConditionsForm?.controls[
+                      'raiseThreshold'
+                    ]?.errors?.required)) && !workFlowConditionsData?.workFlowConditionsForm?.controls[
+                    'raiseThreshold'
+                  ]?.errors?.max && !workFlowConditionsData?.workFlowConditionsForm?.controls[
+                  'raiseThreshold'
+                ]?.errors?.min
+                ">
+                <p class="pl-3">{{ language["This field is required"] }}.</p>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-md-4 col-lg-4 col-xl-4">
+          <!-- <div class="heading-4">{{language['Duration Threshold']}}</div>
+          <div class="info-text" [innerHtml]="language.durationAlarmTriggerNotification"> -->
+          <div class="heading-4">{{language['Alarm']}} {{ language['Duration Threshold']}}<span class="error">*</span></div>
+          <div class="info-text" [innerHtml]="language['time_duration_description']">
+            <!-- {{language.durationAlarmTriggerNotification}} -->
+          </div>
+          <div class="my-3">
+            <div class="ccl-form row">
+              <div class="col-sm-5">
+                <input class="form-control" id="wf_duration" name="wf_duration" min="1" max="120" type="number"
+                  (keyup)="enforceMinMax($event, 'duration')" (keydown)="avoidInvalidValues($event)" formControlName="duration" aria-required="true"
+                  aria-describedby="wf_duration-error" placeholder="0" />
+              </div>
+              <label for="wf_duration" class="col-form-label">{{language['Minute(s)']}}</label>
+              <div class="errorMessage w-100" *ngIf="
+                  (workFlowConditionsData?.workFlowConditionsForm?.controls[
+                    'duration'
+                  ]?.touched &&
+                  (workFlowConditionsData?.workFlowConditionsForm?.controls[
+                    'duration'
+                  ]?.invalid ||
+                    workFlowConditionsData?.workFlowConditionsForm?.controls[
+                      'duration'
+                    ]?.errors?.required)) && !workFlowConditionsData?.workFlowConditionsForm?.controls[
+                    'duration'
+                  ]?.errors?.max && !workFlowConditionsData?.workFlowConditionsForm?.controls[
+                  'duration'
+                ]?.errors?.min
+                ">
+                <p class="pl-3">{{ language["This field is required"] }}.</p>
+              </div>
+              <div class="errorMessage" *ngIf="workFlowConditionsData?.workFlowConditionsForm?.controls[
+              'duration'
+            ]?.errors?.max">
+            {{ language['Please enter value less than or equal to'] }} 120.
+              </div> 
+              <div class="errorMessage" *ngIf="workFlowConditionsData?.workFlowConditionsForm?.controls[
+              'duration'
+            ]?.errors?.min">
+                {{ language['Please enter value greater than or equal to'] }} 1.
+              </div> 
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-md-4 col-lg-4 col-xl-4">
+          <div class="heading-4">{{language['Alarm']}} {{ language["Soak Time"] }}<span class="error">*</span></div>
+          <div class="info-text" [innerHTML]="language['The duration for which all thresholds must be met in order to trigger this notification']"></div>
+          <div class="my-3">
+            <div class="ccl-form row">
+              <div class="col-sm-5">
+                <input class="form-control" id="wf_soak_time" name="wf_soak_time" min="0" max="240" type="number"
+                  (keyup)="enforceMinMax($event, 'soakTime')" (keydown)="avoidInvalidValues($event)" formControlName="soakTime" aria-required="true"
+                  aria-describedby="wf_soak_time-error" placeholder="0" />
+              </div>
+              <label for="wf_soak_time" class="col-form-label">{{language['Minute(s)']}}</label>
+              <div class="errorMessage w-100" *ngIf="workFlowConditionsData?.workFlowConditionsForm?.controls[
+              'soakTime'
+            ]?.errors?.max">
+            {{ language['Please enter value less than or equal to'] }} 240.
+              </div> 
+              <div class="errorMessage w-100" *ngIf="workFlowConditionsData?.workFlowConditionsForm?.controls[
+              'soakTime'
+            ]?.errors?.min">
+            {{ language['Please enter value greater than or equal to'] }} 0.
+              </div> 
+              <div class="errorMessage w-100" *ngIf="
+                  (workFlowConditionsData?.workFlowConditionsForm?.controls[
+                    'soakTime'
+                  ]?.touched &&
+                  (workFlowConditionsData?.workFlowConditionsForm?.controls[
+                    'soakTime'
+                  ]?.invalid ||
+                    workFlowConditionsData?.workFlowConditionsForm?.controls[
+                      'soakTime'
+                    ]?.errors?.required)) && !workFlowConditionsData?.workFlowConditionsForm?.controls[
+                    'soakTime'
+                  ]?.errors?.max && !workFlowConditionsData?.workFlowConditionsForm?.controls[
+                  'soakTime'
+                ]?.errors?.min
+                ">
+                <p class="pl-3">{{ language["This field is required"] }}.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-md-4 col-lg-4 col-xl-4">
+          <div class="heading-4">{{language.Geography}}</div>
+          <div class="info-text">
+            {{language['immediate_geography_msg']}}
+          </div>
+          <ng-template [ngTemplateOutlet]="geographyTemplate"></ng-template>
+        </div>
+        
+        <!--end-->
+        <div class="col-sm-6 col-md-4 col-lg-4 col-xl-4" [ngClass]="{
+          'cursornallow':
+            workFlowConditionsData?.soakTime > 0
+        }">
+        <div class="heading-4">
+          {{ language["Cleared Alarm Notification"] }}
+          <!-- {{ language["Cleared Alarms Email"] }} -->
+        </div>
+        <div class="form-group form-check">
+          <input
+          [ngClass]="{
+            'diable-div':
+              workFlowConditionsData?.soakTime > 0
+          }"
+            formControlName="notifyOnClear"
+            type="checkbox"
+            class="form-check-input"
+            id="mailNotifyOnClear"
+          />
+          <!-- <label class="form-check-label info-text" for="mailNotifyOnClear"
+            [innerHTML]="language['Send an \<b>additional email \</b> when alarms have been cleared to the threshold below']">
+          </label> -->
+          <label [ngClass]="{
+            'diable-div':
+              workFlowConditionsData?.soakTime > 0
+          }" class="form-check-label info-text cursor-pointer" for="mailNotifyOnClear"
+            [innerHTML]="language['clearedAlarmNotificationLabel']">
+          </label>
+          
+        </div>
+        <div
+          class="errorMessage"
+          *ngIf="
+            workFlowConditionsData?.workFlowConditionsForm?.controls[
+              'clearThreshold'
+            ]?.touched &&
+            (workFlowConditionsData?.workFlowConditionsForm?.controls[
+              'clearThreshold'
+            ]?.invalid ||
+              workFlowConditionsData?.workFlowConditionsForm?.controls[
+                'clearThreshold'
+              ]?.errors?.required)
+          "
+        >
+          <p>{{ language["This field is required"] }}.</p>
+        </div>
+        </div>
+        <!--end-->
+        <div
+        class="col-sm-6 col-md-4 col-lg-4 col-xl-4"
+      >
+        <div class="d-flex justify-content-between">
+          <div class="heading-4">{{ language.Exclusions }}</div>
+          <!-- <div class="timezone">
+            <ng-select
+              formControlName="timezone"
+              [items]="timezones"
+              [searchable]="true"
+              [clearable]="false"
+              bindLabel="name"
+              bindValue="id"
+              class="col-lg-10 col-md-12 col-sm-12 px-0"
+            >
+            </ng-select>
+          </div> -->
+        </div>
+        <!-- [(ngModel)]="timezoneId" -->
+        <!-- <div class="info-text" [innerHTML]="language['Define the days that will \<b>no \</b> be included in the schedule' ]"> -->
+        <div class="info-text" [innerHTML]="language['Select the days that will not be included in this schedule' ]">
+          <!-- {{ language["Define the days that will"] }} <b>{{ language.not }}</b>
+          {{ language["be included in the schedule"] }} -->
+        </div>
+
+        <ng-container formArrayName="weekDays">
+          <ng-container
+            [formGroupName]="i"
+            *ngFor="
+              let days of workFlowConditionsData?.workFlowConditionsForm?.controls
+                ?.weekDays?.controls;
+              let i = index
+            "
+          >
+            <div
+              class="exclusions-container align-items-center"
+              [ngClass]="{ 'mt-3': i == 0 }"
+            >
+              <div class="exclusions-item">
+                <div class="form-group form-check mr-3">
+                  <input
+                    formControlName="checked"
+                    [readonly]="
+                    workFlowConditionsData?.workFlowConditionsForm?.controls?.immediate?.value == 'false'
+                    "
+                    (click)="onCheckExclusionDays($event, i)"
+                    id="{{ workFlowConditionsData?.weekDays[i].value }}"
+                    class="form-check-input"
+                    type="checkbox"
+                  />
+                  <label
+                    class="form-check-label"
+                    for="{{ workFlowConditionsData?.weekDays[i].value }}"
+                    >{{ language[workFlowConditionsData?.weekDays[i].name] }}
+                  </label>
+                </div>
+              </div>
+              <div
+                class="exclusions-item w-100-imp ccl-form">
+                <p-calendar
+                  formControlName="dayFrom"
+                  placeholder="12:00 AM"
+                  [maxDate]="workFlowConditionsData.weekDays[i].maxTime"
+                  id="{{ workFlowConditionsData?.weekDays[i].dayFrom }}"
+                  [style]="{ width: '100%', height: '36px' }"
+                  [inputStyle]="{ height: '36px' }"
+                  appendTo="body"
+                  [autoZIndex]="true"
+                  [showIcon]="false"
+                  timeOnly="true"
+                  hourFormat="12"
+                  (input)="onChangeExclusionTime($event, 'dayFrom', i, 'input')"
+                  (onSelect)="
+                    onChangeExclusionTime($event, 'dayFrom', i, 'select')
+                  "
+                >
+                </p-calendar>
+              </div>
+
+              <div class="exclusions-item mx-1">{{ language.to }}</div>
+
+              <div
+                class="exclusions-item w-100-imp ccl-form">
+                <!-- #attendee -->
+                <p-calendar
+                  formControlName="dayTo"
+                  [defaultDate]="workFlowConditionsData.weekDays[i].defaultTime"
+                  [minDate]="workFlowConditionsData.weekDays[i].minTime"
+                  placeholder="11:59 PM"
+                  id="{{ workFlowConditionsData?.weekDays[i].dayTo }}"
+                  [style]="{ width: '100%', height: '36px' }"
+                  [inputStyle]="{ height: '36px' }"
+                  appendTo="body"
+                  [autoZIndex]="true"
+                  [showIcon]="false"
+                  timeOnly="true"
+                  hourFormat="12"
+                  (input)="onChangeExclusionTime($event, 'dayTo', i, 'input')"
+                  (onSelect)="
+                    onChangeExclusionTime($event, 'dayTo', i, 'select')
+                  "
+                >
+                </p-calendar>
+              </div>
+            </div>
+          </ng-container>
+        </ng-container>
+      </div>
+        <!--end-->
+      </div>
+      </ng-container>
+    <!--start onShedule-->
+    <ng-container
+          *ngIf="
+          workFlowConditionsData?.workFlowConditionsForm.controls['immediate']
+              ?.value == 'false'
+          "
+        >
+    <div class="row">
+    <div class="col-12">
+        <div class="sectitle border-bottom mb-3 pb-1">
+          {{language.TOptions}}
+        </div>
+        <div class="row">
+          <div class="col-sm-6 col-md-4 col-lg-4 col-xl-4">
+            <label class="w-100 label-highlight" id = "options-schedule">{{language.Schedule}}</label>
+            <p>{{language.alarm_shedule_msg}}</p>
+            <div class="w-100 max-w165">
+              <ng-select
+                formControlName="recurrence"
+                [items]="recurrenceList"
+                [searchable]="true"
+                [clearable]="false"
+                bindLabel="name"
+                bindValue="id"
+              >
+              <ng-template ng-label-tmp let-item="item">
+                {{language[item.name] }}
+              </ng-template>
+              <ng-template ng-option-tmp let-item="item" let-index="index">
+                {{language[item.name] }}
+              </ng-template>
+              </ng-select>
+            </div>
+            <!--end-->
+            <div *ngIf="
+            workFlowConditionsData?.workFlowConditionsForm.controls['recurrence']
+              ?.value == 'weekly'
+          " class="day-selection w-100 mt-3 week-container">
+          <ng-container formArrayName="weekDays">
+            <ng-container
+              [formGroupName]="i"
+              *ngFor="
+                let days of workFlowConditionsData?.workFlowConditionsForm
+                  ?.controls?.weekDays?.controls;
+                let i = index
+              "
+            >
+            <div
+            class="cursor-pointer"
+            ngDefaultControl
+            formControlName="scheduleWeeklyStatus"
+            (click)="
+              selectWeeklySchedule(
+                workFlowConditionsData?.weekDays[i]
+              )
+            "
+            id="{{ workFlowConditionsData?.weekDays[i].scheduleWeekly }}"
+            [ngClass]="{
+              'select-day':
+                workFlowConditionsData?.weekDays[i].scheduleWeeklyStatus ==
+                true,
+              day:
+                workFlowConditionsData?.weekDays[i].scheduleWeeklyStatus ==
+                false
+            }"
+          >
+            <span class="week-circle"
+              >{{ workFlowConditionsData?.weekDays[i].scheduleWeekly }}
+            </span>
+          </div>
+            </ng-container>
+          </ng-container>
+            </div>
+            <!--end-->
+            <div class="w-100 my-3">
+             <label class="mb-0 label-highlight">{{language['Start Schedule']}}</label>
+             <div class="d-flex">
+               <ng-container *ngIf="
+               workFlowConditionsData?.workFlowConditionsForm.controls['recurrence']
+                 ?.value == 'monthly'
+             ">
+             <label class="mb-0 mr-2 mt-1">{{language['Day']}}<span class="error">*</span></label>
+             <div class="ccl-form w-25">
+               <input type="number" placeholder="1" (keyup)="enforceMinMax($event, 'dayOfMonth')" class="form-control" id="dayOfMonthId" name="dayOfMonth"
+               formControlName="dayOfMonth" min="1" max = "31" aria-required="true" />
+              </div>
+               </ng-container>
+              
+               <div [ngClass]="{
+                'w-100':
+                workFlowConditionsData?.workFlowConditionsForm.controls['recurrence']
+                ?.value != 'monthly'
+              }" class="ccl-form position-relative">
+                
+                 <!-- <span class="icon-p-cal"><img src="../../../../assets/img/ic_datetime.svg"/></span> -->
+                
+                 <p-calendar
+                 formControlName="scheduleStartTime"
+                 id="scheduleStartTimeId"
+                 class="start-item"
+                 appendTo="body"
+                 [autoZIndex]="true"
+                 [timeOnly] = "true"
+                 [showTime]="true"
+                 view="date"
+                 hourFormat="12"
+                 [showIcon]="true"
+               >
+               </p-calendar>
+               <!-- [timeOnly]="workFlowConditionsData?.workFlowConditionsForm.controls['recurrence']
+                 ?.value != 'monthly'" -->
+               <!-- [minDate]="scheduleMinDate" -->
+               </div>
+             </div>
+             <div class="errorMessage" *ngIf="
+              (workFlowConditionsData?.workFlowConditionsForm?.controls[
+                'dayOfMonth'
+              ]?.touched &&
+              (workFlowConditionsData?.workFlowConditionsForm?.controls[
+                'dayOfMonth'
+              ]?.invalid ||
+                workFlowConditionsData?.workFlowConditionsForm?.controls[
+                  'dayOfMonth'
+                ]?.errors?.required)) ||
+                workFlowConditionsData?.workFlowConditionsForm?.controls[
+                'scheduleStartTime'
+              ]?.touched &&
+              (workFlowConditionsData?.workFlowConditionsForm?.controls[
+                'scheduleStartTime'
+              ]?.invalid ||
+                workFlowConditionsData?.workFlowConditionsForm?.controls[
+                  'scheduleStartTime'
+                ]?.errors?.required)
+            ">
+            <p>{{ language["This field is required"] }}.</p>
+          </div>
+            </div>
+            <!--end-->
+          </div>
+          <!--end-->
+          <div class="col-sm-6 col-md-4 col-lg-4 col-xl-4">
+            <label class="w-100 label-highlight">{{language.Geography}}</label>
+            <div class="info-text">
+              {{language.alarm_geography_msg}}
+            </div>
+            <ng-template [ngTemplateOutlet]="geographyTemplate"></ng-template>
+          </div>
+          <!--end-->
+        </div>
+        <!--end-->
+    </div>
+    </div>
+  </ng-container>
+  
+  <ng-template #geographyTemplate>
+    
+
+      <div class="">
+        <label for="inputEmail3" class="col-form-label">{{language['Region(s)']}}</label>
+        <div class="w-100">
+          <ng-select formControlName="region" [multiple]="true" [items]="workFlowConditionsData?.regionsDataArray"
+            bindValue="id" bindLabel="name" [clearable]="false" [searchable]="true"
+            placeholder="{{ language.region }}" (add)="validateRegion($event)" (remove)="loadLocationValue($event)">
+          </ng-select>
+          <div class="errorMessage" *ngIf="
+              workFlowConditionsData?.workFlowConditionsForm?.controls[
+                'region'
+              ]?.touched &&
+              (workFlowConditionsData?.workFlowConditionsForm?.controls[
+                'region'
+              ]?.invalid ||
+                workFlowConditionsData?.workFlowConditionsForm?.controls[
+                  'region'
+                ]?.errors?.required)
+            ">
+            <p>{{ language["This field is required"] }}.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="">
+        <label for="inputEmail3" class="col-form-label"> {{language['Location(s)']}}</label>
+        <div class="w-100">
+          <ng-select formControlName="location" [multiple]="true"
+            [items]="workFlowConditionsData?.locationDataArray" bindValue="id" bindLabel="name"
+            placeholder="{{ language.Location }}" [clearable]="false" [searchable]="true"
+            (add)="validateLocation($event)" (remove)="removeLocationValue($event)">
+          </ng-select>
+          <div class="errorMessage" *ngIf="
+              workFlowConditionsData?.workFlowConditionsForm?.controls[
+                'location'
+              ]?.touched &&
+              (workFlowConditionsData?.workFlowConditionsForm?.controls[
+                'location'
+              ]?.invalid ||
+                workFlowConditionsData?.workFlowConditionsForm?.controls[
+                  'location'
+                ]?.errors?.required)
+            ">
+            <p>{{ language["This field is required"] }}.</p>
+          </div>
+        </div>
+      </div>
+    
+  </ng-template>
+    <!--end onShedule-->
+    </div>
+  </form>
+</section>

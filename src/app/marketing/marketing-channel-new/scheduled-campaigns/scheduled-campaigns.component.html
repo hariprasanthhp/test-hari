@@ -1,0 +1,135 @@
+<div class="row align-items-start w-100 mt-4">
+ <div class="col-md-4 ccl-form mb-3">
+    <input placeholder="Search campaigns"/>
+ </div>
+ <div class="col-8 col-md-8 col-sm-12 px-0 justify-content-end">
+    <div class="row w-100 justify-content-end align-items-center">
+   <div class="filter-col mr-3 mb-3">
+    <ng-select id="statusId" [clearable]="false">
+    </ng-select>
+   </div>
+ </div>
+</div>
+</div>
+
+<div class="row">
+ <div class="col-12">
+  <table id="seheduledCapaignsTable" datatable [dtOptions]="tableOptions">
+    <thead>
+        <tr>
+            <th>{{language['Name']}}</th>
+            <th>{{language['Status']}}</th>
+            <th>{{language['Type']}}</th>
+            <th>{{language['Segment']}}</th>
+            <th>{{language['Audience']}}</th>
+            <th>{{language['segmentChannels']}}</th>
+            <th>{{language['START_DATE']}}</th>
+            <th>{{language['END_DATE']}}</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Spring Fiber Upgrade</td>
+            <td>Draft</td>
+            <td>Upsell</td>
+            <td>Protect</td>
+            <td>3,489</td>
+            <td>CIQ, Mailchimp</td>
+            <td>April 20, 2021</td>
+            <td>May 10, 2021</td>
+            <td>
+                <ul class="action-list list-inline mb-0">
+                    <li class="d-inline-flex mr-2" title={{language.Edit}}>
+                        <a class="cursor-pointer text-decoraion-none">
+                            <img src="../../../../assets/img/ic_edit.svg" width="15px" height="14.5px" />
+                        </a>
+                    </li>
+                    <li class="d-inline-flex mr-2" title={{language.Active}}>
+                        <a class="cursor-pointer text-decoraion-none" (click)="modalOpen(pauseCampaignModal)">
+                            <img src="../../../../assets/img/ic_controls_play.svg" width="11.74px" height="12.67px" />
+                        </a>
+                    </li>
+                    <!-- [ngClass]="item.status == language.Active ? 'show' : 'hide'" -->
+                    <li class="d-inline-flex mr-2" title={{language.Paused}}>
+                        <a class="cursor-pointer text-decoraion-none">
+                            <img src="../../../../assets/img/ic_controls_pause.svg" width="14.52px" height="13.2px" />
+                        </a>
+                    </li>
+                    <li class="d-inline-flex" title={{language.Delete}}>
+                        <a class="cursor-pointer text-decoraion-none">
+                            <img src="../../../../assets/img/ic_delete_trash.svg" width="14.67px" height="16.67px" />
+                        </a>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+ </div>
+</div>
+
+<ng-template #pauseCampaignModal let-modal>
+    <div class="modal-cust-space">
+        <div class="modal-header">
+            <button type="button" class="close" aria-label="Close"
+                (click)="modal.dismiss('Cross click')"><span></span></button>
+        </div>
+        <div class="modal-body">
+            <h1 class="cco-title mb-3"  id="sh-campaign-pause-title">{{language['Pause Campaign']}}</h1>
+            <p class="ccl-form-labe">{{language['Pause_Campaign_Msg']}}</p>
+        </div>
+        <div class="modal-footer justify-content-start mt-4 p-0">
+            <button type="button" class="btn-default primary mr-2 ml-0" id="sh-campaign-pause-btn">
+                {{language['Pause Campaign']}}
+            </button>
+            <button type="button" class="btn-default btn-dft py-1 my-0" id="sh-campaign-cancel-btn">
+                {{language['cancel']}}
+            </button>
+        </div>
+    </div>
+</ng-template>
+<ng-template #unpauseCampaignModal let-modal>
+    <div class="modal-cust-space">
+        <div class="modal-header">
+            <button type="button" class="close" aria-label="Close"
+                (click)="modal.dismiss('Cross click')"><span></span></button>
+        </div>
+        <div class="modal-body">
+            <h1 class="cco-title mb-3" id="sh-campaign-unpause-title">{{language['Unpause Campaign']}}</h1>
+            <p class="ccl-form-labe">{{language['Unpause_Campaign_Msg']}}</p>
+        </div>
+        <div class="modal-footer justify-content-start mt-4 p-0">
+            <button type="button" class="btn-default primary mr-2 ml-0" id="sh-campaign-unpause-btn">
+                {{language['Unpause Campaign']}}
+            </button>
+            <button type="button" class="btn-default btn-dft py-1" id="sh-campaign-unpause-cancel-btn">
+                {{language['cancel']}}
+            </button>
+        </div>
+    </div>
+</ng-template>
+<ng-template #deleteCampaign let-modal>
+    <div class="modal-cust-space">
+        <div class="modal-header">
+            <button type="button" class="close"data-dismiss="modal" aria-label="Close" tabindex="-1">
+            <span></span>
+        </button>
+        </div>
+        <div class="modal-body">
+            <h1 class="cco-title mb-3" id="sh-delete-campaign-title">{{language['Delete Campaign']}}</h1>
+            <p class="ccl-form-label pr-2">{{language['Delete_Campaign_Confirmation']}}</p>
+        </div>
+        <div class="modal-footer justify-content-start mt-4 p-0">
+            <form class="custom-form ml-0">
+            <button type="button" class="btn-default primary mr-2 my-0" id="sh-campaign-delete-btn"
+             autofocus tabindex="0">
+                {{language['Delete Campaign']}}
+            </button>
+            <button type="button" class="btn-default btn-dft py-1 my-0" id="sh-campaign-cancel-btn" 
+            data-dismiss="modal">{{language['cancel']}}
+            </button>
+            </form>
+        </div>
+    </div>
+</ng-template>

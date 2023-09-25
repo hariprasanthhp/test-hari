@@ -1,0 +1,561 @@
+<div class="container px-0 my-3 position-relative">
+    
+    <div class="loader" id="tabLoader" *ngIf="totalLoader || totalMicroLoader || tableLoading">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">{{language.Loading}}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="w-100 alert alert alert-danger fade show" *ngIf="errorMsg">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+        <button type="button" id="hide-error-btn" class="close" (click)="errorMsg = ''">
+            <span></span>
+        </button>
+        <div class="d-inline-flex" [innerHtml]="errorMsg"></div>
+    </div>
+
+    <div class="alert alert-success w-100 alert-dismissible fade show" role="alert" *ngIf="successWelcome">
+        <span class="mr-2"><img class="width-height-20" src="./assets/img/success-icon.svg" /></span>
+        <span class="alert-title-24">{{language['Welcome Email Sent Successfully']}}</span>
+        <div class="d-inline-flex">
+            <button type="button" class="close" (click)="hideSuccess()"><span></span></button>
+        </div>
+    </div>
+
+    <div class="alert alert-success w-100 alert-dismissible fade show" role="alert" *ngIf="successReset">
+        <span class="mr-2"><img class="width-height-20" src="./assets/img/success-icon.svg" /></span>
+        <span class="alert-title-24">{{language['Successfully sent Reset Password email!']}}</span>
+        <div class="d-inline-flex">
+            <button type="button" class="close" (click)="hideSuccess1()"><span></span></button>
+        </div>
+    </div>
+
+    <!-- [ngClass]="!myCommStatus?.myCommunityIQ?.subscriber?.enable ? 'disabled noAction' : ''" -->
+    <div class="col-md-12 px-0 pb-3" *ngIf="sectionToShow == 'Communities'">
+        <div class="d-flex">
+            <button type="button" *ngIf="false" class="btn btn-primary mr-3"
+                (click)="escalationModalOpen()">{{language['Escalate']}}</button>
+            <div class="mycommunity-more mycommunity-edge-more flex-wrap">
+                <ng-select id="group" class="mr-3 mt-n1 min-w-200x" [items]="communities"
+                    *ngIf="sectionToShow == 'Communities'" bindLabel="label" bindValue="micrositeId"
+                    [searchable]="false" [clearable]="false" [(ngModel)]="community" (change)="communityChange()"
+                    [disabled]="!myCommStatus?.myCommunityIQ?.subscriber?.enable && !communities.length">
+                </ng-select>
+                <button class="btn-default btn-dft mr-3 "
+                    [disabled]="!myCommStatus?.myCommunityIQ?.subscriber?.enable && !communities.length"
+                    href=" javascript:void(0)" (click)="myCommWelcomeMail()">
+                    {{language['Send Welcome Email']}}
+                </button>
+                <button class="btn-default btn-dft" [disabled]="!myCommStatus?.myCommunityIQ?.subscriber?.enable "
+                    href=" javascript:void(0)" (click)="resetMyCommPasswrd()">
+                    {{language['Reset Password']}}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- this is the previous relese data now dont use. we're using it on the Deatils tab (CCL-51798) -->
+    <div class="row mt-2" *ngIf="false">
+        <div class="col-sm-12 col-md-12 col-lg-4 col-xl-4">
+            <div class="loader load" *ngIf="loading">
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border text-primary">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between border-bottom mb-3">
+                <div class="cco-secondary-title" id="bark-account-details">{{language['Account Details']}}</div>
+                <div class="w-24">
+                    <img class="refresh-icon" src="../../../../assets/img/Refresh-icon.svg"
+                        (click)="getMyCommunityStatus(true)">
+                </div>
+            </div>
+            <div class="mycommunity-table pl-3">
+                <table class="table" id="mycommunity-acc-details">
+                    <tbody>
+                        <tr>
+                            <td>{{language['Subscription Status']}}</td>
+                            <td>
+                                <span
+                                    [ngClass]="myCommStatus?.myCommunityIQ?.subscriber?.enable ? 'highlightGreen' : 'highlightRed'">
+                                    {{myCommStatus?.myCommunityIQ?.subscriber?.enable ?
+                                    language.Subscribed : language.Unsubscribed }}
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>{{language['Account Email']}}</td>
+                            <td>{{ subInfo?.email ? subInfo?.email : '-'}}</td>
+                        </tr>
+                        <tr>
+                            <td>Eduroam</td>
+                            <td
+                                [ngClass]="myCommStatus?.myCommunityIQ?.eduroam?.enable && myCommStatus?.myCommunityIQ?.eduroam?.status?.result !== 'failed' ? 'highlightGreen' : 'highlightRed'">
+                                {{ myCommStatus?.myCommunityIQ?.eduroam?.enable ?
+                                (myCommStatus?.myCommunityIQ?.eduroam?.status?.result === 'failed' ?
+                                language.EnableFailed : language.enabled) : language.Disabled}}
+                            </td>
+                        </tr>
+                        <!-- <tr>
+                        <td>Devices</td>
+                        <td>2</td>
+                    </tr> -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- <div class="col-sm-12 col-md-12 col-lg-4 col-xl-4">
+        <div class="d-flex justify-content-between border-bottom mb-3">
+            <div class="cco-secondary-title" id="bark-account-status">Eleven Status</div>
+            <div class="w-24">
+                <img class="refresh-icon" src="../../../../assets/img/Refresh-icon.svg">
+            </div>
+        </div>
+        <div class="mycommunity-table pl-3">
+            <table class="table mb-0" id="bark-status">
+                <tbody>
+                    <tr>
+                        <td>{{language['Overall Status']}}</td>
+                        <td><span class="highlightGreen">{{language.Up}}</span></td>
+                    </tr>
+                    <tr>
+                        <td>Microsites</td>
+                        <td><span class="highlightGreen success">{{language.Up}}</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="eleven-status-inside-table">
+            <table class="table" id="bark-status">
+                <tbody>
+                    <tr>
+                        <td>Microsite -1</td>
+                        <td><span class="highlightGreen">{{language.Up}}</span></td>
+                    </tr>
+                    <tr>
+                        <td>Microsite -2</td>
+                        <td><span class="highlightGreen success">{{language.Up}}</span></td>
+                    </tr>
+                    <tr>
+                        <td>Microsite -3</td>
+                        <td><span class="highlightGreen error">{{language.Down}}</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div> -->
+        <div class="col-sm-12 col-md-12 col-lg-8 col-xl-8">
+            <div class="loader load" *ngIf="microLoading">
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border text-primary">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between border-bottom mb-3">
+                <div class="cco-secondary-title" id="bark-account-status">{{language.myCommCloud}}</div>
+                <div class="w-24">
+                    <img class="refresh-icon" src="../../../../assets/img/Refresh-icon.svg"
+                        (click)="getMyCommunityStatus()">
+                </div>
+            </div>
+            <div class="mycommunity-onboarded-table pl-3" *ngIf="microsites.length">
+                <table class="table" id="mycommunity-status">
+                    <thead>
+                        <tr>
+                            <th class="w-40">{{language['Bsp_Microsite_Name']}}</th>
+                            <th class="w-45">{{language.Description}}</th>
+                            <th class="w-15">{{language.status}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let microsite of microsites">
+                            <td class="w-40 text-break">{{ microsite?.communityName }}</td>
+                            <td class="w-45 text-break pr-4">{{ microsite?.communityDesc }}</td>
+                            <td class="w-15"
+                                [ngClass]="microsite?.status == 'READY' ? 'highlightGreen' : 'highlightRed'">{{
+                                microsite?.status == "READY" ? language.Active : language.Error }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <ng-template #escalationModal let-modal>
+        <div class="modal-header justify-content-end">
+            <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                <img src="../../../../assets/img/ic_close-44px.svg" />
+            </button>
+        </div>
+        <div class="row">
+            <div class="col-md-12 center-space px-5 pt-2">
+                <div class="modal-body">
+                    <div class="w-100">
+                        <h5 class="ccl-admin-title" id="EscalationProcessTitle">{{language['Escalation Process']}}</h5>
+                    </div>
+                    <div class="w-100 mt-4 pl-12">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                                <div class="w-100 border-bottom">
+                                    <h5 class="ccl-secondary-title" id="MycommunitIqInstructions">
+                                        {{language.Instructions}}
+                                    </h5>
+                                </div>
+                                <!--end-->
+                                <div class="escalate-list">
+                                    <ol>
+                                        <li>{{language['Open your preferred email client and paste the following email
+                                            template']}}</li>
+                                        <li>{{language['Fill in all required fields contained inside the <> symbols
+                                                found in the subject line and the body of the email']}}</li>
+                                        <li>{{language['Send the email to']}}
+                                            <a
+                                                href="mailto:calixpartnersupport@mycommunityiq.com">calixpartnersupport@mycommunityiq.com</a>
+                                        </li>
+                                    </ol>
+                                    <ul>
+                                        <li>
+                                            *{{language['Do not modify this template as it will result in a delay of
+                                            handling the escalation.']}}
+                                        </li>
+                                        <li>
+                                            *{{language['All fields are mandatory in order to process the
+                                            escalation.']}}
+                                        </li>
+                                    </ul>
+                                </div>
+                                <!--end-->
+                            </div>
+                            <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                                <div class="w-100 border-bottom">
+                                    <h5 class="ccl-secondary-title" id="EmailTemplate">{{language['Email Template']}}
+                                    </h5>
+                                </div>
+                                <div class="w-100">
+                                    <div>
+                                        <span class="gray-text">{{language.subject}}:</span>
+                                    </div>
+                                    <div id="myComIQTemplateSubject">
+                                        {{language['Calix Partner Escalation']}}:{{language['Calix Partner
+                                        Escalation']}}
+                                    </div>
+                                    <div class="mt-3">
+                                        <span class="gray-text">{{language.Body}}:</span>
+                                    </div>
+                                    <div>
+                                        <ul id="myComIQTemplateBody">
+                                            <li> {{language['Calix Partner Name']}} : {{"<"}}{{language['broadband
+                                                    service providor name']}}{{">
+                                                    "}}
+                                            </li>
+                                            <li> {{language['Calix Partner Customer First Name']}} : {{"
+                                                <"}}{{language['subscriber first name']}}{{">"}}
+                                            </li>
+                                            <li> {{language['Calix Partner Customer Last Name']}} : {{"
+                                                <"}}{{language['subscriber last name']}}{{">"}}
+                                            </li>
+                                            <li> {{language['Calix Partner Customer Email']}} : {{"
+                                                <"}}{{language['subscriber email address']}}{{">"}}
+                                            </li>
+                                            <li> {{language['Calix Partner Customer Phone']}} : {{"
+                                                <"}}{{language['subscriber phone number']}}{{">"}}
+                                            </li>
+                                            <li> {{language['Calix Partner Customer Issue-Concern']}} : {{"
+                                                <"}}{{language['subscriber issue or concern']}}{{">"}}
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="">
+                                        <button type="button" class="btn-default primary" id="myComIQclipboard"
+                                            (click)="sso.copyToClipboard('#myComIQTemplateSubject', '#myComIQTemplateBody li')">
+                                            {{language['Copy to clipboard']}}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+
+    <section>
+        <div class="row">
+            
+            
+
+            <div class="col-md-2">
+                <ul id="tabs" class="w-100 nav flex-column left-menu tab-view-style">
+                    <li class="nav-item" (click)="onTabChange('details')"><a data-toggle="tab"
+                            [ngClass]="[sectionToShow == 'details' ? 'active' : '']" id="details"
+                            class="nav-link ">{{language.Details}}</a>
+                    </li>
+                    <li class="nav-item" (click)="onTabChange('OnboardedDevices')"><a data-toggle="tab"
+                            [ngClass]="[sectionToShow == 'OnboardedDevices' ? 'active' : '']" id="OnboardedDevices"
+                            class="nav-link ">{{language['Onboarded Devices']}}
+                        </a></li>
+                    <li class="nav-item" (click)="onTabChange('Communities')"><a data-toggle="tab"
+                            [ngClass]="[sectionToShow == 'Communities' ? 'active' : '']" id="Communities"
+                            class="nav-link ">{{language.Communities}}</a>
+                    </li>
+
+                </ul>
+            </div>
+            <div class="col-md-10">
+                <div class="w-100 alert alert alert-danger fade show" *ngIf="showError">
+                    <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+                    <button type="button" id="hide-error-btn" class="close" (click)="hideError()">
+                        <span></span>
+                    </button>
+                    <div class="d-inline-flex" [innerHtml]="errorMsg"></div>
+                </div>
+
+                <!-- Details-content Start -->
+                <div class="smart-town-container" *ngIf="sectionToShow == 'details'">
+
+                    <!-- Account Details -->
+                    <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
+                        <div class="d-flex justify-content-between border-bottom mb-3">
+                            <div id="" class="cco-secondary-title">{{language['Account Details']}}</div>
+                            <div class="w-24"><img src="../../../../assets/img/Refresh-icon.svg"
+                                    (click)="getMyCommunityStatus(true);" class="refresh-icon">
+                            </div>
+                        </div>
+
+                        <div class="mycommunity-table pl-3">
+                            <table id="" class="table">
+                                <tbody>
+                                    <tr>
+                                        <td>{{language['Subscriber_Membership']}}</td>
+                                        <td><span
+                                                [ngClass]="myCommStatus?.myCommunityIQ?.subscriber?.enable ? 'highlightGreen' : 'highlightRed'">
+                                                {{ myCommunityStatusLoading ? '-' :
+                                                (myCommStatus?.myCommunityIQ?.subscriber?.enable ?
+                                                language.Subscribed : language.Unsubscribed) }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>{{language['Account Email']}}</td>
+                                        <td>{{ myCommunityStatusLoading ? '-' : (subInfo?.email ? subInfo?.email :
+                                            '-')}}</td>
+                                    </tr>
+                                    <tr *ngIf="zyxelHotspopt">
+                                        <td>{{language['SmartTown Wi-Fi Hotspot']}}</td>
+                                        <td>
+                                            <span
+                                    [ngClass]="(myCommStatus?.myCommunityIQ?.passpoint?.enable && 
+                                    (myCommStatus?.myCommunityIQ?.passpoint?.status?.result == 'succeeded')) ? 'highlightGreen' : 'highlightRed'">
+                                                {{RGHotspot ? RGHotspot : '-'}}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="zyxelHotspopt">
+                                        <td>{{language['Subscriber Traffic Prioritization']}}</td>
+                                        <td>
+                                            <span *ngIf="getPrioritizeTraffic();else priority"
+                                                [ngClass]="myCommStatus?.myCommunityIQ?.prioritizeTraffic ? 'highlightGreen' : 'highlightRed'">
+                                                {{ myCommunityStatusLoading ? '-' :
+                                                (myCommStatus?.myCommunityIQ?.prioritizeTraffic ? language.enabled :
+                                                language.Disabled)
+                                                }}
+                                            </span>
+                                            <ng-template #priority>
+                                                <span Class='highlightRed'>-</span>
+                                            </ng-template>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="zyxelHotspopt">
+                                        <td>{{language['Eduroam']}}</td>
+                                        <td
+                                            [ngClass]="myCommStatus?.myCommunityIQ?.eduroam?.enable && myCommStatus?.myCommunityIQ?.eduroam?.status?.result !== 'failed' ? 'highlightGreen' : 'highlightRed'">
+                                            {{ myCommunityStatusLoading ? '-' : (myCommStatus?.myCommunityIQ?.eduroam ?
+                                            (myCommStatus?.myCommunityIQ?.eduroam?.enable
+                                            ? (myCommStatus?.myCommunityIQ?.eduroam?.status?.result === 'failed' ?
+                                            language.Disabled : language.enabled) : language.Disabled) : '-')}}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- Account Details end -->
+
+                    <!-- Cloud Health Status -->
+                    <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
+                        <div class="loader load" *ngIf="healthLoader">
+                            <div class="d-flex justify-content-center">
+                                <div class="spinner-border text-primary">
+                                    <span class="sr-only">{{language.Loading}}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between border-bottom mb-3">
+                            <div id="" class="cco-secondary-title">{{language['Cloud Health Status']}}</div>
+                            <div class="w-24"><img src="../../../../assets/img/Refresh-icon.svg"
+                                    (click)="getHealth();moreStatusInfoFlag = false;health = []" class="refresh-icon">
+                            </div>
+                        </div>
+
+                        <div class="mycommunity-table pl-3">
+                            <table id="" class="table">
+                                <tbody>
+                                    <tr>
+                                        <td class="w-40">{{language['Overall Status']}}</td>
+                                        <td class="w-60" class="border-top-0">
+                                            <span
+                                                *ngIf="health?.length && (overalldesc?.length && (health?.length != overalldesc?.length))"
+                                                class="highlightRed">{{ healthLoader ? '-' :
+                                                (language.DEGRADED)}}</span>
+                                            <span *ngIf="health?.length && !overalldesc?.length"
+                                                class="highlightGreen">{{language['Up']}}</span>
+                                            <span *ngIf="health?.length && (health?.length == overalldesc?.length)"
+                                                class="highlightRed">{{language['Down']}}</span>
+                                            <span *ngIf="!health?.length && !overalldesc?.length"
+                                                class="highlightRed">-</span>
+                                            <i *ngIf="overallStatus?.length <=3 && overalldesc?.length"
+                                                class="fas fa-caret-down highlightRed pointer" id="moreInfo"
+                                                (click)="moreStatusInfo()"></i>
+                                        </td>
+                                    </tr>
+                                    <ng-container
+                                        *ngIf="health?.length && moreStatusInfoFlag && overallStatus?.length <=3">
+                                        <tr *ngFor="let dropdata of overalldesc">
+                                            <td class="w-40"></td>
+                                            <td class="w-60">{{ healthLoader ? '-' : dropdata}}</td>
+                                        </tr>
+                                    </ng-container>
+
+                                    <!-- this will be uncommit in next release so no-one removed this. -->
+                                    <tr *ngFor="let Obj of radiusFiltered;let i = index">
+                                        <!-- <td class="w-40">{{Obj.health_name.includes('Microsites') ? language.Microsites :
+                                            (Obj.health_name.includes('RADIUS') ? language.radiusserver: '')}}</td> -->
+                                         <td class="w-40">{{(Obj.health_name.includes('RADIUS') ? (language.radiusserver +" " +usDirection(Obj.health_name)): '')}}</td>
+                                        <td class="w-60" *ngIf="health.length && Obj.health_name.includes('RADIUS')"
+                                            [ngClass]="Obj.status ? 'highlightGreen' : 'highlightRed'">
+                                            {{ healthLoader ? '-' : (Obj.status ? language['Up'] : language['Down'])}}
+                                        </td>
+                                        <td class="w-60" *ngIf="!health.length" class="highlightRed">-</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- Cloud Health Status end -->
+
+                </div>
+                <!-- Details-content End -->
+
+                <!-- Onboarded Devices Start -->
+                <div class="connected-devices-wrapper mb-2" *ngIf="sectionToShow == 'OnboardedDevices'">
+                    <div class="connected-devices-info">
+                        <!-- <div class="devices-info-list ">
+                            Connected Devices
+                        </div>
+                        <div class="count">
+                            34
+                        </div> -->
+
+                    </div>
+                    <div class="onboarded-devices ju">
+                        <div class="d-flex justify-content-between border-bottom mb-3">
+                            <div id="" class="cco-secondary-title">{{language['Onboarded Devices']}}</div>
+                            <div class="w-24"><img src="../../../../assets/img/Refresh-icon.svg"
+                                    (click)="onboardDeviceApiCall(myCommStatus,true);" class="refresh-icon"></div>
+                        </div>
+                        <div class="onboarded-devices-table">
+                            <div class="loader" *ngIf="usersLoading">
+                                <div class="d-flex justify-content-center">
+                                    <div class="spinner-border text-primary">
+                                        <span class="sr-only">{{language.Loading}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <table class="table table-borderless" datatable  [dtOptions]="dtOptions">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            {{language['userName']}}
+                                        </th>
+                                        <th>
+                                            {{language['Bsp_Microsite_Name']}}
+                                        </th>
+                                        <th>
+                                            {{language['MAC_Address']}}
+                                        </th>
+                                        <th>
+                                            {{language['Onboarded Date']}}
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody *ngIf="myCommStatus?.myCommunityIQ && myCommStatus?.myCommunityIQ?.subscriber?.enable && !usersLoading">
+                                    <ng-container>
+                                        <tr *ngFor="let user of users">
+                                            <td>{{subscriberName.name}}</td>
+                                            <td>{{user.comunityName}}</td>
+                                            <td>{{user.callingStationId.replaceAll('-',':')}}</td>
+                                            <td>{{user.firstAuthenticated | date:'MMM dd,YYYY'}}</td>
+                                        </tr>
+                                    </ng-container>
+                                </tbody>
+                                <tfoot
+                                    *ngIf="(!users.length || (!myCommStatus?.myCommunityIQ?.subscriber?.enable)) && !usersLoading">
+                                    <tr>
+                                        <td class="text-center" colspan="4">{{ language['No Data Available'] }}
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- Onboarded Devices End -->
+
+                <!-- Communities  Start-->
+                <div class="smart-town-container" *ngIf="sectionToShow == 'Communities'">
+                    <div class="smart-town-item">
+
+                        <div class="d-flex justify-content-between border-bottom mb-3">
+                            <div id="" class="cco-secondary-title">{{language.Communities}} </div>
+                            <div class="w-24">
+                                <img src="../../../../assets/img/Refresh-icon.svg"
+                                    (click)="micrositesList.length > 0 ? micrositeApiForm(communityIds):'';"
+                                    class="refresh-icon">
+                            </div>
+                        </div>
+
+                        <div class="mycommunity-table pl-3">
+                            <div class="loader load" *ngIf="microLoading">
+                                <div class="d-flex justify-content-center">
+                                    <div class="spinner-border text-primary">
+                                        <span class="sr-only">{{language.Loading}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <table id="" class="table">
+                                <tbody>
+                                    <tr *ngFor="let microsite of micrositesList">
+                                        <td class="w-40 text-break">{{ microsite?.communityName }}</td>
+                                        <td class="w-15"
+                                            [ngClass]="microsite?.status == 'READY' ? 'highlightGreen' : 'highlightRed'">
+                                            {{ microLoading ? '-' :
+                                            (microsite?.status == "READY" ? language.Up : language.down)
+                                            }}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- Communities  End -->
+
+            </div>
+        </div>
+    </section>
+</div>

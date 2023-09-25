@@ -1,0 +1,761 @@
+<div *ngIf="subscribechartDownloadError" class="alert alert-warning alert-dismissible fade show" role="alert">
+    <strong>Error!</strong>{{subscribechartDownloadErrorMsg}}.
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true" (click)='errorReset()'></span>
+    </button>
+</div>
+
+<div class="subscriber-details" [ngClass]="!fullScreen ? 'd-block' : 'd-none'">
+    <div class="flex overview-row mt-2">
+        <!-- <div class="ov-col" *ngIf="activeSubscribersForUI"> -->
+        <div class="ov-col">
+            <p class="listlabels greyaa" id="SubscribersId">{{language.Subscribers}}</p>
+            <h2 class="primary">{{activeSubscribersForUI | number}}</h2>
+        </div>
+        <div class="ov-col" *ngIf="segmentSummary">
+            <p class="listlabels greyaa" id="StreamingId">{{language.Streaming}}</p>
+            <h2 class="primary">{{segmentSummary.streamingUsers | number}}</h2>
+        </div>
+        <div class="ov-col" *ngIf="segmentSummary">
+            <p class="listlabels greyaa" id="GamingId">{{language.Gaming}}</p>
+            <h2 class="primary">{{segmentSummary.gamingUsers | number}}</h2>
+        </div>
+
+        <div class="ov-col" *ngIf="segmentSummary">
+            <p class="listlabels greyaa" id="WfhId">{{language.Wfh}}</p>
+            <h2 class="primary">{{segmentSummary.wfhUsers | number}}</h2>
+        </div>
+    </div>
+
+    <div class="marketing-wizard flex">
+        <div class="mark-wiz-col brd-btm-snowgrey">
+            <div class="mwc-header flex">
+                <h3 class="chart-title greyaa mb0" id="subdatausageId">{{language.SUBS_DATA_USAGE_TITLE}}</h3>
+                <div class="mwc-btns flex">
+                    <button id="subscriberModelOpen" class="btn-round btn-small-24 btn-grey btn-que d-none"
+                        (click)="subscribChartModalOpen(language.SUBS_DATA_USAGE_TITLE)" data-toggle="tooltip"
+                        title="{{language.subs_content_tip}}">
+                    </button>
+                    <button id="subscriberDownloadSection" class="btn-round btn-small-24 btn-grey btn-dload"
+                        (click)="downloadFunction(language.SUBS_DATA_USAGE_TITLE)" data-toggle="tooltip"
+                        title="{{language.subs_download_tip}}">
+
+                    </button>
+                    <button id="subscriberExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+                        (click)="fullScreenExpandFunction(language.SUBS_DATA_USAGE_TITLE)" data-toggle="tooltip"
+                        title="{{language.subs_fullscreen_tip}}">
+                    </button>
+                </div>
+            </div>
+            <div class="req-text text-center" *ngIf="subscriberDataUsageError">
+                <div class="loader error-text">
+                    {{subscriberDataUsageErrorMsg}}
+                </div>
+            </div>
+            <div class="text-center" *ngIf="!subscriberDataUsageDataAvailable && !subscriberDataUsageError">
+                <div class="pos-text">
+                    <div class="spinner-border text-primary loader">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <div [ngClass]="subscriberDataUsageDataAvailable ? 'd-block' : 'd-none'">
+                <h5 class="greyaa mb0  heading-subtitle">{{language.Active_subscriber}}: {{activeSubscribers | number }}
+                </h5>
+                <div class="mwc-content">
+                    <div class="col-md-12 p-2 ">
+                        <div id="subscriber-data-usage-chart" class="chart-box pos-text"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="mark-wiz-col brd-btm-snowgrey">
+            <div class="mwc-header flex">
+                <h3 class="chart-title greyaa mb0" id="StreamingTitle">{{language.Streaming_Title}}</h3>
+                <div class="mwc-btns flex">
+                    <button id="streamingModelOpen" class="btn-round btn-small-24 btn-grey btn-que d-none"
+                        (click)="subscribChartModalOpen(language.Streaming_Title)" data-toggle="tooltip"
+                        title="{{language.Streaming_Show_Tittle}}">
+                    </button>
+                    <button id="streamingDownloadSection" (click)="downloadFunction(language.Streaming_Title)"
+                        class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                        title="{{language.subs_download_tip}}">
+                    </button>
+                    <button id="streamingExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+                        (click)="fullScreenExpandFunction(language.Streaming_Title)" data-toggle="tooltip"
+                        title="{{language.subs_fullscreen_tip}}">
+                    </button>
+                </div>
+            </div>
+
+            <div class="req-text text-center" *ngIf="streamingSubscriberError">
+                <div class="loader error-text">
+                    {{streamingSubscriberErrorMsg}}
+                </div>
+            </div>
+            <div class="text-center" *ngIf="!streamingSubscribersDataAvailable && !streamingSubscriberError">
+                <div class="pos-text">
+                    <div class="spinner-border text-primary loader">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <div [ngClass]="streamingSubscribersDataAvailable ? 'd-block' : 'd-none'">
+                <h5 class="greyaa mb0  heading-subtitle" *ngIf="segmentSummary">{{language.Streaming_Title}}:&nbsp;
+                    {{segmentSummary.streamingUsers | number}}
+                    ({{streamingSubscribersPercentage | number:'1.1-1'}}%)</h5>
+
+                <div class="mwc-content">
+                    <div class="col-md-12 p-2">
+                        <div id="streaming-subscribers-chart" class="chart-box pos-text"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mark-wiz-col brd-btm-snowgrey">
+            <div class="mwc-header flex">
+                <h3 class="chart-title greyaa mb0" id="GamingTitle">{{language.Gaming_Title}}</h3>
+                <div class="mwc-btns flex">
+                    <button id="gamingSubscriberModelOpen" class="d-none btn-round btn-small-24 btn-grey btn-que"
+                        (click)="subscribChartModalOpen(language.Gaming_Title)" data-toggle="tooltip"
+                        title="{{language.Gaming_Show_Title}}">
+                    </button>
+                    <button id="gamingSubscriberDownloadSection" (click)="downloadFunction(language.Gaming_Title)"
+                        class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                        title="{{language.subs_download_tip}}">
+                    </button>
+                    <button id="gamingSubscriberExpandSection" (click)="fullScreenExpandFunction(language.Gaming_Title)"
+                        class="btn-round btn-small-24 btn-grey btn-expand" data-toggle="tooltip"
+                        title="{{language.subs_fullscreen_tip}}">
+                    </button>
+                </div>
+            </div>
+            <div class="req-text text-center" *ngIf="gamingSubscriberError">
+                <div class="loader error-text">
+                    {{gamingSubscriberErrorMsg}}
+                </div>
+            </div>
+            <div class="text-center" *ngIf="!gamingSubscribersDataAvailable && !gamingSubscriberError">
+                <div class="pos-text">
+                    <div class="spinner-border text-primary loader">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <div [ngClass]="gamingSubscribersDataAvailable ? 'd-block' : 'd-none'">
+                <h5 class="greyaa mb0  heading-subtitle" *ngIf="segmentSummary">{{language.Gaming_Title}}:&nbsp;
+                    {{segmentSummary.gamingUsers | number}} ({{ gamingSubscribersPercentage | number:'1.1-1'}}%)
+                </h5>
+                <div class="mwc-content">
+                    <div class="col-md-12 p-2 ">
+                        <div id="gaming-subscribers-chart" class="chart-box pos-text"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mark-wiz-col brd-btm-snowgrey">
+            <div class="mwc-header flex">
+                <h3 class="chart-title greyaa mb0" id="WFHTitle">{{language.WFH_Title}}</h3>
+                <div class="mwc-btns flex">
+                    <button id="WFHSubscriberModelOpen" class="d-none btn-round btn-small-24 btn-grey btn-que"
+                        (click)="subscribChartModalOpen(language.WFH_Title)" data-toggle="tooltip"
+                        title="{{language.WFH_Show_Title}}">
+                    </button>
+                    <button id="WFHSubscriberDownloadSection" (click)="downloadFunction(language.WFH_Title)"
+                        class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                        title="{{language.subs_download_tip}}">
+                    </button>
+                    <button id="WFHSubscriberExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+                        (click)="fullScreenExpandFunction(language.WFH_Title)" data-toggle="tooltip"
+                        title="{{language.subs_fullscreen_tip}}">
+                    </button>
+                </div>
+            </div>
+            <div class="req-text text-center" *ngIf="WFHSubscriberError">
+                <div class="loader error-text">
+                    {{WFHSubscriberErrorMsg}}
+                </div>
+            </div>
+            <div class="text-center" *ngIf="!WFHSubscribersDataAvailable && !WFHSubscriberError">
+                <div class="pos-text">
+                    <div class="spinner-border text-primary loader">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <div [ngClass]="WFHSubscribersDataAvailable ? 'd-block' : 'd-none'">
+                <h5 class="greyaa mb0  heading-subtitle" *ngIf="segmentSummary">
+                    {{language.WFH_Title}}:&nbsp;{{segmentSummary.wfhUsers | number}}
+                    ({{wfhSubscribersPercentage | number:'1.1-1'}}%)</h5>
+                <div class="mwc-content">
+                    <div class="col-md-12 p-2 ">
+                        <div id="wfh-subscribers-chart" class="chart-box pos-text"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mark-wiz-col brd-btm-snowgrey">
+            <div class="mwc-header flex">
+                <h3 class="chart-title greyaa mb0" id="SubscribersActivityTrendsTitle">
+                    {{language.SubscribersActivityTrends_Title}}</h3>
+                <div class="mwc-btns flex">
+                    <button id="subscriberActivityModelOpen" class="d-none btn-round btn-small-24 btn-grey btn-que"
+                        (click)="subscribChartModalOpen(language.SubscribersActivityTrends_Title)" data-toggle="tooltip"
+                        title="{{language.activity_Show_Title}}">
+                    </button>
+                    <button id="subscriberActivityDownloadSection"
+                        (click)="downloadFunction(language.SubscribersActivityTrends_Title)"
+                        class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                        title="{{language.subs_download_tip}}">
+                    </button>
+                    <button id="subscriberActivityExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+                        (click)="fullScreenExpandFunction(language.SubscribersActivityTrends_Title)"
+                        data-toggle="tooltip" title="{{language.subs_fullscreen_tip}}">
+                    </button>
+                </div>
+            </div>
+            <div class="req-text text-center" *ngIf="subscriberActivityError">
+                <div class="loader error-text">
+                    {{subscriberActivityErrorMsg}}
+                </div>
+            </div>
+            <div class="text-center" *ngIf="!subscriberActivityDataAvailable && !subscriberActivityError">
+                <div class="pos-text">
+                    <div class="spinner-border text-primary loader">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <div [ngClass]="subscriberActivityDataAvailable ? 'd-block' : 'd-none'">
+                <div class="mwc-content">
+                    <div class="col-md-12 p-2 ">
+                        <div id="subscriber-activity-trends-chart" class="chart-box pos-text">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mark-wiz-col brd-btm-snowgrey">
+            <div class="mwc-header flex">
+                <h3 class="chart-title greyaa mb0" id="DataUsageTrendsTitle">{{language.DataUsageTrends_Title}}</h3>
+                <div class="mwc-btns flex">
+                    <button id="dataUsageModelOpen" class="d-none btn-round btn-small-24 btn-grey btn-que"
+                        (click)="subscribChartModalOpen(language.DataUsageTrends_Title)" data-toggle="tooltip"
+                        title="{{language.usage_Show_Title}}">
+                    </button>
+                    <button id="dataUsageDownloadSection" (click)="downloadFunction(language.DataUsageTrends_Title)"
+                        class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                        title="{{language.subs_download_tip}}">
+                    </button>
+                    <button id="dataUsageExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+                        (click)="fullScreenExpandFunction(language.DataUsageTrends_Title)" data-toggle="tooltip"
+                        title="{{language.subs_fullscreen_tip}}">
+                    </button>
+                </div>
+            </div>
+            <div class="req-text text-center" *ngIf="dataTrendsError">
+                <div class="loader error-text">
+                    {{dataTrendsErrorMsg}}
+                </div>
+            </div>
+            <div class="text-center" *ngIf="!dataTrendsDataAvailable && !dataTrendsError">
+                <div class="pos-text">
+                    <div class="spinner-border text-primary loader">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <div [ngClass]="dataTrendsDataAvailable ? 'd-block' : 'd-none'">
+                <div class="mwc-content">
+                    <div class="col-md-12 p-2 ">
+                        <div id="data-usage-trends-chart" class="chart-box pos-text">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mark-wiz-col brd-btm-snowgrey">
+            <div class="mwc-header flex">
+                <h3 class="chart-title greyaa mb0" id="DevicePerHouseholdTitle">{{language.DevicePerHousehold_Title}}
+                </h3>
+                <div class="mwc-btns flex">
+                    <button id="deviceModelOpen" class="d-none btn-round btn-small-24 btn-grey btn-que"
+                        (click)="subscribChartModalOpen(language.DevicePerHousehold_Title)" data-toggle="tooltip"
+                        title="{{language.DevicePerHousehold_Info}}">
+                    </button>
+                    <button id="deviceDownloadSection" (click)="downloadFunction(language.DevicePerHousehold_Title)"
+                        class="btn-round btn-small-24 btn-grey btn-dload " data-toggle="tooltip"
+                        title="{{language.subs_download_tip}}">
+                    </button>
+                    <button id="deviceExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+                        (click)="fullScreenExpandFunction(language.DevicePerHousehold_Title)" data-toggle="tooltip"
+                        title="{{language.subs_fullscreen_tip}}">
+                    </button>
+                </div>
+            </div>
+            <div class="req-text text-center" *ngIf="dataHouseholdError">
+                <div class="loader error-text">
+                    {{dataHouseholdErrorMsg}}
+                </div>
+            </div>
+            <div class="text-center" *ngIf="!dataHouseholdDataAvailable && !dataHouseholdError">
+                <div class="pos-text">
+                    <div class="spinner-border text-primary loader">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <div [ngClass]="subscriberActivityDataAvailable ? 'd-block' : 'd-none'">
+                <h5 id="subscriberDeviceHouseCSC" class="greyaa mb0  heading-subtitle">{{language.Csc_Giga}}:
+                    {{ devicePerHouseholdSubscribers | number}}</h5>
+                <div class="mwc-content">
+                    <div class="col-md-12 p-2 ">
+                        <div id="device-per-household-chart" class="chart-box pos-text">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+</div>
+<!-- Subscriber Data Usage -->
+<ng-template #subscribChartModal let-modal class="col-md-12">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addModal">{{popup_heading}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form class="custom-form">
+            <div class="row">
+                <div class="col-md-12">
+                    <p>{{language.subs_data_popup1}}</p>
+                    <p>{{language.subs_data_popup2}}</p>
+                    <ul class="list-block">
+                        <li>{{language.subs_data_popup3}}</li>
+                        <li>{{language.subs_data_popup4}}</li>
+                        <li>{{language.subs_data_popup5}}</li>
+                        <li>{{language.subs_data_popup6}}</li>
+                        <li class="ml-20p"><span>{{language.subs_data_popup7}}</span>
+                            {{language.subs_data_popup10}}</li>
+                        <li class="ml-20p"><span>{{language.subs_data_popup8}}</span>
+                            {{language.subs_data_popup11}}</li>
+                        <li>{{language.subs_data_popup9}}</li>
+                    </ul>
+
+                </div>
+            </div>
+            <!-- <button type="button" class="btn-default primary px-3 px-3">{{language.Save}}</button> -->
+            <button type="button" class="btn-default  btn-dft px-3 px-3 m-2" (click)="closeModal()"
+                data-dismiss="modal">{{language.Cancel}}</button>
+        </form>
+    </div>
+</ng-template>
+<!-- Streaming Subscribers -->
+<ng-template #subscribStreamingChartModal let-modal class="col-md-12">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addModal">{{popup_heading}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form class="custom-form">
+            <div class="row">
+                <div class="col-md-12">
+                    <p>{{language.stream_sub_popup1}}</p>
+                    <p>{{language.stream_sub_popup2}}</p>
+                    <ul class="list-block">
+                        <li>{{language.stream_sub_popup3}}</li>
+                        <li>{{language.stream_sub_popup4}}</li>
+                        <li>{{language.stream_sub_popup5}}</li>
+                        <li>{{language.stream_sub_popup6}}</li>
+                        <li class="ml-20p"><span>{{language.stream_sub_popup7}}</span>
+                            {{language.stream_sub_popup10}}</li>
+                        <li class="ml-20p"><span>{{language.stream_sub_popup8}}</span>
+                            {{language.stream_sub_popup11}}</li>
+                        <li>{{language.stream_sub_popup9}}</li>
+                    </ul>
+
+                </div>
+            </div>
+            <!-- <button type="button" class="btn-default primary px-3 px-3">{{language.Save}}</button> -->
+            <button type="button" class="btn-default  btn-dft px-3 px-3 m-2" (click)="closeModal()"
+                data-dismiss="modal">{{language.Cancel}}</button>
+        </form>
+    </div>
+</ng-template>
+<!-- Gaming Subscribers -->
+<ng-template #subscribGamingChartModal let-modal class="col-md-12">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addModal">{{popup_heading}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form class="custom-form">
+            <div class="row">
+                <div class="col-md-12">
+                    <p>{{language.gaming_subs_popup1}}</p>
+                    <p>{{language.gaming_subs_popup2}}</p>
+                    <ul class="list-block">
+                        <li>{{language.gaming_subs_popup3}}</li>
+                        <li>{{language.gaming_subs_popup4}}</li>
+                        <li>{{language.gaming_subs_popup5}}</li>
+                        <li>{{language.gaming_subs_popup6}}</li>
+                        <li class="ml-20p"><span>{{language.gaming_subs_popup7}}</span>
+                            {{language.gaming_subs_popup10}}</li>
+                        <li class="ml-20p"><span>{{language.gaming_subs_popup8}}</span>
+                            {{language.gaming_subs_popup11}}</li>
+                        <li>{{language.gaming_subs_popup9}}</li>
+                    </ul>
+
+                </div>
+            </div>
+            <!-- <button type="button" class="btn-default primary px-3 px-3">{{language.Save}}</button> -->
+            <button type="button" class="btn-default  btn-dft px-3 px-3 m-2" (click)="closeModal()"
+                data-dismiss="modal">{{language.Cancel}}</button>
+        </form>
+    </div>
+</ng-template>
+<!-- WFH Subscribers -->
+<ng-template #subscribWFHChartModal let-modal class="col-md-12">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addModal">{{popup_heading}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form class="custom-form">
+            <div class="row">
+                <div class="col-md-12">
+                    <p>{{language.wfh_popup1}}</p>
+                    <p>{{language.wfh_popup2}}</p>
+                    <p>{{language.wfh_popup3}}</p>
+                    <ul class="list-block">
+                        <li>{{language.wfh_popup4}}</li>
+                        <li>{{language.wfh_popup5}}</li>
+                        <li>{{language.wfh_popup6}}</li>
+                        <li>{{language.wfh_popup7}}</li>
+                        <li class="ml-20p"><span>{{language.wfh_popup8}}</span> {{language.wfh_popup11}}
+                        </li>
+                        <li class="ml-20p"><span>{{language.wfh_popup9}}</span> {{language.wfh_popup12}}
+                        </li>
+                        <li>{{language.wfh_popup10}}</li>
+                    </ul>
+
+                </div>
+            </div>
+            <!-- <button type="button" class="btn-default primary px-3 px-3">{{language.Save}}</button> -->
+            <button type="button" class="btn-default  btn-dft px-3 px-3 m-2" (click)="closeModal()"
+                data-dismiss="modal">{{language.Cancel}}</button>
+        </form>
+    </div>
+</ng-template>
+<!-- Activity  Subscribers -->
+<ng-template #subscribActivityChartModal let-modal class="col-md-12">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addModal">{{popup_heading}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form class="custom-form">
+            <div class="row">
+                <div class="col-md-12">
+                    <p>{{language.subs_act_popup1}}</p>
+                    <p>{{language.subs_act_popup2}}</p>
+                    <ul class="list-block">
+                        <li>{{language.subs_act_popup3}}</li>
+                        <li>{{language.subs_act_popup4}}</li>
+                        <li>{{language.subs_act_popup5}}</li>
+                        <li>{{language.subs_act_popup6}}</li>
+                    </ul>
+
+                </div>
+            </div>
+            <!-- <button type="button" class="btn-default primary px-3 px-3">{{language.Save}}</button> -->
+            <button type="button" class="btn-default  btn-dft px-3 px-3 m-2" (click)="closeModal()"
+                data-dismiss="modal">{{language.Cancel}}</button>
+        </form>
+    </div>
+</ng-template>
+<!-- Data Usage Trends -->
+<ng-template #subscribDataChartModal let-modal class="col-md-12">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addModal">{{popup_heading}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form class="custom-form">
+            <div class="row">
+                <div class="col-md-12">
+                    <p>{{language.data_usg_popup1}}</p>
+                    <p>{{language.data_usg_popup2}}</p>
+                    <ul class="list-block">
+                        <li>{{language.data_usg_popup3}}</li>
+                        <li>{{language.data_usg_popup4}}</li>
+                        <li>{{language.data_usg_popup5}}</li>
+                        <li>{{language.data_usg_popup6}}</li>
+                    </ul>
+
+                </div>
+            </div>
+            <!-- <button type="button" class="btn-default primary px-3 px-3">{{language.Save}}</button> -->
+            <button type="button" class="btn-default  btn-dft px-3 px-3 m-2" (click)="closeModal()"
+                data-dismiss="modal">{{language.Cancel}}</button>
+        </form>
+    </div>
+</ng-template>
+<!-- Device house -->
+<ng-template #subscribDevicesChartModal let-modal class="col-md-12">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addModal">{{popup_heading}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form class="custom-form">
+            <div class="row">
+                <div class="col-md-12">
+                    <p>{{language.device_popup1}}</p>
+                    <p>{{language.device_popup2}}</p>
+                    <ul class="list-block">
+                        <li>{{language.device_popup3}}</li>
+                        <li>{{language.device_popup4}}</li>
+                        <li>{{language.device_popup5}}</li>
+                        <li>{{language.device_popup6}}</li>
+                        <li class="ml-20p"><span>{{language.device_popup8}}</span>
+                            {{language.device_popup11}}</li>
+                        <li class="ml-20p"><span>{{language.device_popup9}}</span>
+                            {{language.device_popup12}}</li>
+                        <li>{{language.device_popup10}}</li>
+                    </ul>
+
+                </div>
+            </div>
+            <!-- <button type="button" class="btn-default primary px-3 px-3">{{language.Save}}</button> -->
+            <button type="button" class="btn-default  btn-dft px-3 px-3 m-2" (click)="closeModal()"
+                data-dismiss="modal">{{language.Cancel}}</button>
+        </form>
+    </div>
+</ng-template>
+
+<div class="subscriber-details" [ngClass]="fullScreen ? 'd-block' : 'd-none'">
+    <div class="marketing-wizard flex">
+        <div class="mark-wiz-col brd-btm-snowgrey w-100">
+            <div class="mwc-header flex">
+                <h3 class="listlabels greyaa mb0">{{fullScreenChart}}</h3>
+                <div class="mwc-btns flex">
+                    <button id="subscriberChartFullView" class="d-none btn-round btn-small-24 btn-grey btn-que"
+                        (click)="subscribChartModalOpen(fullScreenChart)" data-toggle="tooltip"
+                        title="{{language.subs_fullscreen_content}}">
+                    </button>
+                    <button id="subscriberChartDownload" *ngIf="getExportMenus.length < 2" (click)="downloadFunction(fullScreenChart)"
+                        [ngClass]="fullScreenDownload ? 'spinnershow': '' "
+                        class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                        title="{{language.subs_download_tip}}">
+                    </button>
+                    <!-- EXPORT MENU -->
+                    <div *ngIf="getExportMenus.length > 1" class="dropdown-button" ngbDropdown>
+                        <button data-toggle="tooltip" title="{{language.explort_option}}"
+                            [ngClass]="fullScreenDownload ? 'spinnershow': '' "
+                            class="btn-round btn-small-24 btn-grey btn-dload" id="dropdownPeriod11" ngbDropdownToggle>
+                        </button>
+                        <div ngbDropdownMenu aria-labelledby="dropdownPeriod11">
+                            <button data-toggle="tooltip" title="{{item}}"
+                                (click)="downloadFunction(fullScreenChart,item)" *ngFor="let item of getExportMenus"
+                                ngbDropdownItem class="greyaa">{{item}}
+                            </button>
+                        </div>
+                    </div>
+                    <button id="subscriberChartFullViewClose" class="btn-round btn-small-24 btn-grey btn-expand-inv"
+                        (click)="fullScreenCloseFunction()" data-toggle="tooltip"
+                        title="{{language.subs_fullscreen_close_tip}}"> </button>
+                </div>
+            </div>
+            <h5 class="greyaa mb0 heading-subtitle" *ngIf="fullScreenChart == language.SUBS_DATA_USAGE_TITLE">
+                {{language.Active_subscriber}}: {{activeSubscribers | number}}</h5>
+            <h5 class="greyaa mb0  heading-subtitle"
+                *ngIf=" fullScreenChart == language.Streaming_Title && segmentSummary">
+                {{language.Streaming_Title}}:&nbsp;
+                {{segmentSummary.streamingUsers | number}}
+                ({{streamingSubscribersPercentage}}%)</h5>
+            <h5 class="greyaa mb0  heading-subtitle"
+                *ngIf=" fullScreenChart == language.Gaming_Title && segmentSummary">
+                {{language.Gaming_Title}}:&nbsp;
+                {{segmentSummary.gamingUsers | number}} ({{ gamingSubscribersPercentage}}%)</h5>
+            <h5 class="greyaa mb0  heading-subtitle" *ngIf=" fullScreenChart == language.WFH_Title && segmentSummary">
+                {{language.WFH_Content}}:&nbsp;{{segmentSummary.wfhUsers | number}}
+                ({{wfhSubscribersPercentage}}%)</h5>
+            <h5 class="greyaa mb0  heading-subtitle" *ngIf=" fullScreenChart == language.DevicePerHousehold_Title">
+                {{language.HouseholdOptions_Content}}: {{ devicePerHouseholdSubscribers | number}}
+            </h5>
+
+            <div class="col-12" [ngClass]="chartAvailable ? 'd-block' : 'd-none'">
+                <div class="chart-sec">
+                    <div id={{fullScreenChart}} class="chart-box chart-h-w"></div>
+                </div>
+            </div>
+            <div class="text-center" *ngIf="!chartAvailable">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                </div>
+            </div>
+
+            <div [ngClass]="fullScreenTableAvailable ? 'd-block' : 'd-none'">
+                <div id="tableContentReady">
+                    <h4 class="fullscreen-table-info"
+                        *ngIf="fullScreenChart == language.SUBS_DATA_USAGE_TITLE && clickData">
+                        {{subscriberUsage}} {{language.Usage}}</h4>
+                    <h4 class="fullscreen-table-info"
+                        *ngIf="fullScreenChart == language.Streaming_Title  && clickData ">
+                        {{clickData.tier}} / {{clickData.tech}}</h4>
+                    <h4 class="fullscreen-table-info" *ngIf="fullScreenChart ==  language.Gaming_Title  && clickData ">
+                        {{clickData.tier}} / {{clickData.tech}}</h4>
+                    <h4 class="fullscreen-table-info" *ngIf="fullScreenChart ==  language.WFH_Title && clickData ">
+                        {{clickData.tier}} / {{clickData.tech}}</h4>
+                    <h4 class="fullscreen-table-info"
+                        *ngIf="fullScreenChart ==  language.DevicePerHousehold_Title && clickData ">
+                        {{clickData.tier}} {{language.DevicesLabel}}</h4>
+
+                    <div class="table-responsive table-w-overflow">
+                        <table [ngClass]="!fullScreenTableDataNotAvailable ? 'd-block' : 'd-none'"
+                            id="subscriberUsageFullViewTable"
+                            class="table subscriber-table table-striped showTableDataInChart smal">
+                            <!-- SUBSCRIBER DATA USAGE TABLE HEADER -->
+                            <thead *ngIf="fullScreenChart == language.SUBS_DATA_USAGE_TITLE">
+                                <tr>
+                                    <td>{{language.accountNumber}} </td>
+                                    <td>{{language.Name}} </td>
+                                    <td>{{language.phonenumber}} </td>
+                                    <td>{{language.serviceaddress}} </td>
+                                    <td>{{language.emailAddress}}</td>
+                                    <td>{{language.Service_Tier}}</td>
+                                    <td>{{language.region}} </td>
+                                    <td>{{language.Location}} </td>
+                                    <td>{{language.Technology_Type}}</td>
+                                    <td>{{language.Customer_Type}}</td>
+                                    <td>{{language.downloadSpeedLabel}}</td>
+                                    <td class="text-right">{{language.uploadSpeedLabel}}</td>
+                                    <td class="text-right">{{language.attainableratembps}}</td>
+                                    <td class="text-right">{{language.totalusage}}</td>
+                                </tr>
+                            </thead>
+                            <!-- STREAMING,GAMING,WFH SUBSCRIBERS -->
+                            <thead *ngIf="fullScreenChart == language.Streaming_Title">
+                                <tr>
+                                    <td>{{language.accountNumber}} </td>
+                                    <td>{{language.Name}} </td>
+                                    <td>{{language.phonenumber}} </td>
+                                    <td>{{language.serviceaddress}} </td>
+                                    <td>{{language.emailAddress}}</td>
+                                    <td>{{language.region}} </td>
+                                    <td>{{language.Location}} </td>
+                                    <td>{{language.Technology_Type}}</td>
+                                    <td>{{language.Customer_Type}}</td>
+                                    <td class="text-right">{{language.downloadSpeedLabel}}</td>
+                                    <td class="text-right">{{language.uploadSpeedLabel}}</td>
+                                    <td>{{language.attainableratembps}}</td>
+                                    <td class="text-right">{{language.streamingUsageLabel}}</td>
+                                    <td class="text-right">{{language.totalusage}}</td>
+                                </tr>
+                            </thead>
+                            <thead *ngIf="fullScreenChart == language.Gaming_Title">
+                                <tr>
+                                    <td>{{language.accountNumber}} </td>
+                                    <td>{{language.Name}} </td>
+                                    <td>{{language.phonenumber}} </td>
+                                    <td>{{language.serviceaddress}} </td>
+                                    <td>{{language.emailAddress}}</td>
+                                    <td>{{language.region}} </td>
+                                    <td>{{language.Location}} </td>
+                                    <td>{{language.Technology_Type}}</td>
+                                    <td>{{language.Customer_Type}}</td>
+                                    <td class="text-right">{{language.downloadSpeedLabel}}</td>
+                                    <td class="text-right">{{language.uploadSpeedLabel}}</td>
+                                    <td>{{language.attainableratembps}}</td>
+                                    <td class="text-right">{{language.gamingusage}}</td>
+                                    <td class="text-right">{{language.totalusage}}</td>
+                                </tr>
+                            </thead>
+                            <thead *ngIf="fullScreenChart == language.WFH_Title">
+                                <tr>
+                                    <td>{{language.accountNumber}} </td>
+                                    <td>{{language.Name}} </td>
+                                    <td>{{language.phonenumber}} </td>
+                                    <td>{{language.serviceaddress}} </td>
+                                    <td>{{language.emailAddress}}</td>
+                                    <td>{{language.region}} </td>
+                                    <td>{{language.Location}} </td>
+                                    <td>{{language.Technology_Type}}</td>
+                                    <td>{{language.Customer_Type}}</td>
+                                    <td class="text-right">{{language.downloadSpeedLabel}}</td>
+                                    <td class="text-right">{{language.uploadSpeedLabel}}</td>
+                                    <td>{{language.attainableratembps}}</td>
+                                    <td class="text-right">{{language.wfhtimes}}</td>
+                                </tr>
+                            </thead>
+                            <!-- DEVICE PER HOUSEHOLD -->
+                            <thead *ngIf="fullScreenChart == language.DevicePerHousehold_Title">
+                                <tr>
+                                    <td>{{language.accountNumber}} </td>
+                                    <td>{{language.Name}} </td>
+                                    <td>{{language.phonenumber}} </td>
+                                    <td>{{language.emailAddress}}</td>
+                                    <td>{{language.serviceaddress}} </td>
+                                    <td>{{language.Service_Tier}} </td>
+                                    <td>{{language.region}} </td>
+                                    <td>{{language.Location}} </td>
+                                    <td>{{language.Technology_Type}}</td>
+                                    <td>Opt- Out</td>
+                                    <td>{{language.Customer_Type}}</td>
+                                    <td class="text-right">{{language.downloadSpeedLabel}}</td>
+                                    <td class="text-right">{{language.uploadSpeedLabel}}</td>
+                                    <td>{{language.wifiscore}}</td>
+                                    <td>{{language.WiFi_Devices_Count}}</td>
+                                </tr>
+                            </thead>
+                            <tbody class="tbodyheading" id="append-table-list">
+                            </tbody>
+                        </table>
+                        <!-- LOAD MORE BUTTON SECTION -->
+                        <div class="ccl-center text-center" *ngIf="loadMoreButton">
+                            <button id="subscriberFullViewLoadMore" [ngClass]="loadingBtn ? 'cursor-ban': ''"
+                                class="btn-default primary d-btn-padding" (click)='loadMore()' id="loadMoreBtn">
+                                {{loadingBtn ?
+                                language['Loading'] : language['loadmore']}}
+                                <div *ngIf="loadingBtn" class="spinner">
+                                    <i class="fa fa-spinner"></i>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                    <div *ngIf="fullScreenTableDataNotAvailable" id="no-data-available"
+                        class="border-for-no-data text-center">
+                        <span>{{language.nodata}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center" *ngIf="tableLoader">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

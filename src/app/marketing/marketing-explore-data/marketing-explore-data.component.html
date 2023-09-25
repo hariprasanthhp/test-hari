@@ -1,0 +1,165 @@
+<div class="subscriber-details" *ngIf="scopes.exploredataRead">
+    <div class="subs-title">
+        <div class="st-header flex">
+            <div class="sth-left">
+                <h2 class="greyaa" id="explore-data-main-title">{{language.Explore_Data}}</h2>
+            </div>
+            <div class="sth-rht flex">
+                <!-- <button id="newCampaignAdd" class="btn-default btn-dft" (click)="newCampaign()"
+                    style="margin-right: 10px; padding: 0px 15px;"
+                    *ngIf="scopes.campaignWrite">{{language.New_Campaign}}</button> -->
+                <!-- <button class="btn-round btn-dft">...</button> -->
+            </div>
+
+        </div>
+        <div class="tabs-wrapper">
+            <div class="tabs flex mb-3">
+                <!-- <a href="javascript:void(0)" class="active" [routerLink]="['/subscriber-segments']">Recommended</a> -->
+                <a id="basicData-list-tab" href="javascript:void(0)" [ngClass]="{'active': Basic}"
+                    (click)="tab_Chart_Sec('Basic')">{{language.Basic}}</a>
+                <a id="advancedData-list-tab" href="javascript:void(0)" [ngClass]="{'active': Advanced}"
+                    (click)="tab_Chart_Sec('Advanced')" *ngIf="(!isThoughspotAvailable && !cmcType) || (!isThoughspotAvailable && cmcType)" >{{language.Advanced}}</a>
+                <a id="prospectsData-list-tab" href="javascript:void(0)" 
+                    [ngClass]="{'active': Prospect}" (click)="tab_Chart_Sec('Prospects')" *ngIf="cmcType && !isThoughspotAvailable" >{{language['prospects']}}</a>
+                   
+                <a id="advance-qlik-list-tab" href="javascript:void(0)" [ngClass]="{'active': advanceQlik}"
+                    (click)="tab_Chart_Sec('AdvanceQlik')" *ngIf="(isThoughspotAvailable && cmcType) || (isThoughspotAvailable && !cmcType)" >{{language['Advanced']}}</a>
+                    <a id="prospect-qlik-list-tab" href="javascript:void(0)" [ngClass]="{'active': prosQlik}"
+                    (click)="tab_Chart_Sec('ProspectQlik')" *ngIf="isThoughspotAvailable && cmcType" >{{language['prospects']}}</a>
+                    <a id="custom-qlik-list-tab" href="javascript:void(0)" [ngClass]="{'active': customTab}"
+                    (click)="tab_Chart_Sec('customTab')" *ngIf="(isDev || isDevfunc) && isThoughspotAvailable" >Custom Dashboard</a>
+
+            </div>
+        </div>
+        <div>
+            <ng-container *ngIf="active_Chart=='Basic'">
+                <app-marketing-basic></app-marketing-basic>
+            </ng-container>
+            <ng-container *ngIf="active_Chart=='Advanced'">
+                <app-marketing-advanced [segmentId]='segmentId'></app-marketing-advanced>
+            </ng-container>
+            <ng-container *ngIf="active_Chart=='Prospects'">
+                <app-new-prospects [segmentId]='segmentId'></app-new-prospects>
+            </ng-container>
+            <ng-container *ngIf="active_Chart=='AdvanceQlik'">
+                <app-advance-explorer-qlik [segmentId]='segmentId'></app-advance-explorer-qlik>
+            </ng-container>
+            <ng-container *ngIf="active_Chart=='ProspectQlik'">
+                <app-advance-explorer-pro [segmentId]='segmentId'></app-advance-explorer-pro>
+            </ng-container>
+            <ng-container *ngIf="active_Chart=='customTab'">
+                <app-marketing-customtab [segmentId]='segmentId'></app-marketing-customtab>
+            </ng-container>
+        </div>
+
+        <!-- <div class="row" *ngIf="explore_chart">
+            <div class="form-group tab-reg">
+                <label for="Name" class="col-sm-3 col-form-label">Region</label>
+                <div class="col-sm-9">
+                    <div class="dropdown-button custom-dropdown-btn" ngbDropdown>
+                        <div class="mr-2" id="dropdownPeriod1" ngbDropdownToggle aria-haspopup="true"
+                            aria-expanded="false">
+                            <p class="listdata mb0"> Select
+                                <span></span>
+                            </p>
+                        </div>
+                        <div ngbDropdownMenu aria-labelledby="dropdownPeriod1">
+                            <button ngbDropdownItem class="greyaa">All</button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group tab-reg">
+                <label for="Name" class="col-sm-4 col-form-label">Location</label>
+                <div class="col-sm-9">
+                  <div class="dropdown-button custom-dropdown-btn" ngbDropdown>
+                      <div class="mr-2" id="dropdownPeriod1" ngbDropdownToggle aria-haspopup="true"
+                          aria-expanded="false">
+                           <p class="listdata mb0"> Select
+                              <span></span>
+                          </p>
+                        </div>
+                        <div ngbDropdownMenu aria-labelledby="dropdownPeriod1">
+                            <button ngbDropdownItem class="greyaa">All</button>
+                        </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group tab-reg">
+                <label for="Name" class="col-sm-4 col-form-label">Timeframe</label>
+                <div class="col-sm-9">
+                  <div class="dropdown-button custom-dropdown-btn" ngbDropdown>
+                      <div class="mr-2" id="dropdownPeriod1" ngbDropdownToggle aria-haspopup="true"
+                          aria-expanded="false">
+                           <p class="listdata mb0"> Select
+                              <span></span>
+                          </p>
+                        </div>
+                        <div ngbDropdownMenu aria-labelledby="dropdownPeriod1">
+                            <button ngbDropdownItem class="greyaa">Last 30 Days</button>
+                        </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group tab-reg"> <label for="Name" class="col-sm-4 col-form-label">Clear</label></div>
+        </div>
+        <div class="container-fluid" *ngIf="explore_chart">
+            <div class="row">
+                <div class="col-sm-12 col-md-12 col-lg-3 pr-0 ccl-tabs">
+                    <ul id="netops-list-menu" class="nav flex-column left-menu tab-view-style">
+                        <li class="nav-item"><a class="list-group-item list-group-item-action" style="cursor: pointer;"
+                                (click)="chart_Change('subscribe')" [ngClass]="{'active': subscribe}">Subscribers</a>
+                        </li>
+                        <li class="nav-item"><a class="list-group-item list-group-item-action" style="cursor: pointer;"
+                                (click)="chart_Change('service')" [ngClass]="{'active': service}">Services</a></li>
+                        <li class="nav-item"><a class="list-group-item list-group-item-action" style="cursor: pointer;"
+                                (click)="chart_Change('application')"
+                                [ngClass]="{'active': application}">Applications</a></li>
+                        <li class="nav-item"><a class="list-group-item list-group-item-action" style="cursor: pointer;"
+                                (click)="chart_Change('retention')" [ngClass]="{'active': Retention}">Retention</a></li>
+
+                    </ul>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-9 pr-0">
+
+
+                    <div class="flex overview-row" style="margin-top: 10px;">
+                        <div class="ov-col">
+                            <p class="listlabels greyaa">{{language.All_Subscribers}}</p>
+                            <h2 class="primary">18,123</h2>
+                        </div>
+                        <div class="ov-col">
+                            <p class="listlabels greyaa">{{language.Gamer}}</p>
+                            <h2 class="ov-col-actsubs">4,336</h2>
+                        </div>
+                        <div class="ov-col">
+                            <p class="listlabels greyaa">{{language.Streamer}}</p>
+                            <h2 class="ov-col-failed">10,021</h2>
+                        </div>
+                        <div class="ov-col">
+                            <p class="listlabels greyaa">{{language.Wfh}}</p>
+                            <h2 class="ov-col-sysrbt">13</h2>
+                        </div>
+                    </div>
+
+                    <div>
+                        <ng-container *ngIf="active_Chart=='application'">
+                            <app-marketing-application-chart></app-marketing-application-chart>
+                        </ng-container>
+                        <ng-container *ngIf="active_Chart=='retention'">
+                            <app-marketing-retention-chart></app-marketing-retention-chart>
+                        </ng-container>
+                        <ng-container *ngIf="active_Chart=='service'">
+                            <app-marketing-service-chart></app-marketing-service-chart>
+                        </ng-container>
+                        <ng-container *ngIf="active_Chart=='subscribe'">
+                            <app-marketing-subscrib-chart></app-marketing-subscrib-chart>
+                        </ng-container>
+                    </div>
+
+                </div>
+            </div>
+        </div> -->
+    </div>
+</div>

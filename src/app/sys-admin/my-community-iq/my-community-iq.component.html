@@ -1,0 +1,36 @@
+<section class="mb-4">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 p-0">
+        <div class="">
+          <div class="ccl-tabs">
+            <ul id="tabs" class="nav nav-tabs sub-tab">
+              <li class="nav-item"><a 
+                  id="BSP-Information"  data-toggle="tab" class="nav-link" routerLink="./bsp-information" [ngClass]="{'active':activeTab ==='bsp-information'}"
+                  >{{language['Bsp_Info']}}</a></li><!--bindings={
+            "ng-reflect-ng-if": "true"
+          }-->
+              <li class="nav-item"><a 
+                  data-toggle="tab" id="communities"  class="nav-link small"
+                  routerLink="./communities" [ngClass]="{'active':activeTab ==='communities'}" >{{language['Communities']}}</a></li><!--bindings={
+            "ng-reflect-ng-if": "true"
+          }-->
+              
+          <li class="nav-item"><a 
+            data-toggle="tab" id="community-users"  class="nav-link small"
+            routerLink="./community-users" [ngClass]="{'active':activeTab ==='community-users'}">{{language['Community Users']}}</a></li>
+          
+          <!--bindings={
+            "ng-reflect-ng-if": "true"
+          }-->
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<router-outlet></router-outlet>
+

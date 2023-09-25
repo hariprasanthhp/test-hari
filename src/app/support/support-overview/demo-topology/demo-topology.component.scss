@@ -1,0 +1,147 @@
+::ng-deep {
+  .gshHeader {
+    border-color : #a768be;
+    font-size    : 13px;
+    margin-bottom: 7px;
+  }
+}
+
+.diagram-info {
+  width     : 100%;
+  min-height: 500px;
+  margin-top: 20px;
+}
+
+.toggle-swtbtn {
+  display        : flex;
+  justify-content: space-between;
+
+  span {
+    margin-right: 13px;
+  }
+
+  p {
+    margin-left: 40px;
+    cursor     : pointer;
+    color      : #0279ff;
+    font-size  : larger;
+    font-weight: 700;
+  }
+
+  .refreshButton {
+    .refreshicon {
+      font-size  : 24px;
+      color      : #0279FF;
+      margin-left: 30px;
+    }
+  }
+
+  .accessPoint {
+    display        : flex;
+    justify-content: flex-end;
+
+    // .searchContent {
+    //   display     : flex;
+    //   margin-right: 40px;
+
+    //   input {
+    //     margin-bottom: 20px;
+    //   }
+    // }
+
+    .zoom {
+      margin-left: 40px;
+      display    : flex;
+      ;
+    }
+  }
+}
+
+.cus-button {
+  float        : right;
+  min-width    : 168px;
+  position     : relative;
+  height       : 42px;
+  display      : block;
+  // overflow: hidden;
+  border-radius: 60px;
+  border       : 1px solid #dcdcdc;
+
+  span.icon-hl {
+    display: inline-block;
+  }
+
+  .bord-right {
+    border-right : 1px solid #dcdcdc;
+    padding-right: 8px;
+  }
+
+  .bord-left {
+    border-left : 1px solid #dcdcdc;
+    padding-left: 8px;
+  }
+
+  padding: 0px 0px 0px 12px;
+
+  .ng-select-container {
+    background-color: white !important;
+    border          : none !important;
+  }
+
+  .ng-dropdown-panel-items {
+    // ::-webkit-scrollbar {
+    //     display: none;
+    // }  
+    overflow-y: hidden !important;
+  }
+
+  .ng-dropdown-panel .ng-dropdown-panel-items {
+    width: 75px !important;
+  }
+}
+
+.topo-info-box {
+  width           : 100%;
+  padding         : 15px;
+  background-color: #EBEAEF;
+  border-radius   : 10px;
+}
+
+.ng-dropdown-panel .ng-dropdown-panel-items {
+  max-height: 240px !important;
+}
+
+.search-box-input {
+  border-radius: 26px;
+  background   : #F8F8FA;
+  padding      : 0px 15px;
+  padding-right: 0px;
+  font-size    : 14px;
+  font-weight  : 400;
+  width        : 30%;
+  color        : #646363;
+  border       : 1px solid #dfdfdf;
+  margin-right : 5px;
+
+  input {
+    width        : 100%;
+    height       : 38px;
+    line-height  : inherit !important;
+    border-radius: 26px;
+    background   : transparent;
+    padding      : 0;
+    font-size    : 14px;
+    font-weight  : 400;
+    color        : #646363;
+    border       : none;
+  }
+}
+
+.search-box-icon {
+  width           : 42px;
+  height          : 40px;
+  background-color: #0279ff;
+  padding         : 10px;
+  border-radius   : 25px;
+  cursor          : pointer;
+}

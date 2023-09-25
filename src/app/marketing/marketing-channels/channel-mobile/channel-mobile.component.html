@@ -1,0 +1,167 @@
+<div class="page-wrapper">
+    <div class="subscriber-details">
+
+        <div class="subs-title">
+            <div class="st-header border-bottom">
+                <div class="sth-left position-relative">
+                    <div class="ccl-mktg-large-title greyaa" id="mobile-notf-result">
+                        {{language.Command_IQ_Mobile_Notification_Results}}</div>
+                    <span class="right-close">
+                        <div class="sth-rht">
+                            <button type="button" class="close command" data-dismiss="modal" aria-label="Close"
+                                (click)="closeModal()">
+                                <span aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </span>
+                    <!-- <p class="last-update"> {{language.Last_Update}} : 1.35 AM</p> -->
+                </div>
+
+            </div>
+        </div>
+
+        <div class=" col-lg-12 col-md-12 col-sm-12 alert alert-warning alert-dismissible fade show" role="alert"
+            *ngIf="mobileError">
+            <span class="success-img"><img src="./assets/img/error-icon.svg" /></span>
+            <div class="d-inline-flex text-left w-75">{{mobileErrorMsg}}.</div>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true" (click)='errorReset()'></span>
+            </button>
+        </div>
+        <section>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 ccl-tabs px-0">
+
+                        <div class="tab-content" id="myTabContent">
+                            <div class="tab-pane fade show active" id="campaigns" role="tabpanel"
+                                aria-labelledby="home-tab">
+                                <section>
+                                    <div class="container">
+                                        <div class="row">
+                                            <div class="col-md-12 px-0">
+                                                <div class="time-frame d-flex justify-content-between">
+                                                    <div class="col-md-4 d-inline-flex ccl-form p-0">
+                                                        <input class="form-control mr-sm-2" type="text"
+                                                            [(ngModel)]="search_Text_Value"
+                                                            placeholder="{{language.Search}}" 
+                                                            [disabled]="loading" [ngClass]="{'cursor-ban': loading}"
+                                                            (input)="searchName($event.target.value)">
+                                                        <span class="clear-icon" *ngIf="search_Text_Value" (click)="search_Text_Valuefun()"> <img src="assets/img/close-icon.svg">
+                                                        </span>
+                                                    </div>
+                                                    <div class="col-md-2" [ngClass]="{'cursor-ban': loading}">
+                                                        <!-- <label> {{language.Timeframe}} </label> -->
+                                                        <ng-select id="typemobId" bindLabel="name"
+                                                            [(ngModel)]="activePeriod" bindValue="name"
+                                                            class="selectboxwidth" [disabled]="loading"
+                                                            (ngModelChange)="selectTimeFrame($event)"
+                                                            [items]="timeframes" [clearable]="false">
+                                                        </ng-select>
+                                                    </div>
+                                                </div>
+                                                <div class="no-data" *ngIf="loading">
+                                                    <div class="spinner-border text-primary">
+                                                        <span class="sr-only">{{language.Loading}}</span>
+                                                    </div>
+                                                </div>
+                                                <div class="table-responsive camp-table"
+                                                    [ngClass]="{ 'hide-table':  !showDataTable}"
+                                                    id="mobile-notf-datatable">
+                                                    <table [dtOptions]="dtOptions" datatable [dtTrigger]="dtTrigger"
+                                                        class="row-border campaign_table_saved">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>{{language.Name}}</th>
+                                                                <th>{{language.Segment}}</th>
+                                                                <th>{{language.Status}}</th>
+                                                                <th>{{language.Schedule_Type}}</th>
+                                                                <th>{{language.Subscribers}}</th>
+                                                                <th>{{language.Notification_Sent}}</th>
+                                                                <th>{{language.START_DATE}}</th>
+                                                                <th>{{language.END_DATE}}</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody
+                                                            [ngClass]="!mobileNotificationResultsError ? 'table-row-group': 'd-none'">
+                                                            <tr *ngFor="let item of channelResultTable">
+                                                                <td class="w-11">
+                                                                    <div class="content-wrap"
+                                                                        title={{item.campaignName}}>
+                                                                        <span>{{(item.campaignName)}}</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td class="w-11">
+                                                                    <div class="nor-wrap" title={{item.segmentName}}>
+                                                                        {{item.segmentName}}
+                                                                    </div>
+                                                                </td>
+                                                                <td class="w-11">
+                                                                    <div class="nor-wrap" title={{item.status}}>
+                                                                        {{item.status}}
+                                                                    </div>
+                                                                </td>
+                                                                <td class="w-11">
+                                                                    <div class="content-wrap"
+                                                                        title={{item.scheduleType}}>
+                                                                        {{item.scheduleType}}
+                                                                    </div>
+                                                                </td>
+
+                                                                <td class="w-11" title={{item.subscribersCount}}>
+                                                                    <div class="nor-wrap">
+                                                                        {{item.subscribersCount | number}}
+
+                                                                    </div>
+                                                                </td>
+                                                                <td class="w-11">
+                                                                    <div class="nor-wrap"
+                                                                        title={{item.sentNotificationCount}}>
+                                                                        {{item.sentNotificationCount}}
+                                                                    </div>
+                                                                </td>
+                                                                <td class="w-11">
+                                                                    <span
+                                                                        class="d-none">{{getTimestamp(item.startDate)}}</span>
+                                                                    <div class="nor-wrap" title={{item.startDate}}>
+                                                                        {{item.startDate}}
+                                                                    </div>
+                                                                </td>
+                                                                <td class="w-11">
+                                                                    <span
+                                                                        class="d-none">{{getTimestamp(item.endDate)}}</span>
+                                                                    <div class="nor-wrap" title={{item.endDate}}>
+                                                                        {{item.endDate}}
+                                                                    </div>
+                                                                </td>
+
+
+                                                            </tr>
+
+                                                        </tbody>
+                                                        <tbody
+                                                            [ngClass]="mobileNotificationResultsError ? 'table-row-group': 'd-none'">
+                                                            <tr>
+                                                                <td colspan="9" class="text-center">{{language.nodata}}
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+</div>

@@ -1,0 +1,367 @@
+<section class="my-3">
+    <div class="loader" *ngIf="loading">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">{{ language.Loading }}</span>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess">
+    {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} </div>
+
+<section>
+    <div class="filter-section filter-elemnts pt-2">
+        <div class="filter-wrapper mb-3">
+            <div class="custom-selectbox col-md-3">
+                <label class="filter-label">{{ language.type }}</label>
+                <ng-select id="type" [items]="types" bindLabel="name" bindValue="value" [clearOnBackspace]="false"
+                    placeholder="{{language['None Selected']}}" [searchable]="false" [(ngModel)]="typeSelected"
+                    [ngModelOptions]="{ standalone: true }">
+                    <ng-template ng-label-tmp let-item="item">
+                        {{language[item.name] }}
+                    </ng-template>
+                    <ng-template ng-option-tmp let-item="item" let-index="index">
+                        {{language[item.name] }}
+                    </ng-template>
+                </ng-select>
+            </div>
+            <div class="custom-selectbox col-md-3" id="region">
+                <label for="Name" class="filter-label">{{language.region}}</label>
+                <ng-select [(ngModel)]="regionSelected" [items]="regionsDataArray" bindValue="id" bindLabel="name"
+                    class="selectboxwidth" [ngModelOptions]="{ standalone: true }" (ngModelChange)="getLocations()"
+                    [clearable]="false" [searchable]="true" [disabled]="condition" placeholder="{{ language.region }}">
+                </ng-select>
+            </div>
+
+            <div class="custom-selectbox col-md-3" id="location">
+                <label for="Name" class="filter-label">{{language.location}}</label>
+                <ng-select [(ngModel)]="locationSelected" [items]="locationDataArray" bindValue="id" bindLabel="name"
+                    class="selectboxwidth" placeholder="{{ language.Location }}" [ngModelOptions]="{ standalone: true }"
+                    [clearable]="false" [disabled]="condition" [searchable]="true"
+                    (ngModelChange)="loadSystemValue($event)">
+                </ng-select>
+            </div>
+            <div class="current-issue-menu-item col-12 col-sm-6 col-md-3 col-lg-3">
+                <label for="Name" class="col-form-label select-font">{{ language.System }}</label>
+                <div class="custom-selectbox" class="w-100" id="current-issues-interval">
+                    <ng-select [(ngModel)]="systemSelected" [items]="systemDataArray" bindValue="uuid" bindLabel="name"
+                        class="selectboxwidth" placeholder="{{ language.System }}" [ngModelOptions]="{standalone: true}"
+                        [disabled]="condition" [clearable]="false" [searchable]="true">
+                    </ng-select>
+                </div>
+            </div>
+
+
+            <!-- <div class="custom-selectbox" id="location">
+                <label for="Name" class="filter-label">Time Period</label>
+                <ng-select style="width:200px;" [(ngModel)]="timePeriodSelected" class="selectboxwidth" placeholder=""
+                    [ngModelOptions]="{ standalone: true }" [clearable]="false" [searchable]="true">
+
+                    <ng-option value="first">First Discovered Time</ng-option>
+                    <ng-option value="last">Last Discovered Time</ng-option>
+                </ng-select>
+            </div> -->
+
+            <div class="current-issue-menu-item col-sm-12 col-md-12 col-lg-3 mpl-1 flex current-issue-item-w">
+                <label for="Name"
+                    class="col-form-label select-font w-100">{{language.FSAN}}/{{language.MAC_Address}}</label>
+                <div class="ccl-form">
+                    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                        [(ngModel)]="name" (keypress)="removespecialcharacter($event)" (change)="textselected()"
+                        (keyup)="changeMAc()" [maxlength]="fmmaxlength"
+                        placeholder="{{language.FSAN}}/{{language.MAC_Address}}">
+
+
+                </div>
+                <small class="vald-tag" *ngIf="fsanvalid">{{language['Invalid FSAN']}}/{{language.MAC_Address}}</small>
+            </div>
+
+            <div class="current-issue-menu-item col-sm-12 col-md-12 col-lg-3 mpl-1 flex">
+                <label for="Name" class="col-form-label select-font w-100">{{language['First discovered']}}</label>
+                <div class="ccl-form w-100 first-discovered">
+                    <p-calendar [(ngModel)]="firstDiscoverd" selectionMode="range" [readonlyInput]="true" #calendar
+                        [showButtonBar]="true" (onClose)="onSelect()" inputId="range" [maxDate]="maxForStartDate"
+                        [showIcon]="true">
+                    </p-calendar>
+                </div>
+            </div>
+
+            <div class="current-issue-menu-item col-sm-12 col-md-12 col-lg-3 mpl-1 flex mw-120">
+                <label for="Name" class="col-form-label select-font w-100">{{language['Last discovered']}}</label>
+                <div class="ccl-form w-100 first-discovered">
+                    <p-calendar [(ngModel)]="lastDiscoverd" selectionMode="range" [readonlyInput]="true" inputId="range"
+                        #calendar [maxDate]="maxForStartDate" [showIcon]="true" (onClose)="onSelect()"
+                        [showButtonBar]="true"
+                        [minDate]="firstDiscoverd ? (firstDiscoverd[0] ? firstDiscoverd[0]: (firstDiscoverd[1] ? firstDiscoverd[1]: undefined)): undefined">
+                    </p-calendar>
+
+                </div>
+            </div>
+
+
+
+            <!-- <div class="current-issue-menu-item col-sm-12 col-md-12 col-lg-6 mpl-1 flex mt-3" style="min-width: 120px;">
+
+
+                
+
+                <div class="w-50 pr-1">
+                    <label for="Name" class="col-form-label select-font w-100">First discovered</label>
+                
+                    <small id="emailHelp" class="form-text text-muted">First Present Time Start</small>
+                    <div class="custom-selectbox" class="w-100" id="current-issues-interval">
+                        <div class="ccl-form">
+                            <p-calendar id="firstPresentTimeStart" [style]="{ width: '100%', height: '36px' }"
+                                [inputStyle]="{ height: '36px' }" appendTo="body" [autoZIndex]="true"
+                                placeholder="{{ language['Select Date'] }}" [(ngModel)]="firstPresentTimeStart"
+                                [showIcon]="true" [ngModelOptions]="{ standalone: true }" dateFormat="mm-dd-yy"
+                                [maxDate]="maxForStartDate">
+                            </p-calendar>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="w-50 pl-1" style="padding-top: 35px;">
+                    <small id="emailHelp" class="form-text text-muted">First Present Time End</small>
+                    <div class="custom-selectbox" class="w-100" id="current-issues-interval">
+                        <div class="ccl-form">
+                            <p-calendar id="firstPresentTimeEnd" [style]="{ width: '100%', height: '36px' }"
+                                [inputStyle]="{ height: '36px' }" appendTo="body" [autoZIndex]="true"
+                                placeholder="{{ language['Select Date'] }}" [(ngModel)]="firstPresentTimeEnd"
+                                [showIcon]="true" [ngModelOptions]="{ standalone: true }" dateFormat="mm-dd-yy"
+                                [maxDate]="maxForStartDate">
+                            </p-calendar>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="current-issue-menu-item col-sm-12 col-md-12 col-lg-6 mpl-1 flex mt-3" style="min-width: 120px;">
+                <div class="w-50 pr-1">
+                    <label for="Name" class="col-form-label select-font w-100">Last discovered</label>
+                    <small id="emailHelp" class="form-text text-muted">Last Present Time Start</small>
+                    <div class="custom-selectbox" class="w-100" id="current-issues-interval">
+                        <div class="ccl-form">
+                            <p-calendar id="lastPresentTimeStart" [style]="{ width: '100%', height: '36px' }"
+                                [inputStyle]="{ height: '36px' }" appendTo="body" [autoZIndex]="true"
+                                placeholder="{{ language['Select Date'] }}" [(ngModel)]="lastPresentTimeStart"
+                                [showIcon]="true" [ngModelOptions]="{ standalone: true }" dateFormat="mm-dd-yy"
+                                [maxDate]="maxForStartDate">
+                            </p-calendar>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="w-50 pl-1" style="padding-top: 35px;">
+                    
+                    <small id="emailHelp" class="form-text text-muted">Last Present Time End</small>
+                    <div class="custom-selectbox" class="w-100" id="current-issues-interval">
+                        <div class="ccl-form">
+                            <p-calendar id="lastPresentTimeEnd" [style]="{ width: '100%', height: '36px' }"
+                                [inputStyle]="{ height: '36px' }" appendTo="body" [autoZIndex]="true"
+                                placeholder="{{ language['Select Date'] }}" [(ngModel)]="lastPresentTimeEnd"
+                                [showIcon]="true" [ngModelOptions]="{ standalone: true }" dateFormat="mm-dd-yy"
+                                [maxDate]="maxForStartDate">
+                            </p-calendar>
+                        </div>
+                    </div>
+
+                </div>
+            </div> -->
+
+            <!-- <div class="current-issue-menu-item col-sm-12 col-md-12 col-lg-4 mpl-1" style="min-width: 120px;">
+                <label for="Name" class="col-form-label select-font">First Present Time End</label>
+
+            </div> -->
+
+            <!-- <div class="current-issue-menu-item col-12 col-sm-12 col-md-2 col-lg-2 mpl-1" style="min-width: 170px;">
+                <label for="Name" class="col-form-label select-font">Last Present Time Start</label>
+                <div class="custom-selectbox" class="w-100" id="current-issues-interval">
+                    <div class="ccl-form">
+                        <p-calendar id="lastPresentTimeStart" [style]="{ width: '100%', height: '36px' }"
+                            [inputStyle]="{ height: '36px' }" appendTo="body" [autoZIndex]="true"
+                            placeholder="{{ language['Select Date'] }}" [(ngModel)]="lastPresentTimeStart"
+                            [showIcon]="true" [ngModelOptions]="{ standalone: true }" dateFormat="mm-dd-yy"
+                            [maxDate]="maxForStartDate">
+                        </p-calendar>
+                    </div>
+                </div>
+            </div> -->
+
+            <!-- <div class="current-issue-menu-item col-12 col-sm-12 col-md-2 col-lg-2 mpl-1" style="min-width: 170px;">
+                <label for="Name" class="col-form-label select-font">Last Present Time End</label>
+                <div class="custom-selectbox" class="w-100" id="current-issues-interval">
+                    <div class="ccl-form">
+                        <p-calendar id="lastPresentTimeEnd" [style]="{ width: '100%', height: '36px' }"
+                            [inputStyle]="{ height: '36px' }" appendTo="body" [autoZIndex]="true"
+                            placeholder="{{ language['Select Date'] }}" [(ngModel)]="lastPresentTimeEnd"
+                            [showIcon]="true" [ngModelOptions]="{ standalone: true }" dateFormat="mm-dd-yy"
+                            [maxDate]="maxForStartDate">
+                        </p-calendar>
+                    </div>
+                </div>
+            </div> -->
+
+
+
+            <div class="current-issue-menu-item col-sm-12 col-md-12 col-lg-5 mt-4 pt-2">
+                <!-- <label class="filter-label">&nbsp;</label>
+                <button id="filter-submit-btn" class="btn-default primary" type="button" (click)="getCount()">
+                    {{ language.run }}
+                </button> -->
+
+
+                <div class="d-inline-flex">
+                    <button type="button" class="btn-default primary mr-3" (click)="getCount()">
+                        {{ language.run }}
+                    </button>
+                    <button type="button" class="btn-default btn-dft" (click)="clearFilter()">
+                        {{ language.Clear_Filters }}
+                    </button>
+
+                </div>
+
+
+            </div>
+            <div class="current-issue-menu-item col-sm-12 col-md-12 col-lg-7">
+                <button type="button" id="export" class="btn-default btn-dft float-right"
+                    (click)="getExportData('export')">
+                    {{language.Export}}
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="w-100 alert alert-danger  fade show my-3" *ngIf="exportError">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+        <button type="button" class="close" (click)="exportError = false"><span></span></button>
+        <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+    </div>
+    <div class="container" *ngIf="showTable">
+        <div class="row">
+            <div class="col-md-12 px-0 overflow-auto">
+                <table class="table table-borderless" datatable [dtOptions]="dtOptions">
+                    <thead>
+                        <tr>
+                            <th>{{language['ONU ID']}}</th>
+                            <!-- <th>{{language['Vendor ID']}} </th>
+                            <th>{{language['Serial Number']}} </th> -->
+                            <th>{{language["FSAN"]}}</th>
+                            <th>{{language['model']}}</th>
+                            <th>{{language['Registration_ID']}}</th>
+                            <th>{{language['Interface']}}</th>
+                            <th>{{language['ONU Mac Address']}}</th>
+                            <th>{{language.Version}}</th>
+                            <th>{{language.IsQuarantined }}</th>
+                            <th>{{language.Region}}/{{language.Location}}</th>
+                            <th class="mw-120">{{language.System}}</th>
+                            <th>{{language['First discovered']}}</th>
+                            <th>{{language['Last discovered']}}</th>
+                            <!-- <th></th>
+                            <th></th> -->
+
+                        </tr>
+                    </thead>
+                    <tbody *ngIf="list?.length != 0">
+
+                        <tr *ngFor="let item of list" id="tr-{{item.uuid}}">
+                            <td id="name-{{item.uuid}}">{{item.ontId}} </td>
+                            <!-- <td id="vendorId-{{item.uuid}}"> {{item.vendorId?item.vendorId: ''}}</td>
+                            <td id="discoveredSerialNumber-{{item.uuid}}"> {{is_DEVICE_NEVER_CHECKED_IN ?
+                                item?.serialNumber : item?.discoveredSerialNumber}}</td> -->
+                            <td id="Fsan-{{item.uuid}}">{{item.fsan}}</td>
+                            <td id="model-{{item.uuid}}">{{item?.discoveredModel}}</td>
+                            <td id='regid-{{item?.uuid}}'>{{is_DEVICE_NEVER_CHECKED_IN ? item?.registrationId:
+                                item?.discoveredRegistrationId }}</td>
+                            <td id="discoveredPonPort-{{item.uuid}}"> {{item.discoveredPonPort}}</td>
+                            <td id="discoveredMacAddress-{{item.uuid}}"> {{is_DEVICE_NEVER_CHECKED_IN ?
+                                item?.macAddress =="00:00:00:00:00:00" ? "":item?.macAddress: item?.discoveredMacAddress
+                                }}</td>
+                            <td id="discoveredVersion-{{item.uuid}}">
+                                {{item.discoveredVersion}}
+                            </td>
+                            <td>{{item && item.isRogue ? "Yes": (item.isRogue == null ? '' : "No")}}</td>
+                            <td><span>{{item.region}}</span><span *ngIf="item.location">/{{item.location}}</span></td>
+                            <td>{{item.oltName}}</td>
+                            <td>{{item?.firstPresentTime ? convertToDateTime(item.firstPresentTime):""}}</td>
+                            <td>{{item?.lastPresentTime ? convertToDateTime(item.lastPresentTime):""}}</td>
+                            <!-- <td><i class="fas fa-sync refreshicon primary pointer " (click)="refresh(item.uuid)"></i>
+                            </td>
+                            <td>
+                                <div class="dropdown" *ngIf="item && item.isConfigured">
+                                    <button class="btn" type="button" data-toggle="dropdown">...
+                                    </button>
+                                    <div>
+                                        <ul class="dropdown-menu">
+                                            <li *ngIf="item.type == 'MGMT_SYSTEM'"><button
+                                                    class="btn btn-white w-100 text-left"
+                                                    (click)="gotoEdit(item.uuid)">Edit</button></li>
+                                            <li *ngIf="item && item.isConfigured"><button
+                                                    class="btn btn-white w-100 text-left"
+                                                    (click)="delete(item.uuid, item.name)">Delete</button></li>
+
+                                        </ul>
+                                    </div>
+                                </div>
+                            </td> -->
+
+
+                        </tr>
+                    </tbody>
+                    <tbody *ngIf="(!list?.length ||  count == 0)">
+                        <tr>
+                            <td colspan="14" class="no-data-available">{{language['No data available in table']}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<ng-template #deleteModal let-data let-ref="dialogRef">
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{ language.Delete }}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="close()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <p>
+            {{language['Are you sure you want to delete the System']}}
+            <b>{{ deleteName }}</b> ?
+        </p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="close()">
+            {{ language.Close }}
+        </button>
+        <button type="button" class="btn btn-primary ml-2" (click)="doDelete()">
+            {{ language.Yes }}
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #deleteSuccessModal let-data let-ref="dialogRef">
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{ language.Delete }}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="close()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <p>{{ language["Deleted Successfully"] }}</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="close()">
+            {{ language.Close }}
+        </button>
+    </div>
+</ng-template>

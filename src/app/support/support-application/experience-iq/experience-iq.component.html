@@ -1,0 +1,2786 @@
+<!-- // tab experienceiQ -->
+<div class="row protect-sec experience-sec mt-3" *ngIf="!profileDetails && !staffProfileDetail && scopeFlag.configRead">
+  <div class="col-lg-2 col-md-3 col-sm-12 tab-sec border-right smy-2">
+    <ul id="tabs" class="w-100 nav nav-tabs sub-tab vertical-tab">
+      <li class="nav-item">
+        <a href="javascript:void(0)" id="details" data-toggle="tab" class="nav-link small"
+          [ngClass]="[sectionToShow == 'details' ? 'active' : '']" (click)="changeSection('details')">
+          {{ language.Details }}
+        </a>
+      </li>
+      <li class="nav-item" *ngIf="(deviceSubscription && deviceStatus) && !smbEnabled">
+        <a href="javascript:void(0)" id="alert" data-toggle="tab" class="nav-link small"
+          [ngClass]="[sectionToShow == 'alert' ? 'active' : '']" (click)="changeSection('alert')">
+          {{ language.Alerts }}
+        </a>
+      </li>
+      <li class="nav-item" *ngIf="(deviceSubscription && deviceStatus) && !smbEnabled">
+        <a href="javascript:void(0)" id="people" data-toggle="tab" class="nav-link small"
+          [ngClass]="[sectionToShow == 'people' ? 'active' : '']" (click)="changeSection('people')">
+          {{ language.People }}
+        </a>
+      </li>
+      <li class="nav-item"
+        *ngIf="(deviceSubscription && deviceStatus) && softwareVrsion >= 23.3 && isSmbOnboarded && availability?.smbStaffNetworkSharedMode == false">
+        <a href="javascript:void(0)" id="staff" data-toggle="tab" class="nav-link small"
+          [ngClass]="[sectionToShow == 'staff' ? 'active' : '']" (click)="changeSection('staff')">
+          {{ language.Staff }}
+        </a>
+      </li>
+      <li class="nav-item" *ngIf="showPriority && (deviceSubscription && deviceStatus) && !smbEnabled">
+        <a href="javascript:void(0)" id="priorities" data-toggle="tab" class="nav-link small"
+          [ngClass]="[sectionToShow == 'priorities' ? 'active' : '']" (click)="changeSection('priorities')">
+          {{ language.Priorities }}
+        </a>
+      </li>
+      <li class="nav-item" *ngIf="(deviceSubscription && deviceStatus) && availability?.defaultRestriction">
+        <a href="javascript:void(0)" id="restrictions" data-toggle="tab" class="nav-link small"
+          [ngClass]="[sectionToShow == 'restrictions' ? 'active' : '']"
+          (click)="changeSection('restrictions'); getRestriction();">
+          {{ language['Restriction Settings'] }}
+        </a>
+      </li>
+    </ul>
+  </div>
+  <div class="col-lg-10 col-md-9 col-sm-12 details-sec">
+    <!--<div class="w-100 alert alert alert-danger fade show" *ngIf="isError">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+      <button type="button" class="ok float-right btn-default primary" (click)="isError = false">
+        {{ language.OK }}
+      </button>
+      <span class="d-inline-flex" [innerHtml]="warningMessage"></span>
+    </div>-->
+    <section class="test-loader">
+      <!-- // details -->
+      <div class="row" id="details" role="tab" aria-labelledby="details" *ngIf="sectionToShow == 'details'">
+
+        <div class="w-100 alert alert alert-danger fade show" *ngIf="showError">
+          <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+          <span [innerHtml]="errorMsg"></span>
+          <!-- <button type="button" class="ok float-right" (click)="isError = false">
+            {{ language.OK }}
+          </button> -->
+          <div class="ok float-right" (click)="hideError()">
+            <button type="button" class="ok float-right btn-default btn-primary" (click)="isError = false">
+              {{ language.OK }}
+            </button>
+          </div>
+
+        </div>
+        <div class="col-lg-6 col-md-12 col-sm-12">
+          <div class="Protect-iq-table experienceiq-setting-info">
+            <div class="border-bottom">
+              <div class="ccl-Secondary-title user-name" id="eiq-details-settings">{{ language.Settings }}</div>
+            </div>
+
+            <!-- <div class="col-12 col-lg-12 pl-1 mt-3">
+              <label>Status : </label><span class="pl-3">{{ deviceSubscription ? 'Enabled' : 'Disabled'}}</span>
+            </div> -->
+
+
+            <div class="col-12 col-lg-12 pl-1 mt-3 font-weight-bold">{{language.Subscription}}</div>
+            <div class="col-12 col-lg-12 pl-1 mt-3">
+              <div class="form-check form-check-inline">
+                <input type="radio" id="materialInline3" name="subscription" [(ngModel)]="deviceSubscription"
+                  [value]="true" (click)="toggleSubscription(true)" [disabled]="!scopeFlag.configWrite || smbEnabled">
+                <label class="form-check-label mx-2" for="materialInline3">{{ language.Subscribed }}</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input type="radio" id="materialInline4" name="subscription" [(ngModel)]="deviceSubscription"
+                  [value]="false" (click)="toggleSubscription(false)"
+                  [disabled]="!scopeFlag.configWrite || (isSmartTownActivated ? false : (isWFHAvailable || smbOrSmarttownEnabled)) || smbEnabled">
+                <label class="form-check-label mx-2" for="materialInline4">{{language.Unsubscribed }}</label>
+              </div>
+            </div>
+
+
+
+            <div class="col-12 col-lg-12 pl-1 mt-3 font-weight-bold">{{language.SERVICE}}</div>
+            <div class="col-12 col-lg-12 pl-1">
+              <div class="form-check form-check-inline">
+                <input type="radio" id="materialInline10" name="enabled" [(ngModel)]="deviceStatus" [value]="true"
+                  (click)="toggleEnable(true)"
+                  [disabled]="!scopeFlag.enableWrite || !deviceSubscription || !gloObj.deviceDataCount || isSmartTownActivated || smbEnabled">
+                <label class="form-check-label mx-2" for="materialInline10">{{ language.enabled }}</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input type="radio" id="materialInline11" name="enabled" [(ngModel)]="deviceStatus" [value]="false"
+                  (click)="toggleEnable(false)"
+                  [disabled]="!scopeFlag.enableWrite || !deviceSubscription || isWFHAvailable || !gloObj.deviceDataCount || isSmartTownActivated || smbOrSmarttownEnabled || smbEnabled">
+                <label class="form-check-label mx-2" for="materialInline11">{{language.Disabled }}</label>
+              </div>
+            </div>
+
+            <div class="col-12 col-lg-12 pl-1 mt-3 f-s-12px" *ngIf="isWFHAvailable">
+              {{language['This field can’t be disabled due to provisioned WFH SSID']}}</div>
+
+
+
+            <table class="detail-list mt-3 d-none">
+              <tbody>
+                <tr *ngIf="scopeFlag.configRead">
+                  <th scope="row" class="">{{ language.Subscribed }}</th>
+                  <td class="">
+                    <div
+                      [ngClass]="!deviceSubscription?'toggle-swtbtn checkbox switcher-disabld mb-2':'toggle-swtbtn checkbox switcher mb-2'">
+                      <label for="selfHealCheckbox">
+                        <input type="checkbox" id="selfHealCheckbox" [checked]="deviceSubscription"
+                          (change)="toggleSubscription(true)" [disabled]="!scopeFlag.configWrite"
+                          [(ngModel)]="deviceSubscription" />
+                        <span [ngClass]="!scopeFlag.configWrite ? 'toggleDisabled' : ''"><small></small></span>
+                      </label>
+                    </div>
+                  </td>
+                </tr>
+                <!--  *ngIf="scopeFlag.enableRead && !this.undiscoveredGS" -->
+                <tr *ngIf="scopeFlag.configRead">
+                  <th scope="row" class="">{{ language.enabled }}</th>
+                  <td class="">
+                    <div
+                      [ngClass]="!deviceStatus?'toggle-swtbtn checkbox switcher-disabld mb-2':'toggle-swtbtn checkbox switcher mb-2'">
+                      <label for="selfHealCheckbox1">
+                        <input type="checkbox" id="selfHealCheckbox1" [checked]="deviceSubscription"
+                          (change)="onSubscription(true)" [disabled]="true" [(ngModel)]="deviceSubscription" />
+                        <!-- [disabled]="!scopeFlag.enableWrite || !newData?.userId" -->
+                        <span class="toggleDisabled"><small></small></span>
+                        <!-- [ngClass]="!scopeFlag.enableWrite || !newData?.userId ? 'toggleDisabled' : ''" -->
+                      </label>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="test-loader">
+      <!-- // Alert -->
+      <div class="loader-wrapper-info" *ngIf="loading || advLoading">
+        <div class="loader">
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+              <span class="sr-only">{{ language.Loading }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 px-0" id="alert" role="tab" aria-labelledby="alert" *ngIf="sectionToShow == 'alert'">
+        <div class="experienceiq-alert-info Protect-iq-table">
+          <div class="w-100 alert alert alert-danger fade show" *ngIf="showError">
+            <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+            <button type="button" id="hide-error-btn" class="close" (click)="hideError()">
+              <span></span>
+            </button>
+            <div class="d-inline-flex" [innerHtml]="errorMsg"></div>
+          </div>
+          <table class="detail-list skip-device" id="eiq-alerts-table">
+            <thead>
+              <th class="w-30">
+                <div class="ccl-Secondary-title user-name" id="eiq-occurred">{{ language.Occurred }}</div>
+              </th>
+              <th class="w-60">
+                <div class="ccl-Secondary-title user-name" id="eiq-alert-details">{{ language.Alert_Details }}</div>
+              </th>
+              <th class="w-30">
+                <ng-select class="my-2" autocomplete="new-password" (change)="onalertFilterChange()"
+                  [searchable]="false" id="notificationFilter" name="notificationFilter" [items]="notificationFilter"
+                  bindLabel="name" bindValue="value" [clearable]="false" [(ngModel)]="selectednotificationFilter">
+                  <ng-template ng-label-tmp let-item="item">
+                    {{language[item.name] || item.name }}
+                  </ng-template>
+                  <ng-template ng-option-tmp let-item="item" let-index="index">
+                    {{language[item.name] || item.name }}
+                  </ng-template>
+                </ng-select>
+              </th>
+            </thead>
+            <tbody>
+              <tr *ngFor="let notify of notificationList.datas; let i = index">
+                <td colspan="3">
+                  <div class="protect-iq-accordion">
+                    <div id="'accordion'+i">
+                      <div class="card">
+                        <div class="card-header" id="alert-carc" data-toggle="collapse"
+                          [attr.data-target]="'#collapse' + i" [attr.aria-expanded]="true"
+                          [attr.aria-controls]="'collapse' + i">
+                          <div class="row mb-0">
+                            <ul class="alert-ul" (click)="isExpandedAlert[i] = !isExpandedAlert[i]">
+                              <li class="occurr-date">
+                                <div class="Protect-iq-info experienceiq-alert-info">
+                                  <span class="plus-minus-toggle mr-2">
+                                    <span class="plus" data-toggle="collapse" [attr.data-target]="'#collapse' + i"
+                                      [attr.aria-expanded]="true" [attr.aria-controls]="'collapse' + i"
+                                      *ngIf="!isExpandedAlert[i]; else expanded">
+                                      +
+                                    </span>
+                                    <ng-template #expanded>
+                                      <span class="minus" [attr.id]="'symbolMinus' + i" data-toggle="collapse"
+                                        [attr.data-target]="'#collapse' + i" [attr.aria-expanded]="true"
+                                        [attr.aria-controls]="'collapse' + i">
+                                        -
+                                      </span>
+                                    </ng-template>
+                                  </span>
+                                  <p>
+                                    {{
+                                    notify.timestamp
+                                    | date: "MMM dd yyyy, hh:mm:ss a"
+                                    }}
+                                  </p>
+                                </div>
+                              </li>
+                              <li class="alert-details">
+                                <div class="">
+                                  <div *ngIf="
+                                      notify.parentalAlarm.action == 'LOGGED';
+                                      else avcappNameBlock
+                                    ">
+                                    {{language['VPN use detected']}}: {{ notify.parentalAlarm.appName }}
+                                  </div>
+                                  <ng-template #avcappNameBlock>
+                                    <div *ngIf="notify.parentalAlarm.type == 'AVC'; else appTimeLimitReach">
+                                      {{ notify.parentalAlarm.appName }} {{language['was blocked']}}
+                                    </div>
+                                  </ng-template>
+                                  <ng-template #appTimeLimitReach>
+                                    <div *ngIf="notify.parentalAlarm.type == 'AVC-TL'; else appNameBlock">
+                                      {{language['Your application']}} {{ notify.parentalAlarm.appName }}
+                                      {{language['reached time limit']}}
+                                    </div>
+                                  </ng-template>
+                                  <ng-template #appNameBlock>
+                                    {{ notify.parentalAlarm.webDomain }} {{language['was blocked']}}
+                                  </ng-template>
+                                </div>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                        <div [id]="'collapse' + i" class="collapse" aria-labelledby="alert-carc"
+                          data-parent="#accordion">
+                          <table
+                            class="table device-detail experience-detail table-borderless experienceiq-alert-detail-list">
+                            <tbody>
+                              <tr>
+                                <th class="w-30"></th>
+                                <th class="w-60 p-0">
+                                  <table class="experienceiq-alert-detail-list-inside detail-list">
+                                    <tbody>
+                                      <tr *ngIf="notify.parentalAlarm.type">
+                                        <th scope="row" class="">{{language.Type}} :</th>
+                                        <td class="">
+                                          {{
+                                          notify.parentalAlarm.type
+                                          | alertTypeConverter
+                                          }}
+                                        </td>
+                                      </tr>
+                                      <tr *ngIf="notify.parentalAlarm.targetStaName">
+                                        <th scope="row">{{language.device}} :</th>
+                                        <td>
+                                          {{
+                                          notify.parentalAlarm.targetStaName
+                                          }}
+                                        </td>
+                                      </tr>
+                                      <tr *ngIf="notify.parentalAlarm.profileName">
+                                        <th scope="row">{{language.People}} :</th>
+                                        <td>
+                                          {{
+                                          notify.parentalAlarm.profileName
+                                          }}
+                                        </td>
+                                      </tr>
+                                      <tr *ngIf="notify.parentalAlarm.categoryName">
+                                        <th scope="row">{{language.Category_Name}} :</th>
+                                        <td>
+                                          {{
+                                          notify.parentalAlarm.categoryName
+                                          }}
+                                        </td>
+                                      </tr>
+                                      <tr *ngIf="notify.parentalAlarm.webDomain">
+                                        <th scope="row">{{language['web domain']}} :</th>
+                                        <td>
+                                          {{
+                                          notify.parentalAlarm.webDomain
+                                          }}
+                                        </td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                </th>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="notificationList.datas.length == 0">
+                <td colspan="5" class="no-data-available">{{language['No data available']}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+    <section class="loader-wrapper">
+      <!-- // -- People -->
+      <div class="loader-wrapper-info" *ngIf="loading">
+        <div class="loader">
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+              <span class="sr-only">{{ language.Loading }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 px-0" id="people" role="tab" aria-labelledby="people" *ngIf="sectionToShow == 'people'">
+        <div class="Protect-iq-table">
+          <div class="flex skip-btns">
+            <button *ngIf="scopeFlag.configWrite" type="button" (click)="openModal(addSubscriberModal, 'addProfile')"
+              class="btn-default primary br-26 b-none mr-3" id="people-add-new">
+              {{ language.Add_People }}
+            </button>
+            <button type="button" *ngIf="connectAllButton && scopeFlag.configWrite"
+              (click)="updateProfileBlockedStatus(true)" class="btn-default btn-dft br-26 b-none" id="people-dis-all">
+              {{ language.Disconnect_All }}
+            </button>
+            <button type="button" *ngIf="disconnectAllButton && scopeFlag.configWrite"
+              (click)="updateProfileBlockedStatus(false)" class="btn-default btn-dft br-26 b-none" id="people-con-all">
+              {{ language.Connect_All }}
+            </button>
+          </div>
+
+          <div class="w-100 alert alert alert-danger fade show" *ngIf="showError">
+            <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+            <button type="button" id="hide-error-btn" class="close" (click)="hideError()">
+              <span></span>
+            </button>
+            <div class="d-inline-flex" [innerHtml]="language[errorMsg] || errorMsg"></div>
+          </div>
+
+          <div class="w-100 alert alert alert-success fade show" *ngIf="showSuccess">
+            <button type="button" class="close" id="hide-success-btn" (click)="hideSuccess()">
+              <span></span>
+            </button>
+            <strong>
+              <div [innerHtml]="successMsg"></div>
+            </strong>
+          </div>
+
+          <div class="py-3 warning-msg" *ngIf="deleteProfileData">
+            <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+            <span>{{ language["Are you sure you want to delete"] }}
+              {{ modalInfo }}</span>
+            <div class="btn-con-sec float-right">
+              <button class="btn btn-primary py-1 mr-2" id="deletePFBtn" (click)="confirmUserProfileDelete()">
+                {{language.Confirm}}
+              </button>
+              <button class="btn-default btn-dft" (click)="closeMessageModal()">
+                {{language.Cancel}}
+              </button>
+            </div>
+          </div>
+
+          <table class="detail-list dataTable people-detail-info add-people-table mt-4 table table-hover table-striped"
+            id="eiq-people-table">
+            <thead>
+              <th>
+                {{ language.Name }}
+              </th>
+              <th class="status-th-min">
+                {{ language.Status }}
+              </th>
+              <!-- <th>
+								{{language.Systems}}
+							</th>
+							<th>
+								{{language.Daily_Usage}}
+							</th> -->
+            </thead>
+            <tbody *ngIf="peopleListObj">
+              <tr *ngFor="let people of peopleListObj.profiles; let i = indexx" (click)="goToProfile(people)">
+                <td>
+                  <div class="people-info">
+                    <span> {{ people.name }} </span>
+                  </div>
+                </td>
+                <td>
+                  <div class="d-flex">
+                    <div>{{ people.isBlocked | experianceIQStatus }}</div>
+                    <div class="skip-sec align-self-center">
+                      <button *ngIf="scopeFlag.configWrite" type="button" (click)="deleteExperianceIq(people, $event)"
+                        id="edit-experiance-iq" class="mr-3 my-1 btn-default primary skip-btn">
+                        {{language['Delete']}}
+                      </button>
+                      <button *ngIf="people.isBlocked && scopeFlag.configWrite; else deviceDiscConBlock" type="button"
+                        (click)="connectParticularProfile(people, $event)" [id]="'disconnect-experiance-iq' + i"
+                        class="mr-2 my-1 btn-default primary skip-btn">
+                        {{language.Connect}}
+                      </button>
+                      <ng-template #deviceDiscConBlock>
+                        <button *ngIf="scopeFlag.configWrite" type="button"
+                          (click)="disconnectParticularProfile(people, $event)" [id]="'connect-experiance-iq' + i"
+                          class="mr-2 my-1 btn-default btn-dft skip-btn">
+                          {{language.Disconnect}}
+                        </button>
+                      </ng-template>
+                    </div>
+                  </div>
+                </td>
+                <!-- <td>
+									{{ people.deviceCount }}
+								</td>
+								<td>
+									<div class="row">
+										<div>{{ people.usage | experianceIQUsage }}</div>
+										<div class="skip-sec align-self-center">
+											<div>
+												<button type="button" (click)="deleteExperianceIq(people)"
+													id="edit-experiance-iq" class="btn-default primary skip-btn">
+													Delete
+												</button>
+											</div>
+										</div>
+									</div>
+								</td> -->
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="loader-wrapper">
+      <div class="col-12 px-0" id="StaffSection" role="tab" aria-labelledby="people" *ngIf="sectionToShow == 'staff'">
+        <div class="Protect-iq-table">
+
+          <div class="w-100 alert alert alert-danger fade show" *ngIf="showError">
+            <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+            <button type="button" id="hide-error-btn" class="close" (click)="hideError()">
+              <span></span>
+            </button>
+            <div class="d-inline-flex" [innerHtml]="language[errorMsg] || errorMsg"></div>
+          </div>
+
+          <div class="w-100 alert alert alert-success fade show" *ngIf="showSuccess">
+            <button type="button" class="close" id="hide-success-btn" (click)="hideSuccess()">
+              <span></span>
+            </button>
+            <strong>
+              <div [innerHtml]="successMsg"></div>
+            </strong>
+          </div>
+
+          <div id="staffDeleteConfirmatn" class="py-3 warning-msg" *ngIf="deleteProfileData">
+            <span class="error-img"><img src="./assets/img/ic_warning-36px.svg" /></span>
+            <span>{{ language["Are you sure you want to delete"] }}
+              {{ modalInfo }}?</span>
+            <div class="btn-con-sec float-right">
+              <button class="btn btn-primary py-1 mr-2" id="deletePFBtn" (click)="deleteStaffProfile()">
+                {{language.Confirm}}
+              </button>
+              <button class="btn-default btn-dft" (click)="closeMessageModal()">
+                {{language.Cancel}}
+              </button>
+            </div>
+          </div>
+
+          <table *ngIf="!staffProfilesCheck" datatable [dtOptions]="tableOptions"
+            class="detail-list dataTable people-detail-info add-people-table mt-4 table table-hover"
+            id="eiq-people-table">
+            <thead>
+              <tr>
+                <th>
+                  {{ language.Name }}
+                </th>
+                <th>
+                  {{ language.Status }}
+                </th>
+                <th>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let staffP of staffProfiles; let i = indexx">
+                <td>
+                  <div class="people-info">
+                    <a href="javascript:void(0)" (click)="showStaffProfileDetail(staffP)"> {{ staffP.firstName + ' ' +
+                      staffP.lastName }}
+                    </a>
+                  </div>
+                </td>
+                <td>
+                  <div
+                    [ngClass]="{'color-green' : staffP?.profileStatus == 'Online', 'color-red' : staffP?.profileStatus == 'Unregistered', 'color-grey' : staffP?.profileStatus == 'Offline'}">
+                    <span> {{ staffP.profileStatus }} </span>
+                  </div>
+                </td>
+                <td class="text-right"><span class="delete-icon"><img (click)="deleteStaffProfConfirmatn(staffP)"
+                      class="w-15" src="./assets/img/net-delete.svg" title="{{language.Delete}}" /></span>
+                </td>
+
+              </tr>
+              <!-- <tr *ngIf="staffProfiles.length == 0">
+                <td colspan="3" class="text-center">{{ language['No Data Available']}}</td>
+                <td class="d-none"></td>
+                <td class="d-none"></td>
+              </tr> -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="loader-wrapper">
+      <!-- // -- priorities -->
+      <div class="loader-wrapper-info" *ngIf="loading">
+        <div class="loader">
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+              <span class="sr-only">{{ language.Loading }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 px-0" id="priorities" role="tab" aria-labelledby="priorities"
+        *ngIf="sectionToShow == 'priorities'">
+        <div class="alert alert-success alert-dismissible" *ngIf="showmsg">
+          <span class="success-img"><img src="../../../../../assets/img/success-icon.svg" /></span>
+          <div class="d-inline-flex"><strong>{{ successMessage | titlecase }}</strong></div>
+          <button class="btn-default px-3 ok-btn float-right" (click)="closeAlert()" id="inprpwarn-ok">
+            {{ language.Ok }}
+          </button>
+        </div>
+      </div>
+      <div class="col-12 px-0" id="priorities" role="tab" aria-labelledby="priorities"
+        *ngIf="sectionToShow == 'priorities'">
+        <div class="prioritied">
+          <div class="w-100 pb-2">
+            <p class="d-inline-block m-0"> {{ language.Prioritize_traffic_devices_network }} </p>
+            <button class="btn-default btn-dft btn-grey-alt py-0 px-4 float-right" *ngIf="isqosalert"
+              (click)="Recalibrate()">
+              {{ language.Recalibrate_Priorities }}
+            </button>
+          </div>
+          <div class="content-toggle">
+            <label class="en-disable" *ngIf="safeSearchStatus"> {{ language.enabled }} </label>
+            <label class="en-disable" *ngIf="!safeSearchStatus"> {{ language.Disabled }} </label>
+            <div class="toggle-swtbtn checkbox switcher">
+              <label for="safeSearchCheckbox">
+                <!-- <input type="checkbox" id="safeSearchCheckbox"
+
+                      (change)="updateSafeSearchStatus()"
+                      [checked]="safeSearchStatus" > -->
+                <input type="checkbox" id="safeSearchCheckbox"
+                  [disabled]="!scopeFlag.configWrite || (isWFHAvailable && safeSearchStatus) || availability?.bwShapingOn"
+                  (change)="Activate($event)" [checked]="safeSearchStatus" [(ngModel)]="safeSearchStatus" />
+                <span
+                  [ngClass]="(!scopeFlag.configWrite || (isWFHAvailable && safeSearchStatus) || availability?.bwShapingOn) ? 'toggleDisabled' : ''"><small></small></span>
+              </label>
+            </div>
+
+            <div class="f-size12" *ngIf="availability?.bwShapingOn; else wfhStatus">
+              {{language['This field can’t be enabled due to bandwidth shaping']}}
+            </div>
+            <ng-template #wfhStatus>
+              <div class="f-size12" *ngIf="isWFHAvailable && safeSearchStatus">
+                {{language['This field can’t be disabled due to provisioned WFH SSID']}}</div>
+            </ng-template>
+
+          </div>
+          <!-- <div>
+            <span><small>{{
+                language.Prioritize_traffic_devices_network
+                }}</small></span>
+          </div> -->
+          <div class="py-3 warning-msg" *ngIf="priority_alert_delete">
+            <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+            <span>{{ language["Are you sure you want to delete"] }}
+              {{ modalInfo }}</span>
+            <div class="btn-con-sec float-right">
+              <button class="btn btn-primary py-1 mr-2" id="deletePFBtn" (click)="DeleteProfile()">
+                {{language.Confirm}}
+              </button>
+              <button class="btn-default btn-dft" (click)="close_priority_alert()">
+                {{language.Cancel}}
+              </button>
+            </div>
+          </div>
+
+          <div class="py-3 warning-msg" *ngIf="showError">
+            <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+            <span>{{ errorMsg }}</span>
+
+            <button type="button" class="ok float-right btn-default primary" (click)="closeAlertError()">
+              {{ language.OK }}
+            </button>
+          </div>
+
+          <div class="row mt-20 mb-200" *ngIf="safeSearchStatus">
+            <div class="col-lg-5 col-md-5 col-sm-12">
+              <div class="border-bottom flex-space-between">
+                <div class="ccl-Secondary-title user-name" id="pri-raffic-prior">{{ language.Traffic_Priorities }}</div>
+                <div class="Disable f-s-14px primary pointer" *ngIf="scopeFlag.configWrite"
+                  [ngClass]="{ 'btn-disabled': addSheduleBtnDisabled == true }"
+                  (click)="channelchangesModalOpen('new')">
+                  {{ language.New }} +
+                </div>
+              </div>
+
+              <!-- <div class="al-deafult">
+                  <div class="l-al"  (click)="PrioritiesModalOpen()">
+                      <span class="primary pointer"> Default </span>
+                  </div>
+                  <div class="l-al">
+                    Always on
+                  </div>
+                </div> -->
+              <div class="device-prf-table-info">
+                <table class="table dataTable table-borderless device-prf-table hover-btn" id="pri-traff-priorities">
+                  <thead>
+                    <tr>
+                      <td (click)="PrioritiesModalOpen()" class="primary pointer">
+                        {{ language.Default }}
+                      </td>
+                      <td>{{ language["Always on"] }}</td>
+                      <td></td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let profile of scheduleProfile">
+                      <td>
+                        <span class="primary pointer" (click)="updateProfile(profile)" data-toggle="tooltip"
+                          data-placement="top" title=" {{ profile.name }}">
+                          {{ profile.name }}
+                        </span>
+                      </td>
+                      <td>
+                        {{ profile.day }}{{
+                        profile.startTime
+                        }} &nbsp;-&nbsp; {{ profile.endTime }}
+                      </td>
+                      <td>
+                        <div class="flex-end">
+                          <!-- <button class="btn-default primary remove-dev-btn"
+                            (click)="DeleteProfile(profile)">Delete</button> -->
+                          <button *ngIf="scopeFlag.configWrite" class="btn-default primary remove-dev-btn"
+                            (click)="confirmDeleteProfile(profile)">
+                            {{ language["Delete"] }}
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+            </div>
+            <div class="col-lg-7 col-md-7 col-sm-12">
+              <div class="border-bottom flex-space-between">
+                <div class="ccl-Secondary-title user-name" id="pri-device-priorities">{{ language.Device_Priorities }}
+                </div>
+                <div class="f-s-14px primary pointer" *ngIf="scopeFlag.configWrite"
+                  [ngClass]="{ 'btn-disabled': selectedDevice.length >= 5 }" (click)="
+                    selectedDevice.length < 5
+                      ? addDevicePrioritiesModalOpen()
+                      : ''
+                  ">
+                  {{ language.Add_Device }} +
+                </div>
+              </div>
+
+              <div class="device-priorities-container flex-start col-dev">
+                <div class="device-priorities-item px-0">
+                  <input class="align-self-center" type="radio" id="alwayson" name="Device"
+                    [(ngModel)]="setDurationValue" (change)="ispermanent(true)" value="always" />
+                  <label class="greyaa" for="alwayson">
+                    {{ language.Always_On }}
+                  </label>
+                </div>
+
+                <div class="device-priorities-item px-0">
+                  <input class="align-self-center" type="radio" id="setDuration" name="Device"
+                    [(ngModel)]="setDurationValue" (change)="ispermanent(false)" value="duration" />
+                  <label class="greyaa" for="setDuration">
+                    {{ language.Set_Duration }}
+                  </label>
+                </div>
+                <div class="device-priorities-item px-0 ccl-form">
+                  <div class="custom-datepicker">
+                    <div class="col-md-5 px-0 d-inline-flex mr-2 set-duration">
+                      <p-calendar class="set-duration-input" name="startTime" [disabled]="isPermanent" #Time="ngModel"
+                        id="duration" hourFormat="24" readonlyInput="true" [(ngModel)]="durationTimeValue"
+                        [showIcon]="false" (onSelect)="durationchange($event)" timeOnly="true" aria-required="true"
+                        aria-describedby="Time-error" aria-invalid="true">
+                      </p-calendar>
+                      <div class="p-time-icon">
+                        <i class="far fa-clock"></i>
+                      </div>
+                    </div>
+
+                    <span>{{ language.hour_s }}</span>
+                    <button class="btn-default btn-primary ml-1 min-widthauto" *ngIf="scopeFlag.configWrite" (click)="
+                      selectedDevice.length >= 1 || deviceSave
+                        ? addDevicePrioritiesModalOpen(true)
+                        : '' " [disabled]="selectedDevice.length == 0 || deviceSave">
+                      {{ language.save }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="py-3 warning-msg" *ngIf="deviceDeleteModalRef">
+                <div class="d-inline-flex w-72">
+                  <span class="error-img"><img src="./assets/img/ic_warning-36px.svg" /></span>
+
+                  {{language['Are you sure you want to delete'] }} "{{deleteDevice?.name}}"?
+                </div>
+
+                <div class="btn-con-sec d-inline-flex w-25">
+                  <button type="button" class="btn btn-primary py-1 mr-1" ngbAutofocus id="confirm-btn"
+                    (click)="removeDevice(deleteDevice, true)">
+                    {{ language.Confirm }}
+                  </button>
+                  <button type="button" class="btn-default btn-dft" id="cancel-btn"
+                    (click)="deviceDeleteModalRef = false">
+                    {{ language.Cancel }}
+                  </button>
+                </div>
+              </div>
+              <table class="table dataTable table-borderless device-prf-table hover-btn">
+                <tbody *ngIf="selectedDevice">
+                  <tr *ngFor="let device of selectedDevice">
+                    <td>
+                      {{ device.name }}
+                    </td>
+                    <td>
+                      {{ device.macAddr }}
+                    </td>
+                    <td>
+                      <div class="flex-end">
+                        <button class="btn-default primary remove-dev-btn" *ngIf="scopeFlag.configWrite"
+                          (click)="removeDevice(device, '')">
+                          {{ language.Remove }}
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section>
+      <!-- New Restriction tab -->
+      <!-- <div class="col-12 col-md-12 pl-0 mb-2 ccl-tabs">
+
+
+        <ul id="tabs" class="nav nav-tabs sub-tab">
+        <li class="nav-item">
+        <a routerlink="" id="" routerlinkactive="active" class="nav-link small f-size-16 active" ng-reflect-router-link-active="active" href="">Primary & Point of Sale Networks</a></li>
+        <li class="nav-item">
+        <a routerlink="" id="" routerlinkactive="" class="nav-link small f-size-16 " ng-reflect-router-link-active="" href="">Staff Network</a></li>
+        <li class="nav-item">
+        <a routerlink="" id="" routerlinkactive="" class="nav-link small f-size-16 " ng-reflect-router-link-active="" href="">Customer Portal </a></li>
+        </ul></div> -->
+      <div class="container-fluid" id="restrictions" role="tab" aria-labelledby="restrictions"
+        *ngIf="sectionToShow == 'restrictions'">
+        <div *ngIf='(!(softwareVrsion >= 23.3 && isSmbOnboarded))'>
+          <app-primary-network-experience-iq [userId]="userId"></app-primary-network-experience-iq>
+        </div>
+        <!-- OnBoard smb  -->
+        <div *ngIf='isSmbOnboarded && softwareVrsion >= 23.3'>
+          <div class="tab-content" id="nav-tabContent">
+            <app-smb-experience-iq [isSmbEnabled]="smbEnabled" [userId]="userId">
+            </app-smb-experience-iq>
+          </div>
+
+        </div>
+        <!--end-->
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- <router-outlet></router-outlet> -->
+
+<div class="profile-device-detail" *ngIf="profileDetails">
+  <div class="loader" *ngIf="loading">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary">
+        <span class="sr-only">{{ language.Loading }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="flex-space-between border-bottom">
+    <div class="profile-sec">
+      <div class="profile-img">
+        <span class="ccl-Secondary-title"> {{ selectedProfile.name }} </span>
+      </div>
+    </div>
+    <div class="edit-profile">
+      <button *ngIf="scopeFlag.configWrite" (click)="openModal(editProfileModal, 'editProfile')"
+        class="btn-default primary">
+        {{language['Edit People']}}
+      </button>
+      <span class="prf-close mx-2">
+        <a (click)="closeProfile()"><img src="assets/img/ic_close-44px.svg" /></a>
+      </span>
+    </div>
+  </div>
+
+  <section>
+    <div class="row">
+      <div class="col-md-12 sub-tabs">
+        <ul id="tabs" class="nav nav-tabs experienceiq-add-tab">
+          <li class="nav-item">
+            <a data-toggle="tab" data-target="#device" class="pl-0 nav-link active" role="tab" aria-controls="device"
+              (click)="deviceClicked()" aria-selected="true" href="javascript:void(0)">{{language.Devices}}</a>
+          </li>
+          <li class="nav-item">
+            <a data-toggle="tab" data-target="#restrictions" class="nav-link" role="tab" aria-controls="restrictions"
+              (click)="fetchRestrictionData()" aria-selected="true"
+              href="javascript:void(0)">{{language.Restrictions}}</a>
+          </li>
+          <li class="nav-item">
+            <a data-toggle="tab" data-target="#timelimits" class="nav-link" role="tab" (click)="fetchTimeLimitsData()"
+              aria-controls="timelimits" aria-selected="true" href="javascript:void(0)">{{language.Time_Limits}}</a>
+          </li>
+          <li class="nav-item">
+            <a data-toggle="tab" data-target="#Usage" class="nav-link" role="tab" (click)="fetchUsageData()"
+              aria-controls="Usage" aria-selected="true" href="javascript:void(0)">{{language.Usage}}</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- // device -->
+      <div class="col-md-12">
+        <div class="tab-content w-100">
+          <div class="col-12" class="tab-pane show active" role="tabpanel" aria-labelledby="nav-device" id="device">
+            <div class="edit-profile mt-3 mb-3">
+              <button id="addDeviceBtn" *ngIf="scopeFlag.configWrite" (click)="openModal(addDeviceModal, 'addDevice')"
+                class="btn-default primary">
+                {{language.add_device}}
+              </button>
+            </div>
+            <br />
+            <div class="w-100 alert alert alert-danger fade show" *ngIf="showError">
+              <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+              <button type="button" id="hide-error-btn" class="close" (click)="hideError()">
+                <span></span>
+              </button>
+              <div class="d-inline-flex" [innerHtml]="errorMsg"></div>
+            </div>
+
+            <div class="w-100 alert alert alert-success fade show" *ngIf="showSuccess">
+              <button type="button" class="close" id="hide-success-btn" (click)="hideSuccess()">
+                <span></span>
+              </button>
+              <strong>
+                <div [innerHtml]="successMsg"></div>
+              </strong>
+            </div>
+
+            <div class="py-3 warning-msg" *ngIf="deleteDeviceData">
+              <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+              <span>{{ language["Are you sure you want to remove"] }}
+                {{ modalInfo }}</span>
+              <div class="btn-con-sec float-right">
+                <button class="btn btn-primary py-1 mr-2" id="deletePFBtn" (click)="confirmProfileDeviceDelete()">
+                  {{language.Confirm}}
+                </button>
+                <button class="btn-default btn-dft" (click)="closeMessageModal()">
+                  {{language.Cancel}}
+                </button>
+              </div>
+            </div>
+            <div class="loader" *ngIf="loading">
+              <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary">
+                  <span class="sr-only">{{ language.Loading }}</span>
+                </div>
+              </div>
+            </div>
+            <table class="table dataTable table-borderless device-prf-table">
+              <thead>
+                <tr>
+                  <th>{{language.device}}</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let device of deviceList.stations">
+                  <td>
+                    <div class="about-device flex-start">
+                      <span>
+                        <img height="30px" width="30px" [src]="device.type | deviceImage" alt="warning" />
+                      </span>
+                      &nbsp;&nbsp;&nbsp;
+                      <div class="device-serial">
+                        <h6 class="m-0">{{ device.name }}</h6>
+                        <span>{{ device.isOnline | DeviceStatus }}</span>
+                        <span *ngIf="isProfilePaused"> - {{language['Paused']}} </span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="flex-end">
+                      <button (click)="removeProfileDevice(device)" *ngIf="scopeFlag.configWrite"
+                        class="btn btn-default remove-dev-btn">
+                        {{language.Remove_Device}}
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- People Restrictions -->
+
+          <div class="col-12 m-3 px-0" class="tab-pane fade" role="tabpanel" aria-labelledby="nav-restrictions"
+            id="restrictions">
+            <div class="loader" *ngIf="loading">
+              <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary">
+                  <span class="sr-only">{{ language.Loading }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="w-100 alert alert alert-danger fade show" *ngIf="showError">
+              <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+              <button type="button" id="hide-error-btn" class="close" (click)="hideError()">
+                <span></span>
+              </button>
+              <div class="d-inline-flex" [innerHtml]="language[errorMsg] || errorMsg"></div>
+            </div>
+
+            <div class="w-100 alert alert alert-success fade show" *ngIf="showSuccess">
+              <button type="button" class="close" id="hide-success-btn" (click)="hideSuccess()">
+                <span></span>
+              </button>
+              <strong>
+                <div [innerHtml]="language[successMsg] || successMsg"></div>
+              </strong>
+            </div>
+
+            <div class="py-3 warning-msg" *ngIf="deleteProfileData">
+              <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+              <span>{{ language["Are you sure you want to delete"] }}
+                {{ modalInfo }}</span>
+              <div class="btn-con-sec float-right">
+                <button class="btn btn-primary py-1 mr-2" id="deletePFBtn" (click)="confirmUserProfileDelete()">
+                  {{language.Confirm}}
+                </button>
+                <button class="btn-default btn-dft" (click)="closeMessageModal()">
+                  {{language.Cancel}}
+                </button>
+              </div>
+            </div>
+
+            <div class="col-md-12 mt-3 px-0">
+              <p>
+                *{{language.peopleRestrictnNote(selectedProfile.name)}}. </p>
+            </div>
+            <div class="col-md-12 mb-2 px-0">
+              <label class="cco-secondary-title border-bottom w-100 pb-2"
+                id="rest-content-label">{{language['Content']}}</label>
+            </div>
+            <!--end title-->
+            <div class="col-md-12 mb-2 px-0">
+              <div class="row">
+                <div class="col-sm-12 col-md-9 col-lg-9 col-xl-9">
+                  <p>{{language['Restrict access to specific content or select an age range for pre-set
+                    restrictions']}}.
+                  </p>
+                </div>
+                <div class="col-sm-12 col-md-3 col-lg-3 col-xl-3 cus-select-height-24">
+                  <ng-select autocomplete="new-password" (change)="onContentFilterChange()" [searchable]="false"
+                    [disabled]="!scopeFlag.configWrite" id="Parentfilter" name="contetnFilter" [items]="contentFilter"
+                    bindLabel="name" bindValue="value" [clearable]="false" [(ngModel)]="selectedContentFilter">
+                    <ng-template ng-label-tmp let-item="item">
+                      {{item.name }}
+                    </ng-template>
+                    <ng-template ng-option-tmp let-item="item" let-index="index">
+                      {{item.name }}
+                    </ng-template>
+                  </ng-select>
+                </div>
+              </div>
+            </div>
+            <div class="toggles-switch col-lg-12 row px-0">
+              <div class="toggle-swtbtn checkbox switcher col-lg-3" *ngFor="let category of categoriesList.categories">
+                <label [for]="category.cid">
+                  <input type="checkbox" [id]="category.cid" (change)="onCatergoryChange(category)"
+                    [(ngModel)]="category.blocked" [disabled]="!scopeFlag.configWrite" [checked]="category.blocked" />
+                  <span [ngClass]="!scopeFlag.configWrite ? 'toggleDisabled' : ''"><small></small></span>
+                  {{ language[category.name] || category.name }}
+                </label>
+              </div>
+            </div>
+
+            <!--End toggle switches-->
+            <div class="col-12 px-0">
+              <div class="row">
+                <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                  <div class="border-bottom mb-2 mt-3">
+                    <label class="cco-secondary-title w-100" id="rest-applicat-label">{{language.Applications}}</label>
+                  </div>
+                  <p class="mb-1">
+                    {{language['Manage access to applications added here']}}.
+                  </p>
+                  <div class="row">
+                    <div class="col-12 toggles-switch">
+                      <div class="toggle-swtbtn checkbox switcher">
+                        <label>
+                          <input type="checkbox" [disabled]="!scopeFlag.configWrite" id="youtubeRestrictionCheckbox"
+                            [(ngModel)]="youtubeRestrictionStatus" (change)="updateYoutubeRestrictionStatus()"
+                            [checked]="youtubeRestrictionStatus" />
+                          <span [ngClass]="!scopeFlag.configWrite ? 'toggleDisabled' : ''"><small></small></span>
+                          {{language.YouTube}}
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-12 col-md-7 col-lg-7 col-xl-7 ccl-form mb-0 position-relative">
+
+                      <ng-template #rt let-r="result" let-t="term">
+                        <ng-container *ngIf="r.id != 4626">
+                          <img [src]="r.iconUrl" class="mr-1 w-20p" />
+                          <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
+                        </ng-container>
+                      </ng-template>
+                      <input id="typeahead-basic" type="text" typeahead-no-results="noResults"
+                        class="col-9 ccl-form form-control" [disabled]="!scopeFlag.configWrite" [(ngModel)]="model"
+                        [resultFormatter]="appformatter" [resultTemplate]="rt" [inputFormatter]="appformatter"
+                        [ngbTypeahead]="searchApp" placeholder="{{language['Search the application']}}"
+                        (selectItem)="selectedItem($event)" (keyup)="typeaheadbasickeyup($event)" />
+                      <span [ngClass]="!scopeFlag.configWrite ? 'toggleDisabled' : ''"><small></small></span>
+                      <small *ngIf="searching" class="form-text text-muted">{{language.searching}}...</small>
+                      <div class="invalid-feedback" *ngIf="searchFailed">
+                        {{language['Sorry, suggestions could not be loaded.']}}
+                      </div>
+                    </div>
+                    <div class="col-12"><span class="small req-text" *ngIf="gloObj.restAppExist">
+                        {{language['Selected Application already exists']}}</span></div>
+                    <!-- <div class="col-sm-12 col-md-5 col-lg-5 col-xl-5 pt-1 pl-0 mb-3 text-right">
+                      <button class="btn-default btn-dft py-0" id="AddApplication">Add Application</button>
+                    </div> -->
+                    <div class="col-12">
+                      <button class="btn-default btn-dft py-0 color-grey-rgb" *ngIf="isError" [disabled]="true">
+                        {{language['noresults']}}</button>
+                    </div>
+
+                    <div class="col-12" *ngFor="let app of selectedApps.apps; let i = index">
+                      <div class="d-flex justify-content-between align-items-center my-3">
+                        <div class="align-items-center">
+                          <span class="mr-2">
+                            <img src="{{ app.iconUrl }}" />
+                          </span>
+                          <label class="font-weight-600 mb-0">{{ app.name }}</label>
+                        </div>
+                        <div class=""> <button *ngIf="scopeFlag.configWrite" class="btn-default btn-dft app-delete"
+                            (click)="openModal(deleteAppWeb, 'temp'); setDeleteWebApp('app', app.id, false);">
+                            {{language.Delete}}
+                          </button></div>
+
+                      </div>
+                      <div class="row">
+
+
+                        <div class="form-check-inline mb-2 pl-3">
+                          <input class="form-check-input mr-2" type="radio" [value]="true"
+                            [disabled]="!scopeFlag.configWrite" [(ngModel)]="app.blocked" (change)="updateApp(app, i)"
+                            [checked]="app.blocked" [name]="app.id" id="ra-block" />
+                          {{language.Block}}
+                        </div>
+                        <div class="form-check-inline mb-2">
+                          <input class="form-check-input mr-2" type="radio" [value]="false"
+                            [disabled]="!scopeFlag.configWrite" [(ngModel)]="app.blocked" (change)="updateApp(app, i)"
+                            [checked]="app.blocked" [name]="app.id" id="ra-AlwaysAllow" />
+                          {{language['Always Allow']}}
+                        </div>
+
+                        <div class="form-check-inline mb-2">
+                          <input class="form-check-input mr-2" type="radio" [disabled]="!scopeFlag.configWrite"
+                            value="selected" [(ngModel)]="allowForChecked[i]"
+                            (change)="updateAllowForChecked(app, i, $event)" [name]="app.id" id="ra-AllowFor" />
+                          {{language['Allow for']}}
+                        </div>
+                        <div class="form-check-inline ccl-form mb-2 m-w111">
+                          <div class="custom-datepicker">
+                            <p-calendar name="startTime" [disabled]="
+                              (allowForChecked[i] != 'selected' || !scopeFlag.configWrite)
+                                ? true
+                                : false
+                            " #myCalendar id="allowFor" hourFormat="24" [stepMinute]="05" [minDate]="minDuration"
+                              readonlyInput="true" [(ngModel)]="customTimeUsage[i]" [showIcon]="true" timeOnly="true"
+                              (onSelect)="onCalenderSelected($event, i)" (onBlur)="
+                              onAllowForTimeSelected(
+                                $event,
+                                customTimeUsage[i],
+                                i
+                              )
+                            " (onShow)="allowForCalenderClicked(i)" aria-required="true" aria-describedby="Time-error"
+                              aria-invalid="true" aria-placeholder="Hrs">
+                              <p-footer>
+                                <button pButton type="button" id="cancelButton" label="Close"
+                                  class="closeButton closeButton-small " (click)="
+                                  closeDatePicker(app, i);
+                                  $event.stopPropagation()
+                                "></button>
+                                <button pButton type="button" id="submitButton" label="Submit"
+                                  class="submitButton submitButton-small" [disabled]="bisabledAllowForButtonMain[i]"
+                                  (click)="
+                                  updateAllowForApp(app, i);
+                                  $event.stopPropagation()
+                                "></button>
+                              </p-footer>
+                            </p-calendar>
+                          </div>
+                        </div>
+
+                        <div class="form-check-inline ccl-form mb-2">
+                          <span>{{language.hour_s}}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                  <div class="border-bottom mb-2 mt-3">
+                    <label class="cco-secondary-title w-100" id="rest-websites-label">{{language.Websites}}</label>
+                  </div>
+                  <p class="mb-1">
+                    {{language['Manage access to websites added here']}}.
+                  </p>
+                  <div class="row">
+                    <div class="col-12 toggles-switch">
+                      <div class="toggle-swtbtn checkbox switcher">
+                        <label>
+                          <input type="checkbox" name="SafeSearch" id="SafeSearch" [(ngModel)]="safeSearchStatus"
+                            [checked]="safeSearchStatus" (change)="updateSafeSearchStatus()"
+                            [disabled]="!scopeFlag.configWrite" />
+                          <span [ngClass]="!scopeFlag.configWrite ? 'toggleDisabled' : ''"
+                            class="mr-1"><small></small></span>
+                          {{language['Safe Search']}}
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row" *ngIf="availableFor22a2">
+                    <div class="col-12 toggles-switch">
+                      <div class="toggle-swtbtn checkbox switcher">
+                        <label>
+                          <input type="checkbox" name="dnsName" id="dnsId" [(ngModel)]="dnsStatus" [checked]="dnsStatus"
+                            (change)="updateDnsStatus()" [disabled]="!scopeFlag.configWrite" />
+                          <span [ngClass]="!scopeFlag.configWrite ? 'toggleDisabled' : ''"
+                            class="mr-1"><small></small></span>
+                          {{language['dnsOverHttp']}}
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row" *ngIf="availableFor22a2">
+                    <div class="col-12 toggles-switch">
+                      <div class="toggle-swtbtn checkbox switcher">
+                        <label>
+                          <input type="checkbox" name="icloudName" id="icloudId" [(ngModel)]="icloudStatus"
+                            [checked]="icloudStatus" (change)="updateiCloudStatus()"
+                            [disabled]="!scopeFlag.configWrite" />
+                          <span [ngClass]="!scopeFlag.configWrite ? 'toggleDisabled' : ''"
+                            class="mr-1"><small></small></span>
+                          {{language['iCloudRelay']}}
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-12 col-md-8 col-lg-8 col-xl-8 ccl-form mb-3">
+                      <input *ngIf="scopeFlag.configWrite" class="form-control mr-sm-2 m-h30" [(ngModel)]="websiteModel"
+                        placeholder="{{language['www.website.com']}}"
+                        (keyup)="gloObj.isValidWebsite = true; gloObj.urlExist = false" />
+                      <span class="small req-text error" *ngIf="!gloObj.isValidWebsite">{{language['Please enter a valid
+                        URL.']}}<br></span>
+                      <span class="small req-text error" *ngIf="gloObj.urlExist">
+                        {{language['Entered URL already exists']}}
+                      </span>
+                    </div>
+                    <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4 pt-1 pl-0 mb-3 text-right">
+                      <button class="btn-default btn-dft py-0" id="AddWebsite" *ngIf="scopeFlag.configWrite"
+                        [disabled]="websiteModel.length == 0" (click)="addWebsite()">
+                        {{language['Add Website']}}</button>
+                    </div>
+                    <div class="col-12" *ngFor="let web of webList.webs; let i = index" [attr.data-index]="i">
+                      <div class="d-flex justify-content-between align-items-center my-3">
+                        <div class="align-items-center">
+                          <label class="font-weight-600 mb-0">{{ web.webUrl }}</label>
+                        </div>
+                        <div class="">
+                          <button class="btn-default btn-dft app-delete" *ngIf="scopeFlag.configWrite"
+                            (click)="openModal(deleteAppWeb, 'temp'); setDeleteWebApp('web', web.id, false);">
+                            {{language['Delete']}}
+                          </button>
+                        </div>
+                      </div>
+
+
+                      <div class="form-check-inline mb-2">
+                        <input class="form-check-input mr-2" type="radio" [disabled]="!scopeFlag.configWrite"
+                          [(ngModel)]="web.blocked" [value]="true" (change)="updateWebUrl(web)" [checked]="web.blocked"
+                          [name]="i" />
+                        {{language.Block}}
+                      </div>
+                      <div class="form-check-inline mb-2">
+                        <input class="form-check-input mr-2" type="radio" [disabled]="!scopeFlag.configWrite"
+                          [(ngModel)]="web.blocked" [value]="false" (change)="updateWebUrl(web)" [checked]="web.blocked"
+                          [name]="i" />
+                        {{language['Always Allow']}}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!--end-->
+          </div>
+
+          <!-- // Time Limits -->
+
+          <div class="custom-radio-box time-limit flex-start" class="tab-pane fade" role="tabpanel"
+            aria-labelledby="nav-timelimits" id="timelimits">
+            <div class="w-100 alert alert alert-danger fade show" *ngIf="showError">
+              <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+              <button type="button" id="hide-error-btn" class="close" (click)="hideError()">
+                <span></span>
+              </button>
+              <div class="d-inline-flex" [innerHtml]="errorMsg"></div>
+            </div>
+
+            <div class="w-100 alert alert alert-success fade show" *ngIf="showSuccess">
+              <button type="button" class="close" id="hide-success-btn" (click)="hideSuccess()">
+                <span></span>
+              </button>
+              <strong>
+                <div [innerHtml]="successMsg"></div>
+              </strong>
+            </div>
+
+            <div class="py-3 warning-msg" *ngIf="deleteProfileData">
+              <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+              <span>{{ language["Are you sure you want to delete"] }}
+                {{ modalInfo }}
+              </span>
+              <div class="btn-con-sec float-right">
+                <button class="btn btn-primary py-1 mr-2" id="deletePFBtn" (click)="confirmUserProfileDelete()">
+                  {{language.Confirm}}
+                </button>
+                <button class="btn-default btn-dft" (click)="closeMessageModal()">
+                  {{language.Cancel}}
+                </button>
+              </div>
+            </div>
+            <div class="loader" *ngIf="loading">
+              <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary">
+                  <span class="sr-only">{{ language.Loading }}</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <p class="py-2 m-0">{{language['Select offline hours for each day']}}</p>
+            </div>
+            <div class="d-flex">
+              <div class="radio-label">
+                <label class="radio-inline">
+                  <input value="none" [disabled]="!scopeFlag.configWrite" id="none" (change)="onNoneClicked()"
+                    [(ngModel)]="customeTimeLimit" type="radio" name="allEnabled" />
+                  <span class="radio-text">{{language['None']}}</span>
+                  <span [ngClass]="!scopeFlag.configWrite ? 'toggleDisabled' : ''"><small></small></span>
+                </label>
+              </div>
+              <div class="radio-label">
+                <label class="radio-inline">
+                  <input [disabled]="!scopeFlag.configWrite" value="everyday" id="everyday"
+                    [(ngModel)]="customeTimeLimit" type="radio" name="allEnabled" />
+                  <span class="radio-text"> {{language.Everyday}}</span>
+                  <span [ngClass]="!scopeFlag.configWrite ? 'toggleDisabled' : ''"><small></small></span>
+                </label>
+              </div>
+              <div class="radio-label">
+                <label class="radio-inline">
+                  <input type="radio" id="custom" [disabled]="!scopeFlag.configWrite" [(ngModel)]="customeTimeLimit"
+                    name="allEnabled" value="custom" />
+                  <span class="radio-text"> {{language.Custom}}</span>
+                  <span [ngClass]="!scopeFlag.configWrite ? 'toggleDisabled' : ''"><small></small></span>
+                </label>
+              </div>
+            </div>
+            <div>
+              <table id="EveryDay" class="time-limits-table table" *ngIf="customeTimeLimit == 'everyday'">
+                <thead>
+                  <tr>
+                    <th class="w-25">{{language.Day}}</th>
+                    <th class="w-25">{{language.From}}</th>
+                    <th class="w-25">{{language.Iq_to}}</th>
+                    <th class="w-25"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>{{language.Everyday}}</td>
+                    <td>
+                      <a *ngIf="
+                          (timelimitsList.type || !everydayStartTime) && scopeFlag.configWrite;
+                          else showTimeLimts
+                        " data-toggle="modal" class="cursor-pointer" data-target="#everyDayTimeLimitModal">
+                        {{language['Add Time Limit']}}
+                      </a>
+                      <ng-template class="row" #showTimeLimts>
+                        <div *ngIf="everydayEnabled || everydayStartTime">
+                          <div>{{ everydayStartTime | date: "hh:mm a" }}</div>
+                        </div>
+                      </ng-template>
+                    </td>
+                    <td>
+                      <div class="ccl-form" *ngIf="everydayEnabled || everydayEndTime">
+                        {{ everydayEndTime | date: "hh:mm a" }}
+                      </div>
+                    </td>
+                    <td>
+                      <div class="flex-end" *ngIf="timelimitsList.days && everydayEndTime">
+                        <div class="mr-5">
+                          <span title="{{language.edit}}" class="cursor-pointer" *ngIf="scopeFlag.configWrite"
+                            id="edit-every-day" (click)="editEveryDay(editEveryDayTimeLimitModal)">
+                            <i class="fas fa-pencil-alt"></i>
+                          </span>
+                        </div>
+                        <!-- 	<div class="mx-2 toggle-swtbtn  checkbox switcher">
+													<label for="everydayEnabledCheckBox">
+														<input type="checkbox" name="everydayEnabledCheckBox"
+															id="everydayEnabledCheckBox" [checked]="everydayEnabled"
+															[(ngModel)]="everydayEnabled" (change)="setEveryDayLimit()">
+														<span><small></small></span>
+													</label>
+												</div> -->
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="everyDayTimeLimitModal" tabindex="-1" role="dialog"
+              aria-labelledby="everyDayTimeLimtModalCenterTitle" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                  <div class="modal-header pl-7p">
+                    <h5 class="modal-title" id="everyDayTimeLimitModalLongTitle">
+                      {{language['Add Time Limit']}}
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true"></span>
+                    </button>
+                  </div>
+
+                  <div class="modal-body">
+                    <div class="ccl-form mx-2 num-input mt-2">
+                      <div class="form-group row ccl-form required">
+                        <label class="col-12" for="startTimeInput">{{language.From}}</label>
+                        <div class="col-12 position-relative">
+                          <div class="custom-datepicker">
+                            <p-calendar name="startTime" id="startTime" hourFormat="12" readonlyInput="true"
+                              [(ngModel)]="startTimeValue" [showIcon]="false" timeOnly="true" aria-required="true"
+                              aria-describedby="Time-error" aria-invalid="true">
+                            </p-calendar>
+                          </div>
+                          <div class="clock-icon-pos"><i class="far fa-clock"></i></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div class="ccl-form mx-2 num-input position-relative">
+                        <div class="form-group row ccl-form required">
+                          <label class="col-12" for="endTimeInput">{{language.To}}</label>
+                          <div class="col-12 position-relative">
+                            <div class="custom-datepicker">
+                              <p-calendar name="startTime" #Time="ngModel" id="endTime" hourFormat="12"
+                                readonlyInput="true" [(ngModel)]="endTimeValue" [showIcon]="false" timeOnly="true"
+                                aria-required="true" aria-describedby="Time-error" aria-invalid="true">
+                              </p-calendar>
+                            </div>
+                            <div class="clock-icon-pos"><i class="far fa-clock"></i></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="submit" (click)="onSubmitTimeLimit()" class="btn btn-primary py-1"
+                      data-dismiss="modal">
+                      {{language.Done}}
+                    </button>
+                    <button type="button" class="btn-default btn-dft" data-dismiss="modal">
+                      {{language.Cancel}}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <table id="custom" class="table" *ngIf="customeTimeLimit == 'custom'">
+              <thead>
+                <tr>
+                  <th class="w-10">{{language.Day}}</th>
+                  <th class="w-10">{{language.From}}</th>
+                  <th class="w-20">{{language.Iq_to}}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let days of WeekDays; let i = index">
+                  <td>
+                    <div>
+                      <ul>
+                        <li>{{ days | weekDays }}</li>
+                      </ul>
+                      <button *ngIf="
+                          timelimitsList.days &&
+                          timelimitsList.days[i]?.bedTime &&
+                          timelimitsList.days[i]?.bedTime.length != 0 && scopeFlag.configWrite
+                        " (click)="removeProfileWholeDayLimit(days)" class="btn-default btn-dft app-delete">
+                        {{language['Remove All']}}
+                      </button>
+                    </div>
+                    <!-- <div *ngIf="timelimitsList.days && timelimitsList.days[i]"
+											class="checkbox switcher">
+											<label [for]="'everyday'+i">
+												<input type="checkbox" [name]="'everyday'+i" [id]="'everyday'+i"
+													[checked]="timelimitsList.days[i].allEnabled"
+													[(ngModel)]="timelimitsList.days[i].allEnabled"
+													(change)="setWholeDayLimit(timelimitsList.days[i])">
+												<span><small></small></span>
+											</label>
+										</div> -->
+                  </td>
+                  <td>
+                    <div *ngIf="timelimitsList.days">
+                      <ul *ngFor="
+                          let bedTime of timelimitsList.days[i]?.bedTime;
+                          index as j
+                        ">
+                        <li>{{ bedTime.startTime | customAppTime }}</li>
+                      </ul>
+                      <a href="javascript:void(0)" *ngIf="
+                          timelimitsList.days[i] &&
+                          timelimitsList.days[i].bedTime.length < 5 && scopeFlag.configWrite
+                        " data-toggle="modal" data-target="#DayTimeLimitModal" (click)="
+                          dayNumber(days, timelimitsList.days[i].bedTime, true)
+                        ">
+                        {{language['Add Time Limit']}}
+                      </a>
+                      <a href="javascript:void(0)" *ngIf="!timelimitsList.days[i] && scopeFlag.configWrite"
+                        data-toggle="modal" data-target="#DayTimeLimitModal" (click)="dayNumber(days, [], true)">
+                        {{language['Add Time Limit']}}
+                      </a>
+                    </div>
+                    <a href="javascript:void(0)" *ngIf="timelimitsList.type && scopeFlag.configWrite"
+                      data-toggle="modal" data-target="#DayTimeLimitModal" (click)="dayNumber(days, [], true)">
+                      {{language['Add Time Limit']}}
+                    </a>
+                  </td>
+                  <td>
+                    <div *ngIf="timelimitsList.days && timelimitsList.days[i]">
+                      <ul *ngFor="
+                          let bedTime of timelimitsList.days[i]?.bedTime;
+                          let j = index
+                        ">
+                        <li>{{ bedTime.endTime | customAppTime }}</li>
+                        <div class="d-inline-flex float-right pos-top-m25">
+                          <!-- <div class="mx-2 checkbox switcher">
+														<label [for]="'weekDay'+j+i">
+															<input type="checkbox" [name]="'weekDay'+j+i"
+																[id]="'weekDay'+j+i" [checked]="bedTime.enable"
+																[(ngModel)]="bedTime.enable"
+																(change)="setDayLimit(bedTime,i)">
+															<span><small></small></span>
+														</label>
+													</div> -->
+                          <div class="mr-5">
+                            <span title="{{language.edit}}" class="cursor-pointer experienceiq-edit-icon"
+                              *ngIf="scopeFlag.configWrite" id="edit-every-day" (click)="
+                                editSpecificDay(editTimeLimitModal, bedTime, i)
+                              ">
+                              <i class="fas fa-pencil-alt"></i>
+                            </span>
+                          </div>
+                          <button *ngIf="scopeFlag.configWrite" (click)="removeProfileDayTime(bedTime.idx, days)"
+                            class="mx-2 btn-default btn-dft app-delete">
+                            {{language.Remove}}
+                          </button>
+                        </div>
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="modal fade" id="DayTimeLimitModal" tabindex="-1" role="dialog"
+              aria-labelledby="DayTimeLimitModal" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                  <div class="modal-header pl-7p">
+                    <h5 class="modal-title" id="DayTimeLimitModal">
+                      {{language['Add Time Limit']}}
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true"></span>
+                    </button>
+                  </div>
+
+                  <div class="modal-body">
+                    <div class="ccl-form mx-2 num-input mt-2">
+                      <div class="form-group row ccl-form required">
+                        <label class="col-12" for="startTimeInput">{{language.From}}</label>
+                        <div class="col-12 position-relative">
+                          <div class="custom-datepicker">
+                            <p-calendar name="startTime" #Time="ngModel" id="startTime" hourFormat="12"
+                              readonlyInput="true" [(ngModel)]="startTimeValue" [showIcon]="false" timeOnly="true"
+                              aria-required="true" aria-describedby="Time-error" aria-invalid="true">
+                            </p-calendar>
+                          </div>
+                          <div class="clock-icon-pos"><i class="far fa-clock"></i></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="ccl-form mx-2 num-input">
+                      <div class="form-group row ccl-form required">
+                        <label class="col-12" for="endTimeInput">{{language.To}}</label>
+                        <div class="col-12 position-relative">
+                          <div class="custom-datepicker">
+                            <p-calendar name="startTime" #Time="ngModel" id="endTime" hourFormat="12"
+                              readonlyInput="true" [(ngModel)]="endTimeValue" [showIcon]="false" timeOnly="true"
+                              aria-required="true" aria-describedby="Time-error" aria-invalid="true">
+                            </p-calendar>
+                          </div>
+                          <div class="clock-icon-pos"><i class="far fa-clock"></i></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="submit" (click)="onSubmitIndividualTimeLimit()" class="btn btn-primary py-1"
+                      data-dismiss="modal">
+                      {{language.Done}}
+                    </button>
+                    <button type="button" class="btn-default btn-dft" data-dismiss="modal">
+                      {{language.Cancel}}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Modal for edit timeLimit -->
+            <ng-template #editTimeLimitModal let-modal ariaLabelledBy="modal-edit-title">
+              <div class="modal-header">
+                <h5 class="modal-title" id="addModal">{{language['Edit Time']}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+                  <span aria-hidden="true"></span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <div class="ccl-form mx-3 num-input">
+                  <div class="form-group row ccl-form required">
+                    <label class="col-12" for="startTimeInput">{{language.From}}</label>
+                    <div class="col-12 position-relative">
+                      <div class="custom-datepicker">
+                        <p-calendar name="startTime" #Time="ngModel" id="startTime" hourFormat="12" readonlyInput="true"
+                          [(ngModel)]="editStartTimeValue" [showIcon]="false" timeOnly="true" aria-required="true"
+                          aria-describedby="Time-error" aria-invalid="true"></p-calendar>
+                      </div>
+                      <div class="clock-icon-pos"><i class="far fa-clock"></i></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="ccl-form mx-3 num-input">
+                  <div class="form-group row ccl-form required">
+                    <label class="col-12" for="endTimeInput">{{language.To}}</label>
+                    <div class="col-12 position-relative">
+                      <div class="custom-datepicker">
+                        <p-calendar name="startTime" #Time="ngModel" id="endTime" hourFormat="12" readonlyInput="true"
+                          [(ngModel)]="editEndTimeValue" [showIcon]="false" timeOnly="true" aria-required="true"
+                          aria-describedby="Time-error" aria-invalid="true"></p-calendar>
+                      </div>
+                      <div class="clock-icon-pos"><i class="far fa-clock"></i></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" (click)="confirmEditModal()" class="btn btn-primary py-1" data-dismiss="modal">
+                  {{language.Done}}
+                </button>
+                <button type="button" (click)="closeModal()" class="btn-default btn-dft" data-dismiss="modal">
+                  {{language.Cancel}}
+                </button>
+              </div>
+            </ng-template>
+            <ng-template #editEveryDayTimeLimitModal let-modal ariaLabelledBy="modal-edit-title">
+              <div class="modal-header">
+                <h5 class="modal-title" id="addModal">{{language['Edit Time']}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+                  <span aria-hidden="true"></span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <div class="ccl-form mx-3 num-input">
+                  <div class="form-group row ccl-form required">
+                    <label class="col-12" for="startTimeInput">{{language.From}}</label>
+                    <div class="col-12 position-relative">
+                      <div class="custom-datepicker">
+                        <p-calendar name="startTime" #Time="ngModel" id="startTime" hourFormat="12" readonlyInput="true"
+                          [(ngModel)]="everyDayStartTimeValue" [showIcon]="false" timeOnly="true" aria-required="true"
+                          aria-describedby="Time-error" aria-invalid="true"></p-calendar>
+                      </div>
+                      <div class="clock-icon-pos"><i class="far fa-clock"></i></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="ccl-form mx-3 num-input">
+                  <div class="form-group row ccl-form required">
+                    <label class="col-12" for="endTimeInput">{{language.Iq_to}}</label>
+                    <div class="col-12 position-relative">
+                      <div class="custom-datepicker">
+                        <p-calendar name="startTime" #Time="ngModel" id="endTime" hourFormat="12" readonlyInput="true"
+                          [(ngModel)]="everyDayEndTmeValue" [showIcon]="false" timeOnly="true" aria-required="true"
+                          aria-describedby="Time-error" aria-invalid="true"></p-calendar>
+                      </div>
+                      <div class="clock-icon-pos"><i class="far fa-clock"></i></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" (click)="submitEveryDay()" class="btn btn-primary py-1" data-dismiss="modal">
+                  {{language.Done}}
+                </button>
+                <button type="button" (click)="closeModal()" class="btn-default btn-dft" data-dismiss="modal">
+                  {{language.Cancel}}
+                </button>
+              </div>
+            </ng-template>
+          </div>
+
+          <!-- Usage -->
+
+          <div class="col-12 m-3" class="tab-pane fade" role="tabpanel" aria-labelledby="nav-Usage" id="Usage">
+            <div class="loader" *ngIf="loading">
+              <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary">
+                  <span class="sr-only">{{ language.Loading }}</span>
+                </div>
+              </div>
+            </div>
+            <section>
+              <div class="row">
+                <div class="col-md-12 sub-tabs exp-Usage">
+                  <ul id="tabs" class="nav nav-tabs">
+                    <li class="nav-item">
+                      <a data-toggle="tab" class="pl-0 nav-link active" role="tab" data-target="#DayUsage"
+                        (click)="fetchUsageData()" aria-controls="DayUsage" aria-selected="true"
+                        href="javascript:void(0)">{{language.Day}}</a>
+                    </li>
+                    <li class="nav-item">
+                      <a data-toggle="tab" data-target="#WeekUsage" class="nav-link" role="tab" aria-selected="true"
+                        aria-controls="WeekUsage" (click)="fetchWeekUsageData()"
+                        href="javascript:void(0)">{{language.Week}}</a>
+                    </li>
+                    <li class="nav-item">
+                      <a data-toggle="tab" data-target="#MonthUsage" class="nav-link" role="tab"
+                        (click)="fetchMonthUsageData()" aria-controls="MonthUsage" aria-selected="true"
+                        href="javascript:void(0)">{{language.Month}}</a>
+                    </li>
+                  </ul>
+                </div>
+                <div class="col-md-12">
+                  <div class="tab-content">
+                    <!-- Day Usage -->
+                    <div class="col-md-12" class="tab-pane show active" role="tabpanel" aria-labelledby="nav-device"
+                      id="DayUsage">
+                      <table class="experienceiq-usage-detail-list-inside table dataTable table-borderless">
+                        <thead>
+                          <tr>
+                            <th class="w-10 pl-0">{{language.Name}}</th>
+                            <th class="w-10">{{language['Duration Time']}}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="
+                              let app of profileUsage.timeUsage.usage;
+                              let i = index
+                            " class="app-title">
+                            <td class="pl-0">
+                              <div class="app-details flex-space-between">
+                                <div class="flex-start">
+                                  {{ app.name }}
+                                </div>
+                              </div>
+                            </td>
+                            <td>
+                              <div *ngIf="app.duration">
+                                {{ app.duration | minToHr }}
+                              </div>
+                            </td>
+                          </tr>
+                          <!-- 	<tr *ngIf="profileUsage.otherMin">
+														<td>
+															<div class="app-details flex-space-between">
+																<div class="flex-start">
+																	Others
+																</div>
+															</div>
+														</td>
+														<td>
+															<div> {{profileUsage.otherMin | minToHr}} </div>
+														</td>
+													</tr> -->
+
+                          <tr *ngIf="profileUsage.timeUsage.totalUsage" class="app-details bg-light-wh">
+                            <td class="px-0">
+                              <h3>{{language.Total}}</h3>
+                            </td>
+                            <td>
+                              {{ profileUsage.timeUsage.totalUsage | minToHr }}
+                            </td>
+                          </tr>
+                        </tbody>
+                        <tbody *ngIf="profileUsage.timeUsage.usage.length == 0">
+                          <tr>
+                            <td colspan="5" class="pl-0 no-data-available">
+                              {{language['No data available']}}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <!-- Week Usage -->
+                    <div class="col-12" class="tab-pane fade" role="tabpanel" aria-labelledby="nav-device"
+                      id="#WeekUsage">
+                      <table class="app-table">
+                        <thead>
+                          <tr>
+                            <th class="w-10 pl-0">{{language.Name}}</th>
+                            <th class="w-10">{{language['Duration Time']}}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="
+                              let app of profileUsage.timeUsage.usage;
+                              let i = index
+                            " class="app-title">
+                            <td>
+                              <div class="app-details flex-space-between">
+                                <div class="flex-start">
+                                  <h3>{{ app.name }}</h3>
+                                </div>
+                                <div *ngIf="app.duration">
+                                  {{ app.duration | minToHr }}
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                          <!-- 	<tr *ngIf="profileUsage.otherMin">
+														<td>
+															<div class="app-details flex-space-between">
+																<div class="flex-start">
+																	<h3> Others </h3>
+																</div>
+																<div> {{profileUsage.otherMin | minToHr}} </div>
+															</div>
+														</td>
+													</tr> -->
+                          <div *ngIf="profileUsage.timeUsage.totalUsage" class="app-details flex-space-between">
+                            <div class="flex-start">
+                              <h3>{{language.Total}}</h3>
+                            </div>
+                            <div>
+                              {{ profileUsage.timeUsage.totalUsage | minToHr }}
+                            </div>
+                          </div>
+                        </tbody>
+                        <tbody *ngIf="profileUsage.timeUsage.usage.length == 0">
+                          <tr>
+                            <td colspan="5" class="no-data-available">
+                              {{language['No data available']}}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <!-- Month Usage -->
+                    <div class="col-12" class="tab-pane fade" role="tabpanel" aria-labelledby="nav-device"
+                      id="DayUsage">
+                      <table class="app-table">
+                        <thead>
+                          <tr>
+                            <th class="w-10 pl-0">{{language.Name}}</th>
+                            <th class="w-10">{{language['Duration Time']}}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="
+                              let app of profileUsage.timeUsage.usage;
+                              let i = index
+                            " class="app-title">
+                            <td>
+                              <div class="app-details flex-space-between">
+                                <div class="flex-start">
+                                  <h3>{{ app.name }}</h3>
+                                </div>
+                                <div *ngIf="app.duration">
+                                  {{ app.duration | minToHr }}
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                          <!-- <tr *ngIf="profileUsage.otherMin">
+														<td>
+															<div class="app-details flex-space-between">
+																<div class="flex-start">
+																	<h3> Others </h3>
+																</div>
+																<div> {{profileUsage.otherMin | minToHr}} </div>
+															</div>
+														</td>
+													</tr> -->
+
+                          <div *ngIf="profileUsage.timeUsage.totalUsage" class="app-details flex-space-between">
+                            <div class="flex-start">
+                              <h3>{{language.Total}}</h3>
+                            </div>
+                            <div>
+                              {{ profileUsage.timeUsage.totalUsage | minToHr }}
+                            </div>
+                          </div>
+                        </tbody>
+                        <tbody *ngIf="profileUsage.timeUsage.usage.length == 0">
+                          <tr>
+                            <td colspan="5" class="no-data-available">
+                              {{language['No data available']}}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Staff profile details -->
+<div *ngIf="staffProfileDetail">
+  <div class="flex-space-between border-bottom">
+    <div class="profile-sec">
+      <div class="profile-img">
+        <span class="ccl-Secondary-title"> {{ staffProfileDetail.name }} </span>
+      </div>
+    </div>
+    <div class="edit-profile">
+      <span class="prf-close mx-2">
+        <a (click)="staffProfileDetail = null"><img src="assets/img/ic_close-44px.svg" /></a>
+      </span>
+    </div>
+  </div>
+
+  <section>
+    <div class="">
+      <!-- // device -->
+      <div class="col-md-12">
+        <div class="tab-content w-100">
+          <div class="col-12" class="tab-pane show active" role="tabpanel" aria-labelledby="nav-device"
+            id="staffDevice">
+            <div class="w-100 alert alert alert-danger fade show" *ngIf="showError">
+              <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+              <button type="button" id="hide-error-btn" class="close" (click)="hideError()">
+                <span></span>
+              </button>
+              <div class="d-inline-flex" [innerHtml]="errorMsg"></div>
+            </div>
+
+            <div class="w-100 alert alert alert-success fade show" *ngIf="showSuccess">
+              <button type="button" class="close" id="hide-success-btn" (click)="hideSuccess()">
+                <span></span>
+              </button>
+              <strong>
+                <div [innerHtml]="successMsg"></div>
+              </strong>
+            </div>
+
+            <div class="loader" *ngIf="loading">
+              <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary">
+                  <span class="sr-only">{{ language.Loading }}</span>
+                </div>
+              </div>
+            </div>
+            <table datatable class="table dataTable table-borderless device-prf-table"
+              [dtOptions]="tableOptionForProfileDetail">
+              <thead>
+                <tr>
+                  <th>{{language.device}}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let device of staffProfileDetail.stations">
+                  <td>
+                    <div class="about-device flex-start">
+                      <span>
+                        <img height="30px" width="30px" class="ml-1"
+                          [src]="device.deviceType | deviceImage:device.online" alt="warning" />
+                      </span>
+                      &nbsp;&nbsp;&nbsp;
+                      <div class="device-serial">
+                        <h6 class="m-0">{{ device.deviceHostName }}</h6>
+                        <span [ngClass]="device.online ? 'color-green' : 'color-grey'">{{ device.online | DeviceStatus
+                          }}</span>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr *ngIf="staffProfileDetail.stations.length == 0">
+                  <td class="text-center">{{ language['No Data Available']}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- // add people -->
+<ng-template #addSubscriberModal let-modal class="col-md-12">
+  <div class="modal-header">
+    <h5 class="modal-title" id="addModal">{{ language.Add_People }}</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body add-device-model">
+    <div class="loader" *ngIf="modalLoader">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="form-group ccl-form">
+      <div class="row">
+        <label for="account" class="col-sm-12 col-form-label">{{ language.Name }} <span class="required-field"> *
+          </span></label>
+        <div class="col-sm-12">
+          <input type="text" [(ngModel)]="createProfile.name"
+            (keyup)="gloObj.addPeopleLimitExceed = createProfile.name.trim().length > 30" id="account" placeholder="" />
+        </div>
+        <div class="col-sm-12" *ngIf="gloObj.addPeopleLimitExceed"><span class="small req-text errorMessage">
+            {{language['Please fill the name without exceeding 30 characters']}}.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-responsive repone-table" id="add-people-table">
+      <table class="dataTable" width="100%">
+        <thead>
+          <tr>
+            <th class="w-50">{{ language.device }}</th>
+            <th class="w-50">{{ language.MAC_Address }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="device" *ngFor="let device of stationList.stations">
+            <td>
+              <div class="custom-checkbox">
+                <input type="checkbox" [value]="device.profileId" (change)="onDeviceSelected($event, device)" />
+                <span class="ml-2">
+                  <img height="30px" width="30px" [src]="device.type | deviceImage" alt="warning" />
+                </span>
+                <span>
+                  <p class="m-0">
+                    <label for="device.deviceId"> {{ device.name }} </label>
+                  </p>
+                  <p class="m-0">
+                    <label for="device.deviceId">
+                      {{ device.isOnline | DeviceStatus }}
+                    </label>
+                  </p>
+                </span>
+              </div>
+            </td>
+            <td>
+              {{ device.macAddr }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <button type="button" [disabled]="!createProfile.name?.trim() || gloObj.addPeopleLimitExceed"
+      (click)="onsumbitNewUser()" class="btn-default primary px-3 px-3">
+      {{ language.Add }}
+    </button>
+    <button type="button" class="btn-default btn-dft px-3 px-3 m-2" (click)="closeModal()" data-dismiss="modal">
+      {{ language.Cancel }}
+    </button>
+  </div>
+</ng-template>
+
+<!--Edit Profile -->
+<ng-template #editProfileModal let-modal class="col-md-12">
+  <div class="modal-header">
+    <h5 class="modal-title" id="addModal">{{language['Edit people']}}</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body add-device-model">
+    <div class="loader" *ngIf="modalLoader">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="form-group ccl-form">
+      <div class="row">
+        <label for="account" class="col-sm-12 col-form-label">{{language.Name}} <span class="required-field"> *
+          </span></label>
+        <div class="col-sm-12">
+          <input type="text" [(ngModel)]="createProfile.name"
+            (keyup)="gloObj.addPeopleLimitExceed = createProfile.name.trim().length > 30" id="account" placeholder="" />
+        </div>
+        <div class="col-sm-12" *ngIf="gloObj.addPeopleLimitExceed"><span class="small req-text">
+            {{language['Please fill the name without exceeding 30 characters']}}.</span>
+        </div>
+      </div>
+    </div>
+    <button type="button" [disabled]="!createProfile.name?.trim() || gloObj.addPeopleLimitExceed"
+      (click)="onSubmitEditProfile()" class="btn-default primary px-3 px-3">
+      {{language.submit}}
+    </button>
+    <button type="button" class="btn-default btn-dft px-3 px-3 m-2" (click)="closeModal()" data-dismiss="modal">
+      {{language.Cancel}}
+    </button>
+  </div>
+</ng-template>
+
+<!-- // Add device -->
+<ng-template #addDeviceModal let-modal class="col-md-12">
+  <div class="modal-header">
+    <h5 class="modal-title" id="addModal">{{language.Add_Device}}</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body add-device-model">
+    <div class="loader" *ngIf="modalLoader">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="table-responsive repone-table">
+      <table class="dataTable" width="100%">
+        <thead>
+          <tr>
+            <th class="w-50">{{language.device}}</th>
+            <th class="w-50">{{language.MAC_Address}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="device" *ngFor="let device of stationList.stations">
+            <td>
+              <div class="custom-checkbox">
+                <input type="checkbox" [value]="device.profileId" (change)="onDeviceSelected($event, device)" />
+                <!-- &nbsp;&nbsp;&nbsp; -->
+                <span class="ml-2">
+                  <img height="30px" width="30px" [src]="device.type | deviceImage" alt="warning" />
+                </span>
+                <span>
+                  <p class="m-0">
+                    <label for="device.deviceId"> {{ device.name }} </label>
+                  </p>
+                  <p class="m-0">
+                    <label for="device.deviceId">
+                      {{ device.isOnline | DeviceStatus }}
+                    </label>
+                  </p>
+                </span>
+              </div>
+              <!-- <div class="pl-3">
+
+							</div> -->
+            </td>
+            <td>
+              {{ device.macAddr }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <button type="button" class="btn-default primary px-3 px-3" [disabled]="disableAddDeviceButton"
+      (click)="addDevicetoProfile()">
+      {{language.Add}}
+    </button>
+    <button type="button" class="btn-default btn-dft px-3 px-3 m-2" (click)="closeModal()" data-dismiss="modal">
+      {{language.Cancel}}
+    </button>
+  </div>
+</ng-template>
+
+<!-- // Add application -->
+
+<!-- <ng-template #addSubscriberModal let-modal class="col-md-12">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addModal">{{language['Add Applications']}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+      <form class="custom-form">
+        <div class="form-group ccl-form">
+            <label for="account" class="col-sm-12 col-form-label">{{language['Search Applications']}} <span class="required-field"> *
+                </span></label>
+            <div class="col-sm-12">
+                <input type="text" id="account" placeholder="Facebook">
+            </div>
+        </div>
+
+        <div class="custom-radio-box">
+            <div class="radio-label">
+
+              <label class="radio-inline">
+                <input type="radio" name="optradio">
+                <span class="radio-text">  {{language.Block}}</span>
+              </label>
+
+            </div>
+            <div class="radio-label">
+              <label class="radio-inline">
+                <input type="radio" name="optradio">
+                <span class="radio-text">  {{language.['Always allow']}} </span>
+              </label>
+            </div>
+             <div class="radio-label flex-start">
+              <label class="radio-inline">
+                <input type="radio" name="optradio">
+                <span class="radio-text">   {{language.['Always allow']}} </span>
+              </label>
+              <div class="ccl-form w-20 num-input">
+                <input type="number" name="times">
+              </div>
+              <label class="radio-inline">  {{language.Hours}}</label>
+            </div>
+        </div>
+      </form>
+
+    <button type="button" class="btn-default primary px-3 px-3">{{language.Add}}</button>
+    <button type="button" class="btn-default btn-dft px-3 px-3 m-2" (click)="closeModal()"
+          data-dismiss="modal">{{language.Cancel}}</button>
+  </div>
+</ng-template> -->
+
+<!-- // Add website -->
+
+<!-- <ng-template #addSubscriberModal let-modal class="col-md-12">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addModal">Add Website</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+      <form class="custom-form">
+        <div class="form-group ccl-form">
+            <label for="account" class="col-sm-12 col-form-label">Website URL<span class="required-field"> *
+                </span></label>
+            <div class="col-sm-12">
+                <input type="text" id="account" placeholder=" google.com">
+            </div>
+        </div>
+
+        <div class="custom-radio-box">
+            <div class="radio-label">
+
+              <label class="radio-inline">
+                <input type="radio" name="optradio">
+                <span class="radio-text">  Block</span>
+              </label>
+
+            </div>
+            <div class="radio-label">
+              <label class="radio-inline">
+                <input type="radio" name="optradio">
+                <span class="radio-text">  Always allow </span>
+              </label>
+            </div>
+             <div class="radio-label flex-start">
+              <label class="radio-inline">
+                <input type="radio" name="optradio">
+                <span class="radio-text">   Always allow </span>
+              </label>
+              <div class="ccl-form w-20 num-input">
+                <input type="number" name="times">
+              </div>
+              <label class="radio-inline">  Hours</label>
+            </div>
+        </div>
+      </form>
+
+    <button type="button" class="btn-default primary px-3 px-3">Add</button>
+    <button type="button" class="btn-default btn-dft px-3 px-3 m-2" (click)="closeModal()"
+          data-dismiss="modal">Cancel</button>
+  </div>
+</ng-template> -->
+
+<!-- // Add time limit -->
+
+<!-- // add time picker  -->
+
+<!-- <ng-template #addSubscriberModal let-modal class="col-md-12">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addModal">Add Time Limit</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+      <form class="custom-timepicker flex-start">
+
+        <div class="form-group ccl-form">
+            <label for="account" class="col-sm-12 col-form-label">From<span class="required-field"> *
+                </span></label>
+            <div class="col-sm-12">
+                <input type="text" id="account" placeholder=" 10.00 AM">
+            </div>
+        </div>
+
+        <div class="form-group ccl-form">
+            <label for="account" class="col-sm-12 col-form-label">To<span class="required-field"> *
+                </span></label>
+            <div class="col-sm-12">
+                <input type="text" id="account" placeholder="4.00 PM">
+            </div>
+        </div>
+      </form>
+
+    <button type="button" class="btn-default primary px-3 px-3">Done</button>
+    <button type="button" class="btn-default btn-dft px-3 px-3 m-2" (click)="closeModal()"
+          data-dismiss="modal">Cancel</button>
+  </div>
+</ng-template>
+-->
+
+<ng-template #addSubscriberModal let-modal class="col-md-12">
+  <div class="modal-header">
+    <h5 class="modal-title" id="addModal">{{language['Add Time Limit']}}</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form class="custom-timepicker flex-start">
+      <div class="form-group ccl-form">
+        <label for="account" class="col-sm-12 col-form-label">{{language.From}}<span class="required-field"> *
+          </span></label>
+        <div class="col-sm-12">
+          <input type="text" id="account" placeholder=" 10.00 AM" />
+        </div>
+      </div>
+
+      <div class="form-group ccl-form">
+        <label for="account" class="col-sm-12 col-form-label">{{language.Iq_to}}<span class="required-field"> *
+          </span></label>
+        <div class="col-sm-12">
+          <input type="text" id="account" placeholder="4.00 PM" />
+        </div>
+      </div>
+    </form>
+
+    <button type="button" class="btn-default primary px-3 px-3">{{language.Done}}</button>
+    <button type="button" class="btn-default btn-dft px-3 px-3 m-2" (click)="closeModal()" data-dismiss="modal">
+      {{language.Cancel}}
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #channelchangesModal let-modal class="col-md-12 custom-modal priority_modal">
+  <div class="modal-header">
+    <h5 class="modal-title" id="addModal">
+      {{ chanelChangesModelTitle }}<br /><span>{{ language["You can set upto 3 traffic priority schedules"] }}
+      </span>
+    </h5>
+
+    <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+      <span aria-hidden="true"></span>
+    </button> -->
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeTrfficePriorityModal()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="ccl-form">
+      <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-12 pr-5">
+          <div class="border-bottom">
+            <div class="ccl-Secondary-title user-name">{{ language.Details }}</div>
+          </div>
+
+          <div class="mt-3">
+            <div class="form-group ccl-form">
+              <label class="col-form-label"> {{ language.Name }}<span class="error">*</span> </label>
+              <input class="form-control" id="text" type="text" name="name" [(ngModel)]="profiledata.name"
+                #name="ngModel" (keyup)="checkName($event)" required />
+              <!-- <div class="errorMessage">
+                  This field is required
+              </div> -->
+              <div *ngIf="
+                  (name.invalid && (name.dirty || name.touched)) ||
+                  scheduleNameError
+                " class="">
+                <small *ngIf="name.errors.required" class="ccl-error">
+                  {{language.Name_Is_Required}}
+                </small>
+              </div>
+            </div>
+            <div class="cor-col ccl-form">
+              <label class="col-form-label">
+                {{ language.Scheduled_Time }}
+              </label>
+              <div *ngIf="scheduledTimeError" class="">
+                <small class="ccl-error">
+                  {{ language["Start time should be earlier than end time"] }}
+                </small>
+              </div>
+              <div class="flex-start mb-3">
+                <div class="time-pick mr-3">
+                  <label> {{ language.From }} : </label>
+                  <div class="custom-datepicker">
+                    <p-calendar name="startTime" #Time="ngModel" id="endTime" hourFormat="12" readonlyInput="true"
+                      [(ngModel)]="editStartTimeValue" (ngModelChange)="setEndTimeEvent()" [showIcon]="false"
+                      timeOnly="true" aria-required="true" aria-describedby="Time-error" aria-invalid="true">
+                    </p-calendar>
+                    <span class="p-time-icon2"><i class="far fa-clock"></i></span>
+                  </div>
+                </div>
+
+                <div class="time-pick">
+                  <label> {{ language.Iq_to }} : </label>
+                  <div class="custom-datepicker">
+                    <p-calendar name="startTime" #Time="ngModel" id="endTime" hourFormat="12" readonlyInput="true"
+                      [minDate]="setEndTimeEvent('get')" [(ngModel)]="editEndTimeValue" [showIcon]="false"
+                      timeOnly="true" aria-required="true" aria-describedby="Time-error" aria-invalid="true">
+                    </p-calendar>
+                    <span class="p-time-icon2"><i class="far fa-clock"></i></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="cor-col ccl-form">
+              <label class="col-form-label">
+                {{ language.Scheduled_Days }}
+              </label>
+              <div *ngIf="scheduleDaysError" class="">
+                <small class="ccl-error">
+                  {{ language["Select atleast one day."] }}
+                </small>
+              </div>
+
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item" *ngFor="let day of defaultDaysarray; index as i">
+                  <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input w-auto z-1" id="check-{{ i }}"
+                      (change)="addDays($event, i)" [checked]="day.checked" />
+                    <label class="custom-control-label" for="check-{{ i }}">{{
+                      day.day
+                      }}</label>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="flex-start mt-3">
+            <button class="btn-default primary mr-2" *ngIf="scopeFlag.configWrite" [disabled]="modalLoader"
+              (click)="saveshedule(); modalLoader = true;">
+              {{ ModelButton }}
+            </button>
+            <!-- <button class="btn-default transparant " (click)="closeModal()"> Cancel </button> -->
+            <button class="btn-default transparant" (click)="closeTrfficePriorityModal()">
+              {{ language.Cancel }}
+            </button>
+          </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12">
+          <div class="border-bottom">
+            <div class="user-name ccl-Secondary-title">{{ language.Priorities }}</div>
+          </div>
+          {{
+          language.Set_prioritization_highest_priority_lowest_priority
+          }}
+
+          <!-- <div class="file-drag mt-4">
+              <div class="file-drg-name" *ngFor = "let device of profile">
+                <span> {{ device.description }}</span>
+                <span class="bar-icon">  <i class="fas fa-bars"></i> </span>
+              </div> -->
+          <!-- <div class="file-drag mt-4">
+
+            <div cdkDropList #pendingList="cdkDropList" [cdkDropListData]="profile"
+              class="file-drg-name" (cdkDropListDropped)="drop($event)">
+              <div class="item-box" *ngFor="let item of profile" cdkDrag>{{item.description}}</div>
+            </div>
+          </div> -->
+          <div class="file-drag mt-4" cdkDropList #pendingList="cdkDropList" [cdkDropListData]="profile"
+            (cdkDropListDropped)="drop($event)">
+            <div class="file-drg-name" *ngFor="let item of profile" cdkDrag>
+              <span> {{ item.description }}</span>
+              <span class="bar-icon"> <i class="fas fa-bars"></i> </span>
+            </div>
+          </div>
+
+          <!-- <div class="file-drg-name">
+                <span> Video & Music </span>
+                <span class="bar-icon">  <i class="fas fa-bars"></i> </span>
+              </div>
+              <div class="file-drg-name">
+                <span> Gaming </span>
+                <span class="bar-icon">  <i class="fas fa-bars"></i> </span>
+              </div>
+              <div class="file-drg-name">
+                <span> Browsing </span>
+                <span class="bar-icon">  <i class="fas fa-bars"></i> </span>
+              </div>
+              <div class="file-drg-name">
+                <span> File Transfers </span>
+                <span class="bar-icon">  <i class="fas fa-bars"></i> </span>
+              </div>
+              <div class="file-drg-name">
+                <span> P2P File Sharing </span>
+                <span class="bar-icon">  <i class="fas fa-bars"></i> </span>
+              </div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #PrioritiesModal let-modal class="col-md-12 custom-modal">
+  <div class="modal-header mt-3">
+    <h5 class="modal-title" id="addModal">
+      {{ language.Add_Traffic_Priority_Schedule }}<br />
+      <span>{{
+        language.Set_prioritization_highest_priority_lowest_priority
+        }}</span>
+    </h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="ccl-form">
+      <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+          <div class="border-bottom">
+            <div class="ccl-Secondary-title user-name">{{ language.Priorities }}</div>
+          </div>
+          <div class="file-drag mt-4" cdkDropList #pendingList="cdkDropList" [cdkDropListData]="profile"
+            (cdkDropListDropped)="drop($event)">
+            <div class="file-drg-name" *ngFor="let item of profile" cdkDrag>
+              <span> {{ item.description }}</span>
+              <span class="bar-icon"> <i class="fas fa-bars"></i> </span>
+            </div>
+          </div>
+
+          <!-- <div class="file-drag mt-4">
+              <div class="file-drg-name">
+                <span> Work </span>
+                <span class="bar-icon">  <i class="fas fa-bars"></i> </span>
+              </div>
+              <div class="file-drg-name">
+                <span> Video & Music </span>
+                <span class="bar-icon">  <i class="fas fa-bars"></i> </span>
+              </div>
+              <div class="file-drg-name">
+                <span> Gaming </span>
+                <span class="bar-icon">  <i class="fas fa-bars"></i> </span>
+              </div>
+              <div class="file-drg-name">
+                <span> Browsing </span>
+                <span class="bar-icon">  <i class="fas fa-bars"></i> </span>
+              </div>
+              <div class="file-drg-name">
+                <span> File Transfers </span>
+                <span class="bar-icon">  <i class="fas fa-bars"></i> </span>
+              </div>
+              <div class="file-drg-name">
+                <span> P2P File Sharing </span>
+                <span class="bar-icon">  <i class="fas fa-bars"></i> </span>
+              </div>
+            </div> -->
+
+          <div class="flex-start mt-3">
+            <button class="btn-default primary mr-2" *ngIf="scopeFlag.configWrite" (click)="UpdateDefaultProfile()">
+              {{ language.Save }}
+            </button>
+            <button class="btn-default transparant" (click)="closeModal()">
+              {{ language.Cancel }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #addDevicePrioritiesModal let-modal class="col-md-12">
+  <div class="modal-header d-block">
+    <h5 class="modal-title" id="addModal">
+      {{ language["Add Device to Prioritize"] }}
+    </h5>
+    <p class="mb-0" *ngIf="currentDevice.length >= 1">
+      {{ language["Up to 5 devices may be prioritized"] }}
+    </p>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body add-device-model">
+    <div class="w-100 alert alert alert-danger fade show" *ngIf="isdevError">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+      <button type="button" class="close" id="hide-error-btn" (click)="isdevError = false">
+        <span></span>
+      </button>
+      <div class="d-inline-flex" [innerHtml]="warningMessage"></div>
+    </div>
+    <div class="loader" *ngIf="modalLoader">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="table-responsive repone-table" *ngIf="currentDevice.length >= 1; else nrf">
+      <table class="dataTable" width="100%">
+        <thead>
+          <tr>
+            <th class="w-50">{{ language.device }}</th>
+            <th class="w-50">{{ language.MAC_Address }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="device" *ngFor="let device of currentDevice">
+            <td>
+              <div class="options-menu-item custom-checkbox">
+                <input type="checkbox" aria-label="Checkbox for following text input"
+                  (change)="checkBoxValue($event, device)" />
+                <span class="ml-3">
+                  <img height="30px" width="30px" [src]="iconimage(device['type'], 'online')" alt="warning" />
+                </span>
+                <span>
+                  <p class="m-0">
+                    <label for="device.deviceId"> {{ device.name }} </label>
+                  </p>
+                  <p class="m-0">
+                    <label for="device.deviceId"> {{language.Online}} </label>
+                  </p>
+                </span>
+              </div>
+            </td>
+            <td>
+              {{ device.macAddr }}
+            </td>
+          </tr>
+
+          <!-- <tr id="device">
+						<td>
+
+              <div class="options-menu-item custom-checkbox">
+                <input type="checkbox" aria-label="Checkbox for following text input">
+                <span class="ml-3">
+                  <img height="30px" width="30px" src="assets/img/tv_grey.svg">
+                </span>
+                <span>
+                  <p class="m-0"><label for="device.deviceId"> LG V35 ThinQ </label></p>
+                  <p class="m-0">
+                    <label for="device.deviceId"> Online </label>
+                  </p>
+                </span>
+              </div>
+
+
+
+						</td>
+						<td>
+							00:57:c1:d0:32:40
+						</td>
+					</tr>
+          <tr id="device">
+						<td>
+
+              <div class="options-menu-item custom-checkbox">
+                <input type="checkbox" aria-label="Checkbox for following text input">
+                <span class="ml-3">
+                  <img height="30px" width="30px" src="assets/img/tv_grey.svg">
+                </span>
+                <span>
+                  <p class="m-0"><label for="device.deviceId"> LG V35 ThinQ </label></p>
+                  <p class="m-0">
+                    <label for="device.deviceId"> Online </label>
+                  </p>
+                </span>
+              </div>
+
+
+
+						</td>
+						<td>
+							00:57:c1:d0:32:40
+						</td>
+					</tr>			<tr id="device">
+						<td>
+
+              <div class="options-menu-item custom-checkbox">
+                <input type="checkbox" aria-label="Checkbox for following text input">
+                <span class="ml-3">
+                  <img height="30px" width="30px" src="assets/img/tv_grey.svg">
+                </span>
+                <span>
+                  <p class="m-0"><label for="device.deviceId"> LG V35 ThinQ </label></p>
+                  <p class="m-0">
+                    <label for="device.deviceId"> Online </label>
+                  </p>
+                </span>
+              </div>
+
+
+
+						</td>
+						<td>
+							00:57:c1:d0:32:40
+						</td>
+					</tr>			<tr id="device">
+						<td>
+
+              <div class="options-menu-item custom-checkbox">
+                <input type="checkbox" aria-label="Checkbox for following text input">
+                <span class="ml-3 mr-2">
+                  <img height="30px" width="30px" src="assets/img/tv_grey.svg">
+                </span>
+                <span>
+                  <p class="m-0"><label for="device.deviceId"> LG V35 ThinQ </label></p>
+                  <p class="m-0">
+                    <label for="device.deviceId"> Online </label>
+                  </p>
+                </span>
+              </div>
+
+						</td>
+						<td>
+							00:57:c1:d0:32:40
+						</td>
+					</tr> -->
+        </tbody>
+      </table>
+      <button type="button" id="addDevice" class="btn-default primary px-3 px-3" (click)="AddDevice()">
+        {{ language.Add_Devices }}
+      </button>
+      <button type="button" class="btn-default btn-dft px-3 px-3 m-2" (click)="closeModal()" data-dismiss="modal">
+        {{ language.Cancel }}
+      </button>
+    </div>
+    <ng-template #nrf>
+      <div class="text-center">
+        {{ language["No devices available"] }}
+      </div>
+    </ng-template>
+  </div>
+</ng-template>
+
+<ng-template #deleteAppWeb let-modal ariaLabelledBy="modal-edit-title">
+  <div class="modal-header">
+    <h5 class="modal-title" id="addModal">{{language.Delete}}</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="ccl-form mx-3 num-input">
+      {{language['Are you sure you want to delete']}}?
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="submit" (click)="deleteWebApp(); closeModal()" class="btn btn-primary py-1" data-dismiss="modal">
+      {{language.Delete}}
+    </button>
+    <button type="button" (click)="closeModal()" class="btn-default btn-dft" data-dismiss="modal">
+      {{language.Cancel}}
+    </button>
+  </div>
+</ng-template>
+<ng-template #RecalibratePrioritiesModal let-modal ariaLabelledBy="modal-edit-title">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body mt-4 px-3">
+    <div class="w-100 d-flex">
+      <div class="icon alert-max-width">
+        <img src="../../../../assets/img/ic_warning-36px.svg" alt="icon here" />
+      </div>
+      <div class="al-content">
+        <h5 class="f-size-24"> {{language['Are you sure you want to recalibrate Priorities']}}?</h5>
+        <p>{{language['This action cannot be undone and should only be used in the following scenarios']}}:</p>
+        <ul class="pl-2">
+          <li>1. {{language['If the subscriber upgrades or downgrades their data plan']}}</li>
+          <li>2. {{language['If the subscriber has had extremely low performance over a prolonged period of time and it
+            has been recently resolved']}}</li>
+        </ul>
+        <div class="w-100 mt-3">
+          <button type="submit" (click)="ExIQPrioritiesReset(); closeModal()" class="btn btn-primary"
+            data-dismiss="modal">
+            {{language['Re-Calibrate Priorities']}}
+          </button>
+          <button type="button" (click)="closeModal()" class="btn link-button" data-dismiss="modal">
+            {{language.Cancel}}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- <div class="modal-footer justify-flex-start">
+    
+  </div> -->
+</ng-template>

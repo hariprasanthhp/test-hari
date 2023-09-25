@@ -1,0 +1,60 @@
+<div class="container mh-65 position-relative">
+    <div class="loader" *ngIf="!dataAvailable">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    </div>
+    <div class="w-100 alert alert-danger  fade show" *ngIf="error">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+        <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+        <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+    </div>
+
+    <!--------------- Row for Title & Back Button --------------->
+    <div class="row my-3">
+        <div class="col-md-8">
+            <div class="ccl-title">{{orgName}}</div>
+        </div>
+        <div class="col-md-4">
+            <div class="text-right"><a class="back-text" (click)=goToOrgList();><i class="fa fa-angle-left mr-1"
+                        aria-hidden="true"></i>
+                    {{language.backtoorg}} </a></div>
+        </div>
+    </div>
+    <!--------------- Row for Title & Back Button End --------------->
+    <!--------------- Row for Organization Secured  --------------->
+    <div class="row my-3">
+        <div class="col-md-12" *ngIf="dataAvailable">
+            <table id="secure-access-list" width="100%" datatable [dtOptions]="tableOptions"
+                class="row-border hover table-alter">
+                <thead class="">
+                    <tr>
+                        <th>{{language.users}}</th>
+                        <th>{{language.accesstype}}</th>
+                        <th>{{language.duration}}</th>
+                        <th>{{language.action}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr id="{{item.id}}" *ngFor="let item of securedTableData">
+                        <td>{{item.username}}</td>
+                        <td>
+                            {{(checkType(item.type) == 'Read and Write' ) ? language['Read and Write'] : language['Read
+                            only'] }}
+                        </td>
+                        <td>{{checkExpiry(item)}}</td>
+                        <td class="actions" style="white-space: nowrap;">
+                            <button class="" (click)="gotoSecuredAccessData(item)"
+                                style="font-size: 12px;border: none;background-color: transparent">
+                                <img src="assets/images/user_secure_access_icon.png">
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!--------------- Row for Organization Secured End --------------->
+</div>

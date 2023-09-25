@@ -1,0 +1,299 @@
+.modal.fade .modal-dialog {
+  border-radius: 26px;
+  max-width    : 75% !important;
+}
+
+
+.stepper-main {
+  width          : 100%;
+  display        : flex;
+  justify-content: center;
+  align-items    : center;
+  flex-direction : column;
+  position       : relative;
+}
+
+.stepper {
+  width   : 100%;
+  position: relative;
+
+  .step {
+    position        : relative;
+    border          : 1px solid #0279ff;
+    background-color: #ffffff;
+    height          : 32px;
+    min-width       : 100px;
+    padding         : 0px 6px !important;
+    line-height     : normal;
+    margin-bottom   : 5px;
+    cursor          : pointer;
+    padding-left    : 25px !important;
+
+    &:first-child {
+      border-radius             : 26px;
+      border-top-right-radius   : 0;
+      border-bottom-right-radius: 0px;
+    }
+
+    &::before {
+      content      : "";
+      position     : absolute;
+      width        : 0;
+      height       : 32px;
+      border-top   : 15px solid transparent;
+      border-bottom: 15px solid transparent;
+      border-left  : 16px solid #fff;
+      top          : -1px;
+      right        : -15px;
+      z-index      : 500;
+    }
+
+    &::after {
+      content      : "";
+      width        : 0;
+      height       : 32px;
+      position     : absolute;
+      border-top   : 15px solid transparent;
+      border-bottom: 15px solid transparent;
+      border-left  : 16px solid #0279ff;
+      top          : -1px;
+      right        : -16px;
+      z-index      : 300;
+    }
+  }
+
+}
+
+.step-success {
+  border-color: #82bf00 !important;
+}
+
+.step-success::before {
+  border-left-color: #82bf00 !important;
+}
+
+.step-success::after,
+.step-active::after {
+  border-left-color: #fff !important;
+}
+
+.step-active::before {
+  border-left-color: #0279ff !important;
+}
+
+.step-active {
+  background: #0279ff !important;
+  color     : #ffffff !important;
+}
+
+.step-success {
+  background: #82bf00 !important;
+  color     : #ffffff !important;
+}
+
+// disabled
+
+.step:disabled {
+  cursor      : not-allowed !important;
+  background  : #ffffff !important;
+  border-color: #0279ff !important;
+}
+
+.step-success:disabled {
+  background  : #82bf00 !important;
+  border-color: #82bf00 !important;
+}
+
+.step-active:disabled {
+  background  : #0279ff !important;
+  border-color: #0279ff !important;
+}
+
+.back-arrow img {
+  position: relative;
+  left    : -4px;
+  top     : -2px;
+}
+
+.close-icon {
+  padding-left: 0.5rem;
+  cursor      : pointer;
+}
+
+/*new stepper*/
+.stepper-main {
+  width          : 100%;
+  display        : flex;
+  justify-content: center;
+  flex-direction : column;
+  position       : relative;
+}
+
+.stepper-ui {
+  display   : flex;
+  list-style: none;
+  margin    : 0 0 10px 0;
+  padding   : 0;
+  overflow  : hidden;
+
+  li {
+    button {
+      padding         : 0px 10px 0px 30px;
+      // background      : #ffffff;
+      color           : #1A1F22;
+      position        : relative;
+      height          : 32px;
+      // min-width    : 120px;
+      border-top      : 1px solid #0279ff;
+      border-bottom   : 1px solid #0279ff;
+      border-right    : 0px !important;
+      border-left     : 0px !important;
+      outline         : none !important;
+
+      span {
+        position: relative;
+        z-index : 2;
+      }
+
+      &::after {
+        content                : "";
+        width                  : 30px;
+        height                 : 100%;
+        background             : transparent;
+        position               : absolute;
+        top                    : 0;
+        right                  : -10px;
+        transform              : rotate(48deg);
+        z-index                : 1;
+        border                 : 1px ridge transparent;
+        border-top-color       : #0279ff;
+        border-right-color     : #0279ff;
+        border-top-right-radius: 5px;
+      }
+
+      &.step-current,
+      &.step-done {
+        color: #ffffff;
+      }
+
+      &.step-current,
+      &.step-current::after {
+        background-color: #0279ff !important;
+      }
+
+      &.step-done {
+        background-color: #82bf00 !important;
+        border-color    : #82bf00;
+
+        &::after {
+          background-color: #82bf00 !important;
+        }
+        &:disabled{
+          background-color: #82bf00 !important;
+          border-color    : #82bf00 !important;
+        }
+      }
+
+      &.step-done::after {
+        border-top-color  : #fff !important;
+        border-right-color: #fff !important;
+        border-style      : solid;
+      }
+
+      &.step-current::after {
+        border-top-color  : #0279ff !important;
+        border-right-color: #0279ff !important;
+        border-style      : solid;
+      }
+    }
+
+    &:first-child button {
+      border-top-left-radius   : 30px;
+      border-bottom-left-radius: 30px;
+    }
+  }
+}
+button:disabled {
+  background: transparent !important;
+  border-color: #0279ff !important;
+  cursor    : not-allowed;
+  color     : #4c4c4c;
+}
+.stepper-ui {
+  li {
+    button{
+      background-color: #F5FAFF;
+      color: #0279ff;
+      &::after{
+        background-color: #F5FAFF;
+      }
+      &::before{
+        content: '';
+        position: absolute;
+        right: 0;
+        top: -1px;        
+        width: 20px;
+        height: 32px;
+        background-color: transparent;
+        border-top:1px solid #0279ff;
+        border-bottom:1px solid #0279ff;
+        z-index: 9;
+      }
+      &:disabled{
+        &::after{
+          background-color: #ffffff;
+        }
+        color: #1A1F22;
+      }
+      &.step-current:disabled,
+      &.step-done:disabled{
+        span{
+          opacity: 0.8;
+          color: #ffffff !important;
+        }
+      }
+      &.step-current,
+      &.step-done{
+        &::before{
+          display: none;
+        }
+      }
+    }
+  }
+}
+/*new stepper end*/
+.pos-abs-right{
+  position: absolute; right: 0px;
+}
+.btn-overflow-tooltip{
+max-width: 155px;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+}
+.stepper-main{
+button {
+  span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+  }
+  }
+}
+#add-summary {
+span {
+  max-width: 100px;
+}
+}
+.min-h-300px{min-height: 300px;}
+
+.subscriber-name {
+  font-size: 42px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: 53px;
+  letter-spacing: 0em;
+  text-align: left;
+  color: #1a1f22;
+}

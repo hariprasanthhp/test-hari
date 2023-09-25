@@ -1,0 +1,51 @@
+<div class="loader" *ngIf="loading">
+    <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+            <span class="sr-only">{{language.Loading}}</span>
+        </div>
+    </div>
+</div>
+<div class="container sys-contain px-0">
+    <form [formGroup]="staticGroupForm">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <!-- <div class="cco-secondary-title"> {{language['Static Groups']}} </div> -->
+                <div class="ccl-form needs-validation">
+                    <div class="ccl-form">
+                        <label class="col-form-label"> {{ language.Add_Staticgrps }} </label>
+                        <div class="col-12 col-lg-6">
+                            <div class="form-check form-check-inline">
+                                <input type="radio" [attr.disabled]="disableGroup ? '' : null" id="staticGroupYes" name="static" formControlName="static"
+                                    [value]="true" (click)="changeStatic()">
+                                <label class="form-check-label mx-2" for="staticGroupYes">{{ language.Yes }}</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" [attr.disabled]="disableGroup ? '' : null" id="staticGroupNo" name="static" formControlName="static"
+                                    [value]="false" (click)="changeStatic()">
+                                <label class="form-check-label mx-2" for="staticGroupNo">{{language.No }}</label>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group" *ngIf="staticGroupForm.value.static">
+                        <label class="col-form-label"> {{language.Static_Groups}} <span class="error">*</span></label>
+                        <div class="custom-selectbox" class="w-100">
+                            <ng-select id="deviceDataList" [items]="deviceDataList" bindLabel="name" bindValue="_id"
+                                [multiple]="true" placeholder="" formControlName="staticGroupList"
+                                (change)="systemchange(); validateStaticGroups();" [clearable]="true"
+                                [searchable]="true">
+                            </ng-select>
+                            <div *ngIf="staticGroupError" class="">
+                                <div><small class="mandatory-msg">{{language['Please add at least one static group']}}</small>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,35 @@
+:host ::ng-deep .dataTables_empty {
+  display: none;
+}
+
+.no-data-available {
+  text-align: center;
+}
+
+.configuration-files-table {
+  table {
+    width: 100% !important;
+
+    tbody {
+      tr {
+        td {
+          word-break: break-all;
+        }
+      }
+    }
+  }
+
+}
+
+.actions a {
+  font-size: 16px;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(255, 255, 255, 0) !important;
+}
+
+.table-striped>tbody>tr:nth-child(odd)>td {
+  background-color: #ffff !important;
+}
+.actions a.fa-trash-o{text-decoration: none;}

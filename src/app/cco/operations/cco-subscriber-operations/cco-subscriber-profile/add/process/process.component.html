@@ -1,0 +1,922 @@
+<section class="profile-start-wizard pb-4">
+  <div class="row">
+    <div class="w-100 alert alert-danger  fade show my-3" *ngIf="error">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+      <button type="button" class="close" (click)=" error = false"><span></span></button>
+      <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+    </div>
+
+    <div class="w-100 alert alert-success fade show my-3" *ngIf="success">
+      <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+      <button type="button" class="close" (click)="success = false"><span></span></button>
+      <div [innerHtml]="successInfo"></div>
+    </div>
+  </div>
+  <div class="loader" *ngIf="loading">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary">
+        <span class="sr-only">{{ language.Loading }}</span>
+      </div>
+    </div>
+  </div>
+  <h3 class="net-ops-secondary-title">
+    <!-- {{ language.Step_2 }}- {{ language.Build_Profile }} -->
+  </h3><br>
+
+  <form [formGroup]="myForm">
+    <div class="form-group ccl-form row">
+      <label id="typeofprofile" class="col-2 control-label mand-field pr-2">{{ language["Select the profile"]}} <span
+          class="required-field">*</span></label>
+
+      <div class="col-10" *ngIf="isCOC" >
+        <!-- <div class="loader" *ngIf="loading">
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border text-primary">
+                            <span class="sr-only">{{ language.Loading }}</span>
+                        </div>
+                    </div>
+                </div> -->
+        <select class="ccl-form form-control form-control-sm" formControlName="typeofprofile"  
+          (change)="ontypechange($event.target.value)" [attr.disabled]="name ? '' : null" [ngClass]="{'disableselect': name == true} ">
+          <option value="service_Definition_Profile"> {{ language["Service Definition Template"] }}</option>
+          <option value="subscriber_profile"> {{ language["Service Profile"] }}</option>
+          <option value="bandWidth_profile"> {{ language["bandWidth_profile"] }}</option>
+          <optgroup label="{{language['Video Service Profile']}}" class="text-indent-9">
+            <ng-container>
+              <option value="oui_profile" class="text-indent-18">
+                {{language["Oui Match List Profile"]}}
+              </option>
+              <option value="Multicast_Range_Profile" class="text-indent-18">
+                {{language["Multicast Range Profile"]}}
+              </option>
+              <!-- <option value="Multicast_Vlan_Profile" class="text-indent-18">
+                {{language["Multicast VLAN Profile"]}}
+              </option> -->
+            </ng-container>
+          </optgroup>
+          <!-- <option value="oui_profile">{{language["Oui Match List Profile"]}}</option>
+                    <option value="Multicast_Range_Profile">{{language["Multicast Range Profile"]}}</option>
+                    <option value="Multicast_Vlan_Profile">{{language["Multicast VLAN Profile"]}} </option> -->
+          <!-- <option value="Data Service">Data Service</option>
+                    <option value="Voice Service">Voice Service</option>
+                    <option value="Video Service">Video Service</option> -->
+        </select>
+        <!-- <select class="ccl-form form-control form-control-sm" formControlName="typeofprofile"  *ngIf="!dev"
+          (change)="ontypechange($event.target.value)" [attr.disabled]="name ? '' : null" [ngClass]="{'disableselect': name == true} ">
+          <option value="service_Definition_Profile"> {{ language["Service Definition Template"] }}</option>
+          <option value="subscriber_profile"> {{ language["Service Profile"] }}</option>
+          <option value="bandWidth_profile"> {{ language["bandWidth_profile"] }}</option>
+        </select> -->
+        <div class="errorMessage" *ngIf="
+                (myForm?.controls['typeofprofile']?.touched &&
+                  (myForm?.controls['typeofprofile']?.invalid ||
+                    myForm?.controls['typeofprofile']?.errors?.required)) ||
+                (!addProfileObj.buildProfile?.isvalid && myForm?.controls['typeofprofile']?.invalid)
+              ">
+          <p>{{ language["This field is required"] }}.</p>
+        </div>
+
+      </div>
+      <div class="col-10" *ngIf="!isCOC" >
+        <!-- <div class="loader" *ngIf="loading">
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border text-primary">
+                            <span class="sr-only">{{ language.Loading }}</span>
+                        </div>
+                    </div>
+                </div> -->
+        <select class="ccl-form form-control form-control-sm" formControlName="typeofprofile"  
+          (change)="ontypechange($event.target.value)" [attr.disabled]="name ? '' : null" [ngClass]="{'disableselect': name == true} ">
+          <option value="service_Definition_Profile"> {{ language["Service Definition Template"] }}</option>
+          <option value="subscriber_profile"> {{ language["Service Profile"] }}</option>
+          <optgroup label="{{language['Video Service Profile']}}" class="text-indent-9">
+            <ng-container>
+              <option value="oui_profile" class="text-indent-18">
+                {{language["Oui Match List Profile"]}}
+              </option>
+              <option value="Multicast_Range_Profile" class="text-indent-18">
+                {{language["Multicast Range Profile"]}}
+              </option>
+              <!-- <option value="Multicast_Vlan_Profile" class="text-indent-18">
+                {{language["Multicast VLAN Profile"]}}
+              </option> -->
+            </ng-container>
+          </optgroup>
+          <!-- <option value="oui_profile">{{language["Oui Match List Profile"]}}</option>
+                    <option value="Multicast_Range_Profile">{{language["Multicast Range Profile"]}}</option>
+                    <option value="Multicast_Vlan_Profile">{{language["Multicast VLAN Profile"]}} </option> -->
+          <!-- <option value="Data Service">Data Service</option>
+                    <option value="Voice Service">Voice Service</option>
+                    <option value="Video Service">Video Service</option> -->
+        </select>
+        <!-- <select class="ccl-form form-control form-control-sm" formControlName="typeofprofile"  *ngIf="!dev"
+          (change)="ontypechange($event.target.value)" [attr.disabled]="name ? '' : null" [ngClass]="{'disableselect': name == true} ">
+          <option value="service_Definition_Profile"> {{ language["Service Definition Template"] }}</option>
+          <option value="subscriber_profile"> {{ language["Service Profile"] }}</option>
+          <option value="bandWidth_profile"> {{ language["bandWidth_profile"] }}</option>
+        </select> -->
+        <div class="errorMessage" *ngIf="
+                (myForm?.controls['typeofprofile']?.touched &&
+                  (myForm?.controls['typeofprofile']?.invalid ||
+                    myForm?.controls['typeofprofile']?.errors?.required)) ||
+                (!addProfileObj.buildProfile?.isvalid && myForm?.controls['typeofprofile']?.invalid)
+              ">
+          <p>{{ language["This field is required"] }}.</p>
+        </div>
+
+      </div>
+    </div>
+    <div *ngIf="isMulticastRange">
+      <form [formGroup]="MulticastRangeForm">
+        <div class="form-group ccl-form row px-3">
+          <div class="w-100 cco-secondary-title border-bottom">
+            {{language["Multicast Range Profile"]}}
+          </div>
+        </div>
+        <div class="form-group ccl-form row">
+          <label id="totalno" class="col-2 control-label">
+            {{language['Total Number of Multicast Range Filters']}}</label>
+          <div class="col-10">
+            <ng-select formControlName="totalno" [(ngModel)]="addProfileObj.buildProfile.property.totalno"
+              [items]="MulticastRange" bindValue="id" bindLabel="id" class="selectboxwidth" [clearable]="false"
+              [searchable]="false" (ngModelChange)="MulticastRangeChange()">
+            </ng-select>
+          </div>
+        </div>
+        <div formArrayName="filters" *ngFor="let item of MulticastRangeForm.get('filters')['controls']; let i = index;">
+          <div [formGroupName]="i">
+            <div class="form-group ccl-form row">
+              <label class="col-2 control-label mand-field">{{language[MulticastRangetext[i][0]]}} <span
+                  class="required-field">*</span></label>
+              <div class="col-10">
+                <input class="form-control-sm" formControlName="start" placeholder="" type="text">
+                <div class="errorMessage"
+                  *ngIf="multirangevalid[i].get('start').touched && multirangevalid[i].get('start').errors?.ipaddress && !multirangevalid[i].get('start').errors?.required ">
+                  <p>{{language['Please enter the valid IP Address']}}</p>
+                </div>
+                <div class="errorMessage"
+                  *ngIf="multirangevalid[i].get('start').touched && multirangevalid[i].get('start').errors?.ipv4 && !multirangevalid[i].get('start').errors?.required ">
+                  <p>{{language['New_Profile_Validation9']}}</p>
+                </div>
+                <div class="errorMessage"
+                  *ngIf="!addProfileObj.buildProfile?.isvalid && multirangevalid[i].get('start').errors?.required ">
+                  <p>{{ language["This field is required"] }}.</p>
+                </div>
+              </div>
+            </div>
+            <div class="form-group ccl-form row">
+              <label class="col-2 control-label mand-field">{{language[MulticastRangetext[i][1]]}} <span
+                  class="required-field">*</span></label>
+              <div class="col-10">
+                <input class="form-control-sm" formControlName="end" placeholder="" type="text">
+                <div class="errorMessage"
+                  *ngIf="multirangevalid[i].get('end').touched && multirangevalid[i].get('end').errors?.ipaddress && !multirangevalid[i].get('end').errors?.required ">
+                  <p>{{language['Please enter the valid IP Address']}}</p>
+                </div>
+                <div class="errorMessage"
+                  *ngIf="multirangevalid[i].get('end').touched && multirangevalid[i].get('end').errors?.ipv4 && !multirangevalid[i].get('end').errors?.required ">
+                  <p>{{language['New_Profile_Validation9']}}</p>
+                </div>
+                <div class="errorMessage"
+                  *ngIf="!addProfileObj.buildProfile?.isvalid && multirangevalid[i].get('end').errors?.required ">
+                  <p>{{language["This field is required"]}}.</p>
+                </div>
+                <div class="errorMessage"
+                  *ngIf="item.errors?.ipcompare && !multirangevalid[i].get('end').errors?.ipaddress">
+                  <p> {{language["Ending IP Address should greater than Starting IP Address"]}}. </p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <!-- <div class="form-group ccl-form row">
+                        <label class="col-2"></label>
+                        <div class="errorMessage" *ngIf="item.errors?.ipcompare ">
+                            <p> {{language["Ending IP Address should greater than Starting IP Address"]}}. </p>
+                        </div>
+                    </div> -->
+        </div>
+      </form>
+    </div>
+    <div *ngIf="isMulticastVLAN">
+      <form [formGroup]="MulticastVlanForm">
+        <div class="form-group ccl-form row px-3">
+          <div class="w-100 cco-secondary-title border-bottom">
+            {{language["Multicast VLAN Profile"]}}
+          </div>
+        </div>
+        <div class="form-group ccl-form row">
+          <label class="col-3 control-label "> {{language['Total Number of MVR VLAN(s)']}} </label>
+          <div class="col-9">
+            <ng-select formControlName="totalvlans" [(ngModel)]="addProfileObj.buildProfile.property.totalvlans"
+              [items]="MulticastVlans" bindValue="id" bindLabel="id" class="selectboxwidth" [clearable]="false"
+              [searchable]="false" (ngModelChange)="MulticastvlansChange()">
+            </ng-select>
+          </div>
+        </div>
+        <div formArrayName="vlans" *ngFor="let item of MulticastVlanForm.get('vlans')['controls']; let i=index;">
+          <div [formGroupName]="i">
+            <div class="form-group ccl-form row">
+              <label class="col-3 control-label  mand-field"> {{language[MVRIdText[i]]}}<span
+                  class="required-field">*</span></label>
+              <div class="col-9">
+                <input class="form-control-sm" id="subscriberpervlan" type="number" placeholder="" formControlName="vlanId"
+                  style="position: relative;" max="4095" min="1" maxlength="4" />
+                <div class="errorMessage"
+                  *ngIf="item.get('vlanId').touched &&( item.get('vlanId').errors?.min ||item.get('vlanId').errors?.max )&& !multicastvlansvalid[i].get('vlanId').errors?.required">
+                  <p>{{language["Please enter a value range between 1 to 4095"]}}</p>
+                </div>
+                <div class="errorMessage"
+                  *ngIf="!addProfileObj.buildProfile?.isvalid && item.get('vlanId').errors?.required ">
+                  <p>{{ language["This field is required"] }}.</p>
+                </div>
+              </div>
+            </div>
+            <div class="form-group ccl-form row">
+              <label class="col-3 control-label"> {{language[MVRRangeText[i]]}}</label>
+              <div class="col-9">
+                <ng-select formControlName="totalrange" [items]="MulticastVlans" bindValue="id" bindLabel="id"
+                  class="selectboxwidth" [clearable]="false" [searchable]="false"
+                  (ngModelChange)="MulticastvlansRangeChange(i)">
+                </ng-select>
+              </div>
+            </div>
+            <div formArrayName="ranges" *ngFor="let item of ranges(i).controls ; let j=index;">
+              <div [formGroupName]="j">
+                <div class="form-group ccl-form row ">
+                  <label class="col-3 control-label mand-field">
+                    {{language[MulticastvlanRangestarttext[i][j]]}}
+                    <span class="required-field">*</span></label>
+                  <div class="col-9">
+                    <input class="form-control-sm" formControlName="start" placeholder="" type="text">
+                    <div class="errorMessage"
+                      *ngIf="item.get('start').touched && item.get('start').errors?.ipaddress  && !item.get('start').errors?.required">
+                      <p>{{language['Please enter the valid IP Address']}}</p>
+                    </div>
+                    <div class="errorMessage"
+                      *ngIf="item.get('start').touched && item.get('start').errors?.ipv4  && !item.get('start').errors?.required">
+                      <p>{{language['New_Profile_Validation9']}}</p>
+                    </div>
+                    <div class="errorMessage"
+                      *ngIf="!addProfileObj.buildProfile?.isvalid && item.get('start').errors?.required ">
+                      <p>{{ language["This field is required"] }}.</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group ccl-form row">
+                  <label class="col-3 control-label mand-field">
+                    {{language[MulticastvlanRangeendtext[i][j]]}} <span class="required-field">*</span></label>
+                  <div class="col-9">
+                    <input class="form-control-sm" formControlName="end" placeholder="" type="text">
+                    <div class="errorMessage"
+                      *ngIf="item.get('end').touched && item.get('end').errors?.ipaddress  && !item.get('end').errors?.required">
+                      <span>{{language['Please enter the valid IP Address']}}</span>
+                    </div>
+                    <div class="errorMessage"
+                      *ngIf="item.get('end').touched && item.get('end').errors?.ipv4  && !item.get('end').errors?.required">
+                      <p>{{language['New_Profile_Validation9']}}</p>
+                    </div>
+                    <div class="errorMessage"
+                      *ngIf="!addProfileObj.buildProfile?.isvalid && item.get('end').errors?.required ">
+                      <span>{{ language["This field is required"] }}.</span>
+                    </div>
+                    <div class="errorMessage profile-error" *ngIf="item.errors?.ipcompare ">
+                      <span>{{language["Ending IP Address should greater than Starting IP
+                                                Address"]}}.</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </form>
+    </div>
+    <div *ngIf="isouimatch">
+      <form [formGroup]="ouimatchForm">
+        <div class="form-group ccl-form row px-3">
+          <div class="w-100 cco-secondary-title border-bottom">
+            {{language["Oui Match List Profile"]}}
+          </div>
+        </div>
+
+        <div class="form-group ccl-form row">
+          <label class="col-2 control-label mand-field">{{language["Oui List Values"]}} <span
+              class="required-field">*</span><i class="infoIcon fa fa-info-circle hand-cursor" title="{{language['OUI_Info_Msg']}}"></i></label>
+          <div class="col-10">
+            <div formArrayName="ouiListValues"
+              *ngFor="let item of ouimatchForm.get('ouiListValues')['controls']; let i = index;">
+              <div [formGroupName]="i">
+                <div class="form-group ccl-form row">
+                  <div class="col-6">
+                    <input class="form-control-sm" formControlName="ouivalue" placeholder="AB:CD:EF" maxlength="8"
+                      type="text">
+                  </div>
+                  <div class="col-4" *ngIf="i!=0">
+                    <button class="mb-2 mx-2 btn-default btn-primary" type="button"
+                      (click)="deleteItem(i)">{{ language["Remove"]}}</button>
+                  </div>
+                </div>
+                <div class="errorMessage"
+                *ngIf="((ouivalues[i].get('ouivalue').touched && ouivalues[i].get('ouivalue').errors?.duplicate) ) && !ouivalues[i].get('ouivalue').errors?.required ">
+                  <p>{{language['Duplicate Value']}}</p>
+                </div>
+                <div class="errorMessage"
+                  *ngIf="ouivalues[i].get('ouivalue').touched && ouivalues[i].get('ouivalue').errors?.addressName && !ouivalues[i].get('ouivalue').errors?.required ">
+                  <p>{{language['Enter_A_Valid_MAC']}}.</p>
+                </div>
+                <div class="errorMessage"
+                  *ngIf="!addProfileObj.buildProfile?.isvalid && ouivalues[i].get('ouivalue').errors?.required ">
+                  <p>{{ language["This field is required"] }}.</p>
+                </div>
+
+              </div>
+            </div>
+            <button class="mb-2 mx-2 btn-default btn-primary" type="button" (click)="addItem()">{{language["Add"]}}
+            </button>
+          </div>
+        </div>
+      </form>
+
+    </div>
+    <div *ngIf="isserviceDefinitiontype">
+      <div class="form-group ccl-form row px-3">
+        <div class="w-100 cco-secondary-title border-bottom">
+          {{ language["Service Definition Template"] }}
+        </div>
+      </div>
+      <!-- New filed -->
+      <div class="form-group ccl-form row">
+        <label class="col-2 control-label mand-field">{{language.Service_Type}} <span
+            class="required-field">*</span></label>
+        <div class="col-10">
+          <select class="ccl-form form-control form-control-sm" formControlName="serviceType"
+            (change)="servicetypeselected($event.target.value); clearFormValue($event.target.value);"
+            [attr.disabled]="name ? '' : null" [ngClass]="{'disableselect': name == true} ">
+            <option value="DATA">{{ language.Data }}</option>
+            <option value="VOICE">{{ language.Voice }}</option>
+            <option value="VIDEO">{{ language.Video }}</option>
+          </select>
+          <!-- <select class="ccl-form form-control form-control-sm" formControlName="serviceType" *ngIf="!dev"
+            (change)="servicetypeselected($event.target.value); clearFormValue($event.target.value);"
+            [attr.disabled]="name ? '' : null" [ngClass]="{'disableselect': name == true} ">
+            <option value="DATA">{{ language.Data }}</option>
+            <option value="VOICE">{{ language.Voice }}</option>
+          </select> -->
+          <div *ngIf="( myForm.controls.serviceType.errors) || myForm.controls.serviceType.touched"
+            class="errorMessage">
+            <span *ngIf="myForm.controls.serviceType.errors?.required">
+              {{ language["This field is required"] }}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="form-group ccl-form row" *ngIf="myForm.value.serviceType">
+        <label class="col-2 control-label mand-field">{{ language["Service Profile"] }}<span
+            class="required-field">*</span></label>
+        <div class="col-10">
+
+          <ng-select formControlName="serviceTemplateName" [items]="serviceTemplateList" bindValue="name"
+            (change)="ShowProfile()" bindLabel="name" class="selectboxwidth" [clearable]="true" [searchable]="true">
+          </ng-select>
+          <div class="errorMessage" *ngIf="
+                    (myForm?.controls['serviceTemplateName']?.touched &&
+                      (myForm?.controls['serviceTemplateName']?.invalid ||
+                        myForm?.controls['serviceTemplateName']?.errors?.required)) ||
+                        (!addProfileObj.buildProfile?.isvalid && myForm?.controls['serviceTemplateName']?.invalid)
+                  ">
+            <p>{{ language["This field is required"] }}.</p>
+          </div>
+        </div>
+      </div>
+      <div class="form-group ccl-form row" *ngIf="myForm.value.serviceType && isCOC ">
+        <label class="col-2 control-label">{{ language["bandWidth_profile"] }} </label>
+        <div class="col-10 custom-selectbox-opr">
+          <ng-select formControlName="tierName" [items]="bandWidthData" bindValue="name" bindLabel="name"
+            class="selectboxwidth" [ngModelOptions]="{standalone: true}" [clearable]="true" [searchable]="true">
+          </ng-select>
+          <div class="errorMessage" *ngIf="
+                    (myForm?.controls['tierName']?.touched &&
+                      (myForm?.controls['tierName']?.invalid ||
+                        myForm?.controls['tierName']?.errors?.required)) ||
+                        (!addProfileObj.buildProfile?.isvalid && myForm?.controls['tierName']?.invalid)
+                  ">
+            <p>{{ language["This field is required"] }}.</p>
+          </div>
+        </div>
+      </div>
+      <div class="form-group ccl-form row" *ngIf="myForm.value.serviceType ==='VIDEO'">
+        <label class="col-2 oui-lable-space control-label">{{ language["Oui Match List Profile"]}} 
+          <img class="hand-cursor" src="../../../../../../../assets/img/guide-info.svg" title="{{ language['Applied to both PON-integrated RGs and Ethernet RGs'] }}">
+          </label>
+        <div class="col-10 custom-selectbox-opr">
+          <ng-select formControlName="ouiMatchListName" [items]="ouiMatchData" bindValue="name" bindLabel="name"
+            class="selectboxwidth" [ngModelOptions]="{standalone: true}" [clearable]="true" [searchable]="true">
+          </ng-select>
+        </div>
+      </div>
+      <div class="form-group ccl-form row" *ngIf="myForm.value.serviceType ==='VIDEO'">
+        <label class="col-2 control-label">{{ language["Multicast Range Profile"]}}</label>
+        <div class="col-10 custom-selectbox-opr">
+          <ng-select formControlName="multicastRangeName" [items]="MulticastRangeData" bindValue="name" bindLabel="name"
+            class="selectboxwidth" [ngModelOptions]="{standalone: true}" [clearable]="true" [searchable]="true">
+          </ng-select>
+        </div>
+      </div>
+      <!-- <div class="form-group ccl-form row" *ngIf="myForm.value.serviceType ==='VIDEO'">
+        <label class="col-2 control-label">{{ language["Multicast VLAN Profile"]}}</label>
+        <div class="col-10 custom-selectbox-opr">
+          <ng-select formControlName="multicastVlanName" [items]="MulticastVlansData" bindValue="name" bindLabel="name"
+            class="selectboxwidth" [ngModelOptions]="{standalone: true}" [clearable]="true" [searchable]="true">
+          </ng-select>
+        </div>
+      </div> -->
+      <!-- <div class="form-group ccl-form row">
+                <label class="col-2 control-label">{{ language["tagAction"] }} </label>
+                <div class="col-10">
+                    <input class="form-control" id="subscriberpervlan" type="text"
+                        placeholder="{{ language['tagAction'] }}" formControlName="tagAction"
+                        style="position: relative;" />
+
+                </div>
+            </div> -->
+
+    </div>
+  </form>
+  <div *ngIf="issubscribertype">
+    <form [formGroup]="SubscriberForm">
+      <div class="form-group ccl-form row px-3">
+        <div class="w-100 cco-secondary-title border-bottom">
+          {{language["Service Profile"] }}
+        </div>
+      </div>
+      <div class="form-group ccl-form row">
+        <label class="col-2 control-label mand-field">{{language["SERVICE"]}} <span
+            class="required-field">*</span></label>
+
+        <div class="col-10">
+          <!-- <select class="ccl-form form-control form-control-sm" formControlName="serviceType" *ngIf="!dev"
+            (change)="servicetypechanged($event.target.value); clearFormValue($event.target.value);"
+            [attr.disabled]="name ? '' : null" [ngClass]="{'disableselect': name == true} ">
+            <option value="DATA">{{ language.Data }}</option>
+            <option value="VOICE">{{ language.Voice }}</option>
+          </select> -->
+          <select class="ccl-form form-control form-control-sm" formControlName="serviceType" 
+            (change)="servicetypechanged($event.target.value); clearFormValue($event.target.value);"
+            [attr.disabled]="name ? '' : null" [ngClass]="{'disableselect': name == true} ">
+            <option value="DATA">{{ language.Data }}</option>
+            <option value="VOICE">{{ language.Voice }}</option>
+            <option  value="VIDEO">{{ language.Video }}</option>
+          </select>
+          <div
+            *ngIf="(!addProfileObj.buildProfile?.isvalid && SubscriberForm.controls.serviceType.errors) || SubscriberForm.controls.serviceType.touched"
+            class="errorMessage">
+            <span *ngIf="SubscriberForm.controls.serviceType.errors?.required">
+              {{ language["This field is required"] }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="category-container" *ngIf="selectedCategoryType &&  SubscriberForm.get('serviceType').value">
+        <h4 *ngIf="isCOC">{{language['Common Parameters']}}</h4>
+        <hr *ngIf="isCOC" />
+        <div class="form-group ccl-form row">
+          <label class="col-2 control-label mand-field pr-2">{{language['CE Tagging']}}
+          </label>
+          <div class="col-10 col-xs-8 col-sm-8 col-md-9 col-lg-10 inline-group">
+            <label class="radio hand-cursor col-3">
+              <input type="radio" class="mr-2 hand-cursor" [value]="true" formControlName="VlanTagAction"
+                (change)="onChangeVLANTagAction(true)"><i></i>{{language.Tagged}}</label><label
+              class="radio hand-cursor col-3">
+              <input type="radio" class="mr-2 hand-cursor" [value]="false" formControlName="VlanTagAction"
+                (change)="onChangeVLANTagAction(false)" /><i></i>{{language.Untagged}}</label>
+          </div>
+        </div>
+        <div class="form-group ccl-form row" *ngIf="SubscriberForm.controls.VlanTagAction.value">
+          <label id="ceVlan" class="col-2 control-label pr-2 mand-field">{{language["Ce-Vlan"]}} <span
+              class="required-field">*</span>
+            <!-- <i class="infoIcon fa fa-info-circle hand-cursor"
+                            title="Customer Equipment VLAN. This is the VLAN on the WAN side of the RG and the LAN side of the ONT. Required for ONTs with an integrated RG."></i> -->
+          </label>
+          <div class="col-10">
+            <input class="form-control-sm" id="ceVlan" type="number" name="Name" formControlName="ceVlan" min="0"
+              oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..?)\../g, '$1');" max="4094"
+              (change)="onchangecevlan($event.target.value)" />
+            <div
+              *ngIf="(!addProfileObj.buildProfile?.isvalid && SubscriberForm.controls.ceVlan.errors) || SubscriberForm.controls.ceVlan.touched"
+              class="errorMessage">
+              <span
+                *ngIf="SubscriberForm.controls.ceVlan.errors?.pattern && !SubscriberForm.controls.ceVlan.errors?.required">
+                {{language["New_Profile_Validation2"]}}
+              </span>
+              <span
+                *ngIf="SubscriberForm.controls.ceVlan.errors?.max  && !SubscriberForm.controls.ceVlan.errors?.required ">
+                {{language["Please enter a value less than or equal to 4094"]}}
+              </span>
+              <span *ngIf="SubscriberForm.controls.ceVlan.errors?.required">
+                {{ language["This field is required"] }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group ccl-form row" *ngIf="SubscriberForm.get('serviceType').value ==='VOICE'">
+          <label class="col-2 control-label mand-field pr-2">{{language['Service Type']}}
+          </label>
+          <div class="col-10 col-xs-8 col-sm-8 col-md-9 col-lg-10 inline-group">
+            <ng-select formControlName="Type" [items]="serviceTypeList" bindValue="value"
+            (change)="voiceServiceType()" bindLabel="label" class="selectboxwidth" [clearable]="true" [searchable]="true">
+          </ng-select>
+          <p *ngIf="(!this.name ||(this.name && !SubscriberForm.value.h248Profile)) && this.voiceService ==='H.248' &&  isCOC">
+            <small class="sm-text">{{language['Configure H.248 profile in “ONT & Integrated ONT/RG Parameters” section for enabling voice on ONT']}}</small>
+          </p>
+          <p *ngIf="(!this.name ||(this.name && !SubscriberForm.value.sipProfile)) && this.voiceService ==='SIP'">
+            <small class="sm-text" *ngIf="isCOC">{{language['Configure SIP profile and Dial Plan in the “ONT & Integrated ONT/RG Parameters” section for enabling voice on ONT.']}}</small>
+          </p>
+          </div>
+        </div>
+        <div class="form-group ccl-form row" *ngIf="SubscriberForm.get('serviceType').value ==='VIDEO'">
+          <label id="ceVlan" class="col-2 control-label pr-2 mand-field">{{language["Maximum # of Multicast Streams"]}}
+            <img src="../../../../../../../../assets/img/guide-info.svg" alt="{{language['GigaCenter/GigaHub/GigaPoint maximum # of multicast streams threshold']}}" title="{{language['GigaCenter/GigaHub/GigaPoint maximum # of multicast streams threshold']}}">
+            <!-- <i class="infoIcon fa fa-info-circle hand-cursor"
+                            ></i> -->
+          </label>
+          <div class="col-10">
+            <input class="form-control-sm" id="X_000631_MaxStreams" type="number" name="Name" formControlName="X_000631_MaxStreams" min="0" (keyup)="allowInteger()"
+              oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..?)\../g, '$1');" max="512" />
+            <div
+              class="errorMessage">
+              <span
+                *ngIf="SubscriberForm.controls.X_000631_MaxStreams.errors?.max">
+                {{language["Please enter a value less than or equal to 512"]}}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="category-container"
+        *ngIf="selectedCategoryType && loadServices && SubscriberForm.get('serviceType').value">
+        <h4 *ngIf="isCOC">{{language['RG Parameters']}}</h4>
+        <hr *ngIf="isCOC" />
+        <app-add-newcategories-ont [VlanTagAction]="VlanTagAction" (startLoad)="buffer($event)" [buildProfileObj]="buildProfileObj"
+          [dialPlanList]="dialPlanList" 
+          [categoryType]="selectedCategoryType" (hideCEVLAN)="onChangeVLANTagAction($event)">
+        </app-add-newcategories-ont>
+      </div>
+
+      <div  class="category-container" *ngIf="selectedCategoryType && SubscriberForm.get('serviceType').value && isCOC">
+        <h4 >{{language['ONT & Integrated ONT/RG Parameters']}}</h4>
+        <hr />
+
+        <div class="form-group ccl-form row">
+          <!--<label class="col-2 control-label mand-field pr-2"> {{language['VLAN Type']}} </label>-->
+          <div class="col-10 col-xs-8 col-sm-8 col-md-9 col-lg-10 inline-group">
+            <label class="radio hand-cursor col-3">
+              <input type="radio" class="mr-2 hand-cursor" value="Static" formControlName="vlanType"
+                (change)="StaticVLANAction(true)"><i></i>{{language['StaticVLAN']}}
+            </label>
+            <label class="radio hand-cursor col-3">
+              <input type="radio" class="mr-2 hand-cursor" value="Global" formControlName="vlanType"
+                (change)="DynamicVLANAction(false)" /><i></i>{{language['DynamicVLAN']}}
+            </label>
+          </div>
+        </div>
+        <div class="form-group ccl-form row" *ngIf="SubscriberForm.value.vlanType === 'Global'">
+          <label class="col-2 control-label mand-field pr-2">{{language['Global VLAN Service Attribute']}}<span
+              class="required-field">*</span></label>
+          <div class="col-10 col-xs-8 col-sm-8 col-md-9 col-lg-10 inline-group">
+            <input class="form-control-sm" (keyup)="validateForm(this.SubscriberForm.value.globalVlan)"
+              id="primarycontroller" type="text" formControlName="globalVlan" style="position: relative;" />
+            <div *ngIf="!this.SubscriberForm.value.globalVlan" class="errorMessage">
+              <span>
+                {{ language["This field is required"] }}
+              </span>
+            </div>
+            <div *ngIf="globleVlanErr===true" class="errorMessage">
+              <span>
+                {{language [  'The Global VLAN Service Attribute must be 1 to 64 characters']}}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group ccl-form row" *ngIf="SubscriberForm.value.vlanType === 'Static'">
+          <div class="col-2 control-label">
+            <label id="Vlans" for="staticEmail2" class="">{{language["Vlans"]}} </label>
+          </div>
+          <div class="col-10">
+            <div class="w-100" *ngFor="let subnet of createVlans; let i = index">
+              <span class="w-75">{{ subnet }}</span>
+              <span class="w-25 cursor-pointer" (click)="removeVlans(i)">&nbsp;<i class="fa fa-times primary"
+                  aria-hidden="true"></i></span>
+            </div>
+            <label for="inputPassword2" class="sr-only"></label>
+            <input type="number" min="1" max="4094" id="createSubnetV4" class="" name="createSubnetV4"
+              formControlName="vlans" (keypress)="removespecialcharacter($event)" (keyup)="addVlans('ischange')"
+              (change)="addVlans('ischange')" style="width: 250px" />
+            <button class="mb-2 mx-2 btn-default btn-primary"
+              [ngClass]="{ noDropCursor: SubscriberForm.controls.vlans.value == ''}"
+              [disabled]="SubscriberForm.controls.vlans.value == '' ||SubscriberForm.controls.vlans.value == 'null' ||vlanempty "
+              (click)="addVlans('v4')">
+              {{ language.Add }}
+            </button>
+            <!-- <div *ngIf="this.addProfileObj.buildProfile.property.Vlans?.length==0" class="errorMessage">
+              <span>
+                {{ language["This field is required"] }}
+              </span>
+            </div> -->
+            <div class="errorMessage" *ngIf="vlanempty">{{ vlanmsg }}</div>
+          </div>
+        </div>
+        <div class="form-group ccl-form row">
+          <label class="col-2 control-label">{{language["Vlan Mode"]}}</label>
+          <div class="col-10">
+            <select class="ccl-form form-control form-control-sm" placeholder="Vlan Mode" formControlName="vlanMode">
+              <option value="ONE2ONE">1:1</option>
+              <option value="N2ONE">N:1</option>
+            </select>
+            <!-- <div *ngIf="!this.SubscriberForm.value.vlanMode" class="errorMessage">
+              <span>
+                {{ language["This field is required"] }}
+              </span>
+            </div> -->
+          </div>
+        </div>
+        <div class="form-group ccl-form row" *ngIf="SubscriberForm.value.vlanType === 'Static'">
+          <label id="subscribersPerVlan" class="col-2 control-label">{{language["Subscribers Per Vlan"]}}
+            <!-- <i class="infoIcon fa fa-info-circle hand-cursor"
+                            title="{{language['subscriber_tooltip']}}"></i> -->
+          </label>
+          <div class="col-10">
+            <input class="form-control-sm" id="subscribersPerVlan" type="number" min="0" max="2147483647"
+              formControlName="subscribersPerVlan" style="position: relative;"
+              (keypress)="removespecialcharacter($event)"
+              (ngModelChange)="removespecialcharacter($event)" />
+            <div
+              *ngIf="(!addProfileObj.buildProfile?.isvalid && SubscriberForm.controls.subscribersPerVlan.errors) || SubscriberForm.controls.subscribersPerVlan.touched"
+              class="errorMessage">
+              <span *ngIf="SubscriberForm.controls.subscribersPerVlan.errors?.required">
+                {{ language["This field is required"] }}
+              </span>
+              <span
+                *ngIf="SubscriberForm.controls.subscribersPerVlan.errors?.pattern && !(SubscriberForm.controls.subscribersPerVlan.value > 2147483647)">
+                {{language["This value is invalid"]}}
+              </span>
+              <span *ngIf="SubscriberForm.controls.subscribersPerVlan.value > 2147483647 ">
+                {{language['New_Profile_Validation3']}} 2147483647
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group ccl-form row"
+          *ngIf="(SubscriberForm.value.vlanType === 'Static' || SubscriberForm.value.vlanType === 'Global')">
+          <label id="primaryDnsServer" class="col-2 control-label"> {{language["Primary DNS"]}}
+            <!-- <i class="infoIcon fa fa-info-circle hand-cursor"  title='{{language["DNS_tooltip"]}}'></i> -->
+          </label>
+          <div class="col-10">
+            <input class="form-control-sm" id="primarycontroller" type="text" formControlName="primaryDnsServer"
+              style="position: relative;" />
+            <div
+              *ngIf="(!addProfileObj.buildProfile?.isvalid && SubscriberForm.controls.primaryDnsServer.errors) || SubscriberForm.controls.primaryDnsServer.touched"
+              class="errorMessage">
+              <span
+                *ngIf="SubscriberForm.controls.primaryDnsServer.errors?.ipaddress && !SubscriberForm.controls.primaryDnsServer.errors?.required">
+                <p>{{language['Please enter the valid IP Address']}}</p>
+              </span>
+              
+            </div>
+            <div class="errorMessage">
+              <span *ngIf="SubscriberForm.value.secondaryDnsServer &&!SubscriberForm.value.primaryDnsServer">
+                {{ language["This field is required"] }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group ccl-form row"
+          *ngIf="(SubscriberForm.value.vlanType === 'Static' || SubscriberForm.value.vlanType ==='Global')">
+          <label id="Secondary DNS" class="col-2 control-label"> {{language["Secondary DNS"]}}
+            <!-- <i class="infoIcon fa fa-info-circle hand-cursor" title='{{language["DNS_tooltip"]}}'></i> -->
+          </label>
+          <div class="col-10">
+            <input class="form-control-sm" id="primarycontroller" type="text" formControlName="secondaryDnsServer"
+              style="position: relative;" />
+            <div
+              *ngIf="(!addProfileObj.buildProfile?.isvalid && SubscriberForm.controls.secondaryDnsServer.errors) || SubscriberForm.controls.secondaryDnsServer.touched"
+              class="errorMessage">
+              <span *ngIf="SubscriberForm.controls.secondaryDnsServer.errors?.ipaddress">
+                <p>{{language['Please enter the valid IP Address']}}</p>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group ccl-form row" *ngIf="voicetype && this.voiceService ==='H.248'">
+          <label class="col-2 control-label">{{language["Primary H248 GW Controller (voice)"]}}</label>
+          <div class="col-10">
+            <input class="form-control-sm" id="primarycontroller" type="text" formControlName="h248Profile"
+              style="position: relative;" (change)="removevalidationforsip()" />
+            <div
+              class="errorMessage">
+              <!-- <span *ngIf="!SubscriberForm.value.h248Profile">
+                {{ language["This field is required"] }}
+              </span> -->
+            </div>
+          </div>
+        </div>
+        <div class="form-group ccl-form row" *ngIf="voicetype && this.voiceService ==='SIP'">
+          <label class="col-2 control-label" id="Ont-Rg-Parameters-SIP-Profile">{{language["SIP Proxy Server Address"]}}</label>
+          <div class="col-10">
+            <input class="form-control-sm" id="sipProfile" type="text" formControlName="sipProfile"
+              style="position: relative;" (change)="removevalidationforprimary()" />
+            <!-- <div *ngIf="!this.SubscriberForm.value.sipProfile" class="errorMessage">
+              <span>
+                {{ language["This field is required"] }}
+              </span>
+            </div> -->
+          </div>
+        </div>
+        <div class="form-group ccl-form row" *ngIf="voicetype && this.voiceService ==='SIP'">
+          <label class="col-2 control-label" id="Dial-Plan">{{language["Dial Plan"]}}</label>
+          <div class="col-10">
+            <input class="form-control-sm" id="Ont-Rg-Parameters-DialPlan" type="text" formControlName="dialPlan"
+              style="position: relative;" />
+            <!-- <div *ngIf="!this.SubscriberForm.value.dialPlan" class="errorMessage">
+              <span>
+                {{ language["This field is required"] }}
+              </span>
+            </div> -->
+          </div>
+        </div>
+
+        <div class="form-group ccl-form row" *ngIf="voicetype && dnsserver">
+          <label class="col-2 control-label">DNS Servers</label>
+          <div class="col-10">
+            <input class="form-control-sm" id="DNSservers" type="text" formControlName="DNSservers"
+              style="position: relative;" />
+            <div
+              *ngIf="(!addProfileObj.buildProfile?.isvalid && SubscriberForm.controls.DNSservers.errors) || SubscriberForm.controls.DNSservers.touched"
+              class="errorMessage">
+              <span *ngIf="SubscriberForm.controls.DNSservers.errors?.required">
+                {{ language["This field is required"] }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group ccl-form row" *ngIf="voicetype && dnsserver">
+          <label class="col-2 control-label"> {{ language["Domain_Name"] }} </label>
+          <div class="col-10">
+            <input class="form-control-sm" id="domainname" type="text" formControlName="domainname"
+              style="position: relative;" />
+            <div
+              *ngIf="(!addProfileObj.buildProfile?.isvalid && SubscriberForm.controls.domainname.errors) || SubscriberForm.controls.domainname.touched"
+              class="errorMessage">
+              <span *ngIf="SubscriberForm.controls.domainname.errors?.required">
+                {{ language["This field is required"] }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group ccl-form row" *ngIf="voicetype && dnsserver">
+          <label class="col-2 control-label">DNS Primary </label>
+          <div class="col-10">
+            <input class="form-control-sm" id="sipaddress" type="text" formControlName="dnsprimary"
+              style="position: relative;" />
+            <div
+              *ngIf="(!addProfileObj.buildProfile?.isvalid && SubscriberForm.controls.dnsprimary.errors) || SubscriberForm.controls.dnsprimary.touched"
+              class="errorMessage">
+              <span *ngIf="SubscriberForm.controls.dnsprimary.errors?.required">
+                {{ language["This field is required"] }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group ccl-form row" *ngIf="voicetype && dnsserver">
+          <label class="col-2 control-label">DNS Secondary </label>
+          <div class="col-10">
+            <input class="form-control-sm" id="sipaddress" type="text" formControlName="dnssecondary"
+              style="position: relative;" />
+            <div
+              *ngIf="(!addProfileObj.buildProfile?.isvalid && SubscriberForm.controls.dnssecondary.errors) || SubscriberForm.controls.dnssecondary.touched"
+              class="errorMessage">
+              <span *ngIf="SubscriberForm.controls.dnssecondary.errors?.required">
+                {{ language["This field is required"] }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group ccl-form row" *ngIf="videotype">
+          <label class="col-2 control-label">{{language["Multicast Profile"]}}</label>
+          <div class="col-10">
+            <input class="form-control-sm" id="multicastprofile" type="text" name="s_name"
+              formControlName="multicastProfile" style="position: relative;" />
+            <div
+              *ngIf="(!addProfileObj.buildProfile?.isvalid && SubscriberForm.controls.multicastProfile.errors) || SubscriberForm.controls.multicastProfile.touched"
+              class="errorMessage">
+              <span *ngIf="SubscriberForm.controls.multicastProfile.errors?.required">
+                {{ language["This field is required"] }} 
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group ccl-form row" *ngIf="videotype">
+          <label class="col-2 control-label">{{language["igmp Profile"]}}</label>
+          <div class="col-10">
+            <input class="form-control-sm" id="igmpProfile" type="text" formControlName="igmpProfile"
+              style="position: relative;" />
+          </div>
+        </div>
+
+      </div>
+
+    </form>
+  </div>
+
+  <div *ngIf="isbandwidthtype && isCOC">
+    <div>
+      <form [formGroup]="bandwidthForm">
+        <div class="form-group ccl-form row px-3">
+          <div class="w-100 cco-secondary-title border-bottom">
+            {{language.bandWidth_profile}}
+          </div>
+        </div>
+        <div class="form-group ccl-form row">
+          <label class="col-3 control-label">{{language.Upstream_PIR}} (Mbps)</label>
+          <div class="col-9">
+            <input class="form-control-sm" id="upstreamPir" type="number" [(ngModel)]="upstreamPir"
+              formControlName="upstreamPir" style="position: relative;"  maxlength="10" max="97656"
+              (keypress)="removespecialcharacter($event,'upstreamPir')"
+              (change)="restrictFloat($event,'upstreamPir')" />
+            <div
+              *ngIf="(bandwidthForm.controls.upstreamPir.errors) || bandwidthForm.controls.upstreamPir.touched  || !addProfileObj.buildProfile.allfieldvalid"
+              class="errorMessage">
+              <span *ngIf="bandwidthForm.controls.upstreamPir.errors?.max">
+                {{"Please enter a value less than or equal to 97656"}}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group ccl-form row">
+          <label class="col-3 control-label">{{language.Downstream_PIR}} (Mbps) </label>
+          <div class="col-9">
+            <input class="form-control-sm" id="downstreamPir" type="number" [(ngModel)]="downstreamPir"
+              formControlName="downstreamPir" style="position: relative;"  maxlength="10" max="97656"
+              (keypress)="removespecialcharacter($event,'downstreamPir')"
+              (change)="restrictFloat($event,'downstreamPir')" />
+            <div
+              *ngIf="(bandwidthForm.controls.downstreamPir.errors) || bandwidthForm.controls.downstreamPir.touched || !addProfileObj.buildProfile.allfieldvalid "
+              class="errorMessage">
+              <span *ngIf="bandwidthForm.controls.downstreamPir.errors?.max ">
+                {{"Please enter a value less than or equal to 97656"}}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group ccl-form row">
+          <label class="col-3 control-label">{{language.Upstream_CIR}} (Mbps) </label>
+          <div class="col-9">
+            <input class="form-control-sm" id="upstreamCir" type="number" formControlName="upstreamCir" min="0"
+              [(ngModel)]="upstreamCir" maxlength="10" max="97656" style="position: relative;"
+              (keypress)="removespecialcharacter($event,'upstreamCir')"
+              (change)="restrictFloat($event,'upstreamCir')" />
+            <div
+              *ngIf="(bandwidthForm.controls.upstreamCir.errors) || bandwidthForm.controls.upstreamCir.touched || !addProfileObj.buildProfile.allfieldvalid "
+              class="errorMessage">
+              <span *ngIf="(bandwidthForm.controls.upstreamCir.value > (bandwidthForm.controls.upstreamPir.value ||bandwidthForm.controls.upstreamPir.value =='undefined'))&&
+                                !(bandwidthForm.controls.upstreamCir.errors?.max)">
+                {{language["UpStream cir value should Less Than UpStream pir"]}}
+              </span>
+              <span *ngIf="bandwidthForm.controls.upstreamCir.errors?.max">
+                {{"Please enter a value less than or equal to 97656"}}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group ccl-form row">
+          <label class="col-3 control-label">{{language.Downstream_CIR}} (Mbps) </label>
+          <div class="col-9">
+            <input class="form-control-sm" id="downstreamCir" type="number" formControlName="downstreamCir"
+              style="position: relative;" min="0" maxlength="10" max="97656"
+              (keypress)="removespecialcharacter($event,'downstreamCir')"
+              (change)="restrictFloat($event,'downstreamCir')" [(ngModel)]="downstreamCir" />
+            <div
+              *ngIf="(bandwidthForm.controls.downstreamCir.errors) || bandwidthForm.controls.downstreamCir.touched || !addProfileObj.buildProfile.allfieldvalid "
+              class="errorMessage">
+              <span *ngIf="(bandwidthForm.controls.downstreamCir.value > (bandwidthForm.controls.downstreamPir.value ||bandwidthForm.controls.downstreamPir.value =='undefined'))&&
+                                !(bandwidthForm.controls.downstreamCir.errors?.max)">
+                {{language["Downstream cir value should Less Than DownStream pir"]}}
+              </span>
+              <span *ngIf="bandwidthForm.controls.downstreamCir.errors?.max">
+                {{"Please enter a value less than or equal to 97656"}}
+              </span>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <!-- <div class="category-container" *ngIf="selectedCategoryType">
+        <app-add-newcategories-ont [buildProfileObj]="buildProfileObj" [categoryType]="selectedCategoryType">
+        </app-add-newcategories-ont>
+    </div> -->
+</section>

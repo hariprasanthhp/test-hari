@@ -1,0 +1,602 @@
+<div class="row">
+  <div class="col-12">
+    <div class="loader" *ngIf="loader">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{language.Loading}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <button type="button" class="btn-default primary px-3 md-btn blue-btn" id="resetStatsId"
+          *ngIf="voiceStatus.length && scopeFlag.voiceWrite" (click)="resetVoice()">{{language.ResetStats}}</button>
+        <button type="button" class="btn-default btn-dft px-3 mx-2" *ngIf="objectExistence(metaData?.VoiceStatus)
+        && voiceStatus.length && scopeFlag.voiceWrite" id="restartServiceId" (click)="restartVoice()"
+          [disabled]="(voiceStatusLine.Status.Service == 'Disabled')">{{language.RestartService}}</button>
+
+        <span class="cursor-pointer primary mx-3" id="refreshId" (click)="(subsId && ssoService.getEntitlementsArr().indexOf('102') > -1) ? getAllSubsServicesData() : loadData('refresh')">
+          <i class="fas fa-sync refreshicon"></i>
+        </span>
+
+        <!-- <button type="button" class="btn-default btn-dft px-3 mx-2">{{language.Refresh}}</button> -->
+        <!--<div *ngIf="deviceInfo.length > 1" class="col-md-4 float-right ">
+      <ng-select id="serialNumberList" name="serialNumberList" data-toggle="tooltip" data-placement="bottom"
+        title="Select Serial-Number List to Update" (change)="loadData('')" [(ngModel)]="serialNumberSelected"
+        [items]="deviceInfo" placeholder="Select Serial Number" bindLabel="serialNumber" bindValue="serialNumber"
+        [searchable]="false" [clearable]="false">
+      </ng-select>
+    </div>-->
+      </div>
+    </div>
+
+    <!--<div class="w-100 alert alert alert-success  fade show mt-2" *ngIf="isSuccess">
+  <button type="button" class="close" (click)="isSuccess = false;">&times;</button>
+ {{language.Operation_Successful}}
+</div>-->
+    <div class="w-100 alert alert alert-danger  fade show mt-2" *ngIf="isError">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+      <button type="button" class="close" (click)="isError = false;"><span></span></button>
+      <div class="d-inline-flex" [innerHtml]="alertMessage"></div>
+    </div>
+    <div class="loader" *ngIf="loader">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{language.Loading}}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="container my-3">
+      <div class="row">
+        <div class="col-lg-6 col-md-12 col-sm-12" *ngIf="voiceStatus.length || (ssoService.getEntitlementsArr().indexOf('102') > -1 && (servicesData?.voice?.usoc || voiceServicesStatus?.usoc))"  >
+          <!-- <div class="row mr-3"> -->
+
+          <div class="" *ngIf="ssoService.getEntitlementsArr().indexOf('102') > -1 && ((servicesData?.voice?.usoc && servicesData?.voice?.activate) || voiceServicesStatus?.usoc)">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="ccl-Secondary-title user-name.mb-0 border-bottom">
+                  <!--{{ language.Wan_Configuration }}-->{{language['Voice Service']}}
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12 support-key-value mt-2 mb-3">
+                <table class="" id="wanConfigId">
+                  <tbody>
+                    <tr>
+                      <th scope="">{{language['Voice Plan']}}</th>
+                      <!--<td>{{ontusoc ? ontusoc:'-'}}-->
+                        <td>{{voiceServicesStatus?.usoc? voiceServicesStatus?.usoc:servicesData?.voice?.usoc && servicesData?.voice?.activate ?
+                          servicesData?.voice?.usoc :'-'}}</td>
+                    </tr>
+  
+                    <tr>
+                      <th scope="">{{language['Service Status']}}</th>
+                     <!-- <td [ngClass]="{
+                  green: enablestatus == 'True',
+                  red: enablestatus == 'False'
+                }">{{ language[enablestatus] || enablestatus || "-"}}</td>
+-->
+                <td>
+                  <span class="position-relative d-inline-block">
+                      {{enablestatus ? enablestatus:(isAutomaticallyCreatedData && (isAutomaticallyCreatedData.ontIdentification && isAutomaticallyCreatedData.subSvcState))?'':'-'}} <span *ngIf="isAutomaticallyCreatedData && (isAutomaticallyCreatedData.ontIdentification && isAutomaticallyCreatedData.subSvcState)"> {{enablestatus ? ',':'-'}} {{isAutomaticallyCreatedData.ontIdentification + ': ' + isAutomaticallyCreatedData.subSvcState}}</span>
+                  </span>
+              </td>
+
+                    </tr>
+  
+                <tr *ngIf="interfacedata">
+                      <th scope="">{{language.Interface}}</th>
+                     <td>{{interfacedata}}
+                        <span *ngIf="voiceinterface">, {{voiceinterface}}</span>
+                    </td>
+                    </tr>
+                  
+  
+                    <!--<tr>
+                    <th scope="">Provisioned Downstream (Mbps) </th>
+                    <td>{{ downstream || "-" }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="">Provisioned Upstream (Mbps)</th>
+                    <td>{{ upstream || "-" }}</td>
+                  </tr>-->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+
+
+          <div class="row" *ngIf="voiceStatus.length">
+            <div class="col-md-12">
+              <div class="voice-sec border-bottom d-flex justify-content-start mb-3"
+                [ngClass]="{'stopAction' : !voiceStatus.length}">
+                <div class="col-md-5 pl-0">
+                  <div class="ccl-Secondary-title" id="voiceLineSelectedId">{{language.Voice_Line}}</div>
+                </div>
+                <div class="col-md-7 text-right">
+                  <div class="d-flex justify-content-end align-items-center arrow-down">
+                    <h5 class="wan-dropdown" id="lineStatusIndex"></h5>
+                    <div class="cus-dd dropdown-button custom-dropdown-btn" ngbDropdown>
+
+
+                      <button class="mr-2" id="dropdownExchange" ngbDropdownToggle>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15.472" height="8.442"
+                          viewBox="0 0 15.472 8.442">
+                          <path id="ic_chevrondown" d="M7.738,7.038.7,0,0,.7,7.034,7.742l.7.7.7-.7L15.472.7l-.7-.7Z"
+                            fill="#9e9e9e" />
+                        </svg>
+
+                      </button>
+                      <div ngbDropdownMenu aria-labelledby="dropdownExchange" class="wanDropDown pt-3 pb-3">
+                        <a ngbDropdownItem class="greyaa" *ngFor="let wi of voiceStatus; let i = index"
+                          (click)="lineSelection(i)"><span>{{language.line}} {{i+1}}</span></a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+          <div class="row" *ngIf="voiceStatus.length">
+            <div class="col-md-12">
+              <div class="border-bottom">
+                <h5 class="user-name ccl-Secondary-title">{{language.Line}}</h5>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="row mb-3" *ngIf="voiceStatus.length">
+            <div class="col-md-12">
+              <div class="support-key-value">
+                <table class="" id="voiceLineStatusId">
+                  <tbody>
+                    <tr *ngIf="metaData?.VoiceStatus?.StatusService">
+                      <th scope="row">{{language.Service}}</th>
+                      <td
+                        [ngClass]="{'green': (voiceStatusLine.Status.Service == 'Up' ), 'red': (voiceStatusLine.Status.Service != 'Up')}">
+                       {{  voiceStatusLine.Status.Service && language[voiceStatusLine.Status.Service] ? language[voiceStatusLine.Status.Service] :  voiceStatusLine.Status.Service ? voiceStatusLine.Status.Service : '-'}}</td>
+                    </tr>
+                    <tr *ngIf="metaData?.VoiceStatus?.StatusHook">
+                      <th scope="row">{{language.Hook}}</th>
+                      <td>{{voiceStatusLine.Status.Hook || '-'}}</td>
+                    </tr>
+                    <tr *ngIf="metaData?.VoiceStatus?.StatusCall">
+                      <th scope="row">{{language.Call}}</th>
+                      <td>{{voiceStatusLine.Status.Call || '-'}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- <div class="col-md-12 border-bottom px-0 my-3">
+          <h5 class="user-name">{{language.Vane}}</h5>
+          </div> -->
+          <div class="row" *ngIf="voiceStatus.length">
+            <div class="col-md-12">
+              <div class="border-bottom">
+                <div class="ccl-Secondary-title user-name.mb-0" id="SIP-Stats">{{language['Stats']}}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row  mb-2" *ngIf="voiceStatus.length">
+            <div class="col-md-12">
+              <div class="support-voice-calls-table">
+                <table class="table table-borderless" id="voiceLineCallsId">
+                  <thead>
+                    <tr class="border-bottom ">
+                      <th scope="col">
+                        <div class="ccl-Secondary-title" id="voice-calls">{{language['Call Stats']}}</div>
+                      </th>
+                      <th scope="col">{{language.Incoming}}</th>
+                      <th scope="col">{{language.Outgoing}}</th>
+                      <th scope="col">{{language.Emergency}}</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr style="border-bottom: 1px solid #EBEAEF;"
+                      *ngIf="metaData?.VoiceStatus?.StatsIncomingCallsAttempts || metaData?.VoiceStatus?.StatsOutgoingCallsAttempts || metaData?.VoiceStatus?.StatsEmergencyCallsAttempts">
+                      <td scope="row">{{language.Attempts}}</td>
+                      <td>{{voiceStatusLine.Stats.IncomingCalls.Attempts || '-'}}</td>
+                      <td>{{voiceStatusLine.Stats.OutgoingCalls.Attempts || '-'}}</td>
+                      <td>{{voiceStatusLine.Stats.EmergencyCalls.Attempts || '-'}}</td>
+
+                    </tr>
+                    <tr style="border-bottom: 1px solid #EBEAEF;"
+                      *ngIf="metaData?.VoiceStatus?.StatsIncomingCallsCompletions || metaData?.VoiceStatus?.StatsOutgoingCallsCompletions || metaData?.VoiceStatus?.StatsEmergencyCallsCompletions">
+                      <td scope="row">{{language.Completions}}</td>
+                      <td>{{voiceStatusLine.Stats.IncomingCalls.Completions || '-'}}</td>
+                      <td>{{voiceStatusLine.Stats.OutgoingCalls.Completions || '-'}}</td>
+                      <td>{{voiceStatusLine.Stats.EmergencyCalls.Completions || '-'}}</td>
+
+                    </tr>
+                    <tr style="border-bottom: 1px solid #EBEAEF;"
+                      *ngIf="metaData?.VoiceStatus?.StatsIncomingCallsFailed || metaData?.VoiceStatus?.StatsOutgoingCallsFailed || metaData?.VoiceStatus?.StatsEmergencyCallsFailed">
+                      <td scope="row">{{language.Failed}}</td>
+                      <td>{{voiceStatusLine.Stats.IncomingCalls.Failed || '-'}}</td>
+                      <td>{{voiceStatusLine.Stats.OutgoingCalls.Failed || '-'}}</td>
+                      <td>{{voiceStatusLine.Stats.EmergencyCalls.Failed || '-'}}</td>
+                    </tr> <!--changed from Busy to Failed -->
+                    <tr style="border-bottom: 1px solid #EBEAEF;"
+                      *ngIf="metaData?.VoiceStatus?.StatsIncomingCallsPeerDisconnects || metaData?.VoiceStatus?.StatsOutgoingCallsPeerDisconnects || metaData?.VoiceStatus?.StatsEmergencyCallsPeerDisconnects">
+                      <td scope="row">{{language.Peer_Disconnects}}</td>
+                      <td>{{voiceStatusLine.Stats.IncomingCalls.PeerDisconnects || '-'}}</td>
+                      <td>{{voiceStatusLine.Stats.OutgoingCalls.PeerDisconnects || '-'}}</td>
+                      <td>{{voiceStatusLine.Stats.EmergencyCalls.PeerDisconnects || '-'}}</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #EBEAEF;"
+                      *ngIf="metaData?.VoiceStatus?.StatsIncomingCallsDisconnects || metaData?.VoiceStatus?.StatsOutgoingCallsDisconnects || metaData?.VoiceStatus?.StatsEmergencyCallsDisconnects">
+                      <td scope="row">{{language.Disconnects}}</td>
+                      <td>{{voiceStatusLine.Stats.IncomingCalls.Disconnects || '-'}}</td>
+                      <td>{{voiceStatusLine.Stats.OutgoingCalls.Disconnects || '-'}}</td>
+                      <td>{{voiceStatusLine.Stats.EmergencyCalls.Disconnects || '-'}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="row" *ngIf="voiceStatus.length && sipstatuscheck">
+            <div class="col-md-12">
+              <div class="border-bottom">
+                <div class="ccl-Secondary-title user-name.mb-0" id="SIP-Stats">{{language['SIP Stats']}}</div>
+              </div>
+            </div>
+          </div>
+          <div class="row mb-3" *ngIf="voiceStatus.length && sipstatuscheck">
+            <div class="col-md-12 ">
+              <div class="support-key-value">
+                <table class="" id="voiceLineSIPid">
+                  <tbody>
+                    <tr *ngIf="metaData?.VoiceStatus?.StatsSIPStatsRegisterRequests">
+                      <th scope="row">{{language.Register_Requests}}</th>
+                      <td>{{voiceStatusLine.Stats.SIPStats.RegisterRequests || '-'}}</td>
+
+                    </tr>
+                    <tr *ngIf="metaData?.VoiceStatus?.StatsSIPStatsRegisterChallenges">
+                      <th scope="row">{{language.Register_Challenges}}</th>
+                      <td>{{voiceStatusLine.Stats.SIPStats.RegisterChallenges || '-'}}</td>
+
+                    </tr>
+                    <tr *ngIf="metaData?.VoiceStatus?.StatsSIPStatsRegisterRejects">
+                      <th scope="row">{{language.Register_Rejects}} </th>
+                      <td>{{voiceStatusLine.Stats.SIPStats.RegisterRejects || '-'}}</td>
+                    </tr>
+                    <tr *ngIf="metaData?.VoiceStatus?.StatsSIPStatsRegisterGrants">
+                      <th scope="row">{{language.Register_Grants}} </th>
+                      <td>{{voiceStatusLine.Stats.SIPStats.RegisterGrants || '-'}}</td>
+                    </tr>
+                    <tr *ngIf="metaData?.VoiceStatus?.StatsSIPStatsNotifyWaiting">
+                      <th scope="row">{{language.Notify_Waiting}}</th>
+                      <td>{{voiceStatusLine.Stats.SIPStats.NotifyWaiting || '-'}}</td>
+                    </tr>
+                    <tr *ngIf="metaData?.VoiceStatus?.StatsSIPStatsNotifyNoMsgs">
+                      <th scope="row">{{language.Notify_No_Msgs}}</th>
+                      <td>{{voiceStatusLine.Stats.SIPStats.NotifyNoMsgs || '-'}}</td>
+                    </tr>
+
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="row" *ngIf="voiceStatus.length">
+            <div class="col-md-12">
+              <div class="border-bottom">
+                <div class="ccl-Secondary-title user-name" id="RTP-Stats">{{language['RTP Stats']}}</div>
+              </div>
+            </div>
+          </div>
+          <div class="row mb-3" *ngIf="voiceStatus.length">
+            <div class="col-md-12">
+              <div class="support-key-value">
+                <table class="" id="voiceLineRTPid">
+                  <tbody>
+                    <tr *ngIf="metaData?.VoiceStatus?.StatsRTPStatsPacketsSent">
+                      <th scope="row">{{language.Packets_Sent}}</th>
+                      <td>{{voiceStatusLine.Stats.RTPStats.PacketsSent || '-'}}</td>
+
+                    </tr>
+                    <tr *ngIf="metaData?.VoiceStatus?.StatsRTPStatsPacketsReceived">
+                      <th scope="row">{{language.Packets_Received}}</th>
+                      <td>{{voiceStatusLine.Stats.RTPStats.PacketsReceived || '-'}}</td>
+
+                    </tr>
+
+                    <tr *ngIf="metaData?.VoiceStatus?.StatsRTPStatsErrorsMissing">
+                      <th scope="row">{{language.Err_missing}}</th>
+                      <td>{{voiceStatusLine.Stats.RTPStats.Errors.Missing || '-'}}</td>
+                    </tr>
+                    <tr *ngIf="metaData?.VoiceStatus?.StatsRTPStatsErrorsUnderruns">
+                      <th scope="row">{{language.Err_Undrrun}}</th>
+                      <td>{{voiceStatusLine.Stats.RTPStats.Errors.Underruns || '-'}}</td>
+                    </tr>
+                    <!-- <tr *ngIf="metaData?.VoiceStatus?.StatsRTPStatsPacketsSent">
+                                                                                                                                                                                                    <th scope="row">{{language.Notify_No_Msgs}}</th>
+                                                                                                                                                                                                    <td>{{voiceStatusLine.Stats.RTPStats.NotifyNoMsgs || '-'}}</td>
+                                                                                                                                                                                                  </tr> -->
+
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="row" *ngIf="voiceStatus.length">
+            <div class="col-md-12">
+              <div class="border-bottom">
+                <div class="ccl-Secondary-title user-name" id="voice-dhcp">{{language.DHCP}}</div>
+              </div>
+            </div>
+          </div>
+          <div class="row" *ngIf="voiceStatus.length">
+            <div class="col-md-12">
+              <div class="support-key-value">
+                <table class="" id="voiceLineDHCPid">
+                  <tbody>
+                    <tr *ngIf="metaData?.VoiceStatus?.StatsDHCPDiscovers">
+                      <th scope="row">{{language.Discovers}}</th>
+                      <td>{{voiceStatusLine.Stats.DHCP.Discovers || '-'}}</td>
+
+                    </tr>
+                    <tr *ngIf="metaData?.VoiceStatus?.StatsDHCPAcks">
+                      <th scope="row">{{language.Acks}}</th>
+                      <td>{{voiceStatusLine.Stats.DHCP.Acks || '-'}}</td>
+
+                    </tr>
+
+                    <tr *ngIf="metaData?.VoiceStatus?.StatsDHCPNacks">
+                      <th scope="row">{{language.Nacks}}</th>
+                      <td>{{voiceStatusLine.Stats.DHCP.Nacks || '-'}}</td>
+                    </tr>
+
+
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+        <!-- </div> -->
+        <div class="service-data-info col-lg-6 col-xs-12 col-sm-12  justify-content-end"
+          *ngIf="wanInfo.length else wanInfoError">
+          <div class="row ml-3">
+            <div class="col-md-12 pl-0 border-bottom d-flex justify-content-start"
+              [ngClass]="{'stopAction' : !wanInfo.length}">
+              <div class="col-md-5 pl-0" *ngIf='wanInfo.length > 1'>
+                <div class="ccl-Secondary-title user-name mb-0" id="voice-wan-status"><!--{{language.Wan_Status}}--> {{language['Router WAN Status']}}</div>
+              </div>
+              <div class="col-md-12 pl-0" *ngIf='wanInfo.length === 1'>
+                <div class="user-name mb-0 ccl-Secondary-title" id="voice-wan-status"><!--{{language.Wan_Status}}--> {{language['Router WAN Status']}} -
+                  <span>{{wanInfo[0].Name}}</span>
+                </div>
+              </div>
+              <div class="col-md-7 pr-0 text-right" *ngIf='wanInfo.length > 1'>
+                <div class="d-flex justify-content-end arrow-down">
+                  <div class="ccl-Secondary-title" id="wanStatusSelectedId">{{wanInfo[0].Name}}</div>
+                  <div class="cus-dd dropdown-button custom-dropdown-btn" ngbDropdown>
+                    <button class="mr-2" id="dropdownExchange" ngbDropdownToggle>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="15.472" height="8.442" viewBox="0 0 15.472 8.442">
+                        <path id="ic_chevrondown" d="M7.738,7.038.7,0,0,.7,7.034,7.742l.7.7.7-.7L15.472.7l-.7-.7Z"
+                          fill="#9e9e9e" />
+                      </svg>
+
+                    </button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownExchange" class="wanDropDown pt-3 pb-3">
+                      <button ngbDropdownItem class="greyaa" *ngFor="let wi of wanInfo; let i = index"
+                        (click)="wanSelection(i)"><span>{{wi.Name}}</span></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 support-key-value my-2">
+              <table id="wanVoice" class="">
+                <tbody>
+                  <tr *ngIf="metaData?.WANInfo?.Enable">
+                    <th scope="row">{{language.Enabled}}</th>
+                    <td
+                      [ngClass]="{'green': (wanInfoToDisplay.Enable == 'True' ), 'red': (wanInfoToDisplay.Enable == 'False')}">
+                      {{wanInfoToDisplay.Enable || '-'}} </td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.Uptime && metaData?.WANInfo?.Uptime">
+                    <th scope="row">{{language.Uptime}}</th>
+                    <td>{{wanInfoToDisplay.Uptime ? upTime : '-' || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.ConnectionStatus">
+                    <th scope="row">{{"Connection Status"}}
+                    </th>
+                    <td>{{wanInfoToDisplay.ConnectionStatus || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.IPv6ConnStatus">
+                    <th scope="row">{{"IPv6 Connection Status"}}
+                    </th>
+                    <td>{{wanInfoToDisplay.IPv6ConnStatus || '-'}}</td>
+                  </tr>
+
+                  <tr *ngIf="wanInfoToDisplay.MACAddress && metaData?.WANInfo?.MACAddress">
+                    <th scope="row">{{language.MAC_Address}}</th>
+                    <td>{{wanInfoToDisplay.MACAddress || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.DownstreamRate && metaData?.WANInfo?.DownstreamRate">
+                    <th scope="row">{{language.Downstream_Mbps}}</th>
+                    <td>{{wanInfoToDisplay.DownstreamRate || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.UpstreamRate && metaData?.WANInfo?.UpstreamRate">
+                    <th scope="row">{{language.Upstream_Mbps}}</th>
+                    <td>{{wanInfoToDisplay.UpstreamRate || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.VlanId && metaData?.WANInfo?.VlanID">
+                    <th scope="row">{{language.VLAN_ID}}</th>
+                    <td>{{wanInfoToDisplay.VlanId || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.Vlan">
+                    <th scope="row">{{language.VLAN}}</th>
+                    <td>{{wanInfoToDisplay.Vlan || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.VlanPriority && metaData?.WANInfo?.VlanPriority">
+                    <th *ngIf="wanInfoToDisplay.VlanPriority" scope="row">{{language.VLAN_Priotiry}}</th>
+                    <td>{{wanInfoToDisplay.VlanPriority || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.BytesReceived && metaData?.WANInfo?.BytesReceived">
+                    <th scope="row">{{language.Bytes_Received}}</th>
+                    <td>{{wanInfoToDisplay.BytesReceived || '-'}}</td>
+
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.BytesSent && metaData?.WANInfo?.BytesSent">
+                    <th scope="row">{{language.Byte_Sent}}</th>
+                    <td>{{wanInfoToDisplay.BytesSent || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.PacketsReceived && metaData?.WANInfo?.PacketsReceived">
+                    <th scope="row">{{language.Packets_Received}}</th>
+                    <td>{{wanInfoToDisplay.PacketsReceived || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.PacketsSent && metaData?.WANInfo?.PacketsSent">
+                    <th scope="row">{{language.Packets_Sent}}</th>
+                    <td>{{wanInfoToDisplay.PacketsSent || '-'}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="ccl-Secondary-title user-name.mb-0 border-bottom"><!--{{ language.Wan_Configuration }}-->{{language['Router WAN Configuration']}}</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 support-key-value my-2">
+              <table class="" id="wanConfigId">
+                <tbody>
+                  <tr *ngIf="wanInfoToDisplay.Username">
+                    <th scope="">{{language.Username}}</th>
+                    <td>{{wanInfoToDisplay.Username || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.AddressingType">
+                    <th scope="">{{"Addressing Type"}}</th>
+                    <td>{{wanInfoToDisplay.AddressingType || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.ConnectionType && metaData?.WANInfo?.ConnectionType">
+                    <th scope="">{{language.Connection_Type}}</th>
+                    <td>{{wanInfoToDisplay.ConnectionType || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.RemoteIPAddress">
+                    <th scope="">{{language.Remote_IP_Address}}</th>
+                    <td>{{wanInfoToDisplay.RemoteIPAddress || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.DefaultGateway">
+                    <th scope="row">{{"Default Gateway"}}
+                    </th>
+                    <td>{{wanInfoToDisplay.DefaultGateway || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.SubnetMask">
+                    <th scope="row">{{"Subnet Mask"}}
+                    </th>
+                    <td>{{wanInfoToDisplay.SubnetMask || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.DNSServers">
+                    <th scope="row">{{"DNS Servers"}}</th>
+                    <td>{{wanInfoToDisplay.DNSServers || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.ExternalIPAddress">
+                    <th scope="row">{{"External IP Address"}}</th>
+                    <td>{{ wanInfoToDisplay.ExternalIPAddress || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.IPv6ConnType">
+                    <th scope="">{{"IPv6 Connection Type"}}</th>
+                    <td>{{ wanInfoToDisplay.IPv6ConnType || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.IPv6AddressingType && metaData?.WANInfo?.IPv6AddressingType">
+                    <th scope="">{{"IPv6 Addressing Type"}}</th>
+                    <td>{{wanInfoToDisplay.IPv6AddressingType || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.DefaultIPv6Gateway && metaData?.WANInfo?.DefaultIPv6Gateway">
+                    <th scope="row">{{"Default IPv6 Gateway"}}
+                    </th>
+                    <td>{{wanInfoToDisplay.DefaultIPv6Gateway || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.IPv6DNSServers && metaData?.WANInfo?.IPv6DNSServer">
+                    <th scope="row">{{"IPv6 DNS Servers"}}</th>
+                    <td>{{wanInfoToDisplay.IPv6DNSServers || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.ExternalIPv6Address && metaData?.WANInfo?.ExternalIPv6Address">
+                    <th scope="row">{{"External IPv6 Address"}}</th>
+                    <td>{{wanInfoToDisplay.ExternalIPv6Address || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.IANA && metaData?.WANInfo?.IANA">
+                    <th scope="row">{{language.IANA}}</th>
+                    <td>{{wanInfoToDisplay.IANA || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.GRP && metaData?.WANInfo?.GRP">
+                    <th scope="row">{{language.GRP}}</th>
+                    <td>{{wanInfoToDisplay.GRP || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.IPv6SitePrefixPltime">
+                    <th scope="row">{{'Preferred Lifetime'}}</th>
+                    <td>{{wanInfoToDisplay.IPv6SitePrefixPltime || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.IPv6SitePrefixVltime">
+                    <th scope="row">{{'Valid Lifetime'}}</th>
+                    <td>{{wanInfoToDisplay.IPv6SitePrefixVltime || '-'}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+
+        </div>
+
+
+
+        <ng-template #wanInfoError>
+          {{data?.wanInfo?.error}}
+        </ng-template>
+      </div>
+      <div class="row">
+        <div class="col-12 text-center" *ngIf="!wanInfo.length && !voiceStatus.length && !this.loader && !(ssoService.getEntitlementsArr().indexOf('102') > -1 && (servicesData?.voice?.usoc || voiceServicesStatus?.usoc))">
+          <b>{{language.No_Record_Found}} </b>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+<!-- <div class="row border-bottom mb-4">
+      <div class="dropdown d-none">
+        <a type="text" class="dropdown-toggle" data-toggle="dropdown">
+          Dropdown button
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="#">Link 1</a>
+          <a class="dropdown-item" href="#">Link 2</a>
+          <a class="dropdown-item" href="#">Link 3</a>
+        </div>
+      </div>
+    </div> -->

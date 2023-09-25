@@ -1,0 +1,290 @@
+<div class="container position-relative">
+
+    <div class="loader" *ngIf="loading">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">{{language.Loading}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="w-100 alert alert-danger  fade show" *ngIf="error">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+        <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+        <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+    </div>
+
+    <div class="w-100 alert alert-success fade show" *ngIf="success">
+        <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+        <div [innerHtml]="successInfo"></div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="ccl-title">{{userTitle}}</div>
+        </div>
+        <div class="col-md-4 px-0">
+            <div class="text-right"><a class="back-text" (click)="goToUsersList();"><i class="fa fa-angle-left px-1"
+                        aria-hidden="true"></i>
+                    {{language.backToUsersList}}</a> </div>
+        </div>
+    </div>
+    <div class="container my-3 pr-0">
+
+        <form *ngIf="isLocalUser">
+            <div class="row my-3">
+
+                <div class="col-md-6 pl-0">
+                    <div class="ccl-form required detail-form" [ngClass]="[passwordError  ? 'ccl-error' : '']">
+                        <label for="Password" class="ccl-title">{{language.password}}</label>
+                        <input id="editUserPassword" name="editUserPassword" type="password" [attr.type]="showPassword?'text': 'password'"
+                            [(ngModel)]="editUserPassword" class="" placeholder="{{language['Enter new password']}}"
+                            required="" maxlength="100" aria-required="true" (keyup)="changePassword()"
+                            aria-describedby="editUserPassword-error" autocomplete="new-password">
+                            <!-- <input class="effect" [attr.type]="showPassword?'text': 'password'" id="password" name="password" ngModel
+                                                            placeholder="Password" [autofocus]="isLocalUser">-->
+                                <span class="pwd-icon" [ngClass]="showPassword ? 'password_view':'password_hide'" (click)="toggleShowPassword()"></span>
+                        <em *ngIf="!editUserPassword && cpasswordError" id="editUserPassword-error" class="invalid">{{language['This field is required']}}</em>
+
+                    </div>
+                </div>
+                <!--  col-md-6   -->
+
+                <div class="col-md-6 pr-0">
+                    <div class="ccl-form detail-form" [ngClass]="[cpasswordError  ? 'ccl-error' : '']">
+                        <label class="ccl-title" for="Confirm Password">{{language.confirmPassword}}</label>
+                        <input id="confirmpassword" name="confirmpassword" type="password" [attr.type]="showPasswords?'text': 'password'"
+                            [(ngModel)]="editUserCPassword" class="" placeholder="{{language['Re-enter to confirm']}}"
+                            required="" maxlength="100" (keyup)="changeConfirmPassword()" aria-required="true"
+                            aria-describedby="confirmpassword-error" autocomplete="new-password">
+                            <span class="pwd-icon" [ngClass]="showPasswords ? 'password_view':'password_hide'" (click)="toggleShowPasswords()">
+                            </span>
+                        <span *ngIf="cpasswordError" id="confirmpassword-error"
+                            class="state-error error">{{language['Please enter the same value again']}}.</span>
+                    </div>
+                </div>
+                <!--  col-md-6   -->
+
+            </div>
+        </form>
+
+        <div class="row my-2">
+            <div class="col-md-12 px-0">
+                <span class="ccl-title">{{language.accessControlList}}</span>
+                <br /> <span>{{language.aclInfo}}</span>
+            </div>
+        </div>
+        <div class="row">
+            <span class="ccl-title">{{language.addSubnets}} <span class="error">*</span></span>
+        </div>
+
+        <div class="row ccl-form my-2">
+            <div class="col-md-4 px-0">
+                <div class="mb-2" *ngFor="let subnet of createSubnets; let i = index">
+                    <div class="add-subnet">
+                        <div class="add-subnet-close-icon primary" role="button" (click)="removeSubnet(i)"><i
+                                class="fa fa-times" aria-hidden="true"></i></div>
+                        {{subnet}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row ccl-form">
+            <div class="col-md-4  pl-0" [ngClass]="[subnetError ? 'ccl-error' : '']">
+                <input id="userACLSEL" type="text" class="add-subnet-input" name="createCurrentSubnet"
+                    [(ngModel)]="createCurrentSubnet" placeholder="" autocomplete="new-password"
+                    (change)="subnetChange();" (keyup)="subnetChange();" 
+                    trimSpace (blur)="removeUnwantedSpace('createCurrentSubnet',createCurrentSubnet)">
+                <em *ngIf="subnetError" id="subnet-error" class="ccl-error">{{subnetErrorInfo}}</em>
+            </div>
+            <div class="col-md-2 pl-0">
+                <button _ngcontent-thh-c50="" class="btn-default primary" (click)="addSubnet()"><i _ngcontent-thh-c50=""
+                        aria-hidden="true" class="fa fa-plus"></i></button>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="container my-3 pr-0">
+        <div class="row my-2 pl-0">
+            <div class="ccl-title col-md-12 pl-0">
+                {{language.addDeleteRoles}}
+            </div>
+        </div>
+
+        <div class="row ccl-form">
+            <div class="col-md-4  pl-0">
+                <ng-select class="w-100" [items]="rolesItems" bindLabel="name" placeholder=""
+                    [(ngModel)]="selectedRoles" [multiple]="true" [ngModelOptions]="{standalone: true}"
+                    [searchable]="true" [disabled]="!rolesItems?.length">
+                </ng-select>
+            </div>
+            <div class="col-md-2 pl-0">
+                <button _ngcontent-thh-c50="" class="btn-default primary " (click)="addRole()"
+                    [disabled]="!rolesItems?.length">{{language.add}}</button>
+            </div>
+        </div>
+
+        <div class="row my-4">
+            <div class="w-100 alert alert-warning fade show" *ngIf="existingRoleError">
+                <button type="button" class="close" (click)="closeAlertRole()">&times;</button>
+                <div [innerHtml]="existingRoleErrorInfo"></div>
+            </div>
+            <div class="col-md-12 px-0" [hidden]="!dataAvailable">
+                <table width="100%" class="table row-border hover" datatable [dtOptions]="tableOptions"
+                    [dtTrigger]="dtTrigger">
+                    <thead class="">
+                        <tr>
+                            <th>{{language.roles}}</th>
+                            <th>{{language.action}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr id="{{item._id}}" class="user-details-row" *ngFor="let item of addedRolesList">
+                            <td class="cursor-pointer">{{item.name}}</td>
+                            <td class="actions">
+                                <i class="fas fa-trash-alt p-1 cursor-pointer primary" title="{{language.delete}}"
+                                    (click)=deleteRole(item)></i>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row my-2" *ngIf="rolePermissions.length">
+        <div class="ccl-title col-md-12">
+            {{language.permissions}}
+        </div>
+    </div>
+    <div *ngIf="permissionAvailable">
+        <div *ngIf="permissionAvailableDeploy">
+
+    <div class="row my-4 px-3" *ngIf="rolePermissions.length">
+        <div class="col-md-12 pr-0">
+            <form id="permissionsForm">
+             <div class="" *ngFor="let item of rolePermissions">
+                    <!-- 1ST LEVEL TREE -->
+                    <div class="row row-bg-grey">
+                        <div class="box-of-permission col-md-8">
+                            <div class="custom-flex">
+                                <div>
+                                    {{scopeDisplayName[item.scopeDisplayName] || language[item.scopeDisplayName] || item.scopeDisplayName}}
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="box-of-permission col-md-4">
+                            {{(item.action == 'read,write') ? language['Read and Write'] : (item.action == 'read' ?
+                            language['Read'] : '')}}
+                        </div>
+                    </div>
+                    <!-- 2ND LEVEL TREE -->
+                    <!-- <div *ngIf="item.submenu"> -->
+                    <div *ngIf="item.permissions.length">
+                    <div *ngFor="let menu of item.permissions">
+                        <div class="row">
+                            <div class="box-of-permission col-md-8">
+                                <div class="custom-flex ml-3">
+                                    <div>
+
+                                        {{scopeDisplayName[menu.scopeDisplayName] || language[menu.scopeDisplayName] || menu.scopeDisplayName}}
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="box-of-permission col-md-4">
+
+                                {{(menu.action == 'read,write') ? language['Read and Write'] : (menu.action ==
+                                'read' ? language['Read'] : '')}}
+                            </div>
+                        </div>
+                        <!-- 3RD LEVEL TREE -->
+                        <div *ngIf="menu.permissions2.length">
+                            <div *ngFor="let secondSubMenu of menu.permissions2">
+                                <div class="row ">
+                                    <div class="box-of-permission col-md-8">
+                                        <div class="custom-flex ml-5">
+                                            <div>
+
+                                                {{scopeDisplayName[secondSubMenu.scopeDisplayName] || language[secondSubMenu.scopeDisplayName] ||
+                                                secondSubMenu.scopeDisplayName}}
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="box-of-permission col-md-4">
+
+                                        {{(secondSubMenu.action == 'read,write') ? language['Read and Write'] :
+                                        (secondSubMenu.action == 'read' ? language['Read'] : '')}}
+                                    </div>
+                                </div>
+
+                                <div *ngIf="secondSubMenu.permissions3.length">
+                                    <div *ngFor="let thirdSubMenu of secondSubMenu.permissions3">
+                                        <div class="row ">
+                                            <div class="box-of-permission col-md-8">
+                                                <div class="custom-flex ml-5r">
+                                                    <div>
+
+                                                        {{scopeDisplayName[thirdSubMenu.scopeDisplayName] || language[thirdSubMenu.scopeDisplayName] ||
+                                                        thirdSubMenu.scopeDisplayName}}
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            <div class="box-of-permission col-md-4">
+
+                                                {{(thirdSubMenu.action == 'read,write') ? language['Read and Write']
+                                                : (thirdSubMenu.action == 'read' ? language['Read'] : '')}}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+                    
+
+                </div>
+            </form>
+        </div>
+    </div>
+    </div>
+    
+
+</div>
+<div class="row my-4 px-3" *ngIf="saveCancelShow">
+    <div class="col-12 text-right px-0">
+        <button class="btn-default primary mr-3" (click)="updateUsersDetails()">{{language.saveEnregistrer}}</button>
+        <button class=" btn-default btn-dft py-1" (click)="cancelUpdate()">{{language.Cancel}}</button>
+    </div>
+</div>
+<!-- Modals -->
+<ng-template #deleteModal let-data let-ref="dialogRef">
+
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{modalTitle}}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        {{language['Are you sure you want to delete this role'] }} ?
+        ({{modalInfo}})
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn-default primary px-3" data-dismiss="modal"
+            (click)="confirmDeleteSecleted()">{{language.yes}}</button>
+        <button type="button" class="btn-default btn-dft py-1 px-3" data-dismiss="modal"
+            (click)="closeModal()">{{language.no}}</button>
+    </div>
+</ng-template>
+<!-- Modals -->

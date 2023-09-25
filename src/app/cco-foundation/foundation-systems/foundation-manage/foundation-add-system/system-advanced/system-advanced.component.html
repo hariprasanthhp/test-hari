@@ -1,0 +1,46 @@
+<!-- <section class="service-section" *ngIf="servicedisable && preProvisionedSystem">
+    <div class="system-details-item-full">
+        <div class="alert alert-info margin-top-20" role="alert">
+            <span>{{language["Services for this system are managed by Operation Cloud"]}}</span>
+        </div>
+    </div>
+</section> -->
+<!-- <div *ngIf="isPRConfiguredOutside">
+ <span>{{language["Services for this system are managed by Operation Cloud"]}}</span>
+</div> -->
+<div class="row mm-0">
+    <div class="col-12 col-md-2 pl-0 mpr-0">
+        <ul id="netops-list-menu" class="nav flex-column left-menu tab-view-style mbr-none">
+
+            <li class="nav-item">
+                <a (click)=" gotoTab('DataPlan')" class="list-group-item list-group-item-action pointer" id=""
+                    [ngClass]="activeTab == 'DataPlan' ? 'active' : ''">{{language['Data Plan']}}</a>
+            </li>
+            <li class="nav-item" *ngIf="!device?.modelName || device?.modelName !=='GPR2032H'">
+                <a (click)=" gotoTab('VoicePlan')" class="list-group-item list-group-item-action pointer" id=""
+                    [ngClass]="activeTab == 'VoicePlan' ? 'active' : ''">{{language['Voice Plan']}}</a>
+            </li>
+            <li class="nav-item">
+                <a (click)="gotoTab('VideoPlan')" class="list-group-item list-group-item-action pointer" id=""
+                    [ngClass]="activeTab == 'VideoPlan' ? 'active' : ''">{{language['Video Plan']}}</a>
+            </li>
+        </ul>
+    </div>
+    <div class="col-12 col-md-10 mp-0 mmt-3">
+        <section>
+       
+            <app-add-data-plan [sys_ServiceTiers]="FormData.SysServicetiers" [AllFormData]="syetemsAllData"
+            [formOptions]="formOptions" [servicesListData]="servicesListData"
+            (Out_sys_ServiceTiers)="OnFormData('SysServicetiers', $event)"
+            (out_sys_service_tiers_submit)="submitServiceData()"  *ngIf="activeTab == 'DataPlan'" [servicedisable]="servicedisable"></app-add-data-plan>
+            <app-add-video-plan [sys_ServiceTiers]="FormData.SysServicetiers" [AllFormData]="syetemsAllData"
+            [formOptions]="formOptions" [servicesListData]="servicesListData"
+            (Out_sys_ServiceTiers)="OnFormData('SysServicetiers', $event)"
+            (out_sys_service_tiers_submit)="submitServiceData()"  *ngIf="activeTab == 'VideoPlan'" [servicedisable]="servicedisable"></app-add-video-plan>
+            <app-add-voice-plan [sys_ServiceTiers]="FormData.SysServicetiers" [AllFormData]="syetemsAllData"
+            [formOptions]="formOptions" [servicesListData]="servicesListData"
+            (Out_sys_ServiceTiers)="OnFormData('SysServicetiers', $event)"
+            (out_sys_service_tiers_submit)="submitServiceData()" *ngIf="activeTab == 'VoicePlan'" [servicedisable]="servicedisable"></app-add-voice-plan>
+        </section>
+    </div>
+</div>

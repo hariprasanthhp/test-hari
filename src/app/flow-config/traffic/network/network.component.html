@@ -1,0 +1,28 @@
+<!-- <div class="flow-config-sub-tab" *ngIf="pageAvailable">
+
+    <ul class="nav">
+        <li class="nav-item" *ngFor="let menu of menus">
+            <a class="nav-link" id="{{menu.title}}" routerLink="{{menu.link}}"
+                [routerLinkActive]="['active']">{{menu.title}}</a>
+        </li>
+    </ul>
+</div> -->
+
+<div class="row my-2">
+    <div class="col-md-8">
+        <div class="flow-config-sub-tab" *ngIf="pageAvailable">
+            <ul class="nav">
+                <li class="nav-item" *ngFor="let menu of menus">
+                    <a class="nav-link" id="{{menu.title}}" routerLink="{{menu.link}}"
+                        [routerLinkActive]="['active']">{{menu.title}}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-4 text-right">
+        <app-input-box></app-input-box>
+    </div>
+</div>
+<div class="position-relative">
+    <router-outlet (activate)="onActivate($event)"></router-outlet>
+</div>

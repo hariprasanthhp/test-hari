@@ -1,0 +1,377 @@
+<div class="subscriber-details">
+    <div class="loader" *ngIf="loading">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">{{ language.Loading }}</span>
+            </div>
+        </div>
+    </div>
+    <div class=" col-lg-12 col-md-12 col-sm-12 alert alert-warning alert-dismissible fade show" role="alert"
+        *ngIf="inSightError">
+        <span class="success-img"><img src="./assets/img/error-icon.svg" /></span>
+        <div class="d-inline-flex text-left w-75">{{language.Error}}! {{inSightErrorMsg}}.</div>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true" (click)='errorReset()'></span>
+        </button>
+    </div>
+    <div class="w-100 warn-alert-overflow alert warning-msg fade show d-none" id="extUserCreateWarning">
+        <span class="success-img succ-img"><img src="./assets/img/warning-icon.svg" /></span>
+        <span class="text-break">{{language['Please create a Call Outcome record to visit selected page']}}</span>
+        <button type="button" class="close ml-2" (click)="toggleExtUserCreateWarning()">
+            <img src="assets/img/ic_close-44px.svg" />
+        </button>
+
+    </div>
+    <div *ngIf="!loading">
+        <div class="subs-title">
+            <div class="st-header flex">
+                <div class="sth-left">
+                    <h2 class="greyaa title" id="marketingInsights">{{headerTitle}}</h2>
+                    <p class="greyaa title search-name-fsize">{{searchName}}</p>
+
+                </div>
+                <div class="sth-rht flex">
+                    <button class="btn-no" (click)="searchResults()"> <img src="assets/img/ic_removeall.svg"> </button>
+                </div>
+            </div>
+            <!--header-->
+            <div class="st-content flex">
+                <div class="stc-addr">
+                    <p class="listdata greyaa mb0">{{searchAddress}}</p>
+                    <h4 class="listdataem greyaa mb0">{{language.Calls_in3months}} <span
+                            class="primary">{{searchpastMonthCall}}</span></h4>
+
+                    <div class="stcl-col" *ngIf="showSubscriberData">
+                        <p class="listdata greyaa mb0"><b>{{language.Devices}}</b></p>
+                        <h3 class="greyaa mb0">{{devices | number}}</h3>
+                    </div>
+                    <div class="stcl-col" *ngIf="showSubscriberData">
+                        <p class="listdata greyaa mb0"><b>{{language.WiFi_Score}}</b></p>
+                        <h3 class="greyaa mb0">{{WiFiscore | number}}</h3>
+                    </div>
+                </div>
+                <!--addr-->
+                <div class="stc-list-col" *ngIf="showSubscriberData">
+                    <div class="stcl-col">
+                        <p class="listdata greyaa mb0"><b>{{language.Attainable_rates}}</b></p>
+                        <h3 class="greyaa mb0">{{attainableRates | number}}</h3>
+                    </div>
+                    <div class="stcl-col">
+                        <p class="listdata greyaa mb0"><b>{{language.Upsteam_Limit_Hits}}</b></p>
+                        <h3 class="greyaa mb0">{{upsteamLimitHits | number}}</h3>
+                    </div>
+                    <div class="stcl-col">
+                        <p class="listdata greyaa mb0"><b>{{language.Downsteam_Limit_Hits}}</b></p>
+                        <h3 class="greyaa mb0">{{downsteamLimitHits | number}}</h3>
+                    </div>
+                </div>
+                <div class="stc-list-col" *ngIf="showSubscriberData">
+                    <div class="stcl-col mb15">
+                        <!-- <p class="listdata greyaa mb0">{{language.Package_Service_Tier}}</p>
+                    <h3 class="greyaa mb0">{{searchServiceTier}}</h3> -->
+                    </div>
+                    <div class="stcl-col mb15">
+                        <!-- <p class="listdata greyaa mb0">{{language.CommandIQ}}</p>
+                    <h3 class="greyaa mb0">-</h3> -->
+                    </div>
+                    <div class="stcl-col">
+                        <p class="listdata greyaa mb0"><b>{{language.Stream_Usuage}}</b></p>
+                        <h3 class="greyaa mb0">{{usageDatas['Streaming Media'] || '-'}}</h3>
+                    </div>
+                    <div class="stcl-col">
+                        <p class="listdata greyaa mb0"><b>{{language.Game_usage}}</b></p>
+                        <h3 class="greyaa mb0">{{usageDatas['Gaming'] || '-'}}</h3>
+                    </div>
+                    <div class="stcl-col">
+                        <p class="listdata greyaa mb0"><b>{{language.Total_Usage}}</b></p>
+                        <h3 class="greyaa mb0">{{usageDatas['total'] || '-'}}</h3>
+                    </div>
+                </div>
+                <div class="stc-list-col" *ngIf="showSubscriberData">
+                    <div class="stcl-col mb15">
+                        <!-- <p class="listdata greyaa mb0 flex">{{language.Insights}}</p>
+                    <h3 class="greyaa mb0">{{searchInsights}}</h3> -->
+                    </div>
+                    <div class="stcl-col">
+                        <p class="listdata greyaa mb0"><b>{{language.servicetier}}</b></p>
+                        <h3 class="greyaa mb0">{{searchServiceTier}}</h3>
+                    </div>
+                    <div class="stcl-col">
+                        <p class="listdata greyaa mb0"><b>{{language.Speed_Tests}}</b></p>
+                        <h3 class="greyaa mb0">{{speedTest | number}}</h3>
+                    </div>
+                    <div class="stcl-col" *ngIf="!isSubscriber">
+                        <p class="listdata greyaa mb0"><b>{{language.Competitor_Web_Visits}}</b></p>
+                        <h3 class="greyaa mb0">{{competitorVisits | number}}</h3>
+                    </div>
+                </div>
+            </div>
+            <!--content-->
+        </div>
+        <!--title-->
+        <div class="marketing-wizard flex" *ngIf="showSubscriberData">
+            <div class="mark-wiz-col brd-btm-snowgrey">
+                <div class="mwc-header flex">
+                    <h3 class="chart-title greyaa mb0" id="subscriber-Usage">{{language.subscriberUsage}}</h3>
+                    <div class="mwc-btns flex">
+                        <!-- <button class="btn-round btn-small-24 btn-grey btn-que"></button> -->
+                        <button class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                            title="{{language.subs_download_tip}}" (click)="exportSubscriberUsage()"></button>
+                        <!-- <button class="btn-round btn-small-24 btn-grey btn-expand"></button> -->
+                    </div>
+                </div>
+                <div class="req-text text-center" *ngIf="insightSubscriberError">
+                    <div class="loader loader-h300-center">
+                        {{insightSubscriberErrorMsg}}
+                    </div>
+                </div>
+                <div class="text-center" *ngIf="!insightSubscriberDataAvailable && !insightSubscriberError">
+                    <div class="h300-left">
+                        <div class="spinner-border text-primary loader">
+                            <span class="sr-only">{{language.Loading}}</span>
+                        </div>
+                    </div>
+                </div>
+                <!--header-->
+                <div [ngClass]="insightSubscriberDataAvailable ? 'd-block' : 'd-none'">
+                    <div class="mwc-content">
+                        <div class="total_compet">{{language.Insight_subsusage}}&nbsp;{{totalUsage | number:
+                            '1.2-2'}}&nbsp;{{language.GB}}</div>
+                        <!-- <img src="assets/img/chart1.png"> -->
+                        <div class="col-md-12 p-2 ">
+                            <div id="subscribe-usage" class="chart-box h-300px"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!---->
+            <div class="mark-wiz-col brd-btm-snowgrey">
+                <div class="mwc-header flex">
+                    <h3 class="chart-title greyaa mb0" id="service-limits">{{language.servicelimits}}</h3>
+                    <div class="mwc-btns flex">
+                        <!-- <button class="btn-round btn-small-24 btn-grey btn-que"></button> -->
+                        <button class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                            title="{{language.subs_download_tip}}" (click)="exportServiceLimits()"></button>
+                        <!-- <button class="btn-round btn-small-24 btn-grey btn-expand"></button> -->
+                    </div>
+                </div>
+                <div class="req-text text-center" *ngIf="insightServiceLimitError">
+                    <div class="loader loader-h300-center">
+                        {{insightServiceLimitErrorMsg}}
+                    </div>
+                </div>
+                <div class="text-center" *ngIf="!insightServiceLimitDataAvailable && !insightServiceLimitError">
+                    <div class="h300-left">
+                        <div class="spinner-border text-primary loader">
+                            <span class="sr-only">{{language.Loading}}</span>
+                        </div>
+                    </div>
+                </div>
+                <!--header-->
+                <div [ngClass]="insightServiceLimitDataAvailable ? 'd-block' : 'd-none'">
+                    <div class="mwc-content">
+                        <!-- <img src="assets/img/chart1.png"> -->
+                        <div class="col-md-12 p-2 ">
+                            <div id="service-limits-chart" class="chart-box h-300px"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mark-wiz-col brd-btm-snowgrey">
+                <div class="mwc-header flex">
+                    <h3 class="chart-title greyaa mb0" id="competitor-insight">{{chartTitle}}</h3>
+                    <div class="mwc-btns flex">
+                        <!-- <button class="btn-round btn-small-24 btn-grey btn-que"></button> -->
+                        <button class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                            title="{{language.subs_download_tip}}" (click)="exportCompetitorVisits()"></button>
+                        <!-- <button class="btn-round btn-small-24 btn-grey btn-expand"></button> -->
+                    </div>
+                </div>
+                <!--header-->
+                <div class="req-text text-center" *ngIf="insightWiFiTrendsError">
+                    <div class="loader loader-h300-center">
+                        {{insightCompetitorErrorMsg}}
+                    </div>
+                </div>
+
+                <div class="text-center" *ngIf="!insightCompetitorDataAvailable && !insightWiFiTrendsError">
+
+
+                    <div class="h300-left">
+                        <div class="spinner-border text-primary loader">
+                            <span class="sr-only">{{language.Loading}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div [ngClass]="insightCompetitorDataAvailable ? 'd-block' : 'd-none'">
+                    <div class="mwc-content">
+                        <div class="total_compet" *ngIf="!isSubscriber">{{language.Insight_speedtest}} {{(speedTest +
+                            competitorVisits)
+                            | number}}</div>
+                        <div class="total_compet" *ngIf="isSubscriber">{{language.Insightcsc_speedtest}} {{(speedTest)
+                            | number}}</div>
+                        <div class="col-md-12 p-2 ">
+                            <div id="speed-test-chart" class="chart-box h-300px"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!---->
+            <div class="mark-wiz-col brd-btm-snowgrey">
+                <div class="mwc-header flex">
+                    <h3 class="chart-title greyaa mb0" id="usageBy-ApplnInsit">{{language.Usage_By_Appln_insit}}</h3>
+                    <div class="mwc-btns flex">
+                        <!-- <button class="btn-round btn-small-24 btn-grey btn-que"></button> -->
+                        <button class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                            title="{{language.subs_download_tip}}"
+                            (click)="downloadFunction(language.Usage_By_Appln_insit)"></button>
+                        <!-- <button class="btn-round btn-small-24 btn-grey btn-expand"></button> -->
+                    </div>
+                </div>
+                <div class="req-text text-center" *ngIf="usageByAppDataError">
+                    <div class="loader loader-h300-center">
+                        {{usageByAppDataErrorMsg}}
+                    </div>
+                </div>
+                <div class="text-center" *ngIf="!usageByAppDataAvailable && !usageByAppDataError">
+                    <div class="h300-left">
+                        <div class="spinner-border text-primary loader">
+                            <span class="sr-only">{{language.Loading}}</span>
+                        </div>
+                    </div>
+                </div>
+                <!--header-->
+                <div [ngClass]="usageByAppDataAvailable ? 'd-block' : 'd-none'">
+                    <div class="mwc-content">
+                        <!-- <img src="assets/img/chart1.png"> -->
+                        <div class="col-md-12 p-2 ">
+                            <div id="pie-Usage-chart" class="chart-box h-300px"></div>
+                            <!-- <div id="pie-Usage-chart" class="chart-box" style="height: 300px; width: 300px;"></div> -->
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!---->
+            <div class="mark-wiz-col brd-btm-snowgrey">
+                <div class="mwc-header flex">
+                    <h3 class="chart-title greyaa mb0" id="top-applicat">{{language.Top_Appln}}</h3>
+                    <div class="mwc-btns flex">
+                        <!-- <button class="btn-round btn-small-24 btn-grey btn-que"></button> -->
+                        <button class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                            title="{{language.subs_download_tip}}"
+                            (click)="downloadFunction(language.Top_Appln)"></button>
+                        <!-- <button class="btn-round btn-small-24 btn-grey btn-expand"></button> -->
+                    </div>
+                </div>
+
+                <div class="req-text text-center" *ngIf="topAppDataError">
+                    <div class="loader loader-h300-center">
+                        {{topAppDataErrorMsg}}
+                    </div>
+                </div>
+                <div class="text-center" *ngIf="!topAppDataAvailable && !topAppDataError">
+                    <div class="h300-left">
+                        <div class="spinner-border text-primary loader">
+                            <span class="sr-only">{{language.Loading}}</span>
+                        </div>
+                    </div>
+                </div>
+                <!--header-->
+                <div [ngClass]="topAppDataAvailable ? 'd-block' : 'd-none'">
+                    <div class="mwc-content">
+                        <!-- <img src="assets/img/app-table1.png"> -->
+                        <table class="table-responsive row-border hover table-alter smal  table-striped">
+                            <thead>
+                                <tr>
+                                    <th class="greyaa insight-table-font">{{language.Application}}</th>
+                                    <th class="greyaa text-right insight-table-font">{{language.Usage}}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of topAppDataArray">
+                                    <td class="primary insight-table-font">{{item.application1}}</td>
+                                    <td class="text-right insight-table-font">{{item.usage}}</td>
+                                </tr>
+                                <tr *ngIf="topAppDataArray.length == 0">
+                                    <td colspan="3" class="text-center"> {{ language["No Data Available"] }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="mark-wiz-col brd-btm-snowgrey">
+                <div class="mwc-header flex">
+                    <h3 class="chart-title greyaa mb0" id="device-wifi">{{language.deviceandwifi}}</h3>
+                    <div class="mwc-btns flex">
+                        <!-- <button class="btn-round btn-small-24 btn-grey btn-que"></button> -->
+                        <button class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                            title="{{language.subs_download_tip}}" (click)="exportTrends()"></button>
+                        <!-- <button class="btn-round btn-small-24 btn-grey btn-expand"></button> -->
+                    </div>
+                </div>
+                <div class="req-text text-center" *ngIf="insightWiFiTrendsError">
+                    <div class="loader loader-h300-center">
+                        {{insightWiFiTrendsErrorMsg}}
+                    </div>
+                </div>
+                <div class="text-center" *ngIf="!insightWiFiTrendsDataAvailable && !insightWiFiTrendsError">
+                    <div class="h300-left">
+                        <div class="spinner-border text-primary loader">
+                            <span class="sr-only">{{language.Loading}}</span>
+                        </div>
+                    </div>
+                </div>
+                <!--header-->
+                <div [ngClass]="insightWiFiTrendsDataAvailable ? 'd-block' : 'd-none'">
+                    <div class="mwc-content">
+                        <!-- <img src="assets/img/chart1.png"> -->
+                        <div class="col-md-12 p-2 ">
+                            <div id="device-chart" class="chart-box h-300px"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mark-wiz-col brd-btm-snowgrey" [ngClass]="hasWifiData ? 'd-block' : 'd-none'">
+                <div class="mwc-header flex">
+                    <h3 class="chart-title greyaa mb0" id="Wi-FiDeviceCategory">{{language.Wi_FiDeviceCategory}}</h3>
+                    <div class="mwc-btns flex">
+                        <!-- <button class="btn-round btn-small-24 btn-grey btn-que"></button> -->
+                        <button class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                            title="{{language.subs_download_tip}}"
+                            (click)="downloadFunction(language.Wi_FiDeviceCategory)"></button>
+                        <!-- <button class="btn-round btn-small-24 btn-grey btn-expand"></button> -->
+                    </div>
+                </div>
+                <div class="req-text text-center" *ngIf="WIFICategoryDataError">
+                    <div class="loader loader-h300-center">
+                        {{WIFICategoryErrorMsg}}
+                    </div>
+                </div>
+                <div class="text-center" *ngIf="!wifiAppDataAvailable && !WIFICategoryDataError">
+                    <div class="h300-left">
+                        <div class="spinner-border text-primary loader">
+                            <span class="sr-only">{{language.Loading}}</span>
+                        </div>
+                    </div>
+                </div>
+                <!--header-->
+                <div>
+                    <div class="mwc-content" [ngClass]="wifiAppDataAvailable ? 'd-block' : 'd-none'">
+                        <!-- <img src="assets/img/chart1.png"> -->
+                        <div class="col-md-12 p-2 ">
+                            <div id="pie-wifi-chart" class="chart-box h-300px"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!---->
+        </div>
+    </div>
+    <div *ngIf="showSubscriberData1" id="no-data-available" class="border-for-no-data text-center">
+        <span>{{language.nodata}}</span>
+    </div>
+    <!--marketing-->
+</div>

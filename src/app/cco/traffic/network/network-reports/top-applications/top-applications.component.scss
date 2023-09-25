@@ -1,0 +1,29 @@
+.export_menu image {
+    transform: translate(2px, 0px);
+}
+
+.cus-dd.dropdown-button.show .dropdown-menu.show {
+    width: 140px;
+    top: 10px !important;
+    left: 0px !important;
+    border-radius: 15px;
+    z-index: 5 !important;
+    padding-top: 5px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.13);
+    border: 0;
+    padding-bottom: 5px;
+}
+.cus-dd .listdata{
+    background: #f8f8fa;
+    box-shadow: 3px 3px 5px #ccc;
+    width: fit-content;
+    padding: 4px 25px;
+    border-radius: 10px;
+}
+.dropdown-button button {
+    width: 100% !important;
+    display: block;
+    border: 0;
+    background: transparent;
+    position: relative;
+}

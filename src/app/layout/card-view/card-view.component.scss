@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200&display=swap');
+
+*{
+    font-family: 'Source Sans Pro', sans-serif;
+    color: #4c4c4c;
+}
+
+.cus-card{
+    background: #f8f8fa;
+    color: #4c4c4c;
+    border-radius: 15px;
+}
+.cus-card .card-title{
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+.cus-card .second-para, .cus-card .third-para{
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+.cus-body{
+    text-align: center;
+    padding: 10px;
+}
+.alert-msg{
+    position: absolute;
+    right: 28px;
+    top: 7px;
+}

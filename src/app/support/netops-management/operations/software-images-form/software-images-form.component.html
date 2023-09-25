@@ -1,0 +1,133 @@
+<div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess">
+  {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} </div>
+
+<div class="w-100 alert alert alert-danger fade show" *ngIf="showError && hasScopeAccess">
+  <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+  <button type="button" id="hide-error-btn" class="close" (click)="hideError()">
+    <span></span>
+  </button>
+  <div class="d-inline-flex" [innerHtml]="errorMsg"></div>
+</div>
+
+<div class="w-100 alert alert alert-success fade show" *ngIf="showSuccess && hasScopeAccess">
+  <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+  <button type="button" class="close" id="hide-success-btn" (click)="hideSuccess()">
+    <span></span>
+  </button>
+  <div class="d-inline-flex" [innerHtml]="successMsg"></div>
+</div>
+
+<div class="py-3 warning-msg warning-msg-dis" *ngIf="updateData.name && hasScopeAccess">
+  <span class="error-img"><img src="./assets/img/warning-icon.svg"></span>
+  <span class="wh-fl">
+    {{ language.The_Software_Image }} "{{ swFileObj.name }}"{{
+    language.Overwrite_Confirmation
+    }}
+  </span>
+  <div class="btn-con-sec float-right">
+    <button class="btn-default btn-primary mr-2" id="confirm-btn" (click)="confirmUpdateSecleted()">
+      {{ language.Confirm }}
+    </button>
+    <button class="btn-default btn-dft" (click)="closeModal()">
+      {{ language.Cancel }}
+    </button>
+  </div>
+</div>
+<div class="loader" *ngIf="loading && hasScopeAccess">
+  <div class="d-flex justify-content-center">
+    <div class="spinner-border text-primary">
+      <span class="sr-only">{{ language.Loading }}</span>
+    </div>
+  </div>
+</div>
+<div *ngIf="hasScopeAccess" class="d-flex align-items-center border-bottom-grey">
+  <div class="col-md-8 pl-0">
+    <div class="sf-title">{{language['New Software Image']}}</div>
+  </div>
+  <div class="col-md-4 pr-0 text-right"> <span class="primary pointer" id="cancel-btn" (click)="goBack()"
+      routerLink="">{{language.Cancel}} </span>
+    <button *ngIf="hasWriteAccess" type="submit" form="software-images-form" id="submit-btn"
+      [disabled]="(!myForm.valid || !fileRequired)" class="btn-default primary px-3 ml-3"> {{language['Save
+      Image']}}</button>
+  </div>
+</div>
+<div [hidden]="!hasScopeAccess">
+  <form class="my-3" id="software-images-form" novalidate #myForm="ngForm" (ngSubmit)="onSWFileSubmit()">
+    <div class="form-group browse-file ccl-form row">
+      <div class="input-group">
+        <label class="col-sm-12 col-form-label">{{ language.File }}<span class="error">*</span> <span
+            class="required-field"> </span></label>
+        <div class="col-sm-12 col-md-5 position-relative">
+          <span class="browse-text">{{language.Browse}}</span>
+          <input type="file" accept=".bin,.oneimage,.img" class="custom-file-input" id="importFile" name="importFile"
+            (change)="onFileChange($event.target.files)" />
+          <label class="custom-file-label" #labelImport for="importFile">{{
+            language.File
+            }}</label>
+        </div>
+      </div>
+    </div>
+    <div class="form-group ccl-form row">
+      <label for="inputModel" class="col-sm-12 col-md-12 col-form-label">{{
+        language.Models
+        }}</label>
+      <div class="col-sm-12 col-md-5">
+        <input type="text" id="Model" name="model" class="form-control" [(ngModel)]="swFileObj.models"
+          [readonly]="hasCalixModel" placeholder="{{ language.Models }}" trimSpace [formValue]="swFileObj"/>
+      </div>
+    </div>
+
+    <div class="form-group ccl-form row">
+      <label for="inputVersion" class="col-sm-12 col-md-12 col-form-label">{{
+        language.Version
+        }}</label>
+      <div class="col-sm-12 col-md-5">
+        <input type="text" id="Version" name="version" class="form-control" [(ngModel)]="swFileObj.version"
+          [readonly]="hasCalixModel" placeholder="{{ language.Version }}" trimSpace [formValue]="swFileObj"/>
+      </div>
+    </div>
+    <div class="form-group ccl-form row">
+      <label for="inputName" class="col-sm-12 col-md-12 col-form-label">{{
+        language.Name
+        }}<span class="error"> *</span> </label>
+      <div class="col-sm-12 col-md-5">
+        <input type="text" id="name" #name="ngModel" name="name" class="form-control" [(ngModel)]="swFileObj.name"
+          required placeholder="{{ language.Name }}" trimSpace [formValue]="swFileObj"/>
+        <span *ngIf="name.invalid && (name.dirty || name.touched)">
+          <small class="mandatory-msg" *ngIf="name.errors.required">
+            {{ language.Name_Is_Required }}
+          </small>
+        </span>
+      </div>
+    </div>
+    <div class="form-group ccl-form row">
+      <label for="inputdes" class="col-sm-12 col-md-12 col-form-label">{{ language.Decription }}<small>{{
+          language.optional
+          }}</small></label>
+      <div class="col-sm-12 col-md-5">
+        <!-- <input type="text" id="description" name="description" [(ngModel)]="swFileObj.description"
+        placeholder="{{ language.Decription }}" /> -->
+        <textarea class="form-control text-box" id="description" name="description"
+          [(ngModel)]="swFileObj.description" trimSpace [formValue]="swFileObj"></textarea>
+
+      </div>
+    </div>
+
+    <!--  <div>
+    <div class="mt-3 mb-4">
+      <button *ngIf="hasWriteAccess" type="submit" id="submit-btn" class="btn-default primary px-3 mr-2"
+        [disabled]="(!myForm.valid || !fileRequired)">
+        {{ language.submit }}
+      </button>
+      <button type="button" id="cancel-btn" class="btn-default primary px-3 ml-2 mr-3" (click)="ssoAuthService.redirectByUrl([
+      '/support/netops-management/operations/software-images-list',
+      '/cco/operations/cco-subscriber-operations/operations/software-images-list',
+      '/cco-foundation/foundation-configuration/configuration-prerequisites/software-images-list',
+      '/cco/operations/cco-subscriber-operations/operations/software-images-list'
+     ])" routerLink="">
+        {{ language.cancel }}
+      </button>
+    </div>
+  </div> -->
+  </form>
+</div>

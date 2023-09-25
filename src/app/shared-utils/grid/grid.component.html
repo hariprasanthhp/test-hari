@@ -1,0 +1,77 @@
+<!-- Note : Route Grid URLS with href for pendo initialization   -->
+
+<div class="dropdown-button mod-about" id="menu-category" #myDrop="ngbDropdown" ngbDropdown>
+  <a class="dash-drop mr-2" id="dropdownPeriod" ngbDropdownToggle aria-haspopup="true" aria-expanded="false">
+    <img src="assets/img/dash_icon.svg" />
+  </a>
+
+  <div ngbDropdownMenu aria-labelledby="dropdownPeriod" style="z-index:500000">
+    <div class="mod-page">
+      <ul>
+        <li class="pl-4 pb-2">
+          <img style="width: 130px;" src="../../../assets/img/calix-Cloud-logo.svg" alt="logo here" />
+        </li>
+        <li *ngIf="apps.cmc">
+          <a [href]="baseUrl + '/engagement'" class="ml-0" id="calix_cloud_marketing">
+            <div class="mod-li">
+              <!-- <img (click)="myDrop.close()" src="assets/img/Marketing-logo.svg" alt="Marketing_Cloud"
+                id="calix_cloud_marketing_img" /> -->
+              <p>{{ language.Marketing_Cloud }}</p>
+            </div>
+          </a>
+        </li>
+        <li *ngIf="apps.cco && sso.isFromCcoModule">
+          <a routerLink="/cco" class="ml-0" id="calix_cloud_cco">
+            <div class="mod-li">
+              <!-- <img (click)="myDrop.close()" src="assets/img/calix-Operations.svg" id="calix_cloud_cco_img" /> -->
+              <p>{{language.Operations}}</p>
+            </div>
+          </a>
+        </li>
+        <li *ngIf="apps.cco && !sso.isFromCcoModule">
+          <a [href]="baseUrl +ccoUrl" class="ml-0" id="calix_cloud_cco">
+            <div class="mod-li">
+              <!-- <img (click)="myDrop.close()" src="assets/img/calix-Operations.svg" id="calix_cloud_cco_img" /> -->
+              <p>{{language.Operations}}</p>
+            </div>
+          </a>
+        </li>
+        <li *ngIf="apps.csc">
+          <a [href]="baseUrl + '/support'" id="calix_cloud_support">
+            <div class="mod-li">
+              <!-- <img (click)="myDrop.close()" src="assets/img/Support-logo.svg" alt="Marketing_Cloud"
+                id="calix_cloud_support_img" /> -->
+              <p>{{language['Service']}}</p>
+            </div>
+          </a>
+        </li>
+        <li *ngIf="apps.foundation">
+          <a [href]="baseUrl + '/cco-foundation'" class="ml-0" id="calix_cloud_deployment">
+            <div class="mod-li shad-logo">
+              <!-- <img (click)="myDrop.close()" src="assets/img/calix-Cloud-logo.svg" id="calix_cloud_shad_img" /> -->
+              <p>{{language.Deployment}}</p>
+            </div>
+          </a>
+        </li>
+        <!-- <li *ngIf="apps.shad">
+          <a [routerLink]="isDev ? ['/cco-foundation'] : ['/shad']" class="ml-0">
+            <div class="mod-li shad-logo" style="width: 80px;">
+              <img (click)="myDrop.close()" src="assets/img/calix-Cloud-logo.svg" id="calix_cloud_shad_img" />
+              <p *ngIf="isDev">REDC</p>
+              <p *ngIf="!isDev">{{ language.SHAD }}</p>
+            </div>
+          </a>
+        </li> -->
+
+        <li *ngIf="apps.shad">
+          <a [href]="baseUrl + '/shad'" class="ml-0" id="calix_cloud_shad">
+            <div class="mod-li shad-logo">
+              <!-- <img (click)="myDrop.close()" src="assets/img/calix-Cloud-logo.svg" id="calix_cloud_shad_img" /> -->
+              <p>{{ language.SHAD }}</p>
+            </div>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

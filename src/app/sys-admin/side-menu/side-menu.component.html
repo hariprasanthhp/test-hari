@@ -1,0 +1,128 @@
+<div class="">
+
+  <ul class="nav flex-column left-menu">
+    <li class="nav-item">
+      <a class="list-group-item list-group-item-action active"
+        routerLink='organizations'>{{language.allorganisation}}</a>
+    </li>
+    <li class="nav-item" [ngClass]="currentPage == 'orgSecuredAccess' ? 'dblock' : 'dnone'">
+      <a class="list-group-item list-group-item-action" routerLink='orgSecuredAccess'
+        [routerLinkActive]="['active']">{{language.securedaccess}}</a>
+    </li>
+    <section
+      [ngClass]="(currentPage != 'organizations' && currentPage != 'orgSecuredAccess' && currentPage != 'orgDetail') ? 'dblock' : 'dnone'">
+      <li class="nav-item">
+        <a class="list-group-item list-group-item-action active">{{(orgName.length > 30)? (orgName |
+          slice:0:30)+'..':(orgName)}}</a>
+      </li>
+      <li class="nav-item">
+        <a class="list-group-item list-group-item-action"
+          [ngClass]="(currentPage == 'users' || currentPage == 'addUser'  || currentPage == 'usersDetail' || currentPage == 'UserSecuredAccess') ? 'active':''"
+          routerLink='users'>{{language.users}}</a>
+      </li>
+      <li class="nav-item" [ngClass]="currentPage == 'UserSecuredAccess' ? 'dblock' : 'dnone'">
+        <a class="list-group-item list-group-item-action" routerLink='UserSecuredAccess'
+          [routerLinkActive]="['active']">{{language.securedaccess}}</a>
+      </li>
+      <li class="nav-item" [ngClass]="currentPage == 'usersDetail' ? 'dblock':'dnone'">
+        <a class="list-group-item list-group-item-action active">{{language.usersdetail}}</a>
+      </li>
+      <li class="nav-item">
+        <a class="list-group-item list-group-item-action" routerLink='blacklist'
+          [ngClass]="(currentPage == 'blacklist' || currentPage == 'blacklistAddUser') ? 'active':''">{{language.deactivatedusers}}</a>
+      </li>
+      <li class="nav-item" *ngIf="showAccountManagement">
+        <a class="list-group-item list-group-item-action" routerLink='account-management'
+          [routerLinkActive]="['active']">Account Management</a>
+      </li>
+      <li class="nav-item">
+        <a class="list-group-item list-group-item-action" routerLink='roles'
+          [ngClass]="(currentPage == 'roles' || currentPage == 'addRole' || currentPage == 'roleDetails') ? 'active':''">{{language.roles}}</a>
+      </li>
+      <li class="nav-item" [ngClass]="currentPage == 'addRole' ? 'dblock' : 'dnone'">
+        <a class="list-group-item list-group-item-action active">{{language.addnewrole}}</a>
+      </li>
+      <li class="nav-item">
+        <a class="list-group-item list-group-item-action" routerLink='csccfg'
+          [routerLinkActive]="['active']">{{language.acsConfig}}</a>
+      </li>
+      <li class="nav-item">
+        <a class="list-group-item list-group-item-action" routerLink='orginfo'
+          [routerLinkActive]="['active']">{{language.orginfo}}</a>
+      </li>
+      <li class="nav-item">
+        <a class="list-group-item list-group-item-action" routerLink='flowAnalyze'
+        [class.active]="(router.url.includes('devices-name-placeholder') 
+        || router.url.includes('flowAnalyze'))">{{language.flowconfiguration}}</a>
+      </li>
+      <li class="nav-item">
+        <a class="list-group-item list-group-item-action" routerLink='orgacl'
+          [routerLinkActive]="['active']">{{language.orgacl}}</a>
+      </li>
+      <li class="nav-item">
+        <a class="list-group-item list-group-item-action" routerLink='sso'
+          [routerLinkActive]="['active']">{{language.ssoconfig}}</a>
+      </li>
+      <!-- <li class="nav-item">
+        <a class="list-group-item list-group-item-action" routerLink='foundation'
+          [routerLinkActive]="['active']">Foundation</a>
+      </li> -->
+      <li *ngIf="apps.fa" class="nav-item">
+        <a class="list-group-item list-group-item-action" routerLink='cco-admin'
+          [routerLinkActive]="['active']">{{language['Operations Cloud']}}</a>
+      </li>
+      <li *ngIf="apps.csc && calloutcomeRead" class="nav-item">
+        <a class="list-group-item list-group-item-action" routerLink='admin-call-outcome'
+          [routerLinkActive]="['active']">{{language['Call Outcome']}}</a>
+      </li>
+      <li class="nav-item" *ngIf="apps.foundation">
+        <a class="list-group-item list-group-item-action" routerLink="./block_page_template_list"
+          [class.active]="router.isActive('/systemAdministration/block_page_template_list', false) || router.isActive('/systemAdministration/block_page_template', false) || router.isActive('/systemAdministration/block_page_template_update', false)"
+          *ngIf="showBlackPage">{{language.Block_Page_Temp }} </a>
+      </li>
+      <!-- <li class="nav-item" *ngIf="apps.foundation">
+        <a class="list-group-item list-group-item-action" routerLink="./whitelabel"
+          [class.active]="router.isActive('systemAdministration/whitelabel', false) || router.isActive('systemAdministration/whitelabel-create', false) || router.isActive('systemAdministration/whitelabel-update', false)"
+          *ngIf="showCommandIQ">{{language['White Label'] }} </a>
+      </li>
+      <li class="nav-item" *ngIf="apps.foundation">
+        <a class="list-group-item list-group-item-action" routerLink="./commandIQ"
+          [class.active]="router.isActive('systemAdministration/commandIQ', false) " *ngIf="showCommandIQ">{{language['CommandIQ_Support_Information']}}</a>
+      </li> -->
+      <li class="nav-item">
+        <a class="list-group-item list-group-item-action" routerLink='./SmartTownWi-Fi'
+          [class.active]="router.isActive('systemAdministration/SmartTownWi-Fi', false) "
+          *ngIf="apps.Community">{{language['myCommunityIQ'] }}</a>
+      </li>
+      <li class="nav-item">
+        <a class="list-group-item list-group-item-action" routerLink='./zip-code-upload'
+          [class.active]="router.isActive('systemAdministration/zip-code-upload', false) || 
+          router.isActive('systemAdministration/zip-code-entrylist', false)">{{language['ZIP Code File Upload']}}</a>
+      </li>
+      <li class="nav-item" *ngIf="apps.cmc && !isCA">
+        <a class="list-group-item list-group-item-action"
+          [class.active]="(router.url.includes('subscriber-prospect-upload') || router.url.includes('subscriber-prospect-list'))"
+          routerLink='subscriber-prospect-upload'><span *ngIf="apps.cmcPro">{{language['subscriber-prospect-upload']}}</span>
+          <span *ngIf="!apps.cmcPro">{{language['Subscriber']}}&nbsp;{{language['File']}}&nbsp;{{language['Upload']}}</span></a>
+      </li>
+      <li class="nav-item" *ngIf="showAPIUsage">
+        <a class="list-group-item list-group-item-action" routerLink='api-usage'
+          [routerLinkActive]="['active']">{{language['API Usage']}}</a>
+      </li>
+      <li class="nav-item" *ngIf="showMobileApp">
+        <a class="list-group-item list-group-item-action" routerLink='mobile-app/commandiq'
+          [ngClass]="(currentPage == 'commandWorx' || currentPage == 'commandiq-create' || currentPage == 'commandWorx-create'
+        || currentPage == 'commandWorx-update' || currentPage == 'commandiq-update' || currentPage == 'commandiq' || currentPage == 'support-information') ? 'active':''">{{language['Mobile App']}}</a>
+      </li>
+      <li class="nav-item" *ngIf="(apps.cmc || apps.cmcPro) && billingStatusEnabled ">
+        <a class="list-group-item list-group-item-action ml-0" routerLink='engagement-cloud'
+        [routerLinkActive]="['active']">{{language['cmcName']}}
+     </a>
+    </li>
+    <li class="nav-item" *ngIf="apps.chatBot">
+      <a class="list-group-item list-group-item-action" routerLink='chatbot' 
+      [ngClass]="(router.url.includes('chatbot') || router.url.includes('chatbot-create')) ? 'active':''">{{language['Chatbot']}}</a>
+  </li>
+    </section>
+  </ul> 
+</div>

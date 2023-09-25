@@ -1,0 +1,16 @@
+table.dataTable tbody tr td {
+  font-size    : 13px;
+  font-weight  : 400;
+  color        : #4C4C4C;
+  padding      : 0px;
+  border-top   : 0 !important;
+  border-bottom: 1px solid transparent;
+}
+
+@media screen and (max-width: 767px){
+  .mto-0{
+    left: 0 !important;
+    position: relative !important;
+    margin-bottom: 10px;
+  }
+}

@@ -1,0 +1,140 @@
+<div class="container position-relative">
+  <div class="loader" *ngIf="loader">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary">
+        <span class="sr-only">Loading...</span>
+      </div>
+    </div>
+  </div>
+  <div class="w-100 alert alert-danger  fade show" *ngIf="error">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+    <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+    <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+  </div>
+
+  <div class="w-100 alert alert-success fade show" *ngIf="success">
+    <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+    <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+    <div [innerHtml]="successInfo"></div>
+  </div>
+  <!--------------------- Title & back button --------------------->
+  <div class="row justify-content-end my-3">
+    <div class="col-md-6">
+      <div class="ccl-title">{{language.addUser}}</div>
+    </div>
+    <div class="col-md-6 px-0">
+      <div class="text-right"><a class="back-text" (click)=goToUsersList();><i class="fa fa-angle-left mr-1"
+            aria-hidden="true"></i> {{language.backToUsersList}} </a></div>
+    </div>
+  </div>
+  <!--------------------- Title & back button End --------------------->
+  <!--------------------- Title & back button --------------------->
+  <div class="container my-3 px-0">
+    <form autocomplete="off">
+      <div class="row my-4">
+        <div class="col-md-6">
+          <div class="ccl-form required" [ngClass]="[(saveClicked && !addUserName)  ? 'ccl-error' : '']">
+            <label for="addUserName">{{language.userName}}<span class="state-error error">*</span></label>
+            <input id="addUserName" name="addUserName" [(ngModel)]="addUserName" type="text" class=""
+              placeholder="{{language['Enter Username']}}" required="" maxlength="100" aria-required="true"
+              aria-describedby="addUserName-error" aria-invalid="true" autocomplete="new-password" 
+              trimSpace (blur)="removeUnwantedSpace('addUserName',addUserName)">
+            <div *ngIf="saveClicked && !addUserName" id="addUserName-error" class="">{{language['This field is
+              required']}}</div>
+          </div>
+        </div>
+        <!--  col-md-6   -->
+
+        <div class="col-md-6 pr-0">
+          <div class="ccl-form" [ngClass]="[(saveClicked && (!addUserEmail || emailError) )  ? 'ccl-error' : '']">
+            <label class="control-label" for="addUserEmail">{{language.emailAddess}}<span class="error">*</span></label>
+            <input id="addUserEmail" name="addUserEmail" type="text" [(ngModel)]="addUserEmail" class=""
+              placeholder="{{language['Enter email address']}}" required="" maxlength="100" aria-required="true"
+              aria-describedby="addUserEmail-error" (change)="validateEmail()" autocomplete="new-password" 
+              trimSpace (blur)="removeUnwantedSpace('addUserEmail',addUserEmail)" (keyup)="removeUnwantedSpace('addUserEmail',addUserEmail)">
+            <span *ngIf="saveClicked && !addUserEmail" id="addUserEmail-error"
+              class="state-error">{{language['This field
+              is required']}}</span>
+            <span *ngIf="saveClicked && addUserEmail && emailError" id="addUserEmail-error"
+              class="state-error">{{language['Please enter a valid email address']}}</span>
+          </div>
+        </div>
+        <!--  col-md-6   -->
+      </div>
+      <div class="row my-4">
+        <div class="col-md-6">
+          <div class="ccl-form">
+            <label for="addUserFirstName">{{language.firstName}}</label>
+            <input id="addUserFirstName" name="addUserFirstName" [(ngModel)]="addUserFirstName" type="text" class=""
+              placeholder="{{language['Enter first name']}}" maxlength="100" autocomplete="new-password" 
+              trimSpace (blur)="removeUnwantedSpace('addUserFirstName',addUserFirstName)">
+          </div>
+        </div>
+        <!--  col-md-6   -->
+
+        <div class="col-md-6 pr-0">
+          <div class="ccl-form">
+            <label for="addUserLastName">{{language.lastName}}</label>
+            <input id="addUserLastName" name="addUserLastName" [(ngModel)]="addUserLastName" type="text" class=""
+              placeholder="{{language['Enter last name']}}" maxlength="100" autocomplete="new-password" 
+              trimSpace (blur)="removeUnwantedSpace('addUserLastName',addUserLastName)">
+          </div>
+        </div>
+        <!--  col-md-6   -->
+      </div>
+      <div class="row my-4">
+        <div class="col-md-6 detail-form">
+          <div class="ccl-form required" [ngClass]="[(saveClicked && !addUserPassword)  ? 'ccl-error' : '']">
+            <label class="control-label" for="addUserPassword">{{language.password}}<span
+                class="state-error error">*</span></label>
+            <input id="addUserPassword" name="addUserPassword" [(ngModel)]="addUserPassword" type="password" class=""
+              [attr.type]="showPassword?'text': 'password'"
+              placeholder="{{language['Enter password']}}" required="" maxlength="100" aria-required="true"
+              aria-describedby="addUserPassword-error" (change)="validateConfirmPassword()"
+              (keyup)="validateConfirmPassword()" autocomplete="new-password">
+              <span class="pwd-icon" [ngClass]="showPassword ? 'password_view' : 'password_hide'" (click)="toggleShowPassword()">
+              </span>
+
+            <span *ngIf="saveClicked && !addUserPassword" id="addUserPassword-error"
+              class="state-error">{{language['This
+              field is required']}}</span>
+          </div>
+        </div>
+        <!--  col-md-6   -->
+
+        <div class="col-md-6 pr-0">
+          <div class="ccl-form confirm-password"
+            [ngClass]="[((saveClicked && !addUserCPassword) || (addUserCPassword && cpassError) || (addUserPassword && !addUserCPassword))  ? 'ccl-error' : '']">
+            <label class="control-label" for="confirmpassword">{{language.confirmPassword}}<span
+                class="state-error error">*</span></label>
+            <input id="confirmpassword" name="confirmpassword" [(ngModel)]="addUserCPassword" type="password" class=""
+              [attr.type]="showPasswords?'text': 'password'"
+              placeholder="{{language['Enter password']}}" required="" maxlength="100" aria-required="true"
+              aria-describedby="confirmpassword-error" (change)="validateConfirmPassword()"
+              (keyup)="validateConfirmPassword()" autocomplete="new-password">
+              <span class="" [ngClass]="showPasswords ? 'password_view':'password_hide'" (click)="toggleShowPasswords()">
+              </span>
+            <div *ngIf="((saveClicked && !addUserCPassword && !cpassError) || (addUserPassword && !addUserCPassword))"
+              id="confirmpassword-error" class="ccl-error">{{language['This field is required']}}</div>
+            <div *ngIf="addUserCPassword && cpassError" id="confirmpassword-error" class="ccl-error">{{language['Please
+              enter the same value again']}}.</div>
+          </div>
+        </div>
+        <!--  col-md-6   -->
+      </div>
+
+
+      <div class="row  mt-4">
+
+        <div class="col-md-4 offset-md-8  pr-0 text-right">
+          <button type="submit" class="btn-default primary mr-3" (click)="addUser()">{{language.saveEnregistrer}}</button>
+          <button type="submit" class="btn-default btn-dft py-1" (click)="cancel()">{{language.Cancel}}</button>
+        </div>
+
+
+      </div>
+
+
+    </form>
+  </div>
+</div>

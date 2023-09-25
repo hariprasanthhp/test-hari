@@ -1,0 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200&display=swap');
+
+*{
+    font-family: 'Source Sans Pro', sans-serif;
+    color: #4c4c4c;
+}
+.user-name{
+    color: #4c4c4c !important;
+    font-size: 30px !important;
+    white-space: nowrap;
+    font-weight: 400 !important;
+}
+
+p{
+    font-weight: 400;
+}
+.blue-btn{
+    padding: 8px 20px;
+    border-radius: 10px;
+}
+.btn-group-vertical>.btn, .btn-group>.btn{
+    flex: unset !important;
+}
+.pin-code{
+    font-weight: 300;
+    font-size: 20px;
+    color: #666666;
+}
+.address{
+    font-size: 12px;
+    font-weight: 300;
+}
+.call-count{
+    font-size: 12px;
+    font-weight: 500;
+}
+.title-content{
+    font-weight: 200;
+    font-size: 24px;
+    color: #4c4c4c;
+}
+.title-name{
+    font-size: 12px;
+}
+.more-link{
+    color: #2078fa;
+    
+}

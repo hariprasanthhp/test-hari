@@ -1,0 +1,73 @@
+<div class="position-relative">
+<div class="no-data" *ngIf="loading">
+  <div class="spinner-border text-primary">
+    <span class="sr-only">{{language.Loading}}</span>
+  </div>
+</div>
+<div class="container position-relative">
+    <div class="row">
+      <div class="w-100">
+        <div class="ccl-admin-title">
+            {{language['API Usage']}}
+        </div>
+      </div>
+    </div>
+    <div class="row d-flex w-100 flex-wrap my-4">
+      <div class="dflex-item pr-4">
+        <h5>{{language['Monthly API Quota']}}</h5>
+        <h1>{{apiUsageData?.allowed_count || 0}}</h1>
+      </div>
+      <div class="dflex-item pr-4" *ngIf="currentMonthData">
+        <h5>{{language['Calls This Month']}}</h5>
+        <h1>{{currentMonthData?.count}}</h1>
+      </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+          <div id="container" class="cco-traffic-reports-container"></div>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 px-0">
+            <div class="ccl-med-title mb-3 pb-1">
+                {{language['Calls in the last 6 months']}}
+            </div>
+            <div class="table-responsive">
+                <table class="call-list-table table" datatable  [dtTrigger]="dtTrigger" [dtOptions]="apiUsageOptions">
+                  <thead>
+                    <tr>
+                      <th>{{language['Month']}}</th>
+                      <th>{{language['Total Calls']}}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr id="{{i}}" *ngFor="let item of tableData; let i = index">
+                      <td>{{ language[month[item.month.split('/')[0]]] || month[item.month.split('/')[0]]}}, {{item.month.split('/')[1]}}</td>
+                      <td>{{item.count}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<ng-template #infoModal let-data let-ref="dialogRef">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{ infoTitle }}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body modal-scrll">
+    <div class="w-100">
+      <p class="f-size-16px">{{infoBody}}</p>
+  </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn-default primary px-3" data-dismiss="modal" (click)="closeModal()">
+      {{ language["Okay"] }}
+    </button>
+  </div>
+</ng-template>

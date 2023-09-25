@@ -1,0 +1,146 @@
+<!-- Begin HTML -->
+<div class="w-100 alert alert-danger fade show margin-top-20" *ngIf="error && errorInfo">
+  <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+  <button type="button" class="close" (click)="closeAlert()" id="err-mss">
+    <span></span>
+  </button>
+  <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+</div>
+
+<form #myForm="ngForm" id="dial-plan-form" (ngSubmit)="myForm.form.valid  && doSubmit()" novalidate
+  [customDigitCheck]="['digitShortTimer','digitlongTimer']" class="form-group ccl-form">
+  <div class="form-group row ccl-form required">
+    <label for="name" class="col-md-12 col-form-label">{{ language.Name }}
+      <span class="error">*</span>
+    </label>
+    <div class="col-md-12" [ngClass]="[((name.errors?.required || name.errors?.pattern || name.errors?.customMin
+    || name.errors?.customMax || isEmptySpace) && ( myForm.submitted || name.touched ))  ? 'errorMessage' : '']">
+      <input type="text" #name="ngModel" class="form-control" id="name" name="name" customMin="4" customMax="20"
+        placeholder="{{ language.Name }}" [(ngModel)]="input.name" required aria-required="true"
+        aria-describedby="name-error" aria-invalid="true" autocomplete="new-password" pattern="^[a-zA-Z0-9_\s]+$"
+        [disabled]="nameDisbable" (ngModelChange)="nameSpaceNotAlloed($event)" trimSpace [formValue]="input"/>
+      <span *ngIf="(( name.touched || myForm.submitted )  &&  name.errors?.required) || isEmptySpace" class="pl-3"
+        id="name-error">
+        {{language.Enter_A_Value}}</span>
+      <span *ngIf="( name.touched || myForm.submitted)  &&  name.errors?.pattern" class="" id="name-error">
+        {{language.Name_required_validation1}}</span>
+      <span *ngIf="( name.touched || myForm.submitted)  &&  (name.errors?.customMin || name.errors?.customMax )"
+        class="" id="name-error">
+        {{language.Name_required_validation2}}</span>
+    </div>
+  </div>
+  <div class="form-group row ccl-form">
+    <label for="description" class="col-md-12 col-form-label">{{ language.description }} ({{ language.Optional
+      }})</label>
+    <div class="col-md-12">
+      <input type="text" name="description" maxlength="100" class="form-control" id="dail-description"
+        placeholder="{{ language.description }}" [(ngModel)]="input.description" trimSpace [formValue]="input"/>
+    </div>
+  </div>
+  <div class="form-group row ccl-form required">
+    <label for="digitShortTimer" class="col-md-12 col-form-label">{{ language.Digit_shortimer }}(s)
+      <span class="error">*</span>
+    </label>
+    <div class="col-md-12"
+      [ngClass]="[((digitShortTimer.errors?.required || digitShortTimer.errors?.customNumMin || digitShortTimer.errors?.customNeg) && (myForm.submitted || digitShortTimer.touched))  ? 'errorMessage' : '']">
+      <input class="form-control" id="digitShortTimer" #digitShortTimer="ngModel" type="number" required
+        customNumMin="1" min="1" customNumMax="16" customNeg name="digitShortTimer" [(ngModel)]="input.shortTimer"
+        data-toggle="tooltip" data-placement="bottom" title="{{language.Digit_shortimer}}" aria-required="true"
+        aria-describedby="digitShortTimer-error" aria-invalid="true" autocomplete="new-password">
+
+      <div class="errorMessage"
+        *ngIf="digitShortTimer.errors?.required && (myForm.submitted || digitShortTimer.touched)"
+        id="digitShortTimer-error">
+        {{language.Enter_A_Value}}
+      </div>
+      <div class="errorMessage"
+        *ngIf="(digitShortTimer.errors?.customNumMin || digitShortTimer.errors?.customNeg) && (myForm.submitted || digitShortTimer.touched)"
+        id="digitShortTimer-error">
+        {{language['ShortTimer_Value_Hint_Min']}}
+      </div>
+      <div class="errorMessage"
+        *ngIf="(digitShortTimer.errors?.customNumMax || digitShortTimer.errors?.customNeg) && (myForm.submitted || digitShortTimer.touched)"
+        id="digitShortTimer-error">
+        {{language['ShortTimer_Value_Hint_Max']}}
+      </div>
+    </div>
+  </div>
+  <div class="form-group row ccl-form required">
+    <label for="digitlongTimer" class="col-md-12 col-form-label">{{ language.Digit_longimer }}(s)
+      <span class="error">*</span>
+    </label>
+    <div class="col-md-12"
+      [ngClass]="[((digitlongTimer.errors?.required || digitlongTimer.errors?.longDigitTimer || digitlongTimer.errors?.customNumMin || digitlongTimer.errors?.customNeg) && (myForm.submitted || digitlongTimer.touched))  ? 'errorMessage' : '']">
+      <input class="form-control" id="digitlongTimer" #digitlongTimer="ngModel" type="number" required customNumMin="4" min="1"
+        customNumMax="20" customNeg name="digitlongTimer" [(ngModel)]="input.longTimer" data-toggle="tooltip"
+        data-placement="bottom" title="{{language.Digit_longimer}}" aria-required="true"
+        aria-describedby="digitlongTimer-error" aria-invalid="true" autocomplete="new-password">
+      <div class="errorMessage" *ngIf="digitlongTimer.errors?.required && (myForm.submitted || digitlongTimer.touched)"
+        id="digitlongTimer-error">
+        {{language.Enter_A_Value}}
+      </div>
+      <div class="errorMessage"
+        *ngIf="(digitlongTimer.errors?.longDigitTimer) && (myForm.submitted || digitlongTimer.touched)"
+        id="digitlongTimer-error">
+        {{language.Digit_Validation_Dial_New}}
+      </div>
+      <div class="errorMessage"
+        *ngIf="(digitlongTimer.errors?.customNumMin || digitlongTimer.errors?.customNeg) && (myForm.submitted || digitlongTimer.touched)"
+        id="digitlongTimer-error">
+        {{language.longDigitTimer_Value_Hint_Min}}
+      </div>
+      <div class="errorMessage"
+        *ngIf="(digitlongTimer.errors?.customNumMax || digitlongTimer.errors?.customNeg) && (myForm.submitted || digitlongTimer.touched)"
+        id="digitlongTimer-error">
+        {{language.longDigitTimer_Value_Hint_Max}}
+      </div>
+
+    </div>
+  </div>
+  <div class="form-group row ccl-form required">
+    <label for="Rules" class="col-md-12 col-form-label">{{ language.Rules }}
+      <span class="error">*</span>
+    </label>
+    <div class="col-md-12 rules-textarea"
+      [ngClass]="[((Rules.errors?.required || Rules.errors?.pattern) && (myForm.submitted || Rules.touched))  ? 'errorMessage' : '']">
+      <textarea class="form-control" id="Rules" #Rules="ngModel" type="number" required customNeg name="Rules"
+        [(ngModel)]="input.rules" placeholder="{{language.RegEx_Pattern_eg}}::^911n|^411|^[2-9][0-9]{6}"
+        data-toggle="tooltip" customStartsWith="^" customEndsWith="^" data-placement="bottom"
+        title="{{language.RegEx_Pattern_eg}}::^911n|^411|^[2-9][0-9]{6}" aria-required="true"
+        aria-describedby="Rules-error" aria-invalid="true" [pattern]="rulesPattern" autocomplete="new-password" trimSpace [formValue]="input">
+        </textarea>
+      <div class="errorMessage" *ngIf="Rules.errors?.required && (myForm.submitted || Rules.touched)" id="Rules-error">
+        {{language.Enter_A_Value}}
+      </div>
+      <div class="errorMessage" *ngIf="Rules.errors?.customStartsWith && (myForm.submitted || Rules.touched)"
+        id="Rules-error">
+        {{language.Rules_Validation}}
+      </div>
+      <div class="errorMessage" *ngIf="(Rules.errors?.customEndsWith) && (myForm.submitted || Rules.touched)"
+        id="digitlongTimer-error">
+        {{language.Rules_Validation2}}
+      </div>
+      <div class="errorMessage" *ngIf="(Rules.errors?.pattern) && (myForm.submitted || Rules.touched)"
+        id="digitlongTimer-error">
+        {{language['Invalid Rule']}}
+      </div>
+    </div>
+  </div>
+  <div class="row mt-3">
+    <div class="col-12">
+      <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+        <div class="btn-group mr-2" role="group" aria-label="First group">
+          <button type="submit" *ngIf="hasWriteAccess" class="btn btn-primary btn-sm br-26 px-3" id="submit-btn">
+            {{ language.submit }}
+          </button>
+        </div>
+        <div class="btn-group mr-2" role="group" aria-label="First group">
+          <button type="button" (click)="goBack(null)" class="btn-default btn-dft" id="cancel-btn">
+            {{ language.cancel }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</form>

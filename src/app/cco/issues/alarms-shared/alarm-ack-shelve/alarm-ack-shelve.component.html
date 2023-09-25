@@ -1,0 +1,19 @@
+<div *ngIf="!fullData?.isHistoryAlarmFromUI">
+    <button [disabled]="disableAckBtn" type="button" class="btn-default btn-dft mr-3"
+        (click)="doAck(fullData?.subject?.ccoAck)">{{(fullData
+        &&
+        fullData['subject'] &&
+        fullData['subject'].ccoAck) ? language['Unacknowledge']:
+        language['Acknowledge']}}</button>
+    <button [disabled]="disableShelveBtn" type="button" class="btn-default btn-dft mr-3"
+        (click)="doShelve(fullData?.subject?.ccoShelved)">{{(fullData &&
+        fullData['subject'] &&
+        fullData['subject'].ccoShelved) ? language['Unshelve']: language['Shelve']}}</button>
+</div>
+
+<div *ngIf="fullData?.isHistoryAlarmFromUI && fullData?.subject?.ccoShelved">
+    <button [disabled]="disableShelveBtn" type="button" class="btn-default btn-dft"
+        (click)="doShelve(fullData?.subject?.ccoShelved)">{{(fullData &&
+        fullData['subject'] &&
+        fullData['subject'].ccoShelved) ? language['Unshelve']: ''}}</button>
+</div>

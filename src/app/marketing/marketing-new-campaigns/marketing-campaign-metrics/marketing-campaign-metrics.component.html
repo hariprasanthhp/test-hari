@@ -1,0 +1,57 @@
+<div class="">
+    <div class="row justify-content-between align-items-center">
+        <div class="col-md-3 smy-2 ccl-form mt-24">
+            <input class="form-control mr-sm-2" type="text" class="ccl-from"  [(ngModel)]="search_Text_Value"
+            placeholder="{{language['search']}}"   (input)="searchName($event.target.value)" aria-label="Search"/>
+        <span class="search-close"  *ngIf="search_Text_Value" (click)="search_Text_Valuefun()">
+        <img src="assets/img/ic_close-44px.svg"> </span>
+        </div>
+        <div class="d-flex align-items-center">
+            <div class="min-w-170">
+                <ng-select id="typeId" [(ngModel)]="channelType" (ngModelChange)="selectCampaignFilter()"
+                [items]="finalTypeDataarr" bindLabel="name" bindValue="name" class="selectboxwidth"
+                [ngModelOptions]="{standalone: true}" [clearable]="false"> </ng-select>
+            </div>
+            <div>
+                <div class="subscriber-more-but">
+                    <div class="dropdown">
+                        <button type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                            class="dropdown-toggle"> ... </button>
+                        <div aria-labelledby="dropdownMenuButton" class="dropdown-menu">
+                            <a href="javascript:void(0)" class="dropdown-item" (click)="download_camp()"> {{language['CSV_Download']}} </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    <table class="dataTable w-100" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" >
+        <thead>
+            <tr>
+                <th>{{language['Sync Date']}}</th>
+                <th>{{language.Name}}</th>
+                <th>{{language.Email}}</th>
+                <th>{{language.segmentChannels}}</th>
+            </tr>
+        </thead>
+        <tbody  [ngClass]="!audienceListErrorMsg && marketingAudienceTable ? 'table-row-group': 'd-none'">
+            <tr *ngFor="let item of marketingAudienceTable;let i=index;">
+                <td>{{item.createdDate}}</td>
+                <td>{{item.name}}</td>
+                <td>{{item.email}}</td>
+                <td>{{item.channels}}</td>
+            </tr>
+        </tbody>
+        <tbody [ngClass]="audienceListErrorMsg ? 'table-row-group': 'd-none'">
+            <tr>
+                <td colspan="4" class="text-center">{{language.nodata}}</td>
+            </tr>
+        </tbody>
+        <div class="no-data position-absolute" *ngIf="!loading">
+            <div class="spinner-border text-primary" role="status">
+                <span class="sr-only  text-center">{{language.Loading}}</span>
+            </div>
+        </div>
+    </table>
+</div>

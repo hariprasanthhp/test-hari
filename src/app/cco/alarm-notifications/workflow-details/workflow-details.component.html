@@ -1,0 +1,75 @@
+<section>
+  <div class="container">
+    <div class="row mb-3" *ngIf="loading">
+      <div class="col-md-12">
+        <div class="loader mt-5">
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+              <span class="sr-only">{{ language.Loading }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4 px-0">
+        <form [formGroup]="workFlowDetailsData?.workFlowDetailsForm">
+          <div class="ccl-form">
+            <label for="notification_name">{{ language.Name }} <span class="error">*</span></label>
+            <!-- (keypress)="keyPressAlphanumeric($event)" -->
+            <!-- [ngClass]="workFlowDetailsData.workflowId != '' ? 'cursornallow' : ''" -->
+            <!-- #notification_name
+            [ngClass]="{ disable: workFlowDetailsData.workflowId != '' }"
+            (keydown)="avoidInitialSpacing($event)"
+            [mask]="'^[A-Za-z0-9 ]+$'"
+            [(ngModel)]="workFlowDetailsData.name"
+            maxlength="50" -->
+            <input type="text" class="form-control" id="notification_name" formControlName="name"
+              aria-describedby="name" placeholder="{{ language.Name }}" trimSpace />
+            <div class="errorMessage"
+              *ngIf="workFlowDetailsData?.workFlowDetailsForm?.controls['name']?.invalid && (workFlowDetailsData?.workFlowDetailsForm?.controls['name']?.dirty || workFlowDetailsData?.workFlowDetailsForm?.controls['name']?.touched)">
+              <div *ngIf="workFlowDetailsData?.workFlowDetailsForm?.controls['name']?.errors?.required" class="mt-1">
+                {{language['This field is required.']}}
+              </div>
+
+              <div *ngIf="workFlowDetailsData?.workFlowDetailsForm?.controls['name']?.errors?.invalidName" class="mt-1">
+                Please fill out this field, 1-50 characters including letters, numbers and spaces
+                only
+              </div>
+
+              <div
+                *ngIf="!workFlowDetailsData?.workFlowDetailsForm?.controls['name']?.errors?.invalidName && workFlowDetailsData?.workFlowDetailsForm?.controls['name']?.errors?.maxlength"
+                class="mt-1">
+                Please fill out this field, 1-50 characters including letters, numbers and spaces
+                only
+              </div>
+
+            </div>
+          </div>
+          <div class="form-group ccl-form mt-2">
+            <label for="description">{{ language.description
+              }}<small> ({{ language.Optional }})</small>
+            </label>
+            <textarea class="form-control" id="description" formControlName="description" rows="3"
+              placeholder="{{ language.Decription }}" minlength="0" maxlength="200" trimSpace></textarea>
+            <!-- <span
+              *ngIf="workFlowDetailsData.description && workFlowDetailsData.description.length > 0"
+              (click)="clearSearch()"
+              aria-hidden="true"
+              class="custom-clear"
+              >×</span
+            > -->
+            <div id="the-count" class="text-right">
+              <span id="current">{{
+                (workFlowDetailsData?.workFlowDetailsForm?.controls['description']?.value)
+                ? workFlowDetailsData?.workFlowDetailsForm?.controls['description'].value.length
+                : 0
+                }}</span>
+              <span id="maximum">/200</span>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>

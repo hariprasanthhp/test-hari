@@ -1,0 +1,202 @@
+<div class="conatiner position-relative">
+
+    <div class="loader" *ngIf="loader">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    </div>
+    <div class="w-100 alert alert-danger  fade show" *ngIf="error">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+        <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+        <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+    </div>
+
+    <div class="w-100 alert alert-success fade show" *ngIf="success">
+
+        <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+        <div [innerHtml]="successInfo"></div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="ccl-title">{{userTitle}}</div>
+        </div>
+        <div class="col-md-4">
+            <div class="text-right"><a class="back-text" (click)="goToUsersList();"><i class="fa fa-angle-left px-1"
+                        aria-hidden="true"></i>
+                    {{language.backToUsersList}}</a> </div>
+        </div>
+    </div>
+
+    <div *ngIf="pageAvailable">
+        <div class="">
+            <!-- <p class="ml-2 ccl-title">{{language['Select Organizations']}}</p> -->
+            <form>
+<div class="row my-2">
+    <div class="col-md-6">
+        <div class="form-check mb-3 d-flex align-items-center">
+            <input type="radio" class="form-check-input" id="Select_Organizations" name=" organization" [value]="false"
+                [(ngModel)]="isAllOrgs">
+            <label class="form-check-label" for="Select_Organizations">
+                {{language['Select Organizations']}}
+            </label>
+
+</div>
+<ng-select id="usage_criteria" class="w-100" [items]="orgsList" bindLabel="name" [(ngModel)]="selectedOrgs"
+    [multiple]="true" placeholder="{{language.selectAnOrganization}}" [ngModelOptions]="{standalone: true}"
+    [clearable]="false" [searchable]="true" [disabled]="isAllOrgs">
+</ng-select>
+<div class="mandatory-msg" *ngIf="showErrorMsg && !selectedOrgs.length">{{language["Please select an organization(s)"]}}</div>
+
+</div>
+<div class="col-md-6">
+    <div class="form-check d-flex align-items-center">
+        <input type="radio" class="form-check-input" name="organization" [value]="true" id="All_Organizations"
+            (click)="checkAllOrgs($event.target.checked)" [(ngModel)]="isAllOrgs">
+        <label class="form-check-label" for="All_Organizations">
+            {{language['All Organizations']}}
+        </label>
+    </div>
+</div>
+</div>
+<!-- <div class="row mt-3">
+            <div class="col-sm-6">
+                <div class="form-check mt-2 ml-1">
+                    <label class="form-check-label w-100">
+                            </label>
+                        </div>
+                    </div> -->
+                    <!-- <div class="col-sm-4">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                            
+                            </label>
+                        </div>
+                    </div>
+                </div>-->
+                <div class="mt-4">
+                    <p class="ml-2 ccl-title">{{language['Access Type']}}</p>
+                    <div class="form-check-inline mt-2">
+                        <label class="form-check-label">
+                            <input type="radio" class="form-check-input" name="type" [value]="true"
+                                [(ngModel)]="isReadOnly">{{language['Read only']}}
+                        </label>
+                    </div>
+                    <div class="form-check-inline">
+                        <label class="form-check-label">
+                            <input type="radio" class="form-check-input" name="type" [value]="false"
+                                [(ngModel)]="isReadOnly">{{language['Write and Read']}}
+                        </label>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <p class="ml-2 ccl-title">{{language['Access Duration']}}</p>
+                    <div class="row mt-2">
+                        <div class="col-sm-6 col-12 ccl-form">
+                            <p class="ml-2 ccl-title">{{language['Start Time']}}</p>
+                            <p-calendar id="start_date" [(ngModel)]="startDate" hourFormat="12" (onSelect)="changeDate()" [minDate]="minimumDate" [showTime]="true"
+                                [style]="{'width': '100%','height': '36px'  }" [inputStyle]="{'height': '36px'}"
+                                appendTo="body" [autoZIndex]="true" placeholder='' [showIcon]="true"
+                                readonlyInput="true" [ngModelOptions]="{standalone: true}" dateFormat="mm-dd-yy"
+                                [minDate]="minimumDate">
+                            </p-calendar>
+                        </div>
+                        <div class="col-sm-6 col-12 ccl-form">
+                            <p class="ml-2 ccl-title">{{language['End Time']}}</p>
+                            <p-calendar id="start_date" [(ngModel)]="endDate" [minDate]="startDate" hourFormat="12" [showTime]="true"
+                                [style]="{'width': '100%','height': '36px'  }" [inputStyle]="{'height': '36px'}"
+                                appendTo="body" [autoZIndex]="true" placeholder='' [showIcon]="true"
+                                readonlyInput="true" [ngModelOptions]="{standalone: true}" dateFormat="mm-dd-yy"
+                                [minDate]="minimumDate">
+                            </p-calendar>
+                        </div>
+                    </div>
+                    <div class="form-check-inline mt-3">
+                        <label class="form-check-label" for="endtime">
+                            <input type="radio" class="form-check-input" id="endtime" name="endtime" [value]="true"
+                                [(ngModel)]="hasEndTime">{{language['Has End Time']}}
+                        </label>
+                    </div>
+                    <div class="form-check-inline">
+                        <label class="form-check-label" for="noendtime">
+                            <input type="radio" class="form-check-input" id="noendtime" name="endtime" [value]="false"
+                                [(ngModel)]="hasEndTime">{{language['No End Time']}}
+                        </label>
+                    </div>
+                </div>
+                <div class="row col ccl-form my-3"><button class="btn-default primary"
+                        (click)="addNewDatas()">{{language.add}}</button>
+                </div>
+            </form>
+            <div class="table-div">
+                <div id="users-list-table" class="mt-2" [hidden]="!dataAvailable">
+                    <table width="100%" datatable [dtOptions]="tableOptions" [dtTrigger]="dtTrigger"
+                        class="row-border hover table-alter">
+                        <thead class="">
+                            <tr>
+                                <th>{{language['Organizations']}}</th>
+                                <th>{{language['Access Type']}}</th>
+                                <th>{{language['Duration']}}</th>
+                                <th>{{language.Action}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of addedOrgsList">
+                                <td>{{language[item.orgName] || item.orgName}}</td>
+                                <!-- <td>{{checkType(item.type)}}</td> -->
+                                <td>
+                                    {{(checkType(item.type) == 'Read and Write' ) ? language['Read and Write'] :
+                                    language['Read only'] }}
+                                </td>
+                                <td>{{checkExpiry(item)}}</td>
+                                <td class="actions">
+                                    <a><i class="fas fa-trash-alt p-1 primary cursor-pointer"
+                                            title="{{language.delete}}" (click)="deleteOneData(item)"></i></a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="row my-4" *ngIf="showButtons">
+                    <div class="col-4 offset-md-8 text-right">
+                        
+                        <button class="btn-default primary mr-3" (click)="save()">{{language.saveEnregistrer}}</button>
+                        <button class=" btn-default btn-dft py-1" (click)="cancel()">{{language.Cancel}}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modals -->
+<ng-template #deleteModal let-data let-ref="dialogRef">
+
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{modalTitle}}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        {{language['Are you sure you want to delete']}}?<br>
+        ({{modalInfo}})
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn-default primary px-3" data-dismiss="modal"
+            (click)="confirmDeleteSecleted()">{{language.yes}}</button>
+        <button type="button" class="btn-default btn-dft py-1 px-3" data-dismiss="modal"
+        (click)="closeModal()">{{language.no}}</button>
+    </div>
+</ng-template>
+<!-- Modals -->
+<!-- <div class="custom01">
+    <p>radio - custom01</p>
+    <input type="radio" id="radio02-01" name="demo02" /><label for="radio02-01">foo</label>
+    <input type="radio" id="radio02-02" name="demo02" /><label for="radio02-02">bar</label>
+    <input type="radio" id="radio02-03" name="demo02" /><label for="radio02-03">baz</label>
+</div> -->

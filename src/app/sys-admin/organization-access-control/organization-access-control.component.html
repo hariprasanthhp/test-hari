@@ -1,0 +1,67 @@
+<div class="container position-relative">
+    <div class="loader" *ngIf="loading">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">{{language.Loading}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="w-100 alert alert-danger  fade show" *ngIf="error">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+        <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+        <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+    </div>
+
+    <div class="w-100 alert alert-success fade show" *ngIf="success">
+        <div class="success-alert-wrapper">
+            <div class="success-alert-icon">
+                <img src="../../../assets/img/success-icon.svg" alt="">
+            </div>
+            <div class="success-alert-msg"><span [innerHtml]="successInfo"></span></div>
+            <div class="success-alert-close"> <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <div class="ccl-title">{{language.access}}</div>
+            <span>{{language.accesscontent}}.</span>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-12 ccl-title">{{language.addSubnets}} <span class="error">*</span></div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="mb-2" *ngFor="let subnet of allsub; let i = index">
+                <div class="add-subnet">
+                    <div class="add-subnet-close-icon primary" role="button" (click)="removeSubnet(i)"><i
+                            class="fa fa-times" aria-hidden="true"></i></div>
+                    {{subnet}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 ccl-form" [ngClass]="[subnetError ? 'ccl-error' : '']">
+            <input id="userACLSEL" type="text" class=" add-subnet-input" name="createCurrentSubnet"
+                [(ngModel)]="createCurrentSubnet" placeholder="" autocomplete="new-password" (change)="subnetChange();"
+                (keyup)="subnetChange();" trimSpace (blur)="removeUnwantedSpace('createCurrentSubnet',createCurrentSubnet)">
+            <em *ngIf="subnetError" id="subnet-error" class="ccl-error">{{subnetErrorInfo}}</em>
+        </div>
+        <div class="col-md-2 pl-0">
+            <button _ngcontent-thh-c50="" class="btn-default primary" (click)="addSubnet()"><i _ngcontent-thh-c50=""
+                    aria-hidden="true" class="fa fa-plus"></i></button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3 offset-md-9 pr-0 text-right " *ngIf="showBtns">
+            
+            <button type="submit" class="btn-default primary" (click)="saveSubnet()">{{language.save}}</button>
+            <button type="submit" class="btn-default btn-dft py-1 ml-3" (click)="resetData()">{{language.cancel}}</button>
+        </div>
+    </div>
+</div>

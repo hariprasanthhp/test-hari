@@ -1,0 +1,206 @@
+<div class="container px-0">
+    <div class="loader" *ngIf="loading">
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border text-primary">
+            <span class="sr-only">{{ language.Loading }}</span>
+          </div>
+        </div>
+      </div>
+    <div class="row mb-4">
+     <div class="col-12 d-flex justify-content-between align-items-center pb-2">
+      <div class="cco-title d-inline-flex align-items-center">
+          <span>{{language['Chatbot']}}</span>
+          <span class="disabled-but mt-2 ml-3">
+              <span class="dot"></span>
+              {{language['Disabled']}}
+          </span>
+      </div>
+      <div class="ml-2">
+          <div class="d-inline-flex">
+              <button type="button" class="btn-default btn-dft ml-3" (click)="routeRedirectChatbot()">{{language['Cancel']}}</button>
+              <button type="button" class="btn-default btn-primary ml-3" (click)="saveChanges()" [disabled]=" customerMessageColor.invalid || messageBubbleColor.invalid || messageTextColor.invalid || windowBgColor.invalid || headerBgColor.invalid || chatbotUrl.errors?.pattern || logourl.errors?.pattern || chatbotUrl.touched && ( chatbotUrl.errors?.required )||chatName.touched && ( chatName.errors?.required) || chatbotWebPath.invalid">{{language['Save Changes']}}</button>
+          </div>
+      </div>
+     </div>
+    </div>
+    <div class="row"> 
+     <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
+          <div class="cco-secondary-title">{{language['Configuration']}}</div>
+          <div class="pl-2">
+            <button type="button" class="btn-default btn-dft btn-dload" disabled>{{language['Download Code Snippet']}}</button></div>
+      </div>
+      <div>
+          <p class="mt-2">{{language['Chatbot_Info_Message']}}</p>
+      </div>
+     </div>
+    </div>
+    <div class="row">
+      <div class="col-5 mb-4">
+        <div class="ccl-form">
+          <label for="chatbotUrl">{{language['Chatbot Host URL']}}<span class="error">*</span></label>
+          <input id="chatbotUrl" name="chatbotUrl" [(ngModel)]="chatBotUrl" type="text" required
+          [pattern]="patternvalidation" #chatbotUrl="ngModel" trimSpace>
+          <div class="error" *ngIf="saveClicked && chatbotUrl.errors?.required || chatbotUrl.touched &&  chatbotUrl.errors?.required">{{language['Please enter the Chatbot Host URL.']}}</div>
+
+           <div *ngIf=" chatbotUrl.invalid" class="errorMessage">
+            <div class="error" *ngIf="chatbotUrl.errors?.pattern">{{language['Please enter a valid URL.']}}</div>
+
+          </div>
+      </div>
+       <div class="ccl-form">
+        <label for="chatbotWebPath">{{language['Web Path']}}</label>
+        <input id="chatbotWebPath" name="chatbotWebPath" type="text" [(ngModel)]="chatBotWebPath" [pattern]="webPathPattern"   #chatbotWebPath="ngModel" trimSpace>
+        <div *ngIf=" chatbotWebPath.invalid" class="errorMessage">
+          <div class="error" *ngIf="chatbotWebPath.errors?.pattern">{{language['Please enter a valid Web Path.']}}</div>
+        </div>
+         </div>
+    </div>
+ 
+    <div class="row">
+      <div class="col-12">
+       <div class="w-100 border-bottom pb-2">
+           <div class="cco-secondary-title">{{language['Customization']}}</div>
+       </div>
+       <div>
+           <p class="mt-2">{{language['Customization_Msg']}}</p>
+       </div>
+      </div>
+      <div class="col-11">
+       <div class="row">
+          <div class="col-md-4 col-md-3 ccl-form">
+             <div class="form-group">
+              <label>{{language['Chatbot Name']}}  <span class="error">*</span></label>
+              <input type="text" [(ngModel)]="chatbotName" name="chatName" id="chatName" #chatName="ngModel" required/>
+              <div class="error" *ngIf=" saveClicked && chatName.errors?.required || chatName.touched &&  chatName.errors?.required">{{language['Please enter the Chatbot Name.']}}</div>
+            </div>
+             <div class="form-group">
+              <label>{{language['Logo URL']}}</label>
+              <input type="text" [(ngModel)]="logoUrl"  id="logourl"name="logourl" [pattern]="patternvalidation"  #logourl="ngModel" trimSpace/>
+
+              <div *ngIf=" logourl.invalid" class="errorMessage">
+                <div class="error" *ngIf="logourl.errors?.pattern">{{language['Please enter a valid URL.']}}</div>
+            </div>
+            </div>
+          </div>
+          <div class="col-md-4 col-md-3 ccl-form">
+              <div class="form-group">
+               <label>{{language['Font']}}</label>
+            
+
+            
+               <ng-select clearable="false" searchable="false"  editable="false" 
+               [ngModelOptions]="{standalone: true}" [(ngModel)]="fontSelected">
+                <ng-option aria-selected="true" >Arial Sans Serif</ng-option>
+                <ng-option >Monospace</ng-option>
+               </ng-select> 
+              </div>
+              <div class="form-group">
+               <label>{{language['Header Background Color']}} <span class="error">*</span></label>
+               <div class="d-flex justify-content-between w-100 ccl-color-pick">
+                  <div class="ccl-form input-colorpicker">
+                      <input type="text" class="w-100" [(ngModel)]="chatbotHeaderBgColor" [value]="chatbotHeaderBgColor" required #headerBgColor="ngModel" />
+                      <button class="close btn-custom-clear" (click)="chatbotHeaderBgColor = ''" *ngIf="chatbotHeaderBgColor">
+                          <span></span>
+                      </button>
+                  </div>
+                  <input class="form-control color-box"  name="ChatbotHeaderBgColor" [(colorPicker)]="chatbotHeaderBgColor"
+                  [(ngModel)]="chatbotHeaderBgColor" id="ChatbotHeaderBgColor" [cpOutputFormat]="'hex'" [style.background]="chatbotHeaderBgColor"
+                  autocomplete="off"  [cpPosition]="'top-left'"/>
+               </div>
+               <div *ngIf=" headerBgColor.invalid" class="errorMessage">
+                <div class="error">{{language['Please enter a Header Background Color']}}</div>
+              </div>
+              </div>
+              <div class="form-group">
+               <label>{{language['Window Background Color']}} <span class="error">*</span></label>
+               <div class="d-flex justify-content-between w-100 ccl-color-pick">
+                  <div class="ccl-form input-colorpicker">
+                      <input type="text" class="w-100" [(ngModel)]="chatbotWindowBgColor" [value]="chatbotWindowBgColor" required #windowBgColor="ngModel" />
+                      <button class="close btn-custom-clear" (click)="chatbotWindowBgColor = ''" *ngIf="chatbotWindowBgColor">
+                          <span></span>
+                      </button>
+                  </div>
+                  <input class="form-control color-box"  name="ChatbotWindowBgColor" [(colorPicker)]="chatbotWindowBgColor"
+                  [(ngModel)]="chatbotWindowBgColor" id="ChatbotWindowBgColor" [cpOutputFormat]="'hex'" [style.background]="chatbotWindowBgColor"
+                  autocomplete="off"  [cpPosition]="'top-left'"/>
+               </div>
+               <div *ngIf="windowBgColor.invalid" class="errorMessage">
+                <div class="error">{{language['Please enter a Window Background Color']}}</div>
+              </div>
+              </div>
+           </div>
+           <div class="col-md-4 col-md-3 ccl-form">
+              <div class="form-group">
+                  <label>{{language['Message Text Color']}} <span class="error">*</span></label>
+                  <div class="d-flex justify-content-between w-100 ccl-color-pick">
+                     <div class="ccl-form input-colorpicker">
+                         <input type="text" class="w-100" [(ngModel)]="chatbotMessageTextColor" [value]="chatbotMessageTextColor" required #messageTextColor="ngModel" />
+                         <button class="close btn-custom-clear" (click)="chatbotMessageTextColor = ''" *ngIf="chatbotMessageTextColor">
+                             <span></span>
+                         </button>
+                     </div>
+                     <input class="form-control color-box"  name="ChatbotMessageTextColor" [(colorPicker)]="chatbotMessageTextColor"
+                     [(ngModel)]="chatbotMessageTextColor" id="ChatbotMessageTextColor" [cpOutputFormat]="'hex'" 
+                     [style.background]="chatbotMessageTextColor" autocomplete="off"  [cpPosition]="'top-left'"/>
+                  </div>
+                  <div *ngIf="messageTextColor.invalid" class="errorMessage">
+                    <div class="error">{{language['Please enter a Message Text Color']}}</div>
+                 </div>
+              <div class="form-group">
+               <label>{{language['Chatbot Message Bubble Color']}} <span class="error">*</span></label>
+               <div class="d-flex justify-content-between w-100 ccl-color-pick">
+                  <div class="ccl-form input-colorpicker">
+                      <input type="text" class="w-100" [(ngModel)]="chatbotMessageBubbleColor" [value]="chatbotMessageBubbleColor" required #messageBubbleColor="ngModel" />
+                      <button class="close btn-custom-clear" (click)="chatbotMessageBubbleColor = ''" *ngIf="chatbotMessageBubbleColor">
+                          <span></span>
+                      </button>
+                  </div>
+                  <input class="form-control color-box"  name="ChatbotMessageBubbleColor" [(colorPicker)]="chatbotMessageBubbleColor"
+                  [(ngModel)]="chatbotMessageBubbleColor" id="ChatbotMessageBubbleColor" [cpOutputFormat]="'hex'" 
+                  [style.background]="chatbotMessageBubbleColor" autocomplete="off"  [cpPosition]="'top-left'"/>
+               </div>
+               <div *ngIf="messageBubbleColor.invalid" class="errorMessage">
+                <div class="error">{{language['Please enter a Chatbot Message Bubble Color']}} </div>
+              </div>
+              <div class="form-group">
+               <label>{{language['Customer Message Bubble Color']}} <span class="error">*</span></label>
+               <div class="d-flex justify-content-between w-100 ccl-color-pick">
+                  <div class="ccl-form input-colorpicker">
+                      <input type="text" class="w-100" [(ngModel)]="customerMessageBubbleColor" [value]="customerMessageBubbleColor" required #customerMessageColor="ngModel" />
+                      <button class="close btn-custom-clear" (click)="customerMessageBubbleColor = ''" *ngIf="customerMessageBubbleColor">
+                          <span></span>
+                      </button>
+                  </div>
+                  <input class="form-control color-box"  name="customerMessageBubbleColor" [(colorPicker)]="customerMessageBubbleColor"
+                  [(ngModel)]="customerMessageBubbleColor" id="chatbotMessageBubbleColor" [cpOutputFormat]="'hex'" 
+                  [style.background]="customerMessageBubbleColor" autocomplete="off"  [cpPosition]="'top-left'"/>
+               </div>
+               <div *ngIf="customerMessageColor.invalid" class="errorMessage">
+                <div class="error">{{language['Please enter a Customer Message Bubble Color']}} </div>
+              </div>
+              </div>
+           </div>
+       </div>
+      </div>
+     </div>
+  </div>
+  <!-- Modals -->
+<ng-template #infoModal let-data let-ref="dialogRef">
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">{{ infoTitle }}</h4>
+      <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+    <div class="modal-body modal-scrll">
+      <div class="w-100">
+        <p class="f-size-16px" [innerHTML]="infoBody"></p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-default primary px-3" data-dismiss="modal" (click)="closeModal()">
+        {{ language["Okay"] }}
+      </button>
+    </div>
+  </ng-template>

@@ -1,0 +1,634 @@
+<section>
+    <div class="position-relative">
+        <div class="loader load" *ngIf="loader">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                </div>
+            </div>
+        </div>
+        <div class="w-100 alert alert alert-danger fade show" *ngIf="warningMessage">
+            <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+            <button type="button" class="close" (click)="warningMessage = ''">
+                <span></span>
+            </button>
+            <div class="d-inline-flex" [innerHtml]="warningMessage"></div>
+        </div>
+
+        <div class="preview-button">
+            <button type="button" id="CP-Preview-Btn" class="btn-default btn-dft pointer">
+                <a href="javascript:void(0)" target="_blank" (click)="showPreview()">
+                    {{language['Preview']}} <img src="../../../../assets/img/External Link.svg" alt="">
+                </a>
+            </button>
+        </div>
+
+        <!-- <div class="container">
+            <div class="captive-portal-kpi">
+                 <div id="captive-kpi" class="captive-portal-kpi-item">
+                <span id="pendoOuttages">Customers Connected</span>
+                <div class="align-content-around flex-wrap pointer">
+                    <h3>34</h3>
+                </div>
+
+            </div> -->
+
+        <!-- <div id="captive-kpi" class="captive-portal-kpi-item">
+                <span id="pendoOuttages">Unique Visitors</span>
+                <div class="align-content-around flex-wrap pointer">
+                    <h3>1,343</h3>
+                    <div class="past-hours"> Last 30 days</div>
+                </div>
+
+            </div>
+            </div>
+        </div> -->
+        <div class="container">
+            <div class="row my-4">
+                <div class="col-lg-2 col-md-3 col-sm-12 ccl-tabs pl-0">
+                    <ul id="netops-list-menu" class="nav flex-column left-menu tab-view-style">
+                        <li class="nav-item">
+                            <a id="" class="list-group-item list-group-item-action"
+                                [ngClass]="tabSelected == 'content'? 'active': '' " href="javascript:void(0)"
+                                (click)="tabSelected = 'content';errorValidation.logoImage ? errorValidation.logoImage = false : ''">
+                                {{language['Content']}}
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a id="" class="list-group-item list-group-item-action"
+                                [ngClass]="tabSelected == 'branding'? 'active': '' " href="javascript:void(0)"
+                                (click)="tabSelected = 'branding';errorValidation.coverImage ? errorValidation.coverImage = false : ''">
+                                {{language['Bsp_Add_Micro__Branding']}}
+                            </a>
+                        </li>
+                        <li class="nav-item"> <!--hide this network access tab for next release(R23.2)!-->
+                            <a id="" class="list-group-item list-group-item-action"
+                                [ngClass]="tabSelected == 'network'? 'active': '' " href="javascript:void(0)"
+                                (click)="tabSelected = 'network';errorValidation= {}">{{language['Network Access']}}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a id="" class="list-group-item list-group-item-action"
+                                [ngClass]="tabSelected == 'Visitors'? 'active': '' " href="javascript:void(0)"
+                                (click)="tabSelected = 'Visitors';errorValidation= {}">{{language['Customer Portal
+                                Visitors']}} </a>
+                        </li>
+                    </ul>
+
+                </div>
+
+
+                <div class="col-lg-10 col-md-9 col-sm-12" [ngClass]="tabSelected == 'Visitors' ? 'mb-5' : ''">
+                   
+                    <div class="row" *ngIf="tabSelected == 'content'">
+                        <div class="col-md-6">
+                            <form>
+                                <div class="ccl-form form-group">
+                                    <label for="exampleInputEmail1">{{language['Message']}}</label>
+                                    <input type="text" class="form-control" id="exampleInputEmail1"
+                                        (blur)="setCaptivePortal()" name="message" [(ngModel)]="portalDetail.title"
+                                        aria-describedby="emailHelp" trimSpace [formValue]="portalDetail">
+                                    <div class="error"
+                                        *ngIf="portalDetail.title && portalDetail.title.length > 64">{{language['Character length should not exceed 64 characters']}}</div>
+                                </div>
+                            </form>
+                            <div class="d-flex">
+                                <div class="w-50 mr-2">
+                                    <div> {{language['Cover Photo']}}
+                                        <!-- <span class="error"></span> -->
+                                        <!-- <span class="img-remove" *ngIf="portalDetail.coverImage"> <img (click)="removeImg('coverImage')"
+                                                src="../../../../assets/img/close-icon.svg" alt="" title="{{language['Remove The Image']}}"> </span> -->
+                                        <div class="form-input-field">
+                                            <div class="input-field">
+                                                <div id="logo-image-view-div" class="logo-image-view">
+                                                    <!-- <span class="img-remove" class="fa fa-times-circle" aria-hidden="true"></i> </span> -->
+                                                    <img id="logo-image-view" class="default-cover-image"
+                                                        [src]="portalDetail.coverImage || ' ' ">
+                                                </div>
+                                                <span class="error" id="coverUploadError"
+                                                    *ngIf="errorValidation.coverImage">{{language['Upload valid
+                                                    image file']}}</span>
+                                            </div>
+                                            <div class="upload-btn-wrapper mt-2 pointer">
+                                                <label for="coverImage" class="btn" title="{{language['Upload Image']}}">{{language['Upload Image']}}</label>
+                                                <input type="file" id="coverImage"
+                                                    accept=".jpeg, .JPEG, .PNG, .jpg, .png, .JPG, .img, .IMG, .bin, .BIN"
+                                                    (change)="uploadImg($event, 'coverImage')" />
+                                            </div>
+                                            <span class="ml-2 mt-2 position-absolute" *ngIf="portalDetail.coverImage"
+                                                (click)="removeImg(true,'coverImage')">
+                                                <a href="javascript:void(0)"
+                                                    class="primary link-pointer">{{language.delete}}</a>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-50">
+                                    {{language['Cover Photo Guidelines']}}
+                                    <div class="guidelines">
+                                        <ul>
+
+                                            <li><span class="text-capitalize">{{language['Max File size']}}</span>:20MB
+                                            </li>
+                                            <li>{{language['Max Width']}}:1080px</li>
+                                            <li>{{language['Max Height']}}:360px</li>
+                                            <li>{{language['Supported Formats']}}: .png, .jpeg/.jpg</li>
+
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <form #myForm="ngForm">
+                                <div class="ccl-form form-group">
+                                    <label for="exampleInputEmail11">{{language['Terms of Service']}}</label>
+                                    <input type="text" class="form-control" id="exampleInputEmail11" name="termsService"
+                                        [value]="portalDetail.termsUrl || ''" aria-describedby="emailHelp"
+                                        (keyup)="checkUrlIsValid($event)" (blur)="validateUrl($event)" trimSpace [formValue]="portalDetail">
+                                    <!-- pattern="((h|H)ttp(s)?:\/\/)+(www\.)*[-a-zA-Z0-9@:%._\+~#=]+\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)"> -->
+                                    <span class="error" id="tosError" *ngIf="!checkUrl">{{
+                                        language['Please Enter a valid URL'] }}</span>
+                                </div>
+                                <div class="ccl-form form-group">
+                                    <label for="exampleInputEmail12">{{language['Submit Button Text']}}</label>
+                                    <input type="text" class="form-control" id="exampleInputEmail12" name="btnTxt"
+                                        [(ngModel)]="portalDetail.buttonText" aria-describedby="emailHelp"
+                                        (blur)="setCaptivePortal()" trimSpace [formValue]="portalDetail">
+                                    <div class="error"
+                                        *ngIf="portalDetail.buttonText && portalDetail.buttonText.length > 90">{{language['Character length should not exceed 90 characters']}}</div>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+
+
+                    <!-- Branding Content Start -->
+                    <div class="row mb-5" *ngIf="tabSelected == 'branding'">
+                        <div class="branding-container">
+
+                            <div class="branding-item">
+                                <div class="d-flex">
+                                    <div class="w-50 mr-2">
+                                        <div> {{language['Logo']}}
+                                            <!-- <span class="error"></span> -->
+                                            <!-- <span class="logo-img-remove" *ngIf="portalDetail.logoImage">
+                                                <img (click)="removeImg('logoImage')" src="../../../../assets/img/close-icon.svg" alt=""
+                                                    title="{{language['Remove The Image']}}"> </span> -->
+                                            <div class="form-input-field mt-1">
+                                                <div class="input-field">
+                                                    <div id="logo-image-view-div" class="logo-image-view">
+                                                        <img id="logo-image-view" class="default-cover-image"
+                                                            [src]="portalDetail.logoImage || ' ' ">
+
+
+
+                                                    </div>
+                                                    <span class="error" id="logoUploadError"
+                                                        *ngIf="errorValidation.logoImage">{{language['Upload
+                                                        valid image file']}}</span>
+                                                </div>
+                                                <div class="upload-btn-wrapper">
+                                                    <label class="btn" for="logoImage">{{language['Upload Image']}}</label>
+                                                    <input type="file" id="logoImage"
+                                                        accept=".jpeg, .JPEG, .PNG, .jpg, .png, .JPG, .img, .IMG, .bin, .BIN"
+                                                        (change)="uploadImg($event, 'logoImage')" />
+                                                </div>
+                                                <span class="ml-3 position-absolute" *ngIf="portalDetail.logoImage"
+                                                    (click)="removeImg(true, 'logoImage')">
+                                                    <a href="javascript:void(0)"
+                                                        class="primary link-pointer">{{language.delete}}</a>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="w-50">
+                                        {{language['Logo_Guidelines']}}
+
+                                        <div class="guidelines">
+                                            <ul>
+                                                <li><span class="text-capitalize">{{language['Max File
+                                                        size']}}</span>:20MB</li>
+                                                <li>{{language['Max Width']}}:400px</li>
+                                                <li>{{language['Max Height']}}:400px</li>
+                                                <li>{{language['Supported Formats']}}: .png, .jpeg/.jpg</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="branding-item">
+                                <div class="form-group color-picker-custom">
+                                    <label>{{language['Background']}}</label>
+                                    <div class="d-flex  w-100">
+                                        <div class="position-relative ccl-form min-w-135">
+                                            <input type="text" class="clearable-input"
+                                                [(ngModel)]="portalDetail.bgColor" [value]="portalDetail.bgColor"
+                                                (blur)="setCaptivePortal()" />
+                                            <div *ngIf="!sso.validateHexCode(portalDetail.bgColor)"
+                                                class="error">{{language['capitive_portal_color_validate']}}</div>
+                                            <!-- <button class="close btn-custom-close" (click)="clearInput('bgColor')"
+                                                *ngIf="portalDetail.bgColor">
+                                                <span></span>
+                                            </button> -->
+                                        </div>
+                                        <input class="form-control color-box" name="primaryColor"
+                                            [(colorPicker)]="portalDetail.bgColor" [(ngModel)]="portalDetail.bgColor"
+                                            id="bgColor" [cpOutputFormat]="'hex'" [cpPosition]="'top-left'"
+                                            [style.background]="portalDetail.bgColor" autocomplete="off"
+                                            (cpToggleChange)="colorPickerEvent($event)" />
+                                    </div>
+                                </div>
+                                <div class="form-group color-picker-custom">
+                                    <label>{{language['Primary Button']}}</label>
+                                    <div class="d-flex  w-100">
+                                        <div class="position-relative ccl-form min-w-135">
+                                            <input type="text" class="clearable-input"
+                                                [(ngModel)]="portalDetail.pbColor" [value]="portalDetail.pbColor"
+                                                (blur)="setCaptivePortal()" />
+                                            <div *ngIf="!sso.validateHexCode(portalDetail.pbColor)"
+                                                class="error">{{language['capitive_portal_color_validate']}}</div>
+                                            <!-- <button class="close btn-custom-close" (click)="clearInput('pbColor')"
+                                                *ngIf="portalDetail.pbColor">
+                                                <span></span>
+                                            </button> -->
+                                        </div>
+                                        <input class="form-control color-box" name="pbColor"
+                                            [(colorPicker)]="portalDetail.pbColor" [(ngModel)]="portalDetail.pbColor"
+                                            id="pbColor" [cpOutputFormat]="'hex'" [cpPosition]="'top-left'"
+                                            [style.background]="portalDetail.pbColor" autocomplete="off"
+                                            (cpToggleChange)="colorPickerEvent($event)" />
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="branding-item">
+                                <div class="form-group color-picker-custom">
+                                    <label>{{language['Font']}}</label>
+                                    <div class="d-flex w-100">
+                                        <div class="position-relative ccl-form min-w-135">
+                                            <input type="text" class="clearable-input" [(ngModel)]="portalDetail.fColor"
+                                                [value]="portalDetail.fColor" (blur)="setCaptivePortal()" />
+                                            <div *ngIf="!sso.validateHexCode(portalDetail.fColor)" class="error">
+                                                {{language['capitive_portal_color_validate']}}</div>
+                                            <!-- <button class="close btn-custom-close" (click)="clearInput('fColor')"
+                                                *ngIf="portalDetail.fColor">
+                                                <span></span>
+                                            </button> -->
+                                        </div>
+                                        <input class="form-control color-box" name="fColor"
+                                            [(colorPicker)]="portalDetail.fColor" [(ngModel)]="portalDetail.fColor"
+                                            id="fColor" [cpOutputFormat]="'hex'" [cpPosition]="'top-left'"
+                                            [style.background]="portalDetail.fColor" autocomplete="off"
+                                            (cpToggleChange)="colorPickerEvent($event)" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group color-picker-custom mt-3">
+                                    <label>{{language['Button Font']}}</label>
+                                    <div class="d-flex w-100">
+                                        <div class="position-relative ccl-form min-w-135">
+                                            <input type="text" class="clearable-input"
+                                                [(ngModel)]="portalDetail.bfColor" [value]="portalDetail.bfColor"
+                                                (blur)="setCaptivePortal()" />
+                                            <div *ngIf="!sso.validateHexCode(portalDetail.bfColor)"
+                                                class="error">{{language['capitive_portal_color_validate']}}</div>
+                                            <!-- <button class="close btn-custom-close" (click)="clearInput('bfColor')"
+                                                *ngIf="portalDetail.bfColor">
+                                                <span></span>
+                                            </button> -->
+                                        </div>
+                                        <input class="form-control color-box" name="bfColor"
+                                            [(colorPicker)]="portalDetail.bfColor" [(ngModel)]="portalDetail.bfColor"
+                                            id="bfColor" [cpOutputFormat]="'hex'" [cpPosition]="'top-left'"
+                                            [style.background]="portalDetail.bfColor" autocomplete="off"
+                                            (cpToggleChange)="colorPickerEvent($event)" />
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- Branding Content End -->
+
+
+                    <!-- Network Access Start -->
+                    <!--hide this network access tab for next release(R23.2)!-->
+                    <div class="row ccl-form" *ngIf="tabSelected == 'network'">
+                        <div class="col-md-4">
+                            <div class="mb-2">
+                                <label>{{language['Network Access']}}</label>
+                                <ng-select [items]="networkAccess" bindLabel="label" bindValue="id"
+                                    [(ngModel)]="addNetwork.networkAccess" (change)="networkChange($event);warningMessage=''" [searchable]="false">
+                                </ng-select>
+                            </div>
+                            <div class="mb-2" *ngIf="addNetwork.networkAccess == 'Custom'">
+                                <label>{{language['Select Day(s)']}}</label>
+                                <ng-select [items]="days" bindLabel="label" bindValue="id" [(ngModel)]="addNetwork.day"
+                                    (change)='validateDays()' [multiple]="true" [closeOnSelect]="false" [searchable]="false">
+                                </ng-select>
+                                <div *ngIf="!matchedCriteria && !addNetwork.day.length" class="error">
+                                    {{language['Please select a day']}}
+                                </div>
+                            </div>
+                            <div class="captive-time mb-2" *ngIf="addNetwork.networkAccess != 'Always'">
+                                <div for="">{{language['Start Time']}}</div>
+                                <div class="captive-time-item position-relative">
+                                    <p-calendar *ngIf="addNetwork.networkAccess == 'Custom'" [(ngModel)]="addNetwork.startTime" [showIcon]="true" timeOnly="true" showTime="true"
+                                        (onSelect)="setEndTime($event)" [hourFormat]="12" [showIcon]="true" [disabled]="disablefield()">
+                                    </p-calendar> 
+                                    <p-calendar  *ngIf="addNetwork.networkAccess == 'Everyday'" [(ngModel)]="addNetwork.startTime" [showIcon]="true" timeOnly="true" showTime="true"
+                                    (onSelect)="setEndTimeEveryday($event)" [hourFormat]="12" [showIcon]="true">
+                                </p-calendar> 
+                                </div>
+                            </div>
+                            <div class="captive-time mb-2" *ngIf="addNetwork.networkAccess != 'Always'">
+                                <div for="">{{language['End Time']}}</div>
+                                <div class="captive-time-item position-relative">
+                                    <p-calendar *ngIf="addNetwork.networkAccess == 'Custom'" [(ngModel)]="addNetwork.stopTime" [showIcon]="true" (onSelect)="validateDays()"
+                                        [minDate]="addNetwork.startTime" timeOnly="true" showTime="true"
+                                        [hourFormat]="12" [disabled]="disablefield()" >
+                                    </p-calendar>
+                                    <p-calendar *ngIf="addNetwork.networkAccess == 'Everyday'"  [(ngModel)]="addNetwork.stopTime" [showIcon]="true"
+                                    [minDate]="addNetwork.startTime" timeOnly="true" showTime="true" [hourFormat]="12">
+                                </p-calendar>
+
+                                </div>
+                            </div>
+                            <div>
+                                <div *ngIf="addtimedisabled[addNetwork.networkAccess]" class="error">
+                                    {{language['The selected date and time is already Added']}}
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn-default primary btn-sm-primary mt-2"
+                                [disabled]="addtimedisabled[addNetwork.networkAccess]"
+                                *ngIf="addNetwork.networkAccess == 'Custom' || (addNetwork.networkAccess == 'Everyday')"
+                                (click)="addNetworkAccess()"> + {{language['Add Time']}} </button>
+                        </div>
+                        <div class="col-md-1"> </div>
+                        <div class="col-md-6" *ngIf="addNetwork.networkAccess != 'Always' || customHours.length">
+                            <div class="">{{language['Custom Hours']}} </div>
+                            <div class="captive-hours-table">
+                                <table>
+                                    <thead>
+                                        <th>{{language['Day_s']}}</th>
+                                        <th>{{language['Start Time']}}</th>
+                                        <th>{{language['End Time']}}</th>
+                                        <th></th>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let tr of customHours; let i = index">
+                                            <td>{{(tr.weekDays)}}</td>
+                                            <td>{{parseTime(tr.startTime).toString().substring(0,2)== '00' ? '12'+parseTime(tr.startTime).toString().substring(2): parseTime(tr.startTime)}}</td>
+                                            <td>{{parseTime(tr.stopTime).toString().substring(0,2)== '00' ? '12'+parseTime(tr.stopTime).toString().substring(2): parseTime(tr.stopTime)}}</td>
+                                            <td><img src="../../../../assets/img/net-delete.svg" class="net-delete pointer"
+                                                    title="{{language.Delete}}"
+                                                    (click)="deleteAccess(tr);"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Network Access End -->
+
+                    <!-- Customer Portal Visitors start -->
+
+                    <div class="mb-5" *ngIf="tabSelected == 'Visitors'">
+
+                        <p class="p-0">
+                            {{ language['login_retention_description'] }}
+                        </p>
+
+                        <div class="d-flex mt-2">
+                            <label class="pr-3 pb-0 pt-2">{{language['Login Retention']}}</label>
+                            <div class="w-100px">
+                                <ng-select [searchable]="false" [items]="RetentionDays" [clearable]="false"
+                                    bindLabel="id" bindValue="value" [(ngModel)]="portalDetail.loginRetentionDays"
+                                    (change)="setCaptivePortal()">
+                                </ng-select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Customer Portal Visitors end -->
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+<ng-template #previewModal let-modal class="">
+    <div class="cco-secondary-title mb-3"> {{language['Captive Preview']}}</div>
+    <div class="modal-header justify-content-end">
+        <!-- <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <img src="../../../../assets/img/ic_close-44px.svg" />
+        </button> -->
+        <button type="button" data-dismiss="modal" aria-label="Close" class="close"
+            (click)="modal.dismiss('Cross click')"><span aria-hidden="true"></span></button>
+    </div>
+    <div class="preview-content-warpper">
+        <div class="row mb-2">
+            <div class="col-md-12">
+                <div class="cco-secondary-title-system border-bottom"> {{language['Content']}} </div>
+
+
+                <div class="preview-container">
+                    <div class="preview-item">
+                        <div class="preview-list-label">{{language['Message']}} </div>
+                        <div class="preview-list-info">
+                            <h3>
+                                {{previewData.title}}
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="preview-item">
+                        <div class="preview-list-label">{{language['Cover Photo']}} </div>
+                        <div class="preview-list-info logo-image-view">
+                            <div class="default-cover-image"> <img src="{{previewData.coverImage}}" alt=""> </div>
+                        </div>
+                    </div>
+                    <div class="preview-item">
+                        <div class="preview-list-label">{{language['Terms of Service']}}</div>
+                        <div class="preview-list-info">
+                            <h3>
+                                {{previewData.termsUrl}}
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="preview-item">
+                        <div class="preview-list-label">{{language['Submit Button Text']}}</div>
+                        <div class="preview-list-info">
+                            <h3>
+                                {{previewData.buttonText}}
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-md-12">
+                <div class="cco-secondary-title-system border-bottom"> {{language['Bsp_Add_Micro__Branding']}} </div>
+
+
+                <div class="preview-container">
+                    <div class="preview-item">
+                        <div class="preview-list-label">{{language['Logo']}} </div>
+                        <div class="preview-list-info">
+                            <div class="default-cover-image"> <img src="{{previewData.logoImage}}" alt=""> </div>
+                        </div>
+                    </div>
+                    <div class="preview-item">
+                        <div class="preview-list-label">{{language['Background']}}</div>
+                        <div class="preview-list-info">
+                            <h3>
+                                {{previewData.bgColor}}
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="preview-item">
+                        <div class="preview-list-label">{{language['Font']}} </div>
+                        <div class="preview-list-info">
+                            <h3>
+                                {{previewData.fColor}}
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="preview-item">
+                        <div class="preview-list-label">{{language['Primary Button']}}</div>
+                        <div class="preview-list-info">
+                            <h3>
+                                {{previewData.pbColor}}
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="preview-item">
+                        <div class="preview-list-label">{{language['Button Font']}}</div>
+                        <div class="preview-list-info">
+                            <h3>
+                                {{previewData.bfColor}}
+                            </h3>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-md-12">
+                <div class="cco-secondary-title-system border-bottom"> {{language['Network Access']}} </div>
+
+
+                <!-- <div class="preview-container">
+                    <div class="preview-item">
+                        <div class="preview-list-label">Network Access </div>
+                        <div class="preview-list-info">
+                            <h3>
+                                Join Wi-Fi Network
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="preview-item">
+                        <div class="preview-list-label">Select Day(s) </div>
+                        <div class="preview-list-info">
+                            <h3>
+                                Sun
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="preview-item">
+                        <div class="preview-list-label">Start Time </div>
+                        <div class="preview-list-info">
+                            <h3>
+                                11:00 AM
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="preview-item">
+                        <div class="preview-list-label">End Time </div>
+                        <div class="preview-list-info">
+                            <h3>
+                                12:00 AM
+                            </h3>
+                        </div>
+                    </div>
+                </div> -->
+            </div>
+        </div>
+        <div class="" *ngIf="addNetwork.networkAccess != 'Always'">
+            <div class="captive-hours-table">
+                <table>
+                    <thead>
+                        <th>{{language['Day_s']}}</th>
+                        <th>{{language['Start Time']}}</th>
+                        <th>{{language['End Time']}}</th>
+                        <th></th>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let tr of portalDetail.schedules">
+                            <td>{{tr.weekDays}}</td>
+                            <td>{{parseTime(tr.timeRanges[0]?.startTime).toString().substring(0,2)== '00' ? '12'+parseTime(tr.timeRanges[0]?.startTime).toString().substring(2): parseTime(tr.timeRanges[0]?.startTime)}}</td>
+                            <td>{{parseTime(tr.timeRanges[0]?.stopTime).toString().substring(0,2)== '00' ? '12'+parseTime(tr.timeRanges[0]?.stopTime).toString().substring(2): parseTime(tr.timeRanges[0]?.stopTime)}}</td>
+
+<!-- 
+
+                            <td>{{parseTime(tr.timeRanges[0]?.startTime)}}</td>
+                            <td>{{parseTime(tr.timeRanges[0]?.stopTime)}}</td> -->
+                            <!-- <td>{{(tr.timeRanges[0]?.startTime)}}</td>
+                            <td>{{(tr.timeRanges[0]?.stopTime)}}</td> -->
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+</ng-template>
+
+<ng-template #deleteImg let-modal class="col-md-12">
+    <div>
+        <div class="modal-header">
+
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" (click)="modal.close('cancel')"></span>
+            </button>
+        </div>
+        <div class="modal-body">
+
+            <div class="alert modal-warning alert-warning alert-dismissible fade show">
+                <div class="modal-warning-info d-flex justify-content-between">
+                    <div class="icon">
+                        <img src="../../../../assets/img/warning-icon-36px.svg" alt="">
+                    </div>
+                    <div class="Warning-content">
+                        <div class="warn-confirm pb-2">
+                            <div class="content-title">
+                                {{language['Are you sure you want to delete image?']}}
+                            </div>
+                            <p>{{language['This action cannot be undone']}}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" id="removeImgConfirm" (click)="removeImg(false, imgType)"
+                    class="btn-default primary px-3 mr-3 mt-5">
+                    {{ language.Confirm }}
+                </button>
+                <button type="button" id="removeImgCancel" (click)="modal.close('cancel')"
+                    class="btn-default default btn-dft px-3 mr-3 mt-5">
+                    {{ language.cancel }}
+                </button>
+            </div>
+        </div>
+    </div>
+</ng-template>

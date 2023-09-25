@@ -1,0 +1,114 @@
+<section>
+    <div class="container">
+        <div class="d-flex justify-content-end" *ngIf="!loading">
+            <a routerLink="/cco/operations/cco-subscriber-operations/templates/bandwidth-tiers/add"> <button
+                    type="button" id="add" class="btn-default primary px-3 my-3">{{language.Add}}
+                    {{language.bandwidth}}</button></a>
+        </div>
+        <div class="row">
+            <div class="w-100 alert alert-danger  fade show my-3" *ngIf="error">
+                <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+                <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+                <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+            </div>
+        </div>
+        <div class="row mt-5" *ngIf="loading">
+            <div class="col-md-12">
+                <div class="loader">
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border text-primary">
+                            <span class="sr-only">{{language.Loading}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row my-3">
+            <div class="col-md-12">
+                <table [hidden]="!dataAvailable" id="bandwidth-tier" width="100%" class="row-border hover table-alter "
+                    datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+                    <thead class="">
+                        <tr>
+                            <th>{{language.Name}} </th>
+                            <th>{{language.Upstream}} PIR</th>
+                            <th>{{language.Downstream}} PIR</th>
+                            <th>{{language.Upstream}} CIR</th>
+                            <th>{{language.Downstream}} CIR</th>
+                            <th style="text-align: center;">{{language.action}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr id="{{item._id}}" *ngFor="let item of bandWidthData;let i = index">
+                            <td>{{item.name ? item.name : ''}}</td>
+                            <td>{{item.upstreamPir ? item.upstreamPir : 0 }}</td>
+                            <td>{{item.downstreamPir ? item.downstreamPir : 0}}</td>
+                            <td>{{item.upstreamCir ? item.upstreamCir : 0 }}</td>
+                            <td>{{item.downstreamCir ? item.downstreamCir : 0 }}</td>
+                            <td style="text-align: center;">
+                                <span title="Edit">
+                                    <a href="javascript:void(0)" style="cursor: pointer" (click)="gotoEdit(item.name)">
+                                        <i class="fas fa-pencil-alt mx-2" aria-hidden="true"></i>
+                                    </a>
+                                </span>
+                                <span class="del" title="Delete">
+                                    <a href="javascript:void(0)" style="cursor: pointer"
+                                        (click)="deleteConfirmation(item)">
+                                        <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                    </a>
+                                </span>
+                            </td>
+                    </tbody>
+                    <!-- <tbody *ngIf="bandWidthData?.length == 0">
+                        <tr>
+                            <td colspan="6" class="no-data-available">{{language['No data available in table']}}</td>
+                        </tr>
+                    <tbody> -->
+                </table>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<ng-template #deleteModal let-data let-ref="dialogRef">
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{ language.Delete }}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="close()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <p>
+            {{language["Are you sure you want to delete BandWidth tier"]}}
+            <b> {{ deleteName }}</b> ?
+        </p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="close()">
+            {{ language.Close }}
+        </button>
+        <button type="button" class="btn btn-primary" (click)="deleteBandWidth()" [disabled]="btnDisabled"
+            style="margin-left: 3px">
+            {{ language.Yes }}
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #deleteSuccessModal let-data let-ref="dialogRef">
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{ language.Delete }}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="close()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <p> <b>{{ deleteName }}</b> {{language.BandWidth_tier}} {{language["Deleted Successfully"]}}</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="close()">
+            {{ language.Close }}
+        </button>
+    </div>
+</ng-template>

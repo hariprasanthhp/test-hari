@@ -1,0 +1,224 @@
+.action-control {
+  margin-left  : auto;
+  margin-right : auto;
+  position     : relative;
+  max-width    : 205px;
+  margin-bottom: 24px;
+  border       : 1px solid #ccc;
+  z-index      : 1;
+  border-radius: 20px;
+  padding-left : 25px;
+  display      : flex;
+  align-items  : center;
+  width        : 100%;
+
+  div {
+    display: inline-block;
+    color  : #0279ff;
+
+    &.total {
+      padding-left: 10px;
+    }
+
+    &.played {
+      border-right: 1px solid #ccc;
+    }
+  }
+
+  label {
+    display  : block;
+    min-width: 65px;
+    margin   : 0;
+    color    : #848484;
+  }
+
+  .action-btn .fa {
+    color    : #0279ff;
+    font-size: 28px;
+    cursor   : pointer;
+  }
+}
+
+.track-slider {
+  margin-bottom: 20px;
+  display      : flex;
+
+  .bar-slider {
+    min-width      : 215px;
+    // padding-left: 5px;
+  }
+
+  .action-icon {
+    padding-left: 10px;
+    width       : 63px;
+  }
+
+  .duration {
+    min-width   : 85px;
+    position    : relative;
+    padding-left: 20px;
+
+    span {
+      width        : 16px;
+      height       : 16px;
+      border-radius: 100%;
+      position     : absolute;
+      left         : 0;
+      top          : 5px;
+      border       : 1px solid #FFFFFF;
+      box-sizing   : border-box;
+      box-shadow   : 2px 2px 8px rgb(0 0 0 / 10%);
+    }
+
+    .gray {
+      background: #CCCCCC;
+    }
+
+    .red {
+      background: #E51A1A;
+    }
+  }
+}
+
+.filter {
+  background   : #F8F8FA;
+  border-top   : 1px solid #EBEAEF;
+  border-bottom: 1px solid #EBEAEF;
+  margin-bottom: 20px;
+  padding      : 13px 30px 10px;
+}
+
+.section-rec {
+  padding-left: 15px;
+}
+
+::ng-deep {
+  .track-slider {
+    .ngx-slider {
+      margin-top   : 5px;
+      border-radius: 12px;
+      border       : 1px solid #E51A1A;
+      height       : 17px;
+      overflow     : hidden;
+    }
+
+    .ngx-slider-bar {
+      background: #ffffff !important;
+      height    : 16px !important;
+    }
+
+    .ngx-slider-selection {
+      background: #E51A1A !important;
+    }
+
+    span.ngx-slider-span.ngx-slider-bubble {
+      display: none;
+    }
+
+    .ngx-slider .ngx-slider-pointer {
+      width           : 16px;
+      height          : 16px;
+      top             : -5px;
+      background-color: #5ACFEA;
+      border-radius   : 50%;
+      display         : none;
+
+      &::after {
+        width        : 8px;
+        height       : 8px;
+        top          : 4px;
+        left         : 4px;
+        background   : #fff;
+        border-radius: 50%;
+      }
+
+      &.ngx-slider-active::after {
+        background-color: #5ACFEA;
+      }
+    }
+  }
+
+  .white-select {
+    .ng-select-container {
+      background: #fff !important;
+    }
+  }
+
+}
+
+.board_head {
+  padding: 8px 6px 0 6px;
+}
+
+span.ml20 {
+  padding-left: 8px;
+}
+
+.btn-expand {
+  background-image: url(~src/assets/img/ic_expand_grey.svg);
+
+  &:hover {
+    background-image: url(~src/assets/img/ic_expand_grey.svg);
+  }
+
+  &:focus {
+    background-image: url(~src/assets/img/ic_expand_grey.svg);
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .md-block {
+    display: block !important;
+  }
+
+  .board_body {
+    height: fit-content !important;
+  }
+}
+
+.orange-text {
+  color: rgb(255, 127, 0);
+}
+
+.ml20 {
+  margin-left: 20px;
+}
+
+.mt20 {
+  margin-top: 20px;
+}
+
+.top5-fullscreen {
+  float: right;
+}
+
+.board_body {
+  padding: 0px !important;
+}
+
+
+.expand-icon {
+  background-color   : #ebeaef;
+  color              : #ebeaef;
+  width              : 25px;
+  height             : 25px;
+  border-radius      : 20px;
+  font-size          : 1px;
+  text-align         : center;
+  line-height        : 24px;
+  font-weight        : normal;
+  justify-content    : center;
+  background-image   : url(~src/assets/img/ic_expand_inverted_grey.svg);
+  background-position: 50%;
+  background-repeat  : no-repeat;
+}
+
+.full-screen-info {
+  width : 100%;
+  height: 100%;
+}
+.position-abslt{position: absolute;right: 0;top: 14px;padding: 8px 0;}
+.pr-5px{padding-right: 5px;}
+.h-210{height: 210px;}
+.action-icon a{cursor: pointer;}
+#usage_criteria{min-width: 200px;}

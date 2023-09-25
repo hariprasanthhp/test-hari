@@ -1,0 +1,103 @@
+<div class="ccl-tabs my-3">
+    <ul id="tabs" class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link small"
+                routerLink="/cco/operations/alarms/health-alarm-notifications">{{language['Notifications']}}</a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link small active" (click)="subscribeCount('', true);">{{language['Recipients']}}</a>
+        </li>
+
+
+    </ul>
+</div>
+
+<div class="row">
+    <div class="loader" *ngIf="loading">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">{{language.Loading}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="w-100 alert alert-danger  fade show" *ngIf="error">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+        <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+        <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="pull-left sub-imp-title d-flex justify-content-between">
+
+            <a class="primary text-decoration-none mb-3 cursor-pointer" (click)="doRefresh();">
+                <span class="icon-btn">
+                    <img src="../../../../../assets/img/ic_refresh.svg" alt="">
+                </span>
+                {{language['Refresh']}}</a>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="pull-right sub-imp-title d-flex justify-content-between">
+            <div class="">{{language['Opt-in status is updated once a day.']}}</div>
+
+        </div>
+    </div>
+
+    <div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess">
+        {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}}
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="row w-100 justify-content-between">
+            <div class="col-md-4 ccl-form position-relative">
+                <input id="search-rec" placeholder="Search Recipients" [formControl]="searchRec" class="ccl-input">
+                <div class="close-clear" *ngIf="searchRec?.value" (click)="clearSearchInp()">
+                    <button class="close"><span></span></button>
+                </div>
+            </div>
+            <div class="col-md-3 ccl-form  mb-2 d-flex align-items-center">
+                <label class="mr-2 mb-0">Filter: </label>
+                <ng-select class="w-100" [clearable]="false" [items]="optInStatusList" [formControl]="optInStatus"
+                    bindValue="id" bindLabel="name" [searchable]="false" (change)="subscribeCount('')">
+                </ng-select>
+            </div>
+        </div>
+
+        <div class="sub-imp-table table-responsive" *ngIf="showTable">
+            <table class="table table-borderless w-100 " datatable [dtOptions]="dtOptions">
+                <thead>
+                    <tr>
+                        <th class="recipient">{{language['Recipient']}}</th>
+                        <th>{{language['Type']}}</th>
+                        <th class="notification">{{language['notification']}}</th>
+                        <th id="Opt-In-Status">{{language['Opt-In Status']}}</th>
+                        <th>{{language['lastUpdated']}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let row of list">
+                        <td class="recipient">{{row.recipient}}</td>
+                        <td>{{row.notificationType}}</td>
+                        <td class="notification">{{row.notificationName}}</td>
+                        <td>
+                            <button class="{{colorBtnMap[row.status]}} border-0"><span
+                                    class="dot mr-2"></span>{{row.status}}</button>
+                        </td>
+                        <td>{{convertToDateTime(row.updatedTime)}}</td>
+                    </tr>
+                </tbody>
+
+                <tbody *ngIf="(list?.length == 0 || count === 0 || filterCount === 0)">
+                    <tr>
+                        <td colspan="5" class="no-data-available">{{language['No matching records found']}}</td>
+                    </tr>
+                <tbody>
+
+            </table>
+        </div>
+    </div>
+
+</div>

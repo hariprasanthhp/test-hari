@@ -1,0 +1,314 @@
+<div class="col-md-12" *ngIf="!(softwareVrsion >= 23.3)">
+    <p>
+        *{{language['All restrictions set here will apply to any device not in a profile and new devices
+        connecting
+        to the network']}}. </p>
+</div>
+<div class="col-md-12 mb-2">
+    <label class="cco-secondary-title border-bottom w-100 pb-2" id="rest-content-label">{{language['Content']}}</label>
+</div>
+<!--end title-->
+<div class="col-md-12 mb-2">
+    <div class="row">
+        <div class="col-sm-12 col-md-9 col-lg-9 col-xl-9">
+            <p *ngIf="softwareVrsion<=23.2">{{smbEnabled ? language['Restrict access to specific content'] :
+                language['Restrict access to
+                specific
+                content or
+                select an age range for pre-set restrictions']}}.
+            </p>
+            <p *ngIf="softwareVrsion>=23.3">{{ language['Restrict access to
+                specific
+                content or
+                select pre-set restrictions']}}.
+            </p>
+        </div>
+
+        <div class="col-sm-12 col-md-3 col-lg-3 col-xl-3 cus-select-height-24">
+            <ng-select autocomplete="new-password" *ngIf="!smbEnabled" (change)="onContentFilterChangeMain()"
+                [searchable]="false" [disabled]="!scopeFlag.configWrite" id="Parentfilter" name="contetnFilter"
+                [items]="contentFilter" bindLabel="name" bindValue="value" [clearable]="false"
+                [(ngModel)]="selectedContentFilter">
+                <ng-template ng-label-tmp let-item="item">
+                    {{item.name }}
+                </ng-template>
+                <ng-template ng-option-tmp let-item="item" let-index="index">
+                    {{item.name }}
+                </ng-template>
+            </ng-select>
+        </div>
+    </div>
+</div>
+<div class="loader" *ngIf="loading">
+    <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+            <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+    </div>
+</div>
+<div class="toggles-switch col-lg-12 row">
+    <div class="toggle-swtbtn checkbox switcher col-lg-3" *ngFor="let category of categoriesList.categories">
+        <label [for]="category.cid">
+            <input type="checkbox" [id]="category.cid" (change)="onCatergoryChangeMain(category)"
+                [(ngModel)]="category.blocked" [disabled]="!scopeFlag.configWrite" [checked]="category.blocked" />
+            <span [ngClass]="!scopeFlag.configWrite ? 'toggleDisabled' : ''"><small></small></span>
+            {{ language[category.name] || category.name }}
+        </label>
+    </div>
+</div>
+
+<!--End toggle switches-->
+<div class="col-12">
+    <div class="row">
+        <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+            <div class="border-bottom mb-2 mt-3">
+                <label class="cco-secondary-title w-100" id="rest-applicat-label">{{language.Applications}}</label>
+            </div>
+            <p class="mb-1">
+                {{language['Manage access to applications added here']}}.
+            </p>
+            <div class="row">
+                <div class="col-12 toggles-switch">
+                    <div class="toggle-swtbtn checkbox switcher">
+                        <label>
+                            <input type="checkbox" [disabled]="!scopeFlag.configWrite" name="Youtube" id="Youtube"
+                                [(ngModel)]="youtubeRestrictionStatus" (change)="updateYoutubeRestrictionStatusMain()"
+                                [checked]="youtubeRestrictionStatus" />
+                            <span [ngClass]="!scopeFlag.configWrite ? 'toggleDisabled' : ''"
+                                class="mr-1"><small></small></span>
+                            {{language.YouTube}}
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12 col-md-7 col-lg-7 col-xl-7 ccl-form mb-0 position-relative">
+                    <!-- <input class="form-control mr-sm-2" type="search" placeholder="Search applications"
+            aria-label="Search" style="min-height: 35px;" />
+          <button class="btn-round primary search-btn">
+            <img src="../../../../assets/img/ic_search_white.svg" class="search-icon primary">
+          </button> -->
+                    <ng-template #rt let-r="result" let-t="term">
+                        <ng-container *ngIf="r.id != 4626">
+                            <img [src]="r.iconUrl" class="mr-1 w-20p" />
+                            <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
+                        </ng-container>
+                    </ng-template>
+                    <input id="typeahead-basic" type="text" typeahead-no-results="noResults"
+                        class=" ccl-form form-control" [disabled]="!scopeFlag.configWrite" [(ngModel)]="model"
+                        [resultFormatter]="appformatter" [resultTemplate]="rt" [inputFormatter]="appformatter"
+                        [ngbTypeahead]="searchAppMain" placeholder="{{language['Search the application']}}"
+                        (selectItem)="selectedItemMain($event)" (keyup)="typeaheadbasickeyup($event)" />
+                    <span [ngClass]="!scopeFlag.configWrite ? 'toggleDisabled' : ''"><small></small></span>
+                    <small *ngIf="searching" class="form-text text-muted">{{language.searching}}...</small>
+                    <div class="invalid-feedback" *ngIf="searchFailed">
+                        {{language['Sorry, suggestions could not be loaded.']}}
+                    </div>
+                </div>
+                <div class="col-12"><span class="small ccl-error" *ngIf="gloObj.restAppExist">
+                        {{language['Selected Application already exists']}}</span></div>
+                <!-- <div class="col-sm-12 col-md-5 col-lg-5 col-xl-5 pt-1 pl-0 mb-3 text-right">
+          <button class="btn-default btn-dft py-0" id="AddApplication">Add Application</button>
+        </div> -->
+                <div class="col-12">
+                    <button class="btn-default btn-dft py-0 color-grey-rgb" *ngIf="isError" [disabled]="true">
+                        {{language['noresults']}}</button>
+                </div>
+
+                <div class="col-12" *ngFor="let app of selectedApps.apps; let i = index">
+                    <div class="d-flex justify-content-between align-items-center my-3">
+                        <div class="align-items-center">
+                            <span class="mr-2">
+                                <img src="{{ app.iconUrl }}" />
+                            </span>
+                            <label class="font-weight-600 mb-0">{{ app.name }}</label>
+                        </div>
+                        <div class=""> <button *ngIf="scopeFlag.configWrite" class="btn-default btn-dft app-delete"
+                                (click)="openModal(deleteAppWeb, 'temp'); setDeleteWebApp('app', app.id);">
+                                {{language.Delete}}
+                            </button></div>
+
+                    </div>
+
+                    <div class="row">
+
+
+                        <div class="form-check-inline mb-2 pl-3">
+                            <input class="form-check-input mr-2" type="radio" [value]="true" [(ngModel)]="app.blocked"
+                                (change)="updateAppMain(app, i)" [disabled]="!scopeFlag.configWrite"
+                                [checked]="app.blocked" [name]="app.id" id="ra-block" />
+                            {{language.Block}}
+                        </div>
+                        <div class="form-check-inline mb-2">
+                            <input class="form-check-input mr-2" type="radio" [value]="false" [(ngModel)]="app.blocked"
+                                (change)="updateAppMain(app, i)" [disabled]="!scopeFlag.configWrite"
+                                [checked]="app.blocked" [name]="app.id" id="ra-AlwaysAllow" />
+                            {{language['Always Allow']}}
+                        </div>
+                        <!-- Allow For -->
+
+
+                        <!-- <div class="form-check-inline mb-2" *ngIf="isAllowForOption">
+                            <input class="form-check-input mr-2" type="radio" value="selected"
+                                [(ngModel)]="allowForChecked[i]" (change)="updateAllowForCheckedMain(app, i, $event)"
+                                [name]="app.id" id="ra-AllowFor" />
+                            {{language['Allow for']}}
+                        </div>
+                        <div class="form-check-inline ccl-form mb-2" style="max-width: 111px;" *ngIf="isAllowForOption">
+                            <div class="custom-datepicker">
+                                <p-calendar name="startTime" [disabled]="
+                  allowForChecked[i] == 'selected'
+                    ? false
+                    : true
+                " #myCalendar id="allowFor" hourFormat="24" [stepMinute]="05" [minDate]="minDuration"
+                                    readonlyInput="true" [(ngModel)]="customTimeUsage[i]" [showIcon]="true"
+                                    timeOnly="true" (onSelect)="onCalenderSelected($event, i)" (onBlur)="
+                  onAllowForTimeSelected(
+                    $event,
+                    customTimeUsage[i],
+                    i
+                  )
+                " (onShow)="allowForCalenderClicked(i)" aria-required="true" aria-describedby="Time-error"
+                                    aria-invalid="true" aria-placeholder="Hrs">
+                                    <p-footer>
+                                        <button pButton type="button" id="cancelButton" label="Close"
+                                            class="closeButton closeButton-small " (click)="
+                      closeDatePickerMain(app, i);
+                      $event.stopPropagation()
+                    "></button>
+                                        <button pButton type="button" id="submitButton" label="Submit"
+                                            class="submitButton submitButton-small"
+                                            [disabled]="bisabledAllowForButtonMain[i]" (click)="
+                      updateAllowForAppMain(app, i);
+                      $event.stopPropagation()
+                    "></button>
+                                    </p-footer>
+                                </p-calendar>
+                            </div>
+                        </div> -->
+
+                        <!-- <div class="form-check-inline ccl-form mb-2" *ngIf="isAllowForOption">
+                            <span>{{language.hour_s}}</span>
+                        </div> -->
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+            <div class="border-bottom mb-2 mt-3">
+                <label class="cco-secondary-title w-100" id="rest-websites-label">{{language.Websites}}</label>
+            </div>
+            <p class="mb-1">
+                {{language['Manage access to websites added here']}}.
+            </p>
+            <div class="row">
+                <div class="col-12 toggles-switch">
+                    <div class="toggle-swtbtn checkbox switcher">
+                        <label>
+                            <input type="checkbox" name="SafeSearch" id="SafeSearch" [(ngModel)]="safeSearchStatus"
+                                [checked]="safeSearchStatus" (change)="updateSafeSearchStatusMain()"
+                                [disabled]="!scopeFlag.configWrite" />
+                            <span [ngClass]="!scopeFlag.configWrite ? 'toggleDisabled' : ''"
+                                class="mr-1"><small></small></span>
+                            {{language['Safe Search']}}
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row" *ngIf="availableFor22a2">
+                <div class="col-12 toggles-switch">
+                    <div class="toggle-swtbtn checkbox switcher">
+                        <label>
+                            <input type="checkbox" name="dnsName" id="dnsId" [(ngModel)]="dnsStatus"
+                                [checked]="dnsStatus" (change)="updateDnsStatusMain()"
+                                [disabled]="!scopeFlag.configWrite" />
+                            <span [ngClass]="!scopeFlag.configWrite ? 'toggleDisabled' : ''"
+                                class="mr-1"><small></small></span>
+                            {{language['dnsOverHttp']}}
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row" *ngIf="availableFor22a2">
+                <div class="col-12 toggles-switch">
+                    <div class="toggle-swtbtn checkbox switcher">
+                        <label>
+                            <input type="checkbox" name="icloudName" id="icloudId" [(ngModel)]="icloudStatus"
+                                [checked]="icloudStatus" (change)="updateiCloudMain()"
+                                [disabled]="!scopeFlag.configWrite" />
+                            <span [ngClass]="!scopeFlag.configWrite ? 'toggleDisabled' : ''"
+                                class="mr-1"><small></small></span>
+                            {{language['iCloudRelay']}}
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12 col-md-8 col-lg-8 col-xl-8 ccl-form mb-3">
+                    <input *ngIf="scopeFlag.configWrite" class="form-control mr-sm-2 m-h30" [(ngModel)]="websiteModel"
+                        placeholder="{{language['www.website.com']}}"
+                        (keyup)="gloObj.isValidWebsite = true; gloObj.urlExist = false" />
+                    <span class="small req-text error" *ngIf="!gloObj.isValidWebsite">{{language['Please enter a valid
+                        URL.']}}<br></span>
+                    <span class="small req-text error" *ngIf="gloObj.urlExist">
+                        {{language['Entered URL already exists']}}
+                    </span>
+                </div>
+                <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4 pt-1 pl-0 mb-3 text-right">
+                    <button class="btn-default btn-dft py-0" id="AddWebsite" *ngIf="scopeFlag.configWrite"
+                        [disabled]="websiteModel.length == 0" (click)="addWebsiteMain()">
+                        {{language['Add Website']}}</button>
+                </div>
+                <div class="col-12" *ngFor="let web of webList.webs; let i = index" [attr.data-index]="i">
+                    <div class="d-flex justify-content-between align-items-center my-3">
+                        <div class="align-items-center">
+                            <label class="font-weight-600 mb-0">{{ web.webUrl }}</label>
+                        </div>
+                        <div class="">
+                            <button class="btn-default btn-dft app-delete" *ngIf="scopeFlag.configWrite"
+                                (click)="openModal(deleteAppWeb, 'temp'); setDeleteWebApp('web', web.id);">
+                                {{language['Delete']}}
+                            </button>
+                        </div>
+                    </div>
+
+
+                    <div class="form-check-inline mb-2">
+                        <input class="form-check-input mr-2" type="radio" [(ngModel)]="web.blocked" [value]="true"
+                            (change)="updateWebUrlMain(web)" [disabled]="!scopeFlag.configWrite" [checked]="web.blocked"
+                            [name]="i" />
+                        {{language.Block}}
+                    </div>
+                    <div class="form-check-inline mb-2">
+                        <input class="form-check-input mr-2" type="radio" [(ngModel)]="web.blocked" [value]="false"
+                            (change)="updateWebUrlMain(web)" [disabled]="!scopeFlag.configWrite" [checked]="web.blocked"
+                            [name]="i" />
+                        {{language['Always Allow']}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #deleteAppWeb let-modal ariaLabelledBy="modal-edit-title">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addModal">{{language.Delete}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="ccl-form mx-3 num-input">
+            {{language['Are you sure you want to delete']}}?
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" (click)="deleteWebApp(); closeModal()" class="btn btn-primary py-1" data-dismiss="modal">
+            {{language.Delete}}
+        </button>
+        <button type="button" (click)="closeModal()" class="btn-default btn-dft" data-dismiss="modal">
+            {{language.Cancel}}
+        </button>
+    </div>
+</ng-template>

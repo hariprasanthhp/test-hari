@@ -1,0 +1,209 @@
+<!-- MODEL -->
+<ng-template #deleteSegment let-modal class="col-md-12">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addModal">{{language.deleteConfirmPrompt}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (mousedown)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form class="custom-form">
+            <button type="button" class="btn-default primary px-3 px-3"
+                (mousedown)="segmentDelete()">{{language.yes}}</button>
+            <button type="button" class="btn-default  btn-dft px-3 px-3 m-2" (mousedown)="closeModal()"
+                data-dismiss="modal">{{language.no}}</button>
+        </form>
+    </div>
+</ng-template>
+
+
+
+
+<!-- <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head> -->
+
+<div class="subscriber-details" *ngIf="scopes.exploredataRead">
+    <div [ngClass]="segmentDeleted ? 'alert-success' : 'alert-warning'" class="alert  alert-dismissible fade show"
+        role="alert" *ngIf="segmentAlertShow">
+        <span *ngIf="!segmentDeleted"> <img src="../../../assets/img/warning-icon-36px.svg" alt=""> </span>
+        <span *ngIf="segmentDeleted"> <img src="../../../assets/img/ic_success-circle-outline.svg" alt=""> </span>
+        <strong *ngIf="!segmentDeleted"></strong>
+        <strong *ngIf="segmentDeleted"></strong>
+        {{segmentAlertMsg}}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true" (click)="errorReset()"></span>
+        </button>
+    </div>
+    <div *ngIf="savedPostError || recommendPostError" class="alert alert-danger alert-dismissible fade show"
+        role="alert">
+        <span class="alert-w-icon"> <img src="../../../assets/img/error-icon.svg" alt=""> </span>
+        <strong *ngIf="recommended"></strong> {{recommendPostErrorMsg}}
+        <strong *ngIf="segment"></strong> {{savedPostErrorMsg}}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true" (click)='errorResetTab()'></span>
+        </button>
+    </div>
+
+    <div class="subs-title">
+        <div class="st-header flex">
+            <div class="sth-left">
+                <h2 class="greyaa" id="segment-main-title">{{language.Segments}}</h2>
+            </div>
+            <!-- <div class="sth-rht flex">
+                <button id="segment-new" *ngIf="scopes.exploredataWrite" class="btn-default primary"
+                    (click)="newCampaign()">{{language.New}}</button>
+            </div> -->
+        </div>
+        <!--header-->
+    </div>
+
+    <!--title-->
+    <div class="tabs-wrapper">
+        <div class="tabs flex">
+            <a href="javascript:void(0)" [ngClass]="{'active': recommended}" (click)="tab_recom_seg('recommended')"
+                id="seg-recom-tab">{{language.Recommended}}</a>
+            <a *ngIf="scopes.exploredataRead" href="javascript:void(0)" [ngClass]="{'active': segment}"
+                (click)="tab_recom_seg('segment')" id="seg-saved-tab">{{language.Saved}}</a>
+        </div>
+        <div class="row justify-content-between mt-4" *ngIf="segment">
+            <div class="col-md-3 smy-2 ccl-form mt-24" >
+                <input class="form-control mr-sm-2" type="text" class="ccl-from"  [(ngModel)]="search_Text_Value"
+                    placeholder="{{ language['Search Segments'] || 'Search Segments' }}"   (input)="searchName($event.target.value)" aria-label="Search"/>
+                <span class="search-close"  *ngIf="search_Text_Value" (click)="search_Text_Valuefun()">
+                <img src="assets/img/ic_close-44px.svg"> </span>
+            </div>
+            <div class="min-w-170px ml-2">
+                <ng-select id="typeId" [(ngModel)]="campaignType" (ngModelChange)="selectCampaignFilter()"
+                [items]="finalTypeDataarr" bindLabel="name" bindValue="name" class="selectboxwidth"
+                [ngModelOptions]="{standalone: true}" [clearable]="false">
+            </ng-select>
+            </div>
+        </div>
+
+        <div class="table-responsive mt-3 overflow-xaxis">
+            <div [ngClass]="recommendedSegmentDataAvailable ? 'd-block' : 'd-block'">
+                <app-recommeded-segments [ngClass]="recommendedSegmentArray && recommended ? 'd-block' : 'd-none'">
+                </app-recommeded-segments>
+            </div>
+            <!-- <div [ngClass]="!recommendedSegmentDataAvailable ? 'd-block' : 'd-none'">
+                <app-recommeded-segments [ngClass]="recommended ? 'd-block' : 'd-none'"></app-recommeded-segments>
+            </div> -->
+            <div [ngClass]="savedSegmentDataAvailable ? 'd-block' : 'd-block'">
+                <div [ngClass]="segment && savedSegmentArray ? 'd-block' : 'd-none'">
+                    <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" id="sorting"
+                        class="row-border recommendated_table recommendated_table_saved">
+                        <thead>
+                            <tr>
+                                <th>{{language.Name}}</th>
+                                <th>{{language.Type}}</th>
+                                <th *ngIf="scopes.campaignRead" class="">{{language.Campaigns}}</th>
+                                <th>{{language.Count}}</th>
+                                <th>{{language['Created']}}</th>
+                                <th>{{language['Last Modified']}}</th>
+                                <th class="action-tab" *ngIf="scopes.exploredataWrite"></th>
+                            </tr>
+                        </thead>
+                        <tbody [ngClass]="!savedSegmentErrorMessage ? 'table-row-group': 'd-none'">
+                            <tr *ngFor="let item of savedSegmentArray;let i=index;">
+                                <td class="content-wrap campaign-link"
+                                    (click)="newSegments(item.segmentId,item.segmentType,item.segmentName)"><span
+                                        title={{item.segmentName}}>{{item.segmentName}}</span></td>
+                                <td>{{item.segmentType}}</td>
+                                <td *ngIf="scopes.campaignRead" class="position-relative">
+                                    <!-- <span class="d-none">{{item.campaigns < 10 ? '0' : '' }}</span> -->
+                                            <span class="d-block w-100 float-left">{{item.campaigns !=0 ? item.campaigns : '-' }}</span>
+                                            <div *ngIf="item.campaigns != 0" class="view-data1">
+                                                <div class="dropdown-button dot-drop" ngbDropdown>
+                                                    <div class="camp-dropdown py-2" aria-labelledby="dropdownPeriod"
+                                                        [ngClass]="item.campaignDetail.length > 9?'large_data': 'less_data'">
+                                                    <div *ngFor="let segm of item.campaignDetail;let i = index">
+                                                        <h5 class="drop-down-header border-bottom">{{segm.campaignStatus}}</h5>
+                                                        <div class="camp-dropdown-list dropdown-item"
+                                                            *ngFor="let segment of segm.campaignDetail;let i = index">
+                                                            <a 
+                                                                class="d-block campaign_limit text-decoration-none"
+                                                                (click)='selectCampaign(segment)' title="{{segment.campaignName}}">{{segment.campaignName}}</a>
+                                                        </div>
+                                                   </div>
+                                                        <!-- <div class="camp-dropdown-list"
+                                                            *ngFor="let segm of item.campaignDetail;let i = index">
+                                                            <u ngbDropdownItem
+                                                                class="greyaa campaignname campaign_limit"
+                                                                (click)='selectCampaign(segm)'>{{segm.campaignName}}</u>
+                                                        </div> -->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                </td>
+                                <td>{{item.subscriberCount | number }}</td>
+                                <td>
+                                    <span class="d-none">{{getTimestamp(item.createdDateSec * 1000)}}</span>
+                                    {{item.createdDateSec != null ? (item.createdDateSec * 1000 | date:'yyyy-MM-dd') : '-' }}
+                                </td>
+                                <td>
+                                    <span class="d-none">{{getTimestamp(item.updatedDateSec * 1000)}}</span>
+                                    {{item.updatedDateSec != null ? (item.updatedDateSec * 1000 | date:'yyyy-MM-dd') : '-'}}
+                                </td>
+                                <td *ngIf="scopes.exploredataWrite">
+                                    <div *ngIf="item.campaigns == 0">
+                                    <a title="{{language.delete}}" (click)="segmentDeletePrompt(item)" class="fa fa-trash-o cursor-pointer f-size-16px text-decoration-none" aria-hidden="true">
+                                  </a>
+                                </div>
+                                </td>
+                            
+                            </tr>
+
+                        </tbody>
+                        <tbody
+                            [ngClass]="savedSegmentErrorMessage && savedSegmentArray.length==0 ? 'table-row-group': 'd-none'">
+                            <tr>
+                                <td colspan="7" class="text-center">{{language.nodata}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="no-data" *ngIf="!recommendedSegmentArray && recommended">
+            <div class="spinner-border text-primary" role="status">
+                <span class="sr-only">{{language.Loading}}</span>
+            </div>
+        </div>
+
+
+        <div class="no-data" *ngIf="!savedSegmentArray && segment">
+            <div class="spinner-border text-primary" role="status">
+                <span class="sr-only">{{language.Loading}}</span>
+            </div>
+        </div>
+
+        <!-- table -->
+
+
+
+    </div>
+</div>
+
+
+
+<!-- MODEL -->
+<ng-template #deleteSegment let-modal class="col-md-12">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addModal">{{language.deleteConfirmPrompt}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form class="custom-form">
+            <button type="button" class="btn-default primary px-3 px-3"
+                (click)="segmentDelete()">{{language.yes}}</button>
+            <button type="button" class="btn-default  btn-dft px-3 px-3 m-2" (click)="closeModal()"
+                data-dismiss="modal">{{language.no}}</button>
+        </form>
+    </div>
+</ng-template>

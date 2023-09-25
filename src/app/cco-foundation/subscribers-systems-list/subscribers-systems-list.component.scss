@@ -1,0 +1,53 @@
+.device-info {
+    display    : flex;
+    white-space: nowrap;
+    color      : #007bff;
+
+    a {
+        text-decoration: none;
+        cursor         : pointer;
+    }
+
+    span {
+        margin-left: 5px;
+        cursor     : pointer;
+    }
+}
+
+.cco-pointer {
+    cursor: pointer;
+}
+
+.device-highlight {
+    text-decoration: none;
+    cursor         : pointer;
+    color          : #007bff;
+}
+
+.fd-subscriber-info {
+    display    : flex;
+    white-space: nowrap;
+
+    a {
+        text-decoration: none;
+        cursor         : default;
+    }
+
+    span {
+        margin-left: 5px;
+
+    }
+}
+
+.display {
+    display: flex;
+    margin : 12px;
+}
+
+.small-text-system {
+    font-size  : 12px;
+    line-height: 22px;
+}
+// :host ::ng-deep .odd {
+//     display: table-row !important;
+//   }

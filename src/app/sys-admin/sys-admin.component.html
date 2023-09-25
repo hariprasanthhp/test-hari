@@ -1,0 +1,25 @@
+<div class="maximus  sys-admin-cont">
+
+    <app-admin-header></app-admin-header>
+
+
+    <div class="row" >
+        <div [ngClass]="showRecord?.show !== true ? 'col-md-3 col-sm-3 col-xs-12 pr-2' : ''" [hidden]="showRecord?.show">
+            <app-side-menu></app-side-menu>
+        </div>
+        <div [ngClass]="showRecord?.show === true ? 'col-md-12 col-sm-12 col-xs-12' : 'col-md-9 col-sm-9 col-xs-12'" #scrollTopId>
+            <div class="w-100 alert alert-danger  fade show" *ngIf="error">
+                <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+                <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+                <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+            </div>
+
+            <div class="w-100 alert alert-success fade show" *ngIf="success">
+                <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+                {{successInfo}}
+            </div>
+            <router-outlet (activate)="onActivate($event)"></router-outlet>
+        </div>
+    </div>
+</div>
+<app-admin-footer></app-admin-footer>

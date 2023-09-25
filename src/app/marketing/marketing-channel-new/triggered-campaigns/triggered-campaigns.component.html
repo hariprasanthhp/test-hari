@@ -1,0 +1,310 @@
+<!-- // campaigns start -->
+
+<div class="page-wrapper">
+    <div class="subscriber-details">
+        <div [ngClass]="campaignDeleted ? 'alert-success' : 'alert-warning'" class="alert  alert-dismissible fade show"
+            role="alert" *ngIf="campaignAlertShow">
+            <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+            <strong *ngIf="!campaignDeleted">Error!</strong>
+            {{campaignAlertMsg}}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true" (click)="errorReset()"></span>
+            </button>
+        </div>
+        <!-- <div class=" col-lg-12 col-md-12 col-sm-12 alert alert-warning alert-dismissible fade show" role="alert"
+        *ngIf="campaignListError">
+        <span class="success-img"><img src="./assets/img/error-icon.svg" /></span>
+        <div class="d-inline-flex text-left w-75">Error! {{campaignListErrorMsg}}.</div>
+    </div> -->
+        <div class="alert alert-warning alert-dismissible fade show" role="alert" *ngIf="campaignListError">
+            <span class="success-img"><img src="./assets/img/error-icon.svg" /></span>
+            <div class="d-inline-flex w-75 text-left"> Error! {{campaignListErrorMsg}}.</div>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true" (click)='errorReset()'></span>
+            </button>
+        </div>
+        <div class="tabs-wrapper market-channels">
+            <!-- <div [hidden]="!showDataTable"> -->
+            <div [hidden]="!showDataTable">
+                <div class="buttons d-flex align-items-center justify-content-between">
+                    <div class="col-md-6 p-0" *ngIf="!marketingCampaignSearchTableErrorMsg">
+                        <div class="d-inline-flex ccl-form p-0 w-50">
+                            <!-- <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"> -->
+                            <!-- <input class="form-control mr-sm-2" aria-label="Search" [(ngModel)]="searchText" 
+                        onblur="this.value=''" type="search" (ngModelChange)="FilteredCampaignArray()" placeholder="Search" name="name"/> -->
+                            <input class="form-control mr-sm-2" type="text" [(ngModel)]="search_Text_Value" placeholder="{{language.Search}}"
+                                (input)="searchName($event.target.value)">
+                        <span class="clear-icon" *ngIf="search_Text_Value" (click)="search_Text_Valuefun()">
+                            <img src="assets/img/close-icon.svg"></span>
+                        </div>
+                    </div>
+                    <div class="camp-about" *ngIf="!marketingCampaignSearchTableErrorMsg">
+
+                        <!-- <div class="form-group mb-0 mr-2 w-25">
+                            <label for="account" class="col-sm-12 col-form-label select-font">{{language.Type}}
+                            </label>
+
+                            <ng-select id="typeId" [(ngModel)]="campaignType" (ngModelChange)="selectCampaignFilter()"
+                                [items]="finalTypeDataarr" bindLabel="name" bindValue="name" class="selectboxwidth"
+                                [ngModelOptions]="{standalone: true}" [clearable]="false">
+                            </ng-select>
+                        </div> -->
+                        <div class="form-group mb-0 w-25">
+                            <label for="account" class="col-sm-12 col-form-label select-font">{{language.Status}}
+                            </label>
+
+                            <ng-select id="statusId" [(ngModel)]="campaignStatus"
+                                (ngModelChange)="selectCampaignFilter()" [items]="finalStatusDataarr" bindLabel="name"
+                                bindValue="name" class="selectboxwidth" [ngModelOptions]="{standalone: true}"
+                                [clearable]="false">
+                            </ng-select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-responsive camp-table" id="all-Campaigns-datatable"
+                [ngClass]="{ 'hide-table':  !showDataTable}">
+                <table [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" datatable [hidden]="hideDataTable"
+                    class="row-border campaign_table_saved">
+                    <thead>
+                        <tr>
+                            <th>{{language.Name}}</th>
+                            <th>{{language.Status}} </th>
+                            <th>{{language['Trigger']}}</th>
+                            <th>{{language.Segment}}</th>
+                            <th>{{language.Audience_last}}</th>
+                            <th>{{language.segmentChannels}}</th>
+                            <th class="w-80px">{{language.START_DATE}}</th>
+                            <th class="w-80px">{{language.END_DATE}}</th>
+                            <th>{{language.Budget}}</th>
+                            <th class="text-right action-tab" *ngIf="scopes.campaignWrite"></th>
+                        </tr>
+                    </thead>
+                    <tbody [ngClass]="(!marketingCampaignSearchTableErrorMsg && marketingCampaignTable.length!=0) ? 'table-row-group': 'd-none'">
+                        <tr *ngFor="let item of marketingCampaignTable">
+                            <td class="w-11 w-250px">
+                                <div (click)="selectCampaign(item,0)" class="content-wrap campaign-link"
+                                    title={{item.name}}>
+                                    <span>{{(item.name)}}</span>
+                                </div>
+                            </td>
+                            <td class="w-11">
+                                <div class="content-wrap" title={{item.status}}>
+                                    {{item.status}}
+                                </div>
+                            </td>
+                            <td class="w-11">
+                                <div class="nor-wrap" title={{item.eventType}}>
+                                    {{item.eventType}}
+                                </div>
+                            </td>
+
+                            <td class="w-11">
+                                <div class="nor-wrap" title={{item.segmentName}}>
+                                    {{item.segmentName}}
+                                </div>
+                            </td>
+                            <td class="w-11" title={{item.audienceSize}}>
+                                <div class="nor-wrap">
+                                    {{item.audienceSize | number}}
+                                    <!-- <span
+                                        [ngClass]="item.segmentCategory == 'Recommended' && item.service || item.propensity || item.region || item.location ? '': 'display-none'"
+                                        class="text-danger"> *</span> -->
+                                </div>
+                            </td>
+                            <td class="w-11">
+                                <div class="nor-wrap" title={{item.channels}}>
+                                    <span >{{item.channels}}</span>
+                              
+                                </div>
+                            </td>
+                            <td class="w-11">
+                                <span class="d-none">{{getTimestamp(item.startDate)}}</span>
+                                <div class="nor-wrap" title={{item.startDate}}>
+                                    {{item.startDate}}
+                                </div>
+                            </td>
+                            <td class="w-11">
+                                <span class="d-none">{{getTimestamp(item.endDate)}}</span>
+                                <div class="nor-wrap" title={{item.endDate}}>
+                                    {{item.endDate}}
+                                </div>
+                            </td>
+                            <td class="w-11">
+                                <div class="nor-wrap" title={{item.budget}}>
+                                    <span *ngIf="item.budget == 0">${{item.budget}}</span>
+                                    <span *ngIf="item.budget !=null && item.budget !='' && item.budget != 0">${{item.budget | number : '1.0-0'}}</span>
+                                </div>
+                            </td>
+                            <td class="w-11" *ngIf="scopes.campaignWrite">
+                                <div class="view-data justify-content-end pr-2">
+                                    <ul class="action-list list-inline mb-0">
+                                        <li class="d-inline-flex" [ngClass]="item.status == language.Paused ? 'show' : 'hide'" title={{language.Active}}><a (click)="pauseUnpausePrompt(item,'Paused')">
+                                            <img src="../../../../assets/img/ic_controls_play.svg" width="11.74" height="12.67" />
+                                        </a>
+                                        </li>
+                                        <li class="d-inline-flex"  [ngClass]="item.status == language.Active ? 'show' : 'hide'" title={{language.Paused}}><a (click)="pauseUnpausePrompt(item,'Active')">
+                                                <img src="../../../../assets/img/ic_controls_pause.svg" width="14.52" height="13.2" />
+                                            </a>
+                                        </li>
+                                        <li class="d-inline-flex">
+                                            <span [ngClass]="item.status == language.Draft || item.status == language.Active || item.status == language.Paused? 'show' : 'hide'"  class="nor-wrap cur-pointer"
+                                        title={{language.campaign_Edit}}><i class="fas fa-pencil-alt"
+                                            (click)="selectCampaign(item,1)"></i></span>
+                                        </li>
+                                        <!-- <li class="d-inline-flex" *ngIf="item.campaignType != 'Triggered' && (item.status == language.Draft ||item.status == language['In-Progress'])">
+                                            <span class="nor-wrap cur-pointer" title={{language.campaign_Delete}}><i
+                                                class="mr-0 primary fas fa-trash-alt"
+                                                (click)="campaignDeletePrompt(item)"></i></span></li> -->
+
+                                                <li class="d-inline-flex" *ngIf="item.status == language.Paused || item.status == language.Draft">
+                                                    <span class="nor-wrap cur-pointer" title={{language.campaign_Delete}}><i
+                                                        class="mr-0 primary fas fa-trash-alt"
+                                                        (click)="campaignDeletePrompt(item)"></i></span></li>
+                                    </ul>
+                                    
+                                   
+
+                                </div>
+                                <!-- <div class=" view-data" *ngIf="item.status == 'Complete'">
+
+                                    <span class="nor-wrap cur-pointer" title={{language.campaign_View}}><i
+                                            class="mr-2 primary fa fa-list-alt" (click)="selectView(item)"></i></span>
+
+                                </div> -->
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                    <tbody [ngClass]="(marketingCampaignSearchTableErrorMsg || marketingCampaignTable.length==0) ? 'table-row-group': 'd-none'">
+                        <tr>
+                            <td colspan="9" class="text-center">{{language.nodata}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="no-data" [ngClass]="{ 'hide-table':  showDataTable}">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- MODEL -->
+<ng-template #deleteCampaignOld let-modal class="col-md-12">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addModal">{{language.deleteConfirmPrompt}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" tabindex="-1"
+            (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form class="custom-form">
+            <button type="button" class="btn-default primary px-3 px-3" autofocus tabindex="0"
+                (click)="campaignDelete(0)">{{language.yes}}</button>
+            <button type="button" class="btn-default  btn-dft px-3 px-3 m-2" (click)="closeModal()"
+                data-dismiss="modal">{{language.no}}</button>
+        </form>
+    </div>
+</ng-template>
+
+<ng-template #pauseCampaign let-modal>
+    <div class="modal-cust-space">
+        <div class="modal-header">
+            <button type="button" class="close" aria-label="Close"
+                (click)="modal.dismiss('Cross click')"><span></span></button>
+        </div>
+        <div class="modal-body">
+            <h1 class="cco-title mb-3"  id="title-pause-campaign">{{language['Pause Campaign']}}</h1>
+            <p class="ccl-form-labe">{{language['Pause_Campaign_Msg']}}</p>
+        </div>
+        <div class="modal-footer justify-content-start mt-4 p-0">
+            <button type="button" (click)="pauseUnPause('Paused')" class="btn-default primary mr-2 my-0" id="BtnPauseCampaign">
+                {{language['Pause Campaign']}}
+            </button>
+            <button type="button" class="btn-default btn-dft py-1 my-0" id="BtnCancelPauseCampaign"
+            (click)="closeModal()">{{language['cancel']}}</button>
+        </div>
+    </div>
+</ng-template>
+<ng-template #unpauseCampaign let-modal>
+    <div class="modal-cust-space">
+        <div class="modal-header">
+            <button type="button" class="close" aria-label="Close"
+                (click)="modal.dismiss('Cross click')"><span></span></button>
+        </div>
+        <div class="modal-body">
+            <h1 class="cco-title mb-3" id="title-unpause-campaign">{{language['Unpause Campaign']}}</h1>
+            <p class="ccl-form-labe">{{language['Unpause_Campaign_Msg']}}</p>
+        </div>
+        <div class="modal-footer justify-content-start mt-4 p-0">
+            <button type="button"  (click)="pauseUnPause('Active')" class="btn-default primary mr-2 my-0" id="BtnUnpauseCampaign">
+                {{language['Unpause Campaign']}}
+            </button>
+            <button type="button" class="btn-default btn-dft py-1 my-0" id="BtnCancelUnpauseCampaign"
+            (click)="closeModal()">{{language['cancel']}}
+            </button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #deleteCampaign let-modal>
+    <div class="modal-cust-space">
+        <div class="modal-header">
+            <button type="button" class="close"data-dismiss="modal" aria-label="Close" tabindex="-1"
+            (click)="closeModal()">
+            <span></span>
+        </button>
+        </div>
+        <div class="modal-body">
+            <h1 class="cco-title mb-3" id="title-delete-campaign">{{language['Delete Campaign']}}</h1>
+            <p class="ccl-form-label pr-2">{{language['Delete_Campaign_Confirmation']}}</p>
+        </div>
+        <div class="modal-footer justify-content-start mt-4 p-0">
+            <form class="custom-form ml-0">
+            <button type="button" class="btn-default primary mr-2 my-0" id="btnDeleteCampaign"
+             autofocus tabindex="0" (click)="campaignDelete(0)">
+                {{language['Delete Campaign']}}
+            </button>
+            <button type="button" class="btn-default btn-dft py-1 my-0" id="btnCancelDeleteCampaign"
+            (click)="closeModal()" data-dismiss="modal">{{language['cancel']}}
+            </button>
+            </form>
+        </div>
+    </div>
+</ng-template>
+<ng-template #resetCampaign let-modal>
+    <div class="modal-cust-space">
+        <div class="modal-header">
+            <button type="button" class="close"data-dismiss="modal" aria-label="Close" tabindex="-1"
+            (click)="closeModal()">
+            <span></span>
+        </button>
+        </div>
+        <div class="modal-body">
+            <h1 class="cco-title mb-3" id="reset-delete-campaign">{{language['Reset Triggered Campaign']}}</h1> 
+            <p class="ccl-form-label pr-2">
+                {{language['TriggeredCampaignsMsg']}}
+            </p>
+        </div>
+        <div class="modal-footer justify-content-start mt-4 p-0">
+            <form class="custom-form ml-0">
+            <button type="button" class="btn-default primary mr-2 my-0" id="btnResetCampaign"
+             autofocus tabindex="0" (click)="campaignDelete(1)">
+             {{language['Reset Campaign']}}
+            </button>
+            <button type="button" class="btn-default btn-dft py-1 my-0" id="btnCancelResetCampaign" 
+            (click)="closeModal()" >{{language['cancel']}}
+            </button>
+            </form>
+        </div>
+    </div>
+</ng-template>

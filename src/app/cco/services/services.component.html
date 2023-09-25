@@ -1,0 +1,54 @@
+<div role="alert" class="alert alert-warning" *ngIf="!hasPageAccess">
+    {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} </div>
+
+<span class="cco-title" *ngIf="hasPageAccess && !isProvisioned">
+    {{ language.Services }}
+</span>
+<section *ngIf="hasPageAccess">
+    <div class="container">
+        <div class="row" *ngIf="!isProvisioned">
+            <div class="col-md-12 px-0 ccl-tabs my-3">
+                <ul id="tabs" class="nav nav-tabs">
+                    <li *ngIf="menus['subscribers']" class="nav-item">
+                        <a [routerLink]="menuConfig?.subscribers?.urls?.[0]" class="nav-link small"
+                            [ngClass]="{'active' : activeMenus['subscribers']}" data-toggle="tab"
+                            class="nav-link">{{language['Subscribers']}}
+                        </a>
+                    </li>
+                    <li *ngIf="menus['service-profiles']" class="nav-item">
+                        <a [routerLink]="menuConfig?.serviceprofiles?.urls?.[0]" data-toggle="tab" class="nav-link"
+                            class="nav-link small" id="subscriber-system"
+                            [ngClass]="{'active' : activeMenus['service-profiles']}">{{language['ONT Services
+                            Profiles']}}</a>
+                    </li>
+                    <!-- <li class="nav-item">
+                        <a routerLink="/cco/services/orchestration" data-toggle="tab" class="nav-link"
+                            class="nav-link small"
+                            [ngClass]="{'active' : activeMenus['orchestration']}">Orchestration</a>
+                    </li> -->
+                    <li *ngIf="menus['configuration']" class="nav-item">
+                        <a [routerLink]="menuConfig?.configuration?.urls?.[0]" data-toggle="tab" class="nav-link"
+                            class="nav-link small"
+                            [ngClass]="{'active' : activeMenus['configuration']}">{{language['Configuration']}}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container ccl-tabs p-0" *ngIf="isProvisioned && ccoSearchText">
+        <div class="nav-tabs d-flex justify-content-between align-items-baseline">
+            <span class="cco-title">{{ccoSearchText}} : {{language['Provisioned Subscribers']}}</span>
+            <img class="mr-3 cursor-pointer" src="assets/img/ic_close-44px.svg" alt="" (click)="gotoServiceProfiles()">
+        </div>
+    </div>
+</section>
+
+<section [hidden]="!hasPageAccess">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 px-0">
+                <router-outlet></router-outlet>
+            </div>
+        </div>
+    </div>
+</section>

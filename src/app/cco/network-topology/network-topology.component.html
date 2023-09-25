@@ -1,0 +1,153 @@
+<div class="row">
+  <div class="col-12">
+    <!-- <div class="loader load" *ngIf="loading">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div> -->
+
+    <section>
+      <div class="row">
+        <div class="col-md-12 ccl-tabs">
+          <ul id="tabs" class="nav nav-tabs">
+            <li class="nav-item">
+              <a routerLink="/cco/network-topology" data-toggle="tab" class="nav-link small" routerLinkActive="active">
+                <span class="big-text">Network Systems</span>
+              </a>
+            </li>
+          </ul>
+          <div id="tabsContent" class="tab-content">
+            <div id="issue" class="tab-pane fade active show">
+              <div class="row pb-2"></div>
+            </div>
+            <div id="topology" class="tab-pane fade">
+              <div class="row pb-2"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <form>
+      <div class="row my-3 d-flex align-items-end">
+        <div class="col-12 col-lg-3 state-success">
+          <label for="Name" class="col-form-label select-font">{{
+            language.Topology_Regions
+            }}</label>
+          <ng-select [(ngModel)]="regionSelected" id="topologyRegion" name="trtype" [items]="regionsDataArray"
+            bindLabel="name" bindValue="id" [clearable]="false" [searchable]="true"
+            [ngModelOptions]="{ standalone: true }" placeholder="{{ language.region }}"
+            (ngModelChange)="loadLocationValue($event)">
+          </ng-select>
+        </div>
+
+        <div class="col-12 col-lg-3 state-success">
+          <label for="Name" class="col-form-label select-font">{{
+            language.Topology_Locations
+            }}</label>
+          <ng-select [(ngModel)]="locationSelected" [ngModelOptions]="{ standalone: true }" name="tltype"
+            [items]="locationDataArray" id="topologyLocation" [clearable]="false" [searchable]="true"
+            bindLabel="name" bindValue="id" placeholder="Location" (ngModelChange)="loadSystemValue($event)">
+          </ng-select>
+        </div>
+
+        <div class="col-12 col-lg-3 state-success">
+          <label for="Name" class="col-form-label select-font">{{
+            language.Topology_Systems
+            }}</label>
+          <ng-select [(ngModel)]="systemSelected" [ngModelOptions]="{ standalone: true }" name="tstype"
+            [items]="systemDataArray" id="topologySystem" [clearable]="false" [searchable]="true"
+            bindLabel="name" bindValue="fqn" placeholder="System" (ngModelChange)="selectSystem($event)">
+          </ng-select>
+        </div>
+
+        <div class="col-12 col-lg-3 state-success text-right">
+          <button type="button" id="netops_report_load_bttn" class="btn-default primary px-3 mr-3"
+            (click)="loadFilterData()" [disabled]="canApplyFilter">
+            {{ language.apply }}
+          </button>
+          <button type="button" id="netops_report_load_bttn" class="btn-default primary px-3 mr-3"
+            (click)="clearTopology()">
+            {{ language.Clear_Filters }}
+          </button>
+        </div>
+      </div>
+    </form>
+    <div class="col-md-12 col-lg-12 col-xl-12 px-0">
+      <ol class="breadcrumb m-0">
+        <li class="breadcrumb-item fsize" [ngClass]="currentDiagram == 'Regions' ? 'active' : ''">
+          {{ "Region : &nbsp; " }}
+          <a [ngClass]="currentDiagram == 'Regions' ? 'removeHyperLink' : ''" role="button"
+            (click)="loadBreadCrumbData('Region')">{{ breadCrumbRegion }}</a>
+        </li>
+        <li class="breadcrumb-item fsize" [ngClass]="currentDiagram == 'Locations' ? 'active' : ''"
+          *ngIf="regionSelected != 'All' && currentDiagram != 'Regions'">
+          {{ "Location : &nbsp; " }}
+          <a [ngClass]="currentDiagram == 'Locations' ? 'removeHyperLink' : ''" role="button"
+            (click)="loadBreadCrumbData('Location')">{{ breadCrumbLocation }}</a>
+        </li>
+        <li class="breadcrumb-item fsize" *ngIf="locationSelected != 'All' && currentDiagram != 'Locations'">
+          {{ "System : &nbsp; " }}
+          <a [ngClass]="currentDiagram != 'Locations' ? 'removeHyperLink' : ''" role="button"
+            (click)="loadBreadCrumbData('System')">{{ breadCrumbSystem }}</a>
+        </li>
+      </ol>
+      <div class="col-md-3 d-inline-flex ccl-form p-0 topology-search">
+        <input #searchBar type="search" placeholder="{{language.Search}}" aria-label="Search"
+          class="form-control mr-sm-2 ng-pristine ng-valid ng-touched" [(ngModel)]="searchSelected"
+          (ngModelChange)="searchContext(searchSelected)" /><span class="search-box-icon"><img
+            src="assets/img/ic_search_white.svg" /></span>
+      </div>
+    </div>
+    <div class="col-md-12 my-2 text-right">
+      <div class="cus-button">
+        <span id="ZoomIn zoom" class="mr-2 pointer icon-hl bord-right f-size-24" (click)="changeScaleDiagram($event, 'decrease')">
+          <!-- <i class="fas fa-minus-circle primary"></i> -->
+          <img src="assets/img/iconmonstr-minus.svg" class="zoom-img" alt="ZoomIn" />
+          <!-- <img src="assets/img/iconmonstr-minus-6.svg" alt=""> -->
+        </span>
+
+        <!-- <span
+        id="ZoomFit zoom"
+        class="mr-2 pointer"
+        (click)="zoomfunctionalities('Fit')"
+        style="font-size: 24px"
+      >
+        <i class="fas fa-expand primary"></i>
+      </span> -->
+
+        <span class="icon-hl w-70px">
+          <ng-select class="ngselect-perc" [(ngModel)]="zoomScale"
+            bindLabel="factor" bindValue="value" [items]="zoomFactorList" [clearable]="false"
+            [searchable]="false" [ngModelOptions]="{ standalone: true }"
+            (ngModelChange)="changeScaleDiagram($event, 'dropDown')">
+          </ng-select>
+        </span>
+
+        <span id="ZoomOut zoom" class="mr-2 pointer icon-hl bord-left f-size-24" (click)="changeScaleDiagram($event, 'increase')">
+          <!-- <i class="fas fa-plus-circle primary"></i> -->
+          <img src="assets/img/iconmonstr-plus.svg" class="zoom-img" alt="ZoomOut" />
+          <!-- <img src="assets/img/iconmonstr-plus-6.svg" alt=""> -->
+        </span>
+
+        <span id="savePositions" class="pointer f-size-24" (click)="savePositions()">
+          <i class="fas fa-save primary"></i>
+        </span>
+      </div>
+      <div>
+        <div class="mt-5" *ngIf="loading">
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+              <span class="sr-only">{{ language.Loading }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="topology-container" id="networkTopology" #networkTopology></div>
+        <div class="text-center" *ngIf="noData">{{ language.nodata }}</div>
+      </div>
+    </div>
+  </div>
+</div>

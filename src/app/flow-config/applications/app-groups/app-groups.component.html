@@ -1,0 +1,755 @@
+<div class="container position-relative" *ngIf="pageAvailable">
+  <div class="loader" *ngIf="loading">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary">
+        <span class="sr-only">{{ language.Loading }}</span>
+      </div>
+    </div>
+  </div>
+  <!-- <div class="row py-4" *ngIf="buttonVisible"> -->
+    <!-- CCL=50447 -->
+  <!-- <div class="row py-4" *ngIf="false">
+    <div class="col-md-9">
+      <div class="d-flex">
+        <div>
+          <button id="create-btn" class="btn-default primary mx-2" (click)="showCreate()">
+            {{ language.create }}
+          </button>
+        </div>
+        <div *ngIf="isSysAdmin">
+          <button *ngIf="isSysAdmin" id="export-btn-gbl" class="btn-default primary px-2 mx-2"
+            (click)="export('global')">
+            {{ language.exportglobal }}
+          </button>
+        </div>
+
+        <div class="upload-btn-wrapper" *ngIf="isSysAdmin">
+          <label for="inc-import-global" class="btn-default primary mx-2 cursor-pointer">{{ language.importglobal }}
+          </label>
+          <input type="file" id="inc-import-global" accept=".csv" #importGlobalInput
+            (change)="fullImport('global', $event)" style="display: none" />
+        </div>
+        <div>
+          <button id="export-btn-lcl" class="btn-default primary mx-2 px-2" (click)="export()">
+            {{ language.exportlocal }}
+          </button>
+        </div>
+        <div class="upload-btn-wrapper">
+          <label for="inc-import-local" class="btn-default primary mx-2 cursor-pointer">{{ language.importlocal }}
+          </label>
+          <input type="file" id="inc-import-local" accept=".csv" #importLocalInput
+            (change)="fullImport('local', $event)" style="display: none" />
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-3 align-self-end d-none">
+      <div class="ccl-form">
+        <input type="search" name="searchbox" class="input-sm" placeholder="" />
+        <button class="serach-but btn-default primary btn-icon-md inline">
+          <i class="fa fa-search" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+  </div> -->
+  <div class="row py-4" *ngIf="buttonVisible">
+    <div class="col-12">
+		  <button id="create-btn" class="btn-default primary mr-3" (click)="createAppModalOpen()">
+        {{language['Create Group Member']}}
+		  </button>
+		  <div class="btn-group dropdown dropright">
+			<button type="button" class="btn-default btn-dft dropdown-toggle"
+			 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			  <span>...</span>
+			</button>
+			<div class="dropdown-menu">
+			  <ul class="list-group">
+				<li class="dropdown-item" *ngIf="isSysAdmin">
+				  <a *ngIf="isSysAdmin" id="export-btn-gbl" 
+				  (click)="export('global')"> {{ language.exportglobal }}</a>
+				</li>
+				<li class="dropdown-item pb-1" *ngIf="isSysAdmin">
+				  <div class="upload-btn-wrapper">
+					<label for="inc-import-global" class="mb-0 cursor-pointer">{{ language.importglobal
+					  }}
+					</label>
+					<input type="file" id="inc-import-global" accept=".csv" #importGlobalInput
+					  (change)="fullImport('global', $event)" style="display: none" />
+				  </div>
+				</li>
+				<li class="dropdown-item">
+				  <a id="export-btn-lcl" (click)="export()">
+					{{ language.exportlocal }}
+				  </a>
+				</li>
+				<li class="dropdown-item pb-1">
+				  <div class="upload-btn-wrapper">
+					<label for="inc-import-local" class="mb-0 cursor-pointer">{{ language.importlocal }}
+					</label>
+					<input type="file" id="inc-import-local" accept=".csv" #importLocalInput
+					  (change)="fullImport('local', $event)" style="display: none" />
+				  </div>
+				</li>
+				<li class="dropdown-item pb-1" *ngIf="isSysAdmin &&  hideDpiAsmfeatures">
+				  <div class="upload-btn-wrapper">
+					<label for="inc-import-dpi" class="mb-0 cursor-pointer">{{language.import_ipfix_app_id}}
+					</label>
+					<input type="file" id="inc-import-dpi" accept=".xml" (click)="importDpiInput.value = null"
+           (change)="importDPI($event)"#importDpiInput
+					 style="display: none" />
+				  </div>
+				</li>
+       <!--  <li class="dropdown-item pb-1" *ngIf="isSysAdmin">
+          <a id="import-ecport-dpi-lcl" (click)="importExportDpi()">
+            {{language['importExportDpi']}}
+            </a>
+				</li> -->
+			  </ul>
+			</div>
+		</div>
+	  </div>
+  </div>
+  <!-- CCL-50447 -->
+  <!-- <section *ngIf="createView">
+    <div class="row my-3 py-3">
+      <div class="col-md-12">
+        <form>
+          <div class="row form-inline" *ngIf="isSysAdmin">
+            <div class="form-group mb-2 col-md-3 align-self-start">
+              <label for="staticEmail2" class="">{{ language.type }}</label>
+            </div>
+            <div class="ccl-form col-md-4 mb-2 align-self-end">
+              <ng-select class="w-100" id="createApp" [items]="types" bindLabel="label" bindValue="value"
+                [multiple]="false" placeholder="" [(ngModel)]="createTypeSelected"
+                [ngModelOptions]="{ standalone: true }" [clearable]="false" [searchable]="true">
+              </ng-select>
+            </div>
+          </div>
+          <div class="row form-inline">
+            <div class="form-group mb-2 col-md-3 align-self-start">
+              <label for="staticEmail2" class="">{{
+                language.applicationGroupName
+                }} <span class="error">*</span></label>
+            </div>
+            <div class="ccl-form col-md-4 mb-2 align-self-end">
+              <ng-select class="w-100" *ngIf="!isCreateNew" id="createAppGroup" [items]="appGroupListLocal"
+                bindLabel="trafficTypeName" [multiple]="false" placeholder="" class="slect-custom-pos"
+                [(ngModel)]="createAppGroupSelected" [ngModelOptions]="{ standalone: true }" [clearable]="false"
+                [searchable]="true" appendTo="body">
+              </ng-select>
+              <input *ngIf="isCreateNew" type="text" id="newAppGroupName" class="" placeholder="" name="newAppGroupName"
+                [(ngModel)]="newAppGroupName" trimSpace (blur)="removeUnwantedSpace('newAppGroupName',newAppGroupName)"/>
+            </div>
+            <div class="col-md-2 mb-2 align-self-end dflex-align-base">
+              <input class="form-check-input" type="checkbox" name="create_new_name" value="isCreateNew"
+                id="create_new_name" [(ngModel)]="isCreateNew" [ngModelOptions]="{ standalone: true }" />
+              <label class="form-check-label" for="create_new_name">
+                {{ language.new }}
+              </label>
+            </div>
+          </div>
+          <div class="row form-inline">
+            <div class="form-group mb-2 col-md-3 align-self-start">
+              <label for="staticEmail2" class="">{{
+                language.applicationname
+                }} <span class="error">*</span></label>
+            </div>
+            <div class="ccl-form col-md-4 mb-2 align-self-end ccl-ng-select">
+              <label for="inputPassword2" class="sr-only"></label>
+              <ng-select class="" id="createApp" [items]="appName" bindLabel="name" [multiple]="false" placeholder=""
+                [(ngModel)]="appNameSelected" [ngModelOptions]="{ standalone: true }" [clearable]="false"
+                [searchable]="true">
+              </ng-select>
+            </div>
+          </div>
+          <div class="row form-inline">
+            <div class="form-group mb-2 col-md-3 align-self-start">
+              <label for="staticEmail2" class="">{{
+                language["Social Channel"]
+                }}</label>
+            </div>
+            <div class="ccl-form col-md-4 mb-2 align-self-end">
+              <label for="inputPassword2" class="sr-only"></label>
+              <ng-select id="createApp" [items]="yesNo" bindLabel="label" bindValue="value" [multiple]="false"
+                placeholder="" [(ngModel)]="socialChannelSelected" [ngModelOptions]="{ standalone: true }"
+                [clearable]="false" [searchable]="true">
+              </ng-select>
+            </div>
+          </div>
+          <div class="row form-inline">
+            <div class="form-group mb-2 col-md-3 align-self-start">
+              <label for="staticEmail2" class="">{{
+                language["Cloud Application Name"]
+                }}</label>
+            </div>
+            <div class="ccl-form col-md-4 mb-2 align-self-end">
+              <label for="inputPassword2" class="sr-only"></label>
+              <input type="text" id="cloudAppName" class="" placeholder="" name="cloudAppName"
+                [(ngModel)]="cloudAppName" trimSpace (blur)="removeUnwantedSpace('cloudAppName',cloudAppName)"/>
+            </div>
+          </div>
+          <div class="row form-inline">
+            <div class="form-group mb-2 col-md-3 align-self-start">
+              <label for="staticEmail2" class="">{{
+                language["Cloud Top Application"]
+                }}</label>
+            </div>
+            <div class="ccl-form col-md-4 mb-2 align-self-end">
+              <label for="inputPassword2" class="sr-only"></label>
+              <ng-select id="createApp" [items]="yesNo" bindLabel="label" bindValue="value" [multiple]="false"
+                placeholder="" [(ngModel)]="cloudTopAppSelected" [ngModelOptions]="{ standalone: true }"
+                [clearable]="false" [searchable]="true">
+              </ng-select>
+            </div>
+          </div>
+          <div class="row form-inline my-3">
+            <div class="form-group mb-2 col-md-3">
+              <label for="staticEmail2" class="sr-only"></label>
+            </div>
+            <button type="submit" class="btn-default btn-primary mx-4" (click)="addAppGrpMmbr()">
+              {{ language.submit }}
+            </button>
+            <button type="submit" class="btn-default btn-dft ml-2" (click)="hideCreate()">
+              {{ language.Cancel }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section> -->
+
+  <section *ngIf="tablePreview">
+    <div class="row" *ngIf="tablePreview">
+      <div class="col-md-12 ccl-admin-table" *ngIf="dataAvailable">
+        <table id="example" datatable [dtOptions]="importTableOptions" class="row-border hover table-alter">
+          <thead>
+            <tr>
+              <th>{{ language.action }}</th>
+              <th>{{ language.applicationGroupName }}</th>
+              <!-- <th>{{language.old}} {{this.language.applicationGroupName}}</th> -->
+              <th>{{ language.applicationname }}</th>
+              <!-- <th>{{language.old}} {{this.language.applicationname}}</th> -->
+              <th>{{ language["Social Channel"] }}</th>
+              <th>{{ language.old }} {{ this.language["Social Channel"] }}</th>
+              <th>{{ language["Cloud Application Name"] }}</th>
+              <th>
+                {{ language.old }} {{ this.language["Cloud Application Name"] }}
+              </th>
+              <th>{{ language["Cloud Top Application"] }}</th>
+              <th>
+                {{ language.old }} {{ this.language["Cloud Top Application"] }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="{{ item._id }}" *ngFor="let item of importTableData">
+              <td>{{ item.action }}</td>
+              <td>{{ item.trafficTypeName }}</td>
+              <!-- <td></td> -->
+              <td>{{ item.applicationName }}</td>
+              <!-- <td></td> -->
+              <td>{{ item.socialChannel ? "Yes" : "No" }}</td>
+              <td>{{ item.socialChannel_old }}</td>
+              <td>
+                {{
+                item.marketingCloudAppName ? item.marketingCloudAppName : ""
+                }}
+              </td>
+              <td>
+                {{
+                item.marketingCloudAppName_old
+                ? item.marketingCloudAppName_old
+                : ""
+                }}
+              </td>
+              <td>{{ item.marketingCloudTopApp ? "Yes" : "No" }}</td>
+              <td>{{ item.marketingCloudTopApp_old }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="row my-4">
+      <div class="col-md-8 offset-md-4">
+        <button class="btn-default primary px-3 mx-3" [disabled]="!enableImportSubmit" (click)="importSubmit(false)">
+          {{ language.submit }}
+        </button>
+        <button class="btn-default btn-dft py-1 px-3" (click)="closeImport()">
+          {{ language.Cancel }}
+        </button>
+      </div>
+    </div>
+  </section>
+<!-- CCL-50447 -->
+  <!-- <section id="app-groups-filter-Old" *ngIf="false">
+    <div class="row my-3 py-3">
+      <div class="col-md-12">
+        <form>
+          <div class="row form-inline">
+            <div class="form-group mb-2 col-md-3 align-self-start">
+              <label for="staticEmail2" class="">{{
+                language.applicationGroupName
+                }}</label>
+            </div>
+            <div class="ccl-form col-md-4 mb-2 align-self-end">
+              <ng-select id="appGroup-filter-group-naame" [items]="appGroupList" [multiple]="false" placeholder=""
+                [(ngModel)]="filterAppGroupSelected" bindLabel="trafficTypeName" [ngModelOptions]="{ standalone: true }"
+                [clearable]="true" (change)="doFilter()" [searchable]="true" clear="filterGroupClear">
+              </ng-select>
+            </div>
+          </div>
+          <div class="row form-inline">
+            <div class="form-group mb-2 col-md-3 align-self-start">
+              <label for="staticEmail2" class="">{{ language.type }}</label>
+            </div>
+            <div class="ccl-form col-md-4 mb-2 align-self-end">
+              <ng-select id="appGroup-filter-type" [items]="types" bindLabel="label" bindValue="value"
+                [multiple]="false" placeholder="" [(ngModel)]="filterTypeSelected" (change)="doFilter()"
+                [ngModelOptions]="{ standalone: true }" [clearable]="true" [searchable]="true" clear="filtertypeClear">
+              </ng-select>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section> -->
+  <section id="app-groups-filter">
+    <div>
+      <div class="row justify-content-between">
+        <div class="col-md-3 mb-2 ccl-form position-relative">
+          <input type="text" placeholder="{{language['Search']}}"
+          (input)="search($event.target.value)" [(ngModel)]="searchText" />
+          <span *ngIf="searchText" class="search-close" (click)="clearSearch()"><img src="assets/img/ic_close-44px.svg">
+          </span>
+        </div>
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-md-7 mb-2">
+              <ng-select id="appGroup-filter-group-naame" [items]="appGroupList" [multiple]="false" 
+              placeholder="{{language['All Application Group']}}"
+                [(ngModel)]="filterAppGroupSelected" bindLabel="trafficTypeName" [ngModelOptions]="{ standalone: true }"
+                [clearable]="true" (change)="doFilter()" [searchable]="true">
+              </ng-select>
+            </div>
+            <div class="col-md-5 mb-2">
+              <ng-select id="appGroup-filter-type" [items]="types" bindLabel="label" bindValue="value" [multiple]="false"
+                placeholder="{{language['All Types']}}" [(ngModel)]="filterTypeSelected" (change)="doFilter()"
+                [ngModelOptions]="{ standalone: true }" [clearable]="true" [searchable]="true">
+              </ng-select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="row">
+    <div class="col-md-12 ccl-admin-table" [hidden]="!dataAvailable">
+      <table id="app-groups-table" width="100%" datatable [dtOptions]="tableOptions" [dtTrigger]="dtTrigger"
+        class="row-border hover table-alter">
+        <thead>
+          <tr>
+            <th class="w-nowrap-150">
+              <div class="ccl-fc-table-icon">
+                <div [hidden]="editOnValue" class="d-flex align-items-center">
+                  <input [hidden]="editOnValue" type="checkbox" class="" value="" id="selectDeselectAll"
+                  [disabled]="!isAnyCheckboxAvailable()"
+                    (change)="selectDeselectAll($event.target.checked)" />
+                  <span [hidden]="editOnValue" class="checkbox-ui" id="selectDeselectAll-span"
+                    (click)="showAllInnerCheckBox($event)" style="display: none"></span>
+                </div>
+                <div [hidden]="editOnValue" class="text-center justify-content-center">
+                  <button id="delete-selected-btn" (click)="deleteAllSelected()" class="btn-default primary px-2 mx-2"
+                    [disabled]="!appgroupdata?.length || !deleteIds?.length">
+                    <i class="far fa-trash-alt"></i> {{ language.selected }}
+                  </button>
+                </div>
+              </div>
+            </th>
+            <th class="min-w-270">{{ language.applicationGroupName }} &nbsp;</th>
+            <th class="min-w-250">
+              <span> {{ language.applicationname }} &nbsp;</span>
+            </th>
+            <th class="min-w-230">{{ language["Social Channel"] }} &nbsp;</th>
+            <th class="min-w-230">{{ language["Cloud Application Name"] }} &nbsp;</th>
+            <th class="min-w-250">{{ language["Cloud Top Application"] }} &nbsp;</th>
+            <th class="min-w-80">{{ language.type }} &nbsp;</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- <tr id="{{item._id}}" *ngFor="let item of appsTableData"> -->
+          <tr id="{{ item._id }}" *ngFor="let item of appgroupdata">
+            <td class="w10-nowrap-150">
+              <div *ngIf="
+                              editOnValue != item._id &&
+                              (item.type != 'Global' || isSysAdmin)
+                            " class="editable-td text-center f-size-13px">
+                <div class="ccl-fc-table-icon">
+                  <span class="pr-2">
+                    <div (click)="edit(item)" id="edit-btn" class="primary" title="{{ language['Edit'] }}">
+                      <i class="fas fa-pencil-alt"></i>
+                    </div>
+                  </span>
+                  <span class="pr-2">
+                    <input id="item._id" name="delete_id_{{ item._id }}" class="test_check delete_id_{{ item._id }}"
+                      (click)="getDeleteIds($event, item)" type="checkbox" value="{{ item._id }}" />
+                  </span>
+                  <span class="pr-2">
+                    <div (click)="delete(item)" id="delete-btn" class="primary" title="{{ language['Delete'] }}">
+                      <i class="far fa-trash-alt"></i>
+                    </div>
+                  </span>
+                </div>
+              </div>
+
+              <div *ngIf="
+                              editOnValue == item._id &&
+                              (item.type != 'Global' || isSysAdmin)
+                            " class="save-cancel-btn-group d-flex justify-content-center">
+                <div class="ccl-fc-table-icon">
+                  <span class="pr-1">
+                    <div (click)="updateSave(item._id)" id="save-btn" class="primary mx-3">
+                      <i class="fas fa-check"></i>
+                    </div>
+                  </span>
+                  <span class="pr-1">
+                    <div (click)="updateCancel()" id="cancel-btn" class="primary">
+                      <i class="fas fa-times"></i>
+                    </div>
+                  </span>
+                </div>
+              </div>
+            </td>
+            <td class="min-w-270">
+              <div *ngIf="editOnValue != item._id">
+                {{ item.trafficTypeName ? item.trafficTypeName : "" }}
+              </div>
+              <div *ngIf="editOnValue == item._id">
+                <div class="form-group row fw100 min-w-270">
+                  <div class="col-sm-10 ccl-form">
+                    <ng-select class="w-200-p slect-custom-pos" *ngIf="!editIsCreateNew" id="createAppGroup"
+                      [items]="appGroupListLocal" bindLabel="trafficTypeName" [multiple]="false" placeholder=""
+                      [(ngModel)]="editTrafficnameSelected" [ngModelOptions]="{ standalone: true }" [clearable]="false"
+                      [searchable]="true" appendTo="body">
+                    </ng-select>
+                    <input *ngIf="editIsCreateNew" class="new-typeName-input" type="text" id="editTrafficname" placeholder=""
+                      name="editTrafficname" [(ngModel)]="editTrafficname" trimSpace (blur)="removeUnwantedSpace('editTrafficname',editTrafficname)"/>
+                  </div>
+                  <div class="col-sm-2 pt-3">
+                    <input class="form-check-input" type="checkbox" name="create_new_name" value="editIsCreateNew"
+                      id="editIsCreateNew" [(ngModel)]="editIsCreateNew" [ngModelOptions]="{ standalone: true }" />
+                    <label class="form-check-label" for="editIsCreateNew">
+                      {{ language.new }}
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="min-w-250">
+              <div *ngIf="editOnValue != item._id">
+                {{ item.applicationId ? apps[item.applicationId] : "" }}
+              </div>
+              <div *ngIf="editOnValue == item._id">
+                <div class="form-group rowfw100">
+                  <div class="col-sm-12">
+                    <ng-select id="createApp" class="w-200-p slect-custom-pos" [items]="appName" bindLabel="name"
+                      bindValue="_id" [multiple]="false" placeholder="" [(ngModel)]="editAppNameIdSelected"
+                      appendTo="body" [ngModelOptions]="{ standalone: true }" [clearable]="false" [searchable]="true">
+                    </ng-select>
+                  </div>
+                </div>
+              </div>
+            </td>
+
+            <td class="min-w-230">
+              <div *ngIf="editOnValue != item._id">
+                {{
+                item.socialChannel == null
+                ? ""
+                : item.socialChannel
+                ? language.yes
+                : language.no
+                }}
+              </div>
+              <div *ngIf="editOnValue == item._id">
+                <div class="form-group rowfw100">
+                  <div class="col-sm-12">
+                    <ng-select id="createApp" class="w-200-p slect-custom-pos" [items]="yesNo" bindLabel="label"
+                      bindValue="value" [multiple]="false" placeholder="" [(ngModel)]="editSocialChannelSelected"
+                      [ngModelOptions]="{ standalone: true }" [clearable]="false" [searchable]="true" appendTo="body">
+                    </ng-select>
+                  </div>
+                </div>
+              </div>
+            </td>
+
+            <td class="min-w-250">
+              <div *ngIf="editOnValue != item._id">
+                {{
+                item.marketingCloudAppName ? item.marketingCloudAppName : ""
+                }}
+              </div>
+              <div *ngIf="editOnValue == item._id" class="ccl-form">
+                <input type="text" class="edit-text w-200-p" value="{{ item.marketingCloudAppName }}"
+                  [(ngModel)]="editCloudAppName" [ngModelOptions]="{ standalone: true }" 
+                  trimSpace (blur)="removeUnwantedSpace('editCloudAppName',editCloudAppName)"/>
+              </div>
+            </td>
+
+            <td class="min-w-250">
+              <div *ngIf="editOnValue != item._id">
+                {{
+                item.marketingCloudTopApp == null
+                ? ""
+                : item.marketingCloudTopApp
+                ? language.yes
+                : language.no
+                }}
+              </div>
+              <div *ngIf="editOnValue == item._id">
+                <div class="form-group rowfw100">
+                  <div class="col-sm-12">
+                    <ng-select id="createApp" class="w-200-p slect-custom-pos" [items]="yesNo" bindLabel="label"
+                      bindValue="value" [multiple]="false" placeholder="" [(ngModel)]="editCloudTopAppSelected"
+                      [ngModelOptions]="{ standalone: true }" [clearable]="false" [searchable]="true" appendTo="body">
+                    </ng-select>
+                  </div>
+                </div>
+              </div>
+            </td>
+
+            <td class="min-w-80">
+              <div *ngIf="item.orgId != 0; else typeglobal">Local</div>
+              <ng-template #typeglobal> Global </ng-template>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modals -->
+<ng-template #infoModal let-data let-ref="dialogRef">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{ infoTitle }}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body modal-scrll">
+    <p class="f-size-16px">{{invalidImportTrafficTypeName.length ? language['Note']+' - '+language['No application group
+      name imported'] : ''}}</p>
+    <div class="w-100">
+      <p class="f-size-16px" [innerHtml]="infoBody" ></p>
+      <ul class="list-two" *ngIf="invalidImportTrafficTypeName.length">
+        <li class="text-break" *ngFor="let application of invalidImportTrafficTypeName">{{application.trafficTypeName}}
+        </li>
+      </ul>
+      <ul class="list-two" *ngIf="invalidImportCloudAppName.length">
+        <li class="text-break" *ngFor="let application of invalidImportCloudAppName">
+          {{application.marketingCloudAppName}}</li>
+      </ul>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn-default primary px-3" data-dismiss="modal" (click)="closeModal()">
+      {{ language["Okay"] }}
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #deleteModal let-data let-ref="dialogRef">
+  <ng-container>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">{{ infoTitle }}</h4>
+      <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <table class="w-100">
+        <tr>
+          <td>
+            {{ deleteData.trafficTypeName ? deleteData.trafficTypeName : "" }}
+          </td>
+          <td>{{ (deleteData?.applicationId && apps[deleteData?.applicationId] ) ?
+            apps[deleteData?.applicationId] : ''}}</td>
+          <!-- <td>{{deleteData.marketingCloudAppName ? deleteData.marketingCloudAppName : ''}}</td> -->
+        </tr>
+      </table>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-default primary px-3" data-dismiss="modal" (click)="confirmDelete()">
+        {{ language["Okay"] }}
+      </button>
+      <button type="button" class="btn-default btn-dft py-1 px-3" data-dismiss="modal" (click)="closeModal()">
+        {{ language["Cancel"] }}
+      </button>
+    </div>
+  </ng-container>
+</ng-template>
+
+<ng-template #multiDeleteModal let-data let-ref="dialogRef">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{ infoTitle }}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body modal-scrll">
+    <table class="w-100">
+      <tr *ngFor="let item of deleteApps">
+        <td>{{ item.trafficTypeName ? item.trafficTypeName : "" }}</td>
+      </tr>
+    </table>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn-default primary px-3" data-dismiss="modal" (click)="confirmDeleteSecleted()">
+      {{ language["Okay"] }}
+    </button>
+    <button type="button" class="btn-default btn-dft py-1 px-3" data-dismiss="modal" (click)="closeModal()">
+      {{ language["Cancel"] }}
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #createGroupModal let-modal>
+  <div class="modal-header">
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click');closeCrossIcon()">
+      <span></span>
+    </button>
+  </div>
+  <form class="modal-form">
+    <div class="modal-body">
+      <div class="form-group">
+        <div class="ccl-admin-title">{{language['Create Application Group Member']}}</div>
+      </div>
+      <div class="form-group" *ngIf="isSysAdmin">
+        <label for="staticEmail2" class="mb-0">{{ language.type }}</label>
+        <div class="ccl-form">
+          <ng-select class="w-100" id="createApp" [items]="types" bindLabel="label" bindValue="value" [multiple]="false"
+            placeholder="" [(ngModel)]="createTypeSelected" [ngModelOptions]="{ standalone: true }" [clearable]="false"
+            [searchable]="true">
+          </ng-select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="staticEmail2" class="mb-0">{{
+          language.applicationGroupName
+          }} <span class="error">*</span></label>
+        <div class="row">
+          <div class="col ccl-form">
+            <ng-select class="w-100" *ngIf="!isCreateNew" id="createAppGroup" [items]="appGroupListLocal"
+              bindLabel="trafficTypeName" [multiple]="false" [(ngModel)]="createAppGroupSelected" [ngModelOptions]="{ standalone: true }" [clearable]="false"
+              [searchable]="true">
+            </ng-select>
+            <input *ngIf="isCreateNew" type="text" id="newAppGroupName" class="" placeholder="" name="newAppGroupName"
+              [(ngModel)]="newAppGroupName" />
+          </div>
+          <div class="col-auto pl-3 pt-2">
+            <input class="form-check-input" type="checkbox" name="create_new_name" value="isCreateNew"
+              id="create_new_name" [(ngModel)]="isCreateNew" [ngModelOptions]="{ standalone: true }" />
+            <label class="form-check-label" for="create_new_name">
+              {{ language.new }}
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="staticEmail2" class="mb-0">{{
+          language.applicationname
+          }} <span class="error">*</span></label>
+        <div class="ccl-form">
+          <ng-select class="" id="createApp" [items]="appName" bindLabel="name" [multiple]="false" placeholder=""
+            [(ngModel)]="appNameSelected" [ngModelOptions]="{ standalone: true }" [clearable]="false"
+            [searchable]="true">
+          </ng-select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="staticEmail2" class="mb-0">{{
+          language["Social Channel"]
+          }}</label>
+        <div class="ccl-form">
+          <ng-select id="createApp" [items]="yesNo" bindLabel="label" bindValue="value" [multiple]="false"
+            placeholder="" [(ngModel)]="socialChannelSelected" [ngModelOptions]="{ standalone: true }"
+            [clearable]="false" [searchable]="true">
+          </ng-select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="staticEmail2" class="mb-0">{{
+          language["Cloud Application Name"]
+          }}</label>
+        <div class="ccl-form">
+          <input type="text" id="cloudAppName" class="" placeholder="" name="cloudAppName" [(ngModel)]="cloudAppName" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="staticEmail2" class="mb-0">{{
+          language["Cloud Top Application"]
+          }}</label>
+        <div class="ccl-form">
+          <label for="inputPassword2" class="sr-only"></label>
+          <ng-select id="createApp" [items]="yesNo" bindLabel="label" bindValue="value" [multiple]="false"
+            placeholder="" [(ngModel)]="cloudTopAppSelected" [ngModelOptions]="{ standalone: true }" [clearable]="false"
+            [searchable]="true">
+          </ng-select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer justify-content-start pl-0">
+      <div class="row mx-0">
+        <div class="col-md-12 p-0">
+          <button type="submit" class="btn-default btn-primary mr-3" id="newGroup-Btn" (click)="addAppGrpMmbr()">
+            {{language['Create Group Member']}}
+          </button>
+          <button type="submit" class="btn-default btn-dft" id="newGroup-Cancel-Btn" (click)="hideCreate()">
+            {{ language.Cancel }}
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </form>
+</ng-template>
+<!-- Modals -->
+
+<!-- <ng-template #importExportDPIModal let-modal>
+  <div class="modal-header">
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span></span>
+    </button>
+  </div>
+  <form class="modal-form">
+    <div class="modal-body">
+      <div class="form-group">
+        <div class="ccl-admin-title">{{language.importExportDpi}}</div>
+      </div>
+      <div class="form-group">
+       <p class="mb-0">
+        {{language.importExportDpiNote}}
+       </p>
+      </div>
+    </div>
+    <div class="modal-footer justify-content-start pl-0">
+      <div class="row mx-0">
+        <div class="col-md-12 p-0">
+          <button type="submit" class="btn-default btn-primary mr-3" id="ImportExportDPI-Btn">
+            <label for="md-import-dpi" class="mb-0 cursor-pointer">{{language['Import DPI']}}
+            </label>
+            <input type="file" id="md-import-dpi" accept=".xml" (change)="importDPI($event)" #importExDpiInput
+             style="display: none" />
+          </button>
+          <button type="submit" class="btn-default btn-dft btn-alt-dft mr-2" id="ImportExportDPI-export-Btn">
+            {{ language.Export }} .CSV
+          </button>
+          <button type="submit" class="btn link-btn" id="ImportExportDPI-Cancel-Btn" (click)="modal.dismiss('Cross click')">
+            {{ language.Cancel }}
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </form>
+  <ng-template> -->

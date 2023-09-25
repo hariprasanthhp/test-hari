@@ -1,0 +1,337 @@
+@import '~src/assets/theme/imports/_variables.scss';
+
+$btn-color      : #2078fa;
+$btn-hover-color: #1454b2;
+$btn-disabled   : #c0ddfd;
+
+$btn-sec-color      : #f8f8fa;
+$btn-sec-hover-color: #ebeaef;
+$btn-sec-disabled   : #fcfcfd;
+
+.small-tag {
+  font-size  : 12px;
+  font-weight: 300;
+}
+
+.f-w-600 {
+  font-weight: 600;
+}
+
+.max-w-22 {
+  max-width: 22.1%;
+  width    : 22.1;
+}
+
+.performance-wizard {
+  padding : 0px;
+  position: relative;
+}
+
+// .warning-msg {
+//     border-color: #dfb56c;
+//     color: #826430;
+//     background: #efe1b3;
+//     padding: 6px 15px;
+//     border-radius: 3px;
+//     border-left: 5px solid #dfb56c;
+// }
+.warning-msg h5 {
+  font-size    : 16px;
+  font-weight  : 600;
+  margin-bottom: 0px;
+}
+
+.btn-con-sec {
+  display: flex;
+}
+
+.btn-con-sec .warn-btn {
+  background: #f0ad4e;
+  border    : 1px solid #f0ad4e;
+  color     : #fff;
+  padding   : 5px 10px;
+}
+
+.btn.warn-btn:focus {
+  outline   : none;
+  box-shadow: none;
+}
+
+
+.doc-dele-icon a:last-child {
+  padding-left: 10px;
+}
+
+.doc-dele-icon a {
+  font-size: 18px;
+  color    : #4C4C4C;
+}
+
+.doc-dele-icon a:hover {
+  color: red;
+}
+
+.device-div {
+  margin: 40px 0px;
+}
+
+
+.review-sec {
+  padding      : 20px 25px;
+  border       : 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.review-sec .review-title {
+  font-size  : 18px;
+  font-weight: 600;
+}
+
+@media (max-width: 1291px) {
+
+  .stepper .step {
+    padding  : 10px 26px !important;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 991px) {
+
+  .performance-wizard {
+    padding: 0px;
+  }
+}
+
+@media (max-width: 650px) {
+
+  #performanceWizard.performance-wizard .stepper-main {
+    overflow-x: auto;
+  }
+
+  #performanceWizard.performance-wizard .stepper {
+    min-width: 1280px;
+  }
+
+
+}
+
+.performance-testing-name {
+  width: 30% !important;
+}
+
+.performance-testing-no-of-devices {
+  width: 13% !important;
+  padding-right: 30px !important;
+}
+
+.performance-testing-current-state {
+  width: 15% !important;
+}
+
+.performance-testing-start-date {
+  width: 15% !important;
+}
+
+.performance-testing-number-of-days {
+  width: 15% !important;
+}
+
+.performance-testing-state {
+  width: 12% !important;
+}
+
+.performance-testing-table-info {
+  tbody {
+    tr {
+      td {
+        // padding       : 4px 8px !important;
+        vertical-align: middle;
+      }
+    }
+  }
+}
+
+/*new stepper*/
+.stepper-main {
+  width          : 100%;
+  display        : flex;
+  justify-content: center;
+  flex-direction : column;
+  position       : relative;
+}
+
+.stepper-ui {
+  display   : flex;
+  list-style: none;
+  margin    : 0 0 10px 0;
+  padding   : 0;
+  overflow  : hidden;
+  width     : 100%;
+
+  li {
+    button {
+      padding            : 0px 0px 0px 20px;
+      // background      : #ffffff;
+      color              : #1A1F22;
+      position           : relative;
+      height             : 32px;
+      // min-width    : 120px;
+      border-top         : 1px solid #0279ff;
+      border-bottom      : 1px solid #0279ff;
+      border-right       : 0px !important;
+      border-left        : 0px !important;
+      outline            : none !important;
+      // line-height: 12px;
+
+      span {
+        position: relative;
+        z-index : 2;
+      }
+
+      &::after {
+        content                : "";
+        width                  : 30px;
+        height                 : 100%;
+        background             : transparent;
+        position               : absolute;
+        top                    : 0;
+        right                  : -10px;
+        transform              : rotate(48deg);
+        z-index                : 1;
+        border                 : 1px ridge transparent;
+        border-top-color       : #0279ff;
+        border-right-color     : #0279ff;
+        border-top-right-radius: 5px;
+      }
+
+      &.step-current,
+      &.step-done {
+        color: #ffffff;
+      }
+
+      &.step-current,
+      &.step-current::after {
+        background-color: #0279ff !important;
+      }
+
+      &.step-done {
+        background-color: #82bf00 !important;
+        border-color    : #82bf00;
+
+        &::after {
+          background-color: #82bf00 !important;
+        }
+
+        &:disabled {
+          background-color: #82bf00 !important;
+          border-color    : #82bf00 !important;
+        }
+      }
+
+      &.step-done::after {
+        border-top-color  : #fff !important;
+        border-right-color: #fff !important;
+        border-style      : solid;
+      }
+
+      &.step-current::after {
+        border-top-color  : #0279ff !important;
+        border-right-color: #0279ff !important;
+        border-style      : solid;
+      }
+    }
+
+    &:first-child button {
+      border-top-left-radius   : 30px;
+      border-bottom-left-radius: 30px;
+    }
+  }
+}
+
+button:disabled {
+  background  : transparent !important;
+  border-color: #0279ff !important;
+  cursor      : not-allowed;
+  color       : #4c4c4c;
+}
+
+.stepper-ui {
+  li {
+    button {
+      background-color: #F5FAFF;
+      color           : #0279ff;
+
+      &::after {
+        background-color: #F5FAFF;
+      }
+
+      &::before {
+        content         : '';
+        position        : absolute;
+        right           : 0;
+        top             : -1px;
+        width           : 20px;
+        height          : 32px;
+        background-color: transparent;
+        border-top      : 1px solid #0279ff;
+        border-bottom   : 1px solid #0279ff;
+        z-index         : 9;
+      }
+
+      &:disabled {
+        &::after {
+          background-color: #ffffff;
+        }
+
+        color: #1A1F22;
+      }
+
+      &.step-current:disabled,
+      &.step-done:disabled {
+        span {
+          opacity: 0.8;
+          color  : #ffffff !important;
+        }
+      }
+
+      &.step-current,
+      &.step-done {
+        &::before {
+          display: none;
+        }
+      }
+    }
+  }
+}
+
+/*new stepper end*/
+.stepper-ui {
+  display   : flex;
+  list-style: none;
+  margin    : 0 0 10px 0;
+  padding   : 0;
+  overflow  : hidden;
+  width     : 100%;
+
+  li {
+    button {
+      max-width: 110px;
+      span{max-width: 110px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      display: block;
+      }
+    }
+    #stepper-TestServerDetails{
+      max-width: 143px;
+      span{max-width: 143px;}
+    }
+    #stepper-Devices{
+      max-width: 120px;
+      span{max-width: 120px;}
+    }
+    #stepper-TestSchedule{max-width: 114px;}
+  }
+  }
+  .dis-warning-msg{display: flow-root}

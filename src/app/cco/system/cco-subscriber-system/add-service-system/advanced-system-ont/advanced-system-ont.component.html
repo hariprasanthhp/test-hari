@@ -1,0 +1,1119 @@
+<div class="w-100 alert alert alert-danger fade show" *ngIf="defaultLanValidation">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+    <button type="button" class="close" (click)="defaultLanValidation = false">
+        <span></span>
+    </button>
+    <div class="d-inline-flex" [innerHtml]="serviceErrorMsg"></div>
+</div>
+<div *ngIf="showServiceForm" class="loader-wrapper">
+
+    <div class="loader-wrapper-info" *ngIf="loading">
+        <div class="loader">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{ language.Loading }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3 style="margin-bottom: 10px">{{ language.Data }}</h3>
+    <hr />
+    <section [formGroup]="servicetierForm">
+        <div class="data-add-service" formArrayName="data">
+            <div *ngFor="let item of servicetierForm.get('data')['controls']; let ind = index;">
+                <div class="add_Service" [formGroupName]="ind">
+                    <div class="form-group row">
+                        <label for="serviceProfile_{{ ind }}" class="col-2">{{language.Service_Profile}}</label>
+                        <div class="col-4">
+                            <ng-select formControlName="ProfileId" (change)="onServiceProfileChange('data', ind, true)"
+                                [items]="dataServiceProfileList" bindLabel="name" placeholder="{{language['Service profile']}}">
+                            </ng-select>
+                        </div>
+                        <div class="col-5">
+                            <div class="tag-container"
+                                *ngIf="servicetierForm.value.data && servicetierForm.value.data[ind]?.serviceProfile">
+                                <span class="input serviceTag" id="data_serviceType_{{ ind }}">
+                                    {{servicetierForm.value.data[ind].serviceProfile?.Mode }}</span>
+                                <span class="input serviceTag" id="data_portMembers_{{ ind }}"
+                                    *ngIf="servicetierForm.value.data && servicetierForm.value.data[ind]?.bridgeMBRPort">
+                                    {{
+                                    servicetierForm.value.data[ind]?.bridgeMBRPort.toString()
+                                    }}</span>
+                                <span class="input serviceTag"
+                                    *ngIf="servicetierForm.value.data && servicetierForm.value.data[ind]?.serviceProfile?.defaultConnectionService"
+                                    id="data_wan_{{ ind }}">{{language['Default WAN']}}</span>
+                                <span class="input serviceTag"
+                                    *ngIf="servicetierForm.value.data && servicetierForm.value.data[ind]?.isAPAS"
+                                    id="video_port_{{ ind }}">{{language['Any Port Any Service']}}</span>
+                            </div>
+                        </div>
+                        <div class="col-1">
+                            <i class="fa fa-trash-o pull-right" data-toggle="tooltip" (click)="removeService(ind, true)"
+                                data-placement="left" title="Delete" id="DeleteService_{{ ind }}"></i>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-2 control-label">{{language.Service_Enabled}}</label>
+                        <div class="col-12 col-lg-9">
+                            <div class="toggle-swtbtn checkbox switcher">
+                                <label for="serviceEnable_{{ ind }}">
+                                    <input formControlName="Enable" type="checkbox" id="serviceEnable_{{ ind }}"
+                                        name="serviceEnable_{{ ind }}" />
+                                    <span><small></small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row" formGroupName="Overrides">
+                        <label for="bandwidthProfile_{{ ind }}" class="col-2">{{ language.Bandwidth_Profile }}</label>
+                        <div class="col-4">
+                            <!-- <ng-select (change)="onBandWidthChange(item)" name="bandwidthProfile_{{ ind }}" placeholder="{{ language.Bandwidth_Profile }}">
+                                <ng-option *ngFor="let bandwidth of bandWidthProfileList" [value]="bandwidth._id">{{
+                                    bandwidth.name }}</ng-option>
+                            </ng-select> -->
+                            <ng-select id="Brandwidth_options" formControlName="BwProfile" [items]="Brandwidthitems"
+                                bindLabel="name" bindValue="_id" [multiple]="false" placeholder="" [clearable]="false"
+                                (change)="onBandWidthChange(true, ind)" [searchable]="false">
+                            </ng-select>
+                            <sup *ngIf="servicetierForm.value.data && servicetierForm.value.data[ind]?.isBWOverRide">{{
+                                language.Override }}</sup>
+                        </div>
+                        <label class="col-2">{{ language.VLAN }}</label>
+                        <div class="col-4 ccl-form">
+                            <input formControlName="VlanId" name="VLAN_{{ ind }}" id="VLAN_{{ ind }}" type="text"
+                                maxlength="4" />
+                            <!-- <sup *ngIf="
+                        ontDataService[i].isVLANOverRide
+                      ">{{ language.Override }}</sup>
+                            <div class="errorMessage" *ngIf="
+                        ontDataService[i].inValidVLan
+                      "> -->
+                            <small>{{ vlanErrorMsg }}</small>
+                        </div>
+                    </div>
+                    <div formGroupName="pppoe" class="form-group row"
+                        *ngIf="servicetierForm.value.data[ind]?.serviceProfile?.configurations?.parameterValues?.ServiceConnectionType && servicetierForm.value.data[ind]?.serviceProfile?.configurations?.parameterValues?.ServiceConnectionType == 'PPPOE'">
+                        <label class="col-2">{{language.PPPoE_Username}}</label>
+                        <div class="col-4 ccl-form">
+                            <input type="text" id="username_{{ ind }}" name="Username_{{ ind }}"
+                                formControlName="Username" class="col-12">
+                        </div>
+
+                        <label class="col-2">{{language.PPPoE_Password}}</label>
+                        <div class="col-4 ccl-form">
+                            <input name="Password_{{ ind }}" id="password_{{ ind }}" class="col-12"
+                                formControlName="Password" type="text">
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+            </div>
+        </div>
+        <div class="col-sm-12 p-0 mb-4">
+            <button id="addManagedOntDataService" type="button" (click)="AddMoreDataService()"
+                class="btn-default primary">
+                {{ language.Add_Service }}
+            </button>
+        </div>
+    </section>
+
+    <h3 style="margin-bottom: 10px">{{ language.Video }}</h3>
+    <hr />
+    <section [formGroup]="servicetierForm">
+        <div class="video-add-service" formArrayName="video">
+            <div *ngFor="let item of servicetierForm.get('video')['controls']; let ind = index;">
+                <div class="add_Service" [formGroupName]="ind">
+                    <div class="form-group row">
+                        <label for="videoServiceProfile_{{ ind }}" class="col-2">{{
+                            language.Service_Profile
+                            }}</label>
+                        <div class="col-4">
+                            <ng-select formControlName="ProfileId" (change)="onServiceProfileChange('video', ind, true)"
+                                [items]="videoServiceProfileList" bindLabel="name" placeholder="{{language['Service profile']}}">
+                            </ng-select>
+                        </div>
+                        <div class="col-5">
+                            <div class="tag-container"
+                                *ngIf="servicetierForm.value.video && servicetierForm.value.video[ind].serviceProfile">
+
+                                <span class="input serviceTag" id="video_serviceType_{{ ind }}">
+                                    {{servicetierForm.value.video[ind].serviceProfile?.Mode }}</span>
+                                <span class="input serviceTag" id="video_portMembers_{{ ind }}"
+                                    *ngIf="servicetierForm.value.video && servicetierForm.value.video[ind]?.bridgeMBRPort">
+                                    {{
+                                    servicetierForm.value.video[ind]?.bridgeMBRPort.toString()
+                                    }}
+                                    {{
+                                    servicetierForm.value.video[ind]?.serviceProfile?.IPTVSSID ? ",5GHz IPTV SSID" : ""
+                                    }}</span>
+                                <span class="input serviceTag"
+                                    *ngIf="servicetierForm.value.video && servicetierForm.value.video[ind]?.serviceProfile?.defaultConnectionService"
+                                    id="video_wan_{{ ind }}">{{ language.Default_WAN }}</span>
+                                <span class="input serviceTag"
+                                    *ngIf="servicetierForm.value.video && servicetierForm.value.video[ind]?.isAPAS"
+                                    id="video_port_{{ ind }}">{{ language.Any_Port_Any_Service }}</span>
+                            </div>
+                        </div>
+                        <div class="col-1">
+                            <i class="fa fa-trash-o pull-right" (click)="removeService(ind, false)"
+                                data-toggle="tooltip" data-placement="left" title="Delete"
+                                id="DeleteService_{{ ind }}"></i>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-2 control-label">{{language.Service_Enabled}}</label>
+                        <div class="col-12 col-lg-9">
+                            <div class="toggle-swtbtn checkbox switcher">
+                                <label for="videoServiceEnable_{{ ind }}">
+                                    <input formControlName="Enable" type="checkbox" name="videoServiceEnable_{{ ind }}"
+                                        id="videoServiceEnable_{{ ind }}" />
+                                    <span><small></small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row" formGroupName="Overrides">
+                        <label for="BwProfiles4Service_{{ ind }}" class="col-2">{{ language.Bandwidth_Profile }}</label>
+                        <div class="col-4">
+                            <ng-select id="Brandwidth_options" formControlName="BwProfile" [items]="Brandwidthitems"
+                                bindLabel="name" bindValue="_id" [multiple]="false" placeholder="" [clearable]="false"
+                                (change)="onBandWidthChange(false, ind)" [searchable]="false">
+                            </ng-select>
+
+                            <sup *ngIf="servicetierForm.value.video && servicetierForm.value.video[ind]?.isBWOverRide">{{
+                                language.Override }}</sup>
+                        </div>
+                        <label class="col-2">{{ language.VLAN }}</label>
+                        <div class="col-4 ccl-form">
+                            <input formControlName="VlanId" name="VLAN_{{ ind }}" id="VLAN_{{ ind }}" type="text"
+                                maxlength="4" />
+                            <!-- <input name="Video_VLAN_{{ ind }}" id="video_VLAN_{{ ind }}" (keyup)="
+                        onblurValidation(
+                          'inValidVLan',
+                          addDeviceObj.services.ontVideoService[i]
+                        )
+                      " (blur)="
+                        onVLANChange(addDeviceObj.services.ontVideoService[i])
+                      " [(ngModel)]="
+                        addDeviceObj.services.ontVideoService[i].vLAN
+                      " type="text" maxlength="4" />
+                            <sup *ngIf="
+                        addDeviceObj.services.ontVideoService[i].isVLANOverRide
+                      ">{{ language.Override }}</sup>
+                            <div class="errorMessage" *ngIf="
+                        addDeviceObj.services.ontVideoService[i].inValidVLan
+                      "> -->
+                            <!-- <small>{{ vlanErrorMsg }}</small> -->
+                        </div>
+                    </div>
+                </div>
+                <hr />
+            </div>
+        </div>
+        <div class="col-12 p-0" *ngIf="(servicetierForm.value.video && !servicetierForm.value.video?.length)">
+            <button id="addManagedOntVideoService" type="button" (click)="AddMoreVideoService()"
+                class="btn-default primary">
+                {{ language.Add_Service }}
+            </button>
+        </div>
+    </section>
+    <br />
+
+
+    <div class="col-md-12 col-sm-12 col-lg-12 col-xl-12 p-0" [formGroup]="servicetierForm">
+        <div class="data-plan border-bottom">
+            <div class="left-side-data">
+                <!-- <div class="cco-secondary-title">{{language.Voice}}</div> -->
+                <h3>{{language.Voice}}</h3>
+            </div>
+        </div>
+        <div class="ccl-form form-group my-2">
+            <div class="col-12 pl-0 mt-3" *ngIf="!servicetierForm.value.voice.Enable">
+                <button id="addManagedOntVoiceService" type="button" (click)="onAddVoiceService()"
+                    class="btn-default primary">
+                    {{ language.Add_Service }}
+                </button>
+            </div>
+            <div class="col-12 float-right pb-3" *ngIf="servicetierForm.value.voice.Enable">
+                <i class="fa fa-trash-o pull-right" (click)="onRemoveVoiceService()" data-toggle="tooltip"
+                    data-placement="left" title="Delete" id="DeleteService1"></i>
+            </div>
+        </div>
+        <div class="row need-validation" formGroupName="voice" *ngIf="servicetierForm.value.voice.Enable">
+            <div class="col-md-6">
+                <div class="ccl-form form-group">
+                    <div class="col-12" *ngIf="false">
+                        <input type="checkbox" id="hide{{iId}}" formControlName="Enable" />
+                    </div>
+                </div>
+
+                <div class="form-group inline-input row">
+                    <label class="col-form-label col-md-12">
+                        {{ language.Service_Profile }}
+                    </label>
+                    <!-- <input class="form-control col-md-8 px-0" id="name2" type="text" required formControlName="ServiceType" /> -->
+                    <div class="col-md-12">
+                        <ng-select *ngIf="false" [items]="serviceTypeList" (change)="voiceServiceTypeChange($event)"
+                            bindLabel="label" bindValue="value" [multiple]="false" placeholder=""
+                            formControlName="ServiceType" [clearable]="false" [searchable]="false">
+                        </ng-select>
+                        <ng-select formControlName="ProfileId" (change)="onVoiceServiceTypeChange()"
+                            [items]="voiceServiceProfileList" bindLabel="name" placeholder="{{language['Service profile']}}">
+                        </ng-select>
+                        <div class="valid-feedback"></div>
+                        <div class="invalid-feedback mt-5" style="position: relative; right: 210px">
+                            <!-- *{{ language.Add_Sys_Validation1 }} -->
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group inline-input row" formGroupName="FaxT38" *ngIf="isSIPVoiceServiceType">
+                    <label class="col-form-label col-md-12"> {{ language.T38Fax }} </label>
+                    <div class="col-md-12 w-select">
+                        <div class="toggle-swtbtn checkbox switcher">
+                            <label for="T38Fax{{iId}}">
+                                <input type="checkbox" id="T38Fax{{iId}}" formControlName="Enable" />
+                                <span class="enabled_button"><small></small></span>
+                                <!-- {{ language.enabled }} -->
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group inline-input row" *ngIf="isSIPVoiceServiceType">
+                    <label class="col-form-label col-md-12"> {{ language.Dial_Plan }} </label>
+                    <div class="custom-selectbox-opr w-select col-md-12">
+                        <div class="w-100">
+                            <ng-select bindValue="_id" [items]="DialPlanitems" bindLabel="name" bindValue="_id"
+                                [multiple]="false" placeholder="" formControlName="DialPlan" [clearable]="true">
+                            </ng-select>
+                            <!-- <div *ngIf="frequency.errors?.required && (myForm.submitted|| frequency.touched)" id="frequency-error">
+                                                                  {{language['This field is required']}}
+                                                                </div> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group inline-input row" formGroupName="X_CALIX_SXACC_RG_WAN">
+                    <label class="col-form-label col-md-12"> {{ language.Address_Type }} </label>
+                    <div class="custom-selectbox-opr w-select col-md-12">
+                        <div class="w-100">
+                            <ng-select id="AddressingType_options" formControlName="ServiceConnectionType"
+                                [items]="addressingTypeItems" [multiple]="false" placeholder=""
+                                (change)="addressTypeChange();" [clearable]="false" [searchable]="false">
+                            </ng-select>
+                            <!-- <div *ngIf="frequency.errors?.required && (myForm.submitted|| frequency.touched)" id="frequency-error">
+                                                                  {{language['This field is required']}}
+                                                                </div> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group inline-input row" formGroupName="X_CALIX_SXACC_RG_WAN"
+                    *ngIf="isAddressTypeStatic">
+                    <label class="col-form-label col-md-12">{{ language.IP_Address }} <span class="error">*</span>
+                    </label>
+                    <div class="col-md-12">
+                        <input class="form-control" (keyup)="checkIPValidation('ExternalIPAddress')" type="text"
+                            formControlName="ExternalIPAddress" placeholder="{{ language.IP_Address }}"
+                            style="position: relative" />
+                        <div *ngIf="!voiceFormValidate.X_CALIX_SXACC_RG_WAN.ExternalIPAddress">
+                            <div *ngIf="!servicetierForm.value.voice.X_CALIX_SXACC_RG_WAN.ExternalIPAddress">
+                                <small style="color: red">{{language['This field is required']}}</small>
+                            </div>
+                            <div *ngIf="servicetierForm.value.voice.X_CALIX_SXACC_RG_WAN.ExternalIPAddress">
+                                <small style="color: red">{{ language["Please enter a valid IP address"] }}</small>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="form-group inline-input row" formGroupName="X_CALIX_SXACC_RG_WAN"
+                    *ngIf="isAddressTypeStatic">
+                    <label class="col-form-label col-md-12">{{ language.Subnet_Mask }} <span
+                            class="error">*</span></label>
+                    <div class="col-md-12">
+                        <input class="form-control" (keyup)="checkIPValidation('SubnetMask')"
+                            placeholder="{{ language.Subnet_Mask }}" type="text" formControlName="SubnetMask"
+                            style="position: relative" />
+                        <div *ngIf="!voiceFormValidate.X_CALIX_SXACC_RG_WAN.SubnetMask">
+                            <div *ngIf="!servicetierForm.value.voice.X_CALIX_SXACC_RG_WAN.SubnetMask">
+                                <small style="color: red">{{language['This field is required']}}</small>
+                            </div>
+                            <div *ngIf="servicetierForm.value.voice.X_CALIX_SXACC_RG_WAN.SubnetMask">
+                                <small style="color: red">{{ language["Please enter a valid IP address"] }}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group inline-input row" formGroupName="X_CALIX_SXACC_RG_WAN"
+                    *ngIf="isAddressTypeStatic">
+                    <label class="col-form-label col-md-12">{{ language.Default_Gateway }} <span
+                            class="error">*</span></label>
+                    <div class="col-md-12">
+                        <input class="form-control" (keyup)="checkIPValidation('DefaultGateway')"
+                            placeholder="{{ language.Default_Gateway }}" type="text" formControlName="DefaultGateway"
+                            style="position: relative" />
+                        <div *ngIf="!voiceFormValidate.X_CALIX_SXACC_RG_WAN.DefaultGateway">
+                            <div *ngIf="!servicetierForm.value.voice.X_CALIX_SXACC_RG_WAN.DefaultGateway">
+                                <small style="color: red">{{language['This field is required']}}</small>
+                            </div>
+                            <div *ngIf="servicetierForm.value.voice.X_CALIX_SXACC_RG_WAN.DefaultGateway">
+                                <small style="color: red">{{ language["Please enter a valid IP address"] }}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group inline-input row" formGroupName="X_CALIX_SXACC_RG_WAN"
+                    *ngIf="isAddressTypeStatic">
+                    <label class="col-form-label col-md-12">{{ language.dnsserver }} </label>
+                    <div class="col-md-12">
+                        <input class="form-control" (keyup)="checkDNSServerValidation('DNSServers')" type="text"
+                            formControlName="DNSServers" style="position: relative"
+                            placeholder="{{ language.dnsserver }}" />
+                        <div *ngIf="!voiceFormValidate.X_CALIX_SXACC_RG_WAN.DNSServers">
+                            <!-- <div *ngIf="!servicetierForm.value.voice.X_CALIX_SXACC_RG_WAN.DefaultGateway">
+                    <small style="color: red">{{language['This field is required']}}</small>
+                  </div> -->
+                            <div *ngIf="servicetierForm?.value.voice?.X_CALIX_SXACC_RG_WAN?.DNSServers">
+                                <small style="color: red">{{ language.DNS_server_IP_Addresses }}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group inline-input row ccl-form"
+                    *ngIf="(servicetierForm?.value.voice?.ServiceType == 'MGCP' && servicetierForm?.value.voice?.X_CALIX_SXACC_RG_WAN?.ServiceConnectionType == 'DHCP') || (servicetierForm?.value.voice?.ServiceType == 'H.248' && servicetierForm?.value.voice?.X_CALIX_SXACC_RG_WAN?.ServiceConnectionType == 'DHCP') ">
+                    <label class="col-form-label col-md-12">{{ language.Client_FQDN }} </label>
+                    <div class="col-md-12">
+                        <input class="form-control" (keyup)="checkIPHostValidation('X_000631_Opt81ClientFQDN')"
+                            type="text" formControlName="X_000631_Opt81ClientFQDN"
+                            placeholder="{{ language.Enter_Client_FQDN }}" style="position: relative" />
+                        <div *ngIf="!voiceFormValidate.X_000631_Opt81ClientFQDN">
+                            <!-- <div *ngIf="!servicetierForm.value.voice.X_000631_Opt81ClientFQDN">
+                    <small style="color: red">{{language['This field is required']}}</small>
+                  </div> -->
+                            <div *ngIf="servicetierForm?.value.voice?.X_000631_Opt81ClientFQDN">
+                                <!-- <small style="color: red">Please enter a valid IP address or hostname</small> -->
+                                <small style="color: red">{{language['Please enter a valid Client FQDN']}}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="data-plan border-bottom mt-3">
+                    <ul class="nav nav-tabs sub-tab" id="myTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active pl-0" id="home-tab" data-toggle="tab" href="#Line1" role="tab"
+                                aria-controls="home" aria-selected="true"
+                                (click)="showLineOneTab()">{{language.Line_1}}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#Line2" role="tab"
+                                aria-controls="profile" aria-selected="false"
+                                (click)="showLineTwoTab()">{{language.Line_2}}</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="row" formGroupName="Line">
+                    <div class="col-md-12">
+                        <div class="tab-content" id="myTabContent">
+                            <!-- <div class="form-group inline-input w-100">
+                    <label class="col-md-4 col-form-label"> Voice Service</label>
+                    <div class="col-md-8 pl-0">
+                      <div class="toggle-swtbtn checkbox switcher">
+                        <label for="Voice{{iId}}">
+                          <input type="checkbox" id="Voice{{iId}}" (click)="EnableVoiceLine()"  required
+                            formControlName="Enable" />
+                          <span><small></small></span>
+                        </label>
+                      </div>
+                    </div>
+                  </div> -->
+
+                            <div class="tab-pane fade show active" id="Line1" role="tabpanel" aria-labelledby="home-tab"
+                                formGroupName="1">
+                                <div class="my-3">
+
+                                    <div class="form-group inline-input row">
+                                        <label class="col-md-12 col-form-label"> {{language.Voice_Service}}</label>
+                                        <div class="col-md-12">
+                                            <div class="toggle-swtbtn checkbox switcher">
+                                                <label for="Voice{{iId}}">
+                                                    <input type="checkbox" id="Voice{{iId}}"
+                                                        (change)="EnableVoiceLine(1);" required
+                                                        formControlName="Enable" />
+                                                    <span class="enabled_button"><small></small></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="w-100" *ngIf="isSIPVoiceServiceType && isSIPVoiceServiceType1">
+
+                                        <div class="row form-group inline-input" formGroupName="SIP">
+                                            <label class="col-md-12 col-form-label">{{language.Username}} <span
+                                                    class="error">*</span></label>
+                                            <div class="col-md-12">
+                                                <input class=" form-control" id="s_name2"
+                                                    placeholder="{{language['Enter Username']}}"
+                                                    (keyup)="checkLineValidation(1, 'SIP', 'AuthUserName');" type="text"
+                                                    formControlName="AuthUserName" style="position: relative" />
+                                                <div *ngIf="!lineFormValidate['1'].SIP.AuthUserName">
+                                                    <div
+                                                        *ngIf="!servicetierForm.value.voice.Line['1'].SIP.AuthUserName">
+                                                        <small style="color: red">{{language['This field is
+                                                            required']}}</small>
+                                                    </div>
+                                                    <div *ngIf="servicetierForm.value.voice.Line['1'].SIP.AuthUserName">
+                                                        <small style="color: red">{{userNameErrorMsg}}</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row form-group inline-input" formGroupName="SIP">
+                                            <label class="col-md-12 col-form-label">{{language.Password}} <span
+                                                    class="error">*</span></label>
+                                            <div class="col-md-12">
+                                                <input class="form-control" id="s_name3"
+                                                    placeholder="{{language['Enter Password']}}"
+                                                    (keyup)="checkLineValidation(1, 'SIP', 'AuthPassword');" type="text"
+                                                    required formControlName="AuthPassword"
+                                                    style="position: relative" />
+                                                <div *ngIf="!lineFormValidate['1'].SIP.AuthPassword">
+                                                    <div
+                                                        *ngIf="!servicetierForm.value.voice.Line['1'].SIP.AuthPassword">
+                                                        <small style="color: red">{{language['This field is
+                                                            required']}}</small>
+                                                    </div>
+                                                    <!-- <div *ngIf="servicetierForm.value.voice.Line['1'].SIP.AuthPassword">
+                                <small style="color: red">{{userNameErrorMsg}}</small>
+                              </div> -->
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row form-group inline-input" formGroupName="SIP">
+                                            <label class="col-md-12 col-form-label">{{language.SIP_URI}} <span
+                                                    class="error">*</span></label>
+                                            <div class="col-md-12">
+                                                <input class="form-control" id="s_name4"
+                                                    placeholder="{{language.Enter_URI}}"
+                                                    (keyup)="checkLineValidation(1, 'SIP', 'URI');" type="text" required
+                                                    formControlName="URI" style="position: relative" />
+                                                <div *ngIf="!lineFormValidate['1'].SIP.URI">
+                                                    <div *ngIf="!servicetierForm.value.voice.Line['1'].SIP.URI">
+                                                        <small style="color: red">{{language['This field is
+                                                            required']}}</small>
+                                                    </div>
+                                                    <div *ngIf="servicetierForm.value.voice.Line['1'].SIP.URI">
+                                                        <small style="color: red">{{language['Please enter a valid
+                                                            URI.']}}</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group inline-input row" formGroupName="CallingFeatures">
+                                            <label class="col-md-12 col-form-label">
+                                                {{language.Call_Waiting}}</label>
+                                            <div class="col-md-12">
+                                                <div class="toggle-swtbtn checkbox switcher">
+                                                    <label for="Waiting{{iId}}">
+                                                        <input type="checkbox" id="Waiting{{iId}}"
+                                                            formControlName="CallWaitingEnable" required />
+                                                        <span class="enabled_button"><small></small></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group inline-input row" formGroupName="CallingFeatures">
+                                            <label class="col-md-12 col-form-label">
+                                                {{language.Caller_ID}}</label>
+                                            <div class="col-md-12">
+                                                <div class="toggle-swtbtn checkbox switcher">
+                                                    <label for="CallerIDEnable{{iId}}">
+                                                        <input type="checkbox" id="CallerIDEnable{{iId}}"
+                                                            formControlName="CallerIDEnable" required />
+                                                        <span class="enabled_button"><small></small></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group inline-input row" formGroupName="CallingFeatures">
+                                            <label class="col-md-12 col-form-label">
+                                                {{language.Three_waycall}}</label>
+                                            <div class="col-md-12">
+                                                <div class="toggle-swtbtn checkbox switcher">
+                                                    <label for="Calling{{iId}}">
+                                                        <input type="checkbox" id="Calling{{iId}}"
+                                                            formControlName="X_000631_ThreewayCallingEnable" required />
+                                                        <span class="enabled_button"><small></small></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group inline-input row" formGroupName="CallingFeatures">
+                                            <label class="col-form-label col-md-12">
+                                                {{language.Message_Waiting}}</label>
+                                            <div class="col-md-12">
+                                                <div class="toggle-swtbtn checkbox switcher">
+                                                    <label for="Indicator{{iId}}">
+                                                        <input type="checkbox" id="Indicator{{iId}}"
+                                                            formControlName="MWIEnable" required />
+                                                        <span class="enabled_button"><small></small></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group inline-input row" formGroupName="CallingFeatures">
+                                            <label class="col-md-12 col-form-label">
+                                                {{language.Direct_Connect}}</label>
+                                            <div class="col-md-12">
+                                                <div class="toggle-swtbtn checkbox switcher">
+                                                    <label for="Connect{{iId}}">
+                                                        <input type="checkbox" id="Connect{{iId}}"
+                                                            (change)="directconnectenable();"
+                                                            formControlName="X_000631_DirectConnectEnable" required />
+                                                        <span class="enabled_button"><small></small></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group inline-input row" formGroupName="CallingFeatures"
+                                            *ngIf="servicetierForm.value.voice.Line['1'].CallingFeatures.X_000631_DirectConnectEnable">
+                                            <label class="col-md-12 col-form-label">
+                                                {{language.Direct_No}} *</label>
+                                            <div class="col-md-12">
+                                                <input class="form-control" id="s_name3"
+                                                    placeholder="{{language['Enter Direct Connect Number']}}"
+                                                    oninput="(this.value) = (this.value.replace(/[^0-9.]/g, '').replace(/(\..?)\../g, '$1'));"
+                                                    (keyup)="checkLineValidation(1, 'CallingFeatures', 'X_000631_DirectConnectNumber');"
+                                                    type="text" required formControlName="X_000631_DirectConnectNumber"
+                                                    style="position: relative" />
+                                                <div
+                                                    *ngIf="!lineFormValidate['1'].CallingFeatures.X_000631_DirectConnectNumber">
+                                                    <div
+                                                        *ngIf="!servicetierForm.value.voice.Line['1'].CallingFeatures.X_000631_DirectConnectNumber">
+                                                        <small style="color: red">{{language['This field is
+                                                            required']}}</small>
+                                                    </div>
+                                                    <div
+                                                        *ngIf="servicetierForm.value.voice.Line['1'].CallingFeatures.X_000631_DirectConnectNumber">
+                                                        <small style="color: red">{{language['Please enter a number']}}</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group inline-input row" formGroupName="CallingFeatures"
+                                            *ngIf="servicetierForm.value.voice.Line['1'].CallingFeatures.X_000631_DirectConnectEnable">
+                                            <label class="col-md-12 col-form-label">
+                                                {{language.Direct_Connect_Timer}} <span class="error">*</span></label>
+                                            <div class="col-md-12">
+                                                <input class="form-control" id="s_name3"
+                                                    placeholder="{{language['Enter Direct Connect Timer']}}"
+                                                    oninput="(this.value) = (this.value.replace(/[^0-9.]/g, '').replace(/(\..?)\../g, '$1'));"
+                                                    (keyup)="checkLineValidation(1, 'CallingFeatures', 'X_000631_DirectConnectTimer');"
+                                                    type="text" min="0" max="35" required
+                                                    formControlName="X_000631_DirectConnectTimer"
+                                                    style="position: relative" maxlength="2" />
+                                                <div
+                                                    *ngIf="!lineFormValidate['1'].CallingFeatures.X_000631_DirectConnectTimer">
+                                                    <div
+                                                        *ngIf="servicetierForm.value.voice.Line['1'].CallingFeatures.X_000631_DirectConnectTimer">
+                                                        <small style="color: red">[{{language['Direct Connect Timer ranges from 0 to 35']}}.]</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <!-- ServiceType == 'H.248' -->
+                                    <div class="w-100"
+                                        *ngIf="servicetierForm?.value.voice?.ServiceType == 'H.248' && servicetierForm?.value?.voice?.Line['1']?.Enable">
+                                        <div class="row form-group inline-input" formGroupName="X_000631_H248">
+                                            <label class="col-md-12 col-form-label">{{language.Termination_ID}}
+                                                <span class="error">*</span></label>
+                                            <div class="col-md-12">
+                                                <input class=" form-control" placeholder="{{language['Enter Termination ID']}}"
+                                                    (keyup)="checkLineValidation(1, 'X_000631_H248', 'TerminationId');"
+                                                    type="text" formControlName="TerminationId"
+                                                    style="position: relative" />
+                                                <div *ngIf="!lineFormValidate['1'].X_000631_H248?.TerminationId">
+                                                    <div
+                                                        *ngIf="!servicetierForm.value.voice.Line['1'].X_000631_H248?.TerminationId">
+                                                        <small style="color: red">{{language['This field is
+                                                            required']}}</small>
+                                                    </div>
+                                                    <!-- <div *ngIf="servicetierForm.value.voice.Line['1'].X_000631_H248">
+                                <small style="color: red">{{userNameErrorMsg}}</small>
+                              </div> -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- ServiceType == 'MGCP' -->
+                                    <div class="w-100"
+                                        *ngIf="servicetierForm?.value.voice?.ServiceType == 'MGCP' && servicetierForm?.value?.voice?.Line['1']?.Enable">
+                                        <div class="row form-group inline-input" formGroupName="MGCP">
+                                            <label class="col-md-12 col-form-label">{{language.GR303}}</label>
+                                            <div class="col-md-12 w-select">
+                                                <div class="toggle-swtbtn checkbox switcher">
+                                                    <label for="X_000631_GR303_1{{iId}}">
+                                                        <input type="checkbox" id="X_000631_GR303_1{{iId}}"
+                                                            formControlName="X_000631_GR303" />
+                                                        <span class="enabled_button"><small></small></span>
+                                                        <!-- {{ language.enabled }} -->
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- ServiceType == 'X_000631_TDMGW' -->
+                                    <div class="w-100"
+                                        *ngIf="servicetierForm?.value.voice?.ServiceType == 'X_000631_TDMGW' && servicetierForm?.value?.voice?.Line['1']?.Enable">
+                                        <div class="row form-group inline-input" formGroupName="X_000631_TdmGw">
+                                            <label class="col-md-12 col-form-label">CRV *</label>
+                                            <div class="col-md-12">
+                                                <input class=" form-control" placeholder="{{language['Enter CRV']}}"
+                                                    (keyup)="checkLineValidation(1, 'X_000631_TdmGw', 'Crv');"
+                                                    type="text" formControlName="Crv" style="position: relative" />
+                                                <div *ngIf="!lineFormValidate['1'].X_000631_TdmGw?.Crv">
+                                                    <div
+                                                        *ngIf="!servicetierForm.value.voice.Line['1'].X_000631_TdmGw?.Crv">
+                                                        <small style="color: red">{{language['This field is
+                                                            required']}}</small>
+                                                    </div>
+                                                    <!-- <div *ngIf="servicetierForm.value.voice.Line['1'].X_000631_TdmGw.Crv">
+                                                    <small style="color: red">{{userNameErrorMsg}}</small>
+                                                  </div> -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="w-100" *ngIf="servicetierForm?.value?.voice?.Line['1']?.Enable">
+                                        <div formGroupName="VoiceProcessing">
+                                            <div class="row">
+                                                <div class="col-sm-12 px-0"
+                                                    style="margin-bottom: 24px; margin-top: 24px; margin-left: 12px;">
+                                                    <button id="btn-advancedSettings" type="button"
+                                                        class="btn-default primary"
+                                                        (click)="onToggleAdvSettings()">{{advanceSettingsLbl}}</button>
+                                                </div>
+                                            </div>
+                                            <div *ngIf="isShowAdvSetting">
+                                                <div class="row">
+                                                    <label for="systemLossPlan"
+                                                        class="col-md-12 col-form-label">{{language.System_loss}}</label>
+                                                    <div class="col-12 col-md-12">
+                                                        <ng-select [items]="voiceParam" id="systemLossPlan"
+                                                            [multiple]="false" [clearable]="false" [searchable]="false"
+                                                            (change)="onSysLossChange(1); " formControlName="systemLoss"
+                                                            placeholder="{{language['System loss plan']}}">
+                                                        </ng-select>
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    *ngIf="servicetierForm.value.voice.Line['1'].VoiceProcessing.systemLoss === 'Manual'">
+                                                    <div class="form-group ccl-form row pt-3 pb-2">
+                                                        <label
+                                                            class="col-md-12 col-form-label">{{language.System_Tx_Loss}}
+                                                            {{language.Plan}}
+                                                            (dB)</label>
+                                                        <div class="col-12 col-md-12">
+                                                            <input class="voiceParam" type="text"
+                                                                formControlName="TransmitGain"
+                                                                (keyup)="checkLineValidation(1, 'VoiceProcessing', 'TransmitGain');"
+                                                                #TransmitGain aria-invalid="false">
+                                                            <div
+                                                                *ngIf="!lineFormValidate['1'].VoiceProcessing.TransmitGain">
+                                                                <small
+                                                                    style="color: red">{{language.gainErrorMsg}}</small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group ccl-form row">
+                                                        <label
+                                                            class="col-md-12 col-form-label">{{language.System_Rx_Loss}}
+                                                            {{language.Plan}}
+                                                            (dB)</label>
+                                                        <div class="col-12 col-md-12">
+                                                            <input class="voiceParam" type="text"
+                                                                (keyup)="checkLineValidation(1, 'VoiceProcessing', 'ReceiveGain');"
+                                                                formControlName="ReceiveGain" #ReceiveGain
+                                                                aria-invalid="false">
+                                                            <div
+                                                                *ngIf="!lineFormValidate['1'].VoiceProcessing.ReceiveGain">
+                                                                <small
+                                                                    style="color: red">{{language.gainErrorMsg}}</small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="Line2" role="tabpanel" aria-labelledby="profile-tab"
+                                formGroupName="2">
+                                <div class="my-3">
+
+                                    <div class="form-group inline-input row">
+                                        <label class="col-md-12 col-form-label"> {{language.Voice_Service}}
+                                            2</label>
+                                        <div class="col-md-12">
+                                            <div class="toggle-swtbtn checkbox switcher">
+                                                <label for="Voice-L2{{iId}}">
+                                                    <input type="checkbox" id="Voice-L2{{iId}}"
+                                                        (change)="EnableVoiceLine(2);" required
+                                                        formControlName="Enable" />
+                                                    <span class="enabled_button"><small></small></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <section class="w-100" *ngIf="isSIPVoiceServiceType && isSIPVoiceServiceType2">
+
+                                        <div class="row form-group inline-input" formGroupName="SIP">
+                                            <label class="col-md-12 col-form-label">{{language.Username}} <span
+                                                    class="error">*</span></label>
+                                            <div class="col-md-12">
+                                                <input class="form-control" id="s_name5"
+                                                    placeholder="{{language['Enter Username']}}" type="text" required
+                                                    formControlName="AuthUserName"
+                                                    (keyup)="checkLineValidation(2, 'SIP', 'AuthUserName');"
+                                                    style="position: relative" />
+                                                <div *ngIf="!lineFormValidate['2'].SIP.AuthUserName">
+                                                    <div
+                                                        *ngIf="!servicetierForm.value.voice.Line['2'].SIP.AuthUserName">
+                                                        <small style="color: red">{{language['This field is
+                                                            required']}}</small>
+                                                    </div>
+                                                    <div *ngIf="servicetierForm.value.voice.Line['2'].SIP.AuthUserName">
+                                                        <small style="color: red">{{userNameErrorMsg}}</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row form-group inline-input" formGroupName="SIP">
+                                            <label class="col-md-12 col-form-label">{{language.Password}}<span
+                                                    class="error">*</span></label>
+                                            <div class="col-md-12">
+                                                <input class="form-control" id="s_name6"
+                                                    placeholder="{{language['Enter Password']}}" type="text" required
+                                                    formControlName="AuthPassword"
+                                                    (keyup)="checkLineValidation(2, 'SIP', 'AuthPassword');"
+                                                    style="position: relative" />
+                                                <div *ngIf="!lineFormValidate['2'].SIP.AuthPassword">
+                                                    <div
+                                                        *ngIf="!servicetierForm.value.voice.Line['2'].SIP.AuthPassword">
+                                                        <small style="color: red">{{language['This field is
+                                                            required']}}</small>
+                                                    </div>
+                                                    <!-- <div *ngIf="servicetierForm.value.voice.Line['2'].SIP.AuthPassword">
+                                                          <small style="color: red">{{userNameErrorMsg}}</small>
+                                                        </div> -->
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row form-group inline-input" formGroupName="SIP">
+                                            <label class="col-md-12 col-form-label">{{language.SIP_URI}} <span
+                                                    class="error">*</span></label>
+                                            <div class="col-md-12">
+                                                <input class="form-control" id="s_name7"
+                                                    placeholder="{{language.Enter_URI}}" type="text" required
+                                                    formControlName="URI"
+                                                    (keyup)="checkLineValidation(2, 'SIP', 'URI');"
+                                                    style="position: relative" />
+                                                <div *ngIf="!lineFormValidate['2'].SIP.URI">
+                                                    <div *ngIf="!servicetierForm.value.voice.Line['2'].SIP.URI">
+                                                        <small style="color: red">{{language['This field is
+                                                            required']}}</small>
+                                                    </div>
+                                                    <div *ngIf="servicetierForm.value.voice.Line['2'].SIP.URI">
+                                                        <small style="color: red">{{language['Please enter a valid
+                                                            URI.']}}</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group inline-input row" formGroupName="CallingFeatures">
+                                            <label class="col-md-12 col-form-label">
+                                                {{language.Call_Waiting}}</label>
+                                            <div class="col-md-12">
+                                                <div class="toggle-swtbtn checkbox switcher">
+                                                    <label for="CallWaiting{{iId}}">
+                                                        <input type="checkbox" id="CallWaiting{{iId}}"
+                                                            formControlName="CallWaitingEnable" required />
+                                                        <span class="enabled_button"><small></small></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group inline-input row" formGroupName="CallingFeatures">
+                                            <label class="col-md-12 col-form-label">
+                                                {{language.Caller_ID}}</label>
+                                            <div class="col-md-12">
+                                                <div class="toggle-swtbtn checkbox switcher">
+                                                    <label for="CallerIDEnable2{{iId}}">
+                                                        <input type="checkbox" id="CallerIDEnable2{{iId}}"
+                                                            formControlName="CallerIDEnable" required />
+                                                        <span class="enabled_button"><small></small></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group inline-input row" formGroupName="CallingFeatures">
+                                            <label class="col-md-12 col-form-label">
+                                                {{language.Three_waycall}}</label>
+                                            <div class="col-md-12">
+                                                <div class="toggle-swtbtn checkbox switcher">
+                                                    <label for="Three-Way{{iId}}">
+                                                        <input type="checkbox" id="Three-Way{{iId}}"
+                                                            formControlName="X_000631_ThreewayCallingEnable" required />
+                                                        <span class="enabled_button"><small></small></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group inline-input row" formGroupName="CallingFeatures">
+                                            <label class="col-form-label col-md-12">
+                                                {{language.Message_Waiting}}</label>
+                                            <div class="col-md-12">
+                                                <div class="toggle-swtbtn checkbox switcher">
+                                                    <label for="Message{{iId}}">
+                                                        <input type="checkbox" id="Message{{iId}}"
+                                                            formControlName="MWIEnable" required />
+                                                        <span class="enabled_button"><small></small></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group inline-input row" formGroupName="CallingFeatures">
+                                            <label class="col-md-12 col-form-label">
+                                                {{language.Direct_Connect}}</label>
+                                            <div class="col-md-12">
+                                                <div class="toggle-swtbtn checkbox switcher">
+                                                    <label for="Direct{{iId}}">
+                                                        <input type="checkbox" id="Direct{{iId}}"
+                                                            formControlName="X_000631_DirectConnectEnable" required />
+                                                        <span class="enabled_button"><small></small></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group inline-input row" formGroupName="CallingFeatures"
+                                            *ngIf="servicetierForm.value.voice.Line['2'].CallingFeatures.X_000631_DirectConnectEnable">
+                                            <label class="col-md-12 col-form-label">
+                                                {{language.Direct_No}} <span class="error">*</span></label>
+                                            <div class="col-md-12">
+                                                <input class="form-control" id="s_name3"
+                                                    placeholder="{{language['Enter Direct Connect Number']}}"
+                                                    (change)="directconnectenable();"
+                                                    oninput="(this.value) = (this.value.replace(/[^0-9.]/g, '').replace(/(\..?)\../g, '$1'));"
+                                                    (keyup)="checkLineValidation(2, 'CallingFeatures', 'X_000631_DirectConnectNumber');"
+                                                    type="text" required formControlName="X_000631_DirectConnectNumber"
+                                                    style="position: relative" />
+                                                <div
+                                                    *ngIf="!lineFormValidate['2'].CallingFeatures.X_000631_DirectConnectNumber">
+                                                    <div
+                                                        *ngIf="!servicetierForm.value.voice.Line['2'].CallingFeatures.X_000631_DirectConnectNumber">
+                                                        <small style="color: red">{{language['This field is
+                                                            required']}}</small>
+                                                    </div>
+                                                    <div
+                                                        *ngIf="servicetierForm.value.voice.Line['2'].CallingFeatures.X_000631_DirectConnectNumber">
+                                                        <small style="color: red">{{language['Please enter a
+                                                            number']}}</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group inline-input row" formGroupName="CallingFeatures"
+                                            *ngIf="servicetierForm.value.voice.Line['2'].CallingFeatures.X_000631_DirectConnectEnable">
+                                            <label class="col-md-12 col-form-label">
+                                                {{language.Direct_Connect_Timer}} <span class="error">*</span></label>
+                                            <div class="col-md-12">
+                                                <input class="form-control" id="s_name3"
+                                                    placeholder="{{language['Enter Direct Connect Timer']}}"
+                                                    oninput="(this.value) = (this.value.replace(/[^0-9.]/g, '').replace(/(\..?)\../g, '$1'));"
+                                                    (keyup)="checkLineValidation(2, 'CallingFeatures', 'X_000631_DirectConnectTimer');"
+                                                    type="text" min="0" max="35" maxlength="2" required
+                                                    formControlName="X_000631_DirectConnectTimer"
+                                                    style="position: relative" />
+                                                <div
+                                                    *ngIf="!lineFormValidate['2'].CallingFeatures.X_000631_DirectConnectTimer">
+                                                    <div
+                                                        *ngIf="servicetierForm.value.voice.Line['2'].CallingFeatures.X_000631_DirectConnectTimer">
+                                                        <small style="color: red">[{{language['Direct Connect Timer ranges from 0 to 35']}}.]</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </section>
+
+                                    <!-- ServiceType == 'H.248' -->
+                                    <div class="w-100"
+                                        *ngIf="servicetierForm?.value.voice?.ServiceType == 'H.248' && servicetierForm?.value?.voice?.Line['2']?.Enable">
+                                        <div class="row form-group inline-input" formGroupName="X_000631_H248">
+                                            <label class="col-md-12 col-form-label">{{language.Termination_ID}}
+                                                <span class="error">*</span></label>
+                                            <div class="col-md-12">
+                                                <input class=" form-control" placeholder="{{language['Enter Termination ID']}}"
+                                                    (keyup)="checkLineValidation(2, 'X_000631_H248', 'TerminationId');"
+                                                    type="text" formControlName="TerminationId"
+                                                    style="position: relative" />
+                                                <div *ngIf="!lineFormValidate['2'].X_000631_H248?.TerminationId">
+                                                    <div
+                                                        *ngIf="!servicetierForm.value.voice.Line['2'].X_000631_H248?.TerminationId">
+                                                        <small style="color: red">{{language['This field is
+                                                            required']}}</small>
+                                                    </div>
+                                                    <!-- <div *ngIf="servicetierForm.value.voice.Line['2'].X_000631_H248">
+                                                    <small style="color: red">{{userNameErrorMsg}}</small>
+                                                  </div> -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- ServiceType == 'MGCP' -->
+                                    <div class="w-100"
+                                        *ngIf="servicetierForm?.value.voice?.ServiceType == 'MGCP' && servicetierForm?.value?.voice?.Line['2']?.Enable">
+                                        <div class="row form-group inline-input" formGroupName="MGCP">
+                                            <label class="col-md-12 col-form-label">GR303</label>
+                                            <div class="col-md-12 w-select">
+                                                <div class="toggle-swtbtn checkbox switcher">
+                                                    <label for="X_000631_GR303_2{{iId}}">
+                                                        <input type="checkbox" id="X_000631_GR303_2{{iId}}"
+                                                            formControlName="X_000631_GR303" />
+                                                        <span class="enabled_button"><small></small></span>
+                                                        <!-- {{ language.enabled }} -->
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- ServiceType == 'X_000631_TDMGW' -->
+                                    <div class="w-100"
+                                        *ngIf="servicetierForm?.value.voice?.ServiceType == 'X_000631_TDMGW' && servicetierForm?.value?.voice?.Line['2']?.Enable">
+                                        <div class="row form-group inline-input" formGroupName="X_000631_TdmGw">
+                                            <label class="col-md-12 col-form-label">CRV <span
+                                                    class="error">*</span></label>
+                                            <div class="col-md-12">
+                                                <input class=" form-control" placeholder="{{language['Enter CRV']}}"
+                                                    (keyup)="checkLineValidation(2, 'X_000631_TdmGw', 'Crv');"
+                                                    type="text" formControlName="Crv" style="position: relative" />
+                                                <div *ngIf="!lineFormValidate['2'].X_000631_TdmGw?.Crv">
+                                                    <div
+                                                        *ngIf="!servicetierForm.value.voice.Line['2'].X_000631_TdmGw?.Crv">
+                                                        <small style="color: red">{{language['This field is
+                                                            required']}}</small>
+                                                    </div>
+                                                    <!-- <div *ngIf="servicetierForm.value.voice.Line['2'].X_000631_TdmGw.Crv">
+                                                                        <small style="color: red">{{userNameErrorMsg}}</small>
+                                                                      </div> -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="w-100" *ngIf="servicetierForm?.value?.voice?.Line['2']?.Enable">
+                                        <div formGroupName="VoiceProcessing">
+                                            <div class="row">
+                                                <div class="col-sm-12 px-0"
+                                                    style="margin-bottom: 24px; margin-top: 24px; margin-left: 12px;">
+                                                    <button id="btn-advancedSettings" type="button"
+                                                        class="btn-default primary"
+                                                        (click)="onToggleAdvSettings()">{{advanceSettingsLbl}}</button>
+                                                </div>
+                                            </div>
+                                            <div *ngIf="isShowAdvSetting">
+                                                <div class="row">
+                                                    <label for="systemLossPlan"
+                                                        class="col-md-12 col-form-label">{{language.System_loss}}</label>
+                                                    <div class="col-12 col-md-12 mb-3">
+                                                        <ng-select [items]="voiceParam" id="systemLossPlan"
+                                                            [multiple]="false" [clearable]="false" [searchable]="false"
+                                                            (change)="onSysLossChange(2); " formControlName="systemLoss"
+                                                            name="systemLoss" placeholder="{{language['System loss plan']}}">
+                                                        </ng-select>
+
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    *ngIf="servicetierForm.value.voice.Line['2'].VoiceProcessing.systemLoss === 'Manual'">
+                                                    <div class="form-group ccl-form row pt-3 pb-2">
+                                                        <label class="col-md-12 col-form-label">{{language.System_loss}}
+                                                            {{language.Plan}}
+                                                            (dB)</label>
+                                                        <div class="col-12 col-md-12">
+                                                            <input class="voiceParam" type="text"
+                                                                formControlName="TransmitGain"
+                                                                (keyup)="checkLineValidation(2, 'VoiceProcessing', 'TransmitGain');"
+                                                                #TransmitGain aria-invalid="false">
+                                                            <div
+                                                                *ngIf="!lineFormValidate['2'].VoiceProcessing.TransmitGain">
+                                                                <small
+                                                                    style="color: red">{{language.gainErrorMsg}}</small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group ccl-form row">
+                                                        <label
+                                                            class="col-md-12 col-form-label">{{language.System_Rx_Loss}}
+                                                            {{language.Plan}}
+                                                            (dB)</label>
+                                                        <div class="col-12 col-md-12">
+                                                            <input class="voiceParam" type="text" #ReceiveGain
+                                                                formControlName="ReceiveGain"
+                                                                (keyup)="checkLineValidation(2, 'VoiceProcessing', 'ReceiveGain');"
+                                                                aria-invalid="false">
+                                                            <div
+                                                                *ngIf="!lineFormValidate['2'].VoiceProcessing.ReceiveGain">
+                                                                <small
+                                                                    style="color: red">{{language.gainErrorMsg}}</small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ccl-form mt-4">
+
+
+
+
+
+        </div>
+    </div>
+</div>

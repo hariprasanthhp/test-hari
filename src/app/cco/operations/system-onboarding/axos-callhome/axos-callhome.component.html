@@ -1,0 +1,33 @@
+<section>
+    <div class="container mp-0">
+        <div class="row mm-0">
+            <div class="m-center col-sm-12 col-md-12 px-0  mb-4">
+                <div class="ccl-tabs">
+                    <ul id="tabs" class="nav nav-tabs">
+                        <li class="nav-item" *ngIf="menus['systems']">
+                            <a data-toggle="tab" class="nav-link"
+                                routerLink="/cco/operations/system-onboarding/axos-callhome/axos/list"
+                                routerLinkActive="active" aria-controls="alarms" aria-selected="true" 
+                                id="SysOnboarding-AXOSSystems-Systems">
+                                {{language['Systems']}}
+                            </a>
+                        </li>
+                        <li class="nav-item" *ngIf="menus['callhome']">
+                            <a data-toggle="tab" class="nav-link" class="nav-link small"
+                                routerLink="/cco/operations/system-onboarding/axos-callhome/callhome/list"
+                                routerLinkActive="active" aria-controls="disconncted" aria-selected="true"
+                                [ngClass]="{'active' : activeMenus['callhome']}" 
+                                id="SysOnboarding-AXOSSystems-CallHome">
+                                {{language['Call Home']}}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-12 px-0">
+                <router-outlet></router-outlet>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,30 @@
+input[type="checkbox"] {
+  + {
+    .checkbox-ui {
+      width        : 14px;
+      height       : 14px;
+      // background: #ffffff;
+      // border: 1px solid #b8bcc1;
+      border-radius: 2px;
+      z-index      : 1;
+      position     : absolute;
+      right        : 0px !important;
+
+      display   : inline-block;
+      border    : 1px solid #0279FF;
+      background: #0279FF;
+      left      : 0px;
+      top       : 12px !important;
+    }
+  }
+}
+.deactivated {
+  width: 163px !important;
+}
+.clear-icon {
+  position: absolute;
+  right: 28px;
+  top: 5px;
+  width: 12px;
+  cursor: pointer;
+}

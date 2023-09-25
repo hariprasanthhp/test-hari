@@ -1,0 +1,168 @@
+<section>
+    <div class="w-100 alert alert alert-danger fade show" *ngIf="isDateAreEqual">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg" />
+            {{language['Both Start Time And End Time areSame']}}</span>
+        <button type="button" class="close" (click)="isDateAreEqual=false">
+            <span></span>
+        </button>
+    </div>
+    <div class="row my-2">
+        <!-- <div class="col-md-12 col-lg-3 col-xl-3" *ngIf="softwareVersion >= 22.1">
+            <label class="f-s-14px mb-0">{{language.TTimeFrame}}</label>
+            <ng-select (change)="dropDownchange()" [clearable]="false" [searchable]="false" [items]="Frame"
+                bindLabel="name" bindValue="id" [(ngModel)]="TimeFrame">
+            </ng-select>
+        </div>
+        <div class="col-md-12 col-lg-3 col-xl-3" *ngIf="22.1 > softwareVersion">
+            <label class="f-s-14px mb-0">{{language.TTimeFrame}}</label>
+            <ng-select (change)="dropDownchange()" [clearable]="false" [searchable]="false" [items]="FrameSV"
+                bindLabel="name" bindValue="id" [(ngModel)]="TimeFrame">
+            </ng-select>
+        </div> -->
+
+                        <!-- For ZYXEL devices -->
+        <div class="col-md-12 col-lg-3 col-xl-3" *ngIf="dropdownModel">
+            <label class="f-s-14px mb-0">{{language.TTimeFrame}}</label>
+            <ng-select (change)="dropDownchange()" [clearable]="false" [searchable]="false" [items]="Frame"
+                bindLabel="name" bindValue="id" [(ngModel)]="TimeFrame">
+            </ng-select>
+        </div>
+        <!-- <div class="col-md-12 col-lg-3 col-xl-3" *ngIf="22.1 > softwareVersion">
+            <label class="f-s-14px mb-0">{{language.TTimeFrame}}</label>
+            <ng-select (change)="dropDownchange()" [clearable]="false" [searchable]="false" [items]="FrameSV"
+                bindLabel="name" bindValue="id" [(ngModel)]="TimeFrame">
+            </ng-select>
+        </div> -->
+        <div class="col-md-12 col-lg-2 col-xl-2 cus-select-height-24" *ngIf="TimeFrame == 4">
+            <label class="f-s-14px mb-0">Day(s)</label>
+            <ng-select (change)="dropDownchange()" [clearable]="false" [searchable]="false" [items]="WeekFramedata"
+                bindLabel="name" bindValue="id" [(ngModel)]="WeekFrame">
+            </ng-select>
+        </div>
+
+
+
+
+        <!-- <div class="col-md-2 col-lg-2 col-xl-2 cus-select-height-24" *ngIf="TimeFrame == 6">
+            <label class="f-s-14px mb-0">{{language['Time Interval']}}</label>
+            <ng-select [items]="[{ id: 1, name: ' Every 15 Minutes' }]" bindLabel="name" bindValue="id"
+                [(ngModel)]="TimeInterval">
+            </ng-select>
+        </div> -->
+    </div>
+    <div class="row mb-3" *ngIf="false">
+        <div class="col-md-3">
+            <label>{{language.TTimeFrame}}</label>
+            <ng-select (ngModelChange)="onTimeFrameChange($event)" [items]="Frame" bindLabel="name" bindValue="id"
+                [(ngModel)]="TimeFrame">
+            </ng-select>
+        </div>
+        <div class="col-md-2" *ngIf="start && !isLastDay15minSelected">
+            <label>Date</label>
+            <p-calendar class="ccl-form" id="week_Date" [style]="{ width: '100%', height: '38px' }"
+                [inputStyle]="{ height: '36px' }" appendTo="body" [autoZIndex]="true" placeholder="weekDate"
+                [(ngModel)]="weekDate" [showIcon]="true" [ngModelOptions]="{ standalone: true }"
+                value="#{dateBean.date}">
+            </p-calendar>
+        </div>
+        <!-- <div class="col-md-2">
+            <label>Time Interval</label>
+            <ng-select (ngModelChange)="onTimeIntervalChange($event)" [items]="Interval" bindLabel="name"
+                bindValue="id" [(ngModel)]="TimeInterval">
+            </ng-select>
+        </div> -->
+
+        <div class="col-md-2 form-check" *ngIf="start">
+            <label>{{language['Start Time']}} </label>
+            <p-calendar [(ngModel)]="startDate" [stepMinute]="this.stepMinuteVal" class="ccl-form" id="start_date"
+                [style]="{ width: '100%', height: '38px' }" [inputStyle]="{ height: '36px' }" appendTo="body"
+                [autoZIndex]="true" placeholder="Time" [showIcon]="true" hourFormat="12"
+                [ngModelOptions]="{ standalone: true }" [timeOnly]="this.showHrs" (onSelect)="startTimeUpdate()"
+                [panelStyleClass]="!isLastDay15minSelected ? 'hideMin' : ''">
+            </p-calendar>
+        </div>
+        <div class="col-md-2 form-check" *ngIf="start">
+            <label>{{language['End Time']}} </label>
+            <p-calendar [stepMinute]="this.stepMinuteVal" class="ccl-form" id="end_date"
+                [style]="{ width: '100%', height: '38px' }" [inputStyle]="{ height: '36px' }" appendTo="body"
+                [autoZIndex]="true" placeholder="Time" [(ngModel)]="endDate" [showIcon]="true" hourFormat="12"
+                [ngModelOptions]="{ standalone: true }" [timeOnly]="this.showHrs" [disabled]="isEndDateDisabled"
+                [panelStyleClass]="!isLastDay15minSelected ? 'hideMin' : ''" (onSelect)="endTimeUpdate()">
+            </p-calendar>
+        </div>
+        <div class="col-md-3 col-lg-3 text-right btns-con smy-2" style="margin-top: 40px">
+            <div class="d-inline-flex mr-3">
+                <button type="button" class="btn-default primary px-3" (click)="loadChart()">
+                    {{ language.apply }}
+                </button>
+            </div>
+
+            <!-- <div class="d-inline-flex">
+            <button type="button" id="#" class="btn-default btn-dft" (click)="clearFilter()">
+                {{ language.Clear_Filters }}
+            </button>
+
+        </div> -->
+        </div>
+    </div>
+    <section class="time-frame-section mb-3 p-0" style="min-height: 100px;"
+        *ngIf="TimeFrame == 6 || TimeFrame == 4 ||  TimeFrame == 7">
+        <div class="loader-wrapper-info" *ngIf="loader">
+            <div class="loader">
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border text-primary">
+                        <span class="sr-only">{{ language.Loading }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="left-label">
+            <label>{{language['Chart Timeframe']}}</label>
+            <span>{{language['Last 24h']}}</span>
+        </div> -->
+        <div class="multi-point-slider" *ngIf="showIntervalSlider">
+            <ngx-slider [(value)]="selectedInterval" (userChangeEnd)="sliderEvent()" [options]="timeIntervalOptions">
+            </ngx-slider>
+            <span class="left-most-slider-time"><label> {{ leftSliderTime}}</label></span>
+            <span class="right-most-slider-time"><label>{{ rightSliderTime}}</label></span>
+        </div>
+
+        <div class="row mb-3" *ngIf="false">
+            <div class="col-md-3 col-lg-3 text-left btns-con smy-2" style="margin-top: 15px">
+                <div class="d-inline-flex mr-3">
+                    <button type="button" class="btn-default primary px-3" (click)="loadChart()">
+                        {{ language.apply }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+</section>
+<section>
+    <div class="row mb-3">
+
+
+        <div class="col-md-12">
+            <div class="ccl-Secondary-title border-bottom mb-4" id="devie-client-eff"> {{language['Client Efficiency']}}
+            </div>
+            <div class="">
+                <div class="loader-wrapper-info" *ngIf="loader">
+                    <div class="loader">
+                        <div class="d-flex justify-content-center">
+                            <div class="spinner-border text-primary">
+                                <span class="sr-only">{{ language.Loading }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="wholeHomeEfficiencyChart" class="chart-box" style="height: 400px"></div>
+                <div class="row d-flex justify-content-center">
+                    <!-- <span class="legendSolid"></span> -->
+                    <span class="serviceLegend mr-1" style="background-color: '#0a77fb';"></span>
+                    <span (click)="filterContent()" [ngClass]="{'opac': !effDash}"
+                        class="cursor-pointer mr-2">{{language.Efficiency}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

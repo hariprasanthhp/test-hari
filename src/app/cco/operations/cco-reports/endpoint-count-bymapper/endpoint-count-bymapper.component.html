@@ -1,0 +1,80 @@
+<div class="loader" *ngIf="loading">
+  <div class="d-flex justify-content-center">
+    <div class="spinner-border text-primary">
+      <span class="sr-only">{{ language.Loading }}</span>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <div class="w-100 alert alert-danger  fade show my-3" *ngIf="error">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+    <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+    <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+  </div>
+  <div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess"> {{language['Access denied due to RBAC. Please
+    consult your Organization Administrator for access.']}} </div>
+  <section>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12 px-0 cco-secondary-title mb-3" *ngIf="isCcoReports">
+          {{ language["Endpoint Count by Mapper"] }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 px-0">
+          <div class="report-container">
+            <div class="report-item col-md-3 pr-0">
+              <div class="ccl-form">
+                <label class="d-flex">{{ language["From Date"] }}</label>
+                <p-calendar id="start_date" [style]="{ height: '39px' }" [inputStyle]="{ height: '38px' }"
+                  appendTo="body" [autoZIndex]="true" [showIcon]="true" dateFormat="mm-dd-yy" [(ngModel)]="fromDate"
+                  (onSelect)="selectFromDate()" [maxDate]="today" placeholder="{{language['Select From Date']}}">
+                </p-calendar>
+              </div>
+            </div>
+            <div class="report-item col-md-3 pl-0">
+              <div class="ccl-form">
+                <label class="d-flex">{{ language["To Date"] }}</label>
+                <p-calendar id="start_date" [style]="{ height: '39px' }" [inputStyle]="{ height: '38px' }"
+                  appendTo="body" [autoZIndex]="true" [showIcon]="true" dateFormat="mm-dd-yy" [(ngModel)]="toDate"
+                  (onSelect)="selectToDate()" [maxDate]="today" [minDate]="fromDate"
+                  placeholder="{{language['Select To Date']}}">
+                </p-calendar>
+              </div>
+            </div>
+
+            <div class="report-item d-flex align-items-center">
+              <div class="">
+                <button type="button" class="btn-default primary px-2" (click)="onSubmit()">
+                  {{ language.Run }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <div id="endPointCountMapperChart"></div>
+
+  <ng-template #showInfoModal let-modal class="col-md-12">
+    <div class="modal-header d-block">
+      <h5 class="modal-title" id="showInfoModal">{{ language[modalTitle] }}</h5>
+
+      <div>
+        {{modalInfo}}
+      </div>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+        (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+    <div class="modal-body add-device-model">
+      <button type="button" class="btn-default primary px-3 px-3 float-right" data-dismiss="modal"
+        (click)="modal.close('Save click')">
+        {{ language.Ok }}
+      </button>
+    </div>
+  </ng-template>

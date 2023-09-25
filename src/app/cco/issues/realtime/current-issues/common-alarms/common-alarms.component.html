@@ -1,0 +1,123 @@
+<div class="w-100 alert alert-danger fade show my-3" *ngIf="error">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+    <button type="button" class="close" (click)="closeAlert()">
+        <span></span>
+    </button>
+    <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+</div>
+<div class="row justify-content-end mb-3">
+    <div class="col-md-6">
+        <div class="d-flex justify-content-end">
+            <button id="issues-real-time-export" class="btn-default btn-dft h-24-btn" *ngIf="tableType == 'Table'"
+                (click)="export()">{{language.Export}}</button>
+            <button id="issues-real-time-export" class="btn-default btn-dft h-24-btn ml-2"
+                (click)="gotoHomeGeomap()">{{language['Map_View']}}</button>
+
+        </div>
+    </div>
+</div>
+<div class="d-flex w-100 justify-content-end my-2">
+
+    <div class="col-sm-12 col-md-12 p-0">
+
+    </div>
+
+</div>
+<ng-container *ngIf="tableType == 'Table'">
+
+    <table class="table table-borderless table-striped tbl-border-bottom">
+        <thead class="border-bottom">
+            <tr>
+                <th>{{language.Severity}} </th>
+                <th class="sorting-th-custom">{{language['Reported Time']}}(UTC/{{timeZone}}) </th>
+                <th>{{language['Synced Time']}} (UTC/{{timeZone}})
+                    <!-- <i class="pointer fas fa-sort-down primary float-right"></i> -->
+                </th>
+                <th>{{language["Alarm Name"]}} </th>
+                <th class="col-resource">{{language.Resource}}</th>
+                <th class="max-w-90 w-75px" id="pendo_subscriber_impact" *ngIf="connected">{{language["Subscriber
+                    Impact"]}}</th>
+                <th class="col-recom">{{language.Recommendation}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let issue of list; let i=index">
+
+                <td class="pointer" data-toggle="modal" data-target=".bd-example-modal-lg"
+                    (click)="viewDetails(issue, i)">
+                    <!-- <span
+                                        [ngStyle]="{'color': (issue['subject'] && issue['subject'].perceivedSeverity && colors[issue['subject'].perceivedSeverity]) ? colors[issue['subject'].perceivedSeverity] : 'black' }">{{
+                                        issue['subject'] ? language[issue['subject'].perceivedSeverity] ||
+                                        issue['subject'].perceivedSeverity: '' }}</span> -->
+
+                    <div
+                        class="{{(issue['subject'] && issue['subject'].perceivedSeverity && colorClass[issue['subject'].perceivedSeverity]) ? colorClass[issue['subject'].perceivedSeverity] : 'black clear-sev-but'}}">
+                        <span class="dot"></span> {{
+                        issue['subject'] ? language[issue['subject'].perceivedSeverity] ||
+                        issue['subject'].perceivedSeverity: '' }}
+                    </div>
+                </td>
+                <td class="pointer" data-toggle="modal" data-target=".bd-example-modal-lg"
+                    (click)="viewDetails(issue, i)">
+                    {{ (issue['subject'] && issue['subject']['timeRaised']) ?
+                    convertToDateTime(issue['subject']['timeRaised']): '' }}</td>
+                <td class="pointer" data-toggle="modal" data-target=".bd-example-modal-lg"
+                    (click)="viewDetails(issue, i)">
+                    {{ issue['time'] ? convertToDateTime(issue['time']): '' }}</td>
+                <td class="pointer" data-toggle="modal" data-target=".bd-example-modal-lg"
+                    (click)="viewDetails(issue, i)">
+                    {{ issue['subject'] ? issue['subject']['alarmEventName']: ''}}
+                </td>
+                <td class="col-resource col-recom" class="pointer" data-toggle="modal"
+                    data-target=".bd-example-modal-lg" (click)="viewDetails(issue, i)">
+                    <div class="col-res-data subj-text"
+                        [innerHtml]="issue['subject']['resourceForUI'] ? issue['subject']['resourceForUI']: ''">
+
+                    </div>
+                </td>
+                <td *ngIf="connected">
+                    <div class="action-info-u primary p-blue pointer" (click)="gotoSubscriberImpactedPage(issue)"
+                        *ngIf="issue?.subject?.impactedSubsCount">{{
+                        issue?.subject?.impactedSubsCount }}</div>
+                    <div class="pointer" data-toggle="modal" data-target=".bd-example-modal-lg"
+                        (click)="viewDetails(issue, i)" *ngIf="!(issue?.subject?.impactedSubsCount)">
+                        <span [ngClass]="(issue?.subject?.serviceAffecting) ? 'subscriber-impact-red' :''">
+                            {{(
+                            issue?.subject?.serviceAffecting) ? 'Yes' :
+                            'No'}}
+                        </span>
+                    </div>
+                </td>
+
+                <!-- <td>{{ issue['subject'] ? issue['subject'].region: '' }}/{{ issue['subject'] ?
+                                        issue['subject'].location: '' }}/{{ issue['subject'] ? issue['subject'].system: ''
+                                        }}
+                                    </td> -->
+                <td class="col-recom" class="pointer" data-toggle="modal" data-target=".bd-example-modal-lg"
+                    (click)="viewDetails(issue, i)">
+                    <div class="subj-text">{{
+                        issue['subject'] ? issue['subject'].repairAction: '' }}</div>
+                </td>
+            </tr>
+            <tr *ngIf="!list?.length">
+                <td class="no-data-available" colspan="7">{{language['No data available in table']}}</td>
+            </tr>
+        </tbody>
+    </table>
+</ng-container>
+
+
+
+
+<!-- ------------------- Modal Area ----------- -->
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+    aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content p-0">
+            <app-alarm-details [fullData]="fullData" [showAckShelveBtn]="showAckShelveBtn"
+                [hasWriteAccess]="hasWriteAccess" (ackShelveData)="onAckShelve($event)" [hideSource]="hideSource"
+                [connected]="connected" (refreshAckShelveBtn)="onRefreshAckShelve($event)" [clickedAlarmType]="'Alarm'"
+                [alarmType]="'Alarm'"></app-alarm-details>
+        </div>
+    </div>
+</div>

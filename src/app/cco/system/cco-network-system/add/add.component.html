@@ -1,0 +1,406 @@
+<div class="loader-wrapper-info" *ngIf="loading">
+    <div class="loader">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary" role="">
+                <span class="sr-only">{{language.Loading}}</span>
+            </div>
+        </div>
+    </div>
+</div>
+<div role="alert" class="alert alert-warning" *ngIf="!hasWriteAccess">
+    {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} </div>
+    <span class="cco-title" *ngIf="hasPageAccess">
+        {{ language.Operations }}
+      </span>
+<form [formGroup]="cmsandCmcdbForm" (ngSubmit)="onSubmit()" autocomplete="off" *ngIf="isCms">
+    <section>
+        <div class="container">
+            <div class="row mb-3">
+                <div class="w-100 alert alert-danger  fade show my-3" *ngIf="error">
+                    <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+                    <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+                    {{errorInfo}}
+                </div>
+                <div class="col-md-12 flat-right text-right px-0">
+                    <div class="w-100 border-bottom ">
+                        <button *ngIf="hasWriteAccess" type="submit" class="my-2 mr-3 btn-default primary"
+                            [disabled]="disableSubmit">
+                            {{language.Save}}
+                        </button>
+                        <span class="close-icon pointer" (click)="goToList();"><img src="assets/img/close-icon.svg"
+                                alt="" /></span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 px-0">
+
+                    <div class="form-group ccl-form m-0">
+                        <label class="mand-field" for="exampleFormControlInput1"> {{language['System Name']}}</label>
+                        <span class="required-field">*</span>
+                        <input type="text" class="control" id="name" name="name"
+                            placeholder="{{language['System Name']}}"
+                            [ngClass]=" { 'is-invalid' : submitted && !cmsandCmcdbForm.value.name,'inp-disabled':isEditPage}"
+                            [readonly]="isEditPage" formControlName="name" trimSpace [formValue]="cmsandCmcdbForm">
+
+                        <div *ngIf="submitted && !cmsandCmcdbForm.value.name" class="errorMessage">
+                            <div *ngIf="!cmsandCmcdbForm.value.name">{{language['Please enter the System Name']}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="cco-secondary-title border-bottom w-100  my-2">{{language['CMS']}}</div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 px-0">
+                    <div class="form-group ccl-form">
+                        <label class="mand-field" for="exampleFormControlInput1">
+                            {{language['CMS Instance ID']}}</label>
+                        <span class="required-field">*</span>
+                        <input type="text" class="control" placeholder="{{language['CMS Instance ID']}}"
+                            formControlName="cmsid" [readonly]="isEditPage"
+                            [ngClass]=" { 'is-invalid' : submitted && !cmsandCmcdbForm.value.cmsid,'inp-disabled':isEditPage}"
+                            trimSpace [formValue]="cmsandCmcdbForm">
+                        <div class="errorMessage"
+                            *ngIf="formControls?.cmsid?.invalid && (formControls?.cmsid?.dirty || formControls?.cmsid?.touched || submitted)">
+                            <div *ngIf="formControls?.cmsid?.errors?.minMaxError">
+                                {{language['Please enter a value between 1 and 16']}}
+                            </div>
+                            <div *ngIf="formControls?.cmsid?.errors?.invalidNumber">
+                                {{language['New_Profile_Validation2']}}
+                            </div>
+                            <div *ngIf="formControls?.cmsid?.errors?.isrequired">
+                                {{language['Please enter the CMS Instance ID']}}
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group ccl-form" formGroupName="SOAP">
+                        <label class="mand-field" for="exampleFormControlInput1">{{language['User_Name']}}</label>
+                        <span class="required-field">*</span>
+                        <input type="text" class="control" id="Username" placeholder="{{language['User_Name']}}"
+                            [ngClass]=" { 'is-invalid' : submitted && !cmsandCmcdbForm.value.SOAP.username}"
+                            formControlName="username" autocomplete="new-password" trimSpace [formValue]="cmsandCmcdbForm">
+
+                        <div *ngIf="submitted && !cmsandCmcdbForm.value.SOAP.username" class="errorMessage">
+                            <div *ngIf="!cmsandCmcdbForm.value.SOAP.username">
+                                {{language['Please enter the Username']}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group ccl-form position-relative" formGroupName="SOAP">
+                        <label class="mand-field" for="exampleFormControlInput1">{{language.Password}}</label>
+                        <span class="required-field">*</span>
+                        <input class="control" id="Password" placeholder="{{language.Password}}"
+                            [type]="hidepwdcm ? 'password' : 'text'" formControlName="password"
+                            autocomplete="new-password"
+                            [ngClass]=" { 'is-invalid' : submitted && !cmsandCmcdbForm.value.SOAP.password}">
+                        <span class="see_pass pointer"
+                            [ngClass]="hidepwdcm ? 'password_hide' : 'password_view'" (click)="showPass('CMS')"></span>
+                        <div *ngIf="submitted && !cmsandCmcdbForm.value.SOAP.password" class="errorMessage">
+                            <div *ngIf="!cmsandCmcdbForm.value.SOAP.password">
+                                {{language['Please enter the Password']}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" id = "ipfixstate" type="checkbox" value="true"
+                            formControlName="initialIpfixstate" checked>
+                        <label class="form-check-label cursor-pointer" for="ipfixstate">
+                            {{language['Enable IPFIX on EXA OLTs serviced by this CMS']}}
+                        </label>
+                    </div>
+
+                    <!-- <div class="form-group ccl-form" formGroupName="location">
+                        <label class="mand-field" for="exampleFormControlInput1">{{language['Address']}}</label>
+                        <span class="required-field">*</span>
+                        <input type="text" class="form-control" id="Username" placeholder="{{language['Address']}}"
+                            formControlName="ufLocation" autocomplete="new-password">
+                    </div> -->
+                </div>
+            </div>
+
+        </div>
+
+        <div class="container mt-3" *ngIf="false">
+
+            <div class="row">
+                <div class="cco-secondary-title border-bottom w-100 my-2">{{language['CMS-DB']}}</div>
+            </div>
+            <div class="row" formGroupName="DATABASE">
+                <div class="col-md-6 px-0">
+                    <div class="form-group ccl-form">
+                        <label class="mand-field" for="exampleFormControlInput1"> {{language['IP Address']}}</label>
+                        <span class="required-field">*</span>
+                        <input type="text" class="form-control" placeholder=" {{language['IP Address']}}"
+                            formControlName="dbAddress" (keyup)="doCustomValidation('DATABASE.dbAddress');">
+
+                        <div *ngIf="submitted && cmsandCmcdbForm.get('DATABASE.dbAddress').errors || dbAddressError || cmsandCmcdbForm.get('DATABASE.dbAddress').errors && cmsandCmcdbForm.get('DATABASE.dbAddress').touched"
+                            class="errorMessage">
+                            <div
+                                *ngIf="cmsandCmcdbForm.get('DATABASE.dbAddress').errors && cmsandCmcdbForm.get('DATABASE.dbAddress').errors.required">
+                                {{language['Please enter the IP Address']}}</div>
+                            <div
+                                *ngIf="cmsandCmcdbForm.get('DATABASE.dbAddress').errors.addressName && !(cmsandCmcdbForm.get('DATABASE.dbAddress').errors && cmsandCmcdbForm.get('DATABASE.dbAddress').errors.required)">
+                                {{language['Please enter the valid IP Address']}}</div>
+
+                            <div
+                                *ngIf="dbAddressError && !(cmsandCmcdbForm.get('DATABASE.dbAddress').errors && cmsandCmcdbForm.get('DATABASE.dbAddress').errors.required)">
+                                {{language['Please enter the valid IP Address']}}</div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group ccl-form">
+                        <label class="mand-field" for="exampleFormControlInput1">{{language.port}}</label>
+                        <span class="required-field">*</span>
+                        <input type="number" class="form-control" placeholder="Port" formControlName="port" min=0
+                            save="" oninput="validity.valid ? this.save = value : value = this.save;">
+
+                        <div *ngIf="submitted && cmsandCmcdbForm.get('DATABASE.port').errors" class="errorMessage">
+                            <div *ngIf="cmsandCmcdbForm.get('DATABASE.port').errors.required">
+                                {{language['Please enter the Port']}}
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="form-group ccl-form">
+                        <label class="mand-field" for="exampleFormControlInput1">{{language.User_Name}}</label>
+                        <span class="required-field">*</span>
+                        <input type="text" class="form-control" placeholder="{{language['User_Name']}}"
+                            formControlName="username">
+
+                        <div *ngIf="submitted && cmsandCmcdbForm.get('DATABASE.username').errors" class="errorMessage">
+                            <div *ngIf="cmsandCmcdbForm.get('DATABASE.username').errors.required">
+                                {{language['Please enter the Username']}}</div>
+                        </div>
+
+                    </div>
+                    <div class="form-group ccl-form position-relative">
+                        <label class="mand-field" for="exampleFormControlInput1">{{language.Password}}</label>
+                        <span class="required-field">*</span>
+                        <input class="form-control" placeholder="{{language.Password}}"
+                            [type]="hidepwd ? 'password' : 'text'" formControlName="password">
+                        <span class="see_pass fas pointer pos-right" [ngClass]="hidepwd ? 'fa-eye-slash' : 'fa-eye'"
+                            (click)="showPass('CMS-DB')"></span>
+                        <!-- <span class="pwd-icon">
+                            <img src="../../../../../assets/img/ic_hide.svg" alt="icon here" />
+                            <img src="../../../../../assets/img/ic_view_blue.svg" alt="icon here" />
+                        </span> -->
+                        <div *ngIf="submitted && cmsandCmcdbForm.get('DATABASE.password').errors" class="errorMessage">
+                            <div *ngIf="cmsandCmcdbForm.get('DATABASE.password').errors.required">
+                                {{language['Please enter the Password']}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</form>
+
+
+<form [formGroup]="axosForm" (ngSubmit)="onSubmit()" autocomplete="off" *ngIf="isAxos && !loading">
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="w-100 alert alert-danger  fade show my-3" *ngIf="error">
+                    <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+                    <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+                    {{errorInfo}}
+                </div>
+                <div class="col-md-12 flat-right text-right px-0">
+                    <div class="w-100 border-bottom ">
+                        <button *ngIf="hasWriteAccess" type="submit" class="my-2 mr-3 btn-default primary"
+                            [disabled]="disableSubmit">
+                            {{language.Save}}
+                        </button>
+                        <span class="close-icon pointer" (click)="goToList();"><img src="assets/img/close-icon.svg"
+                                alt="" /></span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 px-0">
+
+                    <div class="form-group ccl-form m-0">
+                        <label class="mand-field" for="exampleFormControlInput1"> {{language['System Name']}}</label>
+                        <span class="required-field">*</span>
+                        <input type="text" class="control" id="name" name="name"
+                            placeholder="{{language['System Name']}}"
+                            [ngClass]=" { 'is-invalid' : submitted && !axosForm.value.name,'inp-disabled':isEditPage}"
+                            [readonly]="isEditPage" formControlName="name">
+
+                        <div *ngIf="submitted && !axosForm.value.name" class="errorMessage">
+                            <div *ngIf="!axosForm.value.name">{{language['Please enter the System Name']}}</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group ccl-form">
+                        <label for="inputPassword4">{{ language.Region }}
+                            <span class="required-field">*</span>
+                        </label>
+                        <ng-select class="selectboxwidth" [bindLabel]="'name'" [bindValue]="'id'"
+                            [items]="regionsDataArray" name="region" [clearable]="false" [searchable]="true"
+                            formControlName="region" (change)="loadLocationValue($event)" id="region"
+                            placeholder="{{ isEditPage ? data.region :language.Select }}">
+                            <ng-template ng-option-tmp let-item="item">
+                                <ng-container>
+                                    <div title="{{item.name}}">{{item.name}}</div>
+                                </ng-container>
+                            </ng-template>
+                        </ng-select>
+
+                        <div class="errorMessage"
+                            *ngIf="formControls?.region?.invalid && (formControls?.region?.dirty || formControls?.region?.touched || submitted)">
+                            <div *ngIf="formControls?.region?.errors?.isrequired" class="mt-1">
+                                {{language['Please select the Region']}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group ccl-form">
+                        <label for="inputPassword4">{{ language.Location }}
+                            <span class="required-field">*</span>
+                        </label>
+                        <ng-select class="selectboxwidth" [bindLabel]="'name'" [bindValue]="'id'"
+                            [items]="locationDataArray" name="location" [clearable]="false" [searchable]="true"
+                            formControlName="newNetworkGroupUuid" id="location"
+                            placeholder="{{ isEditPage ? data.location : language.Select }}">
+                            <ng-template ng-option-tmp let-item="item">
+                                <ng-container>
+                                    <div title="{{item.name}}">{{item.name}}</div>
+                                </ng-container>
+                            </ng-template>
+                        </ng-select>
+
+                        <div class="errorMessage"
+                            *ngIf="formControls?.newNetworkGroupUuid?.invalid && (formControls?.newNetworkGroupUuid?.dirty || formControls?.newNetworkGroupUuid?.touched || submitted)">
+                            <div *ngIf="formControls?.newNetworkGroupUuid?.errors?.isrequired" class="mt-1">
+                                {{language['Please select the Location']}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group ccl-form mt-3">
+                        <div class="form-check-inline">
+                            <label class="form-check-label cursor-pointer">
+                                <input type="radio" class="form-check-input" name="serviceAddressOpt" value="address"
+                                    [checked]="showServiceAddressInp" (change)="showServiceAddress(true)">{{
+                                language["Service Address"]
+                                }}
+                            </label>
+                        </div>
+                        <div class="form-check-inline">
+                            <label class="form-check-label cursor-pointer">
+                                <input type="radio" class="form-check-input" name="serviceAddressOpt" value="latlang"
+                                    [checked]="!showServiceAddressInp" (change)="showServiceAddress(false)">{{
+                                language["Latitude/Longitude"] }}
+                            </label>
+                        </div>
+
+                    </div>
+
+                    <div class="form-group ccl-form m-0" *ngIf="showServiceAddressInp">
+                        <label class="mand-field"> {{language["Service Address"]}}</label>
+                        <span class="required-field">*</span>
+                        <input type="text" class="control" id="name" name="ufLocation"
+                            placeholder="{{language['Service Address']}}" formControlName="ufLocation">
+
+                        <div *ngIf="submitted && !axosForm.value.ufLocation" class="errorMessage">
+                            <div *ngIf="!axosForm.value.ufLocation">{{language['Please enter the Service
+                                Address']}}</div>
+                        </div>
+                    </div>
+
+                    <div class="row w-100 form-group ccl-form" *ngIf="!showServiceAddressInp">
+                        <div class="col-6">
+                            <label class="d-block">
+                                {{ language["Latitude"] }} <span class="error">*</span>
+                            </label>
+                            <input type="text" name="latitude" placeholder="{{ language['Latitude'] }}" min="-90.00"
+                                max="90.00" (keyup)="enforceMinMax($event, 'latitude')" formControlName="latitude">
+                            <div *ngIf="errors['latitude']['error']" class="errorMessage">
+                                <div>{{errors['latitude']['message']}}</div>
+                            </div>
+                        </div>
+                        <div class="col-6 px-0">
+                            <label class="d-block">
+                                {{ language["Longitude"] }} <span class="error">*</span>
+                            </label>
+                            <input type="text" name="longitude" min="-180.00" max="180.00"
+                                (keyup)="enforceMinMax($event, 'longitude')" placeholder="{{ language['Longitude'] }}"
+                                formControlName="longitude">
+                            <div *ngIf="errors['longitude']['error']" class="errorMessage">
+                                <div>{{errors['longitude']['message']}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+    </section>
+</form>
+
+<ng-template #cmsUpdateModal let-data let-ref="dialogRef">
+    <div class="w-100 alert alert-danger fade show my-3" *ngIf="errors['cmsUpdate'].error">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+        <button type="button" class="close" (click)="closeAlert()">
+            <span></span>
+        </button>
+        <div class="d-inline-flex" [innerHtml]="errors['cmsUpdate'].message"></div>
+    </div>
+    <div class="modal-header force-header">
+        <!-- <h4 class="modal-title" id="modal-basic-title">{{ language['Force Sync'] }}</h4> -->
+        <button type="button" class="close" aria-label="Close" (click)="close()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body" *ngIf="!errors['cmsUpdate'].message">
+        <div class="warning-message-info">
+            <div class="icon">
+                <img src="./assets/img/ic_warning-36px.svg" />
+            </div>
+            <div class="message">
+                <div class="w-100 title" id="modal-basic-title">
+                    {{language['EDIT CMS System']}}
+                </div>
+                <div class="w-100">{{language['Modification of CMS user credentials will cause a re-connect of the EXA
+                    systems for the CMS. This reconnection and
+                    resynchronization will impact systems operations and may take up to 60 mins']}}
+                </div>
+
+                <div class="mt-3" *ngIf="!isCmsUpdateInprogress">
+                    <button type="button" class="btn-default btn-primary  mr-3" (click)="doUpdateCmsSystem()">
+                        {{ language.Yes }}
+                    </button>
+                    <button type="button" class="btn-default btn-dft" (click)="close()">
+                        {{ language.No }}
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="loader" *ngIf="isCmsUpdateInprogress">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{ language.Loading }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

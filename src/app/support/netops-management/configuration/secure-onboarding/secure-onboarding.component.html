@@ -1,0 +1,82 @@
+<div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess">
+  {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} </div>
+<div id="secure-onboarding" class="tab-pane position-relative" *ngIf="hasScopeAccess">
+  <div class="pb-2">
+    <div class="w-100 alert alert alert-danger  fade show" *ngIf="showError">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+      <button type="button" id="hide-error-btn" class="close" (click)="hideError()"><span></span></button>
+      <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+    </div>
+
+    <div class="w-100 alert alert alert-success  fade show" *ngIf="showSuccess">
+      <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+      <button type="button" id="hide-success-btn" class="close" (click)="hideSuccess()"><span></span></button>
+
+      <div class="d-inline-flex" [innerHtml]="successMsg"></div>
+
+    </div>
+
+    <div class="loader" *ngIf="loading">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{language.Loading}}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-block d-sm-none ccl-Secondary-title mb-2 col-md-12 border-bottom">{{language.Secure_Onboarding}}</div>
+
+
+    <form id="secure-on-boarding-form">
+      <div class="row p-0 my-3">
+        <!-- <h4 class="col-md-8 mb-4" id="secure-on-boarding-label">{{language.Secure_Onboarding}}</h4> -->
+        <div class="px-3 float-left">
+          <div class="checkbox switcher">
+            <label for="secureOnBoardingCheckbox">
+              <!-- <input *ngIf="router.url.includes('cco-foundation');else secureBlock" type="checkbox"
+                id="secureOnBoardingCheckbox" [checked]="secureOnBoardingObj.secureOnboarding"
+                [disabled]="!hasWriteAccess" (change)="onSecureOnBoardingChange()"> -->
+              <!-- <ng-template #secureBlock> -->
+              <input type="checkbox" id="secureOnBoardingCheckbox" [checked]="secureOnBoardingObj.secureOnboarding"
+                [disabled]="!hasWriteAccess || disableSecureOnBoarding" (change)="onSecureOnBoardingChange()">
+              <!-- </ng-template> -->
+              <span [ngClass]="hasWriteAccess ? '' : 'opacity-50'"><small></small></span>
+            </label>
+            <span class="mx-2"> {{secureOnBoardingObj.secureOnboarding ? language["Enabled" ]:
+              language["Disabled"]}} </span>
+          </div>
+        </div>
+      </div>
+      <!-- ngIf= "!router.url.includes('cco-foundation');else elseBlock" -->
+      <!-- CCL-41939 previously based on module showing different functionality,now all modules are having same functionality-->
+      <div class="text-md-left mt-2">
+        <p class="grey-p-text">*{{language['If enabled, a
+          subscriber']}}
+          <b class="b-600">{{language['must enter their account ID']}}</b>
+          {{language['while onboarding their router or mesh(SAT) in CommandIQ. The account ID']}}
+          <b class="b-600">{{language['must match the billing information']}}</b>
+          {{language['on file in order for them to proceed with the onboarding process. Enable this feature if you want
+          to add a layer of security for subscribers that will ensure that the person onboarding the system is the
+          account owner.']}}
+        </p>
+        <!-- <button *ngIf="hasWriteAccess && !disableSecureOnBoarding" id="submit-btn" type="button"
+          class="btn-default primary px-3 mr-3" (click)="updateSecureOnBoarding()">{{language.submit}}</button>
+        <button *ngIf="hasWriteAccess && !disableSecureOnBoarding" type="button" id="cancel-btn"
+          class="btn-default transparant" (click)="onCancel()">{{language.cancel}}</button> -->
+      </div>
+      <!-- <ng-template #elseBlock>
+        <p style="font-size:14px; line-height: 17.6px; font-weight: 400; color: #4C4C4C;">*{{language['If enabled, a
+          subscriber']}}
+          <b style="font-weight: 600;">{{language['must enter their account ID']}} </b>
+          {{language['while onboarding their router or mesh(SAT) in CommandIQ. The account ID']}}
+          <b style="font-weight: 600;">{{language['must match the billing information']}}</b>
+          {{language['on file in order for them to proceed with the onboarding process. Enable this feature if you want
+          to add a layer of security for subscribers that will ensure that the person onboarding the system is the
+          account owner.']}}
+        </p>
+      </ng-template> -->
+
+    </form>
+  </div>
+
+</div>

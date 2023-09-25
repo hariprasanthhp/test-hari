@@ -1,0 +1,123 @@
+<div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess">
+    {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}}
+</div>
+<div class="col-md-12 mt-4" *ngIf="pageAvailable && hasScopeAccess">
+    <div class="w-100 alert alert-danger  fade show my-3" *ngIf="error">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+        <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+        <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+    </div>
+    <!-- <div class="loader" *ngIf="Initialloading">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">{{language.Loading}}</span>
+            </div>
+        </div>
+    </div> -->
+    <div class="h-auto">
+        <div class="row justify-content-end " *ngIf="dataAvailable">
+            <div class="col-md-3 px-0 text-right">
+                <div class="cus-dd dropdown-button float-right" placement="bottom-right" ngbDropdown>
+                    <button class="float-right" id="dropdownExchange" ngbDropdownToggle>
+                        <p class="listdata bar-label mb0">
+                            <i class="fa fa-bars mr-2"></i> {{language.export}}
+                        </p>
+                    </button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownExchange" id="supportListId">
+                        <button ngbDropdownItem class="greyaa">
+                            <span (click)="downloadPdf();">{{language.exportPdf}}</span>
+                        </button>
+                        <button ngbDropdownItem class="greyaa">
+                            <span (click)="downloadCSV();">{{language.exportCsv}}</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-margin-30" *ngIf="runClicked">
+            <p *ngIf="filters.type === 'network'" class="chart-main-title">
+                {{language.network}} {{language.subdistribution}}
+            </p>
+            <p *ngIf="filters.type === 'location'" class="chart-main-title">
+                {{language.location}} {{language.subdistribution}}
+            </p>
+            <p class="hc-chart-subtitle" id="criteriaText">
+                <span *ngIf="filters.type === 'location'">{{language.location}} : {{locationNames}} &nbsp; &nbsp;
+                </span>
+                {{language.Month}}: {{filters.monthSelected | date: 'MM/yyyy'}} [Coordinated Universal Time]
+                &nbsp;&nbsp;
+                {{language.direction}} : {{directions}} &nbsp;
+                {{language.treshold}} (KB): {{filters.threshold}} <br>
+                <!-- {{language.aggre}} : {{filters.aggregateSelected}} <br> -->
+                {{language.elim}} : {{filters.eliminateUnknownSelected === 'yes' ? language.Yes : language.No}} &nbsp;
+                {{language.thres}} : {{filters.thresholdTypeSelected === 'AllEndpoints' ? language["All Endpoints"] :
+                language["Static Endpoints"]}}&nbsp;
+            </p>
+        </div>
+
+        <div class=" fa-chart-wrapper chart-min-h" id="fa-chart-wrapper">
+            <div class="loader" *ngIf="loading">
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border text-primary">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="chart-sec" [ngClass]="!loading ? 'd-block' : 'd-none'">
+                
+            </div> -->
+
+            <div class="row my-3" *ngIf="dataAvailable && 0">
+                <div class="col-md-6 offset-md-6">
+                    <div class="text-right flat-right">
+                        <div class="row">
+                            <div class="col-md-4">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="ccl-form">
+                                    <input type="search" name="searchbox" class="input-sm"
+                                        placeholder="{{language.searchAdmins}}" (keyup)="search($event.target.value)"
+                                        (search)="search($event.target.value)">
+                                    <button class="serach-but btn-default primary btn-icon-md inline"><i
+                                            class="fa fa-search" aria-hidden="true"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row my-3 min-height-65" [hidden]="loading || !dataAvailable ||!pageAvailable">
+                <div class="col">
+                    <table id="subscriber_distrbution" width="100%" class="row-border hover table-alter " datatable
+                        [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+                        <thead class="">
+                            <tr>
+                                <th>{{language['Total BW']}}</th>
+                                <th class="text-right">{{language['# of Subs']}}</th>
+                                <th class="text-right">{{language['% of Subs']}}</th>
+                                <th class="text-right">{{language['# of Bytes(GB)']}}</th>
+                                <th class="text-right">{{language['% of Bytes']}}</th>
+                            </tr>
+                        </thead>
+                        <tbody *ngIf="tableData?.length !=0">
+                            <tr id="{{item._id}}" *ngFor="let item of tableData">
+                                <td>{{item.strInterval ? item.strInterval : '' }}</td>
+                                <td class="text-right">{{item.subCount ? item.subCount : 0}}</td>
+                                <td class="text-right">{{item.strSubPercent ? item.strSubPercent : ''}}</td>
+                                <td class="text-right">{{item.totalBytes ? convertByteToGB(item.totalBytes) :
+                                    0}}</td>
+                                <td class="text-right">{{item.strBytePercent ? item.strBytePercent : ''}}</td>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="chart-sec">
+                <div class="fa-chart-container">
+                    <div id="subChart-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

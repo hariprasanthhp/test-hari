@@ -1,0 +1,57 @@
+[type=radio]:checked, [type=radio]:not(:checked){
+    position: relative !important;
+    left: 0 !important
+   }
+   select{
+       border-radius: 20px;
+       background: #F8F8FA;
+   }
+
+.hand-cursor {
+    cursor: cursor;
+}
+
+.disable-radio-btn{
+    opacity: .4;
+    pointer-events: none;
+}
+.disableDropDown {
+    pointer-events: none;
+}
+
+.noDropCursor {
+    cursor: no-drop;
+}
+
+.infoIcon:hover {
+    color: #0279ff;
+}
+.alert-warning {
+    color: #856404;
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+    font-size: 15px;
+    padding: 4px;
+}
+::ng-deep.ng-dropdown-panel-items {
+    .ng-option {
+        min-height: 2em;
+    }
+}
+
+.pos-icon-r {
+    position: relative;
+    cursor  : pointer;
+  
+    span.togg-icon {
+      position: absolute;
+      right   : 25px;
+      top     : 5px;
+    }
+  }
+  .required-field {
+    color: #C70000;
+    font-size: 20px;
+    position: relative;
+    top: -4px;
+}

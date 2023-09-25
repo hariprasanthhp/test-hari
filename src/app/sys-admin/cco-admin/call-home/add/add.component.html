@@ -1,0 +1,260 @@
+<section>
+  <div class="position-relative">
+    <div class="loader" *ngIf="loading">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+    <div role="alert" class="alert alert-warning" *ngIf="!hasWriteAccess">
+      {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}}
+    </div>
+
+    <div class="container app-call-home">
+      <div class="row">
+        <div class="w-100 alert alert-danger fade show my-3" *ngIf="error">
+          <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+          <button type="button" class="close" (click)="closeAlert()">
+            <span></span>
+          </button>
+          {{ errorInfo }}
+        </div>
+        <div class="col-md-6 px-0 mt-2" *ngIf="hasWriteAccess">
+          <form [formGroup]="callHomeForm">
+            <div class="form-group ccl-form">
+              <label class="mand-field" for="inputEmail4">{{language['Device Name Format']}}
+                <span class="required-field">*</span>
+              </label>
+              <input type="text" class="form-control" id="deviceNameFormat" name="deviceNameFormat"
+                formControlName="deviceNameFormat" placeholder="%DashedMAC" trimSpace [formValue]="callHomeForm" />
+              <div id="deviceNameFormat_input-error" class="errorMessage"
+                *ngIf="formControls?.deviceNameFormat?.invalid && (formControls?.deviceNameFormat?.dirty || formControls?.deviceNameFormat?.touched || submitted)">
+                <div *ngIf="formControls?.deviceNameFormat?.errors?.isrequired">
+                  {{language['please enter the Device Name Format']}}
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group ccl-form">
+              <label class="mand-field" for="inputEmail4">MAC/{{
+                language["IP Address with Subnet"]
+                }}
+                <span class="required-field">*</span>
+              </label>
+              <input type="IP-Address" class="form-control" id="id" name="id" formControlName="id"
+                placeholder="{{language['Mac/IP Address with Subnet']}}" [readonly]="isEditPage" trimSpace
+                [formValue]="callHomeForm" />
+              <div id="id_input-error" class="errorMessage"
+                *ngIf="formControls?.id?.invalid && (formControls?.id?.dirty || formControls?.id?.touched || submitted)">
+                <div *ngIf="formControls?.id?.errors?.isrequired">
+                  {{language['Please enter the valid Mac /IP Address with Subnet']}}
+                </div>
+
+                <div *ngIf="formControls?.id?.errors?.invalidId">
+                  {{language['Please enter the valid Mac /IP Address with Subnet']}}
+                </div>
+
+              </div>
+            </div>
+            <div class="form-group ccl-form">
+              <label for="inputPassword4">{{ language.Region }}
+                <span class="required-field">*</span>
+              </label>
+              <ng-select class="selectboxwidth" [bindLabel]="'name'" [bindValue]="'id'" [items]="regionsDataArray"
+                name="region" [clearable]="false" [searchable]="true" formControlName="region"
+                (change)="loadLocationValue($event)" id="region"
+                placeholder="{{ isEditPage ? data.region :language.Select }}">
+                <ng-template ng-option-tmp let-item="item">
+                  <ng-container>
+                    <div title="{{item.name}}">{{item.name}}</div>
+                  </ng-container>
+                </ng-template>
+              </ng-select>
+
+              <div class="errorMessage"
+                *ngIf="formControls?.region?.invalid && (formControls?.region?.dirty || formControls?.region?.touched || submitted)">
+                <div *ngIf="formControls?.region?.errors?.isrequired">
+                  {{language['Please enter the Region']}}
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group ccl-form">
+              <label for="inputPassword4">{{ language.Location }}
+                <span class="required-field">*</span>
+              </label>
+              <ng-select class="selectboxwidth" [bindLabel]="'name'" [bindValue]="'id'" [items]="locationDataArray"
+                name="location" [clearable]="false" [searchable]="true" formControlName="networkGroupUuid" id="location"
+                placeholder="{{ isEditPage ? data.location : language.Select }}">
+                <ng-template ng-option-tmp let-item="item">
+                  <ng-container>
+                    <div title="{{item.name}}">{{item.name}}</div>
+                  </ng-container>
+                </ng-template>
+              </ng-select>
+
+              <div class="errorMessage"
+                *ngIf="formControls?.networkGroupUuid?.invalid && (formControls?.networkGroupUuid?.dirty || formControls?.networkGroupUuid?.touched || submitted)">
+                <div *ngIf="formControls?.networkGroupUuid?.errors?.isrequired">
+                  {{language['Please enter the Location']}}
+                </div>
+              </div>
+            </div>
+            <div class="form-group ccl-form">
+              <div class="form-check-inline">
+                <label class="form-check-label cursor-pointer">
+                  <input type="radio" class="form-check-input" name="serviceAddressOpt" value="address"
+                    [checked]="showServiceAddressInp" (change)="showServiceAddress(true)" trimSpace
+                    [formValue]="callHomeForm">
+                  {{ language["Service Address"]
+                  }}
+                </label>
+              </div>
+              <div class="form-check-inline">
+                <label class="form-check-label cursor-pointer">
+                  <input type="radio" class="form-check-input" name="serviceAddressOpt" value="latlang"
+                    [checked]="!showServiceAddressInp" (change)="showServiceAddress(false)">{{
+                  language["Latitude/Longitude"] }}
+                </label>
+              </div>
+
+            </div>
+
+            <div class="form-group ccl-form" *ngIf="!showServiceAddressInp">
+              <div class="d-flex flex-wrap w-100">
+                <div class="col-6 pl-0">
+                  <label>
+                    {{ language["Latitude"] }} <span class="error">*</span>
+                  </label>
+                  <input type="text" formControlName="latitude" name="latitude" min="-90.00" max="90.00"
+                    (keyup)="enforceMinMax($event, 'latitude')" placeholder="{{ language['Latitude'] }}" trimSpace
+                    [formValue]="callHomeForm">
+
+                  <div class="errorMessage"
+                    *ngIf="formControls?.latitude?.invalid && (formControls?.latitude?.dirty || formControls?.latitude?.touched || submitted)">
+                    <div *ngIf="formControls?.latitude?.errors?.isrequired">
+                      {{language['Please enter the Latitude']}}
+                    </div>
+                    <div *ngIf="formControls?.latitude?.errors?.invalidValue">
+                      {{language['Please enter the valid Latitude']}}
+                    </div>
+                  </div>
+
+                </div>
+                <div class="col-6 pl-0 pr-0">
+                  <label>
+                    {{ language["Longitude"] }} <span class="error">*</span>
+                  </label>
+                  <input type="text" formControlName="longitude" name="longitude" min="-180.00" max="180.00"
+                    (keyup)="enforceMinMax($event, 'longitude')" placeholder="{{ language['Longitude'] }}" trimSpace
+                    [formValue]="callHomeForm">
+                  <div class="errorMessage"
+                    *ngIf="formControls?.longitude?.invalid && (formControls?.longitude?.dirty || formControls?.longitude?.touched || submitted)">
+                    <div *ngIf="formControls?.longitude?.errors?.isrequired">
+                      {{language['Please enter the Longitude']}}
+                    </div>
+                    <div *ngIf="formControls?.longitude?.errors?.invalidValue">
+                      {{language['Please enter the valid Longitude']}}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group ccl-form" *ngIf="showServiceAddressInp">
+              <label for="inputAddress">{{
+                language["Service Address"]
+                }}</label>
+              <input type="text" class="form-control" id="ufLocation" name="ufLocation" formControlName="ufLocation"
+                placeholder="{{language['Service Address']}}" trimSpace [formValue]="callHomeForm" />
+              <div class="errorMessage" *ngIf="serviceAddressErrorMsg">
+                <p>
+                  {{ language[serviceAddressErrorMsg] }}
+                </p>
+              </div>
+            </div>
+
+            <div class="form-group ccl-form">
+              <label for="inputAddress">{{
+                language["Distributed OLT Name"]
+                }}</label>
+              <input type="text" class="form-control" id="distributedOltName" name="distributedOltName"
+                formControlName="distributedOltName" placeholder="{{language.Name}}" [readonly]="isEditPage" trimSpace
+                [formValue]="callHomeForm" />
+            </div>
+            <div class="form-group ccl-form">
+              <label for="inputAddress2">{{ language.Username }} <span class="error">*</span></label>
+              <input type="text" class="form-control" id="username" name="username" formControlName="username"
+                placeholder="{{ language.Username }}" trimSpace [formValue]="callHomeForm" />
+
+
+              <div class="errorMessage"
+                *ngIf="formControls?.username?.invalid && (formControls?.username?.dirty || formControls?.username?.touched || submitted)">
+                <div>
+                  {{ language['Please enter the Username'] }}
+                </div>
+              </div>
+
+            </div>
+            <div class="form-group ccl-form">
+              <label for="inputAddress2">{{ language.Password }} <span class="error">*</span></label>
+              <div class="position-relative">
+                <input type="Password" class="form-control" id="password" name="password" formControlName="password"
+                  [type]="hidepwd ? 'password' : 'text'" autocomplete="new-password"
+                  placeholder="{{ language.Password }}" />
+                <ng-container *ngIf="formControls?.password?.value">
+                  <span class="see_pass" [ngClass]="hidepwd ? 'password_hide' : 'password_view'"
+                    (click)="showPass()"></span>
+                </ng-container>
+              </div>
+
+              <div class="errorMessage"
+                *ngIf="formControls?.password?.invalid && (formControls?.password?.dirty || formControls?.password?.touched || submitted)">
+                <div>
+                  {{ language['Please enter the Password'] }}
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group ccl-form">
+              <div class="row">
+                <div class="col-12">
+                  <label for="inputAddress2">{{ language['Connect Timeout'] }} </label>
+                </div>
+                <div class="col-6">
+                  <input type="number" class="form-control" id="connectTimeOut" name="connectTimeOut"
+                    formControlName="connectTimeoutSec" placeholder="{{ language['Connect Timeout'] }}" min="5"
+                    max="90" />
+                </div>
+                <div class="col-6 text-left pl-0">
+                  <label class="text-capitalize pt-1 m-0">{{language['Seconds']}}</label>
+                </div>
+              </div>
+
+              <div class="errorMessage"
+                *ngIf="(formControls?.connectTimeoutSec?.invalid || formControls?.connectTimeoutSec?.errors?.pattern) && submitted">
+                <div>
+                  {{ language.connect_timeout_error }}
+                </div>
+              </div>
+            </div>
+
+            <button type="button" class="btn btn-primary" (click)="onSubmit()">
+              {{ language.submit }}
+            </button>
+            <button type="button" id="add-call-home" data-dismiss="modal" class="btn-default transparant px-3 m-2"
+              (click)="goToList()">
+              {{ language.Cancel }}
+            </button>
+          </form>
+        </div>
+        <div class="col-md-6 text-right px-0">
+          <div class="w-100">
+            <span class="close-icon pointer" (click)="goToList()"><img src="assets/img/close-icon.svg" alt="" /></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

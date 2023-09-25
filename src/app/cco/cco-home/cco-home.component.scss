@@ -1,0 +1,168 @@
+.sub-menu {
+  display        : flex;
+  flex-wrap      : wrap;
+  justify-content: start;
+  width          : 100%;
+}
+
+.sub-menu-list {
+  padding     : 10px;
+  flex        : 0 23%;
+  margin      : 11px;
+  border-left : 3px solid #e2e2e2;
+  padding-left: 20px;
+
+
+}
+
+.sub-menu-list-icon {
+  font-weight  : 400;
+  padding      : 5px 10px;
+  border-radius: 15px;
+  font-size    : 15px;
+  line-height  : 24px;
+
+  color: #507500;
+}
+
+.sub-menu-list-icon2 {
+
+  font-weight  : 400;
+  padding      : 5px 10px;
+  border-radius: 15px;
+  font-size    : 15px;
+  line-height  : 24px;
+  color        : #C70000;
+  position     : relative;
+  padding-left : 22px
+}
+
+.gly-rotate-45 {
+  filter           : progid:DXImageTransform.Microsoft.BasicImage(rotation=0.5);
+  -webkit-transform: rotate(45deg);
+  -moz-transform   : rotate(45deg);
+  -ms-transform    : rotate(45deg);
+  -o-transform     : rotate(45deg);
+  transform        : rotate(45deg);
+  color            : #C70000;
+}
+
+.gly-rotate-90 {
+  filter           : progid:DXImageTransform.Microsoft.BasicImage(rotation=0.5);
+  -webkit-transform: rotate(90deg);
+  -moz-transform   : rotate(90deg);
+  -ms-transform    : rotate(90deg);
+  -o-transform     : rotate(90deg);
+  transform        : rotate(-66deg);
+  color            : #82BF00;
+}
+
+.test-container {
+  display: flex;
+  width  : 100%;
+}
+
+.item {
+  border-left : 1px solid #cdcdcd;
+  padding-left: 10px;
+  width       : 15%;
+}
+
+
+.item+.item {
+  margin-left: 2%;
+}
+
+.menu-info {
+  display: flex;
+  width  : 100%;
+}
+
+
+
+.subscriber-trends-wrapper {
+  display: flex;
+  width  : 100%;
+}
+
+.subscriber-trends-item {
+  flex-grow: 1;
+
+  width: calc(100% / 3);
+}
+
+.subscriber-trends-item+.subscriber-trends-item {
+  margin-left: 5%;
+}
+
+.system-service-trends-wrapper {
+  display: flex;
+  width  : 100%;
+}
+
+.system-service-trends-item {
+  flex-grow: 1;
+
+  width: calc(100% / 3);
+}
+
+.system-service-trends-item+.system-service-trends-item {
+  margin-left: 5%;
+}
+
+.red {
+  color: #C70000;
+}
+
+// bharathi css start
+.test-container .item h3 {
+  font-size    : 30px !important;
+  color        : #0054B2 !important;
+  line-height  : 32px !important;
+  margin-bottom: 0 !important;
+  font-weight  : 300;
+}
+
+.test-container .item>span {
+  color      : #1A1F22;
+  font-size  : 14px;
+  line-height: 16.4px;
+}
+
+.cco-secondary-title {
+  font-size     : 24px;
+  font-style    : normal;
+  font-weight   : 400;
+  line-height   : 30px;
+  letter-spacing: 0em;
+  text-align    : left;
+  color         : #1A1F22;
+}
+
+// bharathi css end
+
+@media screen and (max-width: 767px) {
+  .test-container {
+    display: block;
+  }
+
+  .test-container .item {
+    flex-grow   : 1;
+    border-left : 3px solid #cdcdcd;
+    padding-left: 20px;
+    width       : 100%;
+    margin-left : 0;
+    margin-top  : 10px;
+  }
+
+  .custom-selectbox {
+    margin: 10px 0;
+  }
+}
+
+.past-hours {
+  color      : #9E9E9E;
+  font-size  : 12px;
+  font-weight: 400;
+  line-height: 12px;
+}

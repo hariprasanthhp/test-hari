@@ -1,0 +1,112 @@
+// .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+//     color: #2078fa;
+//     background-color: #fff;
+//     border-color: #dee2e6 #dee2e6 #fff;
+//     border: none;
+//     border-bottom: 1px solid #2078fa;
+// }
+.nav-tabs {
+    border-bottom: none;
+}
+
+a {
+    color: #333;
+}
+
+.nav-link {
+    font-size    : 18px;
+    border-bottom: 1px solid transparent;
+    cursor       : pointer;
+}
+
+// .nav-tabs .nav-link:focus, .nav-tabs .nav-link:hover {
+//     border-color: #e9ecef #e9ecef #dee2e6;
+//     border: none;
+//     color: #9bc1f9;
+//     border-bottom: 1px solid #9bc1f9;
+// }
+
+
+.ccl-no {
+    width           : 25px;
+    height          : 25px;
+    border-radius   : 20px;
+    background-color: #0279ff;
+    text-align      : center;
+    color           : #fff;
+}
+
+.card-shadow {
+    -moz-box-shadow   : 0 0 5px #5d5d5d47;
+    -webkit-box-shadow: 0 0 5px#5d5d5d47;
+    box-shadow        : 0 0 5px #5d5d5d47;
+}
+
+
+
+[type="radio"]:checked,
+[type="radio"]:not(:checked) {
+    position: absolute;
+    left    : -9999px;
+}
+
+[type="radio"]:checked+label,
+[type="radio"]:not(:checked)+label {
+    position    : relative;
+    padding-left: 20px;
+    cursor      : pointer;
+    line-height : 10px;
+    display     : inline-block;
+
+}
+
+[type="radio"]:checked+label:before,
+[type="radio"]:not(:checked)+label:before {
+    content      : '';
+    position     : absolute;
+    left         : 0;
+    top          : 0;
+    width        : 12px;
+    height       : 12px;
+    border       : 2px solid #0279FF;
+    border-radius: 100%;
+    background   : #fff;
+}
+
+[type="radio"]:checked+label:after,
+[type="radio"]:not(:checked)+label:after {
+    content           : '';
+    width             : 6px;
+    height            : 6px;
+    background        : #0279FF;
+    position          : absolute;
+    top               : 3px;
+    left              : 3px;
+    border-radius     : 100%;
+    -webkit-transition: all 0.2s ease;
+    transition        : all 0.2s ease;
+}
+
+[type="radio"]:not(:checked)+label:after {
+    opacity          : 0;
+    -webkit-transform: scale(0);
+    transform        : scale(0);
+}
+
+[type="radio"]:checked+label:after {
+    opacity          : 1;
+    -webkit-transform: scale(1);
+    transform        : scale(1);
+}
+.nav-application > .nav-item{min-height: 42px;}
+.nav-application .nav-link{
+    min-height: 42px;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    line-height: normal;}
+div{
+    line-height: 8px;
+    padding-bottom: 6px;
+}

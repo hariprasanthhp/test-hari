@@ -1,0 +1,74 @@
+<div class="row justify-content-between mt-4">
+    <div class="col-md-3 smy-2 ccl-form mt-24" >
+        <input class="form-control mr-sm-2" type="text" class="ccl-from"  [(ngModel)]="search_Text_Value"
+            placeholder="{{ language['Search Segments'] || 'Search Segments' }}"   (input)="searchName($event.target.value)" aria-label="Search"/>
+        <span class="search-close"  *ngIf="search_Text_Value" (click)="search_Text_Valuefun()">
+        <img src="assets/img/ic_close-44px.svg"> </span>
+    </div>
+    <div class="col-md-2">
+        <ng-select id="typeId" [(ngModel)]="campaignType" (ngModelChange)="selectCampaignFilter()"
+        [items]="finalTypeDataarr" bindLabel="name" bindValue="name" class="selectboxwidth"
+        [ngModelOptions]="{standalone: true}" [clearable]="false">
+    </ng-select>
+    </div>
+</div>
+
+<table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="row-border recommendated_table mt-3">
+    <thead>
+        <tr>
+            <th>{{language.Name}}</th>
+            <th>{{language.Type}}</th>
+            <th *ngIf="scopes.campaignRead" class="max-width-120">{{language.Campaigns}}</th>
+            <th class="max-width-120">{{language.Count}}</th>
+            <th>{{language['Created']}}</th>
+            <th class="min-width-160">{{language['Last Modified']}}</th>
+        </tr>
+    </thead>
+    <tbody [ngClass]="!recommendedErroMessage && recommendedSegmentArray ? 'table-row-group': 'd-none'">
+        <tr *ngFor="let item of recommendedSegmentArray;let i=index;">
+            <td class="content-wrap"><span title={{item.segmentName}}>{{item.segmentName}}</span></td>
+            <td>{{item.segmentType}}</td>
+            <td *ngIf="scopes.campaignRead" class="position-relative">
+                <!-- <span class="d-none">{{item.campaigns < 10 ? '0' : '' }}</span> -->
+                        <span class="d-block w-100 float-left">{{item.campaigns !=0 ? item.campaigns : '-' }}</span>
+                        <div *ngIf="item.campaigns != 0" class="view-data1">
+                            <div class="dropdown-button dot-drop" ngbDropdown>
+                                <div class="camp-dropdown dropright py-2" aria-labelledby="dropdownPeriod"
+                                    [ngClass]="item.campaignDetail.length > 9?'large_data': 'less_data'">
+                                <div *ngFor="let segm of item.campaignDetail;let i = index">
+                                    <h5 class="drop-down-header border-bottom">{{segm.campaignStatus}}</h5>
+                                    <div class="camp-dropdown-list dropdown-item"
+                                        *ngFor="let segment of segm.campaignDetail;let i = index">
+                                        <a 
+                                            class="d-block campaign_limit text-decoration-none"
+                                            (click)='selectCampaign(segment)' title="{{segment.campaignName}}">{{segment.campaignName}}</a>
+                                    </div>
+                               </div>
+                                    <!-- <div class="camp-dropdown-list"
+                                        *ngFor="let segm of item.campaignDetail;let i = index">
+                                        <u ngbDropdownItem
+                                            class="greyaa campaignname campaign_limit"
+                                            (click)='selectCampaign(segm)'>{{segm.campaignName}}</u>
+                                    </div> -->
+                                </div>
+                            </div>
+                        </div>
+            </td>
+            <td>{{item.subscriberCount | number }}</td>
+            <td>
+                <span class="d-none">{{getTimestamp(item.createdDateSec * 1000)}}</span>
+                {{item.createdDateSec != null ? (item.createdDateSec * 1000 | date:'yyyy-MM-dd') : '-' }}
+            </td>
+            <td>
+                <span class="d-none">{{getTimestamp(item.updatedDateSec * 1000)}}</span>
+                {{item.updatedDateSec != null ? (item.updatedDateSec * 1000  | date:'yyyy-MM-dd') : '-' }}
+            </td>
+        </tr>
+
+    </tbody>
+    <tbody [ngClass]="recommendedErroMessage ? 'table-row-group': 'd-none'">
+        <tr>
+            <td colspan="6" class="text-center">{{language.nodata}}</td>
+        </tr>
+    </tbody>
+</table>

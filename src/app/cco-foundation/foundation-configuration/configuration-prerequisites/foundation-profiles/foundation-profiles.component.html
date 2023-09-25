@@ -1,0 +1,21 @@
+<div class="ccl-tabs w-100">
+    <ul id="foundation-config-tabs" class="nav nav-tabs">
+        <li class="nav-item">
+            <a href="javascript:void(0)" data-toggle="tab"  routerLink="./ONT-profile" class="nav-link"
+                routerLinkActive="active">
+                {{ language["ONT Services Profiles"] }}
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="javascript:void(0)" data-toggle="tab" routerLink="./profiles" class="nav-link" 
+                routerLinkActive="active">
+                {{ language["RG Profiles"] }}
+            </a>
+        </li>
+    </ul>
+    <div class="tab-content">
+      <div>
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+</div>

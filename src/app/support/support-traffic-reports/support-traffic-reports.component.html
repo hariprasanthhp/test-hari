@@ -1,0 +1,117 @@
+<app-subscriber-menu></app-subscriber-menu>
+<section class="mr-2 mb-2">
+    <div class="row ">
+        <div class="col-md-12 ccl-tabs">
+            <!-- <div class="loader" *ngIf="loader">
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border text-primary">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div> -->
+            <ul id="tabs" class="nav nav-tabs">
+                <li *ngIf="showDataService" class="nav-item" id="serviceDataTabId">
+                    <a routerLink="/support/service/data" (Click)="$event.preventDefault()" data-toggle="tab"
+                        class="nav-link small " routerLinkActive="active" id="serviceDataTabHrefId"><span
+                            class="big-text">{{language.Data}}</span></a>
+                </li>
+                <li *ngIf="showVideoService && (objectExistence(metaData?.VideoMulticastSystems) || videoWan)"
+                    class="nav-item" id="serviceVideoTabId">
+                    <a routerLink="/support/service/video" data-toggle="tab" class="big-text nav-link small"
+                        routerLinkActive="active"><span class="big-text">{{language.Video}}</span></a>
+                </li>
+
+                <li *ngIf="deviceInfo.modelName && deviceInfo.modelName.indexOf('GS202') != 0
+                && showVoiceService && (objectExistence(metaData?.VoiceStatus) || voiceWan)" id="serviceVoiceTabId"
+                    class="nav-item">
+                    <a routerLink="/support/service/voice" data-toggle="tab" class="nav-link small"
+                        routerLinkActive="active"><span class="big-text">{{language.Voice}}</span></a>
+                </li>
+
+
+
+
+                <!-- <li *ngIf="showDataService" class="nav-item" id="serviceDataTabId">
+                    <a routerLink="/{{MODULE}}/service/data" (Click)="$event.preventDefault()" data-toggle="tab"
+                        class="nav-link small " routerLinkActive="active"><span
+                            class="big-text">{{language.Data}}</span></a>
+                </li>
+                <li *ngIf="showVideoService && (objectExistence(metaData?.VideoMulticastSystems) || videoWan)"
+                    class="nav-item" id="serviceVideoTabId">
+                    <a routerLink="/{{MODULE}}/service/video" data-toggle="tab" class="big-text nav-link small"
+                        routerLinkActive="active"><span class="big-text">{{language.Video}}</span></a>
+                </li>
+
+                <li *ngIf="deviceInfo.modelName && deviceInfo.modelName.indexOf('GS202') != 0
+                 && showVoiceService && (objectExistence(metaData?.VoiceStatus) || voiceWan)" id="serviceVoiceTabId"
+                    class="nav-item">
+                    <a routerLink="/{{MODULE}}/service/voice" data-toggle="tab" class="nav-link small"
+                        routerLinkActive="active"><span class="big-text">{{language.Voice}}</span></a>
+                </li> -->
+
+
+                <!-- <li id="serviceXdslTabId" class="nav-item" *ngIf="thirdPartyDevice">
+                    <a routerLink="/support/service/xdsl" data-toggle="tab" class="nav-link small"
+                        routerLinkActive="active">
+                        <span class="big-text">{{language.XDSL}}</span>
+                    </a>
+                </li> -->
+            </ul>
+        </div>
+    </div>
+</section>
+<section class="m-2">
+    <div class="row mt-4">
+        <div class="col-md-12 px-1 ccl-tabs">
+            <ul id="tabs" class="nav nav-tabs">
+
+                <!-- <li *ngIf="showDataService" class="nav-item" id="serviceDataTabId">
+                    <a routerLink="/{{MODULE}}/service/data" (Click)="$event.preventDefault()" data-toggle="tab"
+                        class="nav-link small " routerLinkActive="active"><span
+                            class="big-text">{{language.Data}}</span></a>
+                </li>
+
+                <li *ngIf="showVideoService" class="nav-item" id="serviceVideoTabId">
+                    <a routerLink="/{{MODULE}}/service/video" data-toggle="tab" class="big-text nav-link small"
+                        routerLinkActive="active"><span class="big-text">{{language.Video}}</span></a>
+                </li>
+
+                <li *ngIf="deviceInfo.modelName && deviceInfo.modelName.indexOf('GS202') != 0
+                && showVoiceService" id="serviceVoiceTabId" class="nav-item">
+                    <a routerLink="/{{MODULE}}/service/voice" data-toggle="tab" class="nav-link small"
+                        routerLinkActive="active"><span class="big-text">{{language.Voice}}</span></a>
+                </li> -->
+
+                <li class="nav-item" id="data-realtime-tab"><a routerLink="/{{MODULE}}/traffic-reports/realtime"
+                        (Click)="$event.preventDefault()" data-toggle="tab" class="nav-link small"
+                        routerLinkActive="active">{{language.Real_time}}</a>
+                </li>
+                <!-- <li class="nav-item"><a routerLink="/support/traffic-reports/reports" data-toggle="tab"
+                        class="nav-link small" routerLinkActive="active">
+                        {{language.Reports}}</a>
+                </li> -->
+                <li *ngIf="true" id="data-reports-time" class="nav-item"><a
+                        routerLink="/{{MODULE}}/traffic-reports/common-reports" data-toggle="tab" class="nav-link small"
+                        routerLinkActive="active">
+                        {{language.Reports}}</a>
+                </li>
+
+
+            </ul>
+
+            <div id="tabsContent" class="tab-content">
+                <div id="issue" class="tab-pane fade active show">
+                    <div class="row pb-2">
+
+                    </div>
+                </div>
+                <div id="topology" class="tab-pane fade">
+                    <div class="row pb-2">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<router-outlet></router-outlet>

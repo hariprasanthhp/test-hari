@@ -1,0 +1,628 @@
+<div class="container position-relative">
+    <div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess">
+        {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}}
+    </div>
+
+    <div class="row">
+        <div class="w-100 alert alert-danger  fade show my-3" *ngIf="errorInfo">
+            <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+            <button type="button" class="close" (click)=" errorInfo = ''"><span></span></button>
+            <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+        </div>
+
+        <div class="w-100 alert alert-success fade show my-3" *ngIf="successInfo">
+            <div class="d-flex align-items-center">
+                <span class="success-img d-inline-flex"><img src="./assets/img/success-icon.svg" /></span>
+                <div class="d-inline-flex text-break pr-4" [innerHtml]="successInfo"></div>
+                <button type="button" class="close clsoe-icon-pos" (click)="successInfo = ''"><span></span></button>
+            </div>
+        </div>
+    </div>
+    <div class="loader" *ngIf="loading">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">{{ language.Loading }}</span>
+            </div>
+        </div>
+    </div>
+
+    <form [formGroup]="thresholdForm" [class.cursor-ban]="!hasWriteAccess">
+        <div class="row" [class.PointerEvent]="!hasWriteAccess">
+            <div class="col-md-12 pr-5">
+                <p class="threshold-title">{{language['Upstream-Downstream-PON Threshold Value']}} (%) <span
+                        class="error">*</span></p>
+                <div class="thresholds-warpper row">
+                    <div class="thresholds-item col-4">
+                        <div class="align-items-end">
+                            <label>{{language['Set Threshold']}}(%)</label>
+                            <div class="form-group ccl-form d-flex">
+                                <input type="text" class="form-control" max="100" min="0" step="1"
+                                    (keypress)="removespecialcharacter($event,'pon')" appCustomdecimalpoint
+                                    formControlName="ponPortHiUtilThreshold" placeholder="">
+                                <span (click)="thresholdForm.get('ponPortHiUtilThreshold').setValue(Defaultvalue.pon)">
+                                    <p class="primary-reset mx-2"
+                                        [class.cursor-ban]="thresholdForm.get('ponPortHiUtilThreshold').value == Defaultvalue.pon">
+                                        {{language['reset']}}</p>
+
+                                    <!-- <img class="m-2"
+                                        
+                                        [title]="thresholdForm.get('ponPortHiUtilThreshold').value == Defaultvalue.pon ? '' : language['Reset to default']"
+                                        [src]="thresholdForm.get('ponPortHiUtilThreshold').value == Defaultvalue.pon ? '../../../../assets/img/ic_undo_disabled.svg' : '../../../../assets/img/ic_undo.svg'"
+                                        alt="Reset"> -->
+                                </span>
+                            </div>
+
+                            <div class="errorMessage" *ngIf="(thresholdForm.get('ponPortHiUtilThreshold')?.touched || issubmit )&&
+                                 thresholdForm.get('ponPortHiUtilThreshold')?.errors?.required">
+                                <label>{{ language["This field is required"] }}.</label>
+                            </div>
+                            <div class="errorMessage"
+                                *ngIf="thresholdForm.get('ponPortHiUtilThreshold')?.errors?.rangeinvalid && !thresholdForm.get('ponPortHiUtilThreshold')?.errors?.required">
+                                <label [innerHtml]="language.range_validation(0,100)"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="thresholds-item col-4">
+                        <label>{{language['Clear Threshold']}}(%)</label>
+                        <div class="form-group ccl-form d-flex">
+                            <input type="text" class="form-control" max="100" min="0" step="1"
+                                (keypress)="removespecialcharacter($event,'pon')" appCustomdecimalpoint
+                                formControlName="ponPortHiUtilThresholdClear" placeholder="">
+                            <span
+                                (click)="thresholdForm.get('ponPortHiUtilThresholdClear').setValue(Defaultvalue.ponClear)">
+                                <p class="primary-reset mx-2"
+                                    [class.cursor-ban]="thresholdForm.get('ponPortHiUtilThresholdClear').value == Defaultvalue.ponClear">
+                                    {{language['reset']}}</p>
+                                <!-- <img class="m-2"
+                                    [class.cursor-ban]="thresholdForm.get('ponPortHiUtilThresholdClear').value == Defaultvalue.ponClear"
+                                    [title]="thresholdForm.get('ponPortHiUtilThresholdClear').value == Defaultvalue.ponClear ? '' : language['Reset to default']"
+                                    [src]="thresholdForm.get('ponPortHiUtilThresholdClear').value == Defaultvalue.ponClear ? '../../../../assets/img/ic_undo_disabled.svg' : '../../../../assets/img/ic_undo.svg'"
+                                    alt="Reset"> -->
+                            </span>
+                        </div>
+                        <div class="errorMessage" *ngIf="(thresholdForm.get('ponPortHiUtilThresholdClear')?.touched || issubmit )&&
+                             thresholdForm.get('ponPortHiUtilThresholdClear')?.errors?.required">
+                            <label>{{ language["This field is required"] }}.</label>
+                        </div>
+                        <div class="errorMessage"
+                            *ngIf="thresholdForm.get('ponPortHiUtilThresholdClear')?.errors?.rangeinvalid && !thresholdForm.get('ponPortHiUtilThresholdClear')?.errors?.required">
+                            <label [innerHtml]="language.range_validation(0,100)"></label>
+                        </div>
+                    </div>
+
+                    <div class="thresholds-item col-4">
+                        <label id="pon-delta-threshold">{{language['Delta Threshold']}}(%)</label>
+                        <div class="form-group ccl-form d-flex">
+                            <input type="text" class="form-control" max="100" min="0" step="1"
+                                (keypress)="removespecialcharacter($event,'pon')" appCustomdecimalpoint
+                                formControlName="ponPortHiUtilThresholdWarn" placeholder="">
+                            <span
+                                (click)="thresholdForm.get('ponPortHiUtilThresholdWarn').setValue(Defaultvalue.deltaPon)">
+                                <p class="primary-reset mx-2"
+                                    [class.cursor-ban]="thresholdForm.get('ponPortHiUtilThresholdWarn').value == Defaultvalue.deltaPon">
+                                    {{language['reset']}}</p>
+                                <!-- <img class="m-2"
+                                    [class.cursor-ban]="thresholdForm.get('ponPortHiUtilThresholdWarn').value == Defaultvalue.deltaPon"
+                                    [title]="thresholdForm.get('ponPortHiUtilThresholdWarn').value == Defaultvalue.deltaPon ? '' : language['Reset to default']"
+                                    [src]="thresholdForm.get('ponPortHiUtilThresholdWarn').value == Defaultvalue.deltaPon ? '../../../../assets/img/ic_undo_disabled.svg' : '../../../../assets/img/ic_undo.svg'"
+                                    alt="Reset"> -->
+                            </span>
+                        </div>
+                        <div class="errorMessage" *ngIf="(thresholdForm.get('ponPortHiUtilThresholdWarn')?.touched || issubmit )&&
+                             thresholdForm.get('ponPortHiUtilThresholdWarn')?.errors?.required">
+                            <label>{{ language["This field is required"] }}.</label>
+                        </div>
+                        <div class="errorMessage"
+                            *ngIf="thresholdForm.get('ponPortHiUtilThresholdWarn')?.errors?.rangeinvalid && !thresholdForm.get('ponPortHiUtilThresholdWarn')?.errors?.required">
+                            <label [innerHtml]="language.range_validation(0,100)"></label>
+                        </div>
+                    </div>
+
+                </div>
+
+                <p class="threshold-title">{{language['Upstream or downstream Ethernet/AE Capacity Utilization']}} (%)
+                    <span class="error">*</span>
+                </p>
+                <div class="thresholds-warpper row">
+                    <div class="thresholds-item col-4">
+                        <div class="align-items-end">
+                            <label>{{language['Set Threshold']}}(%)</label>
+                            <div class="form-group ccl-form d-flex">
+                                <input type="text" class="form-control" max="100" min="0" step="1"
+                                    (keypress)="removespecialcharacter($event,'pon')" appCustomdecimalpoint
+                                    formControlName="etyPortHiUtilThreshold" placeholder="">
+                                <span
+                                    (click)="thresholdForm.get('etyPortHiUtilThreshold').setValue(Defaultvalue.ethernet)">
+                                    <p class="primary-reset mx-2"
+                                        [class.cursor-ban]="thresholdForm.get('etyPortHiUtilThreshold').value == Defaultvalue.ethernet">
+                                        {{language['reset']}}</p>
+                                    <!-- <img class="m-2"
+                                        [class.cursor-ban]="thresholdForm.get('etyPortHiUtilThreshold').value == Defaultvalue.ethernet"
+                                        [title]="thresholdForm.get('etyPortHiUtilThreshold').value == Defaultvalue.ethernet ? '' : language['Reset to default']"
+                                        [src]="thresholdForm.get('etyPortHiUtilThreshold').value == Defaultvalue.ethernet ? '../../../../assets/img/ic_undo_disabled.svg' : '../../../../assets/img/ic_undo.svg'"
+                                        alt="Reset">  -->
+                                </span>
+                            </div>
+                            <div class="errorMessage" *ngIf="(thresholdForm.get('etyPortHiUtilThreshold')?.touched || issubmit )&&
+                                 thresholdForm.get('etyPortHiUtilThreshold')?.errors?.required">
+                                <label>{{ language["This field is required"] }}.</label>
+                            </div>
+                            <div class="errorMessage"
+                                *ngIf="thresholdForm.get('etyPortHiUtilThreshold')?.errors?.rangeinvalid && !thresholdForm.get('etyPortHiUtilThreshold')?.errors?.required">
+                                <label [innerHtml]="language.range_validation(0,100)"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="thresholds-item col-4">
+                        <label>{{language['Clear Threshold']}}(%)</label>
+                        <div class="form-group ccl-form d-flex">
+                            <input type="text" class="form-control" max="100" min="0" step="1"
+                                (keypress)="removespecialcharacter($event,'pon')" appCustomdecimalpoint
+                                formControlName="etyPortHiUtilThresholdClear" placeholder="">
+                            <span
+                                (click)="thresholdForm.get('etyPortHiUtilThresholdClear').setValue(Defaultvalue.ethernetClear)">
+                                <p class="primary-reset mx-2"
+                                    [class.cursor-ban]="thresholdForm.get('etyPortHiUtilThresholdClear').value == Defaultvalue.ethernetClear">
+                                    {{language['reset']}}</p>
+                                <!-- <img class="m-2"
+                                    [class.cursor-ban]="thresholdForm.get('etyPortHiUtilThresholdClear').value == Defaultvalue.ethernetClear"
+                                    [title]="thresholdForm.get('etyPortHiUtilThresholdClear').value == Defaultvalue.ethernetClear ? '' : language['Reset to default']"
+                                    [src]="thresholdForm.get('etyPortHiUtilThresholdClear').value == Defaultvalue.ethernetClear ? '../../../../assets/img/ic_undo_disabled.svg' : '../../../../assets/img/ic_undo.svg'"
+                                    alt="Reset"> -->
+                            </span>
+                        </div>
+                        <div class="errorMessage" *ngIf="(thresholdForm.get('etyPortHiUtilThresholdClear')?.touched || issubmit )&&
+                             thresholdForm.get('etyPortHiUtilThresholdClear')?.errors?.required">
+                            <label>{{ language["This field is required"] }}.</label>
+                        </div>
+                        <div class="errorMessage"
+                            *ngIf="thresholdForm.get('etyPortHiUtilThresholdClear')?.errors?.rangeinvalid && !thresholdForm.get('etyPortHiUtilThresholdClear')?.errors?.required">
+                            <label [innerHtml]="language.range_validation(0,100)"></label>
+                        </div>
+                    </div>
+                    <div class="thresholds-item col-4">
+                        <label id="ethernet-delta-threshold">{{language['Delta Threshold']}}(%)</label>
+                        <div class="form-group ccl-form d-flex">
+                            <input type="text" class="form-control" max="100" min="0" step="1"
+                                (keypress)="removespecialcharacter($event,'pon')" appCustomdecimalpoint
+                                formControlName="etyPortHiUtilThresholdWarn" placeholder="">
+                            <span
+                                (click)="thresholdForm.get('etyPortHiUtilThresholdWarn').setValue(Defaultvalue.deltaEty)">
+                                <p class="primary-reset mx-2"
+                                    [class.cursor-ban]="thresholdForm.get('etyPortHiUtilThresholdWarn').value == Defaultvalue.deltaEty">
+                                    {{language['reset']}}</p>
+                                <!-- <img class="m-2"
+                                    [class.cursor-ban]="thresholdForm.get('etyPortHiUtilThresholdWarn').value == Defaultvalue.deltaEty"
+                                    [title]="thresholdForm.get('etyPortHiUtilThresholdWarn').value == Defaultvalue.deltaEty ? '' : language['Reset to default']"
+                                    [src]="thresholdForm.get('etyPortHiUtilThresholdWarn').value == Defaultvalue.deltaEty ? '../../../../assets/img/ic_undo_disabled.svg' : '../../../../assets/img/ic_undo.svg'"
+                                    alt="Reset"> -->
+                            </span>
+                        </div>
+                        <div class="errorMessage" *ngIf="(thresholdForm.get('etyPortHiUtilThresholdWarn')?.touched || issubmit )&&
+                             thresholdForm.get('etyPortHiUtilThresholdWarn')?.errors?.required">
+                            <label>{{ language["This field is required"] }}.</label>
+                        </div>
+                        <div class="errorMessage"
+                            *ngIf="thresholdForm.get('etyPortHiUtilThresholdWarn')?.errors?.rangeinvalid && !thresholdForm.get('etyPortHiUtilThresholdWarn')?.errors?.required">
+                            <label [innerHtml]="language.range_validation(0,100)"></label>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="threshold-title">{{language['OLT Rx Power Level Threshold Value(GPON)']}} <span
+                        class="error">*</span></p>
+                <div class="thresholds-warpper row">
+                    <div class="thresholds-item col-4" formGroupName="oltPonPowerLevelThresholds">
+                        <div class="align-items-end">
+                            <label>{{language['Set Threshold']}}(dBm)</label>
+                            <div class="form-group ccl-form d-flex">
+                                <input type="text" class="form-control" step="1"
+                                    (keypress)="removespecialcharacter($event,'minus')" appCustomdecimalpoint
+                                    formControlName="gponRxSignalLoThreshold" placeholder="">
+                                <span
+                                    (click)="thresholdForm.get('oltPonPowerLevelThresholds.gponRxSignalLoThreshold').setValue(Defaultvalue.olt_gpon)">
+                                    <p class="primary-reset mx-2"
+                                        [class.cursor-ban]="thresholdForm.get('oltPonPowerLevelThresholds.gponRxSignalLoThreshold').value == Defaultvalue.olt_gpon">
+                                        {{language['reset']}}</p>
+                                    <!-- <img class="m-2"
+                                        [class.cursor-ban]="thresholdForm.get('oltPonPowerLevelThresholds.gponRxSignalLoThreshold').value == Defaultvalue.olt_gpon"
+                                        [title]="thresholdForm.get('oltPonPowerLevelThresholds.gponRxSignalLoThreshold').value == Defaultvalue.olt_gpon ? '' : language['Reset to default']"
+                                        [src]="thresholdForm.get('oltPonPowerLevelThresholds.gponRxSignalLoThreshold').value == Defaultvalue.olt_gpon ? '../../../../assets/img/ic_undo_disabled.svg' : '../../../../assets/img/ic_undo.svg'"
+                                        alt="Reset"> -->
+                                </span>
+                            </div>
+                            <div class="errorMessage"
+                                *ngIf="(thresholdForm.get('oltPonPowerLevelThresholds.gponRxSignalLoThreshold')?.touched || issubmit ) &&
+                                    thresholdForm.get('oltPonPowerLevelThresholds.gponRxSignalLoThreshold')?.errors?.required">
+                                <label>{{ language["This field is required"] }}.</label>
+                            </div>
+                            <div class="errorMessage"
+                                *ngIf="thresholdForm.get('oltPonPowerLevelThresholds.gponRxSignalLoThreshold')?.errors?.rangeinvalid && !thresholdForm.get('oltPonPowerLevelThresholds.gponRxSignalLoThreshold')?.errors?.required">
+                                <label [innerHtml]="language.range_validation(-8,-35)"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="thresholds-item col-4" formGroupName="oltPonPowerLevelThresholdsClear">
+                        <label>{{language['Clear Threshold']}}(dBm)</label>
+                        <div class="form-group ccl-form d-flex">
+                            <input type="text" class="form-control" step="1"
+                                (keypress)="removespecialcharacter($event,'minus')" appCustomdecimalpoint
+                                formControlName="gponRxSignalLoThreshold" placeholder="">
+                            <span
+                                (click)="thresholdForm.get('oltPonPowerLevelThresholdsClear.gponRxSignalLoThreshold').setValue(Defaultvalue.oltClear_gpon)">
+                                <p class="primary-reset mx-2"
+                                    [class.cursor-ban]="thresholdForm.get('oltPonPowerLevelThresholdsClear.gponRxSignalLoThreshold').value == Defaultvalue.oltClear_gpon">
+                                    {{language['reset']}}</p>
+                                <!-- <img class="m-2"
+                                    [class.cursor-ban]="thresholdForm.get('oltPonPowerLevelThresholdsClear.gponRxSignalLoThreshold').value == Defaultvalue.oltClear_gpon"
+                                    [title]="thresholdForm.get('oltPonPowerLevelThresholdsClear.gponRxSignalLoThreshold').value == Defaultvalue.oltClear_gpon ? '' : language['Reset to default']"
+                                    [src]="thresholdForm.get('oltPonPowerLevelThresholdsClear.gponRxSignalLoThreshold').value == Defaultvalue.oltClear_gpon ? '../../../../assets/img/ic_undo_disabled.svg' : '../../../../assets/img/ic_undo.svg'"
+                                    alt="Reset"> -->
+                            </span>
+                        </div>
+                        <div class="errorMessage"
+                            *ngIf="(thresholdForm.get('oltPonPowerLevelThresholdsClear.gponRxSignalLoThreshold')?.touched || issubmit )&&
+                                thresholdForm.get('oltPonPowerLevelThresholdsClear.gponRxSignalLoThreshold')?.errors?.required">
+                            <label>{{ language["This field is required"] }}.</label>
+                        </div>
+                        <div class="errorMessage"
+                            *ngIf="thresholdForm.get('oltPonPowerLevelThresholdsClear.gponRxSignalLoThreshold')?.errors?.rangeinvalid && !thresholdForm.get('oltPonPowerLevelThresholdsClear.gponRxSignalLoThreshold')?.errors?.required">
+                            <label [innerHtml]="language.range_validation(-8,-35)"></label>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="threshold-title">{{language['OLT Rx Power Level Threshold Value(XGS_PON)']}} <span
+                        class="error">*</span>
+                </p>
+                <div class="thresholds-warpper row">
+                    <div class="thresholds-item col-4" formGroupName="oltPonPowerLevelThresholds">
+                        <div class="align-items-end">
+                            <label>{{language['Set Threshold']}}(dBm)</label>
+                            <div class="form-group ccl-form d-flex">
+                                <input type="text" class="form-control" step="1"
+                                    (keypress)="removespecialcharacter($event,'minus')" appCustomdecimalpoint
+                                    formControlName="xponRxSignalLoThreshold" placeholder="">
+                                <span
+                                    (click)="thresholdForm.get('oltPonPowerLevelThresholds.xponRxSignalLoThreshold').setValue(Defaultvalue.olt_xpon)">
+                                    <p class="primary-reset mx-2"
+                                        [class.cursor-ban]="thresholdForm.get('oltPonPowerLevelThresholds.xponRxSignalLoThreshold').value == Defaultvalue.olt_xpon">
+                                        {{language['reset']}}</p>
+                                    <!-- <img class="m-2"
+                                        [class.cursor-ban]="thresholdForm.get('oltPonPowerLevelThresholds.xponRxSignalLoThreshold').value == Defaultvalue.olt_xpon"
+                                        [title]="thresholdForm.get('oltPonPowerLevelThresholds.xponRxSignalLoThreshold').value == Defaultvalue.olt_xpon ? '' : language['Reset to default']"
+                                        [src]="thresholdForm.get('oltPonPowerLevelThresholds.xponRxSignalLoThreshold').value == Defaultvalue.olt_xpon ? '../../../../assets/img/ic_undo_disabled.svg' : '../../../../assets/img/ic_undo.svg'"
+                                        alt="Reset">  -->
+                                </span>
+                            </div>
+                            <div class="errorMessage"
+                                *ngIf="(thresholdForm.get('oltPonPowerLevelThresholds.xponRxSignalLoThreshold')?.touched || issubmit )&&
+                                 thresholdForm.get('oltPonPowerLevelThresholds.xponRxSignalLoThreshold')?.errors?.required">
+                                <label>{{ language["This field is required"] }}.</label>
+                            </div>
+                            <div class="errorMessage"
+                                *ngIf="thresholdForm.get('oltPonPowerLevelThresholds.xponRxSignalLoThreshold')?.errors?.rangeinvalid && !thresholdForm.get('oltPonPowerLevelThresholds.xponRxSignalLoThreshold')?.errors?.required">
+                                <label [innerHtml]="language.range_validation(-7,-32)"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="thresholds-item col-4" formGroupName="oltPonPowerLevelThresholdsClear">
+                        <label>{{language['Clear Threshold']}}(dBm)</label>
+                        <div class="form-group ccl-form d-flex">
+                            <input type="text" class="form-control" step="1"
+                                (keypress)="removespecialcharacter($event,'minus')" appCustomdecimalpoint
+                                formControlName="xponRxSignalLoThreshold" placeholder="">
+                            <span
+                                (click)="thresholdForm.get('oltPonPowerLevelThresholdsClear.xponRxSignalLoThreshold').setValue(Defaultvalue.oltClear_xpon)">
+                                <p class="primary-reset mx-2"
+                                    [class.cursor-ban]="thresholdForm.get('oltPonPowerLevelThresholdsClear.xponRxSignalLoThreshold').value == Defaultvalue.oltClear_xpon">
+                                    {{language['reset']}}</p>
+                                <!-- <img class="m-2"
+                                    [class.cursor-ban]="thresholdForm.get('oltPonPowerLevelThresholdsClear.xponRxSignalLoThreshold').value == Defaultvalue.oltClear_xpon"
+                                    [title]="thresholdForm.get('oltPonPowerLevelThresholdsClear.xponRxSignalLoThreshold').value == Defaultvalue.oltClear_xpon ? '' : language['Reset to default']"
+                                    [src]="thresholdForm.get('oltPonPowerLevelThresholdsClear.xponRxSignalLoThreshold').value == Defaultvalue.oltClear_xpon ? '../../../../assets/img/ic_undo_disabled.svg' : '../../../../assets/img/ic_undo.svg'"
+                                    alt="Reset">  -->
+                            </span>
+                        </div>
+                        <div class="errorMessage"
+                            *ngIf="(thresholdForm.get('oltPonPowerLevelThresholdsClear.xponRxSignalLoThreshold')?.touched || issubmit )&&
+                             thresholdForm.get('oltPonPowerLevelThresholdsClear.xponRxSignalLoThreshold')?.errors?.required">
+                            <label>{{ language["This field is required"] }}.</label>
+                        </div>
+                        <div class="errorMessage"
+                            *ngIf="thresholdForm.get('oltPonPowerLevelThresholdsClear.xponRxSignalLoThreshold')?.errors?.rangeinvalid && !thresholdForm.get('oltPonPowerLevelThresholdsClear.xponRxSignalLoThreshold')?.errors?.required">
+                            <label [innerHtml]="language.range_validation(-7,-32)"></label>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="threshold-title">{{language['ONT Rx Power Level Threshold Value(GPON)']}} <span
+                        class="error">*</span></p>
+                <div class="thresholds-warpper row">
+                    <div class="thresholds-item col-4" formGroupName="ontPonPowerLevelThresholds">
+                        <div class="align-items-end">
+                            <label>{{language['Set Threshold']}}(dBm) </label>
+                            <div class="form-group ccl-form d-flex">
+                                <input type="text" class="form-control" step="1"
+                                    (keypress)="removespecialcharacter($event,'minus')" appCustomdecimalpoint
+                                    formControlName="gponRxSignalLoThreshold" placeholder="">
+                                <span
+                                    (click)="thresholdForm.get('ontPonPowerLevelThresholds.gponRxSignalLoThreshold').setValue(Defaultvalue.ont_gpon)">
+                                    <p class="primary-reset mx-2"
+                                        [class.cursor-ban]="thresholdForm.get('ontPonPowerLevelThresholds.gponRxSignalLoThreshold').value == Defaultvalue.ont_gpon">
+                                        {{language['reset']}}</p>
+                                    <!-- <img class="m-2"
+                                        [class.cursor-ban]="thresholdForm.get('ontPonPowerLevelThresholds.gponRxSignalLoThreshold').value == Defaultvalue.ont_gpon"
+                                        [title]="thresholdForm.get('ontPonPowerLevelThresholds.gponRxSignalLoThreshold').value == Defaultvalue.ont_gpon ? '' : language['Reset to default']"
+                                        [src]="thresholdForm.get('ontPonPowerLevelThresholds.gponRxSignalLoThreshold').value == Defaultvalue.ont_gpon ? '../../../../assets/img/ic_undo_disabled.svg' : '../../../../assets/img/ic_undo.svg'"
+                                        alt="Reset"> -->
+                                </span>
+                            </div>
+                            <div class="errorMessage"
+                                *ngIf="(thresholdForm.get('ontPonPowerLevelThresholds.gponRxSignalLoThreshold')?.touched || issubmit )&&
+                                         thresholdForm.get('ontPonPowerLevelThresholds.gponRxSignalLoThreshold')?.errors?.required">
+                                <label>{{ language["This field is required"] }}.</label>
+                            </div>
+                            <div class="errorMessage"
+                                *ngIf="thresholdForm.get('ontPonPowerLevelThresholds.gponRxSignalLoThreshold')?.errors?.rangeinvalid && !thresholdForm.get('ontPonPowerLevelThresholds.gponRxSignalLoThreshold')?.errors?.required">
+                                <label [innerHtml]="language.range_validation(-8,-30)"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="thresholds-item col-4" formGroupName="ontPonPowerLevelThresholdsClear">
+                        <label>{{language['Clear Threshold']}}(dBm)</label>
+                        <div class="form-group ccl-form d-flex">
+                            <input type="text" class="form-control" step="1"
+                                (keypress)="removespecialcharacter($event,'minus')" appCustomdecimalpoint
+                                formControlName="gponRxSignalLoThreshold" placeholder="">
+                            <span
+                                (click)="thresholdForm.get('ontPonPowerLevelThresholdsClear.gponRxSignalLoThreshold').setValue(Defaultvalue.ontClear_gpon)">
+                                <p class="primary-reset mx-2"
+                                    [class.cursor-ban]="thresholdForm.get('ontPonPowerLevelThresholdsClear.gponRxSignalLoThreshold').value == Defaultvalue.ontClear_gpon">
+                                    {{language['reset']}}</p>
+                                <!-- <img class="m-2"
+                                    [class.cursor-ban]="thresholdForm.get('ontPonPowerLevelThresholdsClear.gponRxSignalLoThreshold').value == Defaultvalue.ontClear_gpon"
+                                    [title]="thresholdForm.get('ontPonPowerLevelThresholds.gponRxSignalLoThreshold').value == Defaultvalue.ontClear_gpon ? '' : language['Reset to default']"
+                                    [src]="thresholdForm.get('ontPonPowerLevelThresholdsClear.gponRxSignalLoThreshold').value == Defaultvalue.ontClear_gpon ? '../../../../assets/img/ic_undo_disabled.svg' : '../../../../assets/img/ic_undo.svg'"
+                                    alt="Reset"> -->
+                            </span>
+                        </div>
+                        <div class="errorMessage"
+                            *ngIf="(thresholdForm.get('ontPonPowerLevelThresholdsClear.gponRxSignalLoThreshold')?.touched || issubmit )&&
+                             thresholdForm.get('ontPonPowerLevelThresholdsClear.gponRxSignalLoThreshold')?.errors?.required">
+                            <label>{{ language["This field is required"] }}.</label>
+                        </div>
+                        <div class="errorMessage"
+                            *ngIf="thresholdForm.get('ontPonPowerLevelThresholdsClear.gponRxSignalLoThreshold')?.errors?.rangeinvalid && !thresholdForm.get('ontPonPowerLevelThresholdsClear.gponRxSignalLoThreshold')?.errors?.required">
+                            <label [innerHtml]="language.range_validation(-8,-30)"></label>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="threshold-title">{{language['ONT Rx Power Level Threshold Value(XGS_PON)']}} <span
+                        class="error">*</span>
+                </p>
+                <div class="thresholds-warpper row">
+                    <div class="thresholds-item col-4" formGroupName="ontPonPowerLevelThresholds">
+                        <div class="align-items-end">
+                            <label>{{language['Set Threshold']}}(dBm)</label>
+                            <div class="form-group ccl-form d-flex">
+                                <input type="text" class="form-control" step="1"
+                                    (keypress)="removespecialcharacter($event,'minus')" appCustomdecimalpoint
+                                    formControlName="xponRxSignalLoThreshold" placeholder="">
+                                <span
+                                    (click)="thresholdForm.get('ontPonPowerLevelThresholds.xponRxSignalLoThreshold').setValue(Defaultvalue.ont_xpon)">
+                                    <p class="primary-reset mx-2"
+                                        [class.cursor-ban]="thresholdForm.get('ontPonPowerLevelThresholds.xponRxSignalLoThreshold').value == Defaultvalue.ont_xpon">
+                                        {{language['reset']}}</p>
+                                    <!-- <img class="m-2"
+                                        [class.cursor-ban]="thresholdForm.get('ontPonPowerLevelThresholds.xponRxSignalLoThreshold').value == Defaultvalue.ont_xpon"
+                                        [title]="thresholdForm.get('ontPonPowerLevelThresholds.xponRxSignalLoThreshold').value == Defaultvalue.ont_xpon ? '' : language['Reset to default']"
+                                        [src]="thresholdForm.get('ontPonPowerLevelThresholds.xponRxSignalLoThreshold').value == Defaultvalue.ont_xpon ? '../../../../assets/img/ic_undo_disabled.svg' : '../../../../assets/img/ic_undo.svg'"
+                                        alt="Reset"> -->
+                                </span>
+                            </div>
+                            <div class="errorMessage"
+                                *ngIf="(thresholdForm.get('ontPonPowerLevelThresholds.xponRxSignalLoThreshold')?.touched || issubmit )&&
+                                 thresholdForm.get('ontPonPowerLevelThresholds.xponRxSignalLoThreshold')?.errors?.required">
+                                <label>{{ language["This field is required"] }}.</label>
+                            </div>
+                            <div class="errorMessage"
+                                *ngIf="thresholdForm.get('ontPonPowerLevelThresholds.xponRxSignalLoThreshold')?.errors?.rangeinvalid && !thresholdForm.get('ontPonPowerLevelThresholds.xponRxSignalLoThreshold')?.errors?.required">
+                                <label [innerHtml]="language.range_validation(-9,-28)"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="thresholds-item col-4" formGroupName="ontPonPowerLevelThresholdsClear">
+                        <label>{{language['Clear Threshold']}}(dBm)</label>
+                        <div class="form-group ccl-form d-flex">
+                            <input type="text" class="form-control" step="1"
+                                (keypress)="removespecialcharacter($event,'minus')" appCustomdecimalpoint
+                                formControlName="xponRxSignalLoThreshold" placeholder="">
+                            <span
+                                (click)="thresholdForm.get('ontPonPowerLevelThresholdsClear.xponRxSignalLoThreshold').setValue(Defaultvalue.ontClear_xpon)">
+                                <p class="primary-reset mx-2"
+                                    [class.cursor-ban]="thresholdForm.get('ontPonPowerLevelThresholdsClear.xponRxSignalLoThreshold').value == Defaultvalue.ontClear_xpon">
+                                    {{language['reset']}}</p>
+                                <!-- <img class="m-2"
+                                    [class.cursor-ban]="thresholdForm.get('ontPonPowerLevelThresholdsClear.xponRxSignalLoThreshold').value == Defaultvalue.ontClear_xpon"
+                                    [title]="thresholdForm.get('ontPonPowerLevelThresholdsClear.xponRxSignalLoThreshold').value == Defaultvalue.ontClear_xpon ? '' : language['Reset to default']"
+                                    [src]="thresholdForm.get('ontPonPowerLevelThresholdsClear.xponRxSignalLoThreshold').value == Defaultvalue.ontClear_xpon ? '../../../../assets/img/ic_undo_disabled.svg' : '../../../../assets/img/ic_undo.svg'"
+                                    alt="Reset"> -->
+                            </span>
+                        </div>
+                        <div class="errorMessage"
+                            *ngIf="(thresholdForm.get('ontPonPowerLevelThresholdsClear.xponRxSignalLoThreshold')?.touched || issubmit )&&
+                             thresholdForm.get('ontPonPowerLevelThresholdsClear.xponRxSignalLoThreshold')?.errors?.required">
+                            <label>{{ language["This field is required"] }}.</label>
+                        </div>
+                        <div class="errorMessage"
+                            *ngIf="thresholdForm.get('ontPonPowerLevelThresholdsClear.xponRxSignalLoThreshold')?.errors?.rangeinvalid && !thresholdForm.get('ontPonPowerLevelThresholdsClear.xponRxSignalLoThreshold')?.errors?.required">
+                            <label [innerHtml]="language.range_validation(-9,-28)"></label>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="threshold-title">{{language['Upstream or downstream DSL Capacity Utilization(%)']}} <span
+                        class="error">*</span>
+                </p>
+                <div class="thresholds-warpper row">
+                    <div class="thresholds-item col-4">
+                        <div class="align-items-end">
+                            <label>{{language['Set Threshold']}}(%)</label>
+                            <div class="form-group ccl-form d-flex">
+                                <input type="text" class="form-control" step="1"
+                                    (keypress)="removespecialcharacter($event,'minus')" appCustomdecimalpoint
+                                    formControlName="dslPortHiUtilThresholdRaise" placeholder="">
+                                <span
+                                    (click)="thresholdForm.get('dslPortHiUtilThresholdRaise').setValue(Defaultvalue.dsl_raise)">
+                                    <p class="primary-reset mx-2"
+                                        [class.cursor-ban]="thresholdForm.get('dslPortHiUtilThresholdRaise').value == Defaultvalue.dsl_raise">
+                                        {{language['reset']}}</p>
+                                </span>
+                            </div>
+                            <div class="errorMessage" *ngIf="(thresholdForm.get('dslPortHiUtilThresholdRaise')?.touched || issubmit )&&
+                             thresholdForm.get('dslPortHiUtilThresholdRaise')?.errors?.required">
+                                <label>{{ language["This field is required"] }}.</label>
+                            </div>
+                            <div class="errorMessage"
+                                *ngIf="thresholdForm.get('dslPortHiUtilThresholdRaise')?.errors?.rangeinvalid && !thresholdForm.get('dslPortHiUtilThresholdRaise')?.errors?.required">
+                                <label [innerHtml]="language.range_validation(0,100)"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="thresholds-item col-4">
+                        <label>{{language['Clear Threshold']}}(%)</label>
+                        <div class="form-group ccl-form d-flex">
+                            <input type="text" class="form-control" step="1"
+                                (keypress)="removespecialcharacter($event,'minus')" appCustomdecimalpoint
+                                formControlName="dslPortHiUtilThresholdClear" placeholder="">
+                            <span
+                                (click)="thresholdForm.get('dslPortHiUtilThresholdClear').setValue(Defaultvalue.dsl_clear)">
+                                <p class="primary-reset mx-2"
+                                    [class.cursor-ban]="thresholdForm.get('dslPortHiUtilThresholdClear').value == Defaultvalue.dsl_clear">
+                                    {{language['reset']}}</p>
+                            </span>
+                        </div>
+                        <div class="errorMessage" *ngIf="(thresholdForm.get('dslPortHiUtilThresholdClear')?.touched || issubmit )&&
+                         thresholdForm.get('dslPortHiUtilThresholdClear')?.errors?.required">
+                            <label>{{ language["This field is required"] }}.</label>
+                        </div>
+                        <div class="errorMessage"
+                            *ngIf="thresholdForm.get('dslPortHiUtilThresholdClear')?.errors?.rangeinvalid && !thresholdForm.get('dslPortHiUtilThresholdClear')?.errors?.required">
+                            <label [innerHtml]="language.range_validation(0,100)"></label>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="threshold-title">{{language['Upstream or downstream DSL current rate comparing to attainable rate(%)']}}
+                    <span class="error">*</span>
+                </p>
+                <div class="thresholds-warpper row">
+                    <div class="thresholds-item col-4">
+                        <div class="align-items-end">
+                            <label>{{language['Set Threshold']}}(%)</label>
+                            <div class="form-group ccl-form d-flex">
+                                <input type="text" class="form-control" step="1"
+                                    (keypress)="removespecialcharacter($event,'minus')" appCustomdecimalpoint
+                                    formControlName="dslPortCurRateThreshold" placeholder="">
+                                <span
+                                    (click)="thresholdForm.get('dslPortCurRateThreshold').setValue(Defaultvalue.dsl_cur_rate)">
+                                    <p class="primary-reset mx-2"
+                                        [class.cursor-ban]="thresholdForm.get('dslPortCurRateThreshold').value == Defaultvalue.dsl_cur_rate">
+                                        {{language['reset']}}</p>
+                                </span>
+                            </div>
+                            <div class="errorMessage" *ngIf="(thresholdForm.get('dslPortCurRateThreshold')?.touched || issubmit )&&
+                         thresholdForm.get('dslPortCurRateThreshold')?.errors?.required">
+                                <label>{{ language["This field is required"] }}.</label>
+                            </div>
+                            <div class="errorMessage"
+                                *ngIf="thresholdForm.get('dslPortCurRateThreshold')?.errors?.rangeinvalid && !thresholdForm.get('dslPortCurRateThreshold')?.errors?.required">
+                                <label [innerHtml]="language.range_validation(0,100)"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="thresholds-item col-4">
+                        <label>{{language['Clear Threshold']}}(%)</label>
+                        <div class="form-group ccl-form d-flex">
+                            <input type="text" class="form-control" step="1"
+                                (keypress)="removespecialcharacter($event,'minus')" appCustomdecimalpoint
+                                formControlName="dslPortCurRateThresholdClear" placeholder="">
+                            <span
+                                (click)="thresholdForm.get('dslPortCurRateThresholdClear').setValue(Defaultvalue.dsl_cur_rate_clear)">
+                                <p class="primary-reset mx-2"
+                                    [class.cursor-ban]="thresholdForm.get('dslPortCurRateThresholdClear').value == Defaultvalue.dsl_cur_rate_clear">
+                                    {{language['reset']}}</p>
+                            </span>
+                        </div>
+                        <div class="errorMessage" *ngIf="(thresholdForm.get('dslPortCurRateThresholdClear')?.touched || issubmit )&&
+                     thresholdForm.get('dslPortCurRateThresholdClear')?.errors?.required">
+                            <label>{{ language["This field is required"] }}.</label>
+                        </div>
+                        <div class="errorMessage"
+                            *ngIf="thresholdForm.get('dslPortCurRateThresholdClear')?.errors?.rangeinvalid && !thresholdForm.get('dslPortCurRateThresholdClear')?.errors?.required">
+                            <label [innerHtml]="language.range_validation(0,100)"></label>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="threshold-title">{{language['Upstream or downstream DSL actual SNR comparing to target SNR']}} <span
+                        class="error">*</span>
+                </p>
+                <div class="thresholds-warpper row">
+                    <div class="thresholds-item col-4">
+                        <div class="align-items-end">
+                            <label>{{language['Set Threshold']}}(dB)</label>
+                            <div class="form-group ccl-form d-flex">
+                                <input type="text" class="form-control" step="1"
+                                    (keypress)="removespecialcharacter($event,'minus')" appCustomdecimalpoint
+                                    formControlName="dslPortSnrThreshold" placeholder="">
+                                <span (click)="thresholdForm.get('dslPortSnrThreshold').setValue(Defaultvalue.dsl_snr)">
+                                    <p class="primary-reset mx-2"
+                                        [class.cursor-ban]="thresholdForm.get('dslPortSnrThreshold').value == Defaultvalue.dsl_snr">
+                                        {{language['reset']}}</p>
+                                </span>
+                            </div>
+                            <div class="errorMessage" *ngIf="(thresholdForm.get('dslPortSnrThreshold')?.touched || issubmit )&&
+                     thresholdForm.get('dslPortSnrThreshold')?.errors?.required">
+                                <label>{{ language["This field is required"] }}.</label>
+                            </div>
+                            <div class="errorMessage"
+                                *ngIf="thresholdForm.get('dslPortSnrThreshold')?.errors?.rangeinvalid && !thresholdForm.get('dslPortSnrThreshold')?.errors?.required">
+                                <label [innerHtml]="language.range_validation(0,10)"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="thresholds-item col-4">
+                        <label>{{language['Clear Threshold']}}(dB)</label>
+                        <div class="form-group ccl-form d-flex">
+                            <input type="text" class="form-control" step="1"
+                                (keypress)="removespecialcharacter($event,'minus')" appCustomdecimalpoint
+                                formControlName="dslPortSnrThresholdClear" placeholder="">
+                            <span
+                                (click)="thresholdForm.get('dslPortSnrThresholdClear').setValue(Defaultvalue.dsl_snr_clear)">
+                                <p class="primary-reset mx-2"
+                                    [class.cursor-ban]="thresholdForm.get('dslPortSnrThresholdClear').value == Defaultvalue.dsl_snr_clear">
+                                    {{language['reset']}}</p>
+                            </span>
+                        </div>
+                        <div class="errorMessage" *ngIf="(thresholdForm.get('dslPortSnrThresholdClear')?.touched || issubmit )&&
+                 thresholdForm.get('dslPortSnrThresholdClear')?.errors?.required">
+                            <label>{{ language["This field is required"] }}.</label>
+                        </div>
+                        <div class="errorMessage"
+                            *ngIf="thresholdForm.get('dslPortSnrThresholdClear')?.errors?.rangeinvalid && !thresholdForm.get('ontPonPowerLevelThresholdsClear.xponRxSignalLoThreshold')?.errors?.required">
+                            <label [innerHtml]="language.range_validation(0,10)"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row px-3">
+            <button *ngIf="hasWriteAccess" type="button" (click)="isnewuser ? saveData(): updataData()" id="save"
+                [disabled]='save_disable' class="btn-default btn-primary mr-20px"> {{language['Save']}}
+            </button>
+        </div>
+    </form>
+</div>

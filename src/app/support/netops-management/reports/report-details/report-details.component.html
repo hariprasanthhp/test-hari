@@ -1,0 +1,92 @@
+<div class="row">
+	<div class="col-12">
+		<a id="back" type="button" class="btn btn-link primary" (click)="Reportlist()">
+			<i class="fa fa-angle-left  primary" aria-hidden="true"></i>
+			<span class="text ml-1 primary">Back to Reports</span>
+		</a>
+	</div>
+	<div class="col-lg-3 col-md-3 col-sm-12">
+
+
+		<div class="yearly-report">
+
+			<div class="flex-space-between years-holder" data-toggle="collapse" data-target="#collapseExample"
+				aria-expanded="false" aria-controls="collapseExample">
+				<div class="year">
+					<div class="col-md-1 ccl-accordion-icon text-right"></div>
+					<!-- <span class="toggle-arrow">
+						<i class="fa collapse-icon fa-angle-down" aria-hidden="true"></i>
+					</span> -->
+					2021
+				</div>
+				<div class="yearly-count">
+					{{totalcount}}
+				</div>
+			</div>
+
+			<div class="collapse month-list-data show" id="collapseExample">
+				<ul class="mb-0">
+					<li class="active" *ngFor="let month of summarylist">
+						<div class="flex-space-between" (click)='SummaryDetail(month)'>
+							<div class="month-date"> {{month.endTime | date:'MMMM d'}}</div>
+							<div class="month-count">{{month.result?month.result.subscriberCount:' '}}
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+
+		</div>
+	</div>
+	<div class="col-lg-9 col-md-9 col-sm-12">
+		<div class="month-based-data">
+			<div class="flex-space-between">
+				<h4> {{name}} <sup><i class="fa fa-fw fa-info-circle info primary" aria-hidden="true" data-toggle="tooltip" title="{{description}}"></i></sup></h4>
+				<button class="btn btn-primary" (click)="export()"> Export</button>
+			</div>
+
+			<div class="about-data">
+				<div class="month-date-year">
+					<p> {{fulldate ?(fulldate | date: 'MMMM d, y' ):'' }}</p>
+				</div>
+				<div class="empty-data" *ngIf="errorindetail">
+					<p> This report is empty. </p>
+				</div>
+				<table class=" dataTable hover table-alter avoid-table" *ngIf="indetail">
+					<thead>
+						<tr>
+							<th>Account Number</th>
+							<th>Name </th>
+							<th>Serial Number</th>
+							<th>Radio Band</th>
+							<th>Interfence</th>
+						</tr>
+					</thead>
+
+					<tbody>
+						<tr *ngFor="let list of summarylistDetail">
+							<td>
+								{{list["Account Number"]?list["Account Number"]:" "}}
+							</td>
+							<td>
+								{{list.Name?list.Name:' '}}
+							</td>
+							<td>
+								{{list.serialNumber?list.serialNumber:" "}}
+							</td>
+							<td>
+								{{list["radio-Band"]?list["radio-Band"]:" "}}
+							</td>
+							<td>
+								{{list["Interfence"]?list["Interfence"]:" "}}
+							</td>
+
+						</tr>
+
+					</tbody>
+
+				</table>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,92 @@
+<section>
+
+    <div class="container">
+        <div class="loader load" *ngIf="loading">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                </div>
+            </div>
+        </div>
+        <div class="py-3 warning-msg" *ngIf="deletedata">
+            <span class="error-img"><img src="./assets/img/warning-icon.svg"></span>
+            <span style="width: 500px; word-wrap: break-word; display: inline-block">
+                {{ language["Are you sure you want to
+                delete"] }}
+                <b>{{ modalInfo }}</b> ?
+            </span>
+            <div class="btn-con-sec float-right">
+
+                <button class="btn warn-btn mr-2" id="deletePFBtn" [disabled]="btnDisabled"
+                    (click)="Deletesubscriber()">
+                    Confirm
+                </button>
+                <button class="btn warn-btn" (click)="closeModal()">Cancel</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="w-100 alert alert-danger  fade show my-3" *ngIf="error">
+                <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+                <button type="button" class="close" (click)=" error = false"><span></span></button>
+                <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+            </div>
+
+            <div class="w-100 alert alert-success fade show my-3" *ngIf="success">
+                <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+                <button type="button" class="close" (click)="success = false"><span></span></button>
+                <div [innerHtml]="successInfo"></div>
+            </div>
+        </div>
+        <!-- <div class="row">
+            <div class="cco-secondary-title border-bottom w-100">
+                Service Template
+            </div>
+        </div> -->
+        <div class="row d-flex justify-content-end">
+            <a routerLink="/cco/operations/cco-subscriber-operations/templates/subscriber-templates/add"> <button
+                    type="button" id="add" class="btn-default primary px-3 my-3">{{language["Add Template"]}}
+                </button></a>
+        </div>
+
+        <div class="col-md-12" [hidden]="!dataAvailable">
+            <table id="subscriber-template" width="100%" class="row-border hover table-alter" datatable
+                [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+                <thead>
+                    <tr>
+                        <th>{{language.Name}} </th>
+                        <th>{{language["Service_Type"]}}</th>
+                        <th>{{language["Ce-Vlan"]}}</th>
+                        <th>{{language["Vlans"]}}</th>
+                        <th>{{language["Vlan Mode"]}}</th>
+                        <th>{{language["Subscribers Per Vlan"]}}</th>
+                        <th>{{language.action}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let list of subscriberList">
+                        <td>{{list.name?list.name:"--"}} </td>
+                        <td>{{list.serviceType?list.serviceType:""}}</td>
+                        <td>{{list["ceVlan"]?list.ceVlan:""}}</td>
+                        <td>{{list.vlans?list.vlans:""}}</td>
+                        <td>{{list["vlanMode"]?list.vlanMode=="N2ONE"?"N:1":"1:1":""}}</td>
+                        <td>{{list.subscribersPerVlan?list.subscribersPerVlan:""}}</td>
+                        <td>
+                            <span class="del" title="Delete">
+                                <a href="javascript:void(0)" style="cursor: pointer"
+                                    (click)="editsubscriber(list.name)">
+                                    <i class="fas fa-pencil-alt mx-2" aria-hidden="true"></i>
+                                </a>
+                            </span>
+                            <span class="del" title="Delete">
+                                <a href="javascript:void(0)" style="cursor: pointer" (click)="deleteDeviceGrp(list)">
+                                    <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                </a>
+                            </span>
+                            <!-- editsubscriber <i aria-hidden="true" class="fa fa-trash-o mx-2"></i> -->
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>

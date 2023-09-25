@@ -1,0 +1,78 @@
+.call-home-table {
+  table {
+    thead {
+      tr {
+        th {
+          font-weight: 400;
+          font-size  : 16px;
+        }
+      }
+    }
+  }
+
+}
+
+
+.call-home-table {
+  table {
+    tbody {
+      tr {
+
+        .remove {
+          display: none;
+        }
+
+        .remove span {
+          background: #EBEAEF !important;
+        }
+
+      }
+
+      tr:hover {
+
+        .remove {
+          display : block;
+          cursor  : pointer;
+          float   : right;
+          position: relative;
+          top     : 11px;
+        }
+
+      }
+    }
+  }
+}
+
+.btn-default .btn-dft {
+  border          : 1px solid #EBEAEF !important;
+  background-color: none !important;
+}
+.dropdown {
+  .dropdown-menu {
+    border-radius     : 16px;
+    box-shadow        : 0px 5px 15px rgba(128, 128, 128, 0.25);
+    -webkit-box-shadow: 0px 5px 15px rgba(128, 128, 128, 0.25);
+    border-color      : rgba(0, 0, 0, .05) !important;
+    min-width         : 175px;
+
+    button.btn {
+      width        : 100% !important;
+      border-radius: 0px !important;
+      text-align   : left;
+      padding      : 10px 25px;
+
+      &:hover {
+        background-color: #EDF5FF !important;
+      }
+    }
+  }
+}
+::ng-deep{
+.alert-del-modal{
+  .modal-content {background: #FFF9F5 !important;border-radius: 24px !important;padding:36px !important;}
+}
+}
+.dfl-icon { width: 72px; img{width: 48px; margin-top: 6px;margin-top: 5px;}}
+.dflex-item{width: calc(100% - 72px);}
+.mw-45{min-width: 45px;}
+.custom-selectbox.state-filter{min-width: 160px;}

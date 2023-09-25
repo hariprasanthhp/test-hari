@@ -1,0 +1,122 @@
+.bark-table {
+  table {
+    td {
+      font-weight: 400;
+      font-size: 15px;
+      line-height: 24px;
+      color: #4C4C4C;
+      padding: 0px 10px 0px 0px;
+    }
+
+    tbody tr:first-child {
+      td {
+        border-top: 0;
+      }
+    }
+  }
+}
+
+.redoDisablity{
+  pointer-events: none;
+  opacity: 0.6 !important;
+  }
+
+.highlightRed {
+  color: #C70000 !important;
+}
+
+.highlightGreen {
+  color: #008000;
+
+
+}
+
+::ng-deep {
+  .custom-large-modal .modal-dialog {
+    max-width: 75% !important;
+  }
+
+  .custom-large-modal .modal-body {
+    min-height: 500px;
+  }
+}
+
+.escalate-list {
+  ul {
+    margin-top: 30px;
+    list-style: none;
+
+    li {
+      margin-bottom: 8px;
+    }
+  }
+
+  ol {
+
+    margin-left: 15px;
+
+    li {
+      margin-bottom: 8px;
+    }
+  }
+}
+
+.btn-close {
+  background: transparent;
+  border: none;
+
+  img {
+    opacity: 0.5;
+  }
+
+  &:hover {
+    img {
+      opacity: 1;
+    }
+  }
+}
+
+.ccl-secondary-title {
+  font-weight: 300;
+  font-size: 24px;
+  line-height: 30px;
+  color: #1A1F22;
+  margin-bottom: 17px;
+    padding-bottom: 8px;
+}
+
+.change-case {
+  text-transform: capitalize;
+}
+
+.gray-text {
+  color: #808080
+}
+
+.w-24 {
+  width: 24px;
+  cursor: pointer;
+}
+
+.error-img-w {
+  width: 50px;
+  float: left;
+  height: 100%;
+}
+
+.alert-msg-w {
+  width: 85%;
+  height: 100%;
+}
+
+//used for editor with Quill and primeng
+.col-auto-width{min-width: 100px;}
+.bark-mail-body {
+  overflow: auto;
+  max-height: 300px;
+}
+.mail-disable {
+  background-color: transparent;
+  cursor: not-allowed;
+  border: none;
+}

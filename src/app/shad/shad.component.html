@@ -1,0 +1,59 @@
+<div class="page-wrapper">
+  <div class="maximus">
+    <app-shad-header></app-shad-header>
+
+    <div class="alert alert-warning" role="alert" [hidden]="shadAccess">
+      {{
+        language[
+          "Access denied due to RBAC. Please consult your Organization Administrator for access."
+        ]
+      }}
+    </div>
+
+    <div class="row" [hidden]="!shadAccess">
+      <div class="col-md-2 position-fixed">
+        <ul class="nav flex-column left-menu">
+          <li class="nav-item" *ngFor="let menu of menu_items">
+            <a
+              class="nav-link"
+              routerLinkActive="active"
+              [routerLink]="[menu.link]"
+              ><i
+                class="{{ menu.icon.pack }} {{ menu.icon.icon }}"
+                aria-hidden="true"
+              ></i
+              >{{ menu.title }}</a
+            >
+          </li>
+        </ul>
+      </div>
+      <div class="col-md-10 offset-md-2">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-shad-footer></app-shad-footer>
+
+<!-- <div class="container">
+    <div class="row">
+        <div class="col-md-2">
+            <ul class="nav flex-column left-menu">
+                <li class="nav-item">
+                  <a class="nav-link active" href="#">DashBoard</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Firmware Update</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Update History</a>
+                </li>
+
+              </ul>
+        </div>
+        <div class="col-md-10">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+</div> -->

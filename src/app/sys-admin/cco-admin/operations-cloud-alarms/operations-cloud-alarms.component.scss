@@ -1,0 +1,114 @@
+.blur-bg{
+    pointer-events: none;
+    opacity: 0.7;
+}
+.filters-cl{
+    margin-top:32px;
+    margin-bottom: 21px;
+}
+.operations-cloud-alarms-table {
+    width: 100%;
+    table {
+        width: 100%;
+
+        thead {
+            tr {
+                th {
+                    font-weight: 600;
+                    font-size: 16px;
+                    line-height: 20px;
+                    padding-bottom: 7px;
+                    border-bottom: 1px solid #CCCCCC;
+                }
+
+                TH:nth-child(1) {
+                    width: 50%;
+                }
+
+                TH:nth-child(2) {
+                    width: 25%;
+                }
+
+                TH:nth-child(3) {
+                    width: 25%;
+                }
+            }
+        }
+
+        tbody {
+            tr {
+                td {
+                    font-weight: 400;
+                    font-size: 15px;
+                    line-height: 24px;
+                    padding: 7px 0px;
+                }
+            }
+
+            tr:hover {
+                background-color: #EDF5FF;
+            }
+
+            tr:nth-child(even) {
+                background-color: #F8F8FA;
+            }
+
+            tr:nth-child(even):hover {
+                background-color: #EDF5FF;
+            }
+        }
+    }
+}
+
+.severity-select {
+    width: 100%;
+    padding-right: 20px;
+    max-width: 150px;
+}
+
+// .severity-select {
+//     .ng-select.ng-select-single .ng-select-container {
+//         height: 20px;
+//     }
+// }
+.critical-select-inp {
+    .ng-select.ng-select-single .ng-select-container {
+        height: 34px !important;
+        box-shadow: none !important;
+        outline: none !important;
+    }
+
+
+
+}
+
+.hide-close-search{
+    display: none;
+}
+.show-close-search{
+    color:#808080;
+    display: block;
+    position: absolute;
+    right: 50px;
+    font-size: 22px;
+    top: 0px;
+  }
+  .close-icon-pos{position: absolute;right: 15px;}
+.max-w170-select{
+    max-width: 210px;
+    min-width: 130px;
+}
+.editDeviceClass{
+    position: relative;
+    top: 8px;
+    right: 0;
+}
+.min-width-130{min-width: 130px;}
+.diable-div{
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.cursornallow {
+    cursor: not-allowed
+}

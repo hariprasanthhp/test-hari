@@ -1,0 +1,8 @@
+<div class="flow-config-tab" *ngIf="pageAvailable && showTabMenu">
+  <ul class="nav">
+    <li class="nav-item" *ngFor="let menu of menus">
+      <a class="nav-link" id="{{menu.title}}" routerLink="{{menu.routeLink}}"
+        [routerLinkActive]="['active']">{{menu.title}}</a>
+    </li>
+  </ul>
+</div>

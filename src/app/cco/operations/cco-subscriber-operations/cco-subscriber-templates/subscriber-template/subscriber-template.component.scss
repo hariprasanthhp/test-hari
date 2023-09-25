@@ -1,0 +1,19 @@
+.form-control-sm {
+    min-height: 38px !important;
+    max-height: 42px !important;
+    padding: .25rem .5rem;
+    font-size: .875rem;
+    line-height: 1.5;
+    border-radius: 1.2rem !important;
+    background-color: #f8f8fa !important;
+    border: none !important;
+}
+select{
+    border-radius: 20px;
+    // background: #F8F8FA;
+    // background-image: url(assets/img/ic_chevrondown.svg);
+    background: url(http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png) no-repeat right #f8f8fa10;
+    -webkit-appearance: none;
+    // background-position-x: 100px 5px;
+    background-position: right 17px center;
+}

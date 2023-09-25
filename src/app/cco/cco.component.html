@@ -1,0 +1,16 @@
+<div class="page-wrapper" [hidden]="!tosAgreed">
+    <div class="maximus">
+        <app-cco-header></app-cco-header>
+    </div>
+
+    <div role="alert" class="alert alert-warning" *ngIf="noScopes"> {{language['Access denied due to RBAC. Please
+        consult your Organization Administrator for access.']}} </div>
+    <!-- <p-toast></p-toast> -->
+
+    <div class="maximus" [ngClass]="{ dashboardFrame: router.url == '/cco/dashboard' }" [hidden]="noScopes">
+        <router-outlet></router-outlet>
+
+    </div>
+</div>
+
+<app-cco-footer [hidden]="!tosAgreed"></app-cco-footer>

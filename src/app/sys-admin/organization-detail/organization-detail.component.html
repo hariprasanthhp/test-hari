@@ -1,0 +1,216 @@
+<div class="container mh-65 position-relative">
+    <div class="loader" *ngIf="loader">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    </div>
+    <div class="w-100 alert alert-danger  fade show" *ngIf="error">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+        <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+        <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+    </div>
+
+    <div class="w-100 alert alert-success fade show" *ngIf="success">
+        <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+        <div [innerHtml]="successInfo"></div>
+    </div>
+    <div class="row  my-3">
+        <div class="col-md-8">
+            <div class="ccl-title">{{orgName}} </div>
+        </div>
+        <div class="col-md-4 px-0">
+            <div class="text-right"><a class="back-text" id="back-org-list" (click)=goToOrgList();><i
+                        class="fa fa-angle-left mr-3" aria-hidden="true"></i>{{language.backtoorg}}</a>
+            </div>
+        </div>
+    </div>
+    <div class="row my-3">
+        <div class="col-md-6">
+            <div class="ccl-title">{{language.addadmin}} </div>
+
+            <div class="row my-3 ccl-form">
+
+                <div class="col-md-8 pr-0">
+                    <ng-select id="admins-list" class="ccl-select-box" [items]="usersList" bindLabel="username"
+                        [(ngModel)]="selectedUsers" [clearable]="false" [ngModelOptions]="{standalone: true}"
+                        [multiple]="true" placeholder="" [disabled]="!usersList?.length">
+                    </ng-select>
+                </div>
+                <div class="col-md-4"> <button _ngcontent-veq-c50="" class="btn-default primary px-1" id="add-user"
+                        (click)="addUser()" [disabled]="!usersList?.length">{{language.add}}</button></div>
+
+
+            </div>
+
+
+        </div>
+    </div>
+    <div class="row my-3">
+        <div class="col-md-12" [hidden]="!dataAvailable">
+            <div class="w-100 alert alert-danger  fade show" *ngIf="warning">
+                <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+                <button type="button" class="close" (click)="closeAlertWarning()"><span></span></button>
+                <div class="d-inline-flex" [innerHtml]="warningInfo"></div>
+            </div>
+            <table id="org-detail-users" width="100%" class="row-border hover table-alter w-100" datatable
+                [dtOptions]="tableOptions" [dtTrigger]="dtTrigger">
+                <thead class="">
+                    <tr>
+                        <th>{{language.username}}</th>
+                        <th>{{language.action}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr id="{{item.id}}" *ngFor="let item of addedUsersList">
+                        <td>
+                            {{item.username}}
+                        </td>
+                        <td class="actions text-nowrap">
+                            <i class="fas fa-trash-alt primary p-1 cursor-pointer" title="{{language.delete}}"
+                                id="delete-user" (click)="deleteUser(item)"></i>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+
+    <div class="row my-3">
+
+        <div class="col-md-12">
+            <div class="ccl-title">{{language.entitlements}} </div>
+        </div>
+        <div class="col-md-12 my-2" *ngIf="entitlementAvailable">
+            <form id="entitlementsForm">
+                <table datatable class="row-border hover table-alter" [dtOptions]="dtOptions">
+                    <thead class="">
+                        <tr>
+                            <th>{{language.appName}}</th>
+                            <th class="hiddenCol p-0"></th> <!-- {{language.entitled}} -->
+                            <th class="hiddenCol p-0"></th> <!-- {{language.inherited}} -->
+                            <th>{{language.salesStartdate}}</th>
+                            <th>{{language.salesEnddate}}</th>
+                            <th>{{language.Status}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr *ngFor="let item of entitlements; let i = index">
+                            <td>
+                                <input type="hidden" name="appType" value="{{item.appType}}">
+                                <input type="hidden" name="name" value="{{item.name}}">
+                                {{item.name}}
+                            </td>
+                            <td class="hiddenCol p-0">
+                                <div class="form-check">
+                                    <label class="form-check-label">
+                                        <input id="{{item.appType}}_entitled" type="checkbox"
+                                            [checked]="['active', 'about_to_expire', 'in_grace_period'].includes((entStatus[i] || '').toLowerCase())"
+                                            name="entitlement" value="{{item.appType}}"
+                                            class="{{item.appType}} not-allow d-none" [readonly]="true"
+                                            (click)="preventClick($event);">&nbsp;&nbsp;&nbsp;
+                                    </label>
+                                </div>
+                            </td>
+
+                            <td class="hiddenCol p-0">
+                                <div class=" form-check">
+                                    <label class="form-check-label">
+                                        <input id="{{item.appType}}_inherited" type="checkbox" [checked]="false"
+                                            name="inherited" class="{{item.appType}} not-allow d-none" [readonly]="true"
+                                            (click)="preventClick($event);">
+                                        &nbsp;&nbsp;&nbsp;
+                                    </label>
+                                </div>
+                            </td>
+
+                            <td>{{item.startDate ? item.startDate : '' }}</td>
+                            <td>{{item.endDate ? item.endDate : '' }}</td>
+                            <td class="org-detail-status">
+                                <!-- <div class="input-group">
+                                <input style="color:red" class="form-control" placeholder="yyyy-mm-dd" name="dp"
+                                    [(ngModel)]="item.overrideEndDate_obj" ngbDatepicker #d="ngbDatepicker"
+                                    (dateSelect)="setOverrideDate($event, item, item.appType, item.overrideEndDate_obj)"
+                                    readonly>
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary calendar" (click)="d.toggle()"
+                                        type="button"></button>
+                                </div>
+                                <ngbd-datepicker-basic></ngbd-datepicker-basic>
+                            </div> -->
+                                <!-- <input placeholder="{{language['Choose Date']}}" [nbDatepicker]="formpicker"
+                                [value]="item.overrideEndDate" name="overrideEndDate" readonly
+                                [ngClass]="{'green': (item.checked === true && item.greenColor === true), 'red': (item.checked === false || !item.greenColor)}">
+                            <nb-datepicker #formpicker format="yyyy-MM-dd"
+                                (dateChange)="setOverrideDate($event, item, item.appType, this.value)">
+                            </nb-datepicker> -->
+                                <!--
+                                    TO fix CCL-40950
+                                    <div class="cal-pick">
+                                    <p-calendar id="{{item.appType}}_overrideEndDate" [(ngModel)]="item.overrideEndDate"
+                                        name="overrideEndDate{{item.appType}}"
+                                        [style]="{'width': '100%','height': '36px' }"
+                                        [inputStyle]="{'height': '36px', 'color': (item.checked === true && item.greenColor === true) ? 'green' : 'red'}"
+                                        appendTo="body" [autoZIndex]="true" placeholder="Choose Date" [showIcon]="true"
+                                        dateFormat="yy-mm-dd" #myCalendar [monthNavigator]="true" [yearNavigator]="true"
+                                        [yearRange]="yRange" showOtherMonths="true"
+                                        (onClose)="setOverrideDate($event, item, item.appType, myCalendar.inputFieldValue)">
+                                    </p-calendar>
+                                    <span class="overriden-input-remove "
+                                        (click)="clearOverrideEndDate($event, item, item.appType, myCalendar.inputFieldValue);">
+                                        <img src="assets/img/close-icon.svg" alt="" />
+                                    </span>
+                                </div> -->
+                                <input type="hidden" name="overrideEndDate" value="{{item.overrideEndDate}}">
+                                <ng-select [id]="'status-list'+i" placeholder="{{language['Select']}}" class="ccl-select-box"
+                                    [items]="statusList" bindLabel="label" bindValue="value" [(ngModel)]="entStatus[i]"
+                                    [ngModelOptions]="{standalone: true}"
+                                    (change)="removePlaceholder(i); showSubmitButtons = true">
+                                </ng-select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+
+    </div>
+
+    <div class="row" *ngIf="showSubmitButtons">
+        <div class="col-md-6 offset-md-6 my-2 text-right pr-0">
+            
+            <button _ngcontent-veq-c50="" class="btn-default primary" (click)="save()"
+                id="submit">{{language.saveEnregistrer}}</button>
+                <button _ngcontent-veq-c50="" class="btn-default btn-dft mx-3" (click)="cancel()"
+                    id="cancel">{{language.Cancel}}</button>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- Modals -->
+<ng-template #deleteModal let-data let-ref="dialogRef">
+
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{modalTitle}}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        {{language['Are you sure you want to delete this administrator']}}? ({{modalInfo}})
+    </div>
+    <div class="modal-footer">
+        
+        <button type="button" class="btn-default primary px-3" data-dismiss="modal"
+            (click)="confirmDeleteSecleted()">{{language.yes}}</button>
+        <button type="button" class="btn-default btn-dft py-1 px-3" data-dismiss="modal"
+        (click)="closeModal()">{{language.no}}</button>
+    </div>
+</ng-template>
+<!-- Modals -->

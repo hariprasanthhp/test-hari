@@ -1,0 +1,120 @@
+<form [formGroup]="filtersForm">
+    <div class="row">
+        <div class="col-md-12 pl-0 pr-0">
+            <div class="current-issue-menu-container flex-wrap">
+
+                <div class="current-issue-menu-item col-12 col-sm-12 col-md-3 col-lg-3">
+                    <label for="Name" class="col-form-label select-font">{{language.region}}</label>
+                    <div class="custom-selectbox" class="w-100" id="current-issues-interval">
+                        <ng-select formControlName="region" [multiple]="true" [items]="regionsDataArray" bindValue="id"
+                            bindLabel="name" class="selectboxwidth" [clearable]="false" [searchable]="true"
+                            placeholder="{{ language.region }}" (add)="validateRegion($event)"
+                            (remove)="loadLocationValue($event)">
+                        </ng-select>
+                    </div>
+                </div>
+                <div class="current-issue-menu-item col-12 col-sm-12 col-md-3 col-lg-3">
+                    <label for="Name" class="col-form-label select-font">{{ language.Location }}</label>
+                    <div class="custom-selectbox" class="w-100" id="current-issues-interval">
+                        <ng-select formControlName="location" [multiple]="true" [items]="locationDataArray"
+                            bindValue="id" bindLabel="name" class="selectboxwidth" placeholder="{{ language.Location }}"
+                            [clearable]="false" [searchable]="true" (add)="validateLocation($event)"
+                            (remove)="loadSystemValue($event)">
+                        </ng-select>
+                    </div>
+                </div>
+                <div class="current-issue-menu-item col-12 col-sm-12 col-md-3 col-lg-3">
+                    <label for="Name" class="col-form-label select-font">{{ language.System }}</label>
+                    <div class="custom-selectbox" class="w-100" id="current-issues-interval">
+                        <ng-select formControlName="system" [multiple]="true" [items]="systemDataArray" bindValue="uuid"
+                            bindLabel="name" class="selectboxwidth" placeholder="{{ language.System }}"
+                            [clearable]="false" [searchable]="true" (add)="validateSystem($event)"
+                            (remove)="validateSystem($event)">
+                        </ng-select>
+                    </div>
+                </div>
+
+                <div class="current-issue-menu-item col-12 col-sm-6 col-md-3 col-lg-3"
+                    *ngIf="appliedFilters.device_type">
+                    <label for="Name" class="col-form-label select-font">{{ language['System Type']
+                        }}</label>
+                    <div class="w-100 ccl-form" id="current-issues-interval">
+                        <ng-select [searchable]="false" formControlName="device_type" [multiple]="false"
+                            (change)="onAlarmGroupChange($event)" [clearable]="false">
+                            <ng-option value="ALL">{{ language.All }}</ng-option>
+                            <ng-option value="ONT">ONT</ng-option>
+                            <ng-option value="OLT">OLT</ng-option>
+                        </ng-select>
+                    </div>
+                </div>
+
+                <div class="current-issue-menu-item col-12 col-sm-6 col-md-3 col-lg-3"
+                    *ngIf="showFSAN && appliedFilters.fsan_serialno">
+                    <label for="Name" class="col-form-label select-font">{{ language['FSAN']
+                        }}</label>
+                    <div class="w-100 ccl-form" id="current-issues-interval">
+                        <input class="form-control" formControlName="fsan_serialno" type="text"
+                            placeholder="{{ language['FSAN'] }}" (keypress)="removespecialcharacter($event)"
+                            (keyup)="validateFSAN($event)" maxlength="12" />
+                        <small class="vald-tag red" *ngIf="!fsanvalid">{{language['Invalid FSAN']}}</small>
+
+                    </div>
+                </div>
+
+                <div class="current-issue-menu-item col-12 col-sm-12 col-md-3 col-lg-3"
+                    *ngIf="appliedFilters.alarmEventName">
+                    <label for="Name" class="col-form-label select-font">{{language['Exclude
+                        Alarms']}}</label>
+                    <div class="custom-selectbox w-100" id="current-issues-interval">
+
+                        <ng-select [searchable]="true" [clearable]="false" [multiple]="true"
+                            placeholder="{{language['Alarm Name']}}" formControlName="alarmEventName"
+                            id="alarmEventName" [items]="alarmNames" bindValue="id" bindLabel="name"
+                            (add)="validateAlarmName($event)" (remove)="validateAlarmName($event)">
+
+                        </ng-select>
+                    </div>
+                </div>
+
+
+
+                <div class="current-issue-menu-item col-12 col-sm-6 col-md-3 col-lg-3" *ngIf="!geoMapFilters">
+                    <label for="Name" class="col-form-label select-font">{{ language['Display Limit']
+                        }} <span class="error">*</span></label>
+                    <div class="w-100 ccl-form" id="current-issues-interval">
+                        <input class="form-control" formControlName="limit" type="number" placeholder="{{ language['Display Limit']
+                                    }}" min="1" />
+
+                        <div class="errorMessage"
+                            *ngIf="filtersForm?.controls?.limit.invalid && (filtersForm?.controls?.limit.dirty || filtersForm?.controls?.limit.touched)">
+                            <div *ngIf="filtersForm?.controls?.limit.errors?.invalidNumber">
+                                {{language['New_Profile_Validation2']}}
+                            </div>
+                            <div *ngIf="filtersForm?.controls?.limit.errors?.isrequired">
+                                {{language['Please enter the display limit']}}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="current-issue-menu-container">
+
+            </div>
+        </div>
+
+    </div>
+    <div class="row mt-1">
+        <div class="col-md-12 text-left">
+            <div class="d-inline-flex">
+                <button type="button" class="btn-default primary" (click)="generateParams()">
+                    {{ language.apply }}
+                </button>
+                <button type="button" class="btn-default btn-dft ml-2" (click)="clearFilter()">
+                    {{ language.Clear_Filters }} 
+                </button>
+            </div>
+        </div>
+    </div>
+</form>

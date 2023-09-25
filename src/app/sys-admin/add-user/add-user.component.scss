@@ -1,0 +1,31 @@
+.state-error{color: #C70000;}
+.detail-form {
+    position: relative;
+
+    .password-eye-icon {
+        cursor: pointer;
+        position: absolute;
+        right: 30px;
+        font-size: 16px;
+        z-index: 1;
+        color: #808080;
+        padding-top: 4px;
+    }
+}
+
+.confirm-password {
+    position: relative;
+
+    .password-eye-icon {
+        cursor: pointer;
+        position: absolute;
+        right: 16px;
+        font-size: 16px;
+        z-index: 1;
+        color: #808080;
+        padding-top: 4px;
+    }
+}
+.pwd-icon{
+    right: 25px;
+}

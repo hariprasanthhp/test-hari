@@ -1,0 +1,202 @@
+<div class="profile-review-wizard" id="profileReviewWizard">
+  <!-- <div *ngIf="!isOverViewPage">
+
+    <span class="net-ops-secondary-title">{{ language.Step_3 }}- {{ language.Review }}</span>
+  </div> -->
+  <div class="review-container pb-3">
+    <span class="net-ops-secondary-title ml-3">{{ language.Profile }}</span>
+    <hr class="my-2" />
+    <div class="container">
+      <div class="row">
+        <div class="col-md-7 pr-3">{{ language.Name }}</div>
+        <div class="col-md-5 word-brk">{{ addProfileObj?.start?.name }}</div>
+      </div>
+      <hr class="my-3" />
+      <div class="row">
+        <div class="col-md-7 pr-3">{{ language.description }}</div>
+        <div class="col-md-5 word-brk">
+          {{ addProfileObj?.start?.description }}
+        </div>
+      </div>
+    </div>
+    <div class="row my-4">
+      <div class="pl-3 ml-3 mb-2 net-ops-secondary-title accordinToggle collapsedAll text-right" id="accordinToggle">
+        {{ language.Categories
+        }}<span class="col-md-1 pl-1 ccl-accordion-icon text-right"></span>
+      </div>
+      <div class="col-md-12">
+        <div class="accordion" id="accordionExample" *ngFor="
+            let category of addProfileObj?.buildProfile?.reviewPageCategoryList;
+            let i = index
+          ">
+          <div class="card">
+            <div class="card-header collapsed" (click)="onToggleAccordion(i)" id="accordin-header"
+              data-category-id="{{ 'accordion' + i }}" data-toggle="collapse" [attr.href]="'#collapseOne_' + i"
+              aria-expanded="true" aria-controls="collapseOne">
+              <div class="row mb-0">
+                <div class="col-md-11 text-left pl-2">
+                  {{ language[category.category] || category.category
+                  }}<span *ngIf="category.category === 'QOS Rule'">
+                    ({{
+                    category.buildCategoryFormData["Rule Name"]
+                    ? category.buildCategoryFormData["Rule Name"]
+                    : category.parameterValues["QosType"]
+                    }})</span>
+                  <span *ngIf="
+                      category?.category === 'Set Parameter Value' &&
+                      category?.buildCategoryFormData['Name']
+                    ">
+                    ({{ category.buildCategoryFormData["Name"] }})</span>
+                  <span *ngIf="
+                      (category?.category === 'WiFi SSID' || category?.category === 'WiFi SSID for EXOS') &&
+                      category?.buildCategoryFormData['Select SSID']
+                    ">
+                    ({{ category.buildCategoryFormData["Select SSID"] }})</span>
+                  <span *ngIf="
+                      category?.category === 'Delete Object' &&
+                      category?.buildCategoryFormData['Object Path']
+                    ">
+                    ({{ category.buildCategoryFormData["Object Path"] }})</span>
+                  <span *ngIf="
+                      category?.category === 'Add Object' &&
+                      category?.buildCategoryFormData['Object Path']
+                    ">
+                    ({{ category.buildCategoryFormData["Object Path"] }})</span>
+                  <span *ngIf="
+                      category?.category === 'DNS Host Mapping' &&
+                      category?.buildCategoryFormData['Host Name']
+                    ">
+                    ({{ category.buildCategoryFormData["Host Name"] }})</span>
+                </div>
+                <div class="col-md-1 ccl-accordion-icon text-right"></div>
+              </div>
+            </div>
+
+            <div id="collapseOne" [attr.id]="'collapseOne_' + i" class="accordion-collaps collapse"
+              aria-labelledby="headingOne" data-parent="#accordionExample">
+              <div class="card-body pl-3">
+                <div class="support-key-value">
+                  <table *ngIf="category.category !== 'ExperienceIQ Restrictions' && 
+                    category.category !== 'ACL Entry for Remote Access' &&
+                    category.category !== 'ACL Entry for VoIP'" class="">
+                    <tbody>
+                      <tr *ngFor="let item of category.selectedCategory">
+                        <td *ngIf="
+                            (category.parameterValues[item.name] ||
+                              category.parameterValues[item.name] === false ||
+                              category.parameterValues[item.name] === 0) &&
+                            category.buildCategoryFormData[item.displayName] !==
+                              '' &&
+                            item.name !== 'AdvancedSettings'
+                          ">
+                          {{ language[item.displayName] || item.displayName }}
+                        </td>
+                        <td *ngIf="
+                            (category.parameterValues[item.name] ||
+                              category.parameterValues[item.name] === false ||
+                              category.parameterValues[item.name] === 0) &&
+                            category.buildCategoryFormData[item.displayName] !==
+                              '' &&
+                            item.name !== 'AdvancedSettings'
+                          ">
+                          {{category.buildCategoryFormData[item.displayName]==='Bridge' ? 'Bridged' :
+                          category.buildCategoryFormData[item.displayName]==='Route' ?
+                          'Routed':language[category.buildCategoryFormData[item.displayName]] ||
+                          category.buildCategoryFormData[item.displayName] }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <table *ngIf="category.category === 'ExperienceIQ Restrictions'" class="">
+                    <tbody>
+                      <tr>
+                        <td>{{language['Category List']}}</td> 
+                        <td></td>
+                      </tr>
+                      <tr *ngFor="let item of category.parameterValues?.categoryList">
+                        <td>{{ language[item.name] || item.name }}</td>
+                        <td>{{item.block ? 'Blocked' : 'Allowed'}}</td>
+                      </tr>
+                      <tr class="opacity-zero">
+                        <td>Row</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td>{{language['Applications List']}}</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td>{{language.YouTube}}</td>
+                        <td>{{category.parameterValues?.youtube.enable ? 'Blocked' : 'Allowed'}}</td>
+                      </tr>
+                      <!-- Enable if Custom App List is required -->
+                      <!-- <tr *ngFor="let app of category.parameterValues?.appList">
+                        <td>{{ app.name }}</td>
+                        <td>{{app.block ? 'blocked' : 'allowed'}}</td>
+                      </tr> -->
+                      <tr class="opacity-zero">
+                        <td>Row</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td>{{language['Websites']}}</td>
+                        <td></td>
+                      </tr>
+                      <tr *ngFor="let web of category.parameterValues?.webList">
+                        <td>Url: {{ web.webUrl }}</td>
+                        <td>{{web.block ? 'Blocked' : 'Allowed'}}</td>
+                      </tr>
+                      <tr *ngIf="!category.parameterValues?.webList.length">
+                        <td>{{ language['No Data Available'] }}</td>
+                      </tr>
+                      <tr class="opacity-zero">
+                        <td>Row</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td>{{language['Safe Search']}}</td>
+                        <td>{{category.parameterValues?.safesearch.enable ? 'Blocked' : 'Allowed'}}</td>
+                      </tr>
+                      <tr>
+                        <td>{{language['dnsOverHttp']}}</td>
+                        <td>{{category.parameterValues?.dnsoverhttps.enable ? 'Blocked' : 'Allowed'}}</td>
+                      </tr>
+                      <tr>
+                        <td>{{language['iCloudRelay']}}</td>
+                        <td>{{category.parameterValues?.icloudrelay.enable ? 'Blocked' : 'Allowed'}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <table *ngIf="category.category === 'ACL Entry for Remote Access' || category.category === 'ACL Entry for VoIP'" class="">
+                    <tbody>
+                      <tr>
+                        <td>{{ language['accessControlList'] }}</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td>{{ language['Access'] }}</td>
+                        <td *ngIf="category.category === 'ACL Entry for Remote Access'">{{ category.parameterValues?.RemoteAcl === 'true' ? language['enabled'] : language['Disabled'] }}</td>
+                        <td *ngIf="category.category === 'ACL Entry for VoIP'">{{ category.parameterValues?.SipAcl === 'true' ? language['enabled'] : language['Disabled'] }}</td>
+                      </tr>
+                      <tr *ngFor="let item of category.parameterValues?.list4">
+                        <td>{{ language[item.action] }}</td>
+                        <td>{{ item.IPAddress }}</td>
+                      </tr>
+                      <tr *ngFor="let item of category.parameterValues?.list6">
+                        <td>{{ language[item.action] }}</td>
+                        <td>{{ item.IPAddress }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

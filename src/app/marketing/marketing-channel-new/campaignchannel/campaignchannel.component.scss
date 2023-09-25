@@ -1,0 +1,499 @@
+@import "~src/assets/variables";
+
+.subscriber-details {
+	justify-content: space-between;
+	align-items    : flex-start;
+	padding-top    : 20px;
+
+	.subs-title {
+		margin-bottom: 15px;
+
+		.st-header {
+			justify-content: space-between;
+			align-items    : center;
+			margin-bottom  : 20px;
+
+			.sth-left {
+				width        : 300px;
+				padding-right: 20px;
+
+				h2 {
+					font-size    : 36px;
+					font-weight  : 300;
+					line-height  : 51px;
+					margin-bottom: 0;
+				}
+
+				p {
+					margin-bottom: 0;
+					font-size    : 22px;
+					font-weight  : 300;
+					line-height  : 28px;
+				}
+			}
+
+		}
+
+	}
+
+	// campaigns css start
+
+
+	.camp-group {
+		display  : flex;
+		flex-wrap: wrap;
+		width    : 50% !important;
+		flex     : 0 0 52% !important;
+	}
+
+	.btn-default {
+		// min-width:165px;
+	}
+
+	.campaign-link {
+		cursor: pointer;
+		color : $primary;
+
+	}
+
+	.campaign_drop {
+		padding      : 0px;
+		min-width    : auto;
+		width        : auto;
+		border-radius: 3px;
+		z-index      : 1;
+		left         : 0px !important;
+		transform    : translate(0px, 58px);
+		position     : absolute;
+		will-change  : transform;
+		top          : 0px !important;
+	}
+
+	.camp-about {
+		display           : flex;
+		align-items       : flex-end;
+		// justify-content: space-between;
+		flex-wrap         : wrap;
+		margin-bottom     : 20px;
+		width             : 50%;
+		float             : right;
+
+		justify-content: flex-end;
+
+		.camp-group {
+			display  : flex;
+			flex-wrap: wrap;
+			width    : 40%;
+			flex     : 0 0 40%;
+
+			.transparant {
+				color  : $greyaa;
+				padding: 5px 15px;
+			}
+
+			.sth-rht {
+				margin-right: 10px;
+			}
+
+			.toggle-btn {
+				min-width: auto;
+				padding  : 0px 10px;
+				cursor   : pointer;
+
+				&:hover svg g {
+					fill: $primary;
+				}
+			}
+
+		}
+
+		.camp-dropdown {
+
+			align-items: flex-end;
+
+			.advance {
+				color          : $primary;
+				font-size      : 14px;
+				text-decoration: none;
+
+				:hover {
+					text-decoration: none;
+				}
+			}
+		}
+	}
+
+	.table-data-no.camp-table {
+		.w-11 {
+			width: 11%;
+		}
+
+		thead {
+			vertical-align: bottom;
+
+			tr {
+				th {
+					vertical-align: middle;
+				}
+			}
+
+			.dropdown-button button {
+				width: auto;
+			}
+		}
+
+		tbody {
+			tr {
+
+				cursor: pointer;
+
+				&:nth-child(even),
+				&:hover {
+					background-color: #f8f8fa;
+				}
+
+				td {
+					&:last-child {
+
+						text-align: center;
+					}
+				}
+			}
+		}
+
+		.nor-wrap {
+			white-space  : nowrap;
+			overflow     : hidden;
+			text-overflow: ellipsis;
+			width        : auto;
+			max-width    : 120px;
+		}
+
+		.down-arrow-icon {
+			width              : 28px;
+			height             : 28px;
+			border-radius      : 50%;
+			justify-content    : center;
+			align-items        : center;
+			display            : flex;
+			background-image   : url(~src/assets/img/ic_chevrondown-sec-grey.svg);
+			background-position: center;
+			background-repeat  : no-repeat;
+		}
+	}
+
+	.select-font {
+		font-size: 12px;
+	}
+
+	.hide-table {
+		display: none;
+	}
+
+	// ::ng-deep table.dataTable td.dataTables_empty {
+	// 	display: none;
+	// }
+
+	//common css start
+
+	.view-button,
+	.view-data .dot-drop {
+		visibility: hidden;
+		opacity   : 0;
+	}
+
+	table.dataTable tbody tr:hover .view-button,
+	table.dataTable tbody tr:hover .view-data .dot-drop {
+		visibility: visible;
+		opacity   : 1;
+	}
+
+	.view-data {
+		display        : flex;
+		justify-content: space-between;
+		align-items    : center;
+
+		svg {
+			width    : 15px;
+			transform: rotate(90deg);
+			fill     : #4a4a4a;
+		}
+
+		button {
+			width: auto;
+		}
+
+		.dropdown-button.show .dropdown-menu.show {
+			// background: #f2f2f2;
+			top          : 0px !important;
+			right        : 0px !important;
+			left         : auto !important;
+			padding      : 0px;
+			min-width    : auto;
+			width        : auto;
+			border-radius: 3px;
+			// border: 2px solid rgba(121, 121, 121, 1);
+			z-index      : 1;
+
+			button {
+				padding: 8px 30px;
+			}
+		}
+
+	}
+
+
+	.lg-content-wrap {
+		white-space  : nowrap;
+		overflow     : hidden;
+		text-overflow: ellipsis;
+		min-width    : auto;
+		max-width    : 180px;
+	}
+
+	.text-center {
+		text-align: center;
+	}
+
+	.text-right {
+		text-align   : right;
+		padding-right: 20px;
+	}
+
+}
+
+th.text-right.action-tab.sorting,
+.action-tab.sorting_desc,
+.action-tab.sorting_asc {
+	background-image: none;
+}
+
+
+.subscriber-details .tabs-wrapper .tabs a {
+	min-width  : 192px;
+	text-align : center;
+	line-height: 40px;
+	font-size  : 28px;
+	font-weight: 300;
+	color      : #4C4C4C;
+	padding    : 15px 10px;
+	position   : relative;
+}
+
+.subscriber-details .tabs-wrapper .tabs a.active {
+	font-weight: 400;
+}
+
+.subscriber-details .tabs-wrapper .tabs a:hover {
+	text-decoration: none;
+}
+
+.subscriber-details .tabs-wrapper .tabs a.active::after {
+	content   : "";
+	position  : absolute;
+	bottom    : -1px;
+	left      : 0;
+	width     : 100%;
+	background: #0279ff;
+	height    : 2px;
+}
+
+.right-side {
+	width          : 50%;
+	margin-left    : auto;
+	justify-content: flex-end;
+}
+
+.right-side .inline-flex-drop .ng-select {
+	min-width: 150px;
+}
+
+
+
+// common css end
+@media (max-width: 1080px) {
+	table.dataTable thead tr th {
+		font-size: 14px;
+	}
+}
+
+@media (max-width: 1024px) {
+	.camp-table {
+		overflow-x: auto;
+	}
+
+	// table.dataTable{
+	// 	width: 1280px;
+	// }
+}
+
+@media (max-width: 991px) {
+	.camp-about {
+		.camp-group {
+			width: 100%;
+			flex : 0 0 100%;
+		}
+
+		.camp-dropdown {
+			justify-content: flex-end;
+			width          : 100%;
+			flex           : 0 0 100%;
+		}
+
+	}
+}
+
+@media (max-width: 425px) {
+	.btn-default {
+		font-size: 14px;
+	}
+
+	.camp-about .camp-group .transparant {
+		padding: 5px;
+	}
+
+	.camp-about .camp-dropdown .advance {
+		width      : 100%;
+		text-align : right;
+		padding-top: 10px;
+	}
+
+	.camp-about .camp-dropdown {
+		justify-content: flex-start;
+	}
+
+	.camp-about .camp-dropdown .dropdown-button button {
+		width: 130px;
+	}
+}
+
+.border-for-no-data {
+	vertical-align: middle;
+	padding       : 10px;
+
+}
+
+.campaign_table_saved .content-wrap span {
+	// -webkit-line-clamp: 2;
+	// -webkit-box-orient: vertical;
+	// overflow          : hidden;
+	// text-overflow     : ellipsis;
+	// width             : 200px !important;
+	// display           : -webkit-box;
+	// white-space       : nowrap;
+	/* -webkit-line-clamp: 2; */
+	-webkit-box-orient   : vertical;
+	/* overflow          : hidden; */
+	/* text-overflow     : ellipsis; */
+	// width             : 100%;
+	/* display           : -webkit-box; */
+	/* white-space       : nowrap; */
+	word-break           : break-word;
+}
+
+// .search-box-icon {
+// 	width           : 42px;
+// 	height          : 40px;
+// 	background-color: #0279ff;
+// 	padding         : 10px;
+// 	border-radius   : 25px;
+// }
+.search-box-icon {
+	width           : 44px;
+	height          : 40px;
+	background-color: #0279ff;
+	padding         : 8px;
+	border-radius   : 25px;
+	position        : relative;
+	right           : 48px;
+	cursor          : pointer;
+}
+
+.camp-table {
+	table {
+		thead {
+			tr {
+				th {}
+			}
+		}
+
+	}
+
+}
+
+.camp-table {
+	table {
+		tbody {
+			tr {
+				td {
+					font-size     : 15px;
+					font-style    : normal;
+					font-weight   : 400;
+					line-height   : 24px !important;
+					letter-spacing: 0em;
+					text-align    : left;
+
+					color: #333333 !important;
+				}
+			}
+		}
+
+	}
+
+}
+
+.table.dataTable tbody tr td {
+	font-size     : 15px;
+	font-style    : normal;
+	font-weight   : 400;
+	line-height   : 24px !important;
+	letter-spacing: 0em;
+	text-align    : left;
+
+	color: #333333 !important;
+}
+.hide{
+	visibility: hidden;
+}
+.show{
+	visibility: visible;
+}
+table.dataTable tbody tr:hover {
+	background-color: #EBEAEF;
+}
+.w-80px{width: 80px;}
+.w-250px{width: 250px;}
+.cur-pointer{cursor: pointer;}
+.action-tab::after,
+.action-tab::before {
+	display: none !important;
+}
+.clear-icon {
+	position: relative;
+	right: 40px;
+	top: 6px;
+	cursor: pointer;
+	width: 15px;
+}
+.modal-cust-space{
+	padding: 42px 74px 42px 62px;
+	padding-left: 62px;
+	padding-right: 74px;
+  }
+  ::ng-deep{
+	.modal-cust-md .modal-dialog{max-width: 45.55% !important;}
+	.default-modal-ui .modal-content{padding: 0 !important;}
+	.default-modal-ui .modal-body{padding-top: 0 !important;}
+  }
+
+  .icon-grey-scale{
+	filter: grayscale(1);
+	-webkit-filter: grayscale(1);;
+    opacity: 0.5;
+  }
+  .action-tab{min-width: 80px;max-width: 100px;}
+  .action-list li{margin-right: 12px;}
+  .action-list li a{cursor: pointer;}
+  .action-list li:last-child{margin-right: 0;}
+  .action-list .show{display: inline-flex !important;}
+  .action-list .hide{display: none !important;}

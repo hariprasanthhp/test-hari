@@ -1,0 +1,63 @@
+<div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess">
+  {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} </div>
+<div id="self-heal" class="tab-pane position-relative">
+
+  <div class="pb-2" *ngIf="hasScopeAccess">
+    <div class="w-100 alert alert alert-danger  fade show" *ngIf="showError">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+      <button type="button" id="hide-error-btn" class="close" (click)="hideError()"><span></span></button>
+      <div class="d-inline-flex" [innerHtml]="errorMsg"></div>
+    </div>
+    <!--  <div class="w-100 alert alert alert-success  fade show" *ngIf="showSuccess">
+      <div class="d-inline">
+        <strong>
+          <div class="pl-2 d-inline" [innerHtml]="successMsg"></div>
+        </strong>
+      </div>
+      <div class="d-inline">
+        <button type="button" id="hide-success-btn" class="close" (click)="hideSuccess()"><span></span></button>
+      </div>
+
+
+    </div> -->
+    <div class="loader" *ngIf="loading">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{language.Loading}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="d-block d-sm-none ccl-Secondary-title mb-2 col-md-12 border-bottom">Self Heal</div>
+    <form id="self-heal-form">
+      <div class="row p-0 my-3">
+        <!-- <h4 class="col-md-8 mb-4" id="self-heal-label">{{language.Self_Heal}}</h4> -->
+        <div class="float-left px-3">
+          <div class="checkbox switcher">
+            <label for="selfHealCheckbox">
+              <input [ngClass]="{'switcher-disabled': disableSelfHeal}" type="checkbox" id="selfHealCheckbox"
+                [checked]="selfHealObj.selfHeal" (change)="selfHealObj.selfHeal = !selfHealObj.selfHeal"
+                [disabled]="(!hasWriteAccess || disableSelfHeal)" (change)="submitSelfHeal()">
+              <span [ngClass]="hasWriteAccess ? '' : 'opacity-50'"><small></small></span>
+            </label>
+            <span class="mx-2">{{selfHealObj.selfHeal ? language.Enabled : language.Disabled }} </span>
+          </div>
+        </div>
+      </div>
+      <div class="text-md-left mt-2">
+        <p class="self-heal-note-content">
+          {{language['Self Healing is available for the']}}
+           <b class="bold-text">{{language['Self Healing bold text']}}</b> {{language['Self healing note content']}}
+        </p>
+      </div>
+      <!-- <div class="col-sm-12 text-md-left mt-2 pl-0">
+        <button *ngIf="hasWriteAccess && !disableSelfHeal" type="button" id="submit-btn"
+          class="btn-default primary px-3 mr-3 " (click)="submitSelfHeal()">{{language.submit}}</button>
+        <button *ngIf="hasWriteAccess && !disableSelfHeal" type="button" class="btn-default btn-dft" id="cancel-btn"
+          (click)="onCancelSelfHeal()">{{language.cancel}}</button>
+      </div> -->
+
+    </form>
+
+  </div>
+
+</div>

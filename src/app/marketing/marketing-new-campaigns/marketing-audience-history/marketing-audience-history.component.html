@@ -1,0 +1,69 @@
+<div class="row">
+    <div class="col-12 mb-2">
+        <div class="d-flex justify-content-between">
+            <div class="box_kbi">
+                <label class="cco-list-label">Target Conversion %</label>
+                <h1 class="stats-value">7%</h1>
+            </div>
+            <div class="chart-filter-select">
+                <ng-select [searchable]="false" [clearable]="false" [items]="chartFilterArray" bindValue="value"
+                    bindLabel="label">
+                </ng-select>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 my-3">
+        <div class="cco-secondary-title border-bottom pb-2 d-flex justify-content-between align-items-center"
+            id="history-campaign-audience-size-title">
+            Campaign Audience Size
+            <div class="mwc-btns flex align-items-center">
+                <button type="button" class="btn-round btn-small-24 btn-grey btn-dload mr-2"
+                    title="{{language.export}}">
+                    <img src="../../../../assets/img/ic_download_grey.svg" />
+                </button>
+                <button type="button" class="btn-round btn-small-24 btn-grey btn-expand" title="{{language.expand}}">
+                    <img src="../../../../assets/img/ic_expand_grey.svg" />
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="box_kbi pl-0 border-0">
+            <label class="cco-list-label">{{language['Daily_Campaign_Audience']}}</label>
+            <h1 class="stats-value">3,489</h1>
+        </div>
+        <div class="chart">
+
+        </div>
+    </div>
+
+</div>
+<div class="row">
+    <div class="col-12 my-3">
+        <div class="cco-secondary-title border-bottom pb-2 d-flex justify-content-between align-items-center"
+            id="history-total-subscribers-title">
+            {{language['Total_Subscribers']}}
+            <div class="mwc-btns flex align-items-center">
+                <button type="button" class="btn-round btn-small-24 btn-grey btn-dload mr-2"
+                    title="{{language.export}}">
+                    <img src="../../../../assets/img/ic_download_grey.svg" />
+                </button>
+                <button type="button" class="btn-round btn-small-24 btn-grey btn-expand" title="{{language.expand}}">
+                    <img src="../../../../assets/img/ic_expand_grey.svg" />
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="box_kbi pl-0 border-0">
+            <label class="cco-list-label">{{language['Total_Subscribers']}}</label>
+            <h1 class="stats-value">62,890</h1>
+        </div>
+        <div class="chart">
+
+        </div>
+    </div>
+
+</div>

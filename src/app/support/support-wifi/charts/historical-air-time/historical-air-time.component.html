@@ -1,0 +1,39 @@
+<div class="loader" *ngIf="loading">
+    <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+            <span class="sr-only"></span>
+        </div>
+    </div>
+</div>
+<div class="row mt-1" *ngIf="1">
+    <div class="col-md-12 px-0 ccl-tabs">
+        <ul id="tabs" class="nav nav-tabs">
+            <li class="nav-item" (click)="changeTab('1', true);" id="wifi-historical-airtime-24g-tab">
+                <a [ngClass]="{'active' : showTabName === '1'}" class="nav-link small">
+                    2.4GHz
+
+                </a>
+
+            </li>
+            <li class="nav-item" *ngIf="show5gWidgets" (click)="changeTab('2', true);"
+                id="wifi-historical-airtime-5g-tab">
+                <a [ngClass]="{'active' : showTabName === '2'}" class="nav-link small">
+                    5GHz
+                </a>
+            </li>
+            <li class="nav-item" *ngIf="metaData?.RadioAirtime6G" (click)="changeTab('3', true);"
+                id="wifi-historical-airtime-6g-tab">
+                <a [ngClass]="{'active' : showTabName === '3'}" class="nav-link small">
+                    6GHz
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+<section style="min-height: 400px;">
+    <div class="row" style="min-height: 400px;" [ngClass]="!showChart ? 'd-none' : ''">
+        <div class="col-md-12" id="wifi-historical-airtime-container">
+            <div id="history-air-time-chart" style="height: 500px;"></div>
+        </div>
+    </div>
+</section>

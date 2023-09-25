@@ -1,0 +1,77 @@
+.health-pon-menu-wrapper {
+  display: flex;
+  width: 100%;
+}
+
+.health-pon-menu-item {
+  flex-grow: 1;
+  border-left: 3px solid #cdcdcd;
+  padding-left: 20px;
+//   width: calc(100% / 6);
+  h3{
+      font-weight: 600;
+  }
+  .menu-title{
+      font-size: 14px;
+      font-weight: 500;
+  }
+  .red{
+      color: #FF3600;
+  }
+  .orange{
+
+    color: #FC7235;
+  }
+  .blue{
+      color: #72B4FF;
+
+  }
+  .yellow{
+      color: #F3B426;
+  }
+  .green{
+      color: #82BF00;
+  }
+}
+
+
+.health-pon-menu-item + .health-pon-menu-item {
+  margin-left: 2%;
+}
+.current-issue-menu-container {
+  display: flex;
+  margin: 20px 0px;
+  justify-self: start;
+}
+
+.current-issue-menu-item {
+  flex-grow: 0;
+  
+}
+
+.current-issue-menu-item + .current-issue-menu-item {
+  margin-left: 1%;
+}
+.btn-secondary {
+    color: #5f6165 !important;
+    background-color: #f8f8fa !important;
+    border-color: #f8f8fa !important;
+    padding: 3px ​10px;
+}
+.subscriber-trends-wrapper{
+ display: flex;
+  width: 100%;
+}
+.subscriber-trends-item{
+    flex-grow: 1;
+  
+  width: calc(100% / 3);
+}
+.subscriber-trends-item + .subscriber-trends-item{
+    margin-left: 5%;
+}
+.all-icon{
+    font-size: 10px;
+    color: #9c9c9c;
+    line-height: 31px;
+}

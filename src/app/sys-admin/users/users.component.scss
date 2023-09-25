@@ -1,0 +1,61 @@
+.btn-trans-icon{font-size: 12px;border: none;background-color: transparent}
+.dropdown-link{color: #0279FF;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 20px;
+}
+.dropleft .dropdown-toggle::before {
+    display: none !important;
+  }
+  .dropdown-toggle {
+    outline: none !important;
+    border: none !important;
+    background-color: transparent !important;
+    box-shadow: none;
+    font-size: 24px;
+    padding: 0;
+    line-height: 16px;
+    color: #4C4C4C;
+    &:hover{color: #0279ff;}
+    &:active{color: #0054b2;}
+    &:focus{color: #0279ff;}
+  }
+  .dropdown {
+    .dropdown-menu {
+      border-radius: 16px;
+      box-shadow: 0px 5px 15px rgba(128, 128, 128, 0.25);
+      -webkit-box-shadow: 0px 5px 15px rgba(128, 128, 128, 0.25);
+      border-color: rgba(0, 0, 0, 0.05) !important;
+      min-width: 210px;
+      button.dropdown-item {
+        width: 100% !important;
+        border-radius: 0px !important;
+        text-align: left;
+        padding: 10px 25px;
+  
+        &:hover {
+          background-color: #edf5ff !important;
+        }
+      }
+    }
+  }
+  .search-min{min-width: 235px;}
+  #userDropdownMenuBtn{min-height: 28px;}
+  .clear-icon {
+    position: relative;
+    right: -200px;
+    top: -33px;
+    cursor: pointer;
+    width: 13px !important;
+    img{
+      width: 12px !important;
+    }
+  }
+  #userDropdownMenuBtn{min-height: 28px;}
+  .clear-icon {
+    position: absolute;;
+    right: 30px;
+    top: 5px;
+    cursor: pointer;
+    width: 12px;
+  }

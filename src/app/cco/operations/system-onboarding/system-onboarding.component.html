@@ -1,0 +1,33 @@
+<div role="alert" class="alert alert-warning" *ngIf="!hasPageAccess">
+    {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} </div>
+
+<section [hidden]="!hasPageAccess">
+    <div class="container mp-0">
+        <div class="row mm-0">
+            <div class="col-12 col-md-2 pl-0 mpr-0" *ngIf="hasPageAccess">
+                <ul id="netops-list-menu" class="nav flex-column left-menu tab-view-style mbr-none">
+                    <li class="nav-item" *ngIf="menus['axoscallhome']">
+                        <a class="list-group-item list-group-item-action" [routerLink]="axosSystemsUrl"
+                            [ngClass]="{'active' : activeMenus['axos-callhome']}" id="SysOnboarding-AXOS-Systems">{{language['AXOS Systems']}}</a>
+                    </li>
+
+                    <li class="nav-item" *ngIf="menus['cmsexacallhome']">
+                        <a class="list-group-item list-group-item-action"
+                            routerLink="/cco/operations/system-onboarding/cms-exa/list"
+                            routerLinkActive="active" id="SysOnboarding-CmsExa-Systems">{{language['CMS/EXA Systems']}}</a>
+                    </li>
+
+                    <li class="nav-item" *ngIf="menus['regionsettings']">
+                        <a class="list-group-item list-group-item-action"
+                            routerLink="/cco/operations/system-onboarding/region-settings"
+                            routerLinkActive="active" id="SysOnboarding-Region-Settings">{{language['Region Settings']}}</a>
+                    </li>
+
+                </ul>
+            </div>
+            <div class="col-12 col-md-10 padl mp-0 mmt-3 pr-0 position-relative" [hidden]="!hasPageAccess">
+                <router-outlet></router-outlet>
+            </div>
+        </div>
+    </div>
+</section>

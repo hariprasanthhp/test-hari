@@ -1,0 +1,734 @@
+<div class="ip-address-category" id="ipAddressCategory">
+  <div class="w-100 alert alert-danger fade show" *ngIf="error">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+    <button type="button" class="close" (click)="closeAlert()">
+      <span></span>
+    </button>
+    <div class="d-inline-flex">
+      {{language.Profile_Passpoint_alert_msg}}
+    </div>
+  </div>
+  <div class="w-100 alert alert-danger fade show" *ngIf="sameNetworkError">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+    <button type="button" class="close" (click)="closeAlert()">
+      <span></span>
+    </button>
+    <div class="d-inline-flex">
+      {{errorInfo}}
+    </div>
+  </div>
+  <form (ngSubmit)="onSubmit(myFormGroup)" [formGroup]="myFormGroup" *ngIf="myFormGroup">
+    <div *ngFor="let parameters of categoryType; let i = index">
+      <div class="row form-group" *ngIf="
+          parameters.type === 'dropDown' &&
+          parameters.display &&
+          !parameters.hidden
+        ">
+        <label class="col col-xs-4 col-sm-4 col-md-3 col-lg-2">{{ language[parameters.displayName] ||
+          parameters.displayName }} <span *ngIf="parameters.mandatory" class="error">*</span>
+          <i class="infoIcon fa fa-info-circle hand-cursor" *ngIf="parameters.tooltip"
+            title="{{ language[parameters.tooltip] }}"></i></label>
+
+
+        <div class="col col-xs-8 col-sm-8 col-md-9 col-lg-10">
+          <div class="state-success" [ngClass]="{
+              'disable-radio-btn': parameters.disableFormField,
+              noDropCursor:
+                selectedCategoryName === 'QOS Rule' &&
+                myFormGroup.controls['QosType']?.value !== 'Custom'
+            }">
+            <ng-select [searchable]="false" [clearable]="false" [items]="parameters.valueEnums"
+              (change)="onChangeDropDown(parameters)" *ngIf="
+                parameters.name === 'QosType' &&
+                parameters.displayName !== 'Bridge LAN Interface' &&
+                parameters.displayName !== 'Member ETH Ports'
+              " formControlName="{{ parameters.name }}" bindLabel="displayName" bindValue="value"
+              id="{{ parameters.name }}">
+              <ng-template ng-label-tmp let-item="item">
+                {{language[item.displayName] || item.displayName }}
+              </ng-template>
+              <ng-template ng-option-tmp let-item="item" let-index="index">
+                {{language[item.displayName] || item.displayName }}
+              </ng-template>
+            </ng-select>
+
+
+
+
+            <ng-select [searchable]="parameters.searchable" (change)="onChangeServiceDropDown(parameters)"
+              [clearable]="false" [items]="parameters.valueEnums" [ngClass]="{
+                disableDropDown:
+                  selectedCategoryName === 'QOS Rule' &&
+                  myFormGroup.controls['QosType']?.value !== 'Custom'
+              }" *ngIf="
+                parameters.name !== 'QosType' &&
+                parameters.displayName !== 'Bridge LAN Interface' &&
+                parameters.displayName !== 'Member ETH Ports'
+              " formControlName="{{ parameters.name }}" bindLabel="displayName" bindValue="value"
+              id="{{ parameters.name }}">
+              <ng-template ng-label-tmp let-item="item">
+                {{language[item.displayName] || item.displayName }}
+              </ng-template>
+              <ng-template ng-option-tmp let-item="item" let-index="index">
+                {{language[item.displayName] || item.displayName }}
+              </ng-template>
+            </ng-select>
+
+            <!-- Member ETH Ports -->
+            <ng-select [searchable]="false" [clearable]="false" [items]="parameters.valueEnums" bindLabel="displayName"
+              bindValue="value" [(ngModel)]="memberETHVPorts" formControlName="{{ parameters.name }}" [multiple]="true"
+              [searchable]="true" id="{{ parameters.name }}" *ngIf="          
+              parameters.displayName === 'Member ETH Ports' && this.selectedCategoryName == 'Video Service'">
+              <!-- <ng-template ng-label-tmp let-item="item">
+                {{language[item.displayName] || item.displayName }}
+              </ng-template>
+              <ng-template ng-option-tmp let-item="item" let-index="index">
+                {{language[item.displayName] || item.displayName }}
+              </ng-template> -->
+            </ng-select>
+
+
+            <ng-select [searchable]="false" [clearable]="false" [items]="parameters.valueEnums" bindLabel="displayName"
+              bindValue="value" [(ngModel)]="memberETHPorts" formControlName="{{ parameters.name }}" [multiple]="true"
+              [searchable]="true" id="{{ parameters.name }}" *ngIf="          
+            parameters.displayName === 'Member ETH Ports' && this.selectedCategoryName == 'Data Service'">
+              <!-- <ng-template ng-label-tmp let-item="item">
+              {{language[item.displayName] || item.displayName }}
+            </ng-template>
+            <ng-template ng-option-tmp let-item="item" let-index="index">
+              {{language[item.displayName] || item.displayName }}
+            </ng-template> -->
+
+            </ng-select>
+
+
+            <!-- END -->
+
+            <!-- Bridge LAN Interface -->
+
+
+            <ng-select [searchable]="false" [clearable]="false" [items]="parameters.valueEnums" bindLabel="displayName"
+              bindValue="value" [(ngModel)]="selectedPort" formControlName="{{ parameters.name }}" [multiple]="true"
+              [searchable]="true" id="{{ parameters.name }}" *ngIf="
+                parameters.displayName === 'Bridge LAN Interface' && parameters.name=='BridgedInterface'
+              ">
+              <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                <span class="ng-value-icon left" (click)="clear(item)">×</span>
+                {{language[item.displayName] || item.displayName }}
+              </ng-template>
+              <ng-template ng-option-tmp let-item="item" let-index="index">
+                {{language[item.displayName] || item.displayName }}
+              </ng-template>
+            </ng-select>
+
+
+            <ng-select [searchable]="false" [clearable]="false" [items]="parameters.valueEnums" bindLabel="displayName"
+              bindValue="value" [(ngModel)]="dataExosBridgedSelectedPorts" formControlName="{{ parameters.name }}"
+              [multiple]="true" [searchable]="true" id="{{ parameters.name }}" *ngIf="
+              parameters.displayName === 'Bridge LAN Interface' 
+             && parameters.name=='ExosBridgedInterface' && this.selectedCategoryName == 'Data Service'
+            ">
+              <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                <span class="ng-value-icon left" (click)="clear(item)">×</span>
+                {{language[item.displayName] || item.displayName }}
+
+              </ng-template>
+              <ng-template ng-option-tmp let-item="item" let-index="index">
+                {{language[item.displayName] || item.displayName }}
+              </ng-template>
+            </ng-select>
+
+            <ng-select [searchable]="false" [clearable]="false" [items]="parameters.valueEnums" bindLabel="displayName"
+              bindValue="value" [(ngModel)]="videoExosBridgedSelectedPorts" formControlName="{{ parameters.name }}"
+              [multiple]="true" [searchable]="true" id="{{ parameters.name }}" *ngIf="
+              parameters.displayName === 'Bridge LAN Interface' 
+             && parameters.name=='ExosBridgedInterface' && this.selectedCategoryName == 'Video Service'
+            ">
+              <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                <span class="ng-value-icon left" (click)="clear(item)">×</span>
+                {{language[item.displayName] || item.displayName }}
+
+              </ng-template>
+              <ng-template ng-option-tmp let-item="item" let-index="index">
+                {{language[item.displayName] || item.displayName }}
+              </ng-template>
+            </ng-select>
+
+
+
+            <!-- END -->
+
+
+            <div *ngIf="parameters.notes!=''" class="f-size-75">
+              <p>{{ language[parameters.notes] }}</p>
+            </div>
+            <div class="errorMessage" *ngIf="
+                parameters.mandatory &&
+                myFormGroup.controls[parameters.name].invalid
+              ">
+              <p>{{ language["This field is required"] }}.</p>
+            </div>
+            <div class="errorMessage" *ngIf="
+                isAlreadyExisit &&
+                (selectedCategoryName === 'WiFi SSID' || selectedCategoryName === 'WiFi SSID for EXOS') &&
+                parameters.name === 'WlanIndex'
+              ">
+              <p>{{ language.New_Profile_Validation }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row pt-2 pb-3" *ngIf="
+          parameters.type === 'radio' &&
+          parameters.display &&
+          !parameters.hidden
+        ">
+        <label [ngClass]="{
+            'col-2 col-xs-4 col-sm-4 col-md-3 col-lg-2': !buildProfileObj.isFromDataModel,
+            'col-6 word-brk': buildProfileObj.isFromDataModel
+          }">
+          {{ language[parameters.displayName] || parameters.displayName }}
+          <i class="infoIcon fa fa-info-circle hand-cursor" *ngIf="parameters.tooltip"
+            title="{{ language[parameters.tooltip] }}"></i></label>
+        <div [ngClass]="{
+            'disable-radio-btn':
+              parameters.disableFormField ||
+              parameters.name === 'X_000631_Dhcp6cForPrefixDelegation' ||
+              parameters.name === 'NATEnabled' ||
+              (parameters.name === 'OptionsTimerSwitch' ? disableots : false),
+            'col-10 col-xs-8 col-sm-8 col-md-9 col-lg-10 inline-group': !buildProfileObj.isFromDataModel,
+            'col-4': buildProfileObj.isFromDataModel
+          }" id="DHCPServerEnable">
+          <label class="radio hand-cursor" [ngClass]="{
+              'col-4':
+                buildProfileObj.isFromDataModel ||
+                selectedCategoryName === 'Delete Object',
+              'col-3':
+                parameters.name === 'RTPDscpInputType' ||
+                !buildProfileObj.isFromDataModel
+              }" *ngFor="let data of parameters.valueEnums">
+            <input type="radio" id="{{ parameters.name + data.displayName }}_radioBtn"
+              formControlName="{{ parameters.name }}" name="{{ parameters.name }}" class="mr-2 hand-cursor"
+              (change)="onchangeRadio(parameters)" [value]="data.value" />
+            <i></i>{{ language[data.displayName] || data.displayName }}</label>
+          <label class="radio col-3 hand-cursor" [ngClass]="{ 'col-4': selectedCategoryName === 'Delete Object' }"
+            *ngIf="
+              parameters.defaultValue === '' &&
+              parameters.unChangedRadioBtnDisplay
+            ">
+            <input type="radio" id="{{ parameters.name }}_unChangeRadioBtn" name="{{ parameters.name }}"
+              formControlName="{{ parameters.name }}" class="mr-2 hand-cursor" value="" />
+            <i></i>{{ language.Unchanged }}</label>
+          <div *ngIf="
+              selectedCategoryName === 'Management Server' &&
+              myFormGroup.value[parameters.name] &&
+              (parameters.name === 'SupplementClient' ||
+                parameters.name === 'ConfigureMain')
+            ">
+            <label class="alert-warning">{{
+              language.New_Profile_Warning
+              }}</label>
+          </div>
+        </div>
+      </div>
+      <div class="row ccl-form form-group" *ngIf="
+          parameters.type === 'textBox' && !parameters.passwordIcon &&
+          parameters.display &&
+          !parameters.hidden
+        ">
+        <label [ngClass]="{
+            'col-2 col-xs-4 col-sm-4 col-md-3 col-lg-2': !buildProfileObj.isFromDataModel,
+            'col-6 word-brk': buildProfileObj.isFromDataModel
+          }">{{ language[parameters.displayName] || parameters.displayName }} <span *ngIf="parameters.mandatory"
+            class="error">*</span>
+          <i class="infoIcon fa fa-info-circle hand-cursor" *ngIf="parameters.tooltip"
+            title="{{ language[parameters.tooltip] || parameters.tooltip}}"></i></label>
+        <div [ngClass]="{
+            'col col-xs-8 col-sm-8 col-md-9 col-lg-10': !buildProfileObj.isFromDataModel,
+            'col-5': buildProfileObj.isFromDataModel,
+            'pos-icon-r': (parameters.name && parameters.name.indexOf('KeyPassphrase') !== -1)
+          }">
+          <input
+            [type]="(parameters.name && parameters.name.indexOf('KeyPassphrase') !== -1) ? (passwordIconShow ? 'text' : 'password') : 'text'"
+            formControlName="{{ parameters.name }}" (keyup)="
+              doCustomValidation(parameters.name);
+              onCommaSeparateValidation(parameters.name);
+              onQosRuleNameValidation(parameters.name);
+              ipZeroValidation(parameters);
+            " placeholder="{{ language[parameters.watermark] }}" id="{{ parameters.name }}"
+            name="{{ parameters.name }}" value="{{ parameters.defaultValue }}" class="valid"
+            [ngClass]="{ 'disable-radio-btn': parameters.disableFormField }" />
+          <span *ngIf="parameters.name && parameters.name.indexOf('KeyPassphrase') !== -1" class="togg-icon"
+            (click)="passwordedit()">
+            <i class="password-icon-toggle" [ngClass]="passwordIconShow ? 'password_view' : 'password_hide'"></i>
+          </span>
+          <div class="errorMessage" *ngIf="
+            dnsAlreadyExist &&
+            (selectedCategoryName === 'DNS Host Mapping') &&
+            parameters.name === 'HostName'
+          ">
+            <p>{{ language.New_Profile_Validation }}</p>
+          </div>
+          <div class="errorMessage" *ngIf="
+              parameters.objectDefaultType === 'string' &&
+              !myFormGroup.controls[parameters.name]?.errors?.maxlength &&
+              !myFormGroup.controls[parameters.name]?.errors?.minlength &&
+              !myFormGroup.controls[parameters.name]?.errors?.required &&
+              myFormGroup.controls[parameters.name].invalid
+            ">
+            <small>
+              {{
+              parameters.tooltip ? language[parameters.tooltip] || parameters.tooltip : errorMsgForInterFacID
+              }}
+            </small>
+          </div>
+          <div class="errorMessage" *ngIf="
+              ((!parameters.isIPAddress && parameters.mandatory) ||
+                ((parameters.objectDefaultType === 'int' ||
+                  parameters.objectDefaultType === 'string') &&
+                  parameters.mandatory)) &&
+              parameters.name !== 'SetParamValueProfileValue' &&
+              myFormGroup.controls[parameters.name].invalid &&
+              myFormGroup.controls[parameters.name]?.errors?.required
+            ">
+            <p class="test">{{ language["This field is required"] }}.</p>
+          </div>
+          <div class="errorMessage" *ngIf="
+              !parameters.isIPAddress &&
+              parameters.mandatory &&
+              parameters.name === 'SetParamValueProfileValue' &&
+              selectedCategoryName === 'Set Parameter Value'
+            ">
+            <p class="test12" *ngIf="myFormGroup.controls[parameters.name]?.errors?.required">
+              {{ language["This field is required"] }}.
+            </p>
+            <p *ngIf="
+                !isSetParamValueProfileValueInvalidInt &&
+                !myFormGroup.controls[parameters.name]?.errors?.required
+              ">
+              {{ setParameterError }}
+            </p>
+          </div>
+          <div class="errorMessage" *ngIf="
+              parameters.objectDefaultType === 'MACAddressListWithWildcard' &&
+              parameters.mandatory
+            ">
+            <p *ngIf="
+                !myFormGroup.controls[parameters.name]?.errors?.required &&
+                !isValidMacAddress
+              ">
+              {{ language.Enter_A_Valid_MAC }}
+            </p>
+          </div>
+          <div class="errorMessage" *ngIf="parameters.name === 'HostName' && parameters.mandatory">
+            <p *ngIf="
+                !myFormGroup.controls[parameters.name]?.errors?.required &&
+                validHostName
+              ">
+              {{language["Please enter a valid HostName and these are not valid characters"] }}
+              ({{hostnameValidateString}})
+            </p>
+          </div>
+          <div class="errorMessage" *ngIf="
+              (parameters.objectDefaultType === 'int' ||
+                parameters.objectDefaultType === 'unsignedInt') &&
+              myFormGroup.controls[parameters.name].invalid
+            ">
+            <p *ngIf="myFormGroup.controls[parameters.name]?.errors?.pattern">
+              {{ language.New_Profile_Validation2 }}
+            </p>
+            <p *ngIf="myFormGroup.controls[parameters.name]?.errors?.max">
+              {{ language.New_Profile_Validation3 }}
+              {{ myFormGroup.controls[parameters.name]?.errors?.max.max }}.
+            </p>
+            <p *ngIf="myFormGroup.controls[parameters.name]?.errors?.min">
+              {{ language.New_Profile_Validation4 }}
+              {{ myFormGroup.controls[parameters.name]?.errors?.min.min }}.
+            </p>
+          </div>
+          <div class="errorMessage" *ngIf="myFormGroup.controls[parameters.name].invalid">
+            <p *ngIf="myFormGroup.controls[parameters.name]?.errors?.maxlength">
+              {{ language.New_Profile_Validation5 }}
+              {{
+              myFormGroup.controls[parameters.name]?.errors?.maxlength
+              ?.requiredLength
+              }}
+              {{ language.Characters }}.
+            </p>
+            <p *ngIf="myFormGroup.controls[parameters.name]?.errors?.minlength">
+              {{ language.New_Profile_Validation6 }}
+              {{
+              myFormGroup.controls[parameters.name]?.errors?.minlength
+              ?.requiredLength
+              }}
+              {{ language.Characters }}.
+            </p>
+          </div>
+          <div class="errorMessage" *ngIf="
+              parameters.objectDefaultType === 'HostNameOrIPAddress' &&
+              myFormGroup.controls[parameters.name].value !== ''
+            ">
+            <p *ngIf="!parameters.isHostNameIPAddresValid">
+              {{ language.New_Profile_Validation7 }}
+            </p>
+          </div>
+          <div class="errorMessage" *ngIf="isAlreadyExisit && parameters.name === 'X_000631_ClassName'">
+            <p>{{ language.New_Profile_Validation }}</p>
+          </div>
+          <div class="errorMessage" *ngIf="
+              parameters.isIPAddress &&
+              myFormGroup.controls[parameters.name].invalid &&
+              selectedCategoryName !== 'Set Parameter Value'
+            ">
+            <p *ngIf="
+                parameters.mandatory &&
+                myFormGroup.controls[parameters.name]?.errors?.required;else elseTemplateName
+              ">
+              {{ language["This field is required"] }}.
+            </p>
+            <ng-template #elseTemplateName>
+              <p *ngIf="
+                (parameters.objectDefaultType !== 'IPv6Address' &&
+                parameters.displayName !== 'Subnet Mask' &&
+                parameters.objectDefaultType !== 'IPv6Prefix' && 
+                !myFormGroup.controls[parameters.name]?.errors?.required) ||
+                validIPAddress
+              ">
+                {{ language["Please enter a valid IP address"] }}
+              </p>
+            </ng-template>
+
+            <p *ngIf="
+                parameters.objectDefaultType === 'IPv6Address' &&
+                parameters.displayName !== 'Subnet Mask' &&
+                parameters.name !== 'X_000631_IPv6DNSServers' &&
+                !myFormGroup.controls[parameters.name]?.errors?.required &&
+                parameters.name !== 'IPv6DNSServers'
+              ">
+              {{ language.New_Profile_Validation10 }}
+            </p>
+            <p *ngIf="
+                parameters.displayName === 'Subnet Mask' &&
+                !myFormGroup.controls[parameters.name]?.errors?.required
+              ">
+              {{ language.New_Profile_Validation8 }}
+            </p>
+          </div>
+
+          <div class="errorMessage">
+            <p *ngIf="parameters.name == '6rdPrefix' && !valid6rdPrefix">
+              {{language['Please enter a valid IPv6 Prefix']}}
+            </p>
+            <p *ngIf="parameters.name == 'Range1Start' && !validRange1Start">
+              {{ language.New_Profile_Validation9 }}
+            </p>
+
+            <p *ngIf="parameters.name == 'Range1End' && !validRange1End">
+              {{ language.New_Profile_Validation9 }}
+            </p>
+
+            <p *ngIf="
+                parameters.name == 'Vlan1Range1Start' && !validMultiCastIpStart
+              ">
+              {{ language.New_Profile_Validation9 }}
+            </p>
+
+            <p *ngIf="
+                parameters.name == 'Vlan1Range1End' && !validMultiCastIpEnd
+              ">
+              {{ language.New_Profile_Validation9 }}
+            </p>
+
+            <p *ngIf="
+                !myFormGroup.controls[parameters.name]?.errors?.required &&
+                parameters.name == 'DNSServers' &&
+                !validDNSServers
+              ">
+              {{ language.New_Profile_Validation11 }}
+            </p>
+
+            <p *ngIf="
+                !myFormGroup.controls[parameters.name]?.errors?.required &&
+                (parameters.name == 'X_000631_IPv6DNSServers' ||
+                  parameters.name == 'IPv6DNSServers') &&
+                !validX_000631_IPv6DNSServers
+              ">
+              {{ language.New_Profile_Validation10 }}
+            </p>
+            <p *ngIf="
+                            !myFormGroup.controls[parameters.name]?.errors?.required &&
+                            (parameters.name == 'X_000631_IPv6DNSServers' ||
+                              parameters.name == 'IPv6DNSServers') &&
+                            !validX_000631_IPv6PrimaryDNSServer
+                          ">
+              {{ language.New_Profile_Validation12 }}
+            </p>
+            <p *ngIf="passwordCheck &&
+             !myFormGroup.controls[parameters.name]?.errors &&
+             selectedCategoryName == 'Support User Credentials' &&
+            parameters.name === 'Password'">
+              {{ language.New_Profile_Validation13 }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- TextBox with PassPharse  -->
+
+      <div class="row ccl-form form-group pos-icon-r" *ngIf="
+      parameters.type === 'textBox' && parameters.passwordIcon &&
+      parameters.display &&
+      !parameters.hidden
+    ">
+        <label [ngClass]="{
+        'col-2 col-xs-4 col-sm-4 col-md-3 col-lg-2': !buildProfileObj.isFromDataModel,
+        'col-6 word-brk': buildProfileObj.isFromDataModel
+      }">{{ language[parameters.displayName] || parameters.displayName }} <span *ngIf="parameters.mandatory"
+            class="error">*</span>
+          <i class="infoIcon fa fa-info-circle hand-cursor" *ngIf="parameters.tooltip"
+            title="{{ language[parameters.tooltip] }}"></i></label>
+        <div [ngClass]="{
+        'col col-xs-8 col-sm-8 col-md-9 col-lg-10': !buildProfileObj.isFromDataModel,
+        'col-5': buildProfileObj.isFromDataModel
+      }">
+          <input [type]="passwordIconShow ? 'text' : 'password'" formControlName="{{ parameters.name }}" (keyup)="
+          doCustomValidation(parameters.name);
+          onCommaSeparateValidation(parameters.name);
+          onQosRuleNameValidation(parameters.name);
+          ipZeroValidation(parameters);
+        " placeholder="{{ language[parameters.watermark] }}" id="{{ parameters.name }}" name="{{ parameters.name }}"
+            value="{{ parameters.defaultValue }}" class="valid"
+            [ngClass]="{ 'disable-radio-btn': parameters.disableFormField }" />
+
+          <span class="togg-icon" (click)="passwordedit()">
+            <i class="password-icon-toggle" [ngClass]="passwordIconShow ? 'password_view' : 'password_hide'"></i>
+          </span>
+          <div class="errorMessage" *ngIf="
+        dnsAlreadyExist &&
+        (selectedCategoryName === 'DNS Host Mapping') &&
+        parameters.name === 'HostName'
+      ">
+            <p>{{ language.New_Profile_Validation }}</p>
+          </div>
+          <div class="errorMessage" *ngIf="
+          parameters.objectDefaultType === 'string' &&
+          !myFormGroup.controls[parameters.name]?.errors?.maxlength &&
+          !myFormGroup.controls[parameters.name]?.errors?.minlength &&
+          !myFormGroup.controls[parameters.name]?.errors?.required &&
+          myFormGroup.controls[parameters.name].invalid
+        ">
+
+
+            <small>
+              {{
+              parameters.tooltip ? language[parameters.tooltip] || parameters.tooltip : errorMsgForInterFacID
+              }}
+            </small>
+          </div>
+          <div class="errorMessage" *ngIf="
+          ((!parameters.isIPAddress && parameters.mandatory) ||
+            ((parameters.objectDefaultType === 'int' ||
+              parameters.objectDefaultType === 'string') &&
+              parameters.mandatory)) &&
+          parameters.name !== 'SetParamValueProfileValue' &&
+          myFormGroup.controls[parameters.name].invalid &&
+          myFormGroup.controls[parameters.name]?.errors?.required
+        ">
+            <p class="test">{{ language["This field is required"] }}.</p>
+          </div>
+          <div class="errorMessage" *ngIf="
+          !parameters.isIPAddress &&
+          parameters.mandatory &&
+          parameters.name === 'SetParamValueProfileValue' &&
+          selectedCategoryName === 'Set Parameter Value'
+        ">
+            <p class="test12" *ngIf="myFormGroup.controls[parameters.name]?.errors?.required">
+              {{ language["This field is required"] }}.
+            </p>
+            <p *ngIf="
+            !isSetParamValueProfileValueInvalidInt &&
+            !myFormGroup.controls[parameters.name]?.errors?.required
+          ">
+              {{ setParameterError }}
+            </p>
+          </div>
+          <div class="errorMessage" *ngIf="
+          parameters.objectDefaultType === 'MACAddressListWithWildcard' &&
+          parameters.mandatory
+        ">
+            <p *ngIf="
+            !myFormGroup.controls[parameters.name]?.errors?.required &&
+            !isValidMacAddress
+          ">
+              {{ language.Enter_A_Valid_MAC }}
+            </p>
+          </div>
+          <div class="errorMessage" *ngIf="parameters.name === 'HostName' && parameters.mandatory">
+            <p *ngIf="
+            !myFormGroup.controls[parameters.name]?.errors?.required &&
+            validHostName
+          ">
+              {{language["Please enter a valid HostName and these are not valid characters"] }}
+              ({{hostnameValidateString}})
+            </p>
+          </div>
+          <div class="errorMessage" *ngIf="
+          (parameters.objectDefaultType === 'int' ||
+            parameters.objectDefaultType === 'unsignedInt') &&
+          myFormGroup.controls[parameters.name].invalid
+        ">
+            <p *ngIf="myFormGroup.controls[parameters.name]?.errors?.pattern">
+              {{ language.New_Profile_Validation2 }}
+            </p>
+            <p *ngIf="myFormGroup.controls[parameters.name]?.errors?.max">
+              {{ language.New_Profile_Validation3 }}
+              {{ myFormGroup.controls[parameters.name]?.errors?.max.max }}.
+            </p>
+            <p *ngIf="myFormGroup.controls[parameters.name]?.errors?.min">
+              {{ language.New_Profile_Validation4 }}
+              {{ myFormGroup.controls[parameters.name]?.errors?.min.min }}.
+            </p>
+          </div>
+          <div class="errorMessage" *ngIf="myFormGroup.controls[parameters.name].invalid">
+            <p *ngIf="myFormGroup.controls[parameters.name]?.errors?.maxlength">
+              {{ language.New_Profile_Validation5 }}
+              {{
+              myFormGroup.controls[parameters.name]?.errors?.maxlength
+              ?.requiredLength
+              }}
+              {{ language.Characters }}.
+            </p>
+            <p *ngIf="myFormGroup.controls[parameters.name]?.errors?.minlength">
+              {{ language.New_Profile_Validation6 }}
+              {{
+              myFormGroup.controls[parameters.name]?.errors?.minlength
+              ?.requiredLength
+              }}
+              {{ language.Characters }}.
+            </p>
+          </div>
+          <div class="errorMessage" *ngIf="
+          parameters.objectDefaultType === 'HostNameOrIPAddress' &&
+          myFormGroup.controls[parameters.name].value !== ''
+        ">
+            <p *ngIf="!parameters.isHostNameIPAddresValid">
+              {{ language.New_Profile_Validation7 }}
+            </p>
+          </div>
+          <div class="errorMessage" *ngIf="isAlreadyExisit && parameters.name === 'X_000631_ClassName'">
+            <p>{{ language.New_Profile_Validation }}</p>
+          </div>
+          <div class="errorMessage" *ngIf="
+          parameters.isIPAddress &&
+          myFormGroup.controls[parameters.name].invalid &&
+          selectedCategoryName !== 'Set Parameter Value'
+        ">
+            <p *ngIf="
+            parameters.mandatory &&
+            myFormGroup.controls[parameters.name]?.errors?.required;else elseTemplateName
+          ">
+              {{ language["This field is required"] }}.
+            </p>
+            <ng-template #elseTemplateName>
+              <p *ngIf="
+            (parameters.objectDefaultType !== 'IPv6Address' &&
+            parameters.displayName !== 'Subnet Mask' &&
+            parameters.objectDefaultType !== 'IPv6Prefix' && 
+            !myFormGroup.controls[parameters.name]?.errors?.required) ||
+            validIPAddress
+          ">
+                {{ language["Please enter a valid IP address"] }}
+              </p>
+            </ng-template>
+
+            <p *ngIf="
+            parameters.objectDefaultType === 'IPv6Address' &&
+            parameters.displayName !== 'Subnet Mask' &&
+            parameters.name !== 'X_000631_IPv6DNSServers' &&
+            !myFormGroup.controls[parameters.name]?.errors?.required &&
+            parameters.name !== 'IPv6DNSServers'
+          ">
+              {{ language.New_Profile_Validation10 }}
+            </p>
+            <p *ngIf="
+            parameters.displayName === 'Subnet Mask' &&
+            !myFormGroup.controls[parameters.name]?.errors?.required
+          ">
+              {{ language.New_Profile_Validation8 }}
+            </p>
+          </div>
+
+          <div class="errorMessage">
+            <p *ngIf="parameters.name == '6rdPrefix' && !valid6rdPrefix">
+              {{language['Please enter a valid IPv6 Prefix']}}
+            </p>
+            <p *ngIf="parameters.name == 'Range1Start' && !validRange1Start">
+              {{ language.New_Profile_Validation9 }}
+            </p>
+
+            <p *ngIf="parameters.name == 'Range1End' && !validRange1End">
+              {{ language.New_Profile_Validation9 }}
+            </p>
+
+            <p *ngIf="
+            parameters.name == 'Vlan1Range1Start' && !validMultiCastIpStart
+          ">
+              {{ language.New_Profile_Validation9 }}
+            </p>
+
+            <p *ngIf="
+            parameters.name == 'Vlan1Range1End' && !validMultiCastIpEnd
+          ">
+              {{ language.New_Profile_Validation9 }}
+            </p>
+
+            <p *ngIf="
+            !myFormGroup.controls[parameters.name]?.errors?.required &&
+            parameters.name == 'DNSServers' &&
+            !validDNSServers
+          ">
+              {{ language.New_Profile_Validation11 }}
+            </p>
+
+            <p *ngIf="
+            !myFormGroup.controls[parameters.name]?.errors?.required &&
+            (parameters.name == 'X_000631_IPv6DNSServers' ||
+              parameters.name == 'IPv6DNSServers') &&
+            !validX_000631_IPv6DNSServers
+          ">
+              {{ language.New_Profile_Validation10 }}
+            </p>
+
+          </div>
+        </div>
+      </div>
+      <!-- End -->
+
+    </div>
+    
+    <!-- Experience IQ Form -->
+    <div *ngIf="selectedCategoryName === 'ExperienceIQ Restrictions'">
+      <experience-iq-restrictions-form (errorOutput)="emitError($event)"></experience-iq-restrictions-form>
+    </div>
+    <!-- Experience IQ Form End -->
+
+    <!-- ACL Entry for Remote Access Form -->
+    <div *ngIf="selectedCategoryName === 'ACL Entry for Remote Access' || selectedCategoryName === 'ACL Entry for VoIP'">
+      <acl-for-remote-access [selectedCategoryName]="selectedCategoryName" (errorOutput)="emitError($event)"></acl-for-remote-access>
+    </div>
+    <!-- ACL Entry for Remote Access End -->
+
+    <div class="row" *ngIf="!buildProfileObj.isFromDataModel">
+      <div class="col-12">
+        <button type="submit" id="btn-doneCategory" class="btn-default primary px-3 mr-2"
+          [ngClass]="{ noDropCursor: !isCategoryDoneBtnDisable }" [disabled]="!isCategoryDoneBtnDisable">
+          {{ language.Done }}
+        </button>
+        <button type="button" id="btn-discardCategory" (click)="OnDiscardCategory()"
+          class="btn-default primary px-3 mr-3">
+          {{ language.Discard }}
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,179 @@
+.hideMin .p-minute-picker {
+
+  color : gray;
+  cursor: not-allowed !important;
+
+  text-decoration: none;
+
+  button {
+
+    cursor: not-allowed !important;
+    color : gray;
+  }
+}
+
+.string-slider .ngx-slider-pointer {
+  position: relative;
+}
+
+::ng-deep {
+  .string-slider {
+    height       : 88px;
+    margin-bottom: 20px;
+
+    .ngx-slider-bubble {
+      display: none !important;
+    }
+
+    .ngx-slider-bar {
+      background   : linear-gradient(90deg, #FF734F 40%, #F7C343 20%, #82BF00 40%) !important;
+      border-radius: 26px !important;
+      height       : 21px !important;
+    }
+
+    .ngx-slider .ngx-slider-pointer {
+      border-radius   : 100px;
+      width           : 88px;
+      height          : 88px;
+      top             : -30px;
+      border          : 1px solid #82BF00;
+      background-color: transparent !important;
+    }
+
+    .ngx-slider-pointer::before {
+      content      : "";
+      position     : absolute;
+      top          : 2.3px;
+      left         : 2.3px;
+      width        : 81.77px;
+      height       : 81.77px;
+      background   : #fff;
+      border-radius: 100px;
+      z-index      : -1;
+      border       : 1px solid #82BF00;
+    }
+  }
+
+  .string-slider {
+    .ngx-slider .ngx-slider-pointer:after {
+      position        : absolute;
+      left            : 0;
+      z-index         : 999;
+      width           : 100% !important;
+      height          : 100% !important;
+      color           : #000 !important;
+      background-color: transparent !important;
+      text-align      : center;
+      line-height     : 56px;
+      font-size       : 16px;
+    }
+
+    [aria-valuetext="1"]::after,
+    [aria-valuetext="2"]::after {
+      content: 'Low' !important;
+
+    }
+
+    [aria-valuetext="3"]::after {
+      content: 'Medium' !important;
+    }
+
+    [aria-valuetext="4"]::after,
+    [aria-valuetext="5"]::after {
+      content: 'High' !important;
+    }
+
+    [aria-valuetext="0"]::after {
+      content: 'No Data' !important;
+    }
+  }
+}
+
+
+.modal.fade .modal-dialog .modal-content .modal-header {
+  padding      : 10px !important;
+  border-bottom: transparent;
+}
+
+.loader-wrapper {
+  position: relative;
+}
+
+// .loader-wrapper-info {
+//   transform: translate(-50%, -50%);
+//   top: 50%;
+//   left: 50%;
+//   position: absolute;
+//   width: 100%;
+
+//   z-index: 100;
+//   height: 100%;
+// }
+
+.time-frame-section {
+  // background-color: #F8F8FA;
+  padding : 2px 0px 1px 140px;
+  position: relative;
+  overflow: hidden;
+
+  .left-label {
+    position : absolute;
+    left     : 0;
+    top      : 25px;
+    font-size: 16px;
+    
+
+    label {
+      margin-bottom: -8px !important;
+      display      : block;
+      overflow: hidden;
+    text-overflow: ellipsis;
+    width: 136px;
+    white-space: nowrap;
+    }
+
+    span {
+      color    : #9E9E9E;
+      font-size: 12px;
+    }
+  }
+}
+
+.legendDash {
+  width     : 20px;
+  height    : 3px;
+  border-top: 2px dashed grey;
+  margin-top: 0.8rem !important;
+}
+
+.legendSolid {
+  width     : 20px;
+  height    : 3px;
+  border-top: 2px solid #0a77fb;
+  margin-top: 0.8rem !important;
+}
+
+.serviceLegend {
+  width        : 13px;
+  height       : 13px;
+  margin-top   : 0.4rem !important;
+  border-radius: 50%;
+
+}
+
+.opac {
+  opacity: 0.5;
+}
+
+.no-realtime-data {
+  position: absolute;
+}
+
+#clientEfficiencyChartDiv .highcharts-root {
+  min-height: 310px;
+}
+
+.f-s-10px
+{
+  font-size: 10px;
+}

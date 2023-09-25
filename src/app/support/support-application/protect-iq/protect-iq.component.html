@@ -1,0 +1,669 @@
+<!-- New wireframe HTMl -->
+<div class="row my-3" *ngIf="scopeFlag.configRead">
+  <div class="col-lg-2 col-md-3 col-sm-12 tab-sec border-right smy-2">
+    <ul id="tabs" class="w-100 nav nav-tabs sub-tab vertical-tab"
+      *ngIf="deviceSubscription && deviceStatus; else tabElseBlock">
+      <li class="nav-item">
+        <a data-toggle="tab" href="javascript:void(0)" class="nav-link small active" (click)="
+            showStatusNotification(); sectionToShow = 'details'; isError = false
+          " id="details">{{ language.Details }}</a>
+      </li>
+      <li class="nav-item">
+        <a data-toggle="tab" href="javascript:void(0)" class="nav-link small"
+          (click)="showAlerts(true); sectionToShow = 'alert'; isError = false" id="alert">{{ language.Alerts }}</a>
+      </li>
+      <li class="nav-item">
+        <a data-toggle="tab" (click)="
+            showTrustList(true); sectionToShow = 'trusted'; isError = false
+          " class="nav-link small" href="javascript:void(0)" id="piq-Trusted-List">{{ language.Trusted_List }}</a>
+      </li>
+      <li class="nav-item">
+        <a data-toggle="tab" (click)="
+            showSkipDevices(); sectionToShow = 'skipped'; isError = false
+          " class="nav-link small" href="javascript:void(0)" *ngIf="showSkippedDevice; else noFeatureAvailability"
+          id="piq-skip-device">{{
+          language.Skipped_Devices }}</a>
+      </li>
+      <li class="nav-item">
+        <a data-toggle="tab" *ngIf="showSecuritySetting; else noFeatureAvailability" (click)="
+            showSecuritySettings(); sectionToShow = 'security'; isError = false
+          " class="nav-link small text-truncate" href="javascript:void(0)" id="piq-security-settings"
+          title="{{ language.Security_Settings}}">{{ language.Security_Settings}}</a>
+      </li>
+    </ul>
+
+    <ng-template #tabElseBlock>
+      <ul id="tabs2" class="nav nav-tabs sub-tab vertical-tab w-100">
+        <li class="nav-item">
+          <a data-toggle="tab" href="javascript:void(0)" class="nav-link small active"
+            (click)="sectionToShow = 'details'" id="details">{{ language.Details }}</a>
+        </li>
+      </ul>
+    </ng-template>
+
+    <ng-template #noFeatureAvailability>
+      <div></div>
+    </ng-template>
+  </div>
+  <div class="col-lg-10 col-md-9 col-sm-12 details-sec">
+    <div class="w-100 alert alert alert-danger fade show d-flex justify-content-between align-items-center"
+      *ngIf="isError">
+      <div class="error-img"><img src="./assets/img/ic_error-36px.svg" /></div>
+      <div class="d-inline-flex wrn-msg" [innerHtml]="warningMessage"></div>
+      <button type="button" class="btn-default primary ok" (click)="isError = false">
+        {{ language.OK }}
+      </button>
+    </div>
+    <div class="row" id="details" role="tab" aria-labelledby="details" *ngIf="sectionToShow == 'security'">
+      <div class="col-lg-6 col-md-12 col-sm-12">
+        <div class="Protect-iq-table">
+          <table class="detail-list mt-3">
+            <tbody>
+              <tr>
+                <th scope="row" class="">
+                  {{ language['IPS Protocol Anomaly'] }}
+                </th>
+                <td class="">
+                  <div class="toggle-swtbtn checkbox switcher mb-2">
+                    <label for="selfHealbox">
+                      <input type="checkbox" id="selfHealbox" [disabled]="!scopeFlag.configWrite"
+                        [checked]="securitySettingPA" (change)="onPAClick()" [(ngModel)]="securitySettingPA" />
+                      <span [ngClass]="{'toggleDisabled' : !scopeFlag.configWrite}"><small></small></span>
+                    </label>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="deviceSubscription">
+                <th scope="row" class="">
+                  {{ language['IPS Port Scan Defense'] }}
+                </th>
+                <td class="">
+                  <div class="toggle-swtbtn checkbox switcher mb-2">
+                    <label for="selfHealbox1">
+                      <input type="checkbox" id="selfHealbox1" [disabled]="!scopeFlag.configWrite"
+                        [checked]="securitySettingPSD" (change)="onPSDClick()" [(ngModel)]="securitySettingPSD" />
+                      <span [ngClass]="{'toggleDisabled' : !scopeFlag.configWrite}"><small></small></span>
+                    </label>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Details  -->
+    <section>
+      <div class="loader" *ngIf="loading || advLoading">
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border text-primary">
+            <span class="sr-only">{{ language.Loading }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div class="row" id="details" role="tab" aria-labelledby="details" *ngIf="sectionToShow == 'details'">
+      <div class="col-lg-6 px-0 col-md-12 col-sm-12">
+        <div class="Protect-iq-table">
+          <div class="border-bottom">
+            <div class="ccl-Secondary-title" id="detail-settings">{{ language.Settings }}</div>
+          </div>
+
+          <!-- <div class="col-12 col-lg-12 pl-1 mt-3">
+            <label>Status : </label><span class="pl-3">{{ deviceSubscription ? 'Enabled' : 'Disabled'}}</span>
+          </div> -->
+
+          <div class="col-12 col-lg-12 pl-1 mt-3 font-weight-bold">{{language.Subscription}}</div>
+          <div class="col-12 col-lg-12 pl-1">
+            <div class="form-check form-check-inline">
+              <input type="radio" id="materialInline3" name="subscribed" [(ngModel)]="deviceSubscription" [value]="true"
+                (click)="toggleSubscription(true)" [disabled]="!scopeFlag.configWrite || smbEnabled">
+              <label class="form-check-label mx-2" for="materialInline3">{{ language.Subscribed }}</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input type="radio" id="materialInline4" name="subscribed" [(ngModel)]="deviceSubscription"
+                [value]="false" (click)="toggleSubscription(false)"
+                [disabled]="!scopeFlag.configWrite || (isSmartTownActivated ? false : smbOrSmarttownEnabled) || smbEnabled">
+              <label class="form-check-label mx-2" for="materialInline4">{{language.Unsubscribed }}</label>
+            </div>
+          </div>
+
+
+          <div class="col-12 col-lg-12 pl-1 mt-3 font-weight-bold">Service</div>
+          <div class="col-12 col-lg-12 pl-1">
+            <div class="form-check form-check-inline">
+              <input type="radio" id="materialInline10" name="enabled" [(ngModel)]="deviceStatus" [value]="true"
+                (click)="toggleEnable(true)"
+                [disabled]="!scopeFlag.enableWrite || !deviceSubscription || !deviceInfo || isSmartTownActivated || smbEnabled">
+              <label class="form-check-label mx-2" for="materialInline10">{{ language.enabled }}</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input type="radio" id="materialInline11" name="enabled" [(ngModel)]="deviceStatus" [value]="false"
+                (click)="toggleEnable(false)"
+                [disabled]="!scopeFlag.enableWrite || !deviceSubscription || !deviceInfo || isSmartTownActivated || smbOrSmarttownEnabled || smbEnabled">
+              <label class="form-check-label mx-2" for="materialInline11">{{language.Disabled }}</label>
+            </div>
+          </div>
+          <table class="detail-list mt-3 d-none">
+            <tbody>
+              <tr *ngIf="scopeFlag.configRead">
+                <th scope="row" class="">{{ language.Subscribed }}</th>
+                <td class="">
+                  <div
+                    [ngClass]="!deviceSubscription?'toggle-swtbtn checkbox switcher-disabld mb-2':'toggle-swtbtn checkbox switcher mb-2'">
+                    <label for="selfHealCheckbox">
+                      <input type="checkbox" id="selfHealCheckbox" [checked]="deviceSubscription"
+                        (change)="toggleSubscription(true)" [(ngModel)]="deviceSubscription"
+                        [disabled]="!scopeFlag.configWrite" />
+                      <span [ngClass]="!scopeFlag.configWrite ? 'toggleDisabled' : ''"><small></small></span>
+                    </label>
+
+                  </div>
+                </td>
+              </tr>
+              <!--  *ngIf="scopeFlag.enableRead && !undiscoveredGS" -->
+              <tr *ngIf="scopeFlag.configRead">
+                <th scope="row" class="">{{ language.enabled }}</th>
+                <td class="">
+                  <div
+                    [ngClass]="!deviceStatus?'toggle-swtbtn checkbox switcher-disabld mb-2':'toggle-swtbtn checkbox switcher mb-2'">
+                    <label for="selfHealCheckbox1">
+                      <input type="checkbox" id="selfHealCheckbox1" [checked]="deviceSubscription"
+                        (change)="onSubscription(true)" [(ngModel)]="deviceSubscription" [disabled]="true" />
+                      <!-- [disabled]="!scopeFlag.enableWrite || !newData?.userId" -->
+                      <span class="toggleDisabled"><small></small></span>
+                      <!-- [ngClass]="(!scopeFlag.enableWrite || !newData?.userId) ? 'toggleDisabled' : ''" -->
+                    </label>
+                  </div>
+                </td>
+              </tr>
+              <ng-template #noSubScription>
+                <tr></tr>
+              </ng-template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="col-lg-6 col-md-12 col-sm-12" *ngIf="showDetail && deviceStatus && deviceSubscription">
+        <div class="Protect-iq-table">
+          <div class="flex-space-between border-bottom">
+            <div class="ccl-Secondary-title" id="details-status">{{ language.Status }}</div>
+            <a href="javascript:void(0)" (click)="showStatusNotification()"><i class="fas fa-sync refreshicon"></i></a>
+          </div>
+          <table class="detail-list detail-list-table" id="Protect-iq-status-table">
+            <tbody>
+              <tr>
+                <th scope="row" class="">{{ language.Uptime}}:</th>
+                <td class="">{{ loading ? '-' : protectIQ_Uptime }}</td>
+              </tr>
+              <tr>
+                <th scope="row">{{ language.Last_Updated }}:</th>
+                <td>{{ loading ? '-' : lastUpdated | date: "MMM dd yyyy, hh:mm:ss a" }}</td>
+              </tr>
+              <tr>
+                <th scope="row">{{ language.Packets_Analyzed_Today }}:</th>
+                <td>{{ loading ? '-' : packetsAnalyzedToday }}</td>
+              </tr>
+              <tr>
+                <th scope="row">{{ language.Total_Virus_Detected }}:</th>
+                <td>{{ loading ? '-' : totalVirusDetected }}</td>
+              </tr>
+              <tr>
+                <th scope="row">{{ language.Total_Intrusions }}:</th>
+                <td>{{ loading ? '-' : totalIntrusions }}</td>
+              </tr>
+              <tr>
+                <th scope="row">{{ language.Total_Web_Threats }}:</th>
+                <td>{{ loading ? '-' : totalWebThreats }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <!-- Alert -->
+    <section>
+      <div class="loader" *ngIf="loading && sectionToShow == 'alert'">
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border text-primary">
+            <span class="sr-only">{{ language.Loading }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div class="col-12 px-0" id="alert" role="tab" aria-labelledby="alert" *ngIf="sectionToShow == 'alert'">
+      <div class="Protect-iq-table">
+        <table class="detail-list skip-device" id="protect-iq-alert-table">
+          <thead>
+            <th class="w-30">
+              <div class="ccl-Secondary-title user-name" id="alert-occurred">{{ language.Occurred }}</div>
+            </th>
+            <th class="w-30">
+              <div class="ccl-Secondary-title user-name" id="alert-details">{{ language.Alert_Details }}</div>
+            </th>
+            <th class="w-20 ccl-form">
+              <ng-select class="my-2" [(ngModel)]="selectedType" name="alert" [items]="alerts"
+                (change)="isError = false; showAlerts()" bindLabel="viewValue" bindValue="value" [searchable]="false">
+                <ng-template ng-label-tmp let-item="item">
+                  {{language[item.viewValue] || item.viewValue }}
+                </ng-template>
+                <ng-template ng-option-tmp let-item="item" let-index="index">
+                  {{ language[item.viewValue] }}
+                </ng-template>
+              </ng-select>
+            </th>
+          </thead>
+          <tbody>
+            <tr *ngFor="let alertDetail of alertDetails; let i = index">
+              <td colspan="3">
+                <div class="protect-iq-accordion">
+                  <div id="accordion">
+                    <div class="card">
+                      <div id="alert-carc">
+                        <div class="row mb-0">
+                          <ul class="alert-ul" (click)="isExpanded[i] = !isExpanded[i]">
+                            <li class="occurr-date">
+                              <div class="Protect-iq-info">
+                                <span class="plus-minus-toggle mr-2">
+                                  <span class="plus" *ngIf="!isExpanded[i]; else expanded">+</span>
+                                  <ng-template #expanded>
+                                    <span class="minus" [attr.id]="'symbolMinus' + i">-</span>
+                                  </ng-template>
+                                </span>
+                                {{
+                                alertDetail.timestamp
+                                | date: "MMM dd yyyy, hh:mm:s a"
+                                }}
+                              </div>
+                            </li>
+                            <li class="alert-details">
+                              <div *ngIf="
+                                  alertDetail?.securityAlarm?.type != 'WG';
+                                  else showUrl
+                                ">
+                                {{ alertDetail?.securityAlarm?.message }} was
+                                {{ alertDetail?.securityAlarm?.action }}ED
+                              </div>
+                              <ng-template #showUrl>
+                                {{ alertDetail?.securityAlarm?.url }} was
+                                {{ alertDetail?.securityAlarm?.action }}ED
+                              </ng-template>
+                            </li>
+                            <li class="alert-btn opacityCheck">
+                              <button class="btn default-btn" [id]="'whitelabelbtn' + i"
+                                (click)="addTrustList(alertDetail, $event)">
+                                {{ language.Add_To_trust }}
+                              </button>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                      <div [id]="'collapseA' + i" *ngIf="isExpanded[i]">
+                        <table class="table table-borderless">
+                          <tbody>
+                            <tr>
+                              <th class="w-30"></th>
+                              <th class="w-60 p-0">
+                                <table class="detail-list protectiq-alerts-table">
+                                  <tbody>
+                                    <tr>
+                                      <th scope="row" class="">
+                                        {{ language.Time }} :
+                                      </th>
+                                      <td class="">
+                                        {{
+                                        alertDetail.timestamp
+                                        | date: "MMM dd yyyy, hh:mm:s a"
+                                        }}
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <th scope="row" class="">
+                                        {{ language.Type }} :
+                                      </th>
+                                      <td class="">
+                                        {{
+                                        alertTypes[
+                                        alertDetail?.securityAlarm?.type
+                                        ] || "-"
+                                        }}
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <th scope="row">
+                                        {{ language.Source_IP }} :
+                                      </th>
+                                      <td>
+                                        {{
+                                        alertDetail?.securityAlarm
+                                        ?.sourceIp || "-"
+                                        }}
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <th scope="row">
+                                        {{ language.Action }} :
+                                      </th>
+                                      <td>
+                                        {{
+                                        alertDetail?.securityAlarm?.action ||
+                                        "-"
+                                        }}
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <th scope="row">
+                                        {{ language["Client Device"] }} :
+                                      </th>
+                                      <td>
+                                        {{
+                                        alertDetail?.securityAlarm
+                                        ?.targetStaName || "-"
+                                        }}
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <th scope="row">URL:</th>
+                                      <td>
+                                        {{
+                                        alertDetail?.securityAlarm?.url || "-"
+                                        }}
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <th scope="row">File:</th>
+                                      <td>
+                                        {{
+                                        alertDetail?.securityAlarm?.file || "-"
+                                        }}
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </th>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+          <tbody *ngIf="alertDetails.length == 0">
+            <tr>
+              <td colspan="5" class="no-data-available">
+                {{ language["No data available"] }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- Trusted_List  -->
+    <section>
+      <div class="loader" *ngIf="loading && sectionToShow == 'trusted'">
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border text-primary">
+            <span class="sr-only">{{ language.Loading }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div class="col-12 px-0" id="alert" role="tab" aria-labelledby="alert" *ngIf="sectionToShow == 'trusted'">
+      <div class="Protect-iq-table px-0">
+        <table class="detail-list skip-device" id="protect-iq-trusted-list">
+          <thead>
+            <tr>
+              <th class="w-30">
+                <div class="ccl-Secondary-title user-name" id="protect-iq-trusted-name">{{ language.Name }}</div>
+              </th>
+              <th class="w-30">
+                <div class="ccl-Secondary-title user-name" id="protect-trustedList">{{ language.Trusted_List }}</div>
+              </th>
+              <th class="w-20">
+                <!-- <div ngbDropdown class="d-inline-block" style="float: right"> -->
+                <ng-select class="my-2" [(ngModel)]="selectedType" name="alert" [items]="alerts"
+                  (change)="isError = false; showTrustList()" bindLabel="viewValue" bindValue="value"
+                  [searchable]="false">
+                  <ng-template ng-label-tmp let-item="item">
+                    {{language[item.viewValue] || item.viewValue }}
+                  </ng-template>
+                  <!-- <option [value]="selectedValue" ></option> -->
+                  <ng-template ng-option-tmp let-item="item" let-index="index">
+                    {{ language[item.viewValue] }}
+                  </ng-template>
+                </ng-select>
+                <!-- </div> -->
+              </th>
+              <!-- <ng-select class="my-2" [(ngModel)]="selectedType" name="alert" [items]="alerts" 
+              (change)="isError = false; showAlerts()" bindLabel="viewValue" bindValue="value" [searchable]="false">
+              <ng-template ng-label-tmp let-item="item">
+                {{language[item.viewValue] || item.viewValue }}
+              </ng-template> 
+                <ng-template ng-option-tmp let-item="item" let-index="index">
+                  {{ language[item.viewValue] }}
+                </ng-template>
+              </ng-select> -->
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="
+                let trustListDetail of trustListDetails.whitelist;
+                let i = index
+              ">
+              <tr id="accordionTable" class="accordion-toggle collapsed" [attr.id]="'accordion_' + i">
+                <td colspan="3">
+                  <ul class="px-0 dropdown-toggle alert-ul" (click)="isExpanded[i] = !isExpanded[i]">
+                    <li class="occurr-date">
+                      <div class="Protect-iq-info">
+                        <span class="plus-minus-toggle mr-2" (click)="accordianChange(i)">
+                          <span class="plus" [attr.id]="'symbolPlus' + i" *ngIf="!isExpanded[i]; else expanded">+</span>
+                          <ng-template #expanded>
+                            <span class="minus" [attr.id]="'symbolMinus' + i">-</span>
+                          </ng-template>
+                        </span>
+                        <div class="trusted-title-info">
+                          {{ trustListDetail.msg }}
+                        </div>
+                      </div>
+                    </li>
+                    <li class="occurr-date">
+                      <div class="Protect-iq-info"></div>
+                    </li>
+                    <li class="occurr-date">
+                      <div class="Protect-iq-info"></div>
+                    </li>
+                    <li class="alert-btn opacityCheck">
+                      <button class="btn btn-danger" [id]="'whitelabelbtn' + i" (click)="
+                          deleteWhiteListItem(trustListDetail.signatureId)
+                        ">
+                        {{ language.delete }}
+                      </button>
+                    </li>
+                  </ul>
+                  <div [attr.id]="'collapseOne_' + i" *ngIf="isExpanded[i]" class="in p-3">
+                    <table class="table table-borderless">
+                      <tbody>
+                        <tr>
+                          <th class="w-30"></th>
+                          <th class="w-60 p-0">
+                            <table class="detail-list protectiq-trusted-list-table">
+                              <tbody>
+                                <tr>
+                                  <th scope="row" class="">
+                                    {{ language.Time }} :
+                                  </th>
+                                  <td class="">
+                                    {{
+                                    trustListDetail.created
+                                    | date: "MMM dd yyyy, hh:mm:s a"
+                                    }}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <th scope="row" class="">
+                                    {{ language.Type }} :
+                                  </th>
+                                  <td class="">
+                                    {{ trustListDetail.type | alertType }}
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </th>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </td>
+              </tr>
+              <ng-template #showInfoMsg>{{ language["No Data is available for "] }}
+                {{ trustListDetail.type | alertType }} type</ng-template>
+            </ng-container>
+            <tr *ngIf="trustListDetails.whitelist == 0">
+              <td colspan="5" class="no-data-available">
+                {{ language["No data available"] }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- Skipped device  -->
+    <section>
+      <div class="loader" *ngIf="loading && sectionToShow == 'skipped'">
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border text-primary">
+            <span class="sr-only">{{ language.Loading }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div class="col-12 px-0" id="alert" role="tab" aria-labelledby="alert" *ngIf="sectionToShow == 'skipped'">
+      <div class="Protect-iq-table">
+        <div class="flex skip-btns">
+          <button [disabled]="!scopeFlag.configWrite" [ngClass]="!scopeFlag.configWrite ? 'toggleDisabled' : ''"
+            type="button" class="btn btn-primary br-26 b-none mr-3" (click)="skipStatusChangeAll(true)"
+            id="sd-skip-all">
+            {{ language.Skip_All }}
+          </button>
+          <button [disabled]="!scopeFlag.configWrite" [ngClass]="!scopeFlag.configWrite ? 'toggleDisabled' : ''"
+            type="button" class="btn btn-primary br-26 b-none" (click)="skipStatusChangeAll(false)" id="sd-scan-all">
+            {{ language.Scan_All }}
+          </button>
+        </div>
+        <table class="detail-list skip-device mt-4" id="piq-skipped-device">
+          <thead>
+            <th class="w-40">
+              <div class="ccl-Secondary-title user-name" id="sd-device">{{ language.device }}</div>
+            </th>
+            <th class="w-50">
+              <div class="ccl-Secondary-title user-name" id="sd-status">{{ language.Status }}</div>
+            </th>
+            <th class="w-10"></th>
+          </thead>
+          <ng-container *ngFor="
+              let skipDevicesDetail of skipDevicesDetails | keyvalue;
+              let i = index
+            ">
+            <tbody>
+              <tr id="accordionTable" class="accordion-toggle collapsed" [attr.id]="'accordion_' + i">
+                <td colspan="3">
+                  <div class="protect-iq-accordion">
+                    <div id="accordion">
+                      <div class="card">
+                        <div class="dropdown-toggle align-middle" (click)="
+                            isExpandedSkipDevice[i] = !isExpandedSkipDevice[i]
+                          ">
+                          <div class="mb-0">
+                            <div class="Protect-iq-info">
+                              <span class="plus-minus-toggle" (click)="accordianChange(i)">
+                                <span class="plus" *ngIf="
+                                    !isExpandedSkipDevice[i];
+                                    else expanded
+                                  ">+</span>
+                                <ng-template #expanded>
+                                  <span class="minus" [attr.id]="'symbolMinus' + i">-</span>
+                                </ng-template>
+                              </span>
+                              <span class="lap-icon">
+                                <img [src]="skipDevicesDetail.key | catogryImg" alt="" />
+                              </span>
+                              {{ skipDevicesDetail.key | catogry }}
+                            </div>
+                          </div>
+                        </div>
+                        <div [id]="'collapse' + i" *ngIf="isExpandedSkipDevice[i]" aria-labelledby="headingThree"
+                          data-parent="#accordion">
+                          <table class="table device-detail table-borderless protectiq-skipped-table">
+                            <tbody *ngFor="let details of skipDevicesDetail.value">
+                              <tr>
+                                <th scope="row" class="w-40">
+                                  <div class="about-device">
+                                    <h6>
+                                      <img style="width: 25px; height: 25px" [src]="
+                                          skipDevicesDetail.key | catogryImg
+                                        " alt="" />
+                                      {{ details.name }}
+                                    </h6>
+                                    <p>{{ details.mac }}</p>
+                                  </div>
+                                </th>
+                                <td class="w-50" *ngIf="!details.skip; else elseBlock" style="padding-top: 30px">
+                                  {{ language.Scanning }}
+                                </td>
+                                <ng-template #elseBlock>
+                                  <td class="w-50" style="padding-top: 30px">
+                                    {{ language.Skipping }}
+                                  </td>
+                                </ng-template>
+                                <td class="w-10">
+                                  <div class="skip-sec" *ngIf="!details.skip; else checkSkipping">
+                                    <button [disabled]="!scopeFlag.configWrite"
+                                      [ngClass]="!scopeFlag.configWrite ? 'toggleDisabled' : ''" type="button"
+                                      class="btn-default primary skip-btn" (click)="
+                                        changeSkipStatus(
+                                          details.deviceId,
+                                          details.skip
+                                        )
+                                      ">
+                                      {{ language.Skipping }}
+                                    </button>
+                                  </div>
+                                </td>
+                                <ng-template #checkSkipping>
+                                  <td class="w-10">
+                                    <div class="skip-sec">
+                                      <button [disabled]="!scopeFlag.configWrite"
+                                        [ngClass]="!scopeFlag.configWrite ? 'toggleDisabled' : ''" type="button"
+                                        class="btn-default primary skip-btn" (click)="
+                                          changeSkipStatus(
+                                            details.deviceId,
+                                            details.skip
+                                          )
+                                        ">
+                                        {{ language.Scanning }}
+                                      </button>
+                                    </div>
+                                  </td>
+                                </ng-template>
+                                <!-- </td> -->
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </ng-container>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

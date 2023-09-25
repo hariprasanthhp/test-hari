@@ -1,0 +1,39 @@
+<div role="alert" class="alert alert-warning" *ngIf="!hasPageAccess">
+  {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}}
+</div>
+<span class="cco-title" *ngIf="hasPageAccess">
+  {{ language.Operations }}
+</span>
+<div class="ccl-tabs my-3" *ngIf="hasPageAccess">
+  <ul id="tabs" class="nav nav-tabs">
+    <li class="nav-item" *ngIf="menus['system-onboarding']">
+      <a [routerLink]="menuConfig?.systemonboarding?.urls?.[0]" data-toggle="tab" class="nav-link"
+        class="nav-link small" [ngClass]="{'active' : activeMenus['system-onboarding']}" id="CCO-Operations-SystemOnboarding">{{language['System Onboarding']}}</a>
+    </li>
+
+    <li class="nav-item" *ngIf="menus['alarms']">
+      <a [routerLink]="menuConfig?.alarms?.urls?.[0]" data-toggle="tab" class="nav-link" class="nav-link small"
+        [ngClass]="{'active' : activeMenus['alarms']}" id="CCO-Operations-Alarms">{{language['Alarms']}}</a>
+    </li>
+
+    <li class="nav-item" *ngIf="menus['health']">
+      <a [routerLink]="menuConfig?.health?.urls?.[0]" data-toggle="tab" class="nav-link" class="nav-link small"
+        [ngClass]="{'active' : activeMenus['health']}" id="CCO-Operations-Health">{{language['Health']}}</a>
+    </li>
+
+    <li class="nav-item" *ngIf="menus['configuration']">
+      <a [routerLink]="menuConfig?.configuration?.urls?.[0]" data-toggle="tab" class="nav-link" class="nav-link small"
+        [ngClass]="{'active' : activeMenus['configuration']}" id="CCO-Operations-Configuration">{{language['Configuration']}}</a>
+    </li>
+
+    <li class="nav-item" *ngIf="menus['cco-reports']">
+      <a [routerLink]="menuConfig?.report?.urls?.[0]" class="nav-link small" id="CCO-Operations-Reports"
+        [ngClass]="{'active' : activeMenus['cco-reports']}" data-toggle="tab" class="nav-link">{{ language.Reports
+        }}</a>
+    </li>
+  </ul>
+
+</div>
+<div class="col-sm-12 col-md-12 col-lg-12 p-0" [hidden]="!hasPageAccess">
+  <router-outlet></router-outlet>
+</div>

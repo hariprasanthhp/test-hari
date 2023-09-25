@@ -1,0 +1,118 @@
+<div>
+    <div class="alert alert-warning alert-dismissible fade show" role="alert" *ngIf="error">
+        <strong>{{language.Error_map}}!</strong> {{errorMsg}}.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="loader" *ngIf="loader">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary" role="">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    </div>
+    <div [hidden]="error" class="main-card-exception" [ngClass]="!mapView ?'d-none':'d-block'">
+        <div class="w-100 position-relative">
+            <div id='myMap' class="map-v" (dblclick)='hideInfobox()' (mousedown)='hideInfobox()'
+                (scroll)='hideInfobox()'>
+            </div>
+            <div class="flex-around pos-abs-w" [hidden]="error">
+                <div *ngIf="foundationEnable">
+                    <button class="btn btn-white ml-2 font-14 cursor-default">
+                        {{language.Number_of_Systems}} = {{deviceCount}}
+                    </button>
+                </div>
+                <div *ngIf="!foundationEnable">
+                    <button class="btn btn-white ml-2 font-14">
+                        {{language.Number_of_Devices}} = {{deviceCount}}
+                    </button>
+                </div>
+                <div *ngIf="!router.url.includes('cco-foundation/foundation-systems/foundation-geographic-view')">
+                    <button class="btn btn-white font-14 mr-2" (click)="tableView()">
+                        <i class="fa fa-list mr-1"></i>{{language.Table_View}}
+                    </button>
+                </div> 
+
+            </div>
+        </div>
+    </div>
+    <div [ngClass]="mapView ?'d-none':'d-block'" [hidden]="error">
+        <div class="modal-footer  border-reset mr-2"
+        *ngIf="!router.url.includes('cco-foundation/foundation-systems/foundation-geographic-view')">
+            <button class="btn btn-sm btn-success" (click)="mapViewFunction()">{{language.Map_View}}
+            </button>
+        </div>
+        <div class="p-2">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>{{foundationEnable ?  language.System_MAC_address : language.Device_MAC_Address}}</th>
+                            <th>{{language.Location_Latitude }}</th>
+                            <th>{{language.Location_Longitude }}</th>
+                            <th>{{language.Action}}</th>
+                        </tr>
+                    </thead>
+                    <tbody *ngIf="locations">
+                        <tr *ngFor="let list of locations">
+                            <td>{{ list.macAddr }}</td>
+                            <td>{{ list.lat }}</td>
+                            <td>{{ list.lng }}</td>
+                            <td>
+                                <button class="btn btn-success btn-sm" id="view-details-{{ list.macAddr }}"
+                                    (click)="open(list.macAddr, $event)">{{language.View}}</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #fullScreeenModal let-data let-ref="dialogRef" class="col-md-8">
+
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{language.MAC_Address}}&nbsp; &nbsp;:&nbsp;
+            &nbsp;{{tablePopupData.macAddr}}
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="close()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="p-2 border-bot-grey">
+            <!-- <tr>
+                <td style="width: 150px;"><b>{{language.MAC_Address}}</b></td>
+                <td> &nbsp; &nbsp;: </td>
+                <td> &nbsp; &nbsp;{{tablePopupData.macAddr}}</td>
+            </tr><br> -->
+            <tr>
+                <td class="f-15 w-150p">{{language.Model_Number }}</td>
+                <td> &nbsp; &nbsp;: </td>
+                <td class="f-15"> &nbsp; &nbsp;{{tablePopupData.modelNumber}}</td>
+            </tr><br>
+            <tr>
+                <td class="f-15 w-150p">{{language.Serial_Number }}</td>
+                <td> &nbsp; &nbsp;: </td>
+                <td class="f-15"> &nbsp; &nbsp;{{tablePopupData.serialNumber}}</td>
+            </tr><br>
+            <tr>
+                <td class="f-15 w-150p">{{language.Firmware_Version}}</td>
+                <td> &nbsp; &nbsp;: </td>
+                <td class="f-15"> &nbsp; &nbsp;{{tablePopupData.firmwareVersion}}</td>
+            </tr><br>
+            <tr>
+                <td class="f-15 w-150p">{{language.Application_s}}</td>
+                <td> &nbsp; &nbsp;: </td>
+                <td class="f-15"> &nbsp; &nbsp;{{tablePopupData.appNames?tablePopupData.appNames: '-'}}</td>
+            </tr>
+
+
+        </div>
+    </div>
+    <!-- <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="close()">{{language.Close}}</button>
+    </div> -->
+</ng-template>

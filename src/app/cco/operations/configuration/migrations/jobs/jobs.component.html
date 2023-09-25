@@ -1,0 +1,299 @@
+<section>
+  <div class="loader" *ngIf="loader">
+    <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+            <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+    </div>
+</div>
+<div class="w-100 alert alert-danger fade show my-3 d-flex align-items-start justify-content-between" *ngIf="error">
+  <span class="error-img"><img class="" src="./assets/img/ic_error-36px.svg" /></span>
+  <div class="text-break w-95 pr-2" [innerHtml]="errorInfo"></div>
+  <button type="button" class="close" (click)="closeAlert()">
+      <span></span>
+  </button>
+</div>
+
+<div class="w-100 alert alert-success fade show my-3" *ngIf="success">
+  <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+  <button type="button" class="close" (click)="success = false">
+      <span></span>
+  </button>
+  <div class="d-inline-flex" [innerHtml]="language[successInfo] || successInfo"></div>
+</div>
+    <div class="container">
+        <div class="row mb-3">
+            <div class="d-flex align-items-center" *ngIf="scope['write']">
+                <!-- <button type="button" id="save" class="btn-default btn-primary mr-20px" disabled=""> {{language['New
+                    Migration']}} </button> -->
+                    <button data-toggle="modal" data-target=".bd-example-modal-lg" class="btn-default primary px-3"
+                        (click)="openNewMigrationPopup(NewMigrationModal)" [disabled]="this.profileList?.length ==0 || this.disableAdd">{{language['New Migration']}} </button>
+                        <div class="ml-2" *ngIf="disableAdd">
+                            <p class="mb-0 text-secondary">{{language['Current migration must complete before starting a new migration']}}</p>
+                         </div>
+            </div>
+            
+        </div>
+        <div class="row" *ngIf="this.profileList?.length ==0">
+            <div class="col-md-12">
+                <div class="center-screen">
+                    <p class="m-0"><b>{{language['At least one migration profile must be created before starting a new migration.']}}</b></p>
+                    <p>{{language.migrationProfile('')}} <span class="primary cursor-pointer" (click)="GotoProfile()"> {{language['Profiles tab']}}. </span></p>
+                    </div>
+            </div>
+        </div>
+        <div class="row justify-content-between mb-3" *ngIf="this.profileList?.length !=0">
+            <div class="col-md-6 p-0">
+                <div class="d-flex">
+                    <span class="w-5 mr-2 cursor-pointer" (click)="getJobList(true)">
+                        <img src="../../../../../../assets/img/Refresh-icon.svg" alt="">
+                    </span>
+                    <div class="w-90" >{{language['Last updated a few seconds ago']}}</div>
+                </div>
+
+            </div>
+            <div class="col-md-6 text-right">
+                <div class="ccl-form float-right px-0 position-relative">
+                  <input type="text" placeholder="Search" class="max-w-227px pr-4" [(ngModel)]="searchtext" (keyup)="search($event.target.value)"
+                  (search)="search($event.target.value)">
+                  <span class="pointer close-pointer clear-icon" [ngClass]="showcloseicon ? '' : ''"
+                  (click)="closeicon($event.target.value)"><img *ngIf="searchtext" src="../../../assets/img/close-icon.svg"
+                    alt=""></span>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3" *ngIf="this.profileList?.length !=0">
+            <div class="">
+                <div class="jobs-migrations-table">
+                    <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="w-100">
+                        <thead>
+                            <tr>
+                                <!-- <th class="th-warning"></th> -->
+                                <th class="w-20">{{language['Name']}}</th>
+                                <th>{{language['Description']}}</th>
+                                <th>{{language['Migration Status']}}</th>
+                                <!-- <th>Progress</th> -->
+                                <th class="th-type">{{language['Type']}}</th>
+                                <th>{{language['Date Completed']}}</th>
+                                <th [hidden]="!scope['write']"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let data of jobList">
+                                <!-- <td  (click)="Gotomigration(data?.migrationId,data?.migrationName)">
+                                    <img src="../../../../../../assets/img/Ic_warning-18px.svg" class="cursor-pointer" title="One or more errors occurred">
+                                </td> -->
+                               <td (click)="Gotomigration(data?.migrationId,data?.migrationName,data?.type)">
+                                <a class="ellipsis-value cursor-pointer" title="{{data?.migrationName}}">
+                                    {{data?.migrationName}}
+                                </a>
+                               </td>
+                               <td><span class="ellipsis-value" title="{{data?.description}}">{{data?.description}}</span></td>
+                                <td>
+                                   <div class="status-btn" [ngClass]="setStatusClass(data?.migrationStatus)"><span class="dot mr-1"></span>
+                                    {{data?.migrationStatus ==='Deleted' ? 'Undo Complete':data?.migrationStatus }}</div>  
+                                </td>
+                                <!-- <td>{{data?.progress}}</td> -->
+                                <td>{{data?.type}}</td>
+                                <td>{{data?.dateCompleted && data?.dateCompleted!=='-'?convertDate(data?.dateCompleted):'-'}}</td>
+                                <td [hidden]="!scope['write']">
+                                    <div class="dropdown dropleft">
+                                        <div class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            ...
+                                          </div>
+                                          <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                            <button class="dropdown-item" type="button" (click)="openNewMigrationPopup(NewMigrationModal,data)">{{language['Edit']}}</button>
+                                            <button class="dropdown-item" type="button" *ngIf="data?.migrationStatus =='Ready To Migrate'"
+                                            data-target=".bd-example-modal-lg" (click)="startMigration(data,data?.migrationId)">{{language['Start Migration']}}</button>
+                                            <button class="dropdown-item" type="button" *ngIf="data?.migrationStatus !=='Ready To Migrate'" [disabled]="data?.migrationStatus.includes('Mapping') || data?.migrationStatus.includes('Migrating')" (click)="ExportMigration(data,data?.migrationId,data?.dateCompleted && data?.dateCompleted!=='-'?convertDate(data?.dateCompleted,true):'')">{{language['Export']}}</button>
+                                            <button class="dropdown-item" type="button" data-toggle="modal" *ngIf="data?.migrationStatus !=='Complete' && data?.migrationStatus !=='Aborted'"
+                                            data-target=".bd-example-modal-lg" (click)="openAbortMigrationPopup(AbortMigrationModal,data?.migrationId,data?.migrationName)">{{language['Abort']}}</button>
+                                            <button class="dropdown-item" type="button" data-toggle="modal" *ngIf="data?.migrationStatus =='Complete' || data?.migrationStatus =='Aborted' || data?.migrationStatus =='Deleted'|| data?.migrationStatus =='Failed'"
+                                            data-target=".bd-example-modal-lg" (click)="openDeleteJobReportPopup(DeleteJobReportmodal,data?.migrationId,data?.migrationName)">{{language['Delete job report']}}</button>
+                                            <button class="dropdown-item"   *ngIf="data?.migrationStatus =='Complete'||data?.migrationStatus =='Aborted' " type="button"data-toggle="modal"
+                                            data-target=".bd-example-modal-lg" (click)="openUndoMigrationPopup(UndoMigrationmodal,data?.migrationId,data?.migrationName)">{{language['Undo migration']}}</button>
+                                          </div>
+                                  </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody *ngIf="jobList?.length === 0">
+                          <tr>
+                              <td colspan="6" class="no-data-available">{{language['There are no migrations.']}}
+                              </td>
+                          </tr>
+                      <tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<ng-template #NewMigrationModal>
+  
+  
+  <!-- Modal -->
+  <div class="modal-content">
+    <div class="modal-header new-migration mb-2">
+      <h5 class="modal-title" id="exampleModalLabel">{{editJobMig? language['Edit Migration']:language['New Migration']}}</h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="close()">
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+    <div class="loader" *ngIf="modelloader">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">{{ language.Loading }}</span>
+            </div>
+        </div>
+    </div>
+    <div class="modal-body">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="">
+                <form [formGroup]="JobMigForm">
+                    <div class="form-group ccl-form">
+                      <label for="exampleInputEmail1">{{language['Name']}} <span class="error">*</span></label>
+                      <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" formControlName="name" placeholder="Name">
+                    </div>
+                    <div class="form-group ccl-form">
+                        <label class="filter-label col-form-label">{{ language["Migration Type"] }}<span class="error">*</span></label>
+                        <ng-select id="type"
+                          placeholder="{{language['None Selected']}}" [searchable]="false" formControlName="deviceType"  [readonly]="editJobMig">
+                          <ng-option value="ONT">{{ language['Ont'] }}</ng-option>
+                          <ng-option value="RG">{{ language['RG'] }}</ng-option>
+                        </ng-select>
+                    </div>
+              
+                      <div id="fullImportUpload-div" class="form-group ccl-form" *ngIf="JobMigForm.value.deviceType ==='ONT'">
+                        <div class="w-100">
+                            <label for="text">{{language['CMS Report (.csv)']}}<span class="error">*</span></label>
+                            <div  class="position-relative">
+                                <input  id="fullImportUpload" name="text"  type="text" formControlName="file" [readonly]="editJobMig" [ngClass]="{'inp-disabled':editJobMig }"
+                                placeholder="No file selected" class="input-file-text" [disabled]="true" readonly>
+                                <label for="logo" 
+                                class="usoc-upload-button btn-default btn-dft" [ngClass]="{'inp-disabled':editJobMig }">{{language.Browse}}</label>
+                              <input class="type-file" type="file" accept=".csv" name="logo" required id="logo" #logo style="display:none" [ngClass]="{'inp-disabled':editJobMig }"  [attr.disabled]="editJobMig ? '' : null"
+                                (change)="readURL($event)">
+                            </div>
+                          
+                        </div>
+                       
+                    </div>
+                    <div class="form-group ccl-form" *ngIf="JobMigForm.value.deviceType ==='RG'">
+                        <label class="col-form-label"> System Group<span class="error">*</span></label>
+                        <div class="custom-selectbox" class="w-100">
+                            <ng-select id="deviceDataList" [items]="deviceDataList" bindLabel="name" bindValue="name"  [readonly]="editJobMig"
+                                 placeholder="" formControlName="group"
+                                 [clearable]="true" [ngClass]="{ 'inp-disabled': editJobMig }"
+                                [searchable]="true">
+                            </ng-select>
+                            <!-- <div *ngIf="!JobMigForm.value.group" class="">
+                                <div><small style="color: red">{{language['Please add at least one static
+                                        group']}}</small>
+                                </div>
+                            </div> -->
+                        </div>
+
+                    </div>
+                    <div class="form-group ccl-form">
+                        <label for="exampleFormControlTextarea1">{{language['Description']}}</label>
+                        <textarea class="form-control" formControlName="description" #description  rows="3" (keyup)="checkMaxMin(description.value)" minlength="0" maxlength="200"></textarea>
+                        <div id="the-count" class="text-right">
+                          <span id="current">
+                              {{JobMigForm.get('description').value?.length ? JobMigForm.get('description').value?.length : 0}}</span>
+                          <span id="maximum">/200</span>
+                      </div>
+                      <div *ngIf="minimumErr" class="ccl-error">
+                        <span> {{language['The migration description shall not exceed 200 characters']}}. </span>
+                      </div>
+                      </div>
+                     
+                    <button [disabled]="(!editJobMig &&(!JobMigForm.value.name || (!file && JobMigForm.value.deviceType ==='ONT') || (!JobMigForm.value.group && JobMigForm.value.deviceType ==='RG')))||(editJobMig && !JobMigForm.value.name)" type="submit" class="btn btn-primary mr-2 py-0" (click)="onSubmit()">{{language['Save']}}</button> <button type="button" class="primary btn-transparent ml-2" (click)="close()"> {{language['Cancel']}}</button>
+                  </form>
+            </div>
+        </div>
+    </div>
+    </div>
+    <!-- <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      <button type="button" class="btn btn-primary">Save changes</button>
+    </div> -->
+  </div>
+</ng-template>
+
+<!-- Undo migration modal -->
+<ng-template #UndoMigrationmodal>
+  <div class="modal-content">
+      <div class="modal-header">
+          <h5 class="modal-title">{{language['Undo migration']}}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="close()">
+              <span aria-hidden="true"></span>
+          </button>
+      </div>
+      <div class="modal-body">
+          <p [innerHTML]="language.undotMigrationmsg(migrationName)"></p>
+
+              <p>{{language['Do you wish to continue?']}}</p>
+          <div class="">
+              <button type="button" class="btn-default primary px-3 mr-2" (click)="undoMigration()"> {{language['Undo migration']}} </button>
+              <button type="button" id="#" class="btn-default btn-dft mr-2" (click)="close()"> {{language['Cancel']}} </button>
+          </div>
+      </div>
+
+  </div>
+</ng-template>
+<!-- Undo migration modal -->
+
+<!-- Delete job report Modal -->
+<ng-template #DeleteJobReportmodal>
+  <div class="modal-content">
+      <div class="modal-header">
+          <h5 class="modal-title">{{language['Delete job report']}}</h5>
+          <button type="button" class="close p-0" data-dismiss="modal" aria-label="Close" (click)="close()">
+              <span aria-hidden="true"></span>
+          </button>
+      </div>
+      <div class="modal-body">
+          <p [innerHtml]="language.deleteMigrationmsg(migrationName)"></p>
+          <p>{{language['Do you wish to continue?']}}</p>
+
+          <div class="">
+              <button type="button" class="btn-default primary px-3 mr-2"(click)="DeleteMigration()"> {{language['Delete job report']}} </button>
+              <button type="button" id="#" class="btn-default btn-dft mr-2" (click)="close()"> {{language['Cancel']}} </button>
+          </div>
+      </div>
+
+  </div>
+</ng-template>
+
+<!-- Delete job report Modal -->
+
+<!-- Abort migration modal -->
+<ng-template #AbortMigrationModal>
+
+  <div class="modal-content">
+      <div class="modal-header">
+          <h5 class="modal-title">{{language['Abort Migration']}}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="close()">
+              <span aria-hidden="true"></span>
+          </button>
+      </div>
+      <div class="modal-body">
+          <p [innerHtml]="language.abortMigrationmsg(migrationName)"></p>
+          <p>{{language['Do you wish to continue?']}}</p>
+
+
+          <div class="mt-3">
+              <button type="button" class="btn-default primary px-3 mr-2"(click)="AbortMigration()"> {{language['Abort Migration']}} </button>
+              <button type="button" id="#" class="btn-default btn-dft mr-2" (click)="close()"> {{language['Cancel']}} </button>
+          </div>
+      </div>
+
+  </div>
+
+</ng-template>
+
+<!-- Abort migration modal -->

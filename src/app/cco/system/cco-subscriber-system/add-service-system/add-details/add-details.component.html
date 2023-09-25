@@ -1,0 +1,125 @@
+<div class="w-100 alert alert-danger fade show" *ngIf="error">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+    <button type="button" class="close" (click)="closeAlert()">
+        <span></span>
+    </button>
+    <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+</div>
+<div class="loader-wrapper-info"
+*ngIf="loading">
+<div class="loader align-items-start pt-5">
+    <div class="d-flex justify-content-center pt-5">
+        <div class="spinner-border text-primary">
+            <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+    </div>
+</div>
+</div>
+<div class="row my-3">
+    <form class="col-md-5" >
+        <div class="ccl-form" [formGroup]="subscriberForm">
+            <label for="account">{{language.account}}</label>
+            <input type="text" class="form-control" id="account" formControlName="account"
+                placeholder="{{language.Enter_Account}}" (keyup)="formChange('account');formChange('fccSubscriberId');" trimSpace [formValue]="subscriberForm">
+            <sup class="mandatory-msg pt-1 mt-2 d-inline-block" *ngIf="submitted && subscriberForm.value.account && !valid.account ">
+                {{ language.FCC_Subscriber_ID_Acc_Check }}
+            </sup>
+        </div>
+        <div class="ccl-form" [formGroup]="subscriberForm">
+            <label for="subscriberLocationId">{{language.Subscriber_Location_ID}} <span class="error">*</span></label>
+            <input type="text" class="form-control" id="subscriberLocationId" formControlName="subscriberLocationId"
+                placeholder="{{language.Enter_Subscriber_Location_ID}}" (keyup)="formChange('subscriberLocationId');" trimSpace [formValue]="subscriberForm">
+            <sup class="mandatory-msg pt-1 mt-2 d-inline-block"
+                *ngIf="submitted && (!subscriberForm.value.subscriberLocationId || !valid.subscriberLocationId) ">
+                {{ language.Add_Sys_Validation1 }}
+            </sup>
+        </div>
+        <div class="ccl-form" [formGroup]="subscriberForm">
+            <label for="name">{{language.Name}} <span class="error">*</span></label>
+            <input type="text" class="form-control" id="name" formControlName="name" (keyup)="formChange('name');"
+                placeholder="{{language.entername}}" trimSpace [formValue]="subscriberForm">
+            <sup class="mandatory-msg pt-1 mt-2 d-inline-block" *ngIf="submitted && (!subscriberForm.value.name || !valid.name )">
+                {{ language.Add_Sys_Validation1 }}
+            </sup>
+        </div>
+        <div class="ccl-form" [formGroup]="subscriberForm">
+            <label for="serviceAddress">{{language.Service_address}}</label>
+            <input type="text" class="form-control" id="serviceAddress" formControlName="serviceAddress"
+                placeholder="{{language.Enter_Service_Address}}" trimSpace [formValue]="subscriberForm">
+        </div>
+        <div  class="ccl-form" *ngIf="createdSubcriberData?.serviceAddress">
+            <button class="btn-default btn-dft my-3" *ngIf="!isLatLongCoordinates"
+            (click)="getGeomapAddress()">
+                {{language['Get Latitude/Longitude Coordinates'] || 'Get Latitude/Longitude Coordinates'}}
+            </button>
+            <div class="d-flex w-100" *ngIf="isLatLongCoordinates">
+                <div class="mr-3 ccl-form">
+                    <label>{{language['Latitude']}}</label> 
+                    <input  type="text" class="form-control inp-disabled" [readonly]="true"  name="lat" [(ngModel)]="latitude" />
+                </div>
+                <div class="mr-3 ccl-form">
+                    <label>{{language['Longitude']}}</label>
+                    <input   type="text" class="form-control inp-disabled" [readonly]="true"  name="long" [(ngModel)]="longtitude"/>
+                </div>
+                <div class="pt-4">
+                    <a class="cursor-pointer text-decoration-none d-inline-block mt-13" (click)="getGeomapAddress('Update')" >
+                        <img src="../../../../../../assets/img/ic_refresh.svg" width="18px" />
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="ccl-form" [formGroup]="subscriberForm">
+            <label for="phone">{{language.Phone}}</label>
+            <input type="text" class="form-control" id="phone" formControlName="phone" (keypress)="numberOnly($event)"
+                placeholder="{{language['Enter Your Phone Number']}}" trimSpace [formValue]="subscriberForm">
+                <!-- this.valid.phone -->
+                <sup class="mandatory-msg pt-1 mt-2 d-inline-block" *ngIf="submitted && subscriberForm.value.phone && !phoneNumberValidationClone(subscriberForm.value.phone) ">
+                    {{ language['You have entered an invalid phone No']! }}
+                </sup>
+        </div>
+        <div class="ccl-form" [formGroup]="subscriberForm">
+            <label for="email">{{language.Email}}</label>
+            <input type="text" class="form-control" id="email" formControlName="email" (keyup)="formChange('email');"
+                placeholder="{{language['Enter Your Email']}}" trimSpace [formValue]="subscriberForm">
+            <sup class="mandatory-msg pt-1 mt-2 d-inline-block" *ngIf="submitted && subscriberForm.value.email && !valid.email ">
+                {{ language['You have entered an invalid email address']! }}
+            </sup>
+        </div>  
+
+        <hr>
+
+        <div class="form-group ccl-form row" [formGroup]="subscriberForm">
+            <label for="hubbId" class="col-md-12 col-form-label">{{language['HUBB ID']}}</label>
+            <div class="col-md-12">
+                <input type="text" id="hubbId" formControlName="hubbLocationId" name="hubbId"
+                    placeholder="{{language['Enter HUBB ID']}}" (keypress)="clsAlphaNoOnly($event)" />
+                <div *ngIf="false" class="errorMessage">
+                    <label *ngIf="false">
+                        {{language['Please enter a valid HUBB ID']}}
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group ccl-form row" [formGroup]="subscriberForm">
+            <label for="hubbSubscriberId" class="col-md-12 col-form-label">{{language['FCC Subscriber ID']}}</label>
+            <div class="col-md-12">
+                <input type="text" id="hubbSubscriberId" formControlName="fccSubscriberId"
+                    (keyup)="formChange('fccSubscriberId');formChange('account');" (keypress)="clsAlphaNoOnly($event)"
+                    name="hubbSubId" placeholder="{{language['Enter FCC Subscriber ID']}}" />
+                <!-- <div *ngIf="0" class="errorMessage">
+                    <label *ngIf="0">
+                        Please enter a valid FCC Subscriber ID
+                    </label>
+                </div> -->
+                <sup class="mandatory-msg pt-1 mt-2 d-inline-block"
+                    *ngIf="submitted && subscriberForm.value.fccSubscriberId && !valid.fccSubscriberId">
+                    {{ language.FCC_Subscriber_ID_Check }}
+                </sup>
+
+            </div>
+        </div>
+    </form>
+
+
+
+</div>

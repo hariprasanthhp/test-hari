@@ -1,0 +1,127 @@
+<section>
+  <div class="container">
+    <!-- <div class="row border-bottom">
+      
+    </div> -->
+    <div class="w-100 alert alert-danger fade show my-3" *ngIf="error">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+      <button type="button" class="close" (click)="closeAlert()">
+        <span></span>
+      </button>
+      <div class="d-inline-flex" [innerHtml]="language[errorInfo] || errorInfo"></div>
+    </div>
+    <div class="w-100 alert alert-success fade show my-3" *ngIf="success">
+      <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+      <button type="button" class="close" (click)="success = false">
+        <span></span>
+      </button>
+      <div class="d-inline-flex" [innerHtml]="language[successInfo] || successInfo"></div>
+    </div>
+    <div class="row mb-3" *ngIf="loading">
+      <div class="col-md-12">
+        <div class="loader mt-5">
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+              <span class="sr-only">{{ language.Loading }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row border-bottom">
+
+      <div class="col-md-11 pl-0">
+        <div class="alarm-title">
+          {{
+          (notificationsData?.details?.workFlowDetailsForm?.controls?.name?.value != "")
+          ? notificationsData?.details?.workFlowDetailsForm?.controls?.name?.value
+          : (notificationsData.workflowId && notificationsData.workflowId != '' ? (language['Notification Schedule'] ||
+          'Notification Schedule') : language['New Notification Schedule'])
+          }}
+        </div>
+        <!-- <div class="alarm-title" *ngIf = "selectedTabIndex == 0">New Notification Schedule</div> -->
+      </div>
+      <div class="col-md-1 d-flex align-items-center justify-content-end">
+        <a href="javascript:void(0)" (click)="goToListView()">
+          <img src=" assets/img/close-icon.svg" alt="" />
+        </a>
+        <!-- routerLinkActive="active"
+        routerLink="/cco/operations/cco-network-operations/cco-alarm-notifications" -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="my-4">
+  <div class="col-md-12 px-0">
+    <ul class="stepper-ui">
+      <li *ngFor="let tab of alarmNotificationsSteppers; let i = index">
+        <button title="{{ language[tab['name']] }}" [ngClass]="{
+            'step-current': activeTab === tab['value'],
+            'step-done': levelsPassed > i && activeTab !== tab['value']
+          }" (click)="onTabChange(i, 'stepperClick')">
+          <span>{{ language[tab['name']] }}</span>
+        </button>
+        <!-- (click)="onTabChange(i)" -->
+      </li>
+    </ul>
+    <div class="pos-abs-right">
+      <button type="button" id="previousbtn" class="btn-arrow btn-arr-prev btn-grey mr-2"
+        [disabled]="selectedTabIndex === 0" [hidden]="selectedTabIndex === 0"
+        (click)="onTabChange(selectedTabIndex - 1, 'backward')">
+        <img src="assets/img/ic_chevronleft_grey.svg" /> {{ language['Go back'] }}
+      </button>
+      <button type="button" id="nextbtn" [ngClass]="{'pe-none' : btnDisabled == true}"
+        class="btn-default primary btn-arr-nxt px-3 mr-2"
+        *ngIf="selectedTabIndex + 1 !== alarmNotificationsSteppers?.length"
+        (click)="onTabChange(selectedTabIndex + 1, 'forward')" data-toggle="tooltip" data-placement="top"
+        title="  {{ language.save_and_continue }}">
+        {{ language.save_and_continue }}
+        <img src="assets/img/ic_chevron-r-w.svg" />
+      </button>
+      <button type="button" id="finishbtn" [ngClass]="{'pe-none' : btnDisabled == true}"
+        class="small-screen-but btn-default primary px-3 mr-2"
+        *ngIf="selectedTabIndex + 1 === alarmNotificationsSteppers?.length" (click)="pauseContinueWorkflow('pause')"
+        data-toggle="tooltip" data-placement="top" title=" {{ language.save_and_pause }}">
+        {{ language.save_and_pause }}
+      </button>
+      <button type="button" id="finishbtn" [ngClass]="{'pe-none' : btnDisabled == true}"
+        class="small-screen-but btn-default primary px-3"
+        *ngIf="selectedTabIndex + 1 === alarmNotificationsSteppers?.length" (click)="pauseContinueWorkflow('activate')"
+        data-toggle="tooltip" data-placement="top" title=" {{ language.save_and_activate }}">
+        {{ language.save_and_activate }}
+      </button>
+    </div>
+
+    <div *ngIf="errorMsg" class="w-100 alert alert-danger fade show ng-star-inserted">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+      <button type="button" (click)="onCloseError()" class="close">
+        <span></span>
+      </button>
+      <div class="d-inline-flex" [innerHtml]="language[errorMsg] || errorMsg"></div>
+      <!-- {{ language[errorMsg] || errorMsg }} -->
+    </div>
+  </div>
+</section>
+<app-workflow-details [loadOnEdit]="loadEditable.asObservable()" (getWorkFlowAPIEmitter)="getWorkflowData($event)"
+  [workFlowDetailsData]="notificationsData.details" *ngIf="activeTab === 'Details'">
+</app-workflow-details>
+<app-workflow-alarms (getWorkFlowAPIEmitter)="getWorkflowData($event)" (errorMsg)="getErrorMsg($event)"
+  [workFlowAlarmsData]="notificationsData.alarms" *ngIf="activeTab === 'Alarms'">
+</app-workflow-alarms>
+<app-workflow-conditions (getWorkFlowAPIEmitter)="getWorkflowData($event)"
+  [conditionFormSubmitted]="conditionFormSubmit" [workFlowConditionsData]="notificationsData.conditions"
+  *ngIf="activeTab === 'Conditions'">
+</app-workflow-conditions>
+<!-- <app-workflow-schedule (getWorkFlowAPIEmitter) = "getWorkflowData($event)" [scheduleFormSubmitted]="scheduleFormSubmit" [workFlowScheduleData]="notificationsData.notification"
+  *ngIf="activeTab === 'notification'">
+</app-workflow-schedule> -->
+
+<app-recepients [dynamicFields]="recepientFormFields" [dynamicFieldsObj]="recepientFormFieldsObj"
+  [workflowObj]="notificationsData.notification" *ngIf="activeTab === 'notification'">
+</app-recepients>
+
+<app-workflow-summary (getWorkFlowAPIEmitter)="getWorkflowData($event)" [workFlowSummaryData]="notificationsData"
+  *ngIf="activeTab === 'Summary'">
+</app-workflow-summary>
+<!-- [filteringFormSubmitted]="filteringFormSubmit" -->

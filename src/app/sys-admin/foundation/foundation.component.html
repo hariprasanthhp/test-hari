@@ -1,0 +1,22 @@
+<div class="flow-config-tab container" *ngIf="pageAvailable">
+    <ul class="nav">
+        <!-- <li class="nav-item">
+            <a class="nav-link" id="foundation-block-page" routerLink='block_page_template_list'
+                [ngClass]="(currentPage == 'block_page') ? 'active':''">{{language.Block_Page_Temp}}</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="foundation-command-iq" routerLink='whitelabel'
+                [ngClass]="(currentPage == 'whitelabel') ? 'active':''">{{language['White Label']}}</a>
+        </li> -->
+        <li class="nav-item">
+            <a class="nav-link" id="foundation-system-delete-settings" routerLink='./system_settings'
+                routerLinkActive='active'>{{ language['System Delete Settings']}}</a>
+        </li>
+    </ul>
+</div>
+<div class="my-2">
+</div>
+
+<div class="container my-3">
+    <router-outlet></router-outlet>
+</div>

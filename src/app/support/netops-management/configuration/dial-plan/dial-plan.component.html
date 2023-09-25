@@ -1,0 +1,148 @@
+<!-- Begin HTML -->
+<div class="position-relative">
+    <div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess">
+        {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} </div>
+    <div class="alert alert-success alert-dismissible" *ngIf="hasScopeAccess">
+        <span class="success-img"><img src="../../../../../assets/img/success-icon.svg" /></span>
+        <button type="button" class="close" (click)="closeAlert()" id="success-msg"><span></span></button>
+        <div class="d-inline-flex"><strong>{{ successMsg | titlecase }}</strong></div>
+    </div>
+    <div class="alert alert-error alert-dismissible py-0" *ngIf="hasScopeAccess">
+        <!-- <span class="error-img"><img src="./assets/img/ic_warning-36px.svg" /></span> -->
+        <!-- <button type="button" class="btn-default px-3 ok-btn float-right" (click)="closeAlert()" id="err-msg"> {{
+        language.Ok
+        }}<span></span></button> -->
+        <!-- <div [innerHtml]="errorMsg"></div> -->
+        <div class="warning-msg pt-2 pb-1 m-0">
+            <span class="error-img"><img src="./assets/img/ic_warning-36px.svg" /></span>
+            <span class="msg-details">
+                <span style="font-weight: bold">{{ language["Warning"] }}!</span>
+                <span [innerHtml]="errorMsg"></span>
+            </span>
+            <button type="button" class="btn-default px-3 ok-btn float-right" (click)="closeAlert()" id="err-msg"> {{
+                language.OK
+                }}<span></span></button>
+        </div>
+
+        <!--<strong>{{ errorMsg | titlecase }}</strong>-->
+    </div>
+    <div class="row no-gutters" *ngIf="hasScopeAccess">
+        <div class="d-block my-3 d-sm-none ccl-Secondary-title mb-2 col-md-12 border-bottom">{{language['Dial Plan']}}
+        </div>
+    </div>
+    <div class="d-flex flex-row justify-content-start align-items-center my-3" *ngIf="!loader && hasScopeAccess">
+        <!-- <h4 class="mb-4 flex-grow-1">{{language.Dial_Plan}}</h4> -->
+        <!-- 
+    <button *ngIf="hasWriteAccess && !router.url.includes('add')" (click)="newDialPlan()" type="button"
+        class="btn-default primary px-3 float-left mb-4" id="new-dail-plan">{{language.New_Dial_Plan}}</button> -->
+        <button *ngIf="hasWriteAccess && allowDialPlan" id="New_Dial_Plan" type="button"
+            class="btn-default primary px-3" (click)="openDialog()" #openDialogBtn data-toggle="modal"
+            data-target=".bd-example-modal-lg">{{language.New_Dial_Plan}}</button>
+
+        <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+            aria-hidden="true" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="modal-title dial-plan-info">{{language['Dial Plan']}}</div>
+                        <img class="pointer" src="assets/img/close-icon.svg" (click)="closeModal()" data-dismiss="modal"
+                            alt="">
+                    </div>
+                    <div class="modal-body">
+                        <a><i hidden class="fa fa-close" data-dismiss="modal" #closeBtn></i></a>
+                        <app-dial-plan-new *ngIf="showDialog" [editModalInput]="editDialPlanObj"
+                            [Id]="editDialPlanObj?editDialPlanObj._id:''" (onClose)="onModalClose($event)">
+                        </app-dial-plan-new>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class=" warning-msg" *ngIf="dialPlanName && hasScopeAccess">
+        <span class="error-img"><img src="./assets/img/warning-icon.svg"></span>
+        <span> {{language.Dial_Plan_Confirmation1}}</span>
+        <div class="btn-con-sec float-right">
+            <button class="btn-default btn-primary mr-2" id="deletePFBtn" (click)="doDeleteDialPlan()">
+                {{language.Confirm}}
+            </button>
+            <button class="btn-default btn-dft py-1" id="cancel-btn" (click)="cancelDelete();">
+                {{language.Cancel}}
+            </button>
+        </div>
+    </div>
+
+    <div id="dial-plan" #scrollTopId class="tab-pane"
+        *ngIf="['/support/netops-management/configuration/dial-plan','/cco/operations/cco-system-operations/sub-profile', '/cco/operations/cco-subscriber-operations/configurations/dial-plan', '/cco-foundation/foundation-operations/foundation-system-operation/sub-profile','/cco-foundation/foundation-configuration/configuration-prerequisites/dial-plan', '/cco/services/service-profiles/dial-plan'].indexOf(router?.url) > -1 && hasScopeAccess">
+        <ng-container *ngIf="language">
+            <div class="pb-2">
+                <table width="100%" id="dail-plan-table" datatable [dtOptions]="dtOptions"
+                    class="row-border hover table-alter dail-plan-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 20%">{{language.Name}}</th>
+                            <th style="width: 20%">{{language.description}}</th>
+                            <th style="width: 10%">{{language.Digit_shortimer}}</th>
+                            <th style="width: 10%">{{language.Digit_longimer}}</th>
+                            <th style="width: 35%">{{language.Rules}}</th>
+                            <th style="width: 5%"></th>
+                        </tr>
+                    </thead>
+                    <tbody *ngIf="dialPadList?.length > 0">
+                        <tr id="{{dialPlan?._id}}" *ngFor="let dialPlan of dialPadList" style="cursor: pointer;"
+                            (click)="goToEdit(dialPlan);$event.stopPropagation()">
+                            <td style="width: 20%">
+                                <div>{{ dialPlan?.name }}</div>
+                            </td>
+                            <td style="width: 20%">
+                                <div>{{ dialPlan?.description }}</div>
+                            </td>
+                            <td style="width: 10%">{{ dialPlan?.shortTimer }}</td>
+                            <td style="width: 10%">{{ dialPlan?.longTimer }}</td>
+                            <td style="width: 35%">
+                                <div class="text-break overflow-max-h">{{ dialPlan?.rules?.join('|') }}</div>
+                            </td>
+                            <td *ngIf="hasWriteAccess" style="width: 5%">
+                                <a href="javascript:void(0)" (click)="deleteDialPlan(dialPlan);$event.stopPropagation()"
+                                    title="{{language.Delete}}" *ngIf="dialPlan?.name !== 'system-default'">
+                                    <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tbody *ngIf="dialPadList?.length === 0">
+                        <tr>
+                            <td colspan="5" class="no-data-available">{{language.NO_Dial_Plan_Found}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="loader" *ngIf="loader" style="height: 100%;">
+                    <div class="d-flex justify-content-center align-content-center">
+                        <div class="spinner-border text-primary">
+                            <span class="sr-only">{{language.Loading}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+</div>
+<!-- Delete Modal -->
+<ng-template #dialPlanDeleteModalRef let-modal>
+    <div class="modal-header" style="color: #cc5814">
+        <h4 class="modal-title">{{language.Delete_DialPlan}}!</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss(false)">
+            <span aria-hidden="true" id="delete-dail"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        {{language.Dial_Plan_Confirmation2}}
+        <strong style="font-size: 18px;">{{ dialPlanObj?.name }}</strong> ?
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="modal.dismiss(false)"
+            id="close">{{language.Close}}</button>
+        <button type="button" class="btn btn-primary" ngbAutofocus (click)="modal.close(true)"
+            id="delete">{{language.Delete}}</button>
+    </div>
+</ng-template>
+<router-outlet></router-outlet>

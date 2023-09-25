@@ -1,0 +1,88 @@
+<div class="loader-wrapper position-relative">
+    <div class="loader-wrapper-info" *ngIf="loading">
+        <div class="loader">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{ language.Loading }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="w-100 alert alert-danger fade show" *ngIf="error">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+        <button type="button" class="close" (click)="closeAlert()">
+            <span></span>
+        </button>
+        <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+    </div>
+
+    <div class="w-100 alert alert-success fade show" *ngIf="success">
+        <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+        <button type="button" class="close" (click)="closeAlert()">
+            <span></span>
+        </button>
+        <div class="d-inline-flex" [innerHtml]="successInfo"></div>
+    </div>
+
+    <div class="container sys-contain">
+        <form class="ccl-form needs-validation" [formGroup]="settingsForm">
+            <div class="row">
+                <div class="col-md-10 col-md-4 col-sm-12 pr-5 pl-0">
+                    <!-- <div class="data-plan">
+                    <div class="left-side-data">
+                        <div class="cco-secondary-title">{{ language.Service_Plan }}</div>
+                        <div class="cco-secondary-title">{{ serviceLabel ? serviceLabel : '' }}</div>
+                    </div>
+                    </div> -->
+
+                    <!-- <div class="">
+                        <h4 class="user-name">{{language['EDGE Suites Bulk Provisioning Options']}}</h4>
+                    </div> -->
+
+                    <div class="ccl-form mt-3 needs-validation  mt-3">
+
+                        <div class="form-group inline-input row"
+                            *ngIf="sso.getEntitlementsArr().indexOf('203') > -1 || sso.getEntitlementsArr().indexOf('205') > -1">
+                            <label class="col-md-3 col-form-label"> {{ 'ProtectIQ' }}</label>
+                            <div class="col-md-6">
+                                <div class="toggle-swtbtn checkbox switcher"
+                                    [ngClass]="!allowSubnetConfig || !hasWriteAccess ? 'switch-disabled' : ''">
+                                    <label for="subscribedToProtectIq">
+                                        <input type="checkbox" id="subscribedToProtectIq"
+                                            [attr.disabled]="!hasWriteAccess || !allowSubnetConfig ? true : null"
+                                            (change)="changeForm()" formControlName="subscribedToProtectIq" />
+                                        <span><small></small></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group inline-input row"
+                            *ngIf="sso.getEntitlementsArr().indexOf('204') > -1 || sso.getEntitlementsArr().indexOf('205') > -1">
+                            <label class="col-md-3 col-form-label"> {{ 'ExperienceIQ' }}</label>
+                            <div class="col-md-6">
+                                <div class="toggle-swtbtn checkbox switcher"
+                                    [ngClass]="!allowSubnetConfig || !hasWriteAccess ? 'switch-disabled' : ''">
+                                    <label for="subscribedToExperienceIq">
+                                        <input type="checkbox" id="subscribedToExperienceIq" (change)="changeForm()"
+                                            formControlName="subscribedToExperienceIq"
+                                            [attr.disabled]="!hasWriteAccess || !allowSubnetConfig ? true : null" />
+                                        <span><small></small></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="form-group inline-input row" *ngIf="showSaveButtons && hasWriteAccess">
+                <div class="col-md-10 offset-md-2 text-right">
+                    <button class="btn-default primary md-btn mr-2 " (click)="reset()">{{language.reset}}</button>
+                    <button class="btn-default primary md-btn px-0 " (click)="save()">{{language.submit}}</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

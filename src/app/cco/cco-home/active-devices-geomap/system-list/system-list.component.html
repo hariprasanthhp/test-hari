@@ -1,0 +1,172 @@
+<div>
+    <div class="geomap-table">
+      <div class="d-flex w-100 justify-content-between">
+        <div class="ccl-form w-30 mb-2 position-relative">
+          <input type="text" class="search-input" [(ngModel)]="searchtext" (keyup)="search($event.target.value)"
+            (search)="search($event.target.value)" autocomplete="off" placeholder="{{language['Search System Name']}}"
+            title="{{language['Search System Name']}}" />
+          <span class="pointer" [ngClass]="showcloseicon ? 'show-close-search' : 'hide-close-search'"
+            (click)="closeicon($event.target.value)">×</span>
+        </div>
+        <button id="customListCloseButton" class="customSystemListCloseButton" (click)="hideToolBox('systemList')"
+          class="close clear-page-buton">
+          <span></span>
+        </button>
+      </div>
+      <div class="customList" class="geomap-view-table pb-2">
+        <table class="table hover table-alter dataTable" datatable
+          [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+          <thead>
+            <tr>
+              <th *ngFor="let header of systemInfoData['listColumn'];let i = index" class="header-col">
+                {{language[header?.name] || header?.name}}
+              </th>
+            </tr>
+          </thead>
+          <tbody class="data-available">
+            <tr *ngFor="let system of systemInfoData['listData'] ; let ind = index">
+              <td>
+                <div class="same-line position-relative">
+                  <span class='dot position-absolute mt-2'
+                    [ngClass]="system['nonZeroSev']?.toLowerCase() == 'warning' || system['nonZeroSev']?.toLowerCase() == 'info' || system['nonZeroSev'] == '' ? 'no-alarms' : system['nonZeroSev']?.toLowerCase()">
+                  </span>
+                  <span class="ml-2 pl-1">
+                    <a href="javascript:void(0)" (click)="redirectToPage('deviceName', system)">
+                      {{system['deviceName']?system['deviceName'] : '-'}}
+                    </a>
+                  </span>
+                </div>
+              </td>
+              <td class="text-break">
+                {{ (system['deviceRegion'] && system['deviceRegion']['region_name'] ?
+                system['deviceRegion']['region_name'] : '-') + ("/") + (system['deviceLocation'] &&
+                system['deviceLocation']['networkgroup_name'] ? system['deviceLocation']['networkgroup_name'] : '-') }}
+              </td>
+              
+              <td>
+                {{system['deviceType']?system['deviceType'] : '-'}}
+              </td>
+              <td>
+                {{system['deviceModel']?system['deviceModel'] : '-'}}
+              </td>
+              <td>
+                <ng-container *ngIf = "!system['systemAlarmCount'] || system['systemAlarmCount'] == 0">
+                  {{system['systemAlarmCount'] ? system['systemAlarmCount'] : '-'}}
+                </ng-container>
+                <ng-container *ngIf = "system['systemAlarmCount'] > 0">
+                  <a href="javascript:void(0)" (click)="redirectToPage('noOfAlarms', system, 'clickNoOfSystemAlarms')">
+                    {{system['systemAlarmCount'] > 0 ? system['systemAlarmCount'] : '-'}}
+                  </a>
+                </ng-container>
+              </td>
+              <td>
+                <ng-container *ngIf = "!system['transformedAlarmCount'] || system['transformedAlarmCount'] == 0">
+                  {{system['transformedAlarmCount'] ? system['transformedAlarmCount'] : '-'}}
+                </ng-container>
+                <ng-container *ngIf = "system['transformedAlarmCount'] > 0">
+                  <a href="javascript:void(0)" (click)="redirectToPage('noOfAlarms', system, 'clickNoOfTransformedAlarms')">
+                    {{system['transformedAlarmCount'] > 0 ? system['transformedAlarmCount'] : '-'}}
+                  </a>
+                </ng-container>
+                
+              </td>
+              <td>
+                <ng-container *ngIf = "!system['cloudHealthCount'] || system['cloudHealthCount'] == 0">
+                  {{system['cloudHealthCount'] ? system['cloudHealthCount'] : '-'}}
+                </ng-container>
+                <ng-container *ngIf = "system['cloudHealthCount'] > 0">
+                  <a href="javascript:void(0)" (click)="redirectToPage('noOfAlarms', system, 'clickNoOfcloudHealthAlarms')">
+                    {{system['cloudHealthCount'] > 0 ? system['cloudHealthCount'] : '-'}}
+                  </a>
+                </ng-container>
+                
+              </td>
+              <td>
+                <ng-container *ngIf = "!system['cloudConnectivityCount'] || system['cloudConnectivityCount'] == 0">
+                  {{system['cloudConnectivityCount'] ? system['cloudConnectivityCount'] : '-'}}
+                </ng-container>
+                <ng-container *ngIf = "system['cloudConnectivityCount'] > 0">
+                  <a href="javascript:void(0)" (click)="redirectToPage('noOfAlarms', system, 'clickNoOfCloudConnectivityAlarms')">
+                    {{system['cloudConnectivityCount'] > 0 ? system['cloudConnectivityCount'] : '-'}}
+                  </a>
+                </ng-container>
+                
+              </td>
+              <td *ngIf = "!systemInfoData['listHasAllOLT']">
+                <ng-container *ngIf = "system['outage'] == 'False'">
+                  <div class="text-break">{{system['serviceDisruption'] ? system['serviceDisruption'] : '-'}}</div>
+                </ng-container>
+                <ng-container *ngIf = "system['outage'] == 'True'">
+                  <!-- redirectToPage('outageAlarmName', system,) -->
+                  <a href="javascript:void(0)" (click)="redirectToPage('noOfAlarms', system, 'clickServiceDisruptions')">
+                    {{system['serviceDisruption'] ? system['serviceDisruption'] : '-'}}
+                  </a>
+                </ng-container>
+              </td>
+              <td *ngIf = "!systemInfoData['listHasAllOLT']">
+                <div class="text-break">{{system['subscriberName']?system['subscriberName'] : '-'}}</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- <div [ngClass] = "{showHideTable : showlistView}">
+    <div class="geomap-table">
+      <div class="d-flex w-100 justify-content-between mb-4">
+        <div>
+          <button type="button" class="btn-default btn-dft" (click) = "goBackToListView()" *ngIf = "!isSinglePushpin">
+            <span class="d-inline-flex align-items-center">
+              <i class="mr-2"><img class="mb-1" src="../../../../../assets/img/ic_chevronleft_grey.svg"/></i>
+              {{language['back']}}
+            </span>
+          </button>
+        </div>
+        <div>
+          <button id="customListCloseButton" class="customSystemListCloseButton" (click)="hideToolBox('systemList')"
+          class="close clear-page-buton">
+          <span></span>
+        </button>
+        </div>
+      </div>
+      <div class="d-flex w-100 justify-content-between align-items-center mb-3">
+        <div class="ccl-admin-title">
+          {{selectedSystem && selectedSystem['deviceName'] ? selectedSystem['deviceName'] : ''}}
+        </div>
+        <button (click)="redirectToPage('deviceName', selectedSystem)" type="button" class="btn-default btn-dft">View System Details</button>      
+      </div>
+      <div class="customList" class="geomap-view-table pb-2">
+        <table class="table hover table-alter dataTable" datatable
+          [dtOptions]="alertTypedtOptions" [dtTrigger]="dtTrigger1">
+          <thead>
+            <tr>
+              <th>
+                {{language['alarmTypes'] || 'Alarm Types'}}
+              </th>
+              <th>
+                {{language['Alarms'] || 'Alarms'}}
+              </th>
+            </tr>
+          </thead>
+          <tbody class="data-available">
+            <tr *ngFor="let system of alarmTypesData ; let ind = index">
+              <td>
+                {{ system['alertTypeName'] }}
+              </td>
+              <td>
+                <div class="same-line position-relative">
+                  <span class="">
+                    <a href="javascript:void(0)" (click)="redirectToAlerts(system)">
+                      {{ system['count'] }}
+                    </a>
+                  </span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div> -->

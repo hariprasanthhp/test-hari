@@ -1,0 +1,642 @@
+<div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess">
+  {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} </div>
+<div id="device-groups" class="tab-pane" *ngIf="pageAvailable && hasScopeAccess">
+  <div class="w-100 alert alert alert-danger fade show" *ngIf="isError">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+    <button type="button" class="close" (click)="isError = false">
+      <span></span>
+    </button>
+    <div class="d-inline-flex" [innerHtml]="language[warningMessage] || warningMessage"></div>
+  </div>
+  <div class="w-100 alert alert alert-success  fade show" *ngIf="showSuccess">
+    <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+    <div class="d-inline">
+      <strong>
+        <div class="d-inline" [innerHtml]="language[successMsg] || successMsg"></div>
+      </strong>
+    </div>
+
+    <div class="d-inline">
+      <button type="button" id="hide-successs-btn" class="close" (click)="hideSuccess()"><span></span></button>
+    </div>
+  </div>
+  <div class="py-3 warning-msg" *ngIf="showWarningMsg">
+    <div class="d-flex warning-msg-info">
+      <div class="error-img"><img src="./assets/img/warning-icon.svg" width="100%" /></div>
+      <div class="span-inline-ww" [innerHtml]="language.deviceGroupWarrningMsg(modalname,MemberCount,workflowcount)">
+      </div>
+      <div class="text-right">
+        <button class="btn-default primary mr-2" id="deletePFBtn" [disabled]="btnDisabled"
+          (click)="confirmDeleteSecleted()">
+          {{ language.Confirm }}
+        </button>
+        <button class="btn-default btn-dft" (click)="closeModal()">
+          {{ language.Cancel }}
+        </button>
+      </div>
+    </div>
+    <!-- Are you sure you want to delete system group <b>{{modalname}}</b>?
+      This system Group has <b>{{MemberCount}}</b> <b class="px-1">member(s)</b> and
+      <a *ngIf="workflowcount" (click)="workFlowMenbers()"
+        class="cursor-pointer text-decoration-none">{{workflowcount}}</a>
+      <a *ngIf="workflowcount == 0" class="none-count text-decoration-none">{{language.No}}</a>
+      <b class="px-1">workflow(s)</b>. -->
+    <!-- {{modalInfo}} -->
+    <!-- Deleting this group will remove the group configuration in the workflow(s). -->
+
+
+  </div>
+  <div class="d-block my-3 d-sm-none ccl-Secondary-title mb-2 col-md-12 border-bottom">{{language['System Group']}}
+  </div>
+  <!-- <div class="row">
+    <div class="col-md-6 text-left my-3">
+      <ng-container *ngIf="hasWriteAccess">
+        <button *ngIf="ishidebtn && !editSystem" type="button" class="btn-default primary px-3"
+          id="add-device-group-btn" (click)="displayAddGroup()">
+          {{ language.New_device_Group }}
+        </button>
+      </ng-container>
+    </div>
+  </div> -->
+
+  <div [hidden]="isAddTable" class=" position-relative">
+    <div class="row">
+      <div class="loader" *ngIf="loading">
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border text-primary">
+            <span class="sr-only">{{ language.Loading }}</span>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="col-md-6">
+           <h4 id="netops-device-grp-title">{{isAddGroupForm ? "Device Groups" : language.Device_Groups}}</h4>
+        </div> -->
+      <div class="col-md-6 text-left my-3">
+        <ng-container *ngIf="hasWriteAccess">
+          <button *ngIf="ishidebtn && !editSystem" type="button" class="btn-default primary px-3"
+            id="add-device-group-btn" (click)="displayAddGroup()">
+            {{ language.New_device_Group }}
+          </button>
+        </ng-container>
+      </div>
+    </div>
+    <div class="w-100" *ngIf="ishidebtn && !editSystem">
+      <div class="d-inline-flex col-5 ccl-form search-box-device float-right px-0">
+        <input class="device-search-input" [(ngModel)]="searchText" (keyup.enter)="searchGroupBy()"
+          placeholder="{{language.GroupName}}/{{language.FSAN_Serial_Number}}/Reg ID/{{language.macAddress}}" />
+        <button id="deviceGroupSearchBtn" (click)="searchGroupBy()" class="btn-round search-btn-round primary">
+          <img src="../../../../../assets/img/ic_search_white.svg" />
+        </button>
+      </div>
+    </div>
+    <table *ngIf="!deviceGroupId" id="devicegrp-table" datatable [dtOptions]="dtOptionsDeviceGroup"
+      class="device-group-table table row-border hover dataTable table-alter">
+      <thead>
+        <tr>
+          <th class="devices-groups-name">{{ language.Name }}</th>
+          <th class="devices-groups-description">{{ language.description }}</th>
+          <th class="min-w-130">{{ language.Type }}</th>
+          <th class="min-w-160">{{ language.no_of_workflows }}</th>
+          <th class="devices-groups-edit-delete bgimage-none" *ngIf="hasWriteAccess"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let item of DeviceTableData">
+          <tr id="{{ item._id }}">
+            <td class="cursor-pointer" (click)="gotoEdit(item._id)">
+              {{ item.name ? item.name : "" }}
+            </td>
+            <td class="cursor-pointer" (click)="gotoEdit(item._id)">
+              {{ item.description ? item.description : "" }}
+            </td>
+            <td class="cursor-pointer" (click)="gotoEdit(item._id)">
+              {{ item.type ? language[item.type | titlecase] || item.type : "" }}
+            </td>
+            <td class="text-left">
+              <!-- <a [ngClass]="item.workflowCount ? 'cursor-pointer' : 'none-count'" class="text-decoration-none"
+                [routerLink]="['../../../device-group-deltion']">{{
+                item.workflowCount ? item.workflowCount : "None" }}</a> -->
+
+              <a *ngIf="item.workflowCount" class="cursor-pointer text-decoration-none"
+                (click)="workFlowMenbers(item._id,item.name, false)">{{
+                item.workflowCount }}</a>
+              <a *ngIf="item.workflowCount == 0" class="none-count text-decoration-none">{{language.None}}</a>
+            </td>
+            <td *ngIf="hasWriteAccess">
+              <span class="del ml-6" title="{{language.Delete}}">
+                <a *ngIf="item.uncompletedCount == 0" href=" javascript:void(0)" class="cursor-pointer"
+                  (click)="deleteDeviceGrp(item)">
+                  <i class="fa fa-trash-o" aria-hidden="true" title="{{language.Delete}}"></i>
+                </a>
+              </span>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+      <tbody *ngIf="DeviceTableData?.length === 0 && !loading">
+        <tr>
+          <td colspan="5" class="no-data-available">
+            {{ language["No data available in table"] }}
+          </td>
+        </tr>
+      </tbody>
+      <tbody></tbody>
+    </table>
+  </div>
+  <div [hidden]="isAddGroupForm">
+    <div class="loader" *ngIf="loading">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+    <form [formGroup]="createDeviceGroup">
+      <div class="d-flex align-items-center border-bottom border-w2 mb-4">
+        <div class="col-md-8 pl-0">
+          <div class="net-ops-title pb-3"><span *ngIf="!editSystem">{{language.New}} </span>{{language['SystemGroup']}}
+          </div>
+        </div>
+        <div class="col-md-4 pr-0 text-right">
+          <div class="row" *ngIf="hasWriteAccess">
+            <div class="col align-self-end">
+              <button type="button" id="cancelbtn" class="btn btn-link primary mr-2 mb-2"
+                (click)="cancelAddGroup(); FilledAll('active')">
+                {{ language.Cancel }}
+              </button>
+              <button type="button" id="submitbtn" class="btn-default primary mb-3" id="submit-device-group-btn"
+                (click)="submitAddGroup()">
+                {{language['Save Group']}}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ng-container *ngIf="Rule_err">
+        <div class="w-100 alert alert alert-danger fade show">
+          <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+          <button type="button" class="close" (click)="Rule_err = false">
+            <span></span>
+          </button>
+          <!-- <div class="d-inline-flex" [innerHtml]="ErrorMessage"></div> -->
+          <div class="d-inline-flex">
+            {{ language[ErrorMessage] || ErrorMessage }}
+          </div>
+        </div>
+      </ng-container>
+      <div class="col-md-6 p-0" *ngIf="hasWriteAccess">
+        <div class="form-group ccl-form row" [ngClass]="is_staticenable ? 'cursornallow' : ''">
+          <label for="deviceName" class="col-sm-12 col-form-label">{{
+            language.Name
+            }}
+            <span class="error">*</span>
+          </label>
+          <div class="col-sm-12" [ngClass]="{ disable: is_staticenable, errorMessage: isNameError }">
+            <input type="text" id="deviceName" placeholder="{{ language.Name }}" formControlName="name"
+              class="grey-input-color" (keyup)="nameCheck($event.target.value)" trimSpace [formValue]="createDeviceGroup"/>
+            <div *ngIf="submitted && f.name.errors" class="errorMessage">
+              <div class="" *ngIf="f.name.errors.required">
+                {{ language.Enter_A_Value }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group ccl-form row" *ngIf="hasWriteAccess">
+          <label for="deviceDescription" class="col-sm-12 col-form-label">{{
+            language.desc_optional
+            }}</label>
+          <div class="col-sm-12">
+            <!-- <input type="text" id="deviceDescription" placeholder="Description" formControlName="description" /> -->
+            <textarea id="deviceDescription" class="form-control text-box" formControlName="description"
+            trimSpace [formValue]="createDeviceGroup"></textarea>
+
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-12 col-form-label">{{language.Type}}</label>
+          <div class="col-md-12 form-check-cus">
+            <div class="form-check-inline" [ngClass]="is_staticenable ? 'cursornallow' : ''">
+              <input class="form-check-input mr-2" type="radio" formControlName="type"
+                [ngClass]="is_staticenable ? 'disable' : ''" [(ngModel)]="groupType" id="devTypeDynamic"
+                (change)="changeType($event)" value="dynamic" />
+              <label for="devTypeDynamic" [ngClass]="is_staticenable ? 'disable' : ''"> {{language.Dynamic}} </label>
+            </div>
+            <div class="form-check-inline" [ngClass]="is_staticenable ? 'cursornallow' : ''">
+              <input class="form-check-input mr-2" type="radio" (change)="changeType($event)" value="static"
+                [ngClass]="is_staticenable ? 'disable' : ''" [(ngModel)]="groupType" formControlName="type"
+                id="devTypeStatic" />
+              <label for="devTypeStatic" [ngClass]="is_staticenable ? 'disable' : ''"> {{language.Static}}</label>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row" *ngIf="IsStatic" [ngClass]="is_staticenable ? 'cursornallow' : ''">
+          <label class="col-sm-12 col-form-label">{{language.Allow_Inheritance}}</label>
+          <div class="col-md-12 form-check-cus">
+            <div class="form-check-inline">
+              <input class="form-check-input mr-2" name="allowInheritance" [ngClass]="is_staticenable ? 'disable' : ''"
+                type="radio" [value]="true" formControlName="allowInheritance" id="devInhyes" />
+              <label for="devInhyes"> {{language.Yes}}</label>
+            </div>
+            <div class="form-check-inline">
+              <input class="form-check-input mr-2" type="radio" [value]="false" name="allowInheritance"
+                [ngClass]="is_staticenable ? 'disable' : ''" formControlName="allowInheritance" id="devInhno" />
+              <label for="devInhno">{{language.No}}</label>
+            </div>
+          </div>
+        </div>
+        <!--<div class="form-group row" [ngClass]="is_staticenable ? 'cursornallow' : ''" *ngIf="hasWriteAccess">
+          <label for="deviceType" class="col-sm-12 col-form-label">{{
+            language.Type
+            }}</label>
+          <div class="col-sm-12"> -->
+        <!--<div class="dropdown-button custom-dropdown-btn dropdown" >
+                  <div class="mr-2 dropdown-toggle" data-toggle="dropdown" id="deviceType"  aria-haspopup="true"
+                       aria-expanded="false">
+                    <p class="listdata mb0"> {{language.Dynamic}}
+                      <span></span>
+                    </p>
+                  </div>
+
+                  <div  aria-labelledby="deviceType" x-placement="bottom" class="dropdown-menu">
+                    <button class="dropdown-item greyaa">{{language.Dynamic}}</button>
+                    <button class="dropdown-item greyaa">{{language.Static}}</button>
+
+                  </div>
+                  </div>-->
+        <!-- <ng-select [items]="dynamic" [searchable]="false" [clearable]="false"
+              [ngClass]="is_staticenable ? 'disable' : ''" id="dynamuicid" (change)="changeType($event)"
+              [(ngModel)]="groupType" bindLabel="name" autofocus bindValue="id" placeholder="Dynamic"
+              formControlName="type">
+            </ng-select>
+          </div>
+        </div> -->
+        <!-- <div class="form-group row" [ngClass]="is_staticenable ? 'cursornallow' : ''" *ngIf="hasWriteAccess">
+          <ng-container *ngIf="IsStatic">
+            <label for="deviceType" class="col-sm-12 col-form-label">{{
+              language.Allow_Inheritance
+              }}</label>
+            <div class="col-sm-12">
+              <ng-select [items]="inheritance" [searchable]="false" [clearable]="false"
+                [ngClass]="is_staticenable ? 'disable' : ''" id="inheritance" bindLabel="name" autofocus bindValue="id"
+                placeholder="Inheritance" formControlName="allowInheritance">
+              </ng-select>
+            </div>
+          </ng-container>
+        </div> -->
+      </div>
+      <div class="col-md-12 p-0">
+        <div class="form-group row" *ngIf="!IsStatic && hasWriteAccess">
+          <div class="col-md-12">
+            <label for="deviceType" class="col-form-label">{{
+              language.Rules
+              }} <span class="error">*</span></label>
+          </div>
+          <div class="col-md-12 pl-0">
+            <div class="row">
+              <div class="col-md-12 " *ngIf="(RulesArray && Is_Update == true) || Is_Update == false">
+                <ng-container *ngFor="let rules of RulesArray; let i = index">
+                  <!-- <p>{{RulesArray[i].rule1items | json}}</p> -->
+                  <!-- <p>{{i}}</p> -->
+                  <div class="d-flex my-3 align-items-center device-groups-drop-downs">
+                    <div class="col-sm-4">
+                      <ng-select [items]="RulesArray[i].rule1items" id="inputKey-{{ i }}"
+                        [(ngModel)]="RulesArray[i].rule1" [searchable]="false" [clearable]="false" (change)="
+                        Rule1change(i);
+                        Rule1ChangeVal(i);
+                        dynamicTitle(RulesArray[i].rule1)
+                      " bindLabel="name" [ngModelOptions]="{ standalone: true }" name="inputKey-{{ i }}" autofocus
+                        bindValue="id" [disabled]="RulesArray[i].disabled">
+                        <ng-template ng-label-tmp let-item="item">
+                          {{ language[item.name] }}
+                        </ng-template>
+                        <ng-template ng-option-tmp let-item="item" let-index="index">
+                          {{ language[item.name] }}
+                        </ng-template>
+                      </ng-select>
+                    </div>
+                    <div class="col-sm-4">
+                      <ng-select [items]="rule2items[RulesArray[i].rule1]" *ngIf="i == Rule1change(i)"
+                        id="inputOperator-{{ i }}" [(ngModel)]="RulesArray[i].rule2" [searchable]="false"
+                        [clearable]="false" (change)="
+                        Rule2change(i);
+                        DropdownOrInput(i);
+                        MultiOrSingle(i);
+                        FilterDevice(i);
+                        initFilledAll(i);
+                        Rule3select(i)
+                      " bindLabel="name" [ngModelOptions]="{ standalone: true }" name="inputOperator-{{ i }}" autofocus
+                        bindValue="id">
+                        <ng-template ng-label-tmp let-item="item">
+                          {{ language[item.name] || item.name }}
+                        </ng-template>
+                        <ng-template ng-option-tmp let-item="item" let-index="index">
+                          {{ language[item.name] || item.name }}
+                        </ng-template>
+                      </ng-select>
+                    </div>
+                    <div class="col-sm-4">
+                      <!-- [items]="rule3items"  -->
+                      <ng-container *ngIf="
+                        DropdownOrInput(i) == true || RulesArray[i].multiple
+                      ">
+                        <!-- <ng-select [items]="rule3items[RulesArray[i].rule1]" [multiple]="MultiOrSingle(i)"
+                                    *ngIf="i == Rule2change(i);" id="rule3" [searchable]="false" [clearable]="false"
+                                    [(ngModel)]="RulesArray[i].rule3" (change)="FilterDevice();Recall();FilledAll('active')"
+                                    bindLabel="name" [ngModelOptions]="{standalone: true}" name="Rule3" autofocus
+                                    bindValue="id">
+                                 </ng-select> -->
+                        <ng-select [items]="RulesArray[i]['rule3items'][RulesArray[i].rule1]"
+                          [multiple]="MultiOrSingle(i) || RulesArray[i].multiple"
+                          *ngIf="i == Rule2change(i) || RulesArray[i].rule3" id="inputValue-{{ i }}" [searchable]="true"
+                          [clearable]="false" [(ngModel)]="RulesArray[i].rule3" (change)="
+                          FilterDevice(i); Recall(); FilledAll('active')
+                        " bindLabel="name" [ngModelOptions]="{ standalone: true }" name="inputValue-{{ i }}" autofocus
+                          bindValue="id" class="rule3items">
+                        </ng-select>
+                      </ng-container>
+                      <ng-container *ngIf="DropdownOrInput(i) == false">
+                        <div class="form-group ccl-form row m-0">
+                          <input type="text" data-toggle="tooltip" data-placement="top"
+                            title="{{ tooltipTitle ? tooltipTitle : '' }}"
+                            *ngIf="i == Rule2change(i) || RulesArray[i].rule3" id="inputValue-{{ i }}"
+                            (focusout)="CheckValidationErr(i)" (keyup)="FilledAll(RulesArray[i].rule3)"
+                            [(ngModel)]="RulesArray[i].rule3" [ngModelOptions]="{ standalone: true }"
+                            (change)="FilterDevice(i)" name="inputValue-{{ i }}"  trimSpace [formValue]="RulesArray[i]"/>
+                        </div>
+                      </ng-container>
+                    </div>
+
+                    <div class="delete-align">
+                      <a href="javascript:void(0)" class="cursor-pointer" id="deleterule"
+                        (click)="OnclickDeleteSymbol(i); FilledAll('active')"><i class="fa fa-trash-o"
+                          title="{{language.Delete}}" aria-hidden="true"></i></a>
+                    </div>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-12 mt-2 plusSymbol" id="deviceRules">
+            <a href="javascript:void(0)" id="adderule" class="btn-default primary pull-left"
+              (click)="onClickPlusSymbol(RulesArray.length); FilledAll('')" *ngIf="isFilledRow">{{language.addRule}}</a>
+
+            <a href="javascript:void(0)" id="adderule" class="btn-default primary pull-left" *ngIf="!isFilledRow"
+              (click)="onClickPlusSymbol(RulesArray.length)">{{language['addRule']}}</a>
+          </div>
+        </div>
+        <!-- <button type="button" id="cancelbtn" class="btn-default primary px-3 ml-2 float-right mb-3" (click)="cancelAddGroup()">{{language.Cancel}}</button>
+            <button type="button" id="submitbtn" class="btn-default primary px-3 float-right mb-3" (click)="submitAddGroup()">{{language.submit}}</button> -->
+        <!-- <div class="row" *ngIf="hasWriteAccess">
+          <div class="col align-self-end">
+            <button type="button" id="cancelbtn" class="btn-default primary px-3 mr-2 mb-3"
+              (click)="cancelAddGroup(); FilledAll('active')">
+              {{ language.Cancel }}
+            </button>
+            <button type="button" id="submitbtn" class="btn-default primary px-3 mb-3" id="submit-device-group-btn"
+              (click)="submitAddGroup()">
+              {{ language.submit }}
+            </button>
+          </div>
+        </div> -->
+      </div>
+      <div *ngIf="Disc_count">
+        <!-- dtOptionsdis -->
+        <div class="row" *ngIf="!static && Disc_count">
+          <div class="col align-self-start">
+            <h5 class="net-ops-secondary-title">
+              {{ language.Discovered_Devices }}
+            </h5>
+          </div>
+          <!-- <button id="my-btn" class="icon-btn" (click)="refresh()">
+                  <i class="fa fa-refresh" aria-hidden="true"></i>
+              </button> -->
+          <div id="my-btn" class="col cursor-pointer align-self-end text-right primary icon-btn">
+            <i class="fa fa-refresh" aria-hidden="true" (click)="CallDiscoveredDevice()"></i>
+          </div>
+        </div>
+        <div class="loader" *ngIf="loading">
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+              <span class="sr-only">{{ language.Loading }}</span>
+            </div>
+          </div>
+        </div>
+        <table *ngIf="!static && Disc_count" id="devicegrp-info-tbl" datatable [dtOptions]="dtOptionsdis"
+          class="row-border hover table-alter">
+          <thead>
+            <tr>
+              <th>{{ language.Device_info }}</th>
+              <th>{{ language.manufacturer }}</th>
+              <th>{{ language.Mode }}</th>
+              <th>{{ language.Model }}</th>
+              <th>{{ language.Software_Version }}</th>
+              <th>{{ language.Registration_ID }}</th>
+              <th>{{ language.IP_Address }}</th>
+              <th>{{ language.MAC_Address }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="{{ item._id }}" *ngFor="let item of DiscoveredTableData">
+              <td>
+                <span class="gotorouter" (click)="GotoTroubleshooting(item)">
+                  {{ item.serialNumber ? item.serialNumber : "" }}
+                </span>
+              </td>
+              <td>
+                {{ item.manufacturer ? item.manufacturer : "" }}
+              </td>
+              <td>
+                {{ item.opMode ? item.opMode : "" }}
+              </td>
+              <td>
+                {{ item.modelName ? item.modelName : "" }}
+              </td>
+              <td>
+                {{ item.softwareVersion ? item.softwareVersion : "" }}
+              </td>
+              <td>
+                {{ item.registrationId ? item.registrationId : "" }}
+              </td>
+              <td>
+                {{ item.ipAddress ? item.ipAddress : "" }}
+              </td>
+              <td>
+                {{ item.macAddress ? item.macAddress : "" }}
+              </td>
+              <!-- <td>
+                {{ item.description ? item.description : "" }}
+              </td> -->
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="row" *ngIf="static">
+        <div class="col align-self-start">
+          <h5 class="net-ops-secondary-title">
+            {{ language.Discovered_Devices }}
+          </h5>
+        </div>
+        <div id="static-discovered" class="col cursor-pointer align-self-end text-right primary icon-btn">
+          <i class="fa fa-refresh" aria-hidden="true" (click)="DevicediscoveredCount()"></i>
+        </div>
+      </div>
+      <div class="loader" *ngIf="loading">
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border text-primary">
+            <span class="sr-only">{{ language.Loading }}</span>
+          </div>
+        </div>
+      </div>
+      <table *ngIf="static && static_disc" id="devicegrp-info-tbl-static" datatable [dtOptions]="dtOptionsstaticdis"
+        class="row-border hover table-alter">
+        <thead>
+          <tr>
+            <th>{{ language.Device_info }}</th>
+            <th>{{ language.manufacturer }}</th>
+            <th>{{ language.Mode }}</th>
+            <th>{{ language.Model }}</th>
+            <th>{{ language.Software_Version }}</th>
+            <th>{{ language.Registration_ID }}</th>
+            <th>{{ language.IP_Address }}</th>
+            <th>{{ language.MAC_Address }}</th>
+          </tr>
+        </thead>
+        <tbody *ngIf="static && Disc_count_static">
+          <tr id="{{ item._id }}" *ngFor="let item of DiscoveredTableData_static; let i = index">
+            <td>
+              <span class="gotorouter" (click)="GotoTroubleshooting(item)">
+                {{ item.serialNumber ? item.serialNumber : "" }}
+              </span>
+            </td>
+            <td>
+              {{ item.manufacturer ? item.manufacturer : "" }}
+            </td>
+            <td>
+              {{ item.opMode ? item.opMode : "" }}
+            </td>
+            <td>
+              {{ item.modelName ? item.modelName : "" }}
+            </td>
+            <td>
+              {{ item.softwareVersion ? item.softwareVersion : "" }}
+            </td>
+            <td>
+              {{ item.registrationId ? item.registrationId : "" }}
+            </td>
+            <td>
+              {{ item.ipAddress ? item.ipAddress : "" }}
+            </td>
+            <td>
+              {{ item.macAddress ? item.macAddress : "" }}
+            </td>
+            <!-- <td>
+                     {{item.description ? item.description : ''}}
+                  </td> -->
+          </tr>
+        </tbody>
+        <tbody *ngIf="DiscoveredTableData_static?.length == 0">
+          <tr>
+            <td colspan="8" class="no-data-available">{{language['No data available in table']}}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="row" *ngIf="static">
+        <div class="col align-self-start">
+          <h5 class="net-ops-secondary-title">
+            {{ language.Undiscovered_Devices }}
+          </h5>
+        </div>
+        <div id="static-undiscovered" class="col cursor-pointer align-self-end text-right primary icon-btn">
+          <i class="fa fa-refresh" aria-hidden="true" (click)="DeviceUndiscoveredCount()"></i>
+          <!--(click)="StaticTblRefreshUndisc()"-->
+        </div>
+      </div>
+
+      <div class="loader" *ngIf="loading">
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border text-primary">
+            <span class="sr-only">{{ language.Loading }}</span>
+          </div>
+        </div>
+      </div>
+      <!-- [dtOptions]="tableOptions" [dtTrigger]="dtTrigger" -->
+      <table *ngIf="static_undisc" id="devicegrp-info-tbl-static-undisc" datatable [dtOptions]="dtOptionsstaticUndis"
+        class="row-border hover table-alter">
+        <thead>
+          <tr>
+            <th>{{ language.Device_info }}</th>
+          </tr>
+        </thead>
+        <tbody *ngIf="static_undisc && UnDisc_count_static">
+          <tr id="{{ item._id }}" *ngFor="let item of UnDiscoveredTableData_static">
+            <td>
+              {{ item.memberInfo ? item.memberInfo : "" }}
+            </td>
+          </tr>
+        </tbody>
+        <tbody *ngIf="UnDiscoveredTableData_static?.length == 0">
+          <tr>
+            <td colspan="5" class="no-data-available">{{language['No data available in table']}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </form>
+  </div>
+
+  <div *ngIf="workflowdetails" class="detail-view">
+    <div class="loader" *ngIf="loading">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="w-100 d-flex align-items-center justify-content-between border-bottom">
+      <div class="net-ops-title pb-3">
+        {{groupName}}
+      </div>
+      <button type="button" id="cancelbtn" class="btn btn-link primary mr-2 mb-2" (click)="cancelWorkFlowGroup()">{{
+        language.Cancel }}</button>
+    </div>
+    <div class="device-group-deletion mt-3">
+      <table class="table table-borderless table-striped w-100">
+        <thead>
+          <tr>
+            <th class="devices-groups-name">{{ language.Name }}</th>
+            <th class="devices-groups-description">{{ language.description }}</th>
+            <th class="max-170px min-130px">{{ language.Type }}</th>
+            <th class="max-170px min-130px">{{ language.Status }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of workflowMemberData">
+            <td><div class="lenth-text-break">{{ item.name ? item.name : "" }}</div></td>
+            <td><div class="lenth-text-break">{{ item.description ? item.description : "" }}</div></td>
+            <td>{{ language.Workflow }}</td>
+            <td>{{ item.state ? language[item.state]||item.state : ""}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+<!-- Modals -->
+<!-- <ng-template #deleteModal let-data let-ref="dialogRef">
+   <div class="modal-header" id="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">{{modalTitle}}</h4>
+      <button type="button" class="close" aria-label="Close" (click)="closeModal()" id="modal-close">
+         <span aria-hidden="true">&times;</span>
+      </button>
+   </div>
+   <div class="modal-body" id="modal-body">
+      {{language['Are you sure you want to delete']}} <b>{{ modalInfo }}</b> ?
+   </div>
+   <div class="modal-footer" id="modal-footer">
+      <button type="button" id="confirm" class="btn-default primary px-3" data-dismiss="modal"
+         (click)="confirmDeleteSecleted()">{{language.Yes}}</button>
+      <button type="button" id="cancel" class="btn-default primary px-3" data-dismiss="modal"
+         (click)="closeModal()">{{language.No}}</button>
+   </div>
+</ng-template> -->
+<!-- Modals -->

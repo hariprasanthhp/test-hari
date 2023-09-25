@@ -1,0 +1,628 @@
+<section class="my-3" *ngIf="language">
+    <div class="loader" *ngIf="loading">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">{{language.Loading}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="w-100 alert alert-danger fade show" [hidden]="!error">
+            <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+            <button type="button" class="close" (click)="closeAlert()">
+                <span></span>
+            </button>
+            <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+        </div>
+
+        <div class="row flex">
+            <!-- <h4 class="title flex" id="filterCountId" *ngIf="showResult && showCount">
+                {{ showFilterCount ? filterCount : topSearchResultscount }}
+                {{
+                filterCount <= 1 || filterCount <=1 ? language["Result"] : language["Results"] }} {{ systemSearchText ?
+                    language["for"] : "" }} &nbsp; <b id="searchedValue"> {{ systemSearchText }}</b>
+            </h4> -->
+
+            <h4 class="title flex" id="filterCountId" *ngIf="showResult && showCount">
+                {{ topSearchResultscount }}
+                {{
+                filterCount <= 1 || filterCount <=1 ? language["Result"] : language["Results"] }} {{ systemSearchText ?
+                    language["for"] : "" }} &nbsp; <b id="searchedValue"> {{ systemSearchText }}</b>
+            </h4>
+            <div class="filter-rht flex"></div>
+        </div>
+    </div>
+</section>
+<section *ngIf="language">
+    <div class="container">
+        <div class="row" *ngIf="countAvailable">
+            <div class="col-md-12 px-0" *ngIf="showResult" [hidden]="!dataAvailable">
+                <table width="100%" class="row-border hover table-alter" datatable [dtOptions]="dtOptions">
+                    <thead>
+                        <tr>
+                            <th>{{ language.FSAN_SN }}</th>
+                            <th>{{ language.Model }}</th>
+                            <th>{{language.RegID}}</th>
+                            <th>{{ language.MAC_Address }}</th>
+                            <th>{{ language.Subscriber_Name }}</th>
+                            <th>{{ language.Account }}</th>
+                            <!-- <th>{{ language["Revenue EDGE Suites"] }}</th>
+                            <th>{{ language.Service_Plan }}</th> -->
+                            <!-- <th style="color: #ffffff;">00</th> -->
+                        </tr>
+                    </thead>
+                    <tbody *ngIf="systemsList?.length !=0">
+                        <tr *ngFor="let item of systemsList">
+                            <td>
+                                <section *ngIf="item.devices && item.devices.length">
+                                    <ng-container *ngFor="let device of item.devices; let i = index">
+                                        <div class="display">
+                                            <ng-container *ngIf="!_array.isArray(device); else arrayDevice">
+                                                <p class="device-info" *ngIf="!checkONT(device);"
+                                                    (click)="goToSystemDetails(item, device)">
+                                                    <a class="subscriberName" [innerHTML]="
+                                                                      (device.serialNumber
+                                                                        ? device.serialNumber
+                                                                        : checkRegIdAndMac(device.deviceId)
+                                                                        ? ''
+                                                                        : device.deviceId
+                                                                      ) | highlight: searchText
+                                                                    ">
+                                                        {{
+                                                        device.serialNumber
+                                                        ? device.serialNumber
+                                                        : checkRegIdAndMac(device.deviceId)
+                                                        ? ""
+                                                        : device.deviceId
+                                                        }}
+
+                                                    </a>
+                                                    <span class="small-text-system" *ngIf="device.opMode">
+                                                        {{
+                                                        device.opMode == "RG"
+                                                        ? "(RG)"
+                                                        : device.opMode.replace(
+                                                        "WAP-IGMP",
+                                                        "Mesh(SAT)"
+                                                        ).replace("WAP", "Mesh(SAT)")
+                                                        }}
+                                                    </span>
+                                                </p>
+                                                <p class="" *ngIf="checkONT(device);">
+                                                    <span [innerHTML]="
+                                                                      (device.serialNumber
+                                                                        ? device.serialNumber
+                                                                        : checkRegIdAndMac(device.deviceId)
+                                                                        ? ''
+                                                                        : device.deviceId
+                                                                      ) | highlight: searchText
+                                                                    ">
+                                                        {{
+                                                        device.serialNumber
+                                                        ? device.serialNumber
+                                                        : checkRegIdAndMac(device.deviceId)
+                                                        ? ""
+                                                        : device.deviceId
+                                                        }}
+                                                    </span>
+
+                                                    <span class="small-text-system" *ngIf="device.opMode">
+                                                        {{
+                                                        device.opMode == "RG"
+                                                        ? "(RG)"
+                                                        : device.opMode.replace(
+                                                        "WAP-IGMP",
+                                                        "Mesh(SAT)"
+                                                        ).replace("WAP", "Mesh(SAT)")
+                                                        }}
+                                                    </span>
+                                                </p>
+                                            </ng-container>
+                                        </div>
+                                        <ng-template #arrayDevice>
+                                            <div class="display">
+                                                <ng-container *ngFor="let rgSet of device">
+                                                    <p class="device-info" *ngIf="!checkONT(rgSet)"
+                                                        (click)="goToSystemDetails(item, device)">
+                                                        <a class="subscriberName" [innerHTML]="
+                                                                  (rgSet.serialNumber
+                                                                    ? rgSet.serialNumber
+                                                                    : checkRegIdAndMac(rgSet.deviceId)
+                                                                    ? ''
+                                                                    : rgSet.deviceId
+                                                                  ) | highlight: searchText
+                                                                ">
+                                                            {{
+                                                            rgSet.serialNumber
+                                                            ? rgSet.serialNumber
+                                                            : checkRegIdAndMac(rgSet.deviceId)
+                                                            ? ""
+                                                            : rgSet.deviceId
+                                                            }}
+                                                        </a>
+
+                                                        <span class="small-text-system" *ngIf="rgSet.opMode">
+                                                            {{
+                                                            rgSet.opMode == "RG"
+                                                            ? "(RG)"
+                                                            : rgSet.opMode.replace(
+                                                            "WAP-IGMP",
+                                                            "Mesh(SAT)"
+                                                            ).replace("WAP", "Mesh(SAT)")
+                                                            }}
+                                                        </span>
+                                                    </p>
+                                                    <p class="device-info" *ngIf="checkONT(rgSet)">
+                                                        <a class="subscriberName" [innerHTML]="
+                                                                  (rgSet.serialNumber
+                                                                    ? rgSet.serialNumber
+                                                                    : checkRegIdAndMac(rgSet.deviceId)
+                                                                    ? ''
+                                                                    : rgSet.deviceId
+                                                                  ) | highlight: searchText
+                                                                ">
+                                                            {{
+                                                            rgSet.serialNumber
+                                                            ? rgSet.serialNumber
+                                                            : checkRegIdAndMac(rgSet.deviceId)
+                                                            ? ""
+                                                            : rgSet.deviceId
+                                                            }}
+                                                        </a>
+
+                                                        <span class="small-text-system" *ngIf="rgSet.opMode">
+                                                            {{
+                                                            rgSet.opMode == "RG"
+                                                            ? "(RG)"
+                                                            : rgSet.opMode.replace(
+                                                            "WAP-IGMP",
+                                                            "Mesh(SAT)"
+                                                            ).replace("WAP", "Mesh(SAT)")
+                                                            }}
+                                                        </span>
+                                                    </p>
+                                                </ng-container>
+
+                                            </div>
+                                        </ng-template>
+                                    </ng-container>
+                                </section>
+                                <!-- <ng-template #systemLocation>
+                                  <p (click)="goToSystemDetails(item, {})">
+                                    <a class="subscriberName">
+                                      {{item.subscriberLocationId ? item.subscriberLocationId : ''}}
+                                    </a>
+                
+                                  </p>
+                                </ng-template> -->
+                            </td>
+                            <td>
+                                <ng-container *ngFor="let device of item.devices; let i = index">
+                                    <div class="display">
+                                        <p *ngIf="!_array.isArray(device); else arrayDevice">
+                                            <span
+                                                [innerHTML]="(device.modelName ? device.modelName : '') | highlight: searchText">{{
+                                                device.modelName ? device.modelName : ''}}</span>
+                                        </p>
+                                    </div>
+                                    <ng-template #arrayDevice>
+                                        <div class="display" *ngFor="let rgSet of device">
+                                            <p *ngIf="rgSet.modelName">
+                                                <span
+                                                    [innerHTML]="(rgSet.modelName ? rgSet.modelName : '') | highlight: searchText">{{
+                                                    rgSet.modelName ?
+                                                    rgSet.modelName : ''}}</span>
+                                            </p>
+                                        </div>
+                                    </ng-template>
+                                </ng-container>
+                            </td>
+                            <td>
+                                <ng-container *ngFor="let device of item.devices; let i = index">
+                                    <div class="display" *ngIf="!_array.isArray(device); else arrayDeviceRegId">
+                                        <ng-container
+                                            *ngIf="((!device.registrationId && checkRegId(device.deviceId)) || (device.registrationId && checkRegId(device.deviceId) && !device.serialNumber && !device.macAddress))">
+                                            <p class="device-highlight" *ngIf="!checkONT(device)"
+                                                (click)="goToSystemDetails(item, device)">
+                                                <span [innerHTML]="(device.registrationId ? device.registrationId :  checkRegId(device.deviceId) ? device.deviceId: '')
+                                                    | highlight: searchText ">
+                                                    {{ device.registrationId ? device.registrationId :
+                                                    checkRegId(device.deviceId)
+                                                    ? device.deviceId
+                                                    :"" }}
+                                                </span>
+
+                                            </p>
+                                            <p class="" *ngIf="checkONT(device)">
+                                                <span [innerHTML]="(device.registrationId ? device.registrationId :  checkRegId(device.deviceId) ?
+                                                  device.deviceId: '') | highlight: searchText">
+                                                    {{ device.registrationId ? device.registrationId :
+                                                    checkRegId(device.deviceId)
+                                                    ? device.deviceId
+                                                    :"" }}
+                                                </span>
+
+                                            </p>
+                                        </ng-container>
+
+                                        <p
+                                            *ngIf="(checkRegId(device.deviceId) && device.registrationId) || !checkRegId(device.deviceId)">
+                                            <span [innerHTML]="
+                                                    (device.registrationId ? device.registrationId : '')
+                                                      | highlight: searchText
+                                                  ">{{ device.registrationId ? device.registrationId : "" }}</span>
+                                        </p>
+
+                                    </div>
+                                    <ng-template #arrayDeviceRegId>
+                                        <div class="display" *ngFor="let rgSet of device">
+                                            <ng-container
+                                                *ngIf="((!rgSet.registrationId && checkRegId(rgSet.deviceId)) || (rgSet.registrationId && checkRegId(rgSet.deviceId) && !rgSet.serialNumber && !rgSet.macAddress))">
+                                                <p class="device-highlight" *ngIf="!checkONT(rgSet)"
+                                                    (click)="goToSystemDetails(item, device)">
+                                                    <span [innerHTML]="
+                                                      (rgSet.registrationId ? rgSet.registrationId : checkRegId(rgSet.deviceId)
+                                                      ? rgSet.deviceId: '')
+                                                        | highlight: searchText
+                                                    ">{{ rgSet.registrationId ? rgSet.registrationId
+                                                        :checkRegId(rgSet.deviceId)
+                                                        ? rgSet.deviceId : "" }}</span>
+                                                </p>
+                                                <p class="" *ngIf="checkONT(rgSet)">
+                                                    <span [innerHTML]="
+                                                      (rgSet.registrationId ? rgSet.registrationId : checkRegId(rgSet.deviceId)
+                                                      ? rgSet.deviceId: '')
+                                                        | highlight: searchText
+                                                    ">{{ rgSet.registrationId ? rgSet.registrationId
+                                                        :checkRegId(rgSet.deviceId)
+                                                        ? rgSet.deviceId : "" }}</span>
+                                                </p>
+                                            </ng-container>
+
+                                            <p
+                                                *ngIf="(checkRegId(rgSet.deviceId) && rgSet.registrationId) || !checkRegId(rgSet.deviceId)">
+                                                <span [innerHTML]="
+                                                  (rgSet.registrationId ? rgSet.registrationId : '')
+                                                    | highlight: searchText
+                                                ">{{ rgSet.registrationId ? rgSet.registrationId : "" }}</span>
+                                            </p>
+                                        </div>
+                                    </ng-template>
+                                </ng-container>
+                            </td>
+                            <td>
+                                <ng-container *ngFor="let device of item.devices; let i = index">
+                                    <div class="display" *ngIf="!_array.isArray(device); else arrayDeviceMac">
+                                        <ng-container
+                                            *ngIf="((!device.macAddress && checkMackAddress(device.deviceId)) || (device.macAddress && checkMackAddress(device.deviceId) && !device.serialNumber && !device.registrationId))">
+                                            <p class="device-highlight" *ngIf="!checkONT(device)"
+                                                (click)="goToSystemDetails(item, device)">
+                                                <span [innerHTML]="
+                                                    (device.macAddress ? device.macAddress :  checkMackAddress(device.deviceId) ?
+                                                    device.deviceId: '')
+                                                      | highlight: searchText
+                                                  ">{{ device.macAddress ? device.macAddress :
+                                                    checkMackAddress(device.deviceId)
+                                                    ? device.deviceId
+                                                    :"" }}</span>
+
+                                            </p>
+                                            <p class="" *ngIf="checkONT(device)">
+                                                <span [innerHTML]="
+                                                    (device.macAddress ? device.macAddress :  checkMackAddress(device.deviceId) ?
+                                                    device.deviceId: '')
+                                                      | highlight: searchText
+                                                  ">{{ device.macAddress ? device.macAddress :
+                                                    checkMackAddress(device.deviceId)
+                                                    ? device.deviceId
+                                                    :"" }}</span>
+
+                                            </p>
+                                        </ng-container>
+                                        <p
+                                            *ngIf="(checkMackAddress(device.deviceId) && device.macAddress) || !checkMackAddress(device.deviceId)">
+                                            <span [innerHTML]="
+                                                  (device.macAddress ? device.macAddress : '')
+                                                    | highlight: searchText
+                                                ">{{ device.macAddress ? device.macAddress
+                                                :"" }}</span>
+                                        </p>
+
+                                    </div>
+                                    <ng-template #arrayDeviceMac>
+                                        <div class="display" *ngFor="let rgSet of device">
+                                            <ng-container
+                                                *ngIf="((!rgSet.macAddress && checkMackAddress(rgSet.deviceId)) || (rgSet.macAddress && checkMackAddress(rgSet.deviceId) && !rgSet.serialNumber && !rgSet.registrationId))">
+                                                <p class="device-highlight" *ngIf="!checkONT(rgSet)"
+                                                    (click)="goToSystemDetails(item, device)">
+                                                    <span [innerHTML]="
+                                                        (rgSet.macAddress ? rgSet.macAddress : checkMackAddress(rgSet.deviceId)
+                                                        ? rgSet.deviceId: '')
+                                                          | highlight: searchText
+                                                      ">{{ rgSet.macAddress ? rgSet.macAddress
+                                                        :checkMackAddress(rgSet.deviceId)
+                                                        ? rgSet.deviceId : "" }}</span>
+                                                </p>
+                                                <p class="" *ngIf="checkONT(rgSet)">
+                                                    <span [innerHTML]="
+                                                        (rgSet.macAddress ? rgSet.macAddress : checkMackAddress(rgSet.deviceId)
+                                                        ? rgSet.deviceId: '')
+                                                          | highlight: searchText
+                                                      ">{{ rgSet.macAddress ? rgSet.macAddress
+                                                        :checkMackAddress(rgSet.deviceId)
+                                                        ? rgSet.deviceId : "" }}</span>
+                                                </p>
+                                            </ng-container>
+
+                                            <p
+                                                *ngIf="(checkMackAddress(rgSet.deviceId) && rgSet.macAddress) || !checkMackAddress(rgSet.deviceId)">
+                                                <span [innerHTML]="
+                                                    (rgSet.macAddress ? rgSet.macAddress : '')
+                                                      | highlight: searchText
+                                                  ">{{ rgSet.macAddress ? rgSet.macAddress
+                                                    :"" }}</span>
+                                            </p>
+                                        </div>
+                                    </ng-template>
+                                </ng-container>
+                            </td>
+                            <td>
+                                <section *ngIf="(item.devices && item.devices.length); else systemLocation">
+                                    <ng-container *ngFor="let device of item.devices; let i = index">
+                                        <p class="fd-subscriber-info" *ngIf="i==0">
+                                            <a>
+                                                <span [innerHTML]="
+                                                  (item.name ? item.name : '') | highlight: searchText
+                                                ">{{ item.name ? item.name : "" }}</span>
+                                            </a>
+                                        </p>
+                                    </ng-container>
+                                </section>
+                                <ng-template #systemLocation>
+                                    <p class="device-info" (click)="goToSystemDetails(item)">
+                                        <a class="subscriberName pointer">
+                                            <span
+                                                [innerHTML]="(item.name ? item.name : '') | highlight: searchText">{{item.name
+                                                ? item.name :
+                                                ''}}</span>
+                                        </a>
+
+                                    </p>
+                                </ng-template>
+                            </td>
+                            <td>
+                                <span [innerHTML]="(item.account ? item.account : '') | highlight: searchText">
+                                    {{item.account ? item.account : ''}}</span>
+                            </td>
+                            <!-- <td>{{ item.revenue_edge_suits ? item.revenue_edge_suits : 'ProductIQ' }}</td>
+                            <td>{{ item.service_plan ? item.service_plan : 'Tier 1'}}</td> -->
+
+                        </tr>
+                    </tbody>
+                    <tbody
+                        *ngIf="((tableCount != undefined && tableCount === 0) || (filterCount != undefined && filterCount === 0))">
+                        <tr>
+                            <td colspan="8" class="no-data-available">{{language['No data available in table']}}</td>
+                        </tr>
+                    <tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<ng-template #swapSystemModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">
+            {{language.Disassociate_System}}
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="py-3 alert alert-danger" *ngIf="isModalError">
+            <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+            <button type="button" id="close-error-btn" class="close" data-dismiss="alert" aria-label="Close"
+                (click)="isModalError = !isModalError">
+                <span></span>
+            </button>
+            <div class="d-inline-flex" [innerHtml]="modalWarningMessage"></div>
+        </div>
+        <div class="loader" *ngIf="modalLoader">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{ language.Loading }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="py-3 warning-msg" *ngIf="deleteServicesAssociateWithSbscrbrMsg">
+            <div class="w-100">
+                <div [innerHtml]="deleteServicesAssociateWithSbscrbrMsg"></div>
+            </div>
+            <div class="w-100">
+                <div class="btn-con-sec">
+                    <button class="btn warn-btn mr-2" id="deleteServicesAssociateWithSbscrbrMsgCnfrmBtn"
+                        (click)="swapWithExistingData()">
+                        Confirm
+                    </button>
+                    <button class="btn warn-btn" (click)="closeDeleteServicesAssociateWithSbscrbrMsg()">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="ccl-form row my-2">
+            <!-- <label class="col-md-3 col-form-label"> bDeleteServices</label>
+      <div class="toggle-swtbtn checkbox switcher">
+        <label for="protectiq">
+          <input type="checkbox" id="protectiq" required />
+          <span><small></small></span>
+        </label> -->
+            <div class="del-dev">
+                {{language['Are you sure you want to disassociate system']}}?
+            </div>
+
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn-default primary px-3 px-3"
+            (click)="confirmDeleteServicesAssociateWithSbscrbrMsg()">
+            Disassociate
+        </button>
+        <button type="button" class="btn-default btn-dft px-3 px-3 m-2" data-dismiss="modal"
+            (click)="modal.close('Save click')">
+            {{ language.Cancel }}
+        </button>
+    </div>
+</ng-template>
+<ng-template #deleteDevicerModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">
+            {{language.disassociateDelete}}
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="py-3 alert alert-danger" *ngIf="isModalError">
+            <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+            <button type="button" id="close-error-btn" class="close" data-dismiss="alert" aria-label="Close"
+                (click)="isModalError = !isModalError">
+                <span></span>
+            </button>
+            <div class="d-inline-flex" [innerHtml]="modalWarningMessage"></div>
+        </div>
+        <div class="loader" *ngIf="modalLoader">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{ language.Loading }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="py-3 warning-msg" *ngIf="deleteDeviceAndServicesAssociateWithSbscrbrMsg">
+            <div class="w-100">
+                <div [innerHtml]="deleteDeviceAndServicesAssociateWithSbscrbrMsg"></div>
+            </div>
+            <div class="w-100">
+                <div class="btn-con-sec">
+                    <button class="btn warn-btn mr-2" id="deleteDeviceAndServicesAssociateWithSbscrbrMsgCnfrmBtn"
+                        (click)="DeleteAndDisassociated()">
+                        Confirm
+                    </button>
+                    <button class="btn warn-btn" (click)="closeDeleteDeviceAndServicesAssociateWithSbscrbrMsg()">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="ccl-form row my-2">
+            <div class="del-dev">
+
+                {{language['Are you sure you want to Delete Device']}}
+
+            </div>
+            <!-- <label class="col-md-3 col-form-label"> bFactoryReset </label>
+      <div class="toggle-swtbtn checkbox switcher">
+        <label for="subscriber">
+          <input type="checkbox" id="subscriber" [checked]='false' required />
+          <span><small></small></span>
+        </label>
+      </div> -->
+        </div>
+        <!-- <div class="ccl-form row my-2">
+      <label class="col-md-3 col-form-label"> bDeleteServices</label>
+      <div class="toggle-swtbtn checkbox switcher">
+        <label for="service">
+          <input type="checkbox" id="service" required />
+          <span><small></small></span>
+        </label>
+      </div>
+    </div> -->
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn-default primary px-3 px-3"
+            (click)="confirmDeleteDeviceAndServicesAssociateWithSbscrbrMsg()">
+            {{language.Delete_Device}}
+        </button>
+        <button type="button" class="btn-default btn-dft px-3 px-3 m-2" data-dismiss="modal"
+            (click)="modal.close('Save click')">
+            {{ language.Cancel }}
+        </button>
+    </div>
+</ng-template>
+<ng-template #deleteSubscriberModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">
+            {{language.Delete_Subscriber}}
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="py-3 alert alert-danger" *ngIf="isModalError">
+            <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+            <button type="button" id="close-error-btn" class="close" data-dismiss="alert" aria-label="Close"
+                (click)="isModalError = !isModalError">
+                <span></span>
+            </button>
+            <div class="d-inline-flex" [innerHtml]="modalWarningMessage"></div>
+        </div>
+        <div class="loader" *ngIf="modalLoader">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{ language.Loading }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="py-3 warning-msg" *ngIf="deleteSbscrbrMsg">
+            <div class="w-100">
+                <div [innerHtml]="deleteSbscrbrMsg"></div>
+            </div>
+            <div class="w-100">
+                <div class="btn-con-sec">
+                    <button class="btn warn-btn mr-2" id="deleteSbscrbrMsgCnfrmBtn" (click)="deleteSubscriber()">
+                        Confirm
+                    </button>
+                    <button class="btn warn-btn" (click)="closeSbscrbrMsg()">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="ccl-form row my-2">
+            <div class="del-dev">
+
+                Are you sure you want to Delete Subscriber?
+
+            </div>
+            <!-- <label class="col-md-3 col-form-label"> bFactoryReset </label>
+      <div class="toggle-swtbtn checkbox switcher">
+        <label for="subscriber">
+          <input type="checkbox" id="subscriber" [checked]='false' required />
+          <span><small></small></span>
+        </label>
+      </div> -->
+        </div>
+        <!-- <div class="ccl-form row my-2">
+      <label class="col-md-3 col-form-label"> bDeleteServices</label>
+      <div class="toggle-swtbtn checkbox switcher">
+        <label for="service">
+          <input type="checkbox" id="service" required />
+          <span><small></small></span>
+        </label>
+      </div>
+    </div> -->
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn-default primary px-3 px-3" (click)="confirmWithSbscrbrMsg()">
+            Delete Subscriber
+        </button>
+        <button type="button" class="btn-default btn-dft px-3 px-3 m-2" data-dismiss="modal"
+            (click)="modal.close('Save click')">
+            {{ language.Cancel }}
+        </button>
+    </div>
+</ng-template>

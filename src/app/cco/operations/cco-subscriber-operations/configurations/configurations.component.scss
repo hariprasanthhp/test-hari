@@ -1,0 +1,22 @@
+.ccl-tabs .nav-tabs li {
+    border-bottom:1px solid #cccccc !important;
+}
+
+.ccl-tabs {
+    overflow-x: auto !important;
+}
+
+.nav-tabs .nav-item a {
+    font-size  : 18px;
+    white-space: nowrap;
+}
+
+#tabs.nav-tabs {
+    display  : inline-flex;
+    flex-wrap: nowrap;
+    width    : 100%;
+}
+
+.nav-tabs .nav-item a.nav-link {
+    padding: 0px 10px;
+}

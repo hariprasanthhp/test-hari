@@ -1,0 +1,156 @@
+<form [formGroup]="filtersForm">
+    <div class="filter-elemnts mt-3">
+        <div class="row" id="issue-active-reports">
+            <div class="col-md-12 pl-0 pr-0">
+                <div class="current-issue-menu-container flex-wrap">
+
+                    <div class="current-issue-menu-item col-12 col-sm-12 col-md-3 col-lg-3 mpl-1 m-w-170px">
+                        <label for="Name" class="col-form-label select-font">{{language.Start_Date}}</label>
+                        <div class="custom-selectbox" class="w-100" id="current-issues-interval">
+                            <div class="ccl-form">
+                                <p-calendar id="start_date" [style]="{ width: '100%', height: '36px' }"
+                                    [inputStyle]="{ height: '36px' }" appendTo="body" [autoZIndex]="true"
+                                    placeholder="{{ language['Select Date'] }}" formControlName="startDate"
+                                    [showIcon]="true" (onSelect)="changeStartDate()" dateFormat="mm-dd-yy"
+                                    [maxDate]="maxForStartDate" [readonlyInput]="true" [showButtonBar]="true">
+                                </p-calendar>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="current-issue-menu-item col-12 col-sm-12 col-md-3 col-lg-3 m-w-170px">
+                        <label for="Name" class="col-form-label select-font">{{language.endDate}}</label>
+                        <div class="custom-selectbox" class="w-100" id="current-issues-interval">
+                            <div class="ccl-form">
+                                <p-calendar id="end_date" [style]="{ width: '100%', height: '36px' }"
+                                    [inputStyle]="{ height: '36px' }" appendTo="body" [autoZIndex]="true"
+                                    placeholder="{{ language['Select Date'] }}" formControlName="endDate"
+                                    [showIcon]="true" (onSelect)="changeDate()" dateFormat="mm-dd-yy"
+                                    [maxDate]="maxDate" [minDate]="FromDate" [readonlyInput]="true"
+                                    [showButtonBar]="true">
+                                </p-calendar>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="current-issue-menu-item col-12 col-sm-12 col-md-3 col-lg-3">
+                        <label for="Name" class="col-form-label select-font">{{language.region}}</label>
+                        <div class="custom-selectbox" class="w-100" id="current-issues-interval">
+                            <ng-select formControlName="region" [multiple]="true" [items]="regionsDataArray"
+                                bindValue="id" bindLabel="name" class="selectboxwidth" [clearable]="false"
+                                [searchable]="true" placeholder="{{ language.region }}" (add)="validateRegion($event)"
+                                (remove)="loadLocationValue($event)">
+                            </ng-select>
+                        </div>
+                    </div>
+                    <div class="current-issue-menu-item col-12 col-sm-12 col-md-3 col-lg-3">
+                        <label for="Name" class="col-form-label select-font">{{ language.Location }}</label>
+                        <div class="custom-selectbox" class="w-100" id="current-issues-interval">
+                            <ng-select formControlName="location" [multiple]="true" [items]="locationDataArray"
+                                bindValue="id" bindLabel="name" class="selectboxwidth"
+                                placeholder="{{ language.Location }}" [clearable]="false" [searchable]="true"
+                                (add)="validateLocation($event)" (remove)="loadSystemValue($event)">
+                            </ng-select>
+                        </div>
+                    </div>
+                    <div class="current-issue-menu-item col-12 col-sm-12 col-md-3 col-lg-3">
+                        <label for="Name" class="col-form-label select-font">{{ language.System }}</label>
+                        <div class="custom-selectbox" class="w-100" id="current-issues-interval">
+                            <ng-select formControlName="system" [multiple]="true" [items]="systemDataArray"
+                                bindValue="uuid" bindLabel="name" (change)="selectSystem($event)" class="selectboxwidth"
+                                placeholder="{{ language.System }}" [clearable]="false" [searchable]="true"
+                                (add)="validateSystem($event)" (remove)="validateSystem($event)">
+                            </ng-select>
+                        </div>
+                    </div>
+
+                    <div class="current-issue-menu-item col-12 col-sm-12 col-md-3 col-lg-3">
+                        <label for="Name" class="col-form-label select-font">{{language['Alarm Name']}}</label>
+                        <div class="custom-selectbox w-100" id="current-issues-interval">
+
+                            <ng-select [searchable]="true" [multiple]="false" placeholder="{{language['Alarm Name']}}"
+                                formControlName="eventName" id="eventName" [items]="alarmNames" bindValue="id"
+                                bindLabel="name" (change)="validateAlarmName($event)">
+
+                            </ng-select>
+                        </div>
+                    </div>
+
+                    <div class="current-issue-menu-item col-12 col-sm-12 col-md-3 col-lg-3">
+                        <label for="Name" class="col-form-label select-font">{{language.FSAN}}</label>
+                        <div class="w-100 ccl-form" id="current-issues-interval">
+                            <input type="text" class="form-control" id="FSAN" name="FSAN"
+                                placeholder="{{language.FSAN}}" maxlength="12"
+                                (keypress)="removespecialcharacter($event)" (keyup)="validateFSAN()"
+                                formControlName="fsan" title="" />
+                            <small class="vald-tag" *ngIf="fsanvalid">{{language['Invalid FSAN']}}</small>
+                        </div>
+                    </div>
+
+                    <div class="current-issue-menu-item col-12 col-sm-12 col-md-3 col-lg-3">
+                        <label for="Name" class="col-form-label select-font">{{ language['Severity'] }}</label>
+                        <div class="custom-selectbox" class="w-100" id="current-issues-interval">
+                            <ng-select [searchable]="false" [clearable]="false" placeholder="{{ language['Severity'] }}"
+                                formControlName="severity" (change)="changeSeverity()" [multiple]="false">
+                                <ng-option value="All">{{ language.All }}</ng-option>
+                                <ng-option value="critical">{{ language.critical }}</ng-option>
+                                <ng-option value="major">{{ language.major }}</ng-option>
+                                <ng-option value="minor">{{ language.minor }}</ng-option>
+                                <ng-option value="warning">{{language.Warning}}</ng-option>
+                                <ng-option value="info">{{language.Info}}</ng-option>
+                            </ng-select>
+                        </div>
+                    </div>
+                    <div class="current-issue-menu-item col-12 col-sm-12 col-md-3 col-lg-3">
+                        <label for="Name" class="col-form-label select-font"
+                            id="pendoCCOCategory">{{language.Category}}</label>
+                        <div class="custom-selectbox" class="w-100" id="current-issues-interval">
+                            <ng-select [searchable]="true" [multiple]="true" placeholder="{{language.Category}}"
+                                formControlName="category" [items]="categories" bindValue="id" bindLabel="name"
+                                (add)="validateCategory($event)" (remove)="validateCategory($event)">
+
+                            </ng-select>
+                        </div>
+                    </div>
+
+                    <div class="current-issue-menu-item col-12 col-sm-12 col-md-3 col-lg-3">
+                        <label for="Name" class="col-form-label select-font" id="pendoCCOAlarmGroup">{{language['Alarm
+                            Group']}}</label>
+                        <div class="custom-selectbox" class="w-100" id="current-issues-interval">
+                            <ng-select [clearable]="false" [searchable]="true" [multiple]="false" placeholder="{{language['Alarm Group']}}"
+                                formControlName="customCategory" [items]="customCategories" bindValue="id"
+                                bindLabel="name" (change)="changeCustomCategory($event)">
+
+                            </ng-select>
+                        </div>
+                    </div>
+
+                    <div class="current-issue-menu-item col-12 col-sm-12 col-md-3 col-lg-3">
+                        <label for="Name" class="col-form-label select-font"
+                            id="acknowledgedAlarms">{{language['Acknowledged
+                            Alarms']}}</label>
+                        <div class="custom-selectbox" class="w-100" id="current-issues-interval">
+                            <ng-select [clearable]="false" [searchable]="true" [multiple]="false" formControlName="cco_ack"
+                                placeholder="{{language['Acknowledged Alarms']}}" [items]="acknowledgedAlarms"
+                                bindValue="id" bindLabel="name">
+                            </ng-select>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-12  text-left">
+                <div class="d-inline-flex">
+                    <button type="button" class="btn-default primary" (click)="generateParams()">
+                        {{ language.apply }}
+                    </button>
+                    <button type="button" class="btn-default btn-dft ml-2" (click)="clearFilter()">
+                        {{ language.Clear_Filters }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

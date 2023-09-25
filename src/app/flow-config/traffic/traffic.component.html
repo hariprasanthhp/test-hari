@@ -1,0 +1,12 @@
+<div class="flow-config-tab" *ngIf="pageAvailable">
+    <ul class="nav"
+        *ngIf="(router.url.indexOf('/traffic/endpoint/realtime') == -1) && (router.url.indexOf('/traffic/endpoint/reports') == -1)">
+        <li class="nav-item" *ngFor="let menu of menus">
+            <a class="nav-link" id="{{menu.title}}" routerLink="{{menu.link}}"
+                [routerLinkActive]="['active']">{{menu.title}}</a>
+        </li>
+    </ul>
+</div>
+
+
+<router-outlet (activate)="onActivate($event)"></router-outlet>

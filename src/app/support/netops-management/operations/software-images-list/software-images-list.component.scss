@@ -1,0 +1,148 @@
+.sw-image {
+  margin: 10px 0px;
+}
+
+:host ::ng-deep .dataTables_empty {
+  display: none;
+}
+
+.no-data-available {
+  text-align: center;
+}
+
+// .software-images-table-info{
+//    tbody{
+//       tr{
+//           td{
+//               padding: 7px !important;
+//           }
+//       }
+//   }
+// }
+
+.fa.fa-trash-o {
+  font-size: 14px;
+}
+
+.no-break {
+  white-space    : nowrap;
+  min-width      : 150px;
+  display        : flex;
+  justify-content: flex-start;
+}
+
+.software-images-table-info {
+  overflow-x: scroll;
+}
+.software-images-table{
+  width: 100% !important;
+  overflow-x: auto !important;
+}
+.del-action-icon{
+  color:#0279ff;
+  cursor: pointer;
+  &:hover{
+    color: #0054b2;
+  }
+  }
+  .w-70px{
+    width: 70px !important;
+  }
+  .warning-msg-dis{display: flow-root}
+  .span-info-text{width: 80%; float: left}
+  .min-130px{min-width: 130px;}
+  .icon-close span,.icon-checked span{
+    width: 20px;
+    font-size: 0;
+  }
+  .icon-checked span {
+    content: url(../../../../../assets/img/success-icon.svg);
+  }
+  
+  .icon-close span {
+    content: url(../../../../../assets/img/ic_error_grey.svg)
+  }
+  .th-after-none::after{
+  display: none !important;  
+  }
+  ::ng-deep {
+    .alert-delete-warning-modal .modal-content
+      {
+        background: #fff9f5;
+      }
+    
+    
+    .alert-delete-warning-modal .modal-dialog 
+      {
+        max-width: 45.73% !important;
+      }
+    }
+    
+    .alert-box {
+      button.close {
+        right: 0;
+        top: 0;
+      }
+    
+      position: relative;
+      padding: 30px 0 15px 0;
+      ul{list-style-type: disc;padding-left:24px;margin-bottom: 35px;}
+      .box-content {
+    
+        .content {
+          padding-right: 30px;
+          padding-left: 80px;
+        }
+    
+        .icon {
+          min-width: 75px;
+          float: left;
+          text-align: center;
+    
+          img {
+            width: 48px;
+          }
+        }
+      }
+      p,ul li {
+        color: #4C4C4C;
+        margin-bottom: 0;
+        font-size: 16px;
+        line-height: 20px;
+      }
+    
+      h3 {
+        font-size: 24px;
+        line-height: 30px;
+        color: #1a1f22;
+      }
+    }
+
+  .disable-th-alt{pointer-events: none !important;}
+  .disable-th-alt::after{display: none !important;}
+    .overflow-auto {
+      table {
+        thead {
+          tr {
+            th:nth-child(7) {
+              text-align: center;
+  
+            }
+          }
+        }
+      }
+    }
+    .long-text-break{
+      word-break: break-all;
+      min-width: 250px;
+      max-width: 320px;
+      padding-right: 15px;
+    }
+    .col-size{max-width: 70px;min-width: 70px;}
+    .w-20{
+      width: 20% !important;
+    }
+    .close{
+      top: 15px !important;
+      right: 15px !important;
+    }

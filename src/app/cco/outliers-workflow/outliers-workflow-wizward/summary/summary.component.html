@@ -1,0 +1,113 @@
+<section *ngIf="!loader">
+    <div class="row mb-2" *ngIf="showTitle">
+        <div class="col-md-12 pb-1 position-relative">
+            <div class="ccl-admin-title text-truncate pr-3" title="{{workflowObj?.name}}">
+                {{workflowObj?.name}}
+            </div>
+            <div class="close-page">
+                <a class="cursor-pointer" routerLink="/cco/operations/alarms/health-alarm-notifications"
+                    routerLinkActive="active">
+                    <img src="assets/img/ic_close-44px.svg" alt="" />
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-md-8">
+            <div class="border-bottom cco-secondary-title pb-1">{{language['OLT System']}}</div>
+            <div class="summary-info-table summary-olt-table px-3">
+
+                <div class="row border-bottom">
+                    <div class="col-md-4"><span class="summary-label">{{language['Region(s)']}}</span></div>
+                    <div class="col-md-8">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <span class="summary-label">{{language['Location(s)']}}</span>
+                            </div>
+                            <div class="col-md-6">
+                                <span class="summary-label">{{language['System(s)']}}</span>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row border-bottom"
+                    *ngIf="workflowObj?.regions?.indexOf('All') !== -1 || !workflowObj?.regions?.length">
+                    <div class="col-md-4"><span class="summary-label">{{ language["All Regions"] }}</span></div>
+                    <div class="col-md-4"><span class="summary-label">{{ language["All Locations"] }}</span></div>
+                    <div class="col-md-4"><span class="summary-label">{{ language["All Systems"] ? language["All
+                            Systems"]: 'All Systems' }}</span></div>
+                </div>
+
+                <div class="row border-bottom" *ngFor="let geo of geoInfo|keyvalue">
+                    <div class="col-md-4"><span class="summary-label">{{regionsObj[geo?.key]}}</span></div>
+                    <div class="col-md-8">
+                        <div class="row" *ngFor="let lgeo of geoInfo[geo?.key]|keyvalue">
+                            <div class="col-md-6">
+                                <div><span class="summary-label">{{loctionsObj[lgeo?.key]}}</span></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div *ngIf="geoInfo[geo?.key][lgeo?.key]?.indexOf('All Systems') == -1">
+                                    <span class="summary-label">{{geoInfo[geo?.key][lgeo?.key]?.length}}
+                                        System(s)</span>
+                                </div>
+                                <div *ngFor="let sys of geoInfo[geo?.key][lgeo?.key]">
+                                    <span class="summary-label">{{sys}}</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="border-bottom cco-secondary-title pb-1">{{ language['Recipients'] }}</div>
+            <div class="summary-info-table">
+
+                <app-summary-recepients [workflowObj]="workflowObj"></app-summary-recepients>
+
+                <!-- <table class="table">
+                    <tbody>
+                        <tr>
+                            <td>{{ language['Recipients'] }}</td>
+                            <td>
+                                {{workflowObj?.emailRecipients?.length}} Recipient(s) <br />
+                                <span *ngFor="let email of workflowObj?.emailRecipients; let last=last;">
+                                    {{email}}<br *ngIf="!last" />
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>{{ language["Email Notes"] }}</td>
+                            <td class="text-break">
+                                {{workflowObj?.emailNotes ? workflowObj?.emailNotes: '-'}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table> -->
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section *ngIf="loader">
+    <div class="container">
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <div class="loader mt-5">
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border text-primary">
+                            <span class="sr-only">{{ language.Loading }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

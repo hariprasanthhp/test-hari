@@ -1,0 +1,89 @@
+.ccl-tabs-traffic {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 2px solid #ccc;
+}
+
+.ccl-tabs-traffic ul.nav-tabs {
+    border-bottom: 0 !important;
+}
+
+.ccl-tabs-traffic ul.nav-tabs .nav-item {
+    margin-top: 1px;
+}
+
+.dropdown-ul {
+    box-shadow: 0px 5px 15px rgba(128, 128, 128, 0.25);
+    border-radius: 16px;
+    border-color: transparent;
+    padding: 15px 0px;
+    min-width: 230px;
+    max-width: 250px;
+    .dropdown-item {
+        width: 100% !important;
+        border-radius: 0px !important;
+        text-align: left;
+        padding: 10px 25px;
+        cursor: pointer;
+
+        &:hover {
+            background-color: #edf5ff !important;
+        }
+    }
+}
+
+.btn-Favorite-dropdown {
+    margin-right: 10px;
+}
+
+.btn-Favorite-dropdown .dropdown-toggle::after {
+    content: url(../../../../../assets/img/ic_chevrondown_blue.svg);
+    position: relative;
+    border: none;
+    border-width: 0;
+    margin: 0;
+    top: 4px;
+
+}
+
+.dropdown-ul-body {
+    overflow: auto;
+    max-height: 225px;
+}
+
+.dropdown-ul-divider {
+    border-top: 1px solid #ccc;
+    padding: 0 15px;
+    margin: 0 15px;
+}
+
+.addto-favlink i {
+    font-size: 24px;
+    margin-right: 2px;
+}
+
+.addto-favlink {
+    display: inline-flex;
+    align-items: center;
+    color: #0279FF;
+    cursor: pointer;
+}
+
+.addto-favlink span {
+    font-weight: 400;
+}
+
+.addto-favlink:hover {
+    color: #0054b2;
+}
+
+.no-endpoint {
+    color: #808080;
+    font-style: italic;
+    text-align: center;
+    cursor: default;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-size: 15px;
+}
+.warning-title{font-size: 18px;line-height: 22.63px;}

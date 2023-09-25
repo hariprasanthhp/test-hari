@@ -1,0 +1,64 @@
+<div class="row no-gutters my-3" *ngIf="hasScopeAccess">
+  <div class="d-block d-sm-none ccl-Secondary-title mb-2 col-md-12 border-bottom">{{language['Call_Outcome_Report']}}</div>
+</div>
+<div id="call-outcome-report" class="tab-pane" *ngIf="hasScopeAccess">
+  <div class="py-3 alert alert-danger" *ngIf="isModalError">
+    <span class="success-img"><img src="./assets/img/error-icon.svg" /></span>
+    <button type="button" id="close-error-btn" class="close" data-dismiss="alert" aria-label="Close"
+      (click)="isModalError = !isModalError">
+      <span></span>
+    </button>
+    <div class="d-inline-flex">{{language['No data available']}}</div>
+  </div>
+  <div class="py-3 alert alert-danger" *ngIf="isError">
+    <span class="success-img"><img src="./assets/img/error-icon.svg" /></span>
+    <button type="button" id="close-error-btn" class="close" data-dismiss="alert" aria-label="Close"
+      (click)="isError = !isError">
+      <span></span>
+    </button>
+    <div class="d-inline-flex">{{alertMessage}}</div>
+  </div>
+  <!-- <div class="row p-0">
+    <h4 class="col-md-12 mb-4 f-size-18">{{language.Call_Outcome_Report}}</h4>
+  </div> -->
+
+  <div class="row pb-2" id="netops_callOutcomeReport_formdiv">
+    <form class="w-100">
+      <div class="col-4 mb-3">
+        <!-- <select name="" id="" class="dropdown" aria-placeholder="Custom dropdown">
+        <option default value="">Time Period</option>
+        <option value="name">name</option>
+        <option value="name">address</option>
+        <option value="name">pincode</option>
+      </select> -->
+
+        <!--<div class="dropdown-button custom-dropdown-btn" ngbDropdown>
+        <div class="mr-2" id="dropdownPeriod" ngbDropdownToggle aria-haspopup="true"
+            aria-expanded="false">
+             <p class="listdata mb0">{{language.Time_period}}
+                <span></span>
+            </p>
+          </div>
+
+          <div ngbDropdownMenu aria-labelledby="dropdownPeriod">
+              <button ngbDropdownItem class="greyaa">{{language.Name}}</button>
+              <button ngbDropdownItem class="greyaa">{{language.Address}}</button>
+              <button ngbDropdownItem class="greyaa">{{language.Pincode}}</button>
+          </div>
+      </div>-->
+        <ng-select id="timePeriod" name="timePeriod" [searchable]="false" [clearable]="false" [items]="timePeriod"
+          bindLabel="name" autofocus bindValue="id" placeholder={{language.Time_Period}} (change)="onChangeTimePeriod()"
+          [(ngModel)]="selectedTimePeriod" [ngModelOptions]="{ standalone: true }" name="rttype"  
+           #rttype="ngModel" required>
+        </ng-select>
+        <div *ngIf="rttype?.invalid &&  submit" class="errorMessage">
+          {{ language.Time_Period_Report_Error }}
+        </div>
+      </div>
+      <div class="col-md-12">
+        <button type="button" id="netops_callOutcomeReport_download" class="btn-default primary px-3 mb-2"
+          (click)="downloadReportFile()" [disabled]="bttnDissable">{{language.Download_Report}}</button>
+      </div>
+    </form>
+  </div>
+</div>

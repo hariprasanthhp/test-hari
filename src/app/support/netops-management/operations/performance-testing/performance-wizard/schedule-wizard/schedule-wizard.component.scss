@@ -1,0 +1,32 @@
+.form-group .input-group input{
+	border-top-left-radius: 25px;
+	border-bottom-left-radius: 25px;
+}
+.form-group .input-group .input-group-append .input-group-text{
+	border-top-right-radius: 25px;
+	border-bottom-right-radius: 25px;	
+}
+
+.form-group{
+	margin-bottom: 10px;
+}
+.custom-selectbox-shedule .ng-dropdown-panel {
+    z-index: 1;
+    
+    width: 100%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-radius: 10px!important;
+    min-height: auto;
+    max-height: 260px;
+    overflow-y: auto;
+    font-size: 14px;
+    transition: 0.5s ease;
+}
+.error-image{
+    max-width: 46px;
+    min-width: 36px;
+}
+.err-msg{
+    width: 90%;
+}

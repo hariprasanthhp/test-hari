@@ -1,0 +1,60 @@
+<div id="background-site-scan" class="tab-pane position-relative">
+  <div class="pb-2">
+
+    <div class="w-100 alert alert alert-danger  fade show" *ngIf="showError">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+      <button type="button" id="hide-error-btn" class="close" (click)="hideError()">
+        <span></span>
+      </button>
+      <div class="d-inline-flex" [innerHtml]="errorMsg"></div>
+    </div>
+    <!--  <div class="w-100 alert alert alert-success  fade show" *ngIf="showSuccess">
+      <div class="d-inline">
+        <strong>
+          <div class="pl-2 d-inline" [innerHtml]="successMsg"></div>
+        </strong>
+      </div>
+      <div class="d-inline">
+        <button type="button" id="hide-success-btn" class="close" (click)="hideSuccess()"><span></span></button>
+      </div>
+    </div> -->
+    <div class="loader" *ngIf="loading">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{language.Loading}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="d-block d-sm-none ccl-Secondary-title mb-2 col-md-12 border-bottom"> {{language.Site_Scan}}</div>
+    <div class="mt-2 note-site-scan" *ngIf="show">
+      {{language["Note: To view Site Scan results, go to a subscriber record in Service Cloud and select the Wi-Fi
+      tile."]}}
+    </div>
+
+    <form id="self-heal-form">
+      <div class="row p-0 my-3">
+        <!-- <h4 class="col-md-8 mb-4">{{language.Background_Site_Scan}}</h4> -->
+        <div class="float-left px-3">
+          <div class="checkbox switcher">
+            <label for="backgroundSiteScanCheckBox"
+              [ngClass]="!allowSubnetConfig || !hasWriteAccess ? 'switch-disabled' : ''">
+              <input type="checkbox" name="backgroundSiteScan" id="backgroundSiteScanCheckBox"
+                [checked]="backgroundSiteScanObj.backgroundSiteScanEnabled"
+                [(ngModel)]="backgroundSiteScanObj.backgroundSiteScanEnabled"
+                [disabled]="!hasWriteAccess || !allowSubnetConfig ? true : null" (change)="onSubmit()">
+              <span><small></small></span>
+              <span class="mx-2">{{backgroundSiteScanObj.backgroundSiteScanEnabled ? language["Enabled" ]:
+                language["Disabled"] }} </span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="col-sm-12 text-md-left pl-0 mt-2">
+        <button *ngIf="hasWriteAccess" type="button" id="submit-btn" class="btn-default primary px-3 mr-3 "
+          (click)="onSubmit()">{{language.submit}}</button>
+        <button *ngIf="hasWriteAccess" type="button" class="btn-default btn-dft" id="cancel-btn"
+          (click)="onCancel()">{{language.cancel}}</button>
+      </div> -->
+    </form>
+  </div>
+</div>

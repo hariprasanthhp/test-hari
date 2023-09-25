@@ -1,0 +1,115 @@
+<span *ngIf="pageType == FavoritePageType.EndPoint && isEndPointPage">
+  <span [title]="favoriteEndPoints?.length >= 25 ? language['Maximum number of Endpoint Favorites reached.']: ''">
+    <span class="addto-favlink align-bottom mt-1" *ngIf="!selectedEndPoint" (click)="saveEndPoint()"
+      [ngClass]="{'redoDisablity':favoriteEndPoints?.length >= 25}">
+      <i class="fa fa-star-o"></i>
+      <span class="f-size-16px">{{language['Add to Favorites']}}
+      </span>
+    </span>
+  </span>
+  <span class="addto-favlink align-bottom" *ngIf="selectedEndPoint" (click)="confirmDelete(selectedEndPoint.id)">
+    <i><img src="../../../assets/img/ic_close_blue.svg" /></i>
+    <span class="f-size-16px mt-1"> {{language['Remove from Favorites']}}</span>
+  </span>
+</span>
+<div class="d-inline-flex" *ngIf="pageType == FavoritePageType.Traffic">
+  <div class="btn-Favorite-dropdown">
+    <div class="btn-group ml-3">
+      <a class="text-decoration-none cursor-pointer dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+        aria-expanded="false">
+        {{language['Favorite Endpoints']}}
+      </a>
+      <div class="dropdown-menu dropdown-ul">
+        <div class="dropdown-ul-body">
+          <button type="button" class="dropdown-item" *ngFor="let item of favoriteEndPoints"
+            (click)="onSelectEndPoint(item)">{{item.settingName}}</button>
+          <div class="no-endpoint" *ngIf="favoriteEndPoints?.length == 0">
+            {{language['No endpoint favorites added']}}
+          </div>
+        </div>
+        <div class="dropdown-ul-divider"></div>
+        <div class="dropdown-ul-footer">
+          <button type="button" class="dropdown-item" (click)="modalManageEndpoint()">
+            {{language['Manage Favorite Endpoints']}}...</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #modaleEndpointFavorites let-modal class="col-md-12">
+  <div class="modal-header">
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span></span>
+    </button>
+  </div>
+  <div class="modal-body px-4">
+    <div class="w-100 px-3 pb-3">
+      <div class="ccl-admin-title my-3">{{language['Manage Endpoint Favorites']}}</div>
+      <p class="mb-3" *ngIf="favoriteEndPoints?.length > 0">{{favoriteEndPoints?.length}} of 25 endpoint favorites added
+      </p>
+      <div class="clx-warning-alert mb-3" [hidden]="!isDeleteSelected">
+        <div class="clx-warning-wrapper">
+          <div class="clx-warning-icon">
+            <span></span>
+          </div>
+          <div class="clx-warning-content">
+            <div class="text-break cco-secondary-title warning-title mb-3">
+              {{language['Are you sure you want to delete']}} <div>
+                <b>{{deletableEndPoint?.settingName}}</b>?
+              </div>
+            </div>
+            <div class="mt-3">
+              <button type="button" class="btn-default btn-primary mr-3" (click)="confirmDelete(deletableEndPoint.id)">
+                {{language['Confirm']}}
+              </button>
+              <button type="button" class="btn-default btn-dft" (click)="cancelDelete()">
+                {{language['Cancel']}}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="w-100 alert alert-danger fade show" *ngIf="errorMessage">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+        <span>{{errorMessage}}</span>
+        <button type="button" class="close" (click)="closeAlert()">
+          <span></span>
+        </button>
+      </div>
+      <div class="w-100 alert alert-success fade show" *ngIf="successMessage">
+        <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+        <span>{{successMessage}}</span>
+        <button type="button" class="close" (click)="closeAlert()">
+          <span></span>
+        </button>
+      </div>
+      <div class="text-center" *ngIf="favoriteEndPoints?.length == 0 && !loading">
+        {{language['There are no endpoint favorites added.']}}
+      </div>
+      <div [hidden]="loading || favoriteEndPoints?.length == 0">
+        <table class="w-100" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+          <thead>
+            <tr>
+              <th>{{language['end']}}</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of favoriteEndPoints">
+              <td>{{item.settingName}}</td>
+              <td><a class="cursor-pointer" (click)="deleteEndPoint(item)"><img
+                    src="../../../assets/img/ic_delete_trash.svg" /></a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="loader" *ngIf="loading">
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border text-primary">
+            <span class="sr-only">{{language.Loading}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

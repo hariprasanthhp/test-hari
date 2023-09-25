@@ -1,0 +1,668 @@
+<div class="alert alert-danger alert-dismissible fade show" role="alert" *ngIf="error">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+    <span>Error!</span> {{ErrorMsg}}
+    <button type="button" class="close" (click)="error!=error" data-dismiss="alert" aria-label="Close"
+        id="netops-reports-AlertClose">
+        <span aria-hidden="true"></span>
+    </button>
+</div>
+<div class="add-report">
+    <h4 class="title-part"> {{Reporttitle}} Report </h4>
+    <form [formGroup]="reportForm" (ngSubmit)="addReprt()" novalidate>
+        <div class="card-report" id="netops-reports-form-container">
+            <div class="report-sec">
+                <div class="report-name">
+                    General
+                </div>
+                <div class="form-group ccl-form ">
+                    <label class="control-label">Name</label>
+                    <div class="">
+                        <input id="name_input" [ngClass]="{'errorInput': submitted && reportForm.controls.name.errors}"
+                            name="name_input" type="text" required="" aria-required="true" maxlength="20" minlength="4"
+                            aria-describedby="name_input-error" placeholder="Enter Report Name" formControlName="name"
+                            required>
+                        <div *ngIf="submitted && reportForm.controls.name.errors" id="name_input-error"
+                            class="errorMessage">
+                            <small *ngIf="reportForm.controls.name.errors.required">
+                                Name is required
+                            </small>
+                            <small *ngIf="!reportForm.controls.name.errors.required">{{namesize()}}</small>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group ccl-form ">
+                    <label class="control-label">Description</label>
+                    <div class="">
+                        <textarea formControlName="description" class="form-control"
+                            placeholder="Enter Report Description" ng-reflect-model=""></textarea>
+                        <!--     <div  id="name_input-error" class="errorMessage">
+                        <small>
+                        Please enter a value
+                        </small>
+                    </div> -->
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="flex-start custom-check">
+                        <div class="control-label">Report Format</div>
+                        <label for="check-label" class="dub-label">
+                            <input type="radio" id="check-label" formControlName="reportFormat" name="reportFormat"
+                                value="1">
+                            <span class="ml-1"> CSV </span> </label>
+                    </div>
+                    <!-- <div  id="name_input-error" class="errorMessage">
+                        <small>
+                        Please enter a value
+                        </small>
+                    </div> -->
+                </div>
+            </div>
+            <div class="report-sec" id="netops-report-emailSchedule">
+                <div class="report-name">
+                    Email Schedule
+                </div>
+                <div class="form-group mb-2">
+                    <label class="control-label">Recurrence</label>
+
+                    <ul class="date-order flex-start mb-0">
+                        <li>
+                            <label id="one-radio-label " class="radio-inline">
+                                <input type="radio" id="one-radio" formControlName="recurrenceType"
+                                    name="recurrenceType" checked value="1" class="mr-2"
+                                    (click)="chooseRecurrence($event)">One Time
+                            </label>
+                        </li>
+                        <li>
+                            <label id="daily-radio-label " class="radio-inline">
+                                <input type="radio" id="daily-radio" formControlName="recurrenceType"
+                                    name="recurrenceType" value="2" class="mr-2" (click)="chooseRecurrence($event)">
+                                Daily
+                            </label>
+                        </li>
+                        <li>
+                            <label id="weekly-radio-label" class="radio-inline ">
+                                <input type="radio" id="weekly-radio" formControlName="recurrenceType"
+                                    name="recurrenceType" value="3" class="mr-2"
+                                    (click)="chooseRecurrence($event)">Weekly
+                            </label>
+                        </li>
+                        <li>
+                            <label id="monthly-radio-label" class="radio-inline ">
+                                <input type="radio" id="monthly-radio" formControlName="recurrenceType"
+                                    name="recurrenceType" value="4" class="mr-2" (click)="chooseRecurrence($event)">
+                                Monthly
+                            </label>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- // Recurrence Pattern  -->
+                <div class="form-group" id="netops-reports-recurrence-pattern-container"
+                    *ngIf="reportForm.controls['recurrenceType'].value !='1'">
+                    <label class="control-label">Recurrence Pattern</label>
+                    <!-- daily  -->
+                    <div class="recurrence-sec" id="netops-reports-daily-pattern-container"
+                        *ngIf="reportForm.controls['recurrenceType'].value =='2'">
+                        <div class="daily-check  mont-list flex-start">
+                            <label id="daily-check-label" class="radio-inline pr-0 mb-0">
+                                <input type="radio" id="daily-check-input" (click)="chooseDailyPattern('eDay')"
+                                    formControlName="dailyPattern" name="dailyPattern" value="eDay" class="mr-2"> Every
+                            </label>
+                            <div class="ccl-form ml-2 number-input">
+                                <input type="number"
+                                    [attr.disabled]="reportForm.controls['dailyPattern'].value === 'eDay'  ? null : ''"
+                                    placeholder="#" formControlName="dailyPatternValue" class="form-control"
+                                    id="daily-pattern-frequence" customNeg name="daily-pattern-frequence"
+                                    [ngClass]="{'errorInput': submitted && (reportForm.controls.dailyPattern.errors || reportForm.controls.dailyPatternValue.errors)}"
+                                    aria-required="true" aria-describedby="frequency-error" aria-invalid="true">
+                                <span> days</span>
+                            </div>
+                        </div>
+                        <div *ngIf="(submitted && reportForm.controls.dailyPatternValue.errors) || reportForm.controls.dailyPatternValue.touched"
+                            id="name_input-error" class="errorMessage">
+                            <small *ngIf="reportForm.controls.dailyPatternValue.errors?.required">
+                                This value is not valid
+
+                            </small>
+                            <small *ngIf="reportForm.controls.dailyPatternValue.errors?.pattern">
+                                Please enter a value greater than or equal to 1
+
+                            </small>
+                        </div>
+                        <div class="mt-2">
+                            <div class="daily-check flex-start">
+                                <label id="weekday-check-label" class="radio-inline pr-0 mb-0">
+                                    <input type="radio" id="weekday-check-input" (click)="chooseDailyPattern('eWeek')"
+                                        formControlName="dailyPattern" name="dailyPattern" value="eWeek" class="mr-2">
+                                    Every weekday
+                                </label>
+                            </div>
+                        </div>
+                        <div *ngIf="submitted && reportForm.controls.dailyPattern.errors" id="name_input-error"
+                            class="errorMessage">
+                            <small *ngIf="reportForm.controls.dailyPattern.errors.required">
+                                Please select one pattern
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- // weekly  -->
+
+                    <div class="recurrence-sec" id="netops-reports-weekly-pattern-container"
+                        *ngIf="reportForm.controls['recurrenceType'].value =='3'">
+                        <div class="weekly-sec">
+                            <div class="workflow-oneline mb-0">
+                                <div class="text-tclr">Recur every</div>
+                                <div class="ccl-form form-group row">
+                                    <input type="number" formControlName="weekPatternValue" class="form-control"
+                                        id="weeklyReccur" placeholder="#" aria-required="true"
+                                        [ngClass]="{'errorInput': submitted && reportForm.controls.weekPatternValue.errors}"
+                                        aria-describedby="weeklyReccur-error" aria-invalid="true" class="form-control"
+                                        name="weekly-pattern-frequency">
+                                </div>
+                                <div class="text-tclr">week(s) on:</div>
+                            </div>
+                            <div *ngIf="(submitted && reportForm.controls.weekPatternValue.errors) || reportForm.controls.weekPatternValue.touched"
+                                id="weekly-pattern-value-error" class="errorMessage">
+                                <small *ngIf="reportForm.controls.weekPatternValue.errors?.required">
+                                    This value is not valid
+                                </small>
+                                <small *ngIf="reportForm.controls.weekPatternValue.errors?.pattern">
+                                    Please enter a value greater than or equal to 1
+                                </small>
+                                <small *ngIf="reportForm.controls.weekPatternValue.value > 100">
+                                    Please enter a value less than or equal to 100
+                                </small>
+                            </div>
+
+
+                        </div>
+                        <div class="form-group weekly-days mt-3">
+                            <div class="checkbox checkbox-inline days-label">
+                                <label *ngFor="let list of allDays; let i = index">
+                                    <input type="checkbox" [value]="list.value" [checked]="list.checked"
+                                        [ngClass]="{'errorInput': submitted && reportForm.controls.weekPatternDay.errors}"
+                                        name="weekly-pattern-day" (change)="chooseWeekDays(list,i, $event)">
+                                    {{list.name}}
+                                </label>
+
+                            </div>
+
+                            <div *ngIf="submitted && reportForm.controls.weekPatternDay.errors"
+                                id="weekly-pattern-select-day-error" class="errorMessage">
+                                <small *ngIf="reportForm.controls.weekPatternDay.errors.required">
+                                    Please select one pattern
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- // monthly -->
+
+                    <div class="recurrence-sec" id="netops-reports-monthly-pattern-container"
+                        *ngIf="reportForm.controls['recurrenceType'].value =='4'">
+                        <div class="mont-list flex-start">
+                            <span class="text-tclr mb-0 pr-2">
+                                <input type="radio" (click)="chooseMonthlyPattern('option1')"
+                                    name="monthlyPatternOptions" class="mr-2" value="date"
+                                    formControlName="monthlyPatternOptions">Day
+                            </span>
+                            <div class="ccl-form">
+                                <input type="number" placeholder="#" formControlName="monthlyPatternDayOption1"
+                                    class="form-control" id="dailyPattern" name="dailyPattern" aria-required="true"
+                                    [ngClass]="{'errorInput': submitted && (reportForm.controls.monthlyPattern.errors || reportForm.controls.monthlyPatternDayOption1.errors)}"
+                                    aria-describedby="dailyPattern-error" aria-invalid="true">
+                                <span style="color: black;">of every </span>
+                            </div>
+                            <div class="ccl-form">
+                                <input type="number" placeholder="#" formControlName="monthlyPatternMonthOption1"
+                                    class="" id="daily-pattern-frequence" name="daily-pattern-frequence"
+                                    aria-required="true"
+                                    [ngClass]="{'errorInput': submitted && (reportForm.controls.monthlyPattern.errors || reportForm.controls.monthlyPatternMonthOption1.errors)}"
+                                    aria-describedby="every-error" aria-invalid="true">
+                                <span class="text-tclr"> month(s)</span>
+                            </div>
+                        </div>
+                        <div class="mont-list flex-start">
+
+                            <div class="ccl-form">
+                                <div *ngIf="(submitted && reportForm.controls.monthlyPatternDayOption1.errors) || reportForm.controls.monthlyPatternDayOption1.touched"
+                                    id="monthly-pattern-day-option1-value-error" class="errorMessage">
+                                    <small *ngIf="reportForm.controls.monthlyPatternDayOption1.errors?.required">
+                                        This value is not valid
+                                    </small>
+
+                                    <small
+                                        *ngIf="(reportForm.controls.monthlyPatternDayOption1.value < 1 && !reportForm.controls.monthlyPatternDayOption1.errors?.required )">
+                                        Please enter a value greater than or equal to 1
+                                    </small>
+                                    <small
+                                        *ngIf="(reportForm.controls.monthlyPatternDayOption1.value>31 && !reportForm.controls.monthlyPatternDayOption1.errors?.required )">
+                                        Please enter a value less than or equal to 31
+                                    </small>
+
+                                </div>
+                            </div>
+                            <div class="ccl-form">
+                                <div *ngIf="(submitted && reportForm.controls.monthlyPatternMonthOption1.errors) || reportForm.controls.monthlyPatternMonthOption1.touched"
+                                    id="monthly-pattern-month-option1-value-error" class="errorMessage">
+                                    <small *ngIf="reportForm.controls.monthlyPatternMonthOption1.errors?.required">
+                                        This value is not valid
+                                    </small>
+                                    <small
+                                        *ngIf="(reportForm.controls.monthlyPatternMonthOption1.value <1 && !reportForm.controls.monthlyPatternMonthOption1.errors?.required) ">
+                                        Please enter a value greater than or equal to 1
+                                    </small>
+                                    <small *ngIf="(reportForm.controls.monthlyPatternMonthOption1.value>12)">
+                                        Please enter a value less than or equal to 12
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mont-list flex-start  mt-3">
+                            <span class="text-tclr mb-0 pr-2">
+                                <input type="radio" (click)="chooseMonthlyPattern('option2')"
+                                    name="monthlyPatternOptions" class="mr-2" value="ordinal"
+                                    formControlName="monthlyPatternOptions">The
+                            </span>
+                            <div class="custom-selectbox w-20 mr-2">
+                                <ng-select formControlName="monthlyPatternOrder" ngModel="Last"
+                                    [ngModelOptions]="{ standalone: true }" [searchable]="false"
+                                    [ngClass]="{'errorInput': submitted && (reportForm.controls.monthlyPattern.errors || reportForm.controls.monthlyPatternOrder.errors)}">
+                                    <ng-option *ngFor="let list of order" [value]="list.value">{{list.name}}
+                                    </ng-option>
+                                </ng-select>
+                                <div *ngIf="(submitted && reportForm.controls.monthlyPatternOrder.errors) || reportForm.controls.monthlyPatternOrder.touched"
+                                    id="monthly-pattern-order-option2-value-error" class="errorMessage">
+                                    <small *ngIf="reportForm.controls.monthlyPatternOrder.errors?.required">
+                                        Please select a value
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="custom-selectbox w-20">
+                                <ng-select formControlName="monthlyPatternDayOption2" ngModel="Sunday"
+                                    [ngModelOptions]="{ standalone: true }" [searchable]="false"
+                                    [ngClass]="{'errorInput': submitted && (reportForm.controls.monthlyPattern.errors || reportForm.controls.monthlyPatternDayOption2.errors)}">
+                                    <ng-option *ngFor="let list of weekList" [value]="list.value">{{list.name}}
+                                    </ng-option>
+                                </ng-select>
+                                <div *ngIf="(submitted && reportForm.controls.monthlyPatternDayOption2.errors) || reportForm.controls.monthlyPatternDayOption2.touched"
+                                    id="monthly-pattern-day-option2-value-error" class="errorMessage">
+                                    <small *ngIf="reportForm.controls.monthlyPatternDayOption2.errors?.required">
+                                        Please select a value
+                                    </small>
+                                </div>
+                            </div>
+                            <span style="color: black;">of every</span>
+
+                            <div class="ccl-form">
+                                <input type="number" placeholder="#" formControlName="monthlyPatternMonthOption2"
+                                    class="" id="daily-pattern-frequence" name="daily-pattern-frequence"
+                                    aria-required="true"
+                                    [ngClass]="{'errorInput': submitted && (reportForm.controls.monthlyPattern.errors || reportForm.controls.monthlyPatternMonthOption2.errors)}"
+                                    aria-describedby="every-error" aria-invalid="true">
+                                <span class="text-tclr"> month(s)</span>
+                                <div *ngIf="(submitted && reportForm.controls.monthlyPatternMonthOption2.errors) || reportForm.controls.monthlyPatternMonthOption2.touched"
+                                    id="monthly-pattern-month-option2-value-error" class="errorMessage">
+                                    <small *ngIf="reportForm.controls.monthlyPatternMonthOption2.errors?.required">
+                                        Please enter a value
+                                    </small>
+                                    <small *ngIf="reportForm.controls.monthlyPatternMonthOption2.errors?.pattern">
+                                        Please enter a value greater than 0
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="submitted && reportForm.controls.monthlyPattern.errors"
+                            id="monthly-pattern-choose-error" class="errorMessage">
+                            <small *ngIf="reportForm.controls.monthlyPattern.errors?.required">
+                                Please select one pattern
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group ccl-form ">
+                    <label class="control-label">Email Recipients</label>
+                    <div class="">
+                        <textarea class="form-control" formControlName="emailRecipients"
+                            placeholder="Enter Email Recipients"></textarea>
+                        <div *ngIf="(submitted && reportForm.controls.emailRecipients.errors) || reportForm.controls.emailRecipients.touched"
+                            class="errorMessage">
+                            <small *ngIf="reportForm.controls.emailRecipients.errors?.pattern">
+                                Invalid Email Address, multiple addresses Should be seperated by ";", No space
+                            </small>
+                        </div>
+                        <!-- <div  id="name_input-error" class="errorMessage">
+                            <small>
+                            Please enter a value
+                            </small>
+                        </div> -->
+                    </div>
+                </div>
+
+            </div>
+            <div class="report-sec">
+                <div class="report-name">
+                    Query Attributes
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-4 col-md-12 col-sm-12">
+                        <div class="form-group">
+                            <div class="control-label">Type</div>
+                            <div class="type-title">
+                                <div class="custom-selectbox w-100 mr-2">
+                                    <ng-select [searchable]="false" [ngModelOptions]="{ standalone: true }"
+                                        ngModel="Wi-Fi-Report">
+                                        <ng-option>Wi-Fi-Report
+                                        </ng-option>
+                                    </ng-select>
+                                </div>
+                            </div>
+                            <!-- <div  id="name_input-error" class="errorMessage">
+                                <small>
+                                Please enter a value
+                                </small>
+                            </div> -->
+                        </div>
+                    </div>
+                    <div class="col-lg-8 col-md-12 col-sm-12">
+                        <div class="control-label">Observation Period</div>
+                        <div class="weekly-sec">
+                            <div class="workflow-oneline mb-0">
+                                <div class="text-tclr">At least</div>
+                                <div class="ccl-form form-group row">
+                                    <input type="number" formControlName="observationPeriodAtlest" class="form-control"
+                                        id="weeklyReccur" placeholder="%" aria-required="true"
+                                        [ngClass]="{'errorInput': submitted && reportForm.controls.observationPeriodAtlest.errors}"
+                                        aria-describedby="weeklyReccur-error" aria-invalid="true" class="form-control"
+                                        name="weekly-pattern-frequency">
+                                </div>
+                                <div class="text-tclr">% of time,</div>
+                            </div>
+                            <div id="observation-atleat-error">
+                                <div *ngIf="(submitted && reportForm.controls.observationPeriodAtlest.errors) || reportForm.controls.observationPeriodAtlest.touched"
+                                    class="errorMessage">
+                                    <small class="pl-60"
+                                        *ngIf="reportForm.controls.observationPeriodAtlest.errors?.required">
+                                        This value is not valid
+                                    </small>
+                                    <small *ngIf="reportForm.controls.observationPeriodAtlest.errors?.pattern">
+                                        Please enter a value greater than or equal to 1
+                                    </small>
+                                    <small *ngIf="reportForm.controls.observationPeriodAtlest.value >100">
+                                        Please enter a value less than or equal to 100
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="workflow-oneline mt-3 mb-0 ">
+                                <div class="text-tclr">over the past </div>
+                                <div class="ccl-form  form-group row">
+                                    <input type="number" formControlName="observationPeriodPastDays"
+                                        class="form-control" id="weeklyReccur" placeholder="#" aria-required="true"
+                                        [ngClass]="{'errorInput': submitted && reportForm.controls.observationPeriodPastDays.errors}"
+                                        aria-describedby="weeklyReccur-error" aria-invalid="true" class="form-control"
+                                        name="weekly-pattern-frequency">
+                                </div>
+                                <div class="text-tclr">day(s)</div>
+                            </div>
+                            <div id="observation-past-day-error" class="text-center">
+                                <div *ngIf="(submitted && reportForm.controls.observationPeriodPastDays.errors) || reportForm.controls.observationPeriodPastDays.touched"
+                                    class="errorMessage">
+                                    <small *ngIf="reportForm.controls.observationPeriodPastDays.errors?.required">
+                                        This value is not valid
+                                    </small>
+                                    <small *ngIf="reportForm.controls.observationPeriodPastDays.errors?.pattern">
+                                        Please enter a value greater than or equal to 1
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="add-rules  bt-solid">
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="control-label">Query Logic</div>
+                        </div>
+                        <div class="col-8">
+                            <ul class="date-order flex-start mb-0">
+                                <li>
+                                    <label id="one-radio-label " class="radio-inline">
+                                        <input type="radio" id="one-radio" formControlName="queryLogic"
+                                            name="queryLogic" value="and" class="mr-2">And
+                                    </label>
+                                </li>
+                                <li>
+                                    <label id="daily-radio-label " class="radio-inline">
+                                        <input type="radio" id="daily-radio" formControlName="queryLogic"
+                                            name="queryLogic" value="or" class="mr-2"> Or
+                                    </label>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row" id="Netops-report-ruleType">
+                        <div class="col-4">
+                            <div class="control-label">Rule Type</div>
+                        </div>
+                        <div class="col-8">
+                            <ul class="date-order flex-start mb-0">
+                                <li>
+                                    <label id="rule-type-option1-label " class="radio-inline">
+                                        <input type="radio" id="rule-type-option1-radio" formControlName="ruleType"
+                                            (click)="chooseRuleType($event)" name="ruleType" value="gateway"
+                                            class="mr-2">Gateway
+                                    </label>
+                                </li>
+                                <li>
+                                    <label id="rule-type-option2-label " class="radio-inline">
+                                        <input type="radio" id="rule-type-option2-radio" formControlName="ruleType"
+                                            (click)="chooseRuleType($event)" name="ruleType" value="client devices"
+                                            class="mr-2"> Client Systems
+                                    </label>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="choose-add-rules" id="rule-query-section">
+                        <div class="control-label">Rules</div>
+                        <div class="mb-3" formArrayName="rulesArray"
+                            *ngFor="let item of reportForm.get('rulesArray')['controls']; let i = index">
+                            <ul [formGroupName]="i" class="add-rules-ul flex-start mb-0">
+                                <li class="mr-2" id="rule-query-row">
+                                    <div class="custom-selectbox w-100 mr-2">
+                                        <ng-select formControlName="parameter" (change)="querytxterror(i)"
+                                            [searchable]="false">
+                                            <ng-option *ngFor="let list of ruleLists" [value]="list.value">{{list.name}}
+                                            </ng-option>
+                                        </ng-select>
+                                        <div *ngIf="(submitted && reportForm['controls'].rulesArray['controls'][i]['controls'].parameter.errors) || reportForm['controls'].rulesArray['controls'][i]['controls'].parameter.touched"
+                                            class="errorMessage">
+                                            <small class="add-report-drop-error-msg"
+                                                *ngIf="reportForm['controls'].rulesArray['controls'][i]['controls'].parameter.errors?.required">
+                                                Please select a value
+                                            </small>
+                                        </div>
+                                        <small class="errorMessage add-report-drop-error-msg"
+                                            *ngIf="paramsSelected.indexOf(paramsSelected[i]) != paramsSelected.lastIndexOf(paramsSelected[i])&& !AddRuleClick">This
+                                            Rule Type is already present</small>
+                                    </div>
+                                </li>
+                                <li class="mr-2">
+                                    <div class="custom-selectbox w-200 mr-2">
+                                        <ng-select formControlName="operator" [searchable]="false">
+                                            <ng-option *ngFor="let list of ruleConditions" [value]="list.value">
+                                                {{list.name}}</ng-option>
+                                        </ng-select>
+                                        <div *ngIf="(submitted && reportForm['controls'].rulesArray['controls'][i]['controls'].operator.errors) || reportForm['controls'].rulesArray['controls'][i]['controls'].operator.touched"
+                                            class="errorMessage">
+                                            <small class="add-report-drop-error-msg"
+                                                *ngIf="reportForm['controls'].rulesArray['controls'][i]['controls'].operator.errors?.required">
+                                                Please select a value
+                                            </small>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="ccl-form add-report-form mr-2 number-input">
+                                        <div class="float-left w-80">
+                                            <input type="number" formControlName="threshold" (keyup)="querytxterror(i)"
+                                                id="daily-pattern-frequence" customNeg name="daily-pattern-frequence"
+                                                [ngClass]="{'errorInput': submitted && reportForm['controls'].rulesArray['controls'][i]['controls'].threshold.errors}"
+                                                aria-required="true" aria-describedby="frequency-error"
+                                                aria-invalid="true" required>
+                                            <div>
+                                                <small *ngIf="queryerror[i]"
+                                                    class="add-report-error-msg mt-2 errorMessage">{{queryerrorMessage[i]}}</small>
+                                            </div>
+                                        </div>
+                                        <div class="float-right pt-2">
+                                            <span>{{reportForm['controls'].rulesArray['controls'][i]['controls'].parameter.value
+                                                === 'RssiUpstreamAvg' ? 'dB' : '%'}}
+                                            </span>
+                                        </div>
+
+
+                                    </div><br />
+                                    <!-- <div *ngIf="(submitted && reportForm['controls'].rulesArray['controls'][i]['controls'].threshold.errors) || reportForm['controls'].rulesArray['controls'][i]['controls'].threshold.touched"
+                                        class="errorMessage"><br/> -->
+                                    <!-- <div *ngIf="(submitted && reportForm['controls'].rulesArray['controls'][i]['controls'].threshold.errors)"
+                                        class="add-report-error-msg-2 add-report-drop-error-msg">
+                                        This value is not valid<br />
+                                        <!-- <small     
+                                            *ngIf="reportForm['controls'].rulesArray['controls'][i]['controls'].threshold.errors?.required">
+                                            This value is not valid
+                                        </small> -->
+                                    <!-- <small
+                                            *ngIf="(!reportForm['controls'].rulesArray['controls'][i]['controls'].threshold.errors?.required || reportForm['controls'].rulesArray['controls'][i]['controls'].parameter.value == 'Signal Strength (RSS)') && (reportForm['controls'].rulesArray['controls'][i]['controls'].threshold.value >=-9)">
+                                            Please enter a value less than or equal to -10
+                                        </small> -->
+
+                                    <!---- </div> -->
+
+
+
+
+
+
+                                </li>
+                                <!-- *ngIf="reportForm.controls['ruleType'].value != 'gateway'" -->
+                                <li class="w-10">
+                                    <button (click)="deleteRuleItem(i)" id="rule-query-row-delete-btn" class=""
+                                        data-toggle="tooltip" title="Delete"
+                                        style="background-color: transparent;font-size: 13.5px;border: none;">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                        <div *ngIf="addRulehide" class="add-rules-link flex-align-center" id="netops-report-addrule">
+                            <a class="link" (click)="addRule()"> + Add Rule</a>
+                        </div>
+                        <div *ngIf="ruleEmpty" class="add-rules-link flex-align-center">
+                            <small class="add-report-drop-error-msg errorMessage">The Rules is required</small>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="report-sec" id="netops-report-attribute-container">
+                <div class="report-name">
+                    Report Attributes
+                </div>
+                <div class="form-group ">
+                    <label class="control-label"> Account </label>
+                    <ul class="date-order flex-start mb-0">
+                        <li>
+                            <label id="one-radio-label " class="radio-inline">
+                                <input type="checkbox" id="one-radio" name="optionGroupsRadios" value="one" class="mr-2"
+                                    checked disabled> Account Number
+                            </label>
+                        </li>
+                        <li>
+                            <label id="daily-radio-label " class="radio-inline">
+                                <input type="checkbox" id="daily-radio" name="optionGroupsRadios" value="daily" checked
+                                    class="mr-2" disabled> Name
+                            </label>
+                        </li>
+                    </ul>
+                </div>
+                <div *ngIf="reportForm.controls['ruleType'].value === 'gateway'" id="gateway"
+                    class="form-group pt-2 mt-2 bt-solid">
+                    <label class="control-label"> Gateway </label>
+                    <ul class="date-order check-flex flex-start mb-0">
+                        <li>
+                            <label id="one-radio-label " class="radio-inline">
+                                <input type="checkbox" id="one-radio" name="optionGroupsRadios" value="one" class="mr-2"
+                                    checked disabled> Serial Number
+                            </label>
+                        </li>
+                        <li>
+                            <label id="daily-radio-label " class="radio-inline">
+                                <input type="checkbox" id="daily-radio" name="optionGroupsRadios" value="daily" checked
+                                    class="mr-2" disabled> Radio Band
+                            </label>
+                        </li>
+                        <li>
+                            <label id="daily-radio-label " class="radio-inline">
+                                <input type="checkbox" id="daily-radio" name="optionGroupsRadios" value="daily" checked
+                                    class="mr-2" disabled> Interference
+                            </label>
+                        </li>
+                    </ul>
+                </div>
+                <div *ngIf="reportForm.controls['ruleType'].value === 'client devices'" id="client-devices"
+                    class="form-group pt-2 mt-2 bt-solid">
+                    <label class="control-label"> Client Systems </label>
+                    <ul class="date-order check-flex flex-start mb-0">
+                        <li>
+                            <label id="one-radio-label " class="radio-inline">
+                                <input type="checkbox" id="one-radio" name="optionGroupsRadios" value="one" class="mr-2"
+                                    checked disabled> Wi-Fi Scrore
+                            </label>
+                        </li>
+                        <li>
+                            <label id="daily-radio-label " class="radio-inline">
+                                <input type="checkbox" id="daily-radio" name="optionGroupsRadios" value="daily" checked
+                                    class="mr-2" disabled> Mac Address
+                            </label>
+                        </li>
+                        <li>
+                            <label id="daily-radio-label " class="radio-inline">
+                                <input type="checkbox" id="daily-radio" name="optionGroupsRadios" value="daily" checked
+                                    class="mr-2" disabled> Signal
+                            </label>
+                        </li>
+                        <li>
+                            <label id="daily-radio-label " class="radio-inline">
+                                <input type="checkbox" id="daily-radio" name="optionGroupsRadios" value="daily" checked
+                                    class="mr-2" disabled> Airtime Usage
+                            </label>
+                        </li>
+                        <li>
+                            <label id="daily-radio-label " class="radio-inline">
+                                <input type="checkbox" id="daily-radio" name="optionGroupsRadios" value="daily" checked
+                                    class="mr-2" disabled> Dropped packets
+                            </label>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="float-right">
+            <button class="btn-default transparant mr-2" id="report_cancel"
+                routerLink="/support/netops-management/reports/call-avoidance-report"> Cancel</button>
+            <button class="btn-default primary" id="report_submit_update">
+                {{recordId ? 'Update' : 'Submit'}}
+            </button>
+        </div>
+
+    </form>
+
+</div>

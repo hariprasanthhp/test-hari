@@ -1,0 +1,342 @@
+<section *ngIf="!loading">
+  <div class="row" *ngIf="!workFlowSummaryData['alarm_notifications_summary']">
+    <div class="col-12 mb-4">
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="alarm-title" data-toggle="tooltip" data-placement="top"
+          title=" {{workFlowSummaryData.notification.name}}">
+          {{workFlowSummaryData.notification.name}}
+        </div>
+        <div>
+          <a href="javascript:void(0)" (click)="goToListView()">
+            <img src=" assets/img/close-icon.svg" alt="" />
+            <!-- routerLink="/cco/operations/cco-network-operations/cco-alarm-notifications" -->
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4">
+      <div class="heading-4">
+        {{ language["Monitored Alarms"] }} ({{ alarmsForm.totMonitoredAlarms | number }})
+      </div>
+      <div class="summary-info-table monitored">
+        <table class="table">
+          <thead>
+            <tr>
+              <th class="width-60">{{ language["Individual Alarms"] }}</th>
+              <th>
+                {{
+                (alarmsForm?.monitoredIndividualAlarm?.data?.length > 0)
+                ? alarmsForm.monitoredIndividualAlarm['data'].length
+                : 0
+                }}
+                {{ language["Alarm(s)"] }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngIf="
+                alarmsForm && alarmsForm['monitoredIndividualAlarm'] && 
+                alarmsForm['monitoredIndividualAlarm']['data'] &&
+                alarmsForm.monitoredIndividualAlarm['data'].length > 0
+              ">
+              <tr *ngFor="
+                  let alarm of alarmsForm?.monitoredIndividualAlarm?.data;
+                  let ind = index
+                ">
+                <td>
+                  {{ alarm.alarm_name }}
+                </td>
+                <td class="pl-0">
+                  {{ alarm.alarm_category }}
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+      </div>
+      <!-- <div class="summary-info-table monitored">
+        <table class="table">
+          <thead>
+            <tr>
+              <th class="width-60">{{ language["Transformed Alarms"] }}</th>
+              <th>
+                {{
+                (alarmsForm?.monitoredTransformAlarm?.data?.length > 0)
+                ? alarmsForm.monitoredTransformAlarm['data'].length
+                : 0
+                }}
+                {{ language["Alarm(s)"] }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngIf="
+            alarmsForm && alarmsForm['monitoredTransformAlarm'] && 
+                alarmsForm.monitoredTransformAlarm['data'] &&
+                alarmsForm.monitoredTransformAlarm['data'].length > 0
+              ">
+              <tr *ngFor="
+                  let alarm of alarmsForm?.monitoredTransformAlarm?.data;
+                  let ind = index
+                ">
+                <td>
+                  {{ alarm.alarm_name ? alarm.alarm_name : "" }}
+                </td>
+                <td></td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+      </div> -->
+      <!-- <div class="summary-info-table monitored">
+        <table class="table">
+          <thead>
+            <tr>
+              <th class="width-60">{{ language["Alarm Category Subgroups"] }}</th>
+              <th>
+               {{
+                (alarmsForm?.monitoredGroupAlarm?.data?.length > 0)
+                ? alarmsForm.monitoredGroupAlarm['data'].length
+                : 0
+                }}
+  {{ language["Group(s)"] }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngIf="
+            alarmsForm && alarmsForm['monitoredGroupAlarm'] && 
+                alarmsForm.monitoredGroupAlarm['data'] &&
+                alarmsForm.monitoredGroupAlarm['data'].length > 0
+              ">
+              
+                <tr 
+                data-toggle="modal" data-target=".bd-example-modal-lg" (click) = "getCategorySubgroupsAlarms(alarm)" *ngFor="
+                let alarm of alarmsForm?.monitoredGroupAlarm?.data;
+                let ind = index
+              ">
+                <td class="hover-row pointer">
+                  {{ alarm.group_name ? alarm.group_name : "" }}
+                </td>
+                <td class="pl-0 hover-row pointer">{{ alarm.no_of_alarms ? alarm.no_of_alarms + " " + language["Alarm(s)"] : "" }}</td>
+              
+            </tr>              
+            </ng-container>
+          </tbody>
+        </table>
+      </div> -->
+    </div>
+    <div class="col-md-4">
+      <div class="heading-4">{{ language['Notification Trigger'] }}</div>
+
+      <div class="summary-info-table marg-b-38px">
+        <table class="table">
+          <tbody>
+            <tr>
+              <td>{{language.Trigger}}</td>
+              <td>{{ conditionForm["trigger"]?conditionForm["trigger"] : '-' }}</td>
+            </tr>
+            <ng-container *ngIf="conditionForm && conditionForm['immediate'] == 'true'">
+              <tr>
+                <td> {{language['Alarm']}} {{ language["Quantity Threshold"] }}</td>
+                <td>
+                  {{
+                  (conditionForm?.raiseThreshold)
+                  ? conditionForm.raiseThreshold
+                  : 0
+                  }}
+                  {{ language["Alarm(s)"] }}
+                </td>
+              </tr>
+              <tr>
+                <td> {{language['Alarm']}} {{ language["Duration Threshold"] }}</td>
+                <td>
+                  {{ (conditionForm?.duration) ? conditionForm.duration : 0 }}
+                  {{ language['Minute(s)'] }}
+                </td>
+              </tr>
+              <tr>
+                <td> {{language['Alarm']}} {{ language["Soak Time"] }}</td>
+                <td>
+                  {{ (conditionForm?.soakTime) ? conditionForm.soakTime : 0 }}
+                  {{ language['Minute(s)'] }}
+                </td>
+              </tr>
+
+              <tr>
+                <td>{{ language.Exclusions }}</td>
+                <td>
+                  <ng-container *ngIf="
+                  conditionForm &&
+                      conditionForm.weekDays && conditionForm.weekDays.length > 0
+                    ">
+                    <ng-container *ngFor="let days of conditionForm?.weekDays; let ind = index">
+                      <ng-container *ngIf="ind != 0">
+                        <br />
+                      </ng-container>
+
+                      {{ days.exclusions ? days.exclusions : "" }}
+                    </ng-container>
+                  </ng-container>
+                  <ng-container *ngIf="
+                      ((!conditionForm.weekDays) || (conditionForm && conditionForm.weekDays && conditionForm.weekDays.length == 0))
+                    ">-</ng-container>
+                </td>
+              </tr>
+              <tr>
+                <td>{{language.Exclusions_timezone}}</td>
+                <td class="text-break">{{ conditionForm.weekDays && conditionForm.weekDays.length > 0 &&
+                  conditionForm.exclusions_timezone ? conditionForm.exclusions_timezone : "-" }}</td>
+              </tr>
+              <tr>
+                <td>{{ language["Cleared Alarm Notification"] }}</td>
+                <td *ngIf="conditionForm && conditionForm['notifyOnClear']">
+                  {{
+                  language.scheduleFormHalfPercentClearThresholdText(
+                  conditionForm.clearThreshold || conditionForm.clearThreshold == 0
+                  ? conditionForm.clearThreshold
+                  : ""
+                  )
+                  }}
+                </td>
+                <td *ngIf="!conditionForm['notifyOnClear']">-</td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="heading-4">{{ language["Regions & Locations"] }}</div>
+      <div class="summary-info-table">
+        <table class="table">
+          <tbody>
+            <ng-container *ngIf="
+            conditionForm &&
+                conditionForm.regionsLocations &&
+                conditionForm.regionsLocationsLength > 0
+              ">
+              <ng-container *ngFor="
+              let region of conditionForm?.regionsLocations | keyvalue;
+              let ind = index
+            ">
+                <tr>
+                  <td>
+                    {{ region.key ? region.key : '' }}
+                  </td>
+                  <td>
+                    {{ region.value.length > 0 ? ( region.value.length == 1 && region.value[0]['noLocation'] ? 'All
+                    Locations' : region.value.length + ' Location(s)') : region.value.length + ' Location(s)' }}
+                  </td>
+                </tr>
+                <ng-container *ngIf="
+            region &&
+            region.value &&
+                region.value.length > 0
+              ">
+                  <tr *ngFor="
+                let locations of region.value;
+                let ind = index
+              ">
+                    <td>
+                    </td>
+                    <td>
+                      {{ locations['location_name'] ? locations['location_name'] : "" }}
+                    </td>
+                  </tr>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+            <ng-container *ngIf="
+            conditionForm &&
+                conditionForm.regionsLocations &&
+                conditionForm.regionsLocationsLength == 0
+              ">
+              <tr>
+                <td>{{ language["All Regions"] }}</td>
+                <td>{{ language["All Locations"] }}</td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="heading-4">{{ language['Recipients'] }}</div>
+      <div class="summary-info-table">
+        <app-summary-recepients [workflowObj]="recepientsInfo"></app-summary-recepients>
+        <!-- <table class="table">
+          <tbody>
+            <tr>
+              <td>{{ language['Recipients'] }}</td>
+              <td>
+                {{ (scheduleForm?.totalMail) ? scheduleForm["totalMail"] : 0 }}
+                {{ language["Recipient(s)"] }}
+                <ng-container
+                  *ngIf="workFlowSummaryData && workFlowSummaryData.notification && workFlowSummaryData.notification.mailRecepients && workFlowSummaryData.notification.mailRecepients.length > 0">
+                  <ng-container *ngFor="let mail of workFlowSummaryData?.notification?.mailRecepients">
+                    <br />
+                    {{ mail }}
+                  </ng-container>
+                </ng-container>
+              </td>
+            </tr>
+            <tr>
+              <td>{{ language["Email Notes"] }}</td>
+              <td class="text-break">
+                <ng-container *ngIf = "scheduleForm.notes && scheduleForm.notes.length > 0">
+                  <ng-container *ngFor = "let text of scheduleForm.notes">
+                    <div class="min-height-div">
+                      {{text}}
+                    </div>
+                  </ng-container>
+                </ng-container>
+              </td>
+            </tr>
+          </tbody>
+        </table> -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="container">
+        <div class="row ">
+          <div class="col-md-11 modal-title">{{categorySubgroupsName + (categorySubgroupsAlarms.length > 0 &&
+            categorySubgroupsAlarms ? " (" + categorySubgroupsAlarms.length + ") " : '')}}</div>
+          <div class="col-md-1"><button type="button" id="" data-dismiss="modal" aria-label="Close"
+              class="close"><span></span></button></div>
+        </div>
+        <div class="row alarm-name-list-box">
+          <div class="col-md-3" *ngFor="let alarm of categorySubgroupsAlarms;let i = index">
+            <div class="alarm-name-list" data-toggle="tooltip" data-placement="top" title=" {{alarm}}">
+              {{alarm}}
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<section *ngIf="loading">
+  <div class="container">
+    <div class="row mb-3">
+      <div class="col-md-12">
+        <div class="loader mt-5">
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+              <span class="sr-only">{{ language.Loading }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

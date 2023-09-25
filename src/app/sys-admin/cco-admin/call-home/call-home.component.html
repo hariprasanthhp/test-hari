@@ -1,0 +1,160 @@
+<section>
+  <div class="position-relative">
+    <div class="loader" *ngIf="loading">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess">
+      {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}}
+    </div>
+
+    <div class="container">
+      <div class="row mb-3 mt-2" *ngIf="hasWriteAccess">
+        <button type="button" id="add-call-home" class="btn-default primary px-3" (click)="goToAdd()">
+          {{language['Add Call Home']}}
+        </button>
+      </div>
+      <div class="row">
+        <div class="filter-section filter-elemnts pt-2 col-md-12">
+          <form [formGroup]="filtersForm">
+            <div class="filter-wrapper mb-1 row">
+              <div class="custom-selectbox state-filter">
+                <label for="Name" class="col-form-label select-font">{{language['Address/Coordinate Info']}}</label>
+                <ng-select [items]="geoLocationOptions" bindValue="value" bindLabel="label"
+                  formControlName="geoLocationInfo" class="selectboxwidth"
+                  placeholder="{{language['Address/Coordinate Info']}}" [clearable]="false" [searchable]="true">
+
+                  <ng-template ng-label-tmp let-item="item">
+                    {{language[item.label]}}
+                  </ng-template>
+
+                  <ng-template ng-option-tmp let-item="item">
+                    {{language[item.label]}}
+                  </ng-template>
+
+                </ng-select>
+              </div>
+
+              <div class="custom-selectbox min-w24p d-flex align-items-center">
+
+                <div class="d-inline-flex mt-4 pt-3">
+                  <button type="button" class="btn-default primary ml-3" title="{{language.run}}" (click)="getList()">
+                    {{ language.run }}
+                  </button>
+                  <button type="button" class="btn-default btn-dft ml-3 btn-overflow-ellip"
+                    title="{{language.Clear_Filters}}" (click)="clearFilter()">
+                    {{ language.Clear_Filters }}
+                  </button>
+                </div>
+
+              </div>
+
+
+            </div>
+          </form>
+        </div>
+
+        <div class="w-100 alert alert-danger fade show my-3" *ngIf="error">
+          <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+          <button type="button" class="close" (click)="closeAlert()">
+            <span></span>
+          </button>
+          <div class="d-inline-flex">{{ errorInfo }}</div>
+        </div>
+        <div class="col-md-12 px-0 call-home-table overflow-auto" [hidden]="!dataAvailable" *ngIf="showTable">
+          <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table table-borderless">
+            <thead>
+              <tr>
+                <th>{{language.Id}}</th>
+                <th>{{language['Device Name Format']}}</th>
+                <th>{{ language.Region }}</th>
+                <th>{{ language.Location }}</th>
+                <th>{{ language["Address/Coordinates"] }}</th>
+                <th>{{ language["Distributed OLT Name"] }}</th>
+                <th>{{ language.Username }}</th>
+                <th>{{ language.Password }}</th>
+                <th>{{ language['Connect Timeout'] }}</th>
+                <!-- <th>{{ language.address }}</th> -->
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of list">
+                <td>{{ item.id }}</td>
+                <td>{{ item.deviceNameFormat }}</td>
+                <td>{{ item.region ? item.region: '' }}</td>
+                <td>{{ item.location ? item.location: '' }}</td>
+                <td [innerHTML]="item?.ui_modified_service_address_latlong"></td>
+                <td>{{ item.distributedOltName }}</td>
+                <td>{{ item.username }}</td>
+                <td>******</td>
+                <td>{{ item?.connectTimeoutSec || '' }}</td>
+                <!-- <td>{{ item.deviceLocation?.ufLocation ? item.deviceLocation?.ufLocation:''}}</td> -->
+                <td class="text-right mw-45" *ngIf="hasWriteAccess">
+                  <a href="javascript:void(0)" (click)="gotoEdit(item.id)" title="{{language.Edit}}"
+                    class="mr-2 cursor">
+                    <i aria-hidden="true" class="fas fa-pencil-alt"></i></a>
+                  <a href="javascript:void(0)" (click)="delete(item.id)" title="{{language.Delete}}"
+                    class="ml-1 cursor">
+                    <i aria-hidden="true" class="fas fa-trash-alt"></i>
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<ng-template #deleteModal let-data let-ref="dialogRef">
+  <div class="d-flex w-100 mt-3">
+    <div class="dfl-icon pr-4">
+      <img src="../../../../assets/img/warning-icon-36px.svg" />
+    </div>
+    <div class="dflex-item">
+      <div class="modal-header">
+        <button type="button" class="close" aria-label="Close" (click)="close()">
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h3 class="cco-secondary-title">
+          {{ language["Are you sure you want to delete the call home"] }}
+          <b>{{ deleteId }}</b> ?
+        </h3>
+      </div>
+      <div class="modal-footer justify-content-start px-0 pb-0">
+        <button type="button" class="btn btn-primary mr-2 py-0" (click)="doDelete()">
+          {{ language.Delete_Call_Home }}
+        </button>
+        <button type="button" class="btn-default btn-dft py-1" (click)="close()">
+          {{ language.Close }}
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #deleteSuccessModal let-data let-ref="dialogRef">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title"></h4>
+    <button type="button" class="close" aria-label="Close" (click)="close()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>{{ language["Deleted Successfully"] }}</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="close()">
+      {{ language.Close }}
+    </button>
+  </div>
+</ng-template>

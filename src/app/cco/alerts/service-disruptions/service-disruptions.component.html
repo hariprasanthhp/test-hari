@@ -1,0 +1,175 @@
+<section>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="test-container">
+                <div class="item" id="current-issues-Total-alarms">
+                    <span class="stats-label">{{language['Total Service Disruptions']}}</span>
+                    <div class="d-flex align-content-around flex-wrap">
+                        <span class="stats-value">{{count}}</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="mb-2">
+    <div class="container p-0">
+        <form [formGroup]="filtersForm">
+            <div class="filter-elemnts mt-1">
+                <div class="row" id="issue-active-reports">
+                    <div class="col-md-12 pl-0 pr-0">
+                        <div class="current-issue-menu-container flex-wrap">
+                            <div *ngIf="appliedFilters['region']"
+                                class="current-issue-menu-item col-12 col-sm-12 col-md-3 col-lg-3">
+                                <label for="Name" class="col-form-label select-font">{{language.region}}</label>
+                                <div class="custom-selectbox" class="w-100" id="current-issues-interval">
+                                    <ng-select formControlName="region" [multiple]="true" [items]="regionsDataArray"
+                                        bindValue="id" bindLabel="name" class="selectboxwidth" [clearable]="false"
+                                        [searchable]="true" placeholder="{{ language.region }}"
+                                        (add)="validateRegion($event)" (remove)="loadLocationValue($event)">
+                                    </ng-select>
+                                </div>
+                            </div>
+                            <div *ngIf="appliedFilters['location']"
+                                class="current-issue-menu-item col-12 col-sm-12 col-md-3 col-lg-3">
+                                <label for="Name" class="col-form-label select-font">{{ language.Location }}</label>
+                                <div class="custom-selectbox" class="w-100" id="current-issues-interval">
+                                    <ng-select formControlName="location" [multiple]="true" [items]="locationDataArray"
+                                        bindValue="id" bindLabel="name" class="selectboxwidth"
+                                        placeholder="{{ language.Location }}" [clearable]="false" [searchable]="true"
+                                        (add)="validateLocation($event)" (remove)="loadSystemValue($event)">
+                                    </ng-select>
+                                </div>
+                            </div>
+                            <div *ngIf="appliedFilters['system']"
+                                class="current-issue-menu-item col-12 col-sm-12 col-md-3 col-lg-3">
+                                <label for="Name" class="col-form-label select-font">{{ language.System }}</label>
+                                <div class="custom-selectbox" class="w-100" id="current-issues-interval">
+                                    <ng-select formControlName="system" [multiple]="true" [items]="systemDataArray"
+                                        bindValue="uuid" bindLabel="name" class="selectboxwidth"
+                                        placeholder="{{ language.System }}" [clearable]="false" [searchable]="true"
+                                        (add)="validateSystem($event)" (remove)="validateSystem($event)">
+                                    </ng-select>
+                                </div>
+                            </div>
+
+                            <div *ngIf="appliedFilters['fsan']"
+                                class="current-issue-menu-item col-12 col-sm-12 col-md-3 col-lg-3">
+                                <label for="Name" class="col-form-label select-font">{{language.FSAN}}</label>
+                                <div class="w-100 ccl-form" id="current-issues-interval">
+                                    <input type="text" class="form-control" id="FSAN" name="FSAN"
+                                        placeholder="{{language.FSAN}}" maxlength="12"
+                                        (keypress)="removespecialcharacter($event)" (keyup)="validateFSAN()"
+                                        formControlName="fsan" title="" />
+                                    <small class="vald-tag red" *ngIf="!fsanvalid">{{language['Invalid FSAN']}}</small>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-md-12  text-left">
+                        <div class="d-inline-flex">
+                            <button type="button" class="btn-default primary" (click)="getListSub()">
+                                {{ language.apply }}
+                            </button>
+                            <button type="button" class="btn-default btn-dft ml-2" (click)="clearFilter()">
+                                {{ language.Clear_Filters }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="w-100 alert alert-danger  fade show my-3" *ngFor="let error of errors | keyvalue">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+        <button type="button" class="close" (click)="clearError(error?.key)"><span></span></button>
+        <div class="d-inline-flex" [innerHtml]="error?.value"></div>
+    </div>
+
+    <div class="row justify-content-end mb-3">
+        <div class="col-md-6">
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn refresh-icon p-0 bg-transparent mr-3" (click)="doRefresh();">
+                    <img src="../../../../assets/img/ic_refresh.svg" />
+                </button>
+                <button id="issues-real-time-export" class="btn-default btn-dft h-24-btn" (click)="doExport()"
+                    [disabled]="disableExprtBtn">{{language.Export}}</button>
+                <button id="issues-real-time-export" class="btn-default btn-dft h-24-btn ml-2"
+                    (click)="gotoHomeGeomap()">{{language['Map_View']}}</button>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12 overflow-auto">
+            <div class="loader" *ngIf="paginateLoading">
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border text-primary">
+                        <span class="sr-only">{{ language.Loading }}</span>
+                    </div>
+                </div>
+            </div>
+            <table class="table table-data dataTable ">
+                <thead>
+                    <tr>
+                        <th class="sorting-th-custom">{{language['Report Time']}}</th>
+                        <th>{{language['Subscriber']}}</th>
+                        <th>{{language['Account No']}}.</th>
+                        <th>{{language['Region']}}</th>
+                        <th>{{language['Location']}}</th>
+                        <th>{{language['Service Address']}}</th>
+                        <th>{{language['Phone Number']}}</th>
+                        <th>{{language['Email']}}</th>
+                        <th>{{language['FSAN']}}</th>
+                        <th>{{language['Model']}}</th>
+                        <th>{{language['Alarm Name']}}</th>
+                        <th>{{language['System Name']}}</th>
+                        <th>{{language['Port']}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of list; let i = index">
+                        <td>{{item.reportTime ? convertToDateTime(item.reportTime): ''}}</td>
+                        <td>{{item.subscriber}}</td>
+                        <td>{{item.accountNo}}</td>
+                        <td>{{item.region}}</td>
+                        <td>{{item.location}}</td>
+                        <td>{{item.serviceAddress}}</td>
+                        <td>{{item.phoneNumber}}</td>
+                        <td>{{item.email}}</td>
+                        <td><a (click)="searchSubscriber(item);" class="primary pointer">{{item.fsan}}</a></td>
+                        <td>{{item.model}}</td>
+                        <td>{{item.alarmName}}</td>
+                        <td>{{item.ui_modified_systemName}}</td>
+                        <td>{{item.port}}</td>
+                    </tr>
+                </tbody>
+
+                <tbody *ngIf="!list?.length">
+                    <tr>
+                        <td colspan="13" class="no-data-available">{{language['No data available in
+                            table']}}
+                        </td>
+                    </tr>
+                <tbody>
+            </table>
+            <div class="table-pagination w-100 d-flex flex-wrap pb-2 justify-content-end pt-4">
+                <div class="page-action-buttons">
+                    <a class="page-navigate page-button" [ngClass]="{'page-disabled': !previousFlag}"
+                        (click)="gotoPrevious()">{{language.Previous}}</a>
+                    <a class="page-navigate page-button" [ngClass]="{'page-disabled': !nextFlag}"
+                        (click)="gotoNext()">{{language.Next}}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>

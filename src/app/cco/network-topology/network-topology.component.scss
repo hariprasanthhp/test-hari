@@ -1,0 +1,124 @@
+::ng-deep {
+    .gshHeader {
+        border-color: #a768be;
+        font-size: 13px;
+        margin-bottom: 7px;
+    }
+}
+.fsize {
+  font-size: 14px !important;
+}
+
+.breadcrumb {
+  padding: 8px !important;
+  background-color: #fff !important;
+  border-bottom: 1px solid #cccccc;
+}
+
+.search-box-icon {
+  width: 43px;
+  height: 37px;
+  background-color: #0279ff;
+  padding: 7px;
+  border-radius: 25px;
+  position: relative;
+  right: 46px;
+}
+
+.topology-container {
+  width: 100%;
+  // max-height: 600px;
+  // overflow-y: scroll;
+  height: 300px;
+  top: 50px;
+}
+
+.breadcrumb-item a {
+  text-decoration: underline;
+  color: #0279ff;
+}
+
+.removeHyperLink {
+  text-decoration: none !important;
+  color: black !important;
+}
+
+.outline-none {
+  outline: none !important;
+}
+// .topology-container::-webkit-scrollbar {
+//     width: 8px;
+
+// }
+
+// .topology-container::-webkit-scrollbar-track {
+//     width     : 5px;
+//     background: #f1f1f1;
+// }
+
+// .topology-container::-webkit-scrollbar-thumb {
+//     width     : 5px;
+//     background: #ddd;
+// }
+.topology-search {
+  position: absolute;
+  right: -40px;
+  top: -5px;
+}
+
+.zoom {
+  img {
+    width: 43px;
+    height: 37px;
+  }
+}
+
+.combined {
+  width: 10%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.cus-button {
+  float: right;
+  min-width: 200px;
+  position: relative;
+  height: 40px;
+  display: block;
+  // overflow: hidden;
+  border-radius: 60px;
+  border: 1px solid #dcdcdc;
+  span.icon-hl {
+    display: inline-block;
+  }
+  .bord-right {
+    border-right: 1px solid #dcdcdc;
+    padding-right: 8px;
+  }
+  .bord-left {
+    border-left: 1px solid #dcdcdc;
+    padding-left: 8px;
+  }
+  padding: 0px 8px;
+
+  .ng-select-container {
+    background-color: white !important;
+    border: none !important;
+  }
+
+  .ng-dropdown-panel-items {
+    // ::-webkit-scrollbar {
+    //     display: none;
+    // }  
+    overflow-y: hidden !important;
+  }
+}
+.zoom-img{
+  height: 25px; margin-bottom: 5px
+}
+.w-70px{
+  width: 70px;
+}
+.ngselect-perc{
+  width: 70px; background-color: #ffffff; border: none
+}

@@ -1,0 +1,235 @@
+<div class="container position-relative">
+    <div class="loader" *ngIf="loading">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">{{language.Loading}}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row py-4" *ngIf="buttonVisible">
+        <div class="col-md-9 ">
+            <div class="d-flex">
+                <div>
+                    <button id="create-btn" class="btn-default primary mx-2"
+                        (click)="create()">{{language.create}}</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3 align-self-end d-none">
+            <div class="ccl-form">
+                <input type="search" name="searchbox" class="input-sm" placeholder="">
+                <button class="serach-but btn-default primary btn-icon-md inline">
+                    <i class="fa fa-search" aria-hidden="true"></i></button>
+            </div>
+        </div>
+    </div>
+    <section *ngIf="formVisible">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <form>
+                    <div class="ccl-form row my-2">
+                        <label for="newIP" class="col-sm-4 col-form-label">{{language['Server IP address']}} <span
+                                class="error">*</span> </label>
+                        <div class="col-sm-8">
+                            <input id="newIP" type="text" name="newIP" class="" placeholder="" [(ngModel)]="newIP" 
+                            trimSpace (blur)="removeUnwantedSpace('newIP',newIP)">
+                        </div>
+                    </div>
+                    <div class="ccl-form row my-2">
+                        <label for="port" class="col-sm-4 col-form-label">{{language.port}}</label>
+                        <div class="col-sm-8">
+                            <input id="port" type="text" name="port" class="" placeholder="" [(ngModel)]="port"
+                                readonly>
+                        </div>
+                    </div>
+                    <div class="ccl-form row my-2">
+                        <label for="secret" class="col-sm-4 col-form-label">{{language.secret}}
+                            <span class="error">*</span>
+                        </label>
+                        <div class="col-sm-8">
+                            <input id="secret" [type]="addSecret ? 'password' : 'text'" name="secret" class=""
+                                placeholder="" [(ngModel)]="secret" maxlength="32">
+                            <span class="paswoard-icon pointer" [ngClass]="addSecret ? 'password_hide' : 'password_view'"
+                                (click)="toggleSecret('addSecret')"></span>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+
+        </div>
+
+        <div class="row my-4">
+            <div class="col-md-8 offset-md-4">
+                <button class="btn-default primary px-3 mx-3" (click)="submit()">{{language.submit}}</button>
+                <button class="btn-default btn-dft py-1 px-3" (click)="cancel()">{{language.Cancel}}</button>
+            </div>
+        </div>
+    </section>
+
+    <div class="row">
+        <div class="col-md-12 ccl-admin-table" [hidden]="!dataAvailable">
+            <table id="radius-servers-table" width="100%" datatable [dtOptions]="tableOptions" [dtTrigger]="dtTrigger"
+                class="row-border hover table-alter">
+                <thead>
+                    <tr>
+                        <th class="mxw-200">
+                            <div class="d-flex justify-content-end">
+                                <div [hidden]="editOnValue" class="d-flex align-items-center mr-1">
+                                    <input [hidden]="editOnValue" type="checkbox" class="" value=""
+                                        id="selectDeselectAll" (change)="selectDeselectAll($event.target.checked)"
+                                        [disabled]="radiusData?.length == 0 || currentTableRowCount == 0">
+                                    <span [hidden]="editOnValue" class="checkbox-ui" id="selectDeselectAll-span"
+                                        (click)="showAllInnerCheckBox($event)" style="display: none;"></span>
+                                </div>
+                                <div [hidden]="editOnValue" class="text-center justify-content-center">
+                                    <button id="delete-selected-btn" (click)="deleteAllSelected()"
+                                        class="btn-default primary px-2" title="{{language['Delete selected']}}"
+                                        [disabled]="!radiusData?.length || !deleteIds?.length">
+                                        <i class="far fa-trash-alt"></i> {{language.selected}}
+                                    </button>
+                                </div>
+                            </div>
+                        </th>
+                        <th class="mw-250">{{language.server}}</th>
+                        <th class="mw-250">{{language.port}}</th>
+                        <th class="mw-250">{{language.secret}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr id="{{item._id}}" *ngFor="let item of radiusData">
+                        <td class="action-button">
+
+                            <div *ngIf="editOnValue != item._id" class="editable-td text-center">
+                                <div class="ccl-fc-table-icon">
+                                    <span class="pr-2">
+                                        <div (click)="edit(item)" id="edit-btn" class="primary "
+                                            title="{{language['Edit']}}">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </div>
+                                    </span>
+                                    <span class="pr-2">
+                                        <input type="checkbox" value="{{item._id}}" name="delete_id_{{item._id}}"
+                                            class="delete_id_{{item._id}}" (click)="getDeleteIds($event, item);"
+                                            title="{{language['Select']}}">
+                                    </span>
+                                    <span class="pr-2">
+                                        <div (click)="delete(item)" id="delete-btn" class="primary "
+                                            title="{{language['Delete']}}">
+                                            <i class="far fa-trash-alt"></i>
+                                        </div>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div *ngIf="editOnValue == item._id"
+                                class="save-cancel-btn-group d-flex justify-content-center">
+                                <div class="ccl-fc-table-icon">
+                                    <span class="pr-1">
+                                        <div (click)="updateSave(item._id)" id="save-btn" class="primary mx-3 ">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                    </span>
+                                    <span class="pr-1">
+                                        <div (click)="updateCancel()" id="cancel-btn" class="primary">
+                                            <i class="fas fa-times"></i>
+                                        </div>
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div *ngIf="editOnValue != item._id">
+                                {{item.ip ? item.ip : ''}}
+                            </div>
+                            <div *ngIf="editOnValue == item._id" class="ccl-form">
+                                <input type="text" class="edit-text" value="{{item.ip}}" [(ngModel)]="editIP"
+                                    [ngModelOptions]="{standalone: true}" trimSpace (blur)="removeUnwantedSpace('editIP',editIP)">
+                            </div>
+                        </td>
+                        <td>
+                            {{item.port ? item.port : ''}}
+                        </td>
+                        <td>
+                            <div *ngIf="editOnValue != item._id" class="secret-div">
+                                {{item.secret ? (!item.hideSecret ? item.secret : '******') : '-'}} <span
+                                    class="pwd-icon" [ngClass]="item.hideSecret ? 'password_hide' : 'password_view'"
+                                    (click)="toggleSecret(item)"></span>
+                            </div>
+                            <div *ngIf="editOnValue == item._id" class="ccl-form secret-div">
+                                <input [type]="item.hideSecret ? 'password' : 'text'" class="edit-text"
+                                    value="{{item.secret}}" [(ngModel)]="editSecret" maxlength="32"
+                                    [ngModelOptions]="{standalone: true}">
+                                <span class="pwd-icon" [ngClass]="item.hideSecret ? 'password_hide' : 'password_view'"
+                                    (click)="toggleSecret(item)"></span>
+
+                            </div>
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modals -->
+<ng-template #infoModal let-data let-ref="dialogRef">
+
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{infoTitle}}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        {{infoBody}}
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn-default primary px-3" data-dismiss="modal"
+            (click)="closeModal()">{{language['Okay']}}</button>
+    </div>
+</ng-template>
+
+<ng-template #deleteModal let-data let-ref="dialogRef">
+
+    <ng-container>
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">{{infoTitle}}?</h4>
+            <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+                <span aria-hidden="true"></span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <table [innerHtml]="infoBody"></table>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-default primary px-3" data-dismiss="modal"
+                (click)="confirmDelete()">{{language['Okay']}}</button>
+            <button type="button" class="btn-default btn-dft py-1 px-3" data-dismiss="modal"
+                (click)="closeModal()">{{language['Cancel']}}</button>
+        </div>
+    </ng-container>
+
+</ng-template>
+
+<ng-template #multiDeleteModal let-data let-ref="dialogRef">
+
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{infoTitle}}?</h4>
+        <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <table [innerHtml]="infoBody"></table>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn-default primary px-3" data-dismiss="modal"
+            (click)="confirmDeleteSecleted()">{{language['Okay']}}</button>
+        <button type="button" class="btn-default btn-dft py-1 px-3" data-dismiss="modal"
+            (click)="closeModal()">{{language['Cancel']}}</button>
+    </div>
+</ng-template>
+<!-- Modals -->

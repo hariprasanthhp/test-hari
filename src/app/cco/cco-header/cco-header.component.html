@@ -1,0 +1,168 @@
+<title>{{ language.Support }}</title>
+<header class="flex">
+  <div class="header-left flex">
+    <div class="logo" id="calix-logo">
+      <a href="javascript:void(0)" [routerLink]="[ccoUrl]"><img src="assets/img/Logo-Operations.svg" />
+      </a>
+    </div>
+    <div customDropdown class="header-search dropdown" *ngIf="false">
+      <div dropdownToggle>
+        <input type="text" placeholder="{{ language.Search_subscribers_systems }}" [(ngModel)]="ccoSystemSearchText"
+          name="ccoSystemSearchText" (keyup)="searchByCharacters($event)" (keyup.enter)="performSearch()"
+          id="supportSearchId" autocomplete="off" />
+        <button class="btn-round primary search-btn" id="performSearchId" (click)="performSearch()">
+          <img src="assets/img/ic_search_white.svg" />
+        </button>
+      </div>
+      <div *ngIf="ccoSystemSearchText && ccoSystemSearchText.length >= 2" dropdownMenu aria-labelledby="dropdownMenu">
+        <h3>{{ language.Subscribers }}</h3>
+        <div class="dropdown-container">
+          <table class="table">
+            <tr *ngFor="let data of searchResult" (click)="showSubscriber(data.subscriberId, data.devices)">
+              <td class="w-33" [innerHTML]="data.name | highlight: ccoSystemSearchText">{{data.name}}</td>
+              <td class="w-33">
+                <span>{{data.account}}</span>
+                <span *ngIf="!data.account && !data.name && data.devices.length">
+                  <p *ngFor="let device of data.devices">{{device.deviceId}}</p>
+                </span>
+              </td>
+              <td class="w-33">{{data.serviceAddress}}</td>
+            </tr>
+          </table>
+        </div>
+        <div class="dropdown-container" *ngIf="0">
+          <table class="table">
+            <tr *ngFor="let data of searchResult">
+              <td>
+                <section *ngIf="(data.devices && data.devices.length); else systemLocation">
+                  <ng-container *ngFor="let device of data.devices; let i = index">
+                    <p *ngIf="!_array.isArray(device); else arrayDevice" class="subscriberName"
+                      (click)="showSystem(data, device)" [innerHTML]="(
+                                device.deviceId
+                                ? device.deviceId
+                                : device.serialNumber
+                                ? device.serialNumber
+                                : device.macAddress
+                                ? device.macAddress
+                                : ''
+                              ) | highlight: ccoSystemSearchText">
+                      {{
+                      device.deviceId
+                      ? device.deviceId
+                      : device.serialNumber
+                      ? device.serialNumber
+                      : device.macAddress
+                      ? device.macAddress
+                      : ""
+                      }}
+                      <span class="small-text" *ngIf="device.opMode && device.opMode == 'RG'">
+                        {{
+                        device.opMode == "RG"
+                        ? '(RG)'
+                        : language.WAP.replace("WAP-IGMP", "Mesh(SAT)").replace(
+                        "WAP",
+                        "Mesh(SAT)"
+                        )
+                        }}
+                      </span>
+                    </p>
+                    <ng-template #arrayDevice>
+                      <div [ngClass]="{ 'mt-2 pt-2 resultSplitter': i }">
+                        <p *ngFor="let rgSet of device" class="subscriberName" (click)="showSystem(data, rgSet)">
+                          {{ rgSet.serialNumber ? rgSet.serialNumber : (rgSet.deviceId ? rgSet.deviceId :
+                          (data.subscriberLocationId ? data.subscriberLocationId : ''))}}
+                          <span class="small-text" *ngIf="rgSet.opMode == 'RG'">
+                            {{
+                            rgSet.opMode == "RG"
+                            ? '(RG)'
+                            : language.WAP.replace("WAP-IGMP", "Mesh(SAT)").replace(
+                            "WAP",
+                            "Mesh(SAT)"
+                            )
+                            }}
+                          </span>
+                        </p>
+                      </div>
+                    </ng-template>
+                  </ng-container>
+                </section>
+                <ng-template #systemLocation>
+                  <p class="subscriberName" (click)="showSystem(data)">
+                    <!-- {{data.subscriberLocationId ? data.subscriberLocationId : ''}} -->
+                  </p>
+                </ng-template>
+
+              </td>
+              <td class="w-33" [innerHTML]="data.name | highlight: ccoSystemSearchText" (click)="showSystem(data)">{{
+                data.name }}</td>
+              <td class="w-33">
+                <span [innerHTML]="data.account | highlight: ccoSystemSearchText" (click)="showSystem(data)">{{
+                  data.account }}</span>
+                <span *ngIf="!data.account && !data.name && data.devices.length">
+                  <p *ngFor="let device of data.devices">
+                    {{ device.deviceId }}
+                  </p>
+                </span>
+              </td>
+              <td class="w-33" [innerHTML]="data.serviceAddress | highlight: ccoSystemSearchText"
+                (click)="showSystem(data)">{{
+                data.serviceAddress }}
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ul class="header-nav flex">
+    <li *ngIf="menus['home']">
+      <a href="javascript:void(0)" [routerLink]="[urls['home']]" [ngClass]="{'active' : activeMenus['home']}"
+        id="Home">{{
+        language.Home
+        }}</a>
+    </li>
+    <li *ngIf="menus['issues']">
+      <a href="javascript:void(0)" [routerLink]="[urls['issues']]" [ngClass]="{'active' : activeMenus['alerts']}"
+        id="Issues">{{language['Alerts']}}</a>
+    </li>
+    <li *ngIf="menus['health']">
+      <a href="javascript:void(0)" [routerLink]="[urls['health']]" [ngClass]="{'active' : activeMenus['health']}"
+        id="Health">{{
+        language.Health
+        }}</a>
+    </li>
+    <li *ngIf="menus['traffic']">
+      <a href="javascript:void(0)" [routerLink]="[urls['traffic']]" [ngClass]="{'active' : activeMenus['traffic']}"
+        id="Traffic">{{
+        language.Traffic_Name
+        }}</a>
+    </li>
+    <!-- <li *ngIf="menus['systems']">
+      <a href="javascript:void(0)" [routerLink]="[urls['systems']]" [ngClass]="{'active' : activeMenus['system']}"
+        id="Systems">{{
+        language.Systems
+        }}</a>
+    </li> -->
+    <li *ngIf="menus['services']">
+      <a href="javascript:void(0)" [routerLink]="[urls['services']]"
+        [ngClass]="{'active' :(activeMenus['services'] ||activeMenus['system'] || router.url.includes('/cco/system/cco-subscriber-system/'))  }">{{
+        language.Services }}</a>
+    </li>
+    <li *ngIf="menus['operations']">
+      <a href="javascript:void(0)" [routerLink]="[urls['operations']]"
+        [ngClass]="{'active' : activeMenus['operations']}" id="Operations">{{
+        language.Operations }}</a>
+    </li>
+    <li *ngIf="showDashboard && menus['dashboard']">
+      <a href="javascript:void(0)" [routerLink]="[urls['dashboard']]" routerLinkActive="active" id="dashboard">
+        {{language ["Dashboards"]}} </a>
+    </li>
+    <li>
+      <app-grid></app-grid>
+    </li>
+    <li>
+      <app-dd-menu></app-dd-menu>
+    </li>
+  </ul>
+
+</header>

@@ -1,0 +1,267 @@
+<div class="w-100 alert alert-danger fade show my-3" *ngIf="error && errorInfo">
+  <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+  <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+  <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+</div>
+
+<!-- <div class="device-wizard" id="deviceWizard">
+  <h4 class="net-ops-secondary-title per-title m-0">
+    {{ language.Step_3 }}- {{ language.Test_Server_Details }}
+  </h4>
+</div> -->
+<div class="margin-top-20">
+  <div class="loader" *ngIf="loading">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary">
+        <span class="sr-only">{{ language.Loading }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-2">
+    <section *ngIf="protocols.ookla">
+      <div class="form-group row" [ngClass]="{ 'error-occur-sec': error && !primaryServer }">
+        <label class="col-12 col-sm-12 col-lg-2 pr-0 control-label">
+          <div class="f-w-600">{{ language['Primary Server'] }}
+            <span class="error">*</span>
+          </div>
+          <p class="line-height">
+            {{ language.GigaSpire_desc }}
+          </p>
+        </label>
+        <div class="col-12 col-sm-12 col-lg-10">
+          <div class="custom-selectbox-testing">
+            <ng-select *ngIf="serverData.length" [items]="serverData" bindLabel="optionDec" class="" id="primaryServer"
+              bindValue="_id" [(ngModel)]="primaryServer" [searchable]="true" (change)="changePrimaryServer()">
+            </ng-select>
+          </div>
+          <p class="small-p">{{ language.Plan_Desc }}</p>
+
+          <div class="error-msg-p pl-3">
+            {{ language.select_value }}
+          </div>
+        </div>
+      </div>
+    </section>
+    <section *ngIf="protocols.ookla">
+      <div class="form-group row">
+        <label for="dataBwProfile" class="col-12 col-lg-2 pr-0">
+          <div class="f-w-600">{{ language.Secondary_server }}</div>
+          <p class="line-height">{{ language.GigaSpire_desc }}</p>
+        </label>
+        <div class="col-12 col-lg-10">
+          <div class="custom-selectbox-testing">
+            <ng-select *ngIf="serverData.length" [items]="serverData" bindLabel="optionDec" class=""
+              id="secondaryServer" bindValue="_id" [(ngModel)]="secondaryServer" (change)="changeSecondaryServer()"
+              [searchable]="true">
+            </ng-select>
+          </div>
+          <p class="small-p">{{ language.Plan_Desc }}</p>
+        </div>
+      </div>
+    </section>
+    <div *ngIf="protocols.tr143">
+      <section>
+        <div class="form-group ccl-form row" [ngClass]="{ 'error-occur-sec': downloadUrlError }">
+          <label class="col-12 col-sm-12 col-lg-2 pr-0 control-label">
+            <div class="f-w-600 ser-error">{{ language.downURL }}</div>
+            <p class="line-height">({{ language.TR_143_Only }})</p>
+          </label>
+          <div class="col-12 col-sm-12 col-lg-10">
+            <input id="downloadUrl" name="downloadUrl" type="text" [(ngModel)]="downloadUrl" (change)="validateDownloadUrl()"
+              (keyup)="validateDownloadUrl()" />
+            <p class="small-p">{{ language.Plan_Desc }}</p>
+
+            <div class="error-msg-p pl-3" *ngIf="downloadUrlError">
+              {{ language[downloadUrlError] }}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="form-group ccl-form row" [ngClass]="{ 'error-occur-sec': uploadUrlError }">
+          <label class="col-12 col-sm-12 col-lg-2 pr-0 control-label">
+            <div class="f-w-600 ser-error">{{ language.uploadURL }}</div>
+            <p class="line-height">({{ language.TR_143_Only }})</p>
+          </label>
+          <div class="col-12 col-sm-12 col-lg-10">
+            <input id="uploadUrl" name="uploadUrl" type="text" [(ngModel)]="uploadUrl" (change)="validateUploadUrl()"
+              (keyup)="validateUploadUrl()" />
+            <p class="small-p">{{ language.Plan_Desc }}</p>
+
+            <div class="error-msg-p pl-3" *ngIf="uploadUrlError">
+              {{ language[uploadUrlError] }}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="form-group ccl-form row" [ngClass]="{ 'error-occur-sec': uploadFileSizeError }">
+          <label class="col-12 col-sm-12 col-lg-2 pr-0 control-label">
+            <div class="f-w-600 ser-error">
+              {{ language.Upload_File_Size_bytes }}
+            </div>
+            <p class="line-height">({{ language.TR_143_Only }})</p>
+          </label>
+          <div class="col-12 col-sm-12 col-lg-10">
+            <input id="uploadFileSize" name="uploadFileSize" type="text" [(ngModel)]="uploadFileSize"
+              (change)="validateUploadFileSize()" (keyup)="validateUploadFileSize()" />
+            <p class="small-p">{{ language.Plan_Desc }}</p>
+
+            <div class="error-msg-p pl-3">
+              {{ language[uploadFileSizeError] }}
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <section>
+      <div class="form-group row">
+        <div class="col-12">
+          <div class="service-div flex-start">
+            <label class="control-label f-w-600 pr-2">{{
+              language.Serv_Tierspeeds
+              }}</label>
+
+            <label class="radio-inline col-2 text-right">
+              <input type="radio" id="serviceTierSpeedTreshChecked" name="serviceTierSpeedTreshChecked" class="mr-2"
+                value="yes" (click)="showform($event)" [checked]="serviceTierSpeedTreshChecked"
+                (click)="setserviceTierandTrshldChecked()" />{{ language.Yes }}
+            </label>
+            <label class="radio-inline col-2">
+              <input type="radio" id="serviceTierSpeedTreshUnChecked" name="serviceTierSpeedTreshUnChecked" class="mr-2"
+                value="no" (click)="hideform($event)" [checked]="!serviceTierSpeedTreshChecked"
+                (click)="setserviceTierandTrshldUnChecked()" />{{ language.No }}
+            </label>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div *ngIf="showservice" class="mt-4 mb-4">
+      <section>
+        <div class="form-group row">
+          <label for="dataBwProfile" class="col-12 col-lg-2 text-right pr-0">
+            <div class="f-w-600">{{ language.Service_Tier }}</div>
+            <p class="line-height">{{ language.Down_Upldspeed }}</p>
+          </label>
+          <div class="col-12 col-lg-10">
+            <!-- <select class="form-control bwProfile" id="dataBwProfile" (change)=bindServerData($event)>
+                            <option></option>
+                            <option value="Kbps">Kbps</option>
+                            <option value="Mbps">Mbps</option>
+                        </select> -->
+            <div class="custom-selectbox">
+              <ng-select *ngIf="serviceTierOptions.length" [items]="serviceTierOptions" bindLabel="name" class=""
+                id="dataBwProfile" bindValue="id" [searchable]="true" [(ngModel)]="serviceTierSelectred">
+              </ng-select>
+            </div>
+
+            <!-- <sup>If you plan to submit these results to the FCC, you need to be sure that the path to this test server is consistent with the requirements set out by the FCC for this testing.</sup> -->
+          </div>
+        </div>
+      </section>
+      <section>
+        <div class="form-group ccl-form row" [ngClass]="{
+            'error-occur-sec': error && validateServiceTierDownloadSpeedMsg
+          }">
+          <label class="col-12 col-lg-2 control-label">
+            <div class="text-right f-w-600">
+              {{ language.Download_Speed_TIER }} <span class="error">*</span>
+            </div>
+          </label>
+          <div class="col-12 col-lg-10">
+            <input id="serviceTierDownloadSpeed" name="serviceTierDownloadSpeed" min="1" max="10000000" type="number"
+              [(ngModel)]="serviceTierDownloadSpeed" (change)="validateServiceTierDownloadSpeed()" />
+            <div class="error-msg-p">
+              {{ language[validateServiceTierDownloadSpeedMsg] }}
+            </div>
+          </div>
+        </div>
+      </section>
+      <section>
+        <div class="form-group ccl-form row" [ngClass]="{
+            'error-occur-sec': error && validateServiceTierUploadSpeedMsg
+          }">
+          <label class="col-12 col-lg-2 control-label">
+            <div class="text-right f-w-600">
+              {{ language.Upload_Speed_TIER }}
+              <span class="error">*</span>
+            </div>
+          </label>
+          <div class="col-12 col-lg-10">
+            <input id="serviceTierUploadSpeed" name="serviceTierUploadSpeed" min="1" max="10000000" type="number"
+              [(ngModel)]="serviceTierUploadSpeed" (change)="validateServiceTierUploadSpeed()" />
+            <div class="error-msg-p">
+              {{ language[validateServiceTierUploadSpeedMsg] }}
+            </div>
+          </div>
+        </div>
+      </section>
+      <section>
+        <div class="form-group ccl-form row" [ngClass]="{ 'error-occur-sec': error && validatSpeedThresholdMsg }">
+          <label class="col-12 col-lg-2 control-label">
+            <div class="text-right f-w-600">
+              {{ language.Speed_Threshold }}
+              <span class="error">*</span>
+            </div>
+          </label>
+          <div class="col-12 col-lg-10">
+            <input id="speedThreshold" name="speedThreshold" type="number" min="1" max="100"
+              [(ngModel)]="speedThreshold" (change)="validatSpeedThreshold()" />
+            <p class="small-p">{{ language.In_percentage }} (%)</p>
+            <div class="error-msg-p">
+              {{ language[validatSpeedThresholdMsg] }}
+            </div>
+          </div>
+        </div>
+      </section>
+      <section>
+        <div class="form-group ccl-form row" [ngClass]="{ 'error-occur-sec': error && validatLatencyThresholdMsg }">
+          <label class="col-12 col-lg-2 control-label">
+            <div class="text-right f-w-600">
+              {{ language.Latency_Threshold }}
+              <span class="error">*</span>
+            </div>
+          </label>
+          <div class="col-12 col-lg-10">
+            <input id="latencyThreshold" name="latencyThreshold" min="1" max="100" type="number"
+              [(ngModel)]="latencyThreshold" (change)="validatLatencyThreshold()" />
+            <p class="small-p">{{ language.In_milliseconds }}</p>
+            <div class="error-msg-p">
+              {{ language[validatLatencyThresholdMsg] }}
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="col-12 mt-3">
+    <div *ngIf="protocols.ookla" class="power-sec">
+      <a class="pointer" href="https://www.speedtest.net" target="_blank">
+        <img src="assets/img/speed_test_powered_icon.png" /></a>
+      <span class="x-small"><a href="https://www.speedtest.net/privacy" target="_blank">{{
+          language.OOKLA_Privacy_Policy
+          }}</a></span>
+    </div>
+  </div>
+</div>
+<div class="d-inline-flex justify-content-start performance-testing-button">
+  <div>
+    <button type="button" (click)="gotoPrevious()" class="btn-arrow btn-arr-prev btn-grey"
+      id="netops-perftest-server-previous-btn">
+      <img src="assets/img/ic_chevronleft_grey.svg"> {{ language.Previous }}
+    </button>
+  </div>
+  <div>
+    <button type="button" class="btn-default btn-dft mx-2" (click)="reload()" id="netops-perftest-server-cancel-btn">
+      {{ language.cancel }}
+    </button>
+    <button type="button" class="btn-arrow btn-arr-nxt primary" (click)="go_next()"
+      id="netops-perftest-server-next-btn">
+      {{ language.Next }} <img src="assets/img/ic_chevron-r-w.svg">
+    </button>
+  </div>
+</div>

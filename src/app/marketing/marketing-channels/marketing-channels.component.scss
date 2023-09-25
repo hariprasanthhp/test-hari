@@ -1,0 +1,275 @@
+
+@import "../../../assets/variables";
+//common css start
+.subscriber-details {
+		justify-content: space-between;
+		align-items: flex-start;
+		padding-top: 44px;
+	    .subs-title {
+			margin-bottom: 15px;
+			.st-header {
+			  justify-content: space-between;
+			  align-items: center;
+			  margin-bottom: 20px;
+			  .sth-left {
+				// width: 300px;
+				padding-right: 20px;
+				h2 {
+				 font-size: 36px;
+				 font-weight: 300;
+				//   line-height: 51px;
+				//   margin-bottom: 0;
+				}
+
+			  }
+
+			}
+
+		  }
+	.view-button ,
+		.view-data .dot-drop{
+			visibility: hidden;
+			opacity: 0;
+		}
+
+		table.dataTable tbody tr:hover .view-button,
+		table.dataTable tbody tr:hover .view-data .dot-drop
+		{
+			visibility: visible;
+			opacity: 1;
+		}
+
+		.view-data {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			svg{
+				width: 15px;
+		    	transform: rotate(90deg);
+		    	fill: #4a4a4a;
+			}
+			button{
+				width: auto;
+			}
+			.dropdown-button.show .dropdown-menu.show {
+		       // background: #f2f2f2;
+			    top: 17px !important;
+			    right: 0px !important;
+			    left: auto !important;
+			    padding: 0px;
+			    min-width: auto;
+			    width: auto;
+			    border-radius: 3px;
+			    // border: 2px solid rgba(121, 121, 121, 1);
+			    z-index: 1;
+
+			    button{
+			    	padding:8px 30px;
+			    }
+			}
+
+		}
+
+			.lg-content-wrap {
+			    white-space: nowrap;
+			    overflow: hidden;
+			    text-overflow: ellipsis;
+			    min-width: auto;
+			    max-width: 180px;
+			}
+			.text-center{
+				text-align:center;
+			}
+
+			.text-right{
+				text-align:right;
+				padding-right: 20px;
+			}
+
+
+		// common css end
+
+
+		// market channels css start
+
+			.add-sec {
+				margin: 10px 0px;
+			}
+
+			.market-table {
+				table.dataTable thead .sorting.text-right{
+					padding-right: 20px;
+				}
+				thead{
+					.sorting{
+							background: none;
+						}
+						.sorting_asc{
+							background: none;
+						}
+						.sorting_desc{
+							background: none;
+						}
+				}
+				tbody{
+					tr{
+						&:hover
+						 { background-color: #f8f8fa; }
+
+					}
+				}
+			}
+
+
+
+		// market channels css end
+
+	.required-field{
+		font-size: 20px;
+		color:#D9001B;
+	}
+
+	 .transparant{
+    	color: $greyaa;
+    	padding: 5px 15px;
+    }
+}
+.hover-table{
+		.w-11{
+			width: 11%;
+		}
+		thead{
+			vertical-align: bottom;
+			tr
+				{
+					th{
+						vertical-align: middle;
+					}
+				}
+				.dropdown-button button{
+					width: auto;
+				}
+			}
+		tbody{
+			tr{
+
+				cursor: pointer;
+
+				&:nth-child(even) ,
+				&:hover
+				{background-color: #f8f8fa;}
+					td{
+						&:last-child{
+
+							text-align: center;
+						}
+					}
+				}
+			}
+			.nor-wrap {
+			    white-space: nowrap;
+			    overflow: hidden;
+			    text-overflow: ellipsis;
+			    width: auto;
+			    max-width: 120px;
+			}
+
+			.down-arrow-icon{
+				width: 28px;
+			    height: 28px;
+			    border-radius: 50%;
+			    justify-content: center;
+			    align-items: center;
+			    display: flex;
+			    background-image: url(/assets/img/ic_chevrondown-sec-grey.svg);
+			    background-position: center;
+			    background-repeat: no-repeat;
+			}
+		}
+		.hide-table {
+		display: none;
+		}
+
+		::ng-deep table.dataTable td.dataTables_empty {
+			display: none;
+		}
+
+    .camp-box {
+      background: #fff;
+      padding: 15px 15px;
+     border-radius: 5px;
+     box-shadow: 0 0px 5px 1px rgba(0, 0, 0, 0.13);
+     height: 185px;
+    }
+    .top-box{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+	.a-status {
+		width: 5px;
+		height: 5px;
+		border-radius: 50%;
+		display: inline-flex;
+		margin: auto;
+		margin-right: 3px;
+		margin-bottom: 2px;
+	}
+	.a-status.active{
+		background: green;
+		color: green;
+	}
+	.a-status.inactive {
+		background: #a09898;
+		color: #a09898;
+	}
+
+	.a-status.warn {
+		background: red;
+		color: red;
+	}
+
+
+    .top-box h6 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+
+    .left-box .btn-default.btn-dft{
+      color: #4C4C4C;
+    }
+    .right-img img {
+      width: 90px;
+  }
+  .s-reduce img{
+    width: 60px;
+  }
+
+   @media (max-width: 1024px) {
+	.camp-table{
+		overflow-x: auto;
+	}
+	table.dataTable{
+		width: 1280px;
+	}
+}
+
+
+@media (max-width: 425px) {
+
+    .modal.fade .modal-dialog {
+	    border-radius: 26px;
+	    max-width: 80%;
+	    padding: 0px;
+	    width: 80%;
+	    margin: auto;
+	}
+
+	.modal-title{
+		font-size: 15px;
+	}
+
+}
+

@@ -1,0 +1,207 @@
+<div class="img my-2">
+    <div class="mwc-content">
+
+        <div class="col-md-12 p-2">
+            <div class="d-flex justify-content-end">
+                <div class="select_period">
+                    <div class="time-drop" *ngIf="!expand">
+                        <ng-select id="typeId" bindLabel="name" [(ngModel)]="activePeriod" bindValue="name"
+                            class="selectboxwidth" (ngModelChange)="selectTimeFrame($event)" [items]="timeframes"
+                            [clearable]="false">
+                        </ng-select>
+                    </div>
+                    <p class="chart_style">- {{language.campaign_period}}</p>
+                    <p class="chart_style">.. {{language.pre_campaign_period}}</p>
+                </div>
+            </div>
+            <section [ngClass]="!fullScreen ? 'd-block full_screen' : 'd-none'">
+                <div class="container" [ngClass]="!deduplicatedDataAvailable ? 'd-block' : 'd-none'">
+
+
+                    <div class="d-flex justify-content-between w-100">
+                        <div class="mwc-header flex w-100 border-bottom">
+                            <div class="cco-secondary-title">
+                                <div class="title-second greyaa" id="total-subscribers">{{language.segment_subs}}
+                                </div>
+                            </div>
+                            <div class="mwc-btns flex align-items-center">
+
+                                <div class="mwc-btns">
+                                    <button id="segmentsubchannelDownloadss" (click)="downloadSubcriber()"
+                                        class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                                        title="{{language.subs_download_tip}}"></button>
+                                    <button id="segmentsubchannelExpandSections2" (click)="expandFullSubcriber()"
+                                        class="btn-round btn-small-24 btn-grey btn-expand" data-toggle="tooltip"
+                                        title="{{language.subs_fullscreen_close_tip}}"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rev_container" *ngIf="revenueDataSubscriber">
+
+                        <div class="total_revenue">
+
+                            <div class="rev_box">
+                                <div>
+                                    <span>{{language.totalsegmentsub}}</span>
+                                    <h3>{{totalSubscriber}}</h3>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div *ngIf="revenueDataSubscriber" id="subscriber-total-chart" class="chart-box h-300px"></div>
+                    <div class="req-text text-center" *ngIf="!revenueDataSubscriber">{{language.nodata}}</div>
+
+
+                    <div class="d-flex justify-content-between w-100">
+                        <div class="mwc-header flex w-100 border-bottom">
+                            <div class="cco-secondary-title">
+                                <div class="title-second greyaa" id="total-subscribers">{{language.Total_Subscribers}}
+                                </div>
+                            </div>
+                            <div class="mwc-btns flex align-items-center">
+
+                                <div class="mwc-btns">
+                                    <button id="segmentchannelDownloadss" (click)="download()"
+                                        class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                                        title="{{language.subs_download_tip}}"></button>
+                                    <button id="segmentchannelExpandSections2" (click)="expandFull()"
+                                        class="btn-round btn-small-24 btn-grey btn-expand" data-toggle="tooltip"
+                                        title="{{language.subs_fullscreen_close_tip}}"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rev_container" *ngIf="revenueData">
+
+                        <div class="total_revenue">
+
+                            <!-- <h6><b>{{language.Total_Subscribers}}</b></h6> -->
+
+
+                            <div class="rev_box">
+                                <div>
+                                    <span>{{language.Total_Subscribers}}</span>
+                                    <h3>{{totalRevenue}}</h3>
+                                </div>
+                                <!-- <div class="brod_rev">
+                                                <span>Total Broadband Revenue</span>
+                                                <h3>1.5M</h3>
+                                            </div> -->
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div *ngIf="revenueData" id="subscribe-total-chart" class="chart-box h-300px"></div>
+                    <div class="req-text text-center" *ngIf="!revenueData">{{language.nodata}}</div>
+
+
+
+                </div>
+            </section>
+        </div>
+    </div>
+    <!-- <img src="assets/images/cco-images/Deduplicated-Alarms.jpg" alt=""> -->
+
+
+    <section [ngClass]="fullScreen ? 'd-block full_screen' : 'd-none'">
+        <div class="container" [ngClass]="deduplicatedDataAvailable ? 'd-block' : 'd-none'">
+            <div class="row my-3">
+                <div class="col-md-12">
+                    <div class="issue-overview-wrapper">
+                        <div class="issue-overview-item">
+                            <div class="d-flex justify-content-between">
+
+                                <div class="mwc-header flex w-100 border-bottom">
+                                    <div class="cco-secondary-title">
+                                        <div class="title-second greyaa" id="total-subscribers">
+                                            {{language.Total_Subscribers}}</div>
+                                    </div>
+                                    <div class="mwc-btns flex align-items-center">
+
+                                        <div class="mwc-btns">
+                                            <button id="segmentchannelDownloadsub" (click)="download()"
+                                                class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                                                title="{{language.subs_download_tip}}"></button>
+                                            <button id="segmentchannelExpandSectionsub" (click)="expandFull1()"
+                                                class="btn-round btn-small-24 btn-grey btn-expand-inv"
+                                                data-toggle="tooltip"
+                                                title="{{language.subs_fullscreen_close_tip}}"></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="img my-2" *ngIf="revenueData">
+                                <div class="mwc-content">
+                                    <div class="col-md-12 p-2">
+                                        <div>
+                                            <span>{{language.Total_Subscribers}}</span>
+                                            <h3><b>{{totalRevenue}}</b></h3>
+                                        </div>
+                                        <div id="subscribe-total-chart-ex" class="chart-box h-300px">
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- <img src="assets/images/cco-images/Deduplicated-Alarms.jpg" alt=""> -->
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="req-text text-center" *ngIf="!revenueData">{{language.nodata}}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container" [ngClass]="deduplicatedDataAvailable_sub ? 'd-block' : 'd-none'">
+            <div class="row my-3">
+                <div class="col-md-12">
+                    <div class="issue-overview-wrapper">
+                        <div class="issue-overview-item">
+                            <div class="d-flex justify-content-between">
+
+                                <div class="mwc-header flex w-100 border-bottom">
+                                    <div class="cco-secondary-title">
+                                        <div class="title-second greyaa" id="total-subscribers">
+                                            {{language.segment_subs}}</div>
+                                    </div>
+                                    <div class="mwc-btns flex align-items-center">
+
+                                        <div class="mwc-btns">
+                                            <button id="segmentchannelDownloadsub1" (click)="downloadSubcriber()"
+                                                class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                                                title="{{language.subs_download_tip}}"></button>
+                                            <button id="segmentchannelExpandSectionsub1" (click)="expandFull1()"
+                                                class="btn-round btn-small-24 btn-grey btn-expand-inv"
+                                                data-toggle="tooltip"
+                                                title="{{language.subs_fullscreen_close_tip}}"></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="img my-2" *ngIf="revenueDataSubscriber">
+                                <div class="mwc-content">
+                                    <div class="col-md-12 p-2">
+                                        <div>
+                                            <span>{{language.totalsegmentsub}}</span>
+                                            <h3><b>{{totalSubscriber}}</b></h3>
+                                        </div>
+                                        <div id="subscriber-total-chart-ex" class="chart-box h-300px">
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- <img src="assets/images/cco-images/Deduplicated-Alarms.jpg" alt=""> -->
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="req-text text-center" *ngIf="!revenueDataSubscriber">{{language.nodata}}</div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+</div>

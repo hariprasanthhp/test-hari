@@ -1,0 +1,39 @@
+<section class="profile-start-wizard pb-4">
+    <h3 class="net-ops-secondary-title">
+        <!-- {{ language.Step_1 }}- {{ language.Start }} -->
+    </h3><br>
+    <!-- maxlength="48" minlength="2" -->
+    <form [formGroup]="myForm">
+        <div class="form-group ccl-form row">
+            <label class="col-2 control-label mand-field">{{ language.Name }} <span
+                    class="required-field">*</span></label>
+            <div class="col-10">
+                <input id="prof_strt_nme" name="prof_strt_nme" type="text" aria-required="true"
+                    aria-describedby="prof_strt_nme-error" placeholder="{{ language.name }}"
+                    formControlName="profileName" [readonly]="name == true" [ngStyle]="{
+                        'cursor': name ? ' no-drop' : 'auto' }" (keyup)="nameValidation()" trimSpace [formValue]="myForm"/>
+               
+               <div class="info-test"><p>{{language['Name cannot be changed']}}</p></div>
+                        <div class="errorMessage">
+                    <p *ngIf="((myForm?.controls['profileName']?.touched || submitted) && myForm?.controls['profileName']?.errors?.required)">{{ language["This field is required"]
+                        }}.</p>
+                    <p *ngIf="copyName && copynameError && !myForm?.controls['profileName']?.errors?.required">
+                        {{language['The name should be appended with a number or some string eg. _copy']}}
+                    </p>
+                    <p
+                        *ngIf="nameError && !myForm?.controls['profileName']?.errors?.required">
+                        {{language['profile_name_validation']}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="form-group ccl-form row">
+            <label class="col-2 control-label">{{ language.description }} <span class="small">{{ language.optional
+                    }}</span> </label>
+            <div class="col-10">
+                <input id="prof_dec" name="prof_dec" type="text" aria-required="true"
+                    aria-describedby="prof_strt_nme-error" placeholder="{{ language.description }}"
+                    formControlName="description" trimSpace [formValue]="myForm"/>
+            </div>
+        </div>
+    </form>
+</section>

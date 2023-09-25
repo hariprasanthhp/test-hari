@@ -1,0 +1,114 @@
+<div id="select-device" class="tab-pane">
+    <div class="loader" *ngIf="loading">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">{{language.Loading}}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="w-100 alert alert-danger mt-4 fade show" *ngIf="error">
+        <span class="success-img"><img src="./assets/img/error-icon.svg" /></span>
+        <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+        <button class="btn-default  px-3 ok-btn float-right" (click)="closeAlert()"
+            id="wk-err-ok">{{language.Ok}}</button>
+    </div>
+
+    <div class="w-100 alert alert-success fade show mt-4" *ngIf="success">
+        <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+        <button type="button" class="close" (click)="closeAlert()" id="wk-success"><span></span></button>
+        <div class="d-inline-flex" [innerHtml]="successInfo"></div>
+    </div>
+
+
+    <div class="wizard-form">
+        <section>
+            <div class="row">
+                <label class="col-3 control-label">{{language.Device_grp_appl}}</label>
+                <div class="col-9">
+                    <label class="radio-inline col-2">
+                        <input type="radio" [disabled]="workflowInputData.state == 'In Progress'" name="optradio"
+                            class="mr-2" value='Yes' [(ngModel)]="workflowInputData.selectedDeviceGroup"
+                            (ngModelChange)='showform();deviceaction();' id="show-form">
+                        {{language.Yes}}
+                    </label>
+                    <label class="radio-inline col-2">
+                        <input type="radio" [disabled]="workflowInputData.state == 'In Progress'" name="optradio"
+                            class="mr-2" value='No' [(ngModel)]="workflowInputData.selectedDeviceGroup"
+                            (ngModelChange)='hideform();deviceaction();' id="hide-form"> {{language.No}}
+                    </label>
+                </div>
+            </div>
+        </section>
+    </div>
+    <div class="pb-2 overflow-auto "
+        *ngIf="showdeviceform && workflowInputData.state != 'In Progress';else InProgressBlock ">
+        <span class="net-ops-secondary-title">{{language.Device_groups}} <span class="error">*</span></span>
+        <table id="device-grp-table" width="100%" datatable [dtOptions]="tableOptions"
+            class="workflow-details-table row-border hover table-alter">
+            <thead>
+                <tr>
+                    <th class="w-45 pl-0">{{language.Name}}</th>
+                    <th class="w-45 pl-0">{{language.description}}</th>
+                    <th class="w-10 pl-0">{{language.type}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr id="{{item._id}}" *ngFor="let item of deviceGrpData let i = index ">
+                    <td class="w-45">
+                        <div class="d-flex w-100 align-items-start">
+                            <input type="checkbox" placeholder="#" class="mt-1 mr-3" [value]='item._id' name="item.name"
+                            (change)='bindDeviceData($event,item._id)' [checked]='item.checked'><span class="text-break">{{item.name ?
+                            item.name : ''}}</span>
+                        </div>
+                    </td>
+                    <td class="w-45">
+                        <span class="text-break">{{item.description ? item.description : ''}}</span>
+                    </td>
+                    <td class="w-10"> 
+                        <span>{{item.type === 'dynamic' ? language.Dynamic : language.Static}}</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <ng-template #InProgressBlock>
+        <div class="overflow-auto" *ngIf="workflowInputData.state == 'In Progress'">
+            <span class="net-ops-secondary-title">{{language.Device_groups}}</span>
+            <table id="device-grp-table" width="100%" datatable [dtOptions]="tableOptions"
+                class="workflow-details-table row-border hover table-alter">
+                <thead>
+                    <tr>
+                        <th class="w-45 pl-0">{{language.Name}}</th>
+                        <th class="w-45 pl-0">{{language.description}}</th>
+                        <th class="w-10 pl-0">{{language.type}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr id="{{item._id}}" *ngFor="let item of deviceGrpData let i = index ">
+                        <td class="w-45">
+                            <div class="d-flex w-100 align-items-start">
+                            <input type="checkbox" placeholder="#" class="mt-1 mr-3" [value]='item._id' name="item.name"
+                                disabled (change)='bindDeviceData($event,item._id)'
+                                [checked]='item.checked'><span class="text-break">{{item.name ?
+                                item.name : ''}}</span>
+                            </div>
+                        </td>
+                        <td class="w-45">
+                            <span class="text-break">{{item.description ? item.description : ''}}</span>
+                        </td>
+                        <td class="w-10">
+                            <span>{{item.type === 'dynamic' ? language.Dynamic : language.Static}}</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </ng-template>
+    <div class="workflow-next-previous">
+        <button type="button" class="btn-arrow btn-arr-prev btn-grey mr-2 " (click)='go_previous()' id="previous"><img
+                src="assets/img/ic_chevronleft_grey.svg"> {{language.Previous}}</button>
+        <button type="button" class="btn-arrow btn-arr-nxt primary " (click)='go_next()' id="next">{{language.Next}}<img
+                src="assets/img/ic_chevron-r-w.svg"></button>
+    </div>
+</div>

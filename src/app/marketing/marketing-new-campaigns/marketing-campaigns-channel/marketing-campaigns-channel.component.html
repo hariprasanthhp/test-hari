@@ -1,0 +1,262 @@
+<div *ngIf="loading" class="no-data">
+    <div class="spinner-border text-primary">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+<div class="subscriber-details">
+    <div class="new-campaign">
+        <!--nav top-->
+        <div class="alert alert-warning alert-dismissible fade show" role="alert" *ngIf="channelPostError">
+            <span class="success-img"><img src="./assets/img/error-icon.svg" /></span>
+            <div class="d-inline-flex"> Error! {{channelPostErrorMsg}}. </div>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true" (click)="errorReset()"></span>
+            </button>
+        </div>
+        <div class="alert alert-warning alert-dismissible fade show col-lg-4" role="alert" *ngIf="channelAlertMsg">
+            <span class="success-img"><img src="./assets/img/error-icon.svg" /></span>
+            <div class="d-inline-flex"> {{language.channelAlertErrorMsg}}. </div>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true" (click)="errorReset()"></span>
+            </button>
+        </div>
+        <div class="alert alert-success alert-dismissible fade show" role="alert" *ngIf="campaignSuccess">
+            <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+            <div class="d-inline-flex"> {{campaignSuccessMsg}}.</div>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true" (click)="errorReset()"></span>
+            </button>
+        </div>
+        <div class="campaign-row flex" *ngIf="hideBeforeLoad">
+            <h2 class="greyaa title-second" id="select-mrktng-channel">{{language.Select_Mrktng_Channel}}</h2>
+            <div class="table-responsive table-data-no">
+                <table class="row-border hover table-alter cmc-campaign-channel">
+                    <thead>
+                        <tr>
+                            <th>
+                                <div class="chk-group">
+                                    <input type="checkbox" id="headerCheckBox" [disabled]="isDataAvilable"
+                                        (change)="channelAllSelect($event.target.checked)" [checked]="doubleChecked">
+                                    <label for="chkhead"></label>
+                                </div>
+                            </th>
+                            <th>{{language.Channel}}</th>
+                            <th class="text-right">{{language.Segment_Size}}</th>
+                            <th class="text-right">{{language.Includes_in_Channel}}</th>
+                            <th>{{language.Decription}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                       <!-- <pre>{{campaignChannelsDataArray | json}}</pre> -->
+                       
+                            <ng-container *ngFor="let item of campaignChannelsDataArray" >
+                                <tr *ngIf="item.show == true">
+                                <td>
+                                    <div class="chk-group">
+                                        <input type="checkbox" [attr.disabled]="(item.available && !item.mobcheck) ? null : true"
+                                            (change)="channelSelect($event.target.checked,item)"
+                                            [(ngModel)]="item.checked" [value]="item.marketingChannel"
+                                            id="mobilechannelCheckBox">
+                                    </div>
+                                </td>
+                                <td>{{item.marketingChannel}}</td>
+                                <!--  -->
+                                <td class="text-right"><span
+                                        *ngIf="(selectedSegmentType == 'Acquisition' || uploadCheck) && item.marketingChannel != 'Facebook'">
+                                        {{segmentExecutableSize | number}}
+                                    </span>
+                                    <span
+                                        *ngIf="(selectedSegmentType == 'Acquisition' || uploadCheck) && item.marketingChannel == 'Facebook'">
+                                        {{(segmentSocialSize | number) }}
+                                    </span>
+                                    <span *ngIf="selectedSegmentType != 'Acquisition' && !uploadCheck">{{ item.segmentSize |
+                                        number}}</span>
+                                </td>
+
+                                <td class="drop-right">
+                                    <span class="text-left"
+                                        *ngIf="item.checked && item.marketingChannel === 'Mobile Notification'">{{language['All']}} ({{
+                                        item.include}})</span>
+                                    <span *ngIf="!item.checked">-</span>
+                                    <div *ngIf="item.checked && item.marketingChannel === 'Mailchimp'"
+                                        class="dropdown-button" ngbDropdown>
+                                        <button class="mr-2" id="dropdownPeriod" ngbDropdownToggle aria-haspopup="true"
+                                            aria-expanded="false">
+                                            <p class="listdata mb0">
+                                                {{ (includeMailchimpSelected === 'Non-Mobile Message') ? language.mobile_non : language['All'] }}
+                                                ({{mailChimpSegmentCount | number}}) <span></span></p>
+                                        </button>
+                                        <div ngbDropdownMenu aria-labelledby="dropdownPeriod">
+                                            <button ngbDropdownItem class="greyaa"
+                                                (click)="selectIncludeMailchimp('All')">{{language['All']}}
+                                                ({{selectedSegmentType == 'Acquisition'|| uploadCheck ? segmentExecutableSize :
+                                                segmentSize}})</button>
+                                            <button ngbDropdownItem class="greyaa"
+                                                (click)="selectIncludeMailchimp('Non-Mobile Message')">{{language.mobile_non}}
+                                                ({{selectedSegmentType == 'Acquisition' || uploadCheck ? segmentNonMobileExecutableSize
+                                                : segmentNonMobileAppSize}})
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="item.checked && (item.marketingChannel === 'ConstantContact' || item.marketingChannel === 'Constant Contact')"
+                                        class="dropdown-button" ngbDropdown>
+                                        <button class="mr-2" id="dropdownPeriod" ngbDropdownToggle aria-haspopup="true"
+                                            aria-expanded="false">
+                                            <p class="listdata mb0">
+                                                {{ (includeConstantSelected === 'Non-Mobile
+                                                Message')?language.mobile_non: language['All'] }}
+                                                ({{constantSegmentCount | number}}) <span></span></p>
+                                        </button>
+                                        <div ngbDropdownMenu aria-labelledby="dropdownPeriod">
+                                            <button ngbDropdownItem class="greyaa"
+                                                (click)="selectIncludeConstant('All')">{{language['All']}}
+                                                ({{selectedSegmentType == 'Acquisition' || uploadCheck ? segmentExecutableSize :
+                                                segmentSize}})</button>
+                                            <button ngbDropdownItem class="greyaa"
+                                                (click)="selectIncludeConstant('Non-Mobile Message')">{{language.mobile_non}}
+                                                ({{selectedSegmentType == 'Acquisition' || uploadCheck ? segmentNonMobileExecutableSize
+                                                : segmentNonMobileAppSize}})
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="item.checked && item.marketingChannel === 'Facebook'"
+                                        class="dropdown-button" ngbDropdown>
+                                        <button class="mr-2" id="dropdownPeriod" ngbDropdownToggle aria-haspopup="true"
+                                            aria-expanded="false">
+                                            <p class="listdata mb0">
+                                                {{ (includeFacebookSelected === 'Non-Mobile
+                                                Message')?language.mobile_non: language['All'] }}
+                                                ({{faceBookSegmentCount | number}}) <span></span></p>
+                                        </button>
+                                        <div ngbDropdownMenu aria-labelledby="dropdownPeriod">
+                                            <button ngbDropdownItem class="greyaa"
+                                            (click)="selectIncludeFacebook('All')">
+                                            {{language['All']}}
+                                            ({{selectedSegmentType == 'Acquisition'|| uploadCheck ? segmentSocialSize :
+                                            segmentSize}})
+                                           </button>
+                                        <button ngbDropdownItem class="greyaa"
+                                            (click)="selectIncludeFacebook('Non-Mobile Message')">{{language.mobile_non}}
+                                            ({{selectedSegmentType == 'Acquisition' ||uploadCheck ? segmentNonMobileSocialSize
+                                            : segmentNonMobileAppSize}})
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="item.checked && item.marketingChannel === 'Hubspot'"
+                                        class="dropdown-button" ngbDropdown>
+                                        <button class="mr-2" id="dropdownPeriod" ngbDropdownToggle aria-haspopup="true"
+                                            aria-expanded="false">
+                                            <p class="listdata mb0">
+                                                {{ (includeHubspotSelected === 'Non-Mobile
+                                                Message')?language.mobile_non: language['All'] }}
+                                                ({{hubspotSegmentCount | number}}) <span></span></p>
+                                        </button>
+                                        <div ngbDropdownMenu aria-labelledby="dropdownPeriod">
+                                            <button ngbDropdownItem class="greyaa"
+                                                (click)="selectIncludeHubspot('All')">{{language['All']}}
+                                                ({{selectedSegmentType == 'Acquisition' || uploadCheck ? segmentExecutableSize :
+                                                segmentSize}})</button>
+                                            <button ngbDropdownItem class="greyaa"
+                                                (click)="selectIncludeHubspot('Non-Mobile Message')">{{language.mobile_non}}
+                                                ({{selectedSegmentType == 'Acquisition' ||uploadCheck ? segmentNonMobileExecutableSize
+                                                : segmentNonMobileAppSize}})
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{item.description}}</td>
+                            </tr>
+                            </ng-container>
+                       
+                        <tr *ngIf="selectedSegmentType !== 'Acquisition' && !uploadCheck && !triggeredCampaign">
+                            <td>
+                                <div class="chk-group">
+                                    <input type="checkbox" (change)="csvSelect($event.target.checked)" id="csvCheckBox"
+                                        [checked]='csvSelected'>
+                                </div>
+                            </td>
+                            <td>{{language.CSV_Download}}</td>
+                            <td class="text-right">{{segmentSize | number}}</td>
+                            <td class="drop-right">
+                                <span *ngIf="!csvSelected">
+                                    -
+                                </span>
+                                <div *ngIf="csvSelected" class="dropdown-button" ngbDropdown>
+                                    <button class="mr-2" id="dropdownPeriod" ngbDropdownToggle aria-haspopup="true"
+                                        aria-expanded="false">
+                                        <p class="listdata mb0">
+                                            {{(includechannelSelected.name === 'Non-Mobile
+                                            Message')?language.mobile_non: language['All']}}
+                                            ({{includechannelSelected.count | number}}) <span></span></p>
+                                    </button>
+                                    <div ngbDropdownMenu aria-labelledby="dropdownPeriod">
+                                        <button ngbDropdownItem class="greyaa" (click)="selectIncludeCahnnel('All')">{{language['All']}}
+                                            ({{segmentSize | number}})</button>
+                                        <button ngbDropdownItem class="greyaa"
+                                            (click)="selectIncludeCahnnel('Non-Mobile Message')">{{language.mobile_non}}
+                                            ({{segmentNonMobileAppSize | number}})
+                                        </button>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{language.hint_download}}</td>
+                        </tr>
+
+
+                    </tbody>
+
+                </table>
+            </div>
+            <!-- <div class="result-channel">
+                <ul class="total-result">
+                    <li>
+                        <div class=" total-name">
+                            {{language.Total}} :
+                        </div>
+                        $0
+                    </li>
+                    <li>
+                        <div class=" total-name">
+                             {{language.Budget}} :
+                        </div>
+                        $10,000.00
+                    </li>
+                    <li>
+                        <div class=" total-name">
+                             {{language.Remaining}} :
+                        </div>
+                        $10,000.00
+                    </li>
+                </ul>
+            </div> -->
+        </div>
+
+    </div>
+    <!--new campaign-->
+</div>
+
+
+<ng-template #includeChannelModal let-modal class="col-md-12">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="addModal">{{language.Include_In_Channel}}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+                <span aria-hidden="true"></span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form class="custom-form">
+                <div class="form-group ccl-form ">
+                    <label for="inputEmail3" class="col-sm-12 col-form-label"> {{language.Amount}} <span
+                            class="required">*</span></label>
+                    <div class="col-sm-10">
+                        <input type="text" id="inputinr" placeholder="$2">
+                    </div>
+                </div>
+                <button type="button" class="btn-default primary px-3 px-3">{{language.Save}}</button>
+                <button type="button" class="btn-default transparant px-3 px-3 m-2" (click)="closeModal()"
+                    data-dismiss="modal">{{language.Cancel}}</button>
+            </form>
+        </div>
+    </div>
+</ng-template>

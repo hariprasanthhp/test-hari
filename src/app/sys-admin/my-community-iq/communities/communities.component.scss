@@ -1,0 +1,82 @@
+.communities-action {
+    .btn:hover{
+        background-color: transparent !important;
+    }
+    button::before {
+        display: none;
+    }
+}
+.communities-popup-title{
+    font-style: normal;
+    font-weight: 300;
+    font-size: 42px;
+    line-height: 53px;
+    color: #1A1F22;
+    margin-bottom: 25px;
+    }
+.ccl-form {
+    textarea {
+        border: 1px solid transparent;
+        background-color: #f8f8fa;
+        width: 100%;
+        border-radius: 26px;
+        padding: 10px 16px;
+    }
+}
+.add-microsite-container{
+    display: flex;
+    flex-wrap: wrap;
+}
+.add-microsite-item{
+    flex: 1 25%;
+    margin-bottom: 2%;
+}
+.logo-customimage-view{
+    display: inline-block;
+}
+.default-microsite-image{
+    background-color: #ebeaef;
+    margin-bottom: 10px;
+    padding: 10px;
+    max-width: 200px;
+    max-height: 150px;
+    display: block;
+    min-width: 200px;
+    min-height: 150px;
+}
+.logo-customimage-view label{
+    width: -webkit-max-content;
+    width: -moz-max-content;
+    width: max-content;
+}
+.type-file{
+    display: none;
+}
+.logo-guidelines{
+    
+    ul{
+      margin-top: 7px;
+      list-style: disc;
+      li{
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 18px;
+        
+        margin: 0px 5px;
+        
+        color: #4C4C4C;
+      }
+    }
+  }
+  .add-microsite-item + .add-microsite-item {
+    margin-left: 28px;
+  }
+  .color-input {
+    input {
+      border-radius: 5px;
+      border: 1px solid #D9D9D9;
+    }
+  }
+  .inp-disabled::ng-deep  * {
+     cursor: no-drop !important;
+  }

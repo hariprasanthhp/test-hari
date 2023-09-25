@@ -1,0 +1,104 @@
+<div class="contaniner position-relative">
+    <div class="loader" *ngIf="loader">
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border text-primary">
+            <span class="sr-only">{{language.Loading}}</span>
+          </div>
+        </div>
+      </div>
+      <div class="w-100 alert alert-danger fade show" *ngIf="error">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+        <button type="button" class="close" (click)="closeAlert()">
+          <span></span>
+        </button>
+        <div class="d-inline-flex" [innerHtml]="language[errorInfo] || errorInfo"></div>
+      </div>
+      
+      <div class="w-100 alert alert-success fade show" *ngIf="success">
+        <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+        <button type="button" class="close" (click)="closeAlert()">
+          <span></span>
+        </button>
+        <div class="d-inline-flex" [innerHtml]="language[successInfo] || successInfo"></div>
+      </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div >
+                <h4> {{language['USOC File Upload']}}</h4>
+            </div>
+            <p class="pl-1"><span [innerHtml]="language['usoc_file_upload']"></span> <span (click)="GoInstruction()" class="f-size-16px primary pointer"> {{language["instructions"]}}
+                <img src="./assets/img/Preview-icon.svg"></span>. </p>
+        </div>
+        <!-- <div class="col-md-12 mb-3">
+        
+          <div class="accordion" id="accordionExample">
+            <div class="card">
+              <div class="csv-header" id="headingOne">
+                <h6 class="mb-0">
+                  <div class="btn-link" type="button" data-toggle="collapse" data-target="#collapseOne"
+                    aria-controls="collapseOne" aria-expanded="false">
+                    {{language["CSV Data File Example"]}} <span class="mr-2"><img
+                        src="../../../../../../assets/img/ic_chevrondown_blue.svg" /></span>
+                  </div>
+                </h6>
+              </div>
+        
+              <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                <div class="card-body p-0">
+                  {{language["The file needs to contain all the attributes in the following order:"]}}
+        
+                  <div class="mt-3">
+                    {{language["USOC, downspeed, upspeed, servicedesc, servicetype, techtype, monthlyfee, customertype"]}}
+                  </div>
+                  <div class="csv-data-list">
+                    <ul>
+                      <li>{{language['I-INET IP B, 10, 1, Basic Internet DSL, data, DSL, 29.95, Residential']}}</li>
+                      <li>{{language['I-NET IP E, 20, 5, Family Internet DSL, data, DSL, 59.95, Residential']}}</li>
+                      <li>{{language['I-NET IP H, 50, 5 Family Internet Fiber, data, Fiber, 59.95, Residential']}}</li>
+                      <li>{{language['I-NET IP J, 20, 5, Business Internet, data, DSL, 99.95, Residential']}}</li>
+                      <li>{{language['I-NET IP N, 50, 50, Business Fiber, data, Fiber, 149.95, Business']}}</li>
+                      <li>{{language['V-RES, 0, 0, Residential Voice, voice, POTS, 19. 95, Residential']}}</li>
+                    </ul>
+                  </div>
+        
+        
+        
+        
+        
+        
+        
+                </div>
+              </div>
+            </div>
+        
+        
+          </div>
+        </div> -->
+        <div class="col-md-5">
+            <form>
+                <div class="form-group">
+                    <div id="fullImportUpload-div" class="ccl-form">
+                        <div class="">
+                            <label for="text" class="col-md-3 pl-1">{{language['CSV File']}}</label>
+                            <input *ngIf="uploadfile" id="fullImportUpload" class="col-md-9 inp-disabled" name="text"  type="text" [(ngModel)]="uploadfile"
+                                data-toggle="tooltip" [disabled]="true" data-placement="top" title="Tooltip on top">
+                        </div>
+                        <label for="logo"
+                          class="primary m-0 pointer usoc-upload-button btn-default my-1 ml-1"><a>{{language.Browse}}</a></label>
+                        <input class="type-file" type="file" accept=".csv" name="logo" required id="logo" #logo style="display:none"
+                          (change)="readURL($event)">
+                    </div>
+                    <div *ngIf="uploadfile">
+                        <button type="button" class="usoc-upload-button btn-default primary ml-1" (click)="fullImportUpload()"
+                        >{{language.Upload}}</button>
+                    </div>
+                    
+
+                </div>
+                
+
+            </form>
+
+        </div>
+    </div>
+</div>

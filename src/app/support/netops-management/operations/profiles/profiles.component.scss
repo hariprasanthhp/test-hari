@@ -1,0 +1,33 @@
+// table.dataTable tbody tr td{
+//     padding: 8px 5px !important;
+// }
+.netops-profile-list {
+    table {
+        width: 100%;
+
+        thead {
+            tr {
+                width: 100%;
+
+            }
+        }
+
+        tbody {
+            tr {
+                width: 100%;
+
+                td {
+                    padding: 10px 10px 10px 0px !important;
+                    width: 450px;
+                        word-break: break-all;
+                    }
+                    
+                    td:nth-child(4) {
+                        max-width: 100px;
+                }
+            }
+        }
+
+    }
+
+}

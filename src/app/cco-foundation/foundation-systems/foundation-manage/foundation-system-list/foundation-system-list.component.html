@@ -1,0 +1,1603 @@
+<section class="my-3" *ngIf="language">
+  <div class="loader" *ngIf="loading">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary">
+        <span class="sr-only">{{ language.Loading }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="w-100 alert alert-danger fade show" [hidden]="!error">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+      <button type="button" class="close" (click)="closeAlert()">
+        <span></span>
+      </button>
+      <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+    </div>
+
+    <div class="w-100 alert alert-success fade show" [hidden]="!success">
+      <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+      <button type="button" class="close" (click)="closeAlert()">
+        <span></span>
+      </button>
+      <div class="d-inline-flex" [innerHtml]="language[successInfo] || successInfo"></div>
+    </div>
+
+    <div class="row mb-2">
+      <div class="col-md-12 px-0" *ngIf="!isProvisioned">
+        <button type="button" *ngIf="hasWrite" class="btn-default primary px-3 mr-3" (click)="goToAddSystem()">
+          {{language['Add System/subscriber']}}
+        </button>
+        <!-- <button *ngIf="serviceEnable" type="button" class="btn-default primary px-3 mr-3" (click)="gotoServiceProfiles()">
+          Back to Service Profiles
+        </button> -->
+        </div>
+<div class="row col-12 align-items-center justify-content-between">
+  <div class="col-md-3 px-0 smy-2 ccl-form mb-cus">
+    <input class="form-control mr-sm-2" type="text" class="ccl-from" [(ngModel)]="searchText"
+      placeholder="{{ language.Search }}" aria-label="Search" (search)="searchByCharacters($event)"
+      (keyup)="searchByCharacters($event)" (keyup.enter)="performSearch()" />
+    <span *ngIf="searchText" class="search-close" (click)="clearSearch(searchText)"><img
+        src="assets/img/ic_close-44px.svg"> </span>
+    <!-- <span class="add-search-icon">
+      <img src="assets/img/ic_search_white.svg" id="performSearchId" (click)="performSearch()" /></span> -->
+  </div>
+  
+  <button *ngIf="isProvisioned" type="button" [disabled]="!tableCount"(click)="exportSubscribers()" class="btn-transparent ml-2 btn-link" disabled=""> {{language['Export Subscribers']}} </button>
+</div>
+      
+    </div>
+    <!-- <div class="row flex">
+      <h4 class="title flex" id="filterCountId" *ngIf="showResult">
+        {{ showFilterCount ? filterCount : tableCount }}
+        {{
+        filterCount <= 1 || filterCount <=1 ? language["Result"] : language["Results"] }} {{ systemSearchText ?
+          language["for"] : "" }} &nbsp; <b id="searchedValue"> {{ systemSearchText }}</b>
+      </h4>
+      <div class="filter-rht flex"></div>
+    </div> -->
+  </div>
+</section>
+<section *ngIf="language">
+  <div class="container">
+    <div class="row" *ngIf="countAvailable">
+      <div class="col-md-12 px-0 systems-list" *ngIf="showResult" [hidden]="!dataAvailable">
+        <table width="100%" class="row-border hover table-alter table-data" datatable  [dtOptions]="dtOptions" >
+          <thead>
+            <tr>
+              <th>{{ language.FSAN_SN }}</th>
+              <th>{{ language.Model }}</th>
+              <th>{{language.RegID}}</th>
+              <th>{{ language.MAC_Address }}</th>
+              <th>{{ language.Subscriber_Name }}</th>
+              <th>{{ language.Account }}</th>
+              <!-- <th>{{ language.Subscriber_Status }}</th> -->
+              <!-- <th>{{ language["Revenue EDGE Suites"] }}</th>
+              <th>{{ language.Service_Plan }}</th> -->
+              <th *ngIf="hasWrite">{{language.action}}</th>
+            </tr>
+          </thead>
+          <tbody *ngIf="systemsList?.length != 0">
+            <tr *ngFor="let item of systemsList">
+              <td>
+                <ng-container *ngFor="let device of item.devices; let i = index">
+                  <div class="display">
+                    <ng-container *ngIf="!_array.isArray(device); else arrayDevice">
+                      <p class="device-info" *ngIf="!checkONT(device);" (click)="goToSystemDetails(item, device)">
+                        <a class="subscriberName" [innerHTML]="
+                          (device.serialNumber
+                            ? device.serialNumber
+                            : checkRegIdAndMac(device.deviceId)
+                            ? ''
+                            : device.deviceId
+                          ) | highlight: searchText
+                        ">
+                          {{
+                          device.serialNumber
+                          ? device.serialNumber
+                          : checkRegIdAndMac(device.deviceId)
+                          ? ""
+                          : device.deviceId
+                          }}
+
+                        </a>
+                        <span class="small-text-system" *ngIf="device.opMode">
+                          {{
+                          device.opMode == "RG"
+                          ? "(RG)"
+                          :device.opMode == "SMB" ? "(SMB)" :device.opMode.replace(
+                          "WAP-IGMP",
+                          "Mesh(SAT)"
+                          ).replace("WAP", "Mesh(SAT)")
+                          }}
+                        </span>
+                      </p>
+                      <p class="" *ngIf="checkONT(device);">
+                        <span [innerHTML]="
+                          (device.serialNumber
+                            ? device.serialNumber
+                            : checkRegIdAndMac(device.deviceId)
+                            ? ''
+                            : device.deviceId
+                          ) | highlight: searchText
+                        ">
+                          {{
+                          device.serialNumber
+                          ? device.serialNumber
+                          : checkRegIdAndMac(device.deviceId)
+                          ? ""
+                          : device.deviceId
+                          }}
+                        </span>
+
+                        <span class="small-text-system" *ngIf="device.opMode">
+                          {{
+                          device.opMode == "RG"
+                          ? "(RG)"
+                          :device.opMode == "SMB" ? "(SMB)" : device.opMode.replace(
+                          "WAP-IGMP",
+                          "Mesh(SAT)"
+                          ).replace("WAP", "Mesh(SAT)")
+                          }}
+                        </span>
+                      </p>
+                    </ng-container>
+
+                  </div>
+                  <ng-template #arrayDevice>
+                    <div class="display">
+                      <ng-container *ngFor="let rgSet of device">
+                        <p class="device-info" *ngIf="!checkONT(rgSet)" (click)="goToSystemDetails(item, device)">
+                          <a class="subscriberName" [innerHTML]="
+                          (rgSet.serialNumber
+                            ? rgSet.serialNumber
+                            : checkRegIdAndMac(rgSet.deviceId)
+                            ? ''
+                            : rgSet.deviceId
+                          ) | highlight: searchText
+                        ">
+                            {{
+                            rgSet.serialNumber
+                            ? rgSet.serialNumber
+                            : checkRegIdAndMac(rgSet.deviceId)
+                            ? ""
+                            : rgSet.deviceId
+                            }}
+                          </a>
+
+                          <span class="small-text-system" *ngIf="rgSet.opMode">
+                            {{
+                            rgSet.opMode == "RG"
+                            ? "(RG)"
+                            : rgSet.opMode == "SMB" ? "(SMB)" :rgSet.opMode.replace(
+                            "WAP-IGMP",
+                            "Mesh(SAT)"
+                            ).replace("WAP", "Mesh(SAT)")
+                            }}
+                          </span>
+                        </p>
+                        <p class="device-info" *ngIf="checkONT(rgSet)">
+                          <a class="subscriberName" [innerHTML]="
+                          (rgSet.serialNumber
+                            ? rgSet.serialNumber
+                            : checkRegIdAndMac(rgSet.deviceId)
+                            ? ''
+                            : rgSet.deviceId
+                          ) | highlight: searchText
+                        ">
+                            {{
+                            rgSet.serialNumber
+                            ? rgSet.serialNumber
+                            : checkRegIdAndMac(rgSet.deviceId)
+                            ? ""
+                            : rgSet.deviceId
+                            }}
+                          </a>
+
+                          <span class="small-text-system" *ngIf="rgSet.opMode">
+                            {{
+                            rgSet.opMode == "RG"
+                            ? "(RG)"
+                            :rgSet.opMode == "SMB" ? "(SMB)" : rgSet.opMode.replace(
+                            "WAP-IGMP",
+                            "Mesh(SAT)"
+                            ).replace("WAP", "Mesh(SAT)")
+                            }}
+                          </span>
+                        </p>
+                      </ng-container>
+
+                    </div>
+                  </ng-template>
+                </ng-container>
+              </td>
+              <td>
+                <ng-container *ngFor="let device of item.devices; let i = index">
+                  <div class="display">
+                    <p *ngIf="!_array.isArray(device); else arrayDeviceMdl">
+                      <span [innerHTML]="
+                        (device.modelName ? device.modelName : '')
+                          | highlight: searchText
+                      ">{{ device.modelName ? device.modelName : "" }}</span>
+                    </p>
+                  </div>
+                  <ng-template #arrayDeviceMdl>
+                    <div class="display" *ngFor="let rgSet of device">
+                      <p *ngIf="rgSet.modelName">
+                        <span [innerHTML]="
+                            (rgSet.modelName ? rgSet.modelName : '')
+                              | highlight: searchText
+                          ">{{ rgSet.modelName ? rgSet.modelName : "" }}</span>
+                      </p>
+                    </div>
+                  </ng-template>
+                </ng-container>
+              </td>
+              <td>
+                <ng-container *ngFor="let device of item.devices; let i = index">
+                  <div class="display" *ngIf="!_array.isArray(device); else arrayDeviceRegId">
+                    <ng-container
+                      *ngIf="((!device.registrationId && checkRegId(device.deviceId)) || (device.registrationId && checkRegId(device.deviceId) && !device.serialNumber && !device.macAddress))">
+                      <p class="device-highlight" *ngIf="!checkONT(device)" (click)="goToSystemDetails(item, device)">
+                        <span [innerHTML]="(device.registrationId ? device.registrationId :  checkRegId(device.deviceId) ? device.deviceId: '')
+                        | highlight: searchText ">
+                          {{ device.registrationId ? device.registrationId : checkRegId(device.deviceId)
+                          ? device.deviceId
+                          :"" }}
+                        </span>
+
+                      </p>
+                      <p class="" *ngIf="checkONT(device)">
+                        <span [innerHTML]="(device.registrationId ? device.registrationId :  checkRegId(device.deviceId) ?
+                      device.deviceId: '') | highlight: searchText">
+                          {{ device.registrationId ? device.registrationId : checkRegId(device.deviceId)
+                          ? device.deviceId
+                          :"" }}
+                        </span>
+
+                      </p>
+                    </ng-container>
+
+                    <p *ngIf="(checkRegId(device.deviceId) && device.registrationId) || !checkRegId(device.deviceId)">
+                      <span [innerHTML]="
+                        (device.registrationId ? device.registrationId : '')
+                          | highlight: searchText
+                      ">{{ device.registrationId ? device.registrationId : "" }}</span>
+                    </p>
+
+                  </div>
+                  <ng-template #arrayDeviceRegId>
+                    <div class="display" *ngFor="let rgSet of device">
+                      <ng-container
+                        *ngIf="((!rgSet.registrationId && checkRegId(rgSet.deviceId)) || (rgSet.registrationId && checkRegId(rgSet.deviceId) && !rgSet.serialNumber && !rgSet.macAddress))">
+                        <p class="device-highlight" *ngIf="!checkONT(rgSet)" (click)="goToSystemDetails(item, device)">
+                          <span [innerHTML]="
+                          (rgSet.registrationId ? rgSet.registrationId : checkRegId(rgSet.deviceId)
+                          ? rgSet.deviceId: '')
+                            | highlight: searchText
+                        ">{{ rgSet.registrationId ? rgSet.registrationId :checkRegId(rgSet.deviceId)
+                            ? rgSet.deviceId : "" }}</span>
+                        </p>
+                        <p class="" *ngIf="checkONT(rgSet)">
+                          <span [innerHTML]="
+                          (rgSet.registrationId ? rgSet.registrationId : checkRegId(rgSet.deviceId)
+                          ? rgSet.deviceId: '')
+                            | highlight: searchText
+                        ">{{ rgSet.registrationId ? rgSet.registrationId :checkRegId(rgSet.deviceId)
+                            ? rgSet.deviceId : "" }}</span>
+                        </p>
+                      </ng-container>
+
+                      <p *ngIf="(checkRegId(rgSet.deviceId) && rgSet.registrationId) || !checkRegId(rgSet.deviceId)">
+                        <span [innerHTML]="
+                      (rgSet.registrationId ? rgSet.registrationId : '')
+                        | highlight: searchText
+                    ">{{ rgSet.registrationId ? rgSet.registrationId : "" }}</span>
+                      </p>
+                    </div>
+                  </ng-template>
+                </ng-container>
+              </td>
+              <td>
+                <ng-container *ngFor="let device of item.devices; let i = index">
+                  <div class="display" *ngIf="!_array.isArray(device); else arrayDeviceMac">
+                    <ng-container
+                      *ngIf="((!device.macAddress && checkMackAddress(device.deviceId)) || (device.macAddress && checkMackAddress(device.deviceId) && !device.serialNumber && !device.registrationId))">
+                      <p class="device-highlight" *ngIf="!checkONT(device)" (click)="goToSystemDetails(item, device)">
+                        <span [innerHTML]="
+                        (device.macAddress ? device.macAddress :  checkMackAddress(device.deviceId) ?
+                        device.deviceId: '')
+                          | highlight: searchText
+                      ">{{ device.macAddress ? device.macAddress : checkMackAddress(device.deviceId)
+                          ? device.deviceId
+                          :"" }}</span>
+
+                      </p>
+                      <p class="" *ngIf="checkONT(device)">
+                        <span [innerHTML]="
+                        (device.macAddress ? device.macAddress :  checkMackAddress(device.deviceId) ?
+                        device.deviceId: '')
+                          | highlight: searchText
+                      ">{{ device.macAddress ? device.macAddress : checkMackAddress(device.deviceId)
+                          ? device.deviceId
+                          :"" }}</span>
+
+                      </p>
+                    </ng-container>
+                    <p
+                      *ngIf="(checkMackAddress(device.deviceId) && device.macAddress) || !checkMackAddress(device.deviceId)">
+                      <span [innerHTML]="
+                      (device.macAddress ? device.macAddress : '')
+                        | highlight: searchText
+                    ">{{ device.macAddress ? device.macAddress
+                        :"" }}</span>
+                    </p>
+
+                  </div>
+                  <ng-template #arrayDeviceMac>
+                    <div class="display" *ngFor="let rgSet of device">
+                      <ng-container
+                        *ngIf="((!rgSet.macAddress && checkMackAddress(rgSet.deviceId)) || (rgSet.macAddress && checkMackAddress(rgSet.deviceId) && !rgSet.serialNumber && !rgSet.registrationId))">
+                        <p class="device-highlight" *ngIf="!checkONT(rgSet)" (click)="goToSystemDetails(item, device)">
+                          <span [innerHTML]="
+                            (rgSet.macAddress ? rgSet.macAddress : checkMackAddress(rgSet.deviceId)
+                            ? rgSet.deviceId: '')
+                              | highlight: searchText
+                          ">{{ rgSet.macAddress ? rgSet.macAddress :checkMackAddress(rgSet.deviceId)
+                            ? rgSet.deviceId : "" }}</span>
+                        </p>
+                        <p class="" *ngIf="checkONT(rgSet)">
+                          <span [innerHTML]="
+                            (rgSet.macAddress ? rgSet.macAddress : checkMackAddress(rgSet.deviceId)
+                            ? rgSet.deviceId: '')
+                              | highlight: searchText
+                          ">{{ rgSet.macAddress ? rgSet.macAddress :checkMackAddress(rgSet.deviceId)
+                            ? rgSet.deviceId : "" }}</span>
+                        </p>
+                      </ng-container>
+
+                      <p
+                        *ngIf="(checkMackAddress(rgSet.deviceId) && rgSet.macAddress) || !checkMackAddress(rgSet.deviceId)">
+                        <span [innerHTML]="
+                        (rgSet.macAddress ? rgSet.macAddress : '')
+                          | highlight: searchText
+                      ">{{ rgSet.macAddress ? rgSet.macAddress
+                          :"" }}</span>
+                      </p>
+                    </div>
+                  </ng-template>
+                </ng-container>
+              </td>
+              <td>
+                <section class="display" *ngIf="
+                    item.devices && item.devices.length;
+                    else systemLocation
+                  ">
+                  <ng-container *ngFor="let device of item.devices; let i = index">
+                    <p class="fd-subscriber-info" *ngIf="i==0">
+                      <a>
+                        <span title='{{ item.name ? item.name : "" }}' [innerHTML]="
+                            (item.name ? item.name : '') | highlight: searchText
+                          ">{{ item.name ? item.name : "" }}</span>
+                      </a>
+                    </p>
+                  </ng-container>
+                </section>
+                <ng-template #systemLocation>
+                  <div class="display">
+                    <p class="device-info info-d-alt" (click)="goToSystemDetails(item)">
+                      <a class="subscriberName">
+                        <span [innerHTML]="
+                          (item.name ? item.name : '') | highlight: searchText
+                        ">{{ item.name ? item.name : "" }}</span>
+                      </a>
+                    </p>
+                  </div>
+                </ng-template>
+              </td>
+              <td>
+                <div class="display">
+                  <span [innerHTML]="
+                    (item.account ? item.account : '') | highlight: searchText
+                  " data-toggle="tooltip" title="{{ item.account ? item.account : '' }}">
+                    {{ item.account ? item.account : "" }}</span>
+                </div>
+              </td>
+
+              <td *ngIf="hasWrite">
+                <section *ngIf="item.devices && item.devices.length; else subsIdCall">
+                  <ng-container *ngFor="let device of item.devices; let ds = index">
+                    <div class="btn-action" *ngIf="item.devices.length == 1 && item.subscriberId">
+                      <div class="dropdown dropleft position-static">
+                        <button class="btn w-50p" type="button" data-toggle="dropdown" data-boundary="viewport">
+                          ...
+                        </button>
+                          <ul class="dropdown-menu text-left">
+                            <li *ngIf="!checkONT(device)">
+                              <button class="btn btn-white" (click)="goToSystemEdit(item, device)">
+                                {{ language['Edit System/subscriber'] }}
+                              </button>
+                            </li>
+                            <li *ngIf="!checkONT(device)">
+                              <button class="btn btn-white text-left"
+                                (click)="opendissasciateDeviceModel(item, device,disassociateSystemModal)">
+                                {{ language.Disassociate_System }}
+                              </button>
+                            </li>
+                            <li *ngIf="device.serialNumber && !checkONT(device)">
+                              <button class="btn btn-white text-left" (click)="openOutModal(reboot, device)">
+                                {{ language.Reboot }}
+                              </button>
+                            </li>
+                            <li *ngIf="device.serialNumber && !checkONT(device)">
+                              <button class="btn btn-white" (click)="openResetModal(item, device)">
+                                {{ language.factoryResetLabel(device?.modelName) }}
+                              </button>
+                            </li>
+                            <li *ngIf="!checkONT(device)">
+                              <button class="btn btn-white text-left" (click)="opendeleteDevicerModal(item, device,deleteSystemModal)">
+                                {{ language.deleteDevice }}
+                              </button>
+                            </li>
+                            <li>
+                              <button class="btn btn-white text-left" (click)="
+                                  opendeleteSubscriberModal(item, device,deletesubscriberModal)
+                                ">
+                                {{ language.Delete_Subscriber }}
+                              </button>
+                            </li>
+                          </ul>
+                      </div>
+                    </div>
+                    <div class="btn-action"
+                      *ngIf="item.devices.length == 1 && !item.subscriberId && ( device.opMode !='WAP') && !checkONT(device)">
+                      <div class="dropdown dropleft position-static">
+                        <button class="btn w-50p" type="button" data-toggle="dropdown" data-boundary="viewport">
+                          ...
+                        </button>
+                          <ul class="dropdown-menu">
+                            <li>
+                              <button class="btn btn-white" (click)="goToSystemEdit(item, device)">
+                                {{ language['Edit System/subscriber'] }}
+                              </button>
+                            </li>
+                            <li *ngIf="device.serialNumber">
+                              <button class="btn btn-white text-left" (click)="openOutModal(reboot, device)">
+                                {{ language.Reboot }}
+                              </button>
+                            </li>
+                            <li *ngIf="device.serialNumber">
+                              <button class="btn btn-white" (click)="openResetModal(item, device)">
+                                {{ language.factoryResetLabel(device?.modelName) }}
+                              </button>
+                            </li>
+                            <li>
+                              <button class="btn btn-white" (click)="showAddSubscriberModal(item, device)">
+                                {{ language.associateSubscriber }}
+                              </button>
+                            </li>
+
+                            <li>
+                              <button class="btn btn-white" (click)="opendeleteDevicerModal(item, device,deleteSystemModal)">
+                                {{language.deleteDevice}}
+                              </button>
+                            </li>
+
+                          </ul>
+                      </div>
+                    </div>
+                    <div class="btn-action"
+                      *ngIf="item.devices.length == 1 && !item.subscriberId && (device.opMode =='WAP') && !checkONT(device)">
+                      <div class="dropdown dropleft position-static">
+                        <button class="btn w-50p" type="button" data-toggle="dropdown" data-boundary="viewport">
+                          ...
+                        </button>
+                          <ul class="dropdown-menu">
+                            <li>
+                              <button class="btn btn-white" (click)="showAddSubscriberModal(item, device)">
+                                {{ language.associateSubscriber }}
+                              </button>
+                            </li>
+                            <li *ngIf="device.serialNumber">
+                              <button class="btn btn-white text-left" (click)="openOutModal(reboot, device)">
+                                {{ language.Reboot }}
+                              </button>
+                            </li>
+                            <li *ngIf="device.serialNumber">
+                              <button class="btn btn-white" (click)="openResetModal(item, device)">
+                                {{ language.factoryResetLabel(device?.modelName) }}
+                              </button>
+                            </li>
+                            <li>
+                              <button class="btn btn-white" (click)="opendeleteDevicerModal(item, device,deleteSystemModal)">
+                                {{language.deleteDevice}}
+                              </button>
+                            </li>
+
+                          </ul>
+                      </div>
+                    </div>
+                    <div class="btn-action" *ngIf="
+                        item.devices.length > 1 &&
+                        item.subscriberId &&
+                        device.opMode == 'RG' && !checkONT(device)
+                      ">
+                      <div class="dropdown dropleft position-static">
+                        <button class="btn w-50p" type="button" data-toggle="dropdown" data-boundary="viewport">
+                          ...
+                        </button>
+                          <ul class="dropdown-menu">
+                            <li *ngIf="!checkONT(device)">
+                              <button class="btn btn-white" (click)="goToSystemEdit(item, device)">
+                                {{ language['Edit System/subscriber'] }}
+                              </button>
+                            </li>
+                            <li *ngIf="!checkONT(device)">
+                              <button class="btn btn-white text-left"
+                                (click)="opendissasciateDeviceModel(item, device, disassociateSystemModal)">
+                                {{ language.Disassociate_System }}
+                              </button>
+                            </li>
+                            <li *ngIf="device.serialNumber && !checkONT(device)">
+                              <button class="btn btn-white text-left" (click)="openOutModal(reboot, device)">
+                                {{ language.Reboot }}
+                              </button>
+                            </li>
+                            <li *ngIf="device.serialNumber && !checkONT(device)">
+                              <button class="btn btn-white" (click)="openResetModal(item, device)">
+                                {{ language.factoryResetLabel(device?.modelName) }}
+                              </button>
+                            </li>
+                            <li *ngIf="!checkONT(device)">
+                              <button class="btn btn-white" (click)="opendeleteDevicerModal(item, device,deleteSystemModal)">
+                                {{ language.deleteDevice }}
+                              </button>
+                            </li>
+                            <li>
+                              <button class="btn btn-white" (click)="
+                                  opendeleteSubscriberModal(item, device,deletesubscriberModal)
+                                ">
+                                {{ language.Delete_Subscriber }}
+                              </button>
+                            </li>
+                          </ul>
+                      </div>
+                    </div>
+                    <div class="btn-action" *ngIf="
+                        item.devices.length > 1 &&
+                        item.subscriberId &&
+                        device.opMode != 'RG'
+                      ">
+                      <div class="dropdown dropleft position-static" *ngIf="ds == 0">
+                        <button class="btn w-50p" type="button" data-toggle="dropdown" data-boundary="viewport">
+                          ...
+                        </button>
+                          <ul class="dropdown-menu">
+                            <li *ngIf="!checkONT(device)">
+                              <button class="btn btn-white" (click)="goToSystemEdit(item, device)">
+                                {{ language['Edit System/subscriber'] }}
+                              </button>
+                            </li>
+                            <li *ngIf="!checkONT(device)">
+                              <button class="btn btn-white text-left"
+                                (click)="opendissasciateDeviceModel(item, device, disassociateSystemModal)">
+                                {{ language.Disassociate_System }}
+                              </button>
+                            </li>
+                            <li *ngIf="device.serialNumber && !checkONT(device)">
+                              <button class="btn btn-white text-left" (click)="openOutModal(reboot, device)">
+                                {{ language.Reboot }}
+                              </button>
+                            </li>
+                            <li *ngIf="device.serialNumber && !checkONT(device)">
+                              <button class="btn btn-white" (click)="openResetModal(item, device)">
+                                {{ language.factoryResetLabel(device?.modelName) }}
+                              </button>
+                            </li>
+                            <li *ngIf="!checkONT(device)">
+                              <button class="btn btn-white" (click)="opendeleteDevicerModal(item, device,deleteSystemModal)">
+                                {{ language.deleteDevice }}
+                              </button>
+                            </li>
+                            <li>
+                              <button class="btn btn-white" (click)="
+                                  opendeleteSubscriberModal(item, device,deletesubscriberModal)
+                                ">
+                                {{ language.Delete_Subscriber }}
+                              </button>
+                            </li>
+                          </ul>
+                      </div>
+                      <div class="dropdown dropleft position-static" *ngIf="ds != 0 && !checkONT(device)">
+                        <button class="btn w-50p" type="button" data-toggle="dropdown" data-boundary="viewport">
+                          ...
+                        </button>
+                          <ul class="dropdown-menu">
+                            <li>
+                              <button class="btn btn-white" (click)="opendeleteDevicerModal(item, device,deleteSystemModal)">
+                                {{ language.deleteDevice }}
+                              </button>
+                            </li>
+                            <li *ngIf="device.serialNumber">
+                              <button class="btn btn-white text-left" (click)="openOutModal(reboot, device)">
+                                {{ language.Reboot }}
+                              </button>
+                            </li>
+                            <li *ngIf="device.serialNumber">
+                              <button class="btn btn-white" (click)="openResetModal(item, device)">
+                                {{ language.factoryResetLabel(device?.modelName) }}
+                              </button>
+                            </li>
+                          </ul>
+                      </div>
+                    </div>
+                    <div class="btn-action" *ngIf="
+                        item.devices.length > 1 &&
+                        !item.subscriberId &&
+                        device.opMode == 'RG' && !checkONT(device)
+                      ">
+                      <div class="dropdown dropleft position-static">
+                        <button class="btn w-50p" type="button" data-toggle="dropdown" data-boundary="viewport">
+                          ...
+                        </button>
+                          <ul class="dropdown-menu">
+                            <li>
+                              <button class="btn btn-white" (click)="goToSystemEdit(item, device)">
+                                {{ language['Edit System/subscriber'] }}
+                              </button>
+                            </li>
+                            <li>
+                              <button class="btn btn-white" (click)="showAddSubscriberModal(item, device)">
+                                {{ language.associateSubscriber }}
+                              </button>
+                            </li>
+                            <li *ngIf="device.serialNumber">
+                              <button class="btn btn-white text-left" (click)="openOutModal(reboot, device)">
+                                {{ language.Reboot }}
+                              </button>
+                            </li>
+                            <li *ngIf="device.serialNumber">
+                              <button class="btn btn-white" (click)="openResetModal(item, device)">
+                                {{ language.factoryResetLabel(device?.modelName) }}
+                              </button>
+                            </li>
+                            <li>
+                              <button class="btn btn-white" (click)="opendeleteDevicerModal(item, device,deleteSystemModal)">
+                                {{language.deleteDevice}}
+                              </button>
+                            </li>
+                            <!-- <li>
+                              <button class="btn btn-white" (click)="
+                                  opendeleteSubscriberModal(item, device)
+                                ">
+                                {{ language.Delete_Subscriber }}
+                              </button>
+                            </li> -->
+                          </ul>
+                      </div>
+                    </div>
+                    <div class="btn-action" *ngIf="
+                        item.devices.length > 1 &&
+                        !item.subscriberId &&
+                        device.opMode != 'RG' && !checkONT(device)
+                      ">
+                      <div class="dropdown dropleft position-static" *ngIf="ds == 0">
+                        <button class="btn w-50p" type="button" data-toggle="dropdown" data-boundary="viewport">
+                          ...
+                        </button>
+                          <ul class="dropdown-menu">
+                            <li>
+                              <button class="btn btn-white" (click)="goToSystemEdit(item, device)">
+                                {{ language['Edit System/subscriber'] }}
+                              </button>
+                            <li>
+                              <button class="btn btn-white" (click)="showAddSubscriberModal(item, device)">
+                                {{ language.associateSubscriber }}
+                              </button>
+                            </li>
+                            <li *ngIf="device.serialNumber">
+                              <button class="btn btn-white text-left" (click)="openOutModal(reboot, device)">
+                                {{ language.Reboot }}
+                              </button>
+                            </li>
+                            <li *ngIf="device.serialNumber">
+                              <button class="btn btn-white" (click)="openResetModal(item, device)">
+                                {{ language.factoryResetLabel(device?.modelName) }}
+                              </button>
+                            </li>
+                            <li>
+                              <button class="btn btn-white" (click)="opendeleteDevicerModal(item, device,deleteSystemModal)">
+                                {{language.deleteDevice}}
+                              </button>
+                            </li>
+                            <!-- <li>
+                              <button class="btn btn-white" (click)="
+                                  opendeleteSubscriberModal(item, device)
+                                ">
+                                {{ language.Delete_Subscriber }}
+                              </button>
+                            </li> -->
+                          </ul>
+                      </div>
+                      <div class="dropdown dropleft position-static" *ngIf="ds != 0">
+                        <button class="btn w-50p" type="button" data-toggle="dropdown" data-boundary="viewport">
+                          ...
+                        </button>
+                          <ul class="dropdown-menu">
+                            <li>
+                              <button class="btn btn-white" (click)="opendeleteDevicerModal(item, device,deleteSystemModal)">
+                                {{language.deleteDevice}}
+                              </button>
+                            </li>
+                            <li *ngIf="device.serialNumber">
+                              <button class="btn btn-white text-left" (click)="openOutModal(reboot, device)">
+                                {{ language.Reboot }}
+                              </button>
+                            </li>
+                            <li *ngIf="device.serialNumber">
+                              <button class="btn btn-white" (click)="openResetModal(item, device)">
+                                {{ language.factoryResetLabel(device?.modelName) }}
+                              </button>
+                            </li>
+                          </ul>
+                      </div>
+                    </div>
+                    <!-- <ng-template #nonRG>
+                      <div class="dropdown">
+                        <button class="btn w-50p" type="button" data-toggle="dropdown">
+                          ...
+                        </button>
+                        <div>
+                          <ul class="dropdown-menu">
+                            <li>
+                              <button class="btn btn-white" (click)="opendeleteSubscriberModal(item, device)"
+                                style="text-align: left !important;">
+                                {{language.disassociateDelete}}
+                              </button>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </ng-template> -->
+                  </ng-container>
+                </section>
+                <section>
+                  <div>
+                    <ng-template #subsIdCall>
+                      <div class="dropdown dropleft position-static alt-drop-down" *ngIf="item.subscriberId">
+                        <button class="btn w-50p" type="button" data-toggle="dropdown" data-boundary="viewport">
+                          ...
+                        </button>
+                          <ul class="dropdown-menu">
+                            <li>
+                              <button class="btn btn-white" (click)="goToSystemEdit(item)">
+                                {{ language['Edit System/subscriber'] }}
+                              </button>
+                            </li>
+                            <!-- <li>
+                          <button class="btn btn-white" (click)="opendissasciateDeviceModel(item)">
+                            Disassociate Device
+                          </button>
+                        </li>
+                        <li>
+                          <button class="btn btn-white" (click)="opendeleteSubscriberModal(item)"
+                            style="text-align: left !important;">
+                            Disassociate and Delete Device
+                          </button>
+                        </li> -->
+                            <li>
+                              <button class="btn btn-white" (click)="opendeleteSubscriberModal(item,'',deletesubscriberModal)">
+                                {{ language.Delete_Subscriber }}
+                              </button>
+                            </li>
+                          </ul>
+                        </div>
+                    </ng-template>
+                  </div>
+                </section>
+              </td>
+            </tr>
+          </tbody>
+      
+
+          <tbody *ngIf="
+              (tableCount != undefined && tableCount === 0) ||
+              (filterCount != undefined && filterCount === 0)
+            ">
+            <tr>
+              <td colspan="8" class="no-data-available">
+                {{ language["No data available in table"] }}
+              </td>
+            </tr>
+          </tbody>
+
+          <!-- <tbody></tbody> -->
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Disassociate System -->
+<!-- <ng-template #disassociateSystemModal let-modal>
+  <div class="modal-body">
+    <div class="w-100 alert-box">
+     
+    <button
+        class="close"
+        aria-label="Close"
+        (click)="isModalError = !isModalError;modal.dismiss()" data-dismiss="alert"
+      >
+        <span></span>
+      </button>
+      <div class="box-content">
+        <div class="icon">
+          <img
+            src="../../../../assets/img/ic_warning-36px.svg"
+            alt="icon here"
+          />
+        </div>
+        <div class="content">
+          <h4>{{language['Are you sure you want to disassociate system']}}?</h4>
+          <div [innerHtml]="deleteServicesAssociateWithSbscrbrMsg">
+      </div>
+          <div class="w-100 mt-4 pt-2">
+            <button
+              type="button"
+              id="disAssociateSystemBtn"
+              class="btn-default primary mr-3"
+              (click)="disassociateDeviceData()">
+              {{ language.Disassociate }}
+            </button>
+           <button type="button" id="disAssociateSystemBtn" class="btn-default primary mr-3">
+                            Disassociate System
+                        </button> 
+            <button
+              type="button"
+              id="canceldisAssociateSystemBtn"
+              class="btn-default btn-dft"
+              aria-label="Close"
+              (click)="closeDeleteServicesAssociateWithSbscrbrMsg()"
+            >
+              {{ language.Cancel }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template> -->
+
+<ng-template #disassociateSystemModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">
+      {{ language.Disassociate_System }}
+    </h4>
+    <button type="button" class="close" aria-label="Close" (click)="cancelModel()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="py-3 alert alert-danger" *ngIf="isModalError">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+      <button type="button" id="close-error-btn" class="close" data-dismiss="alert" aria-label="Close"
+        (click)="isModalError = !isModalError">
+        <span></span>
+      </button>
+      <div class="d-inline-flex" [innerHtml]="language[modalWarningMessage] || modalWarningMessage"></div>
+    </div>
+    <div class="loader" *ngIf="modalLoader">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="py-3 warning-msg" *ngIf="deleteServicesAssociateWithSbscrbrMsg && showwarning">
+      <div class="w-100">
+        <div [innerHtml]="deleteServicesAssociateWithSbscrbrMsg"></div>
+      </div>
+      <div class="w-100">
+        <div class="btn-con-sec">
+          <button class="btn warn-btn mr-2" id="deleteServicesAssociateWithSbscrbrMsgCnfrmBtn"
+            (click)="disassociateDeviceData()">
+            {{ language.Confirm }}
+          </button>
+          <button class="btn warn-btn" (click)="closeDeleteServicesAssociateWithSbscrbrMsg()">
+            {{ language.Cancel }}
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="ccl-form row my-2">
+      <div class="del-dev">
+
+        {{ language["Are you sure you want to disassociate system"] }}&nbsp;<b>{{syssN}}</b>?
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn-default primary px-3 px-3"
+      (click)="confirmDeleteServicesAssociateWithSbscrbrMsg()">
+      {{ language.Disassociate }}
+    </button>
+    <button type="button" class="btn-default btn-dft px-3 px-3 m-2" data-dismiss="modal" (click)="cancelModel()">
+      {{ language.Cancel }}
+    </button>
+  </div>
+</ng-template>
+
+<!-- Delete System -->
+<!-- <ng-template #deleteSystemModal let-modal>
+  <div class="modal-body">
+    <div class="w-100 alert-box">
+      <button
+      class="close"
+      aria-label="Close"
+      (click)="isModalError = !isModalError;modal.dismiss()" data-dismiss="alert"
+    >
+      <span></span>
+    </button>
+      <div class="box-content">
+        <div class="icon">
+          <img
+            src="../../../../assets/img/ic_warning-36px.svg"
+            alt="icon here"
+          />
+        </div>
+        <div class="content">
+          <h4>{{language['Are you sure you want to Delete Device']}}?</h4>
+          <div [innerHtml]="deleteDeviceAndServicesAssociateWithSbscrbrMsg">
+        </div>
+          <div class="w-100 mt-4 pt-2">
+            <button
+              type="button"
+              id="disAssociateSystemBtn"
+              class="btn-default primary mr-3"
+              (click)="DeleteAndDisassociated()">
+              {{ language.deleteDevice }}
+            </button>
+            <button type="button" id="disAssociateSystemBtn" class="btn-default primary mr-3">
+                            Disassociate System
+                        </button> 
+            <button
+              type="button"
+              id="canceldisAssociateSystemBtn"
+              class="btn-default btn-dft"
+              aria-label="Close"
+              (click)="closeDeleteDeviceAndServicesAssociateWithSbscrbrMsg()"
+            >
+              {{ language.Cancel }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template> -->
+<ng-template #deleteSystemModal let-modal>
+  <div class="modal-body">
+    <div class="py-3 alert alert-danger" *ngIf="isModalError">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+      <button type="button" id="close-error-btn" class="close" data-dismiss="alert" aria-label="Close"
+        (click)="isModalError = !isModalError">
+        <span></span>
+      </button>
+      <div class="d-inline-flex" [innerHtml]="language[modalWarningMessage] || modalWarningMessage"></div>
+    </div>
+    <div class="loader" *ngIf="modalLoader">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="w-100 alert-box">
+      <button
+        class="close"
+        aria-label="Close"
+        (click)="modal.dismiss('Cross click')"
+      >
+        <span></span>
+      </button>
+      <div class="box-content">
+        <div class="icon">
+          <img
+            src="../../../../assets/img/ic_warning-36px.svg"
+            alt="icon here"
+          />
+        </div>
+        <div class="content">
+          <h3>{{language['Are you sure you want to Delete Device']}} <span>{{syssN}}?</span></h3>
+          <p>
+            {{language['SystemDeleteWarningMessage1']}}
+          </p>
+          <p>{{language['SystemDeleteWarningMessage2']}}</p>
+          <p class="mt-3"><span class="msg-bol" [innerHtml]="language.checkRestoreorResetInSystemFound"></span></p>
+          <div class="w-100 mt-4 pt-2">
+            <button
+              type="button"
+              id="deleteSystemBtn"  (click)="DeleteAndDisassociated()"
+              class="btn-default primary mr-3"
+            >
+              {{language["Delete"]}}
+            </button>
+            <button
+              type="button"
+              id="cancelDeleteSystemBtn"
+              class="btn-default btn-dft"
+              aria-label="Close" 
+              (click)="modal.dismiss('Cross click')"
+            >
+              {{ language.Cancel }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- <ng-template #deleteSystemModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">
+      {{ language.deleteDevice }}
+    </h4>
+    <button type="button" class="close" aria-label="Close" (click)="cancelModel()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="py-3 alert alert-danger" *ngIf="isModalError">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+      <button type="button" id="close-error-btn" class="close" data-dismiss="alert" aria-label="Close"
+        (click)="isModalError = !isModalError">
+        <span></span>
+      </button>
+      <div class="d-inline-flex" [innerHtml]="language[modalWarningMessage] || modalWarningMessage"></div>
+    </div>
+    <div class="loader" *ngIf="modalLoader">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="py-3 warning-msg" *ngIf="deleteDeviceAndServicesAssociateWithSbscrbrMsg && showwarning">
+      <div class="w-100">
+        <div [innerHtml]="deleteDeviceAndServicesAssociateWithSbscrbrMsg"></div>
+      </div>
+      <div class="w-100">
+        <div class="btn-con-sec">
+          <button class="btn warn-btn mr-2" id="deleteDeviceAndServicesAssociateWithSbscrbrMsgCnfrmBtn"
+            (click)="DeleteAndDisassociated()">
+            {{ language.Confirm }}
+          </button>
+          <button class="btn warn-btn" (click)="closeDeleteDeviceAndServicesAssociateWithSbscrbrMsg()">
+            {{ language.Cancel }}
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="ccl-form row my-2">
+      <div class="del-dev">
+        {{ language["Are you sure you want to Delete Device"] }}&nbsp;<b>{{syssN}}</b>?
+      </div>
+
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn-default primary px-3 px-3"
+      (click)="confirmDeleteDeviceAndServicesAssociateWithSbscrbrMsg()">
+      {{ language.deleteDevice }}
+    </button>
+    <button type="button" class="btn-default btn-dft px-3 px-3 m-2" data-dismiss="modal" (click)="cancelModel()">
+      {{ language.Cancel }}
+    </button>
+  </div>
+</ng-template> -->
+
+<ng-template #deleteSubscriberModalNew let-modal>
+  <div class="modal-body">
+    <div class="w-100 alert-box">
+      <button
+        class="close"
+        aria-label="Close"
+        (click)="modal.dismiss('Cross click');servifySubscriptionActive = !true;"
+      >
+        <span></span>
+      </button>
+      <div class="box-content">
+        <div class="icon">
+          <img
+            src="../../../../assets/img/ic_warning-36px.svg"
+            alt="icon here"
+          />
+        </div>
+        <div class="content">
+          <h3>{{language["Delete_Subscriber"]}}</h3>
+          <p>
+            {{language['The subscriber you are attempting to delete is a member of at least one active community.']}}
+          </p>
+		  <ul class="mt-3">
+        <li>{{language['If you want the subscriber to keep all community memberships, delete the system only (if there is any).']}}</li> 
+		  <!-- <li>{{language['If you want the subscriber to keep all community memberships, delete the stystem only.']}}</li>
+		  <li *ngIf="syssN">{{language['If you want the subscriber to keep the communities other than the one sponsored by you, delete their']}} <i>{{language['c-default']}}</i> {{language['community and the system.']}} </li> -->
+		  </ul>
+          <p class="mt-2">{{language['By proceeding with subscriber deletion, you will delete everything including community memberships and systems.']}}<span >{{language['All associated system(s) will be deleted and restore default as well.']}}</span><span *ngIf="servifySubscriptionActive">  {{language['This subscriber has active Servify subscription also.']}}</span> {{language['Are you sure you want to Delete Subscriber?'].slice(0,-1)}} "{{currentSubscriber}}"? </p>
+          <div class="w-100 mt-4 pt-2">
+            <button
+              type="button"
+              id="removeDeleteSubscriberBtn"
+              class="btn-default primary mr-3"
+              (click)="deleteSubscriber()">
+             {{language["Delete_Subscriber"]}}
+            </button>
+            <button
+              type="button"
+              id="canceltDeleteSubscriberBtn"
+              class="btn-default btn-dft"
+              aria-label="Close"
+              (click)="modal.dismiss('Cross click')"
+            >
+              {{ language.Cancel }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<!-- Delete Subscriber -->
+<ng-template #deletesubscriberModal let-modal>
+  <div class="modal-body">
+    <div class="w-100 alert-box">
+      <button
+      class="close"
+      aria-label="Close"
+      (click)="isModalError = !isModalError;modal.dismiss()" data-dismiss="alert"
+    >
+      <span></span>
+    </button>
+      <div class="box-content">
+        <div class="icon">
+          <img
+            src="../../../../assets/img/ic_warning-36px.svg"
+            alt="icon here"
+          />
+        </div>
+        <div class="content">
+          <h4>{{language['Are you sure you want to Delete Subscriber?']}}</h4>
+          <div [innerHtml]="deleteSbscrbrMsg"></div>
+          <div class="w-100 mt-4 pt-2">
+            <button
+              type="button"
+              id="disAssociateSystemBtn"
+              class="btn-default primary mr-3"
+              (click)="deleteSubscriber()">
+              {{language.Delete_Subscriber}}
+            </button>
+            <button
+              type="button"
+              id="canceldisAssociateSystemBtn"
+              class="btn-default btn-dft"
+              aria-label="Close"
+              (click)="closeSbscrbrMsg()"
+            >
+              {{ language.Cancel }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- <ng-template #deleteSubscriberModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">
+      {{ language.Delete_Subscriber }}
+    </h4>
+    <button type="button" class="close" aria-label="Close" (click)="cancelModel()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="py-3 alert alert-danger" *ngIf="isModalError">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+      <button type="button" id="close-error-btn" class="close" data-dismiss="alert" aria-label="Close"
+        (click)="isModalError = !isModalError">
+        <span></span>
+      </button>
+      <div class="d-inline-flex" [innerHtml]="language[modalWarningMessage] || modalWarningMessage"></div>
+    </div>
+    <div class="loader" *ngIf="modalLoader">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="py-3 warning-msg" *ngIf="deleteSbscrbrMsg && showwarning">
+      <div class="w-100">
+        <div [innerHtml]="deleteSbscrbrMsg"></div>
+      </div>
+      <div class="w-100">
+        <div class="btn-con-sec">
+          <button class="btn warn-btn mr-2" id="deleteSbscrbrMsgCnfrmBtn" (click)="deleteSubscriber()">
+            {{ language.Confirm }}
+          </button>
+          <button class="btn warn-btn" (click)="closeSbscrbrMsg()">
+            {{ language.Cancel }}
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="ccl-form row my-2">
+      <div class="del-dev">
+        {{ language["Are you sure you want to Delete Subscriber?"] }}
+      </div> -->
+      <!-- <label class="col-md-3 col-form-label"> bFactoryReset </label>
+      <div class="toggle-swtbtn checkbox switcher">
+        <label for="subscriber">
+          <input type="checkbox" id="subscriber" [checked]='false' required />
+          <span><small></small></span>
+        </label>
+      </div> -->
+    <!-- </div> -->
+    <!-- <div class="ccl-form row my-2">
+      <label class="col-md-3 col-form-label"> bDeleteServices</label>
+      <div class="toggle-swtbtn checkbox switcher">
+        <label for="service">
+          <input type="checkbox" id="service" required />
+          <span><small></small></span>
+        </label>
+      </div>
+    </div> -->
+  <!-- </div> -->
+  <!-- <div class="modal-footer">
+    <button type="button" class="btn-default primary px-3 px-3" (click)="confirmWithSbscrbrMsg()">
+      {{language.Delete_Subscriber}}
+    </button>
+    <button type="button" class="btn-default btn-dft px-3 px-3 m-2" data-dismiss="modal" (click)="cancelModel()">
+      {{ language.Cancel }}
+    </button>
+  </div>
+</ng-template> -->
+
+
+<ng-template #associateSubscriberModal let-modal class="col-md-12">
+  <div class="modal-content addSubscriber" (click)="closeSearch()">
+    <div class="modal-header">
+      <div class="">
+        <h5 class="modal-title" id="addModal">
+          {{ language.Associate_Subscriber }}
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="cancelAssociate()">
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="modal-body">
+      <div class="hide" id="associateDeviceDataId"></div>
+      <div class="loader" *ngIf="modalLoader">
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border text-primary">
+            <span class="sr-only">{{ language.Loading }}</span>
+          </div>
+        </div>
+      </div>
+      <form [formGroup]="createSubscriber" novalidate>
+        <div class="w-100 alert alert alert-danger fade show" *ngIf="isAddError">
+          <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+        </div>
+        <div class="form-group ccl-form row">
+          <label for="account" class="col-12 col-sm-4 col-form-label">{{
+            language.Account
+            }}</label>
+          <div class="col-12 col-sm-8">
+            <!-- <input type="text"  formControlName="account" placeholder="{{language.Enter + language.Account}}"> -->
+            <input type="text" placeholder="{{ language.Enter + language.Account }}" formControlName="account"
+              (keyup)="searchByCharacters1($event)" (keyup.enter)="performSearch()" (change)="associateChange()"
+              id="account" autocomplete="off" />
+            <div class="asso-search-dropdown">
+              <!-- <h3>{{language.Subscribers}}</h3> -->
+              <div class="for-scroll">
+                <table class="table" id="searchResultId">
+                  <tr *ngFor="let data of accountSearchResult" (click)="showSubscriber(data)">
+                    <td class="w-33" [innerHTML]="data.name | highlight: accountSearchText">
+                      {{ data.name }}
+                    </td>
+                    <td class="w-33">
+                      <span>{{ data.account }}</span>
+                      <span *ngIf="
+                          !data.account && !data.name && data.devices.length
+                        ">{{ data.devices[0]["deviceId"] }}</span>
+                    </td>
+                    <td class="w-33">{{ data.serviceAddress }}</td>
+                  </tr>
+                </table>
+
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group ccl-form row">
+          <label for="locationId" class="col-12 col-sm-4 col-form-label">{{
+            language.Subscriber_Location_ID
+            }}<span class="error">*</span></label>
+          <div class="col-12 col-sm-8" [ngClass]="[
+              modalForm.subscriberLocationId.errors && submitted
+                ? 'errorMessage'
+                : ''
+            ]">
+            <input type="text" id="locationId" formControlName="subscriberLocationId" [readonly]="disableSub" required
+              placeholder="{{
+                language.Enter + language.Subscriber_Location_ID 
+              }}" />
+            <div *ngIf="submitted && modalForm.subscriberLocationId.errors" class="errorMessage">
+              <div *ngIf="modalForm.subscriberLocationId.errors.required">
+                {{ language["This field is required"] }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group ccl-form row">
+          <label for="Name" class="col-12 col-sm-4 col-form-label">{{
+            language.Name
+            }}<span class="error">*</span></label>
+          <div class="col-12 col-sm-8" [ngClass]="[
+              submitted && modalForm.name.errors ? 'errorMessage' : ''
+            ]">
+            <input type="text" id="Name" [readonly]="disableSub" formControlName="name"
+              placeholder="{{ language.Enter + language.name }}" />
+            <div *ngIf="submitted && modalForm.name.errors" class="errorMessage">
+              <div *ngIf="modalForm.name.errors.required">
+                {{ language["This field is required"] }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group ccl-form row">
+          <label for="serviceAddress" class="col-12 col-sm-4 col-form-label">{{
+            language.Service_Address
+            }}</label>
+          <div class="col-12 col-sm-8">
+            <input type="text" id="serviceAddress" [readonly]="disableSub" formControlName="serviceAddress"
+              placeholder="{{ language.Enter + language.Service_Address }}" />
+          </div>
+        </div>
+        <div class="form-group ccl-form row">
+          <label for="phone" class="col-12 col-sm-4 col-form-label">{{
+            language.Phone
+            }}</label>
+          <div class="col-12 col-sm-8">
+            <input type="text" id="phone" (keypress)="numberOnly($event)" [readonly]="disableSub" formControlName="phone"
+              placeholder="{{ language.Enter + language.Phone }}" />
+          </div>
+        </div>
+        <div class="form-group ccl-form row">
+          <label for="inputEmail3" class="col-12 col-sm-4 col-form-label">{{
+            language.Email
+            }}</label>
+          <div class="col-12 col-sm-8" [ngClass]="[
+              submitted && modalForm.email.errors ? 'errorMessage' : ''
+            ]">
+            <input type="email" id="inputEmail3" [readonly]="disableSub" formControlName="email"
+              placeholder="{{ language.Enter + language.Email }}" />
+            <div *ngIf="submitted && modalForm.email.errors" class="errorMessage">
+              <div *ngIf="modalForm.email.errors.pattern">
+                {{ language["Please enter a valid email address"] }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group ccl-form row float-right">
+          <button type="button" class="btn-default btn-dft px-3 m-2" (click)="cancelAssociate()"
+            data-dismiss="modal" id="cancelAssociateDevice">
+            {{ language.cancel }}
+          </button>
+          <button type="button" class="btn-default primary m-2 px-3 px-3" id="associateDevice"
+            (click)="addDevice(unassociatedSubscriber, true)">
+            {{language.Associate}}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>
+<ng-template #reboot let-modal>
+  <div class="modal-header">
+    <div class="ccl-Secondary-title" id="addModal">{{ language.Reboot }}</div>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <p class="">
+      {{ language.Reboot_Warning }}
+    </p>
+    <p class="mb-2 f-size-14">
+      {{ language.Reboot_Confirmation }}
+    </p>
+    <div class="add-bnt">
+      <button #rebootDeviceBtn id="auto_trigger" type="button" id="router_reboot_confirm_bttn"
+        class="btn btn-primary br-26 b-none" (click)="
+          modal.close('Save click');
+          openOutModal(rebootStatus);
+          rebootDevice()
+        ">
+        {{ language.Confirm }}
+      </button>
+      <button type="button" class="btn-sm btn-default transparant ml-2 br-26" id="router_reboot_cancel_bttn"
+        (click)="modal.close('Save click')">
+        {{ language.Cancel }}
+      </button>
+    </div>
+  </div>
+</ng-template>
+<ng-template #rebootStatus id="rebootStatus" let-modal>
+  <div class="modal-header">
+    <div class="ccl-Secondary-title" id="rebootStatus-label">{{ language.Reboot }}</div>
+    <button type="button" class="close" id="rebootStatus-close-btn" data-dismiss="modal" aria-label="Close"
+      (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="col-12 ccl-tabs">
+      <p class="font-weight-bold"></p>
+    </div>
+    <div class="tab-content" id="myTabContent">
+      <div class="tab-pane fade show active" id="backup" role="tabpanel" aria-labelledby="backup-tab">
+        <div class="loader" *ngIf="modalLoader">
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+              <span class="sr-only">{{ language.Loading }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="w-100 alert alert alert-danger fade show" *ngIf="isModalError">
+          <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+          <button type="button" id="hide-error-btn" class="close" (click)="isModalError = false">
+            <span></span>
+          </button>
+          <div class="d-inline-flex" [innerHtml]="modalWarningMessage"></div>
+        </div>
+        <div id="backup" class="tab-pane">
+          <p class="" *ngIf="modalLoader && bootHappening">
+            {{ language.Reboot_Warning }}
+          </p>
+          <div class="col-12 pb-2">
+            <ng-container *ngFor="let list of completionStatus">
+              <p>
+                [{{ list.isTime }}]
+                <span class="font-weight-bold">{{ language[list.isResponse] || list.isResponse }}</span>
+              </p>
+            </ng-container>
+          </div>
+          <div class="add-bnt">
+            <button type="button" id="reboot-again" class="btn btn-primary br-26 b-none reboot-btn" (click)="
+                modal.close('Save click');
+                openOutModal(rebootStatus);
+                rebootDevice()
+              " [disabled]="completionStatus && completionStatus.length == 1">
+              {{ language.Reboot_Again }}
+            </button>
+            <button type="button" id="reboot-cancel" class="btn-sm btn-default ml-2 br-26 transparant"
+              (click)="modal.close('Save click')">
+              {{ language.Cancel }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<ng-template #factoryresetModal let-modal class="col-md-12 custom-modal">
+  <div class="modal-header">
+    <div class="modal-title ml-2" id="addModal">
+      {{ language.factoryResetLabel(deviceInfo?.modelName) }}
+    </div>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeAllModal()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="custom-content px-2">
+      <b> {{ language.FactoryResetModel(deviceInfo?.modelName) }}</b>
+
+
+      <p>{{ language.confirmation }}</p>
+    </div>
+
+    <button type="button" id="router_facres_confirm_bttn" class="btn-default primary px-3 px-3"
+      (click)="closeAllModal(); openResetconfirmModal(); factoryReset(deviceInfo?.modelName)">
+      {{ language.Confirm }}
+    </button>
+    <button type="button" id="router_facres_close_bttn" class="btn-default transparant px-3 px-3 m-2"
+      (click)="closeAllModal()" data-dismiss="modal">
+      {{ language.Cancel }}
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #resetconfirmModal let-modal class="col-md-12 custom-modal">
+  <div class="modal-header">
+    <div class="modal-title ml-2" id="addModal"> {{ language.factoryResetLabel(deviceInfo?.modelName) }}</div>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeAllModal()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="loader" *ngIf="modalLoader">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+      </div>
+    </div>
+    <div id="backup" class="tab-pane">
+      <div class="col-12 pb-2">
+        <ng-container *ngFor="let list of completionStatus">
+          <p>
+            {{ list.isTime }}
+            <span class="font-weight-bold">{{ language[list.isResponse] || list.isResponse }}</span>
+          </p>
+        </ng-container>
+      </div>
+    </div>
+    <div class="add-bnt">
+      <!-- <button type="button" class="btn-default primary px-3 px-3">Reset</button> -->
+      <button type="button" id="router_facres_done_bttn" class="btn-default primary px-3 px-3" (click)="closeAllModal()"
+        data-dismiss="modal">
+        {{ language.Done }}
+      </button>
+    </div>
+  </div>
+</ng-template>
+<ng-template #deleteSubscriberModal let-modal>
+  <div class="modal-body">
+    <div class="w-100 alert-box">
+      <button
+        class="close"
+        aria-label="Close"
+        (click)="modal.dismiss('Cross click')"
+      >
+      <span></span>
+      </button>
+      <div class="box-content">
+        <div class="icon">
+          <img
+            src="../../../../assets/img/ic_warning-36px.svg"
+            alt="icon here"
+          />
+        </div>
+        <div class="content">
+          <h4>{{language['Are you sure you want to Delete Subscriber?']}}</h4>
+          <div [innerHtml]="deleteSbscrbrMsg"></div>
+          <div class="w-100 mt-4 pt-2">
+            <button
+              type="button"
+              id="disAssociateSystemBtn"
+              class="btn-default primary mr-3"
+              (click)="deleteSubscriber()">
+              {{language.Delete_Subscriber}}
+            </button>
+            <button
+              type="button"
+              id="canceldisAssociateSystemBtn"
+              class="btn-default btn-dft"
+              aria-label="Close"
+              (click)="closeSbscrbrMsg()"
+            >
+              {{ language.Cancel }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

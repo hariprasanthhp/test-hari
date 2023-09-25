@@ -1,0 +1,223 @@
+
+<div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess">
+  {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}}
+</div>
+
+<div class="w-100 alert alert alert-danger alert-custom-pos fade show" *ngIf="isError">
+  <span class="error-img error-image-wh"><img
+      src="./assets/img/ic_error-36px.svg" /></span>
+  <span class="d-inline-flex warn-msg-wh" [innerHtml]="warningMessage"></span>
+  <button type="button" class="btn-default primary ok float-right" (click)="isError = false">
+    {{ language.OK }}
+  </button>
+</div>
+
+<div class="w-100 alert alert-success fade show my-3" *ngIf="success">
+  <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+  <button type="button" class="close" (click)="success = false">
+    <span></span>
+  </button>
+  <span [innerHtml]="successInfo"></span>
+</div>
+<div class="warning-msg" *ngIf="WarningMsg">
+  <span class="error-img"><img src="./assets/img/warning-icon.svg" /></span>
+  <span>{{language.Warning}}: {{language['This action could be service affecting. Please consult with Calix before making this change']}}.</span>
+  <div class="btn-con-sec float-right">
+      <button class="btn warn-btn mr-2" id="deletePFBtn" (click)="RemoveWarning()">
+          {{ language.Ok }}
+      </button>
+      <button class="btn warn-btn" id="cancel-btn" (click)="camcelEnable()">
+        {{ language.Cancel }}
+    </button>
+  </div>
+  
+</div>
+<div class="row" *ngIf="hasScopeAccess">
+  <div class="loader" *ngIf="loading">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary">
+        <span class="sr-only">{{ language.Loading }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" novalidate id="ccoOrgAdminForm">
+     
+      <!-- <div class="ccl-form ccl-form mb-2">
+        <label for="cevlan">Status</label>
+        <div class="toggle-swtbtn checkbox switcher mr-2" *ngIf="scope['write'] && allowAddSystems">
+          <label class="checkbox-switcher" for="Service">
+            <input type="checkbox" [(ngModel)]="orgEnable" id="Service" [readonly]="scope['write']"
+              formControlName="orgEnable" (click)="EnableOrg()"> 
+            <span>
+              <small></small>
+            </span>
+          </label>
+          <span class="" id="pendoCCOONTandServiceProvisioning"> {{language['ONT and Service Provisioning']}}</span>
+
+        </div>
+        <div class="toggle-swtbtn checkbox switcher mr-2" *ngIf="(!scope['write']) || (!allowAddSystems) ">
+          <label class="checkbox-switcher" for="Service">
+            <input type="checkbox" [(ngModel)]="orgEnable" id="Service" disabled="!scope['write']"
+              formControlName="orgEnable">
+            <span>
+              <small style="opacity: .4"></small>
+            </span>
+          </label>
+          <span class="" id="pendoCCOONTandServiceProvisioning"> {{language['ONT and Service Provisioning']}}</span>
+
+        </div>
+      </div> -->
+      <div class="ccl-form ccl-form mb-2">
+        <label>{{ language["ONT Linkage Type"] }} <span class="required-field">*</span></label>
+        <div class="w-100">
+          <div class="custom-selectbox" id="current-issues-interval">
+            <ng-select [searchable]="false" placeholder="{{ language['ONT Linkage Type'] }}" formControlName="ontIdType"
+              [(ngModel)]="ontIdTypeTxt" id="ccoOrgAdminONTType" [readonly]="!scope['write']">
+              <ng-option value="SERIAL_NO">SERIAL_NO</ng-option>
+              <ng-option value="REG_ID">REG_ID </ng-option>
+            </ng-select>
+          </div>
+        </div>
+        <div *ngIf="submitted && modalForm.ontIdType.errors" class="errorMessage">
+          <label *ngIf="modalForm.ontIdType.errors.required">
+            {{ language["This field is required"] }}
+          </label>
+        </div>
+      </div>
+      <div class="ccl-form mb-2">
+        <label>{{ language["ONT Name Format"] }} <span class="required-field">*</span></label>
+        <div class="w-100">
+          <div class="custom-selectbox" id="current-issues-interval">
+            <ng-select [searchable]="false" placeholder="{{ language['ONT Name Format'] }}"
+              formControlName="ontNameFormat" [(ngModel)]="ontNameFormat" [readonly]="!scope['write']"
+              id="ccoOrgAdminONTFormate">
+              <ng-option value="%Fsan">%Fsan</ng-option>
+              <ng-option value="%RegId">%RegId </ng-option>
+              <!-- <ng-option value="%AccountId">%AccountId</ng-option> -->
+            </ng-select>
+          </div>
+        </div>
+        <!-- <input type="text" class="form-control" aria-describedby="emailHelp"
+          placeholder="{{ language['ONT Name Format'] }}" formControlName="ontNameFormat" id="ccoOrgAdminONTFormate"
+          readonly /> -->
+        <!-- <span
+          *ngIf="
+            !signupForm.get('ontNameFormat').valid &&
+            signupForm.get('ontNameFormat').touched
+          "
+          class="help-block"
+          >Please enter ONT Name Format</span
+        > -->
+        <div *ngIf="submitted && modalForm.ontNameFormat.errors" class="errorMessage">
+          <label *ngIf="modalForm.ontNameFormat.errors.required">
+            {{ language["This field is required"] }}
+          </label>
+        </div>
+      </div>
+      <!-- <div class="ccl-form ccl-form mb-2">
+        <label>{{ language["DHCP Server Type"] }}</label>
+        <div class="w-100">
+          <div class="custom-selectbox" id="current-issues-interval">
+            <ng-select [searchable]="false" placeholder="DHCP Server Type" formControlName="dhcpServerType"
+              [(ngModel)]="dhcpServerTypeTxt" id="ccoOrgAdminDHCPSrvrType" [readonly]="!scope['write']">
+              <ng-option value="Internal">{{ language.Internal }}</ng-option>
+              <ng-option value="External">{{ language.External }}</ng-option>
+            </ng-select>
+          </div>
+        </div>
+        <div *ngIf="submitted && modalForm.dhcpServerType.errors" class="errorMessage">
+          <label *ngIf="modalForm.dhcpServerType.errors.required">
+            {{ language["This field is required"] }}
+          </label>
+        </div>
+      </div> -->
+
+      <!-- <div class="ccl-form ccl-form mb-2">
+        <label>{{ language["RG Management"] }}</label>
+        <div class="w-100">
+          <div class="custom-selectbox" id="current-issues-interval">
+            <ng-select [searchable]="false" placeholder="{{ language['RG Management'] }}" formControlName="rgManagement"
+              [(ngModel)]="rgManagement" id="ccoOrgAdminrgManagement" [readonly]="!scope['write']">
+              <ng-option value="NATIVE">{{ language.Native }}</ng-option>
+              <ng-option value="EXTERNAL">{{ language.External }}</ng-option>
+            </ng-select>
+          </div>
+        </div>
+        <div *ngIf="submitted && modalForm.rgManagement.errors" class="errorMessage">
+          <label *ngIf="modalForm.rgManagement.errors.required">
+            {{ language["This field is required"] }}
+          </label>
+        </div>
+      </div> -->
+
+      <!-- <div formGroupName='dialPlan'>
+        <div formGroupName='dialPlan'>
+          <div class="ccl-form mb-2">
+            <label>{{ language["Dial Plan"] }}</label>
+            <input
+              type="text"
+              class="form-control"
+              aria-describedby="emailHelp"
+              placeholder="{{ language['Dial Plan'] }}"
+              formControlName="name"
+              [(ngModel)]="dailPlantxt"
+              id="ccoOrgAdminDailPlan"
+            />
+           <div
+              *ngIf="submitted && modalForm.ontNameFormat.errors"
+              class="errorMessage"
+            >
+              <label *ngIf="modalForm.ontNameFormat.errors.required">
+                {{ language["This field is required"] }}
+              </label>
+            </div> 
+          </div>
+        </div>
+      </div> -->
+
+
+      <div class="ccl-form mb-2 ont-soak">
+        <label>{{ language["ONT Soak Timeout"] }} <span class="required-field">*</span></label>
+        <div>
+          <input type="text" class="form-control" aria-describedby="emailHelp" (keyup)="TimeValidate('ontSoakTimeout')"
+            placeholder="{{ language['ONT Soak Timeout'] }}" formControlName="ontSoakTimeout"
+            [(ngModel)]="ontSoakTimeouttxt" id="ccoOrgAdminDailPlan" [readonly]="!scope['write']"
+            oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..?)\../g, '$1');" required />
+          <span class="ont-soak-min">{{language["Minute(s)"]}}</span>
+        </div>
+        <div *ngIf="!timeValidate.ontSoakTimeout">
+          <div *ngIf="signupForm.value.ontSoakTimeout">
+            <small class="required-field">{{language["Please enter a value should be greater than 2880 Minutes(48 hours) and less than 172800 Minutes(120 days)."]}}</small>
+          </div>
+        </div>
+        <div *ngIf="submitted && modalForm.ontSoakTimeout.errors" class="errorMessage">
+          <label *ngIf="modalForm.ontSoakTimeout.errors.required">
+            {{ language["This field is required"] }}
+          </label>
+        </div>
+
+        <!-- <div
+              *ngIf="submitted && modalForm.ontNameFormat.errors"
+              class="errorMessage"
+            >
+              <label *ngIf="modalForm.ontNameFormat.errors.required">
+                {{ language["This field is required"] }}
+              </label> 
+            </div> -->
+      </div>
+
+      <div *ngIf="scope['write'] && allowAddSystems">
+
+        <button type="submit" class="btn-default btn-primary mt-3 mr-3" id="ccoOrgAdminSubmitBtn">
+          {{ language.submit }}
+        </button>
+        
+        <button type="submit" class="btn-default btn-dft mt-3" [routerLink]="cancelLink" id="ccoOrgAdminCancelBtn">
+          {{ language.Cancel }}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

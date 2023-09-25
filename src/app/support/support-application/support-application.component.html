@@ -1,0 +1,96 @@
+<app-subscriber-menu [responseFromIssuse]="apiCallDone"></app-subscriber-menu>
+<section>
+    <div class="loader" *ngIf="loader">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">{{ language.Loading }}</span>
+            </div>
+        </div>
+    </div>
+    <div class="row" *ngIf="!loader">
+        <div class="col-md-12 ccl-tabs">
+            <ul id="tabs" class="nav nav-tabs nav-application">
+                <!-- <li class="nav-item"
+                    *ngIf="(ssoService.getEntitlementsArr().indexOf('203') > -1 || ssoService.getEntitlementsArr().indexOf('205') > -1) && scopeFlag.protectiq && containGS ">
+                    <a href="javascript:void(0)" [routerLink]="['./protectIQ']" data-toggle="tab"
+                        class="pl-0 nav-link small" routerLinkActive="active" (click)="setActiveTab('protectIQ');"
+                        id="edge-Protect-IQ">
+                        {{language.Security}}
+                        <div class="" *ngIf="!ssoService.isSmbEnabled(false, true)">
+                            <span class="f-s-12px">{{ customAppName?.ProtectIQ_Name ? customAppName?.ProtectIQ_Name : language.Protect_IQ}}</span>
+                        </div>
+                    </a>
+                </li> -->
+                <li class="nav-item"
+                    *ngIf="(ssoService.getEntitlementsArr().indexOf('203') > -1 || ssoService.getEntitlementsArr().indexOf('205') > -1 || (ssoService.getEntitlementsArr().includes('218') && ssoService.isSmbEnabled())) && scopeFlag.protectiq && containGS ">
+                    <a href="javascript:void(0)" [routerLink]="['./protect-iq']" data-toggle="tab"
+                        class="pl-0 nav-link small" routerLinkActive="active" (click)="setActiveTab('protectIQ');"
+                        id="edge-Protect-IQ">
+                        {{language.Security}}
+                        <div class="" *ngIf="!ssoService.isSmbEnabled(false, true)">
+                            <span class="f-s-12px">{{ customAppName?.ProtectIQ_Name ? customAppName?.ProtectIQ_Name :
+                                language.Protect_IQ}}</span>
+                        </div>
+                    </a>
+                </li>
+                <li class="nav-item"
+                    *ngIf="(ssoService.getEntitlementsArr().indexOf('204') > -1 || ssoService.getEntitlementsArr().indexOf('205') > -1 || (ssoService.getEntitlementsArr().includes('218') && ssoService.isSmbEnabled())) && scopeFlag.experienceiq && containGS ">
+                    <a href="javascript:void(0)" [routerLink]="['./experienceIQ']" data-toggle="tab"
+                        class="nav-link small" routerLinkActive="active" (click)="setActiveTab('experienceIQ');"
+                        id="edge-Experience-IQ">
+                        {{language.Restrictions}}
+                        <div class="" *ngIf="!ssoService.isSmbEnabled(false, true)">
+                            <span class="f-s-12px">{{ customAppName?.ExperienceIQ_Name ?
+                                customAppName?.ExperienceIQ_Name : language.Experience_IQ}}</span>
+                        </div>
+                    </a>
+                </li>
+                <li class="nav-item" *ngIf="isSmbEnabled() && isSectionAvailable('isSmartBiz', ['218'])">
+                    <a href="javascript:void(0)" [routerLink]="['./smartbiz']" data-toggle="tab" class="nav-link small"
+                        routerLinkActive="active" id="smartbiz">
+                        {{ language['SmartBiz'] }}
+                    </a>
+                </li>
+                <li class="nav-item" *ngIf="isSectionAvailable('isArlo', ['206', '212', '213']) && scopeFlag.arlo">
+                    <a href="javascript:void(0)" [routerLink]="['./arlo-smart']" data-toggle="tab"
+                        class="nav-link small" routerLinkActive="active" (click)="setActiveTab('arlo-smart');"
+                        id="edge-arlo-secure">
+                        {{language["Arlo_Secure"]}}
+                    </a>
+                </li>
+                <li class="nav-item"
+                    *ngIf="scopeFlag.servify && isSectionAvailable('isServify', ['207', '215', '216', '217'])">
+                    <a href="javascript:void(0)" [routerLink]="['./servify-care']" data-toggle="tab"
+                        class="nav-link small" routerLinkActive="active" (click)="setActiveTab('servify-care');">
+                        {{language.ServifyCare}}
+                    </a>
+                </li>
+                <li class="nav-item"
+                    *ngIf="scopeFlag.mycommunityiq && isSectionAvailable('isMyComm', ['214', '222', '223'])">
+                    <a href="javascript:void(0)" [routerLink]="['./SmartTownWiFi']" data-toggle="tab"
+                        class="nav-link small" routerLinkActive="active" id="edge-bark"
+                        (click)="setActiveTab('MyCommunityIQ');">
+                        {{language['myCommunityIQ']}}
+                    </a>
+                </li>
+                <!-- *ngIf="scopeFlag.bark && isSectionAvailable('bark', ['219','220'])" -->
+                <!-- *ngIf="scopeFlag.bark&&(ssoService.getEntitlementsArr().indexOf('219') > -1 || ssoService.getEntitlementsArr().indexOf('220') > -1)"> -->
+                <li class="nav-item" *ngIf="scopeFlag.bark && isSectionAvailable('isBark', ['219','220'])">
+                    <a href="javascript:void(0)" [routerLink]="['./bark']" data-toggle="tab" class="nav-link small"
+                        routerLinkActive="active" id="edge-bark" (click)="setActiveTab('bark');">
+                        {{language["Bark"]}}
+                    </a>
+                </li>
+                <!-- remove later -->
+                <!-- <li class="nav-item" *ngIf="isSmbEnabled() && isSectionAvailable('isCaptive', ['218'])">
+                    <a href="javascript:void(0)" [routerLink]="['./customer-portal']" data-toggle="tab"
+                        class="nav-link small" routerLinkActive="active" id="edge-bark">
+                        {{language['Customer Portal']}}
+                    </a>
+                </li> -->
+                <!-- remove later -->
+            </ul>
+        </div>
+    </div>
+</section>
+<router-outlet *ngIf="!loader"></router-outlet>

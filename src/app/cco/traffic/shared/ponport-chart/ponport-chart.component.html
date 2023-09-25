@@ -1,0 +1,38 @@
+<div class="row mt-3" id="ponports-{{ponPorts}}">
+    <div class="col-md-12 px-0">
+        <div class="mwc-header flex w-100 border-bottom mb-2">
+            <div class="cco-secondary-title title-tooltip" data-toggle="tooltip" data-placement="top"
+                title="{{ponPorts}}">
+                {{ponPorts}} ({{region}}/{{location}}/{{system}})
+            </div>
+            <div class="mwc-btns flex align-items-center">
+                <button type="button" class="close m-2" aria-label="Close" (click)="closeChart()">
+                    <span aria-hidden="true"></span>
+                </button>
+            </div>
+        </div>
+        <div class="d-flex justify-content-between md-block">
+            <div class="col-12 col-md-12 pr-0 pl-0 col-lg-6 mpb-3">
+                <div id="health-network-realtime-rate" class="card m-10" *ngIf="data['maxRate'].length || showRealTime">
+                    <div class="" id="ngx-stream-path-chart-rate">
+                        <app-stream-chart [chartName]="language.RATE" [yAxixTitle]="rateUnit" [data]="data.maxRate"
+                            [time]="data.sendTime" [windowLen]="windowLen" *ngIf="data.maxRate && showRealTime"
+                            [selectedFilter]="selectedTime" [history]="cacheRateData">
+                        </app-stream-chart>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-12 pr-0 col-lg-6">
+                <div id="health-network-realtime-packet" class="card m-10"
+                    *ngIf="data['packet'].length || showRealTime">
+                    <div class="" id="ngx-stream-path-chart-packet">
+                        <app-stream-chart [chartName]="language.PACKET" [yAxixTitle]="packetUnit" [data]="data.packet"
+                            [time]="data.sendTime" [windowLen]="windowLen" *ngIf="data.packet && showRealTime"
+                            [selectedFilter]="selectedTime" [history]="cachePacketData">
+                        </app-stream-chart>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

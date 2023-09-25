@@ -1,0 +1,52 @@
+.late-flow-table {
+    table {
+        width: 100%;
+
+        thead {
+            tr {
+                th {
+                    font-weight: 600;
+                    font-size: 16px;
+                    line-height: 20px;
+                    padding-bottom: 7px;
+                    border-bottom: 1px solid #CCCCCC;
+                }
+            }
+
+
+        }
+
+        // tbody {
+        //     tr {
+        //         td {
+        //             font-weight: 400;
+        //             font-size: 15px;
+        //             line-height: 24px;
+        //             padding: 10px;
+        //         }
+        //     }
+
+        //     tr:nth-child(odd) {
+        //         background-color: #F8F8FA;
+        //     }
+        // }
+    }
+}
+.icon-btn {
+    border          : none;
+    background-color: transparent;
+    outline         : 0;
+    float: right;
+  
+    i {
+      color    : #0279ff;
+      font-size: 16px;
+      cursor   : pointer;
+    }
+  
+  
+    // i.spin-animation {
+    //     //@include animation(spin, 0.5s, ease-in);
+    // }
+  }
+  #apply-btn{min-width: 90px;}

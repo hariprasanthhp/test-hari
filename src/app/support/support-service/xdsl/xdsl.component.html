@@ -1,0 +1,127 @@
+<button class="btn-default btn-dft px-3 ml-3" id="serviceXdslRefresh" (click)="onRefresh()">Refresh Data</button>
+<div class="modal-body notes-modal-body">
+  <div class="loader" *ngIf="modalLoader">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border text-primary">
+        <span class="sr-only">{{language.Loading}}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="w-100 alert alert alert-danger  fade show" *ngIf="isError">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+    <button type="button" class="close" (click)="isError = false;"><span></span></button>
+    <div class="d-inline-flex" [innerHtml]="alertMessage"></div>
+  </div>
+  <div>
+    <table class="table" id="xdslBody">
+      <thead>
+        <tr>
+          <th scope="col"></th>
+          <th scope="col">{{language.Upstream}} <span class="smallText">[{{language.Line_1}}, {{language.Line_2}}
+              ({{language.Sum}})]</span></th>
+          <th scope="col">{{language.Downstream}} <span class="smallText">[{{language.Line_1}}, {{language.Line_2}}
+              ({{language.Sum}})]</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">{{language.Current_Sync_Mbps}}</th>
+          <td>
+            <span *ngFor="let ups of upstreamCurrRate; let i=index">
+              {{ups}}{{((i+1) < upstreamCurrRate.length ? ', ' : '' )}} </span>
+                <span *ngIf="upstreamCurrRate.length > 1">({{ sumOfArray(upstreamCurrRate)
+                  }})</span>
+          </td>
+          <td>
+            <span *ngFor="let ups of downstreamCurrRate; let i=index">
+              {{ups}}{{((i+1) < downstreamCurrRate.length ? ', ' : '' )}} </span>
+                <span *ngIf="downstreamCurrRate.length > 1">({{ sumOfArray(downstreamCurrRate)
+                  }})</span>
+          </td>
+          <!-- <td>
+            <span>{{ downstreamCurrRate.join(', ') }} <span *ngIf="downstreamCurrRate.length > 1">({{
+                sumOfArray(downstreamCurrRate) }})</span></span>
+          </td> -->
+        </tr>
+        <tr>
+          <th scope="row">{{language.Max_Sync_Mbps}}</th>
+          <td>
+            <span *ngFor="let ups of upstreamMaxRate; let i=index">
+              {{ups}}{{((i+1) < upstreamMaxRate.length ? ', ' : '' )}} </span>
+                <span *ngIf="upstreamMaxRate.length > 1">({{ sumOfArray(upstreamMaxRate)
+                  }})</span>
+          </td>
+          <td>
+            <span *ngFor="let ups of downstreamMaxRate; let i=index">
+              {{ups}}{{((i+1) < downstreamMaxRate.length ? ', ' : '' )}} </span>
+                <span *ngIf="downstreamMaxRate.length > 1">({{ sumOfArray(downstreamMaxRate)
+                  }})</span>
+          </td>
+          <!-- <td>
+            <span>{{upstreamMaxRate.join(', ')}} <span *ngIf="upstreamMaxRate.length > 1">({{
+                sumOfArray(upstreamMaxRate) }})</span></span>
+          </td>
+          <td>
+            <span>{{downstreamMaxRate.join(', ')}} <span *ngIf="downstreamMaxRate.length > 1">({{
+                sumOfArray(downstreamMaxRate) }})</span></span>
+          </td> -->
+
+        </tr>
+        <tr>
+          <th scope="row">{{language.Attenuation_dB}}</th>
+          <td>
+            <span *ngFor="let ups of upstreamAttenuation; let i=index">
+              {{ups}}{{((i+1) < upstreamAttenuation.length ? ', ' : '' )}} </span>
+          </td>
+          <td>
+            <span *ngFor="let ups of downstreamAttenuation; let i=index">
+              {{ups}}{{((i+1) < downstreamAttenuation.length ? ', ' : '' )}} </span>
+          </td>
+          <!-- <td>
+            <span>{{upstreamAttenuation.join(', ')}}</span>
+          </td>
+          <td>
+            <span>{{downstreamAttenuation.join(', ')}}</span>
+          </td> -->
+        </tr>
+        <tr>
+          <th scope="row">{{language.Noise_Margin_dB}}</th>
+          <td>
+            <span *ngFor="let ups of upstreamNoiseMargin; let i=index">
+              {{upstreamCurrRate[i] != 0 ? ups : '(-)'}}{{((i+1) < upstreamNoiseMargin.length ? ', ' : '' )}} </span>
+          </td>
+          <td>
+            <span *ngFor="let ups of downstreamNoiseMargin; let i=index">
+              {{downstreamCurrRate[i] != 0 ? ups : '(-)'}}{{((i+1) < downstreamNoiseMargin.length ? ', ' : '' )}}
+                </span>
+          </td>
+          <!-- <td>
+            <span>{{upstreamNoiseMargin.join(', ')}}</span>
+          </td>
+          <td>
+            <span>{{downstreamNoiseMargin.join(', ')}}</span>
+          </td> -->
+        </tr>
+        <tr>
+          <th scope="row">{{language.Output_Power_dBm}}</th>
+          <td>
+            <span *ngFor="let ups of upstreamPower; let i=index">
+              {{upstreamCurrRate[i] != 0 ? ups : '(-)'}}{{((i+1) < upstreamPower.length ? ', ' : '' )}} </span>
+          </td>
+          <td>
+            <span *ngFor="let ups of downstreamPower; let i=index">
+              {{downstreamCurrRate[i] != 0 ? ups : '(-)'}}{{((i+1) < downstreamPower.length ? ', ' : '' )}} </span>
+          </td>
+          <!-- <td>
+            <span>{{upstreamPower.join(', ')}}</span>
+          </td>
+          <td>
+            <span>{{downstreamPower.join(', ')}}</span>
+          </td> -->
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+</div>

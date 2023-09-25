@@ -1,0 +1,109 @@
+.left-side-data p {
+    margin-bottom: 5px;
+}
+
+.data-plan {
+    display    : flex;
+    align-items: center;
+
+}
+
+.data-plan .right-side-data {
+    margin-left: auto;
+}
+
+.del-icon {
+    margin-left: 10px;
+    cursor     : pointer;
+    font-size  : 18px;
+    color      : #0b77fa;
+}
+
+.inline-input {
+    display    : flex;
+    align-items: start;
+}
+
+// .inline-input .col-form-label {
+//   padding: 0px;
+// }
+
+// .ccl-form .inline-input input{
+//   width: 75%;
+//   margin-left: auto;
+// }
+
+.toggle-swtbtn.checkbox.switcher label input+span {
+    margin-right: 10px;
+}
+
+.inline-sec {
+    display    : flex;
+    align-items: center;
+}
+
+.ccl-form .inline-sec input {
+    width: auto;
+}
+
+.inline-sec .c-label {
+    padding: 0px 10px;
+}
+
+.ccl-form .inline-sec input.check-inn {
+    width        : 80px;
+    padding-right: 5px;
+}
+
+.inline-radio {
+    display: flex;
+    margin : 20px 0px;
+}
+
+.radio-in {
+    display    : flex;
+    width      : 100px;
+    align-items: center;
+}
+
+.radio-in input {
+    width     : auto;
+    min-height: auto;
+    max-height: inherit;
+}
+
+.radio-in label {
+    margin-bottom: 0px;
+    margin-left  : 10px;
+}
+
+input {
+    border-radius: 20px;
+}
+
+.nav-tabs {
+    border-bottom: 1px solid #dee2e6 !important;
+}
+
+.form-control.is-invalid {
+    background-image: none !important;
+}
+
+.enabled_button {
+    cursor: pointer;
+}
+
+
+::ng-deep .ng-clear-wrapper {
+    display: block;
+}
+
+.form-group {
+    margin: 0 !important;
+}
+.pass-icon{
+    position: absolute;
+    top: 14px;
+    right: 30px;
+    cursor: pointer;
+}

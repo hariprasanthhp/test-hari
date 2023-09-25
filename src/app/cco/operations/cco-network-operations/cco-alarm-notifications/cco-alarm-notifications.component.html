@@ -1,0 +1,297 @@
+<div class="ccl-tabs my-3">
+  <ul id="tabs" class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link small" routerLink="/cco/operations/alarms/health-alarm-notifications" routerLinkActive="active"
+        id="CcoAlarms-HealthNotifications-Notifications">{{language['Notifications']}}</a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link small" routerLink="/cco/operations/alarms/health-alarm-notifications/recipients"
+        id="CcoAlarms-HealthNotifications-Recipients">{{language['Recipients']}}</a>
+    </li>
+
+
+  </ul>
+</div>
+
+
+<section>
+  <div class="container px-0">
+    <div class="py-3 warning-msg d-flex align-items-start" *ngIf="deletedata">
+      <span class="error-img pr-2 pt-1"><img src="./assets/img/warning-icon.svg" /></span>
+      <span class="warn-msg pt-2">
+        {{
+        language[deleteWarnMsg] ? language[deleteWarnMsg] : deleteWarnMsg
+        }}
+        <b>{{ modalInfo }}</b>?
+      </span>
+      <div class="btn-con-sec float-right">
+        <button class="btn-default primary py-1 mr-2" id="deletePFBtn" [disabled]="btnDisabled"
+          (click)="deleteAlarmWorkflowId()">
+          {{ language.Confirm }}
+        </button>
+        <button class="btn-default btn-dft py-1" (click)="closeModal()">
+          {{ language.Cancel }}
+        </button>
+      </div>
+    </div>
+    <div class="w-100 alert alert-danger fade show my-3" *ngIf="error">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+      <button type="button" class="close" (click)="closeAlert()">
+        <span></span>
+      </button>
+      <div class="d-inline-flex" [innerHtml]="language[errorInfo] || errorInfo"></div>
+    </div>
+
+    <div *ngIf="errors.length">
+      <div class="w-100 alert alert-danger fade show mt-4" *ngFor="let errorInfo of errors; let i = index">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+        <button type="button" class="close" (click)="closeAlert(i)"><span></span></button>
+        <div class="error-info-sec d-inline-flex" [innerHtml]="language[errorInfo] || errorInfo">
+        </div>
+      </div>
+    </div>
+
+
+    <div class="w-100 alert alert-success fade show my-3" *ngIf="success">
+      <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+      <button type="button" class="close" (click)="success = false">
+        <span></span>
+      </button>
+      <div class="d-inline-flex" [innerHtml]="language[successInfo] || successInfo"></div>
+    </div>
+    <!-- <div class="row mb-4" *ngIf = "!cco_entitlement">
+      <div class="col-md-12" style="
+          font-size: 24px;
+          font-style: normal;
+          font-weight: 300;
+          line-height: 30px;
+          letter-spacing: 0em;
+          text-align: left;
+        "></div>
+      <div class="col-md-12 px-0">
+        <button type="button" class="btn-default primary px-3" id="add-device-group-btn" (click)="goto()">
+          {{ language.new_schedule }}
+        </button>
+      </div>
+    </div> -->
+    <!-- <div class="w-100 cco-med-title">
+      Alarm
+      & Health Notifications
+    </div> -->
+    <div class="d-flex justify-content-between">
+      <div *ngIf="!cco_entitlement && hasWriteAccess">
+        <button type="button" class="btn-default primary px-3 mb-3" id="add-device-group-btn"
+          (click)="showNotification()">
+          {{ language['New Notification'] }}
+        </button>
+      </div>
+      <div *ngIf="cco_entitlement || !hasWriteAccess">
+
+      </div>
+
+      <!-- <div class="form-group ccl-form form-inline position-relative d-inline-flex">
+        <label for="search">{{language.Filter}}</label>&nbsp;
+        <input (keydown)="avoidInitialSpacing($event)" [(ngModel)]="searchtext" (keyup)="search($event.target.value)"
+          (search)="search($event.target.value)" class="ccl-from search-box" id="" placeholder="{{language.Name}}">
+        <span class="pointer" [ngClass]="showcloseicon ? 'show-close-search' : 'hide-close-search'"
+          (click)="closeicon($event.target.value)">×</span>
+      </div> -->
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="row mb-4">
+      <div class="col-md-12 px-0">
+        <div class="row mb-3" *ngIf="loading">
+          <div class="col-md-12">
+            <div class="loader mt-15">
+              <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary">
+                  <span class="sr-only">{{ language.Loading }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row w-100 justify-content-between">
+          <div class="col-md-4 ccl-form position-relative">
+            <input type="text" [(ngModel)]="searchtext" (keyup)="search($event.target.value)"
+              (search)="search($event.target.value)" placeholder="{{language['Search notifications']}}" />
+            <div class="close-clear" *ngIf="searchtext" (click)="clearInput()">
+              <button class="close"><span></span></button>
+            </div>
+
+          </div>
+          <div class="col-md-3 ccl-form  mb-2">
+            <ng-select class="w-100" [clearable]="false" [(ngModel)]="filterSelected" [items]="filterArray"
+              bindValue="id" bindLabel="name" (change)="getAlarmWorkflowList();">
+            </ng-select>
+          </div>
+        </div>
+        <div class="alarm-notifications-table overflow-auto" id="alarmNotificationsTable" [hidden]="!dataAvailable">
+          <table datatable [ngClass]="{ showHideTable: loading }" [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"
+            class="row-border hover table-alter dataTable">
+            <thead>
+              <tr>
+                <th scope="col">{{ language.name }}</th>
+                <th scope="col">{{ language.type }}</th>
+                <th scope="col">{{language['Schedule']}}</th>
+                <th scope="col">{{language['Method']}}</th>
+                <th scope="col" class="min-w-230">{{ language.Decription }}</th>
+                <th scope="col" class="text-left min-w-50" id="Opt-In-Status">{{ language.Status }}</th>
+                <th scope="col" class="min-w-50">{{ language.Action }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let workflow of alarmWorkFlowList; let i = index">
+                <td class="clickableRow">
+                  <a (click)="getAlarmNotificationSummary(workflow)">{{ workflow.name ? workflow.name : "" }}</a>
+                </td>
+                <td>{{workflow.ui_modified_notification_type_display}}</td>
+                <td>
+                  {{ workflow.trigger ? workflow.trigger : "" }}
+                </td>
+                <td>{{ workflow?.methods ? workflow.methods : "" }}</td>
+                <td>{{ workflow.description ? workflow.description : "" }}</td>
+                <td>
+                  <div
+                    [ngClass]="workflow.mod_status == 'Draft' ? 'draft-but' : (workflow.mod_status == 'Running'? 'running-but' : 'paused-but')">
+                    <span class="dot"></span> {{ workflow.mod_status ? language[workflow.mod_status] ||
+                    workflow.mod_status : "" }}
+                  </div>
+                </td>
+                <td class="">
+                  <div class="dropdown dropleft text-right pr-3">
+                    <button class="btn dropdown-toggle px-0" type="button" id="anDropdownMenuBtn" data-toggle="dropdown"
+                      aria-haspopup="true" aria-expanded="false">
+                      ...
+                    </button>
+                    <div class="dropdown-menu mt-4 ml-5" aria-labelledby="anDropdownMenuBtn">
+                      <button class="dropdown-item" *ngIf="
+                          workflow.status == 'DRAFT' ||
+                          workflow.status == 'PAUSE'
+                        " (click)="getAlarmWorkflowId(workflow)">
+                        {{language.Edit}}
+                      </button>
+                      <button class="dropdown-item" *ngIf="workflow.status == 'RUN'"
+                        (click)="pauseContinueWorkflow(workflow, 'pause', workflow.ui_modified_notification_type)">
+                        {{language.Pause}}
+                      </button>
+                      <button class="dropdown-item" *ngIf="workflow.status == 'PAUSE'" (click)="
+                          pauseContinueWorkflow(workflow, 'activate', workflow.ui_modified_notification_type)
+                        ">
+                        {{language.Activate}}
+                      </button>
+                      <!-- <button class="dropdown-item" *ngIf="
+                          workflow.status == 'DRAFT' ||
+                          workflow.status == 'RUN' ||
+                          workflow.status == 'PAUSE'
+                        " (click)="delete(workflow)">
+                        {{ language.Delete }}
+                      </button> -->
+
+                      <button class="dropdown-item" (click)="delete(workflow)">
+                        {{ language.Delete }}
+                      </button>
+
+                      <button class="dropdown-item" *ngIf="workflow.active == false"
+                        (click)="getAlarmWorkflowId(workflow)">
+                        {{language.Edit}}
+                      </button>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12"></div>
+    </div>
+  </div>
+</section>
+
+<ng-template #notificationModal let-modal class="">
+  <div class="modal-header">
+    <button type="button" class="close" aria-label="Close" (click)="close()">
+      <span></span>
+    </button>
+  </div>
+  <div class="notification-modal">
+
+    <div class="title mb-3">{{language['New Notification']}}</div>
+    <p class="mb-2">{{language['Notification Type']}}</p>
+
+
+
+    <div class="notification-list" [formGroup]="notificatonForm">
+      <ng-select [clearable]="false" width="100%" formControlName="notificaton" [items]="notificationTypes"
+        bindValue="id" bindLabel="name" class="ng-select-datasource">
+        <ng-template ng-option-tmp let-item="item">
+          <div class="text-truncate" title="{{language[item.name] || item.name}}">
+            {{language[item.name] || item.name}}
+          </div>
+          <div class="text-truncate select-muted-text" title="{{language[item.content] || item.content}}">
+            {{language[item.content] || item.content}}
+          </div>
+        </ng-template>
+      </ng-select>
+
+      <!-- <ul>
+        <li>
+          <div class="form-check form-check-inline">
+            <input type="radio" id="NotificationAlarm" formControlName="notificaton" value="alarm" class="mr-2">
+            <label for="NotificationAlarm" class="form-check-label ml-0 p-0">{{language['Alarm']}} </label>
+          </div>
+          <p class="pl-4">
+            {{language['Get notified when alarms are triggered']}}
+          </p>
+
+        </li>
+
+        <li>
+          <div class="form-check form-check-inline">
+            <input type="radio" id="InternetOutage" formControlName="notificaton" value="outage" class="mr-2">
+            <label for="InternetOutage" class="form-check-label ml-0 p-0">{{language['Internet Outage']}} </label>
+          </div>
+          <p class="pl-4">
+            {{language['Receive an immediate outage notification for monitored areas']}}
+          </p>
+
+        </li>
+        <li>
+          <div class="form-check form-check-inline">
+            <input type="radio" id="OpticalOutliers" formControlName="notificaton" value="optical" class="mr-2">
+            <label for="OpticalOutliers" class="form-check-label ml-0 p-0">{{language['Optical Outliers']}} </label>
+          </div>
+          <p class="pl-4">
+            {{language['Receive a weekly report on selected OLT systems']}}
+          </p>
+
+        </li>
+
+      </ul> -->
+    </div>
+    <div class="modal-footer-button mt-4">
+      <button type="button" class="my-2 mr-3 btn-default primary py-1" [disabled]="!notificatonForm.valid"
+        (click)="goto()">
+        {{language['Start Notification']}}
+      </button>
+      <button type="button" id="callOutcomeBtnId" class="btn-default btn-dft py-1" (click)="close()">
+        {{language['Cancel']}}
+      </button>
+    </div>
+
+  </div>
+</ng-template>

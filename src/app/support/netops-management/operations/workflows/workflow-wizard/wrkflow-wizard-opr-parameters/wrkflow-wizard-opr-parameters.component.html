@@ -1,0 +1,707 @@
+<div class="w-100 alert alert-danger mt-4 fade show" *ngIf="error">
+
+  <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+  <div class="d-inline-flex" [innerHtml]="language[errorInfo] || errorInfo"></div>
+  <button class="btn-default px-3 ok-btn float-right" (click)="closeAlert()" id="wk-opr-err-ok">
+    {{ language.OK }}
+  </button>
+</div>
+<div class="loader-wrapper-info" *ngIf="micrositeLoader || loading">
+  <div class="loader">
+      <div class="d-flex justify-content-center">
+          <div class="spinner-border text-primary" role="">
+              <span class="sr-only">{{language.Loading}}</span>
+          </div>
+      </div>
+  </div>
+</div>
+<div class="pb-2 table-details" *ngIf="!newOprtn && showReordertbl && workflowInputData?.actions.length > 1;else unReOderedTbl">
+  <table id="wk-opr-table" width="100%" datatable [dtOptions]="tableOptions" [dtTrigger]="dtTrigger"
+    class="table row-border dataTable row-border hover table-alter position-relative">
+    <thead>
+      <tr>
+        <th>{{ language.Type }}</th>
+        <th>{{ language.Name }}</th>
+        <th></th>
+        <!-- <th></th> -->
+      </tr>
+    </thead>
+    <tbody cdkDropList [cdkDropListData]="workflowInputData?.actions" (cdkDropListDropped)="drop($event)">
+      <tr id="{{ item._id }}" cdkDrag cdkDragLockAxis="y" *ngFor="let item of workflowInputData?.actions; let i = index">
+        <td class="w-30" *ngIf="item.actionType == 'Add to Static Device Group'">{{language['Add to Static Device
+          Group']}}</td>
+        <td class="w-30" *ngIf="item.actionType != 'Add to Static Device Group'">{{ item.actionType ?
+          language[item.actionType]|| item.actionType :
+          "" }}</td>
+        <td class="w-50"
+          *ngIf="item.actionType!='Edge Suites Bulk Activation' && item.actionType != 'myCommunityIQ Bulk Activation'" >
+          {{item.actionType === 'SmartBiz Bulk Activation' ? "SmartBiz: " + language[(item?.actionConfig?.enable||
+          item?.profileName == 'SmartBiz: Subscribed') ? 'Subscribed':'Unsubscribed']:
+          item.profileName ? language[item.profileName]||item.profileName :  ((item.actionType=="ExperienceIQ Bulk Activation" || item.actionType=="ProtectIQ Bulk Activation") && item.name) ? item.name : 
+          "" }}
+         <p *ngIf="item?.bulkActivationConfig"> {{language['Subscribe']}} : {{item?.bulkActivationConfig?.subscribe ?  language.Enable : language.Disable }}, {{language['Deploy Container']}} : {{item?.bulkActivationConfig?.enable ? language.Enable : language.Disable}}</p>
+        </td>
+        <td class="w-50" *ngIf="item.actionType=='Edge Suites Bulk Activation'">{{ item.appType ? language[item.appType] || item.appType : "" }}</td>
+        <!-- <td class="w-50" *ngIf="item.actionType=='SmartBiz Bulk Activation'">{{ item.actionConfig ? language[item.actionConfig] || item.actionConfig : "" }}</td> -->
+        <td class="w-50"  *ngIf="item.actionType == 'myCommunityIQ Bulk Activation'">
+            <div *ngIf="item.actionType == 'myCommunityIQ Bulk Activation' && item?.passpointConfig">
+              <span> {{language.System_Membership}}: {{(item?.passpointConfig?.enable)?'True':'False'}}<span
+                  *ngIf="item?.passpointConfig?.communities?.length" class="pr-np1">,</span></span>
+          <span class="pr-1"
+              *ngFor="let communitiesItem of item?.passpointConfig?.communities;let i=index">{{showMicroSiteName(communitiesItem.micrositeId)}}<span
+                  *ngIf="i != item?.passpointConfig?.communities?.length-1">,</span></span>
+          </div>
+         <div *ngIf="item?.eduroam">
+          <span >
+              <span>{{language['Eduroam']}}: {{(item?.eduroam?.enable)?'True':'False'}}<span class="pr-np1">{{item?.eduroam?.primaryServer ? ',':''}}</span></span><span class="pr-1"><span class="pr-np1">{{item?.eduroam?.primaryServer}}{{item?.eduroam?.secondaryServer ? ',':''}}</span>{{item?.eduroam?.secondaryServer}}</span>
+          </span>
+         </div>
+        </td>
+        <td class="w-20 text-right">
+          <button *ngIf="item.actionType == 'Download SW/FW Image' && !showEditButton" id="wk-edit-btn" class="pencil-alt-btn"
+              data-toggle="tooltip" title="{{ language.Edit }}" (click)="newOprtnAdd('edit', i)">
+              <i class="fas fa-pencil-alt"></i>
+            </button>
+          <ng-template #editBlock>
+            <button *ngIf="item.actionType == 'Download SW/FW Image'" id="wk-edit-btn" class="pencil-alt-btn"
+              data-toggle="tooltip" title="{{ language.Edit }}" (click)="newOprtnAdd('edit', i)">
+              <i class="fas fa-pencil-alt"></i>
+            </button>
+          </ng-template>
+          <button *ngIf="!showEditButton; else editBlock" id="wk-opr-del-btn" class="delete-org-btn pointer"
+          (click)="deleteWrkflw(i)">
+          <i class="fa fa-lg fa-fw fa-trash-o primary" title="{{ language.Delete }}"></i>
+        </button>
+          <span class="pl-1"><i class="fa fa-bars text-muted example-handle-ic" aria-hidden="true"></i></span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<ng-template #unReOderedTbl>
+  <div class="pb-2 table-details" *ngIf="!newOprtn">
+    <table id="wk-opr-table" width="100%" datatable [dtOptions]="tableOptions" [dtTrigger]="dtTrigger"
+      class="row-border dataTable row-border hover table-alter">
+      <thead>
+        <tr>
+          <th>{{ language.Type }}</th>
+          <th>{{ language.Name }}</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr id="{{ item._id }}" *ngFor="let item of workflowInputData?.actions; let i = index">
+          <td id="1" class="w-30" *ngIf="item.actionType == 'Add to Static Device Group'">{{language['Add to Static Device
+            Group']}}</td>
+          <td id="2" class="w-30" *ngIf="item.actionType != 'Add to Static Device Group'">{{ item.actionType ?
+            language[item.actionType]|| item.actionType :
+            "" }}</td>
+          <td id="3" class="w-50"
+            *ngIf="item.actionType!='Edge Suites Bulk Activation' && item.actionType != 'myCommunityIQ Bulk Activation'">
+            {{ item.actionType === 'SmartBiz Bulk Activation' ? "SmartBiz: " + language[(item?.actionConfig?.enable||
+            item?.profileName == 'SmartBiz: Subscribed') ? 'Subscribed':'Unsubscribed']:
+            item.profileName ? language[item.profileName]||item.profileName : ((item.actionType=="ExperienceIQ Bulk Activation" || item.actionType=="ProtectIQ Bulk Activation") && item.name) ? item.name : "" }}
+            <p *ngIf="item?.bulkActivationConfig"> {{language['Subscribe']}} : {{item?.bulkActivationConfig?.subscribe ?  language.Enable : language.Disable }}, {{language['Deploy Container']}} : {{item?.bulkActivationConfig?.enable ? language.Enable : language.Disable}}</p>
+          </td>
+          <td class="w-50" id="4" *ngIf="item.actionType=='Edge Suites Bulk Activation'">{{ item.appType ? language[item.appType] || item.appType : "" }}</td>
+          <!-- <td class="w-50" *ngIf="item.actionType=='SmartBiz Bulk Activation'">{{ item.actionConfig ? language[item.actionConfig] || item.actionConfig : "" }}</td> -->
+          <td class="w-50" id="5" *ngIf="item.actionType == 'myCommunityIQ Bulk Activation'">
+            <div *ngIf="item.actionType == 'myCommunityIQ Bulk Activation' && communityArr.length && item?.passpointConfig">
+              <span> {{language.System_Membership}}: {{(item?.passpointConfig?.enable)?'True':'False'}}<span
+                  *ngIf="item?.passpointConfig?.communities?.length" class="pr-np1">,</span></span>
+          <span class="pr-1"
+              *ngFor="let communitiesItem of item?.passpointConfig?.communities;let i=index">{{showMicroSiteName(communitiesItem.micrositeId)}}<span
+                  *ngIf="i != item?.passpointConfig?.communities?.length-1">,</span></span>
+          </div>
+         <div>
+          <span *ngIf="item?.eduroam">
+              <span>{{language['Eduroam']}}: {{(item?.eduroam?.enable)?'True':'False'}}<span class="pr-np1">{{item?.eduroam?.primaryServer ? ',':''}}</span></span><span class="pr-1"><span>{{item?.eduroam?.primaryServer}}{{item?.eduroam?.secondaryServer ? ',':''}}</span>{{item?.eduroam?.secondaryServer}}</span>
+          </span>
+         </div>
+          
+        </td>
+  
+          <td class="w-20 text-right">
+            <button *ngIf="item.actionType == 'Download SW/FW Image' && !showEditButton" id="wk-edit-btn" class="pencil-alt-btn"
+                data-toggle="tooltip" title="{{ language.Edit }}" (click)="newOprtnAdd('edit', i)">
+                <i class="fas fa-pencil-alt"></i>
+              </button>
+            <ng-template #editBlock>
+              <button *ngIf="item.actionType == 'Download SW/FW Image'" id="wk-edit-btn" class="pencil-alt-btn"
+                data-toggle="tooltip" title="{{ language.Edit }}" (click)="newOprtnAdd('edit', i)">
+                <i class="fas fa-pencil-alt"></i>
+              </button>
+            </ng-template>
+            <button *ngIf="!showEditButton; else editBlock" id="wk-opr-del-btn" class="delete-org-btn pointer"
+            (click)="deleteWrkflw(i)">
+            <i class="fa fa-lg fa-fw fa-trash-o  primary" title="{{ language.Delete }}"></i>
+          </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</ng-template>
+<div class="wizard-form" *ngIf="newOprtn">
+  <div class="w-100 row form-group">
+    <label for="inputOperationType" class="col-lg-2 col-md-2">
+      <span> {{ language.Operation_Type}} </span>
+    </label>
+    <div class="custom-selectbox-opr col-lg-8 col-md-8" [ngClass]="showEditButton ? 'ngselect-opr-type':''">
+      <ng-select [items]="inputOperationType" bindLabel="name" autofocus bindValue="id"
+        placeholder="{{ language.Operation_Type }}" (change)="optTypeValueChoose()" [(ngModel)]="oprTypeValueSelected"
+        [ngModelOptions]="{ standalone: true }" [searchable]="false" [clearable]="false" id="opr-type" [disabled]="showEditButton">
+        <ng-template ng-label-tmp let-item="item">
+          {{ language[item.name] }} 
+        </ng-template>
+        <ng-template ng-option-tmp let-item="item" let-index="index">
+          {{ language[item.name] }}
+        </ng-template>
+      </ng-select>
+    </div>
+  </div>
+  <div class="form-group ccl-form row">
+    <div for="autocomplete-logic" class="col-lg-2 col-md-2">
+      <span> {{ language.Operation_Condition }} </span>
+    </div>
+    <div class="col-lg-8 col-md-8 pr-46">
+      <textarea id="opr-condition" class="form-control" autofocus="autofocus"
+        [(ngModel)]="operationCondition" trimSpace (blur)="removeUnwantedSpace('operationCondition',operationCondition)"></textarea>
+    </div>
+  </div>
+  <div class="form-group row">
+    <div class="col-12">
+      <span>
+        <span class="net-ops-secondary-title" *ngIf="oprTypeValueSelected === 'Configuration File Download'">{{
+          language.Configuration_Files }}
+          <span class="error">*</span>
+        </span>
+        <span class="net-ops-secondary-title" *ngIf="oprTypeValueSelected === 'Download SW/FW Image'">{{
+          language.Sw_Img_File }}
+          <span class="error">*</span>
+        </span>
+        <span class="net-ops-secondary-title" *ngIf="oprTypeValueSelected === 'Apply Configuration Profile'">{{
+          language.Configuration_Profile }}
+          <span class="error">*</span>
+        </span>
+        <span class="net-ops-secondary-title" *ngIf="oprTypeValueSelected === 'Add Static Device Group'">{{
+          language.Static_Device_Grp }}
+          <span class="error">*</span>
+        </span>
+        <span class="net-ops-secondary-title" *ngIf="oprTypeValueSelected === 'Replace Service Profile'">{{
+          language.Original_Profile }}
+          <span class="error">*</span>
+        </span>
+        <!-- <span class="net-ops-secondary-title" *ngIf="oprTypeValueSelected === 'Edge Suites Provision'">{{
+          language.Edge_Suite_OP }}
+          <span class="error">*</span>
+        </span> -->
+        <span class="net-ops-secondary-title" *ngIf="oprTypeValueSelected === 'ProtectIQ Provision'">{{
+          language['ProtectIQ Provision'] }}
+          <span class="error">*</span>
+        </span>
+        <span class="net-ops-secondary-title" *ngIf="oprTypeValueSelected === 'ExperienceIQ Provision'">{{
+          language['ExperienceIQ Provision'] }}
+          <span class="error">*</span>
+        </span>
+        <span class="net-ops-secondary-title" *ngIf="oprTypeValueSelected === 'myCommunityIQ Bulk Activation'">{{
+          language['myCommunityIQ Bulk Activation'] }}
+          <span class="error">*</span>
+        </span>
+        <span class="net-ops-secondary-title" *ngIf="oprTypeValueSelected === 'SmartBiz Bulk Activation'">{{
+          language['SmartBiz Bulk Activation'] }}
+          <span class="error">*</span>
+        </span>
+      </span>
+    </div>
+  </div>
+  <div *ngIf="oprTypeValueSelected === 'Configuration File Download'">
+    <div class="pb-2 new-profile-table">
+      <table id="opr-config-table" width="100%" datatable [dtOptions]="tableOptions" [dtTrigger]="dtTrigger"
+        class="row-border row-border dataTable hover table-alter">
+        <thead>
+          <tr>
+            <th></th>
+            <th class="max-w-450">{{ language.Name }}</th>
+            <th>{{ language.description }}</th>
+            <th>{{ language.Software_Version }}</th>
+            <th>{{ language.type }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="{{ item._id }}" *ngFor="let item of cofigFileData">
+            <td>
+              <input type="radio" name="replaced-profiles-radio-inline" [value]="item._id" id="{{ item._id }}"
+                (change)="bindConfigData($event, item)" />
+            </td>
+            <td class="max-w-450">{{ item.name ? item.name : "" }}</td>
+            <td>{{ item.description ? item.description : "" }}</td>
+            <td>{{ item.version ? item.version : "" }}</td>
+            <td>{{ item.type ? item.type : "" }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div *ngIf="oprTypeValueSelected === 'Download SW/FW Image'">
+    <div class="pb-2">
+      <table id="wk-sw-table" width="100%" datatable [dtOptions]="tableOptions" [dtTrigger]="dtTrigger"
+        class="row-border dataTable row-border hover table-alter">
+        <thead>
+          <tr>
+            <th></th>
+            <th>{{ language.Name }}</th>
+            <th>{{ language.description }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="{{ item._id }}" *ngFor="let item of swFileData">
+            <td>
+              <input type="radio" name="replaced-profiles-radio-inline" id="{{ item._id }}"
+                (change)="bindConfigData($event, item)" />
+            </td>
+            <td>{{ item.name ? item.name : "" }}</td>
+            <td>{{ item.description ? item.description : "" }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div *ngIf="oprTypeValueSelected === 'Apply Configuration Profile'">
+    <div class="pb-2 w-100 overflow-auto mb-3">
+      <table id="wk-profile-table" width="100%" datatable [dtOptions]="tableOptions" [dtTrigger]="dtTrigger"
+        class="row-border dataTable row-border hover table-alter">
+        <thead>
+          <tr>
+            <th class="w-5"></th>
+            <th class="w-50">{{ language.Name }}</th>
+            <th class="w-45">{{ language.description }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="{{ item._id }}" *ngFor="let item of configProFileData">
+            <td class="w-5">
+              <input type="radio" name="replaced-profiles-radio-inline" id="{{ item._id }}"
+                (change)="bindConfigData($event, item)" />
+            </td>
+            <td class="w-40 text-break">{{ item.name ? item.name : "" }}</td>
+            <td class="w-50 text-break">{{ item.description ? item.description : "" }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div *ngIf="oprTypeValueSelected === 'Add Static Device Group'">
+    <div class="pb-2">
+      <table id="wk-static-table" width="100%" datatable [dtOptions]="tableOptions" [dtTrigger]="dtTrigger"
+        class="row-border dataTable row-border hover table-alter">
+        <thead>
+          <tr>
+            <th class="w-40px"></th>
+            <th>{{ language.Name }}</th>
+            <th>{{ language.description }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="{{ item._id }}" *ngFor="let item of staticDeviceTable">
+            <td>
+              <input type="radio" name="replaced-profiles-radio-inline" id="{{ item._id }}"
+                (change)="bindConfigData($event, item)" />
+            </td>
+            <td>{{ item.name ? item.name : "" }}</td>
+            <td>{{ item.description ? item.description : "" }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!-- <div *ngIf="oprTypeValueSelected === 'Edge Suites Provision'">
+    <div class="pb-2">
+      <table id="wk-static-table" width="100%" datatable [dtOptions]="tableOptions" [dtTrigger]="dtTrigger"
+        class="row-border dataTable row-border hover table-alter">
+        <thead>
+          <tr>
+            <th class="w-40px"></th>
+            <th>{{ language.Name }}</th>
+            <th>{{ language.description }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="{{ item._id }}" *ngFor="let item of IQSuitesData">
+            <td>
+              <input type="checkbox" placeholder="#" class="mr-3" [value]='item._id' name="item.name"
+                (change)='bindConfigData($event, item)' [checked]='item.checked'>
+            </td>
+            <td>
+              {{ item.name ? item.name : "" }}
+            </td>
+            <td>{{ item.description ? item.description : "" }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div> -->
+  <div *ngIf="oprTypeValueSelected === 'ProtectIQ Provision'">
+    <div class="pb-2">
+      <table id="wk-static-table" width="100%" datatable [dtOptions]="tableOptions" [dtTrigger]="dtTrigger"
+        class="row-border dataTable row-border hover table-alter">
+        <thead>
+          <tr class="justify-content-start">
+            <th class="w-10">{{language['Subscribe']}}</th>
+            <th class="w-10">{{language['Deploy Container']}}</th>
+            <th class="w-40">{{ language.Name }}</th>
+            <th class="w-40">{{ language.description }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="{{ item._id }}" class="justify-content-start" *ngFor="let item of IQSuitesData">
+            <td class="w-10">
+              <input type="checkbox" id="Protectiq-Subscribe" [disabled]="item.bulkActivationConfig.enable" placeholder="#" class="mr-3"
+                [(ngModel)]="item.bulkActivationConfig.subscribe" name="{{item.name}}"
+                 >
+            </td>
+            <td class="w-10">
+              <input type="checkbox" placeholder="#" id="deploy-container" class="mr-3" [(ngModel)]="item.bulkActivationConfig.enable"
+                (click)="checkSubscribe($event,item)" name="{{item.name}}"
+                 >
+            </td>
+         
+            <td class="w-40">
+              {{  language[item.name]? language[item.name] : (item.name) ? item.name : "" }}
+            </td>
+            <td class="w-40">{{ item.description ? item.description : "" }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div *ngIf="oprTypeValueSelected === 'ExperienceIQ Provision'">
+    <div class="pb-2">
+      <table id="wk-static-table" width="100%" datatable [dtOptions]="tableOptions" [dtTrigger]="dtTrigger"
+        class="row-border dataTable row-border hover table-alter">
+        <thead>
+          <tr class="justify-content-start">
+            <th class="w-10">{{language['Subscribe']}}</th>
+            <th class="w-10">{{language['Deploy Container']}}</th>
+            <th class="w-40">{{ language.Name }}</th>
+            <th class="w-40">{{ language.description }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="{{ item._id }}" class="justify-content-start" *ngFor="let item of IQSuitesData">
+            <td class="w-10">
+              <!-- [value]='item._id' -->
+              <input type="checkbox" id="experienceiq-subscribe" [disabled]="item.bulkActivationConfig.enable" placeholder="#" class="mr-3" name="item.name"
+                [(ngModel)]="item.bulkActivationConfig.subscribe"  >
+            </td>
+            <td class="w-10">
+              <!-- [value]='item._id' -->
+              <input type="checkbox" placeholder="#" id="ExperienceIQ-Deploy-Container" class="mr-3"
+                [(ngModel)]="item.bulkActivationConfig.enable" (click)="checkSubscribe($event,item)" name="item.name"
+                >
+            </td>
+           
+            <td class="w-40">
+              {{  language[item.name]? language[item.name] : (item.name) ? item.name : "" }}
+            </td>
+            <td class="w-40">{{ item.description ? item.description : "" }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="orginal-profile" *ngIf="oprTypeValueSelected === 'Replace Service Profile'">
+    <div class="w-100 row form-group">
+      <div for="inputOperationType" class="col-lg-2 col-md-2">
+        <span> {{language.Category}} </span>
+      </div>
+      <div class="ccl-form custom-selectbox col-lg-8 col-md-8">
+        <select class="form-control" id="inputCategory" name="buildCategory" [(ngModel)]="categoryChoosed"
+          (change)="chooseCategory()">
+          <optgroup label="{{language[categoryGroup] }}" *ngFor="let categoryGroup of groupOfCategory" class="text-indent-9">
+            <ng-container *ngIf="categoryGroup === 'Service Attributes'">
+              <option value="Bandwidth" class="text-indent-17">
+                {{language.Bandwidth}}
+              </option>
+            </ng-container>
+            <ng-container *ngIf="categoryGroup === 'Services'">
+              <option value="Data Service" class="text-indent-17">
+                {{language['Data Service']}}
+              </option>
+              <option value="Voice Service" class="text-indent-17">
+                {{language['Voice Service']}}
+              </option>
+              <option value="Video Service" class="text-indent-17">
+                {{language['Video Service']}}
+              </option>
+            </ng-container>
+          </optgroup>
+        </select>
+      </div>
+    </div>
+    <div class="pb-2 profile-table">
+      <table id="wk-replace-table" width="100%" datatable [dtOptions]="tableOptions" [dtTrigger]="dtTrigger"
+        class="row-border dataTable row-border hover table-alter">
+        <thead>
+          <tr>
+            <th></th>
+            <th>{{ language.Name }}</th>
+            <th>{{ language.description }}</th>
+            <th>{{ language.type }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="{{ item._id }}" *ngFor="let item of originalProfile">
+            <td>
+              <input type="radio" name="replaced-profiles-radio-inline" id="{{ item._id }}"
+                (change)="bindReplaceData($event, item)" />
+            </td>
+            <td>{{ item.name ? item.name : "" }}</td>
+            <td>{{ item.description ? item.description : "" }}</td>
+            <td>
+              {{ item.category ? item.category : categoryChoosed }}
+              <span *ngIf="item.mode">-</span>
+              {{ item.mode ? item.mode : "" }}
+              <span *ngIf="item.framingtype">-</span>
+              {{ item.framingtype ? item.framingtype : "" }}
+              <span *ngIf="item.voicetype">-</span>
+              {{ item.voicetype ? item.voicetype : "" }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="pb-2 profile-table" *ngIf="newProfileShow">
+      <div class="col-12 pl-0">
+        <span class="net-ops-secondary-title">{{ language.New_Profile }} <span class="error">*</span></span>
+      </div>
+      <table id="wk-new-table" width="100%" datatable [dtOptions]="tableOptions" [dtTrigger]="dtTrigger"
+        class="row-border dataTable row-border hover table-alter">
+        <thead>
+          <tr>
+            <th></th>
+            <th>{{ language.Name }}</th>
+            <th>{{ language.description }}</th>
+            <th>{{ language.type }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="{{ item._id }}" *ngFor="let item of NewProfile">
+            <td>
+              <input type="radio" name="replaced-profiles-radio-new" id="{{ item._id }}"
+                (change)="bindReplaceNewData($event, item)" />
+            </td>
+            <td>{{ item.name ? item.name : "" }}</td>
+            <td>{{ item.description ? item.description : "" }}</td>
+            <td>
+              {{ item.category ? item.category : categoryChoosed }}
+              <span *ngIf="item.mode">-</span>
+              {{ item.mode ? item.mode : "" }}
+              <span *ngIf="item.framingtype">-</span>
+              {{ item.framingtype ? item.framingtype : "" }}
+              <span *ngIf="item.voicetype">-</span>
+              {{ item.voicetype ? item.voicetype : "" }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!-- Code here -->
+  <div *ngIf="oprTypeValueSelected === 'myCommunityIQ Bulk Activation'">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="smart-rg-member">
+          <div class="smart-town-Title"><label class="d-inline-flex align-items-center" for="active-hotspot12">
+            <input type="checkbox"  class="mr-2" id="active-hotspot12"
+              [(ngModel)]="hotspotpasspoint" (change)="changePasspoint()"> {{language.System_Membership}}
+          </label></div>
+          <div class="form-check pl-20px" *ngIf="hotspotpasspoint">
+            <label for="active-hotspot" class="d-inline-flex align-items-center">
+              <input type="checkbox"  class="mr-2" id="active-hotspot"
+                [(ngModel)]="hotspotActivationObj.passpointConfig.enable" (change)="removeCommunity()"> {{language.Activate_Hotspot}}
+            </label>
+          </div>
+          <div class="select-communitie-warpper mt-3 align-items-end" *ngIf="hotspotActivationObj.passpointConfig.enable && hotspotpasspoint">
+            <div class="select-communitie">
+              <label class="form-check-label mb-2" for="Community"> {{language["Available_Community"]}}</label>
+              <ng-select [items]="communityArr" [(ngModel)]="hotspotActivationObj.passpointConfig.communities"
+                [multiple]="true" bindLabel="communityName" bindValue="id">
+              </ng-select>
+            </div>
+            <div class="pl-3" *ngIf="(hotspotActivationObj.passpointConfig.communities.length > 16)">
+              <small class="required-field"> {{language["The_max_number_of_allowed_communities_is_16"]}}
+              </small>
+            </div>
+           
+            <div class="select-communitie-button pl-2">
+              <!-- <button type="button" id="new-Assign" class="btn-default primary px-3"
+              [disabled]="(hotspotActivationObj.passpointConfig.communities.length > 16)|| (hotspotActivationObj.passpointConfig.enable && !(hotspotActivationObj.passpointConfig.communities.length))"
+              (click)="selectedCommunitiesWarnModal(SelectedCommunitiesAlertModal)"> {{language['Assign']}} </button> -->
+            <button type="button" class="btn-default btn-dft ml-2"
+              [disabled]="(hotspotActivationObj.passpointConfig.enable && !(hotspotActivationObj.passpointConfig.communities.length))"
+              (click)="CancelCommunities()"> {{language['Clear All']}} </button>   
+
+            </div>
+          </div>
+          <div class="d-flex alert alert-warning w-100 my-3 px-3"  *ngIf="(hotspotActivationObj.passpointConfig.enable && (hotspotActivationObj.passpointConfig.communities.length))">
+            <div class="warn-icon-24 pt-2">
+              <img src="../../../../../../../assets/img/warning-icon-36px.svg" />
+            </div>
+            <div>
+              <!-- <div class="ccl-Secondary-title ">{{language['Assign Selected Communities']}}</div> -->
+              <p class="mb-0">{{language['The list of communities you have entered will override any communities previously assigned to the
+                selected system(s).']}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6" >
+        <div class="smart-eduroam">
+  
+          <div class="smart-town-Title"> <label for="active-hotspot44" class="d-inline-flex align-items-center"><input type="checkbox" (change)="changeEduroam()"  class="mr-2" id="active-hotspot44"
+            [(ngModel)]="eduroam"> {{language['Eduroam']}}
+        </label> </div>
+          <div class="mb-3" *ngIf="eduroam">
+            <div class="form-check form-check-inline pl-20px">
+              <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" [value]="true" [(ngModel)]="hotspotActivationObj.eduroam.enable">
+              <label class="form-check-label" for="inlineRadio1">{{language['Enabled']}}</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" [value]="false" [(ngModel)]="hotspotActivationObj.eduroam.enable">
+              <label class="form-check-label" for="inlineRadio2">{{language['Disabled']}}</label>
+            </div>
+    
+          </div>
+          <form  autocomplete="off" *ngIf="eduroam">
+            <div class="form-group ccl-form" *ngIf="hotspotActivationObj.eduroam.enable ===true">
+              <label for="exampleInputEmail1">{{language['Primary RADIUS Server (FQDN or IP Address, and Port)']}} <span class="error">*</span></label>
+              <input type="text" name="primaryServer" type="text" maxlength="255"   class="form-control" id="exampleInputEmail1" (keyup)="radiousServerShoudNotMatchValidation('primaryRadious')" 
+              aria-describedby="" placeholder="{{language['sample-primary-radius:port']}}" [(ngModel)]="hotspotActivationObj.eduroam.primaryServer"
+              trimSpace [formValue]="hotspotActivationObj">
+              <div *ngIf="doneClicked && (hotspotActivationObj.eduroam.enable===true) &&hotspotActivationObj.eduroam.primaryServer ===''"  class="ccl-error">
+                <span >{{language['This field is required']}}</span>
+              </div>
+              <div *ngIf="primaryServerPatternValidation()">
+                <small class="c-red mandatory-msg">{{language['You have entered an invalid RADIUS Server']}}</small>
+              </div>
+              <div *ngIf="showRadiousError && showUnder == 'primaryRadious'">
+                <small class="c-red mandatory-msg">{{language['Primary Server And Secondary Server Should Not Be
+                  Same']}}</small>
+              </div>
+          
+            </div>
+            <div class="form-group ccl-form"  *ngIf="hotspotActivationObj.eduroam.enable ===true">
+              <label for="exampleInputPassword1">{{language['Secondary RADIUS Server (FQDN or IP Address, and Port)']}}</label>
+              <input type="text" name="secondaryServer" type="text" maxlength="255"   class="form-control" (keyup)="radiousServerShoudNotMatchValidation('secondaryRadious')" 
+              id="exampleInputPassword1" placeholder="{{language['sample-secondary-radius:port']}}" [(ngModel)]="hotspotActivationObj.eduroam.secondaryServer"
+              trimSpace [formValue]="hotspotActivationObj">
+              <div *ngIf="secondaryServerPatternValidation()">
+                <small class="c-red mandatory-msg">{{language['You have entered an invalid RADIUS Server']}}</small>
+              </div>
+              
+              <div *ngIf="showRadiousError && showUnder == 'secondaryRadious'">
+                <small class="c-red mandatory-msg">{{language['Primary Server And Secondary Server Should Not Be
+                  Same']}}</small>
+              </div>
+            </div>
+            <div class="form-group ccl-form secret-pass-icon"  *ngIf="hotspotActivationObj.eduroam.enable ===true">
+              <label for="exampleInputPassword12">{{language['secret']}}<span class="error">*</span></label>
+              <input [type]="hidepwd ? 'password' : 'text'" maxlength="63" autocomplete="new-password" name="secret" class="form-control" id="exampleInputPassword12" placeholder="" [(ngModel)]="hotspotActivationObj.eduroam.secret">
+              <!-- <span class="see_pass fas pointer" [ngClass]="hidepwd ? 'fa-eye-slash' : 'fa-eye'"
+                                (click)="showPass()"> -->
+            <span class="pointer"><i id="" [ngClass]="hidepwd ? 'password_hide' : 'password_view'" (click)="showPass()"></i></span>
+            <div *ngIf="doneClicked && (hotspotActivationObj.eduroam.enable===true) &&hotspotActivationObj.eduroam.secret===''"  class="ccl-error">
+              <span >{{language['This field is required']}}</span>
+            </div>
+            </div>
+          </form>
+           
+      
+        </div>
+      </div>
+    </div>
+    
+  </div>
+  <!-- SmartBiz Bulk activation code -->
+  <div *ngIf="oprTypeValueSelected === 'SmartBiz Bulk Activation'">
+    <div class="row">
+      <div class="col-md-6" >
+          <div class="mb-3">
+            <div class="form-check form-check-inline pl-20px">
+              <input class="form-check-input" type="radio" name="smartbizRadioOptions" id="smartbizRadio1" value="Subscribed"  [(ngModel)]="Smartbizradiobutton">
+              <label class="form-check-label" for="smartbizRadio1">{{language['Subscribed']}}</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="smartbizRadioOptions" id="smartbizRadio2" value="Unsubscribed" [(ngModel)]="Smartbizradiobutton">
+              <label class="form-check-label" for="smartbizRadio2">{{language['Unsubscribed']}}</label>
+            </div>
+    
+          </div>
+      </div>
+    </div>
+    
+  </div>
+  <div class="row">
+    <div class="flex-start pl-3">
+      <button id="btn-doneOperation" *ngIf="oprTypeValueSelected !== 'myCommunityIQ Bulk Activation'"
+        class="btn-default primary px-3 mr-2 mt-3" [disabled]="!doneActive " (click)="doneClick()">
+        {{ language.Done }}
+      </button>
+      <button id="btn-doneOperation"
+        [disabled]="(hotspotActivationObj.passpointConfig.communities.length > 16) ||(this.hotspotActivationObj.eduroam.enable ===true && (hotspotActivationObj.eduroam.primaryServer==='' || hotspotActivationObj.eduroam.secret ==='' || showRadiousError || secondaryServerPatternValidation() || primaryServerPatternValidation())||(!this.hotspotpasspoint && !this.eduroam))"
+        class="btn-default primary px-3 mr-2 mt-3" *ngIf="oprTypeValueSelected === 'myCommunityIQ Bulk Activation'"
+        (click)="doneClick()">
+        {{ language.Done }}
+      </button>
+      <button id="btn-discardOperation" class="btn-default primary px-3 mr-2 mt-3"
+        (click)="refreshHotspotActivation();newOprtn = false;IQtemp.length=0">
+        {{ language.Discard }}
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<div class="mb-4 flex-start" *ngIf="!newOprtn && !showEditButton">
+  <button type="button" class="btn-default primary px-3" (click)="newOprtnAdd('new');showEditButton = false" id="new-operation">
+    {{ language.New_Operation }}
+  </button>
+</div>
+
+
+
+<div class="workflow-next-previous">
+  <button type="button" class="btn-arrow btn-arr-prev btn-grey mr-2" (click)="go_previous()" id="previous">
+    <img src="assets/img/ic_chevronleft_grey.svg"> {{ language.Previous }}
+  </button>
+  <button type="button" class="btn-arrow btn-arr-nxt primary" (click)="go_next()" id="next">
+    {{ language.Next }} <img src="assets/img/ic_chevron-r-w.svg">
+  </button>
+</div>
+<ng-template #SelectedCommunitiesAlertModal let-modal>
+  <div class="w-100 py-3">
+    <button type="button" class="close mt-1" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span></span>
+    </button>
+  </div>
+  <div class="selected-communities-warn">
+    <div class="d-flex">
+      <div class="warn-icon-min">
+        <img src="../../../../../../../assets/img/warning-icon-36px.svg" />
+      </div>
+      <div>
+        <div class="ccl-Secondary-title mb-2">{{language['Assign Selected Communities']}}</div>
+        <p>{{language['The list of communities you have entered will override any communities previously assigned to the
+          selected system(s).']}}</p>
+        <p>{{language['Do you want to proceed and assign the new list of communities?']}}</p>
+        <div class="mt-5 mb-2">
+          <button class="btn-default primary mr-3" (click)="addCommunity(modal)">{{language['Yes, Assign
+            Communities']}}</button>
+          <button class="btn-dft btn-default" (click)="modal.close('Close click')">{{language.Cancel}}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

@@ -1,0 +1,206 @@
+.password-container {
+    position: relative;
+
+    span {
+        position: absolute;
+        right: 20px;
+        top: 41px;
+    }
+}
+
+.password-container input[type="password"],
+.password-container input[type="text"] {
+    width: 100%;
+    padding: 12px 36px 12px 12px;
+    box-sizing: border-box;
+}
+
+.fa-eye {
+    position: absolute;
+    top: 28%;
+    right: 4%;
+    cursor: pointer;
+    color: lightgray;
+}
+
+.wan-site-scan-table {
+    overflow-y: auto;
+    height: 400px;
+
+    table {
+        border-collapse: collapse;
+
+        thead {
+            tr {
+                th {
+                    background-color: #fff;
+                    border-bottom: 2px solid #dee2e6;
+                    border-top: none;
+
+                    position: sticky;
+                    top: 0;
+                    z-index: 1000;
+                }
+
+                th:nth-child(1) {
+                    width: 10%;
+                }
+
+                th:nth-child(2) {
+                    width: 70%;
+                }
+
+                th:nth-child(3) {
+                    width: 10%;
+                }
+
+                th:nth-child(4) {
+                    width: 10%;
+                }
+
+            }
+        }
+
+        tbody {
+            tr {
+                td {
+                    padding: 7px 0px;
+
+                }
+
+                td:nth-child(1) {
+                    width: 8%;
+                }
+
+                td:nth-child(3) {
+                    width: 8%;
+                    text-align: center;
+                }
+
+                td:nth-child(4) {
+                    width: 10%;
+                    text-align: center;
+
+                }
+            }
+        }
+    }
+}
+
+.switch-disabled {
+    opacity: 0.5;
+
+    label {
+        cursor: not-allowed;
+    }
+}
+
+.success-meg-info {
+    width: 100%;
+    background-color: #FAFFF5;
+    padding: 24px;
+
+    .success-meg {
+        width: 100%;
+
+        .success-meg-icon {
+            width: 4%;
+
+            img {
+                margin-right: 16px;
+                width: 80%;
+            }
+        }
+
+        .success-meg-content {
+            width: 91%;
+
+            p {
+                font-weight: 400;
+                font-size: 24px;
+                line-height: 30px;
+                margin-bottom: 0px;
+            }
+
+            span {
+                font-weight: 400;
+                font-size: 16px;
+                line-height: 20px;
+                color: #4C4C4C;
+            }
+        }
+
+        .success-meg-close {
+            width: 5%;
+            text-align: right;
+
+            img {
+                margin-left: 16px;
+                width: 19px;
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+.error-meg-info {
+    width: 100%;
+    background-color: #FFF5F5;
+    padding: 24px;
+
+    .error-meg {
+        width: 100%;
+
+        .error-meg-icon {
+
+            width: 4%;
+
+            img {
+                margin-right: 16px;
+                width: 80%;
+            }
+        }
+
+        .error-meg-content {
+            width: 91%;
+
+            p {
+                font-weight: 400;
+                font-size: 24px;
+                line-height: 30px;
+                margin-bottom: 0px;
+            }
+
+            span {
+                font-weight: 400;
+                font-size: 16px;
+                line-height: 20px;
+                color: #4C4C4C;
+            }
+        }
+
+        .error-meg-close {
+            width: 5%;
+            text-align: right;
+
+            img {
+                margin-left: 16px;
+                width: 19px;
+                cursor: pointer;
+
+            }
+        }
+    }
+}
+
+.wifi-icon {
+    width: 32px;
+}
+
+.toggle-swtbtn.checkbox.switcher label input[type=checkbox]:disabled+span {
+    cursor: not-allowed;
+}
+
+table.site-scan-table tbody tr td:first-child {
+    padding-left: 12px !important;
+}

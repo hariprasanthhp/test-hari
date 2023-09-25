@@ -1,0 +1,301 @@
+<!-- Title start -->
+<section class="mb-4" *ngIf="showHome">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-8 justify-content-start pl-0">
+        <div class="cco-title">{{ language.Insights }}</div>
+      </div>
+      <!-- <div class="col-md-4 justify-content-end text-right pr-0">
+        {{ language.Last_hours }}
+      </div> -->
+    </div>
+  </div>
+</section>
+<!-- Title End -->
+
+<section class="mb-4" *ngIf="showHome && dataAvailable">
+  <div class="container">
+    <div class="row">
+      <div class="test-container">
+        <div class="item">
+          <span class="cco-list-label" id="pendoFoundationActiveSystems">{{language["Active Systems"]}}</span>
+          <div class="d-flex">
+            <h3>{{active}}</h3>
+            <!-- <span class="sub-menu-list-icon">{{activeper}}
+              <a *ngIf="!arrowactiveEnable && arrowPositive">
+                <i class="gly-rotate-90"></i>
+              </a>
+              <a *ngIf="!arrowactiveEnable && !arrowPositive">
+                <i class="gly-rotate-45"></i>
+              </a>
+            </span> -->
+            <span class="sub-menu-list-icon" *ngIf=" arrowPositive">{{activeper}}
+              <a *ngIf="!arrowactiveEnable">
+                <i class="gly-rotate-90"></i>
+              </a>
+            </span>
+            <span class="sub-menu-list-icon2" *ngIf=" !arrowPositive">{{activeper}}
+              <a *ngIf="!arrowactiveEnable">
+                <i class="gly-rotate-45"></i>
+              </a>
+            </span>
+
+          </div>
+          <div class="past-hours">{{language.Last_hours}}</div>
+        </div>
+        <div class="item">
+          <span class="cco-list-label" id="pendoFoundationPreProvisionedSystems">
+            {{language["Pre-Provisioned Systems"]}}</span>
+          <div class="d-flex">
+            <h3>{{preprovision}}</h3>
+            <span class="sub-menu-list-icon" *ngIf="arrowPositivepro">{{preprovisionper}}
+              <a *ngIf="!arrowprovisionEnable ">
+                <i class="gly-rotate-90"></i>
+              </a>
+            </span>
+            <span class="sub-menu-list-icon2" *ngIf="!arrowPositivepro">{{preprovisionper}}
+              <a *ngIf="!arrowprovisionEnable ">
+                <i class="gly-rotate-45"></i>
+              </a>
+            </span>
+          </div>
+          <div class="past-hours"> {{language.Last_hours}}</div>
+        </div>
+        <div class="item">
+          <span class="cco-list-label" id="pendoFoundationUnassociatedSystem">{{language["Unassociated_System"]}}</span>
+          <div class="d-flex">
+            <h3>{{unassociate}}</h3>
+            <!-- <span class="sub-menu-list-icon">{{unassociateper}}
+              <a *ngIf="!arrowunassoEnable && arrowPositiveunasso">
+                <i class="gly-rotate-90"></i>
+              </a>
+              <a *ngIf="!arrowunassoEnable && !arrowPositiveunasso">
+                <i class="gly-rotate-45"></i>
+              </a>
+            </span> -->
+            <span class="sub-menu-list-icon" *ngIf="arrowPositiveunasso">{{unassociateper}}
+              <a *ngIf="!arrowunassoEnable">
+                <i class="gly-rotate-90"></i>
+              </a>
+            </span>
+            <span class="sub-menu-list-icon2" *ngIf="!arrowPositiveunasso">
+              <a *ngIf="!arrowunassoEnable">
+                <i class="gly-rotate-45"></i>
+              </a>{{unassociateper}}
+            </span>
+          </div>
+          <div class="past-hours"> {{language.Last_hours}}</div>
+        </div>
+        <div class="item">
+          <span class="cco-list-label" id="pendoFoundationCommandIQSubscribers">
+            {{smallBizIQentitlement?language['CommandIQ & CommandWorx Subscribers']:language["CommandIQ Subscribers"]}}</span>
+          <div class="d-flex">
+            <h3>{{commandIQ}}</h3>
+            <!-- <span class="sub-menu-list-icon">{{commandIqper}}
+              <a *ngIf="!arrowcommandIqperEnable && arrowPositivecommand">
+                <i class="gly-rotate-90"></i>
+              </a>
+              <a *ngIf="!arrowcommandIqperEnable && !arrowPositivecommand">
+                <i class="gly-rotate-45"></i>
+              </a>
+            </span> -->
+            <span class="sub-menu-list-icon" *ngIf="arrowPositivecommand">{{commandIqper}}
+              <a *ngIf="!arrowcommandIqperEnable">
+                <i class="gly-rotate-90"></i>
+              </a>
+            </span>
+            <span class="sub-menu-list-icon2" *ngIf="!arrowPositivecommand">
+              <a *ngIf="!arrowcommandIqperEnable">
+                <i class="gly-rotate-45"></i>
+              </a>{{commandIqper}}
+            </span>
+          </div>
+          <div class="past-hours"> {{language.Last_hours}}</div>
+        </div>
+        <div class="item" *ngIf="productIQEnableentitlement || ExperienceIQEnableentitlement || proAndExpEnableentitlement || MyCommunityIQentitlement|| this.arloEnableentitlement|| this.arloUnlimitedentitlement || this.arloUnlimitedplusentitlement || this.ServifyEnableentitlement || this.ServifyGoldentitlement || this.ServifySilverentitlement || this.ServifyPlatinumentitlement || Bark_Premiumentitlement || Bark_Juniorentitlement">
+          <span class="cco-list-label" id="pendoFoundationEDGESuiteSubscribers">
+            {{language['Managed Services Subscriptions']}} </span>
+          <div class="d-flex">
+            <h3>{{edgeSuit}}</h3>
+            <span class="sub-menu-list-icon" *ngIf='arrowPositiveedge'>{{edgeSuitper}}
+              <a *ngIf="!arrowedgeSuitperEnable">
+                <i class="gly-rotate-90"></i>
+              </a>
+            </span>
+            <span class="sub-menu-list-icon2" *ngIf=" !arrowPositiveedge">
+              <a *ngIf="!arrowedgeSuitperEnable">
+                <i class="gly-rotate-45"></i>
+              </a>{{edgeSuitper}}
+            </span>
+          </div>
+          <div class="past-hours"> {{language.Last_hours}}</div>
+        </div>
+        <!-- <div class="item"  *ngIf="this.arloEnableentitlement|| this.arloUnlimitedentitlement || this.arloUnlimitedplusentitlement || this.ServifyEnableentitlement || this.ServifyGoldentitlement || this.ServifySilverentitlement || this.ServifyPlatinumentitlement || Bark_Premiumentitlement || Bark_Juniorentitlement">
+          <span class="cco-list-label" id="pendoFoundationEDGESuiteSubscribers">
+        {{language["EDGE_Ecosystem_Suite_Subscriptions"]}} </span>
+          <div class="d-flex">
+            <h3>{{edgeSuiteco}}</h3>
+            <span class="sub-menu-list-icon" *ngIf='arrowPositiveedgeEco'>{{edgeSuitpereco}}
+              <a *ngIf="!arrowedgeSuitecoperEnable">
+                <i class="gly-rotate-90"></i>
+              </a>
+            </span>
+            <span class="sub-menu-list-icon2" *ngIf=" !arrowPositiveedgeEco">
+              <a *ngIf="!arrowedgeSuitecoperEnable">
+                <i class="gly-rotate-45"></i>
+              </a>{{edgeSuitpereco}}
+            </span>
+          </div>
+          <div class="past-hours"> {{language.Last_hours}}</div>
+        </div> -->
+
+
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Tab menu start -->
+<section class="mt-3" *ngIf="showHome && dataAvailable">
+  <div class="d-flex w-100" style="margin:16px 0px;">
+    <label style="padding-top: 5px;margin-bottom: 0px;">{{language['Chart Timeframe']}}</label> <span
+      class="foun-chart-timeframe">- {{
+      language.Last_7_Days }}</span>
+    <div>
+      <div class="custom-selectbox" class="w-100" id="current-issues-interval" style="padding: 5px 8px">
+        <!-- <span>{{ language.Last_7_Days }}</span> -->
+        <!-- <ng-select [searchable]="false" placeholder="{{ language.Last_7_Days }}">
+          <ng-option value="5"> {{ language.Last_7_Days }}</ng-option>
+          <ng-option value="10">{{ language.Last_30_Days }} </ng-option>
+        </ng-select> -->
+        <!--<span *ngIf=testForm.get('testName').errors?.required?>Please fill this field</span>
+            <div *ngIf="frequency.errors?.required && (myForm.submitted|| frequency.touched)" id="frequency-error">
+            {{language['This field is required']}}
+          </div> -->
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Tab menu End -->
+
+<section *ngIf="showHome && dataAvailable">
+  <div class="container">
+    <div class="row">
+      <div class="subscriber-trends-wrapper">
+        <div class="subscriber-trends-item">
+          <div class="home-title" id="penoFoundationdSystemStatus">{{ language['Systems Status'] }}</div>
+          <app-system-status (Out_sysStatus)="OnFormData($event)"></app-system-status>
+        </div>
+        <div class="subscriber-trends-item">
+          <div class="home-title">
+            {{ language.System_by_Type }}
+          </div>
+          <app-systems-by-type (Out_sysStatus)="OnFormData($event)"></app-systems-by-type>
+        </div>
+        <div class="subscriber-trends-item">
+          <div class="home-title">
+            {{ language["Systems by Model"] }}
+          </div>
+          <app-subscribers-system-model (Out_sysStatus)="OnFormData($event)"></app-subscribers-system-model>
+        </div>
+        
+      </div>
+    </div>
+    <div class="row">
+      <div class="subscriber-trends-wrapper" >
+        <div class="subscriber-trends-item" *ngIf="MyCommunityIQentitlement || smallBizIQentitlement">
+          <div class="home-title" data-toggle="tooltip" data-placement="top"
+            title="{{language['Systems by Managed Services']}}">
+            {{language['Systems by Managed Services']}}
+          </div>
+          <app-mycommunity-iq></app-mycommunity-iq>
+        </div>
+        <div class="subscriber-trends-item">
+          <div class="home-title" data-toggle="tooltip" data-placement="top"
+            title=' {{smallBizIQentitlement? language["Subscribers with CommandIQ and CommandWorx"]:language["Subscribers with CommandIQ"] }}'>
+            {{smallBizIQentitlement? language["Subscribers with CommandIQ and CommandWorx"]:language['Subscribers with CommandIQ'] }}
+          </div>
+          <app-command-iq-status (Out_commandIQ)="on_CommandIQdata($event)"></app-command-iq-status>
+        </div>
+        <div class="subscriber-trends-item" *ngIf="productIQEnableentitlement || ExperienceIQEnableentitlement || proAndExpEnableentitlement || MyCommunityIQentitlement||this.arloEnableentitlement|| this.arloUnlimitedentitlement || this.arloUnlimitedplusentitlement || this.ServifyEnableentitlement || this.ServifyGoldentitlement || this.ServifySilverentitlement || this.ServifyPlatinumentitlement  || Bark_Premiumentitlement || Bark_Juniorentitlement">
+          <div class="home-title" data-toggle="tooltip" data-placement="top"
+            title="{{language['Subscribers with Managed Services']}}">
+            {{language['Subscribers with Managed Services']}}
+          </div>
+          <app-revenue-edge-iqsuites (Out_EdgeSuitIQ)="on_edgesuitiqData($event)"></app-revenue-edge-iqsuites>
+        </div>
+        <!-- <div class="subscriber-trends-item" *ngIf="this.arloEnableentitlement|| this.arloUnlimitedentitlement || this.arloUnlimitedplusentitlement || this.ServifyEnableentitlement || this.ServifyGoldentitlement || this.ServifySilverentitlement || this.ServifyPlatinumentitlement || Bark_Premiumentitlement || Bark_Juniorentitlement">
+          <div class="home-title" data-toggle="tooltip" data-placement="top"
+            title=" {{language['Subscribers with Managed Services']}}">
+            {{language['Subscribers with Managed Services']}}
+          </div>
+          <app-revenue-edge-ecosystem (Out_EdgeSuitEco)="on_edgesuitecoData($event)"></app-revenue-edge-ecosystem>
+        </div> -->
+      </div>
+      </div>
+      <div class="row">
+        <div class="subscriber-trends-wrapper">
+        </div>
+    </div>
+  </div>
+</section>
+<!-- Button trigger modal -->
+<!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+  Launch demo modal
+</button> -->
+
+<!-- Welcome to Revenue EDGE Deployment Cloud Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+
+        
+      </div>
+
+      <div class="modal-body" style="text-align: center; padding: 42px 30px;">
+        <div class=""><img src="assets/img/calix-Cloud-logo.svg" style="width: 290px;"></div>
+        <div class="cco-title mb-4">{{language['Welcome to']}}<br>
+          {{language['Revenue EDGE Deployment Cloud']}}
+        </div>
+        <div class="cco-secondary-title mb-4" style="line-height: initial !important;">
+          {{language['Before you jump in, we\'d like to walk you']}}<br>
+          {{language['through your system onboarding setup']}}.
+        </div>
+
+        <div class="cco-secondary-title" style="color:#0279ff !important">
+          {{language.Lets_Started}}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<ng-template #GetStartedModal let-modal class="col-md-12" >
+  <div class="modal-content">
+
+    <div class="modal-header">
+      <div class="col-md-10"></div>
+      <div class="col-md-2 text-right"> <span class="close-icon pointer" (click)="closeAllModal()" ><img src="assets/img/close-icon.svg" alt="" ></span>
+      </div>
+    </div>
+
+    <div class="modal-body" style="text-align: center; padding: 42px 30px;">
+      <div class=""><img src="assets/img/calix-Cloud-logo.svg" style="width: 290px;"></div>
+      <div class="cco-title mb-4">{{language['Welcome to']}}<br>
+        {{language['Revenue EDGE Deployment Cloud']}}
+      </div>
+      <div class="cco-secondary-title mb-4" style="line-height: initial !important;">
+        {{language['Before you jump in, we\'d like to walk you']}}<br>
+        {{language['through your system onboarding setup']}}.
+      </div>
+
+      <div class="cco-secondary-title " style="color:#0279ff !important" (click)="goToInitialOnboarding()">
+        <span class="cursor-pointer">{{language.Lets_Started}}</span>
+      </div>
+    </div>
+  </div>
+</ng-template>

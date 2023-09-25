@@ -1,0 +1,140 @@
+<div class="container-fluid">
+    <div class="row basic-sec" *ngIf="!subscriber && !Device" style="background-color: #F8F8FA;padding: 20px 0px;">
+        <div class="col-12">
+            <div class="flex-start">
+                <div class="form-group tab-reg">
+                    <label for="Name" class="col-sm-3 col-form-label select-font">{{language.region}}</label>
+                    <div class="col-sm-12" id="regionSelect">
+                        <ng-select [(ngModel)]="regionSelected" [items]="regionsDataArray" class="selectboxwidth"
+                            [ngModelOptions]="{standalone: true}" (ngModelChange)="selectRegion($event)"
+                            [clearable]="false" [searchable]="true">
+                        </ng-select>
+                    </div>
+
+                </div>
+                <div class="form-group tab-reg">
+                    <label for="Location" class="col-sm-4 col-form-label select-font">{{language.Location}}</label>
+                    <div class="col-sm-12" id="locationSelect">
+                        <ng-select [(ngModel)]="locationSelected" [items]="locationData" bindLabel="value"
+                            (ngModelChange)="selectLocation($event)" class="selectboxwidth"
+                            [ngModelOptions]="{standalone: true}" [clearable]="false" [searchable]="true">
+                        </ng-select>
+                    </div>
+                </div>
+                <div class="form-group tab-reg">
+                    <label for="Timeframe" class="col-sm-12 col-form-label select-font">{{language.Timeframe}}</label>
+                    <div class="col-sm-12" id="timeFrameSelect">
+                        <ng-select [(ngModel)]="activePeriod" [items]="timeframes" bindLabel="name" bindValue="value"
+                            (ngModelChange)="selectTimeFrame($event)" class="selectboxwidth"
+                            [ngModelOptions]="{standalone: true}" [clearable]="false" [searchable]="true">
+                        </ng-select>
+                    </div>
+                </div>
+                <div class="form-group tab-reg d-flex">
+                    <div>
+                        <label lass="col-sm-4 col-form-label ">&nbsp;</label>
+                        <div class=" col-sm-12" id="applyFilter">
+                            <button [disabled]="applyDisabled" (click)="applyFiler()"
+                                class="btn-default primary">{{language.apply}}</button>
+                        </div>
+                    </div>
+                    <div *ngIf="regionSelected != language.All ||  locationSelected != language.All || activePeriod != 'last-30d'">
+                        <label for="Clear" class="col-sm-4 col-form-label ">&nbsp;</label>
+                        <div class="col-sm-12" id="clearFilter">
+                            <label style="cursor: pointer;" class="col-sm-12 mb-0 select-font select-color"
+                                (click)="applyClearFiler()">{{language.Clear}}</label>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <section class="mt-4" *ngIf="Device">
+        <div class="container">
+            <div class="row justify-content-end">
+                <div class="col-md-2 float-right text-right pr-0">
+                    <div class="custom-selectbox" class="w-100" id="current-issues-interval">
+                        <span>{{ language["Last 30 days"] }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div [ngClass]="(!divopen)?'col-md-2':'col-md-1'" style="position: relative;padding:0px;">
+            <div id="mySidebar" class=" ccl-tabs sidebar" *ngIf="!subscriber">
+                <ul id="exploreData-list-menu" class="nav flex-column left-menu tab-view-style">
+                    <!-- <li class="nav-item">
+                    <i style="float: right;" (click)="CloseNav()" class="fas fa-chevron-left">close</i>
+                 </li> -->
+                    <li class="nav-item" style="width: 100%;" id="subscribeData-list-menu"><a
+                            class="list-group-item list-group-item-action" style="cursor: pointer;"
+                            (click)="chartChange('subscribe')"
+                            [ngClass]="{'active': subscribe}">{{language.Subscribers}}</a>
+                    </li>
+                    <li class="nav-item" style="width: 100%;" id="serviceData-list-menu"><a
+                            class="list-group-item list-group-item-action" style="cursor: pointer;"
+                            (click)="chartChange('service')" [ngClass]="{'active': service}">{{language.Services}}</a>
+                    </li>
+                    <li class="nav-item" style="width: 100%;" id="applicationData-list-menu"><a
+                            class="list-group-item list-group-item-action" style="cursor: pointer;"
+                            (click)="chartChange('application')"
+                            [ngClass]="{'active': application}">{{language.Applications}}</a>
+                    </li>
+                    <li class="nav-item" style="width: 100%;" id="retentionData-list-menu"><a
+                            class="list-group-item list-group-item-action" style="cursor: pointer;"
+                            (click)="chartChange('retention')"
+                            [ngClass]="{'active': Retention}">{{language.Retention}}</a></li>
+                    <li class="nav-item" style="width: 100%;" id="acquisitionData-list-menu"><a
+                            class="list-group-item list-group-item-action wh-space" style="cursor: pointer;"
+                            (click)="chartChange('acquisition')"
+                            [ngClass]="{'active': Acquisition}">{{language.Acquisitions}}</a>
+                    </li>
+                    <li class="nav-item" style="width: 100%;" id="deviceData-list-menu"><a
+                            class="list-group-item list-group-item-action" style="cursor: pointer;"
+                            (click)="chartChange('device')"
+                            [ngClass]="{'active': Device}">{{language.Systems_basic}}</a>
+                    </li>
+
+                </ul>
+            </div>
+            <ng-container *ngIf="pageavailble">
+                <div><i [ngClass]="(divopen)?'d-block':'d-none'" (click)="openNav()"
+                        class="fas fa-chevron-right circle-icon"></i></div>
+                <!--open-->
+                <div><i [ngClass]="(!divopen)?'d-block':'d-none'" (click)="CloseNav()"
+                        class="fas fa-chevron-left chevron-icon circle-icon"></i></div>
+                <!--close-->
+            </ng-container>
+        </div>
+
+        <div [ngClass]="(!divopen)?'col-sm-10 col-md-10 col-lg-10 pr-0':'col-sm-11 col-md-11 col-lg-11 pr-0'" class="">
+            <div>
+                <ng-container *ngIf="activeChart == 'application'">
+                    <app-marketing-application-chart></app-marketing-application-chart>
+                </ng-container>
+                <ng-container *ngIf="activeChart == 'retention'">
+                    <app-marketing-retention-chart></app-marketing-retention-chart>
+                </ng-container>
+                <ng-container *ngIf="activeChart == 'service'">
+                    <app-marketing-service-chart></app-marketing-service-chart>
+                </ng-container>
+                <ng-container *ngIf="activeChart == 'acquisition'">
+                    <app-marketing-acquisition-chart></app-marketing-acquisition-chart>
+                </ng-container>
+                <ng-container *ngIf="activeChart == 'subscribe'">
+                    <app-marketing-subscrib-chart></app-marketing-subscrib-chart>
+                </ng-container>
+                <ng-container *ngIf="activeChart == 'device'">
+                    <app-marketing-device-chart></app-marketing-device-chart>
+                </ng-container>
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,113 @@
+<div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess">
+  {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} </div>
+<div id="configure-filess" class="tab-pane" *ngIf="hasScopeAccess">
+  <div class="d-block  my-3 d-sm-none ccl-Secondary-title mb-2 col-md-12 border-bottom">Configuration Files</div>
+  <!-- <div class="row">
+    <div class="col-md-6 my-3">
+      <button *ngIf="hasWriteAccess" type="button" id="add-config-btn" class="btn-default primary px-3 px-3" (click)="ssoAuthService.redirectByUrl([
+        '/support/netops-management/operations/configuration-files-form',
+        '/cco/operations/cco-system-operations/configuration-files/configuration-files-form', '',
+        '/cco/operations/cco-subscriber-operations/operations/configuration-files-form'
+      ])">{{language.Add_Config_File}}</button>
+    </div>
+  </div> -->
+
+  <div class="pb-2">
+
+    <div class="w-100 alert alert alert-danger  fade show" *ngIf="showError">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+      <button type="button" id="hide-error-btn" class="close" (click)="hideError()"><span></span></button>
+      <div class="d-inline-flex" [innerHtml]="language[errorMsg] || errorMsg"></div>
+    </div>
+
+    <div class="w-100 alert alert alert-success  fade show" *ngIf="showSuccess">
+      <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+      <button type="button" id="hide-success-btn" class="close" (click)="hideSuccess()"><span></span></button>
+      <div class="d-inline-flex" [innerHtml]="successMsg"></div>
+
+    </div>
+
+    <div class="py-3 warning-msg " *ngIf="deleteData?.name">
+      <span class="error-img"><img src="./assets/img/warning-icon.svg"></span>
+      <span>{{language['Are you sure you want to delete the configuration']}} <b>{{ modalInfo }}</b></span>
+      <div class="btn-con-sec float-right">
+        <button class="btn-default btn-primary px-3 mr-2" id="confirm-btn" (click)="deleteConfigFile()">
+          {{language.Confirm}}
+        </button>
+        <button class="btn-default btn-dft py-1" id="cancel-btn" (click)="closeModal();">
+          {{language.Cancel}}
+        </button>
+      </div>
+    </div>
+    <div class="table-responsive configuration-files-table position-relative">
+      <div class="loader" *ngIf="loading">
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border text-primary">
+            <span class="sr-only">{{language.Loading}}</span>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6 my-3">
+          <button *ngIf="hasWriteAccess" type="button" id="add-config-btn" class="btn-default primary px-3 px-3"
+            (click)="gotoAdd()">{{language.Add_Config_File}}</button>
+        </div>
+      </div>
+      <table *ngIf="dtRendered" id="configurationFilesTable" datatable [dtOptions]="tableOptions" class="
+ table table-hover table-striped">
+        <thead>
+          <tr>
+            <th scope="col">{{language.Name}}</th>
+            <th scope="col">{{language.description}}</th>
+            <th scope="col">{{language.type}}</th>
+            <th scope="col">{{language.Version}}</th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="{{file._id}}" *ngFor="let file of filesListObj">
+            <td>{{ file.name }}</td>
+            <td>{{ file.description }}</td>
+            <td>{{ language[file.type] || file.type }} </td>
+            <td>{{ file.version }}</td>
+            <td *ngIf="hasWriteAccess;else elseBlock" class="actions">
+              <a (click)="deleteConfigFileConfirm(file)" title="{{language.delete}}" style="cursor: pointer;"
+                class="fa fa-trash-o" aria-hidden="true">
+              </a>
+            </td>
+            <ng-template #elseBlock>
+              <td></td>
+            </ng-template>
+          </tr>
+        </tbody>
+        <tbody *ngIf="filesListObj?.length == 0">
+          <tr>
+            <td colspan="5" class="no-data-available">{{language['No data available in table']}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- Modals -->
+<!-- <ng-template #deleteConfiguratioModal let-data let-ref="dialogRef">
+
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{modalTitle}}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        {{ modalInfo }}
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn-default primary px-3" data-dismiss="modal"
+            (click)="closeModal()">{{language.no}}</button>
+        <button type="button" class="btn-default primary px-3" data-dismiss="modal"
+            (click)="deleteConfigFile()">{{language.yes}}</button>
+    </div>
+  </ng-template> -->
+<!-- Modals -->

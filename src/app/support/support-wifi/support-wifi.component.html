@@ -1,0 +1,145 @@
+<app-subscriber-menu [responseFromIssuse]="apiCallDone"></app-subscriber-menu>
+<section>
+  <div class="row">
+    <div class="col-md-12 ccl-tabs wifi-content-tab my-3">
+      <ul id="tabs" class="nav nav-tabs">
+        <li class="nav-item" *ngFor="let device of deviceData; let i = index" id="wifi-router-tab-{{ i }}">
+          <a href="javascript:void(0)" *ngIf="device.opMode == 'RG' && wifiRead && !isModel7XX"
+            [routerLink]="['rg', device.serialNumber]" data-toggle="tab" class="nav-link small"
+            [ngClass]="[activeTab == device.serialNumber ? 'active' : '']"
+            [class.active]="router.isActive('/' + MODULE + '/wifi/rg/' + device.serialNumber, false)"
+            (click)="setActiveTab(device.serialNumber, device)">
+            <span class="small-text">{{ device.modelName }}</span>
+            <span class="big-text">{{ device.serialNumber }}</span>
+            <span class="small-text">{{
+              device.opMode == "RG"
+              ? (ssoService.isSmbEnabled(false) ? language['Small Business Gateway'] : language.Residential_Gateway)
+              : language.WAP.replace("WAP-IGMP", "Mesh(SAT)").replace(
+              "WAP",
+              "Mesh(SAT)"
+              )
+              }}</span>
+          </a>
+          <a href="javascript:void(0)" *ngIf="device.opMode !== 'RG' && wifiRead"
+            [routerLink]="['extender', device.serialNumber]" data-toggle="tab" class="nav-link small"
+            [ngClass]="[activeTab == device.serialNumber ? 'active' : '']"
+            [class.active]="router.isActive('/' + MODULE + '/wifi/extender/' + device.serialNumber, false)"
+            (click)="setActiveTab(device.serialNumber, device)">
+            <span class="small-text">{{ device.modelName }}</span>
+            <span class="big-text">{{ device.serialNumber }}</span>
+            <span class="small-text">{{
+              device.opMode == "RG"
+              ? (ssoService.isSmbEnabled(false) ? language['Small Business Gateway'] : language.Residential_Gateway)
+              : language.WAP.replace("WAP-IGMP", "Mesh(SAT)").replace(
+              "WAP",
+              "Mesh(SAT)"
+              )
+              }}</span>
+          </a>
+        </li>
+        <!--<li class="nav-item" *ngIf="wifiRead" id="wifi-ssid-mgr-tab" (click)="setActiveTab('ssid','')">
+          <a href="javascript:void(0)" routerLink="./ssid" (click)="setActiveTab('ssid','')"
+            [ngClass]="[activeTab == 'ssid' ? 'active' : '']"
+            [class.active]="router.isActive('/' + MODULE + '/wifi/ssid', false) || router.isActive('/' + MODULE + '/wifi/ssidold', false)"
+            class="nav-link small" data-toggle="tab">
+            <span class="big-text"> {{ language.SSID_Manager }}</span>
+          </a>
+        </li>-->
+        <li class="nav-item" *ngIf="wifiRead" id="wifi-ssid-mgr-tab" (click)="setActiveTab('ssid','')">
+          <a href="javascript:void(0)" routerLink="./ssid" (click)="setActiveTab('ssid','')"
+            [ngClass]="[activeTab == 'ssid' ? 'active' : '']"
+            [class.active]="router.isActive('/' + MODULE + '/wifi/ssid', false) || router.isActive('/' + MODULE + '/wifi/ssidold', false)"
+            class="nav-link small" data-toggle="tab">
+            <span class="big-text"> {{ language.SSID_Manager }}</span>
+          </a>
+        </li>
+        <!-- remove later -->
+        <!-- <li class="nav-item" id="" *ngIf="isSmbEnabled()">
+          <a href="javascript:void(0)" routerLink="./network-resilience" (click)="setActiveTab('network-resilience','')"
+            [ngClass]="[activeTab == 'network-resilience' ? 'active' : '']"
+            [class.active]="router.isActive('/' + MODULE + '/wifi/network-resilience', false) || router.isActive('/' + MODULE + '/wifi/network-resilience', false)"
+            class="nav-link small" data-toggle="tab">
+            <span class="big-text"> {{language['Network Resilience']}}</span>
+          </a>
+        </li> -->
+        <!-- remove later -->
+        <div class="col text-right justify-content-end">
+          <div class="align-self-end" id="wifi-self-heal-container" *ngIf="
+              wifiRead && showSelfHeal && ssoService.getCscType() !== 'DME' && subsId
+            ">
+            <div class="d-inline">
+              <div>{{ language.Self_Heal }}</div>
+              <div class="small-text">
+                {{
+                ssidSelfHealTime
+                ? (ssidSelfHealTime | date: "MM/dd/yyyy, hh:mm:ss a")
+                : ""
+                }}
+              </div>
+            </div>
+            <div class="d-inline toggle-swtbtn checkbox switcher">
+              <label for="wifi-self-heal-slider">
+                <input type="checkbox" id="wifi-self-heal-slider" checked name="ssidSelfHeal" [(ngModel)]="ssidSelfHeal"
+                  (click)="openSelfHealConfirmModal($event)" [disabled]="!wifiWrite" />
+                <span><small></small></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </ul>
+
+      <div id="tabsContent" class="tab-content">
+        <div id="issue" class="tab-pane fade active show">
+          <div class="row pb-2"></div>
+        </div>
+        <div id="topology" class="tab-pane fade">
+          <div class="row pb-2"></div>
+        </div>
+
+        <div id="ssidmanager" class="tab-pane fade">
+          <div class="row pb-2"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<router-outlet></router-outlet>
+
+<ng-template #selfHealConfirmModal let-modal class="col-md-12 custom-modal">
+  <div class="modal-header">
+    <h5 class="modal-title" id="self-heal-confirm-modal">
+      {{ language.Confirm }}
+    </h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body" id="self-heal-confirm-wrapper" style="padding-left: 20px">
+    <!-- <div class="loader" *ngIf="wpsUpdating">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                </div>
+            </div>
+        </div>
+        <div class="w-100 alert alert alert-danger  fade show" *ngIf="wpsError">
+            <button type="button" class="close" (click)="wpsError = false;">&times;</button>
+            <div [innerHtml]="wpsErrorInfo"></div>
+        </div> -->
+    <div class="row">
+      <div class="col-md-12 px-0">
+        <h5>{{ selfHealConfirmMessage }}</h5>
+      </div>
+      <div class="add-bnt">
+        <button type="button" id="self-heal-confirm-btn" class="btn-default primary px-3" (click)="doSsidSelfHeal()">
+          {{ language.Confirm }}
+        </button>
+        <button type="button" id="self-heal-cancel-btn" class="btn-default transparant px-3 m-2" (click)="closeModal()"
+          data-dismiss="modal">
+          {{ language.Cancel }}
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>

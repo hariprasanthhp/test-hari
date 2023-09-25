@@ -1,0 +1,16 @@
+<div class="dasboard-frame" style="min-height: 600px;">
+    <div class="w-100 alert alert alert-danger  fade show" *ngIf="isError">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+        <button type="button" class="close" (click)="isError = false;"><span></span></button>
+        {{alertMessage}}
+    </div>
+    <!-- <div class="loader" *ngIf="loader">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    </div> -->
+    <iframe *ngIf="frameUrl && !isRefreshing" class="embed-responsive-item" [src]="frameUrl" allowfullscreen="" style="width: 100%;
+    height: 100%"></iframe>
+</div>

@@ -1,0 +1,41 @@
+<div class="container px-0 position-relative">
+    <div class="loader" *ngIf="loading">
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border text-primary">
+            <span class="sr-only">{{ language.Loading }}</span> 
+          </div>
+        </div>
+      </div>
+    <div class="row">
+        <div class="col-6 ccl-form mt-3">
+            <div class="w-100 alert alert-success fade show my-3" *ngIf="success">
+                <span class="mr-3">
+                    <img src="../../../../assets/img/ic_success-circle-outline.svg" width="24px" />
+                </span>
+                <button type="button" class="close" (click)="success = false">
+                    <span></span>
+                </button>
+                <div class="d-inline-flex">
+                    {{language['Changes saved successfully']}}
+                </div>
+            </div>
+            <label class="mb-0">{{language['Data Source']}}</label>
+            <ng-select width="100%" [items]="dataSourceItems" bindValue="value" bindLabel="name" [clearable]="false"
+                [searchable]="false" [(ngModel)]="useAsmApplication" (change)="detectChange($event)" class="ng-select-datasource">
+                <ng-template ng-option-tmp let-item="item">
+                    <div class="text-truncate" title="{{item.name}}">
+                        {{item.name}}
+                    </div>
+                    <div class="text-truncate select-muted-text" title="{{item.content}}">
+                        {{item.content}}
+                    </div>
+                </ng-template>
+            </ng-select>
+        </div>
+        <div class="col-12">
+            <button type="button" (click)="save()" [disabled]="!showButton" class="btn-default btn-primary mt-3">
+                {{language['save']}}
+            </button>
+        </div>
+    </div>
+</div>

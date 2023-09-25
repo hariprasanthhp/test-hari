@@ -1,0 +1,35 @@
+<div class="position-relative">
+    <div class="container">
+        <div class="row my-3">
+            <div class="col-lg-2 col-md-3 col-sm-12 ccl-tabs pl-0">
+                <div class="loader" *ngIf="loading">
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border text-primary">
+                            <span class="sr-only">{{language.Loading}}</span>
+                        </div>
+                    </div>
+                </div>
+                <ul id="netops-list-menu" class="nav flex-column left-menu tab-view-style">
+                    <li class="nav-item">
+                        <a id="network-resilience" class="list-group-item list-group-item-action"
+                            [ngClass]="activeTab == 'network-resilience'? 'active': ''" href="javascript:void(0)"
+                            (click)="activeTab = 'network-resilience'">
+                            {{ language['Network Resilience'] }}
+                        </a>
+                    </li> <!-- add conditions if any -->
+                    <li class="nav-item">
+                        <a id="customer-portal" class="list-group-item list-group-item-action"
+                            [ngClass]="activeTab == 'customer-portal'? 'active': ''" href="javascript:void(0)"
+                            (click)="activeTab = 'customer-portal'">
+                            {{ language['Customer Portal'] }}
+                        </a>
+                    </li> <!-- add conditions if any -->
+                </ul>
+            </div>
+            <div class="col-lg-10 col-md-9 col-sm-12">
+                <network-resilience *ngIf="activeTab == 'network-resilience'"></network-resilience>
+                <customer-portal *ngIf="activeTab == 'customer-portal'"></customer-portal>
+            </div>
+        </div>
+    </div>
+</div>

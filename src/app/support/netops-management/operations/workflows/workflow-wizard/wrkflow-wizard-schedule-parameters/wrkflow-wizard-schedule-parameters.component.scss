@@ -1,0 +1,137 @@
+.f-w-600 {
+    font-weight: 600;
+}
+
+[type=radio]:checked,
+[type=radio]:not(:checked) {
+    position: relative !important;
+    left    : unset !important;
+}
+
+
+ul.date-order {
+    display: inline-flex;
+    width  : 100%;
+}
+
+ul.date-order li {
+    width: 15%;
+}
+
+.ccl-form.number-input {
+    width      : 50%;
+    margin-left: 10px;
+}
+
+.number-input input {
+    padding-right: 5px;
+    color        : #222;
+}
+
+// .radio-inline {
+//     cursor: pointer;
+// }
+
+.workflow-oneline {
+    display      : flex;
+    align-items  : center;
+    margin-bottom: 20px;
+}
+
+.workflow-oneline .form-group {
+    margin-bottom: 0px;
+    width        : 65px;
+    margin       : 0px 10px;
+}
+
+.weekly-days {
+    display    : flex;
+    align-items: center;
+
+}
+
+.weekly-days .checkbox-inline {
+    // width: 14%;
+}
+
+.weekly-days .checkbox-inline label {
+    cursor: pointer;
+}
+
+.days-line {
+    padding-left: 5px;
+}
+
+.mont-list .ccl-form {
+    width      : 20%;
+    display    : flex;
+    align-items: center;
+}
+
+.mont-list .ccl-form input {
+    width        : 50%;
+    padding-right: 5px;
+}
+
+.mont-list .ccl-form span {
+    padding-left: 10px;
+}
+
+.mont-list label.radio-inline {
+    margin-right: 9px;
+}
+
+.ccl-form .occurr-end {
+    display    : flex;
+    align-items: center;
+}
+
+.ccl-form .occurr-end .occur-input {
+    width      : 11%;
+    margin-left: 10px;
+}
+
+.ccl-form .occurr-end input {
+    padding-right: 5px;
+}
+
+.mothly-error-div {
+    display    : flex;
+    align-items: start;
+    width      : auto;
+}
+
+.mothly-error-div .daily-month-error {
+    width        : 28%;
+    padding-right: 10px;
+    font-size    : 13px;
+}
+
+.days-label label {
+    padding-right: 15px;
+    margin       : 0px;
+}
+
+.days-label label input {
+    margin-right: 5px;
+}
+
+.custom-selectbox-shedule-par .ng-dropdown-panel {
+    z-index: 1;
+
+    width         : 100%;
+    padding-top   : 10px;
+    padding-bottom: 10px;
+    border-radius : 10px !important;
+    min-height    : auto;
+    max-height    : 260px;
+    overflow-y    : auto;
+    font-size     : 14px;
+    transition    : 0.5s ease;
+}
+
+.alert-note {
+    color           : #1A1F22;
+    background-color: #F5FAFF;
+    border-color    : #F5FAFF;
+}

@@ -1,0 +1,32 @@
+<div class="analytic-widget" *ngIf="pageAvailable">
+  <div class="analytic-widget-header">
+    <div class="d-flex justify-content-between">
+      <div class="mx-2">
+        <span class="widget-title" title="{{chartName}}"> {{chartName}} </span>
+        <a class="legend-label toggle-up" (click)="toggleUpStream();">
+          <span class="legend-glyph" style="background-color: #0027FF;"></span>
+          {{language.up}}
+        </a>
+        <a class="legend-label toggle-down" (click)="toggleDownStream();">
+          <span class="legend-glyph" style="background-color: #5ACFEA"></span>
+          {{language.down}}
+        </a>
+        <span class="interval">{{language.interval}} 1 sec</span>
+      </div>
+
+      <div class="mx-2" style="text-align: right;">
+        <span class="traffic-volume monitor-status-normal">
+          <span style="color: #0027FF;"><i class="fa fa-arrow-up" aria-hidden="true"></i> {{upRate | unit_convert:
+            'rate'}}</span>
+          <span style="color: #5ACFEA;"><i class="fa fa-arrow-down" aria-hidden="true"></i> {{downRate | unit_convert:
+            'packet'}}</span>
+        </span>
+
+      </div>
+    </div>
+    <div class="analytic-widget-body">
+      <highcharts-chart [Highcharts]="highcharts" [options]="streamOptions" *ngIf="load" id="custom-mirrot-chart"
+        style="width: 100%; display: block;">
+      </highcharts-chart>
+    </div>
+  </div>

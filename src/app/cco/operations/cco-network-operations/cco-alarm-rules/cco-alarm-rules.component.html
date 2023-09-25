@@ -1,0 +1,153 @@
+<section class="ccl-form" [ngClass]="{ disable: !hasWriteAccess }">
+  <!-- <ng-container *ngIf="alarmsList['alarmListForm']"> -->
+    <div class="w-100 alert alert-danger fade show my-3" *ngIf="error">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+        <button type="button" class="close" (click)="closeAlert()">
+          <span></span>
+        </button>
+        <div class="d-inline-flex" [innerHtml]="language[errorInfo] || errorInfo"></div>
+      </div>
+      <div class="w-100 alert alert-success fade show my-3" *ngIf="success">
+        <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+        <button type="button" class="close" (click)="success = false">
+          <span></span>
+        </button>
+        <div class="d-inline-flex" [innerHtml]="language[successInfo] || successInfo"></div>
+      </div>
+      <div class="row mb-3" *ngIf="loading">
+        <div class="col-md-12">
+          <div class="loader mt-5">
+            <div class="d-flex justify-content-center">
+              <div class="spinner-border text-primary">
+                <span class="sr-only">{{ language.Loading }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <form [formGroup]="alarmsList?.alarmListForm">
+      <div class="row">
+        <div class="col-md-12 mb-2 mt-1">
+          <label class="cco-secondary-title">{{language['Multiple - ONTs - Down']}}</label>
+        </div>
+      </div>
+      <ng-container
+        *ngIf="
+          alarmsList['alarmRulesData'] &&
+          alarmsList['alarmRulesData'].length > 0
+        "
+      >
+        <ng-container formArrayName="alarmsFormArray">
+          <ng-container
+            [formGroupName]="i"
+            *ngFor="
+              let days of alarmsList?.alarmListForm?.controls?.alarmsFormArray
+                ?.controls;
+              let i = index
+            "
+          >
+         
+            <div class="row">
+              <div class="col-md-12 mt-2">
+                <div class="form-group form-check">
+                  <input
+                    formControlName="checked"
+                    [ngClass]="{ greyout: !hasWriteAccess }"
+                    type="checkbox"
+                    class="form-check-input"
+                    id="{{ alarmsList?.alarmRulesData[i].value }}"
+                    (click)="onChangeCheckbox('check', $event, 'checked', i)"
+                  />
+                  <label
+                    class="form-check-label cursor-pointer"
+                    for="{{ alarmsList?.alarmRulesData[i].value }}"
+                    >{{ language[alarmsList?.alarmRulesData[i].display_name] || alarmsList?.alarmRulesData[i].display_name }}
+                  </label>
+                </div>
+              </div>
+              <div class="col-md-12 row-group" >
+                <!-- [ngClass]="{
+                  'diable-div':
+                  alarmsList?.alarmRulesData[i]['checked'] == false
+                }" -->
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label class="col-form-label"
+                        >{{language['Raised Count']}} <span class="error">*</span></label
+                      >
+                      <input
+                        formControlName="raiseThreshold"
+                        type="number"
+                        placeholder="2"
+                        [min]="alarmsList?.alarmRulesData[i]?.raiseCountMin"
+                        [max]="alarmsList?.alarmRulesData[i]?.raiseCountMax"
+                        (keyup)="enforceMinMax($event, 'raiseThreshold', i)"
+                        (change)="enforceMinMax($event, 'raiseThreshold', i)"
+                        (keydown)="avoidInvalidValues($event)"
+                      />
+                      <!-- (input) = "onInputRaiseThreshold($event, 'raiseThreshold', i)" -->
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label class="col-form-label"
+                        >{{language['Clear Count']}} <span class="error">*</span></label
+                      >
+                      <input
+                        formControlName="clearThreshold"
+                        type="number"
+                        placeholder="0"
+                        min="0"
+                        [max]="alarmsList?.alarmRulesData[i]?.raiseThreshold-1"
+                        (keyup)="enforceMinMax($event, 'clearThreshold', i)"
+                        (keydown)="avoidInvalidValues($event)"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label class="col-form-label"
+                        >{{language.Duration}} (minutes) <span class="error">*</span></label
+                      >
+                      <input
+                        formControlName="duration"
+                        type="number"
+                        [min]="alarmsList?.alarmRulesData[i]?.durationMin"
+                        [max]="alarmsList?.alarmRulesData[i]?.durationMax"
+                        (keyup)="enforceMinMax($event, 'duration', i)"
+                        placeholder="{{language['1-120 mins']}}"
+                        (keydown)="avoidInvalidValues($event)"
+                      />
+                    </div>
+                  </div>
+                  <!-- <div class="col-md-3 name-col">
+                          <div class="form-group">
+                            <label class="col-form-label"
+                              >Name of the alarm <span class="error">*</span></label
+                            >
+                            <input type="text" placeholder="Name" />
+                          </div>
+                        </div> -->
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+    </form>
+  <!-- </ng-container> -->
+
+  <div class="row" *ngIf = "hasWriteAccess">
+    <div class="col-md-12">
+      <div class="form-group mt-3" *ngIf = "!cco_entitlement">
+        <button class="btn-default primary" [disabled] = "alarmsList.disableSaved" (click)="crudAlarmRules()">
+          {{language.Save}}
+        </button>
+        <button class="btn-default btn-dft ml-2" [disabled] = "alarmsList.disableCleared" (click)="setAlarmListForm('clear')">
+          {{language.Clear}}
+        </button>
+      </div>
+    </div>
+  </div>
+</section>

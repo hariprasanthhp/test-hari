@@ -1,0 +1,97 @@
+.issue {
+  color: #C70000;
+}
+
+.warning {
+  color: orange;
+}
+
+.resolved {
+  color: black;
+}
+
+:host ::ng-deep .dataTables_empty {
+  display: none;
+}
+
+.no-data-available {
+  text-align: center;
+}
+
+
+.btn-white {
+  border-radius: 16px;
+  padding: 5px;
+  min-width: 40px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 400;
+  color: black;
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.15);
+  border: 0;
+  background-color: white;
+  margin: 2px;
+}
+
+i {
+  font-size: 16px;
+}
+
+
+tbody {
+  tr {
+    td {
+      font-size: 12px;
+      font-weight: 400;
+      ///color: $greyaa;
+      vertical-align: middle;
+      // padding:13px 8px 15px;
+      border-top: 0 !important;
+      border-bottom: 1px solid #cccccc;
+      word-break: break-word;
+
+      a {
+        padding: 0px !important;
+      }
+
+      // button {
+      //   &.not {
+      //     background: transparent;
+      //     border: 0;
+      //     padding: 0;
+      //     width: 9px;
+      //   }
+      //   &:focus {
+      //     outline: none;
+      //     border: 0;
+      //     box-shadow: none;
+      //   }
+      // }
+    }
+  }
+}
+
+table.dataTable tbody tr td {
+  font-size: 13px;
+  font-weight: 400;
+  color: #4C4C4C;
+  padding: 0px 10px;
+  border-top: 0 !important;
+  border-bottom: 1px solid transparent;
+  word-break: break-word;
+  min-height: 45px;
+}
+.img-float{
+  height: 100%;
+  float: left;
+  width: 20%;
+  margin-right: 10px;
+  text-align: center;
+
+  .modem-icon{
+    width: 100%;
+  }
+  .ic-wifi{
+    width: 100%;
+  }
+}

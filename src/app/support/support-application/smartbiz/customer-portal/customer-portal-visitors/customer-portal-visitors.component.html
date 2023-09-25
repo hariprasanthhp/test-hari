@@ -1,0 +1,13 @@
+<div class="mb-5" [formGroup]="form">
+    <p class="p-0">
+        {{ language['login_retention_description'] }}
+    </p>
+    <div class="d-flex mt-2">
+        <label class="pr-3 pb-0 pt-2">{{language['Login Retention']}}</label>
+        <div class="w-100px">
+            <ng-select [searchable]="false" [items]="retentionDays" [clearable]="false" bindLabel="id" bindValue="value"
+                formControlName="loginRetentionDays" (change)="loginRetentionChanged()">
+            </ng-select>
+        </div>
+    </div>
+</div>

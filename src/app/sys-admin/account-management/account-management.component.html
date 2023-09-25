@@ -1,0 +1,88 @@
+<div class="row my-3">
+    <div class="col-md-12">
+        <div class="ccl-admin-title">{{language['Account Management']}}</div>
+        <p *ngIf="showMFALink" class="management-link">To grant 3rd party users access to your organization, please
+            use this <a class="cursor-pointer" (click)="openMFALink()">link <img
+                    src="../../../assets/img/External Link-blue.svg" alt="">.</a></p>
+    </div>
+</div>
+
+<div class="w-100 alert alert-danger  fade show" *ngIf="error">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+    <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+    <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+</div>
+
+<div class="w-100 alert alert-success fade show" *ngIf="success">
+    <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+    <div [innerHtml]="successInfo"></div>
+</div>
+
+
+<div class="row my-3">
+    <div class="col-md-4 offset-md-0">
+        <form [formGroup]="accountsForm">
+            <div class="form-group ccl-form">
+                <label for="inputPassword4">Select an Account
+                    <span class="required-field">*</span>
+                </label>
+                <ng-select formControlName="org" [items]="orgsList" bindLabel="orgName" bindValue="orgId"
+                    [clearable]="false" [ngModelOptions]="{standalone: true}" placeholder="Select"
+                    notFoundText="{{language.noItemsFound}}" (change)="tableRerender()">
+                </ng-select>
+            </div>
+            <div class="form-group ccl-form">
+                <label for="inputPassword4">Default Role
+                    <span class="required-field">*</span>
+                </label>
+                <ng-select formControlName="roleId" [items]="roles" bindLabel="name" bindValue="_id" [clearable]="false"
+                    [ngModelOptions]="{standalone: true}" placeholder="Accounts"
+                    notFoundText="{{language.noItemsFound}}">
+                </ng-select>
+            </div>
+        </form>
+
+    </div>
+
+
+</div>
+<div class="row col-md-3 ccl-form mt-4 position-relative px-0" [hidden]="!showTable">
+    <input id="search-user" placeholder="{{language['searchUsers']}}" [formControl]="searchUser" class="ccl-input">
+    <i *ngIf="searchUser?.value" class="search-close fas fa-times" (click)="clearSearchInp()"></i>
+</div>
+<div class="row">
+
+    <div class="col-md-8" *ngIf="showTable">
+
+        <table id="add-role-users" width="100%" class="table table-sm row-border w-100" datatable
+            [dtOptions]="dtOptions">
+            <thead class="header-color">
+                <tr>
+                    <th>{{language.userName}}</th>
+                    <th>{{language.Action}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of userListForOrg">
+                    <td>{{item?.userName}}</td>
+                    <td class="actions" (click)="gotoUserDetail(item)">
+                        <i class="fas fa-pencil-alt p-1 primary cursor-pointer" title="{{language.Edit}}"></i>
+                    </td>
+                </tr>
+            </tbody>
+            <tbody *ngIf="(userListForOrg?.length == 0 || filterCount == 0)">
+                <tr>
+                    <td colspan="5" class="no-data-available">{{filterAndSearchFlag ? language['No matching records found']
+                        :language['No data available in table']}}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <button type="button" class="btn btn-primary" (click)="onSubmit()" [disabled]="disableBtn">
+            {{ language.submit }}
+        </button>
+        <button type="button" id="add-call-home" class="btn-default transparant px-3 m-2" (click)="clearForm()">
+            {{ language.Cancel }}
+        </button>
+    </div>
+</div>

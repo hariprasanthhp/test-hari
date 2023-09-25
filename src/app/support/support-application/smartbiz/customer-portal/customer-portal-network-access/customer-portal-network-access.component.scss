@@ -1,0 +1,117 @@
+::ng-deep .captive-time-item .p-calendar-w-btn .p-datepicker-trigger {
+  .p-button-icon.pi.pi-calendar {
+    background: url(../../../../../../assets/img/clock.svg) !important;
+    background-repeat: no-repeat !important;
+    background-size: 20px !important;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+
+    &:before {
+      display: none !important;
+    }
+  }
+}
+
+.captive-time {
+  position: relative;
+
+  .time {
+    img {
+      position: absolute;
+      right: 11px;
+      top: 35px;
+      width: 20px;
+    }
+  }
+}
+
+.captive-time-item {
+  width: 100%;
+}
+
+.captive-hours-table {
+  width: 616px;
+  margin-top: 16px;
+
+  table {
+    width: 100%;
+
+    thead {
+      border-bottom: 1px solid #cccccc;
+
+      th {
+        font-weight: 600;
+        font-size: 14px;
+        line-height: 18px;
+        padding-bottom: 6px;
+      }
+
+      th:nth-child(1) {
+        padding-left: 16px;
+      }
+    }
+
+    tbody {
+      tr {
+        td {
+          font-weight: 400;
+          font-size: 15px;
+          line-height: 24px;
+
+          p {
+            margin: 0;
+            padding: 3px 0px;
+          }
+        }
+
+        td:nth-child(1) {
+          padding-left: 16px;
+        }
+      }
+
+      tr:nth-child(even) {
+        background: #f8f8fa;
+      }
+    }
+  }
+}
+
+::ng-deep {
+  .add-schedule-modal {
+    .modal-dialog {
+      border-radius: 26px;
+      width: 536px;
+
+      .modal-header {
+        height: 20px;
+      }
+
+      .modal-content {
+        .modal-body {
+          h2 {
+            font-family: "Source Sans Pro";
+            font-style: normal;
+            font-weight: 300;
+            font-size: 42px;
+            line-height: 53px;
+            display: flex;
+            align-items: center;
+          }
+
+          #cancel {
+            text-decoration: none;
+            cursor: pointer;
+          }
+        }
+      }
+    }
+  }
+}
+
+.captive-hours-delete {
+  img {
+    width: 16px;
+    padding: 6px 0px;
+  }
+}

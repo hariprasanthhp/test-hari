@@ -1,0 +1,126 @@
+<div class="mb-16">
+    <form [formGroup]="form">
+        <div [formGroupName]="formType">
+            <div class="row">
+                <div class="col-md-12">
+                    <p *ngIf="this.formType == 'aclForRemoteAccessForm'">
+                        {{ language['The Access control IP addresses below will be allowed to remotely access the GigaSpire EWI'] }}.
+                    </p>
+                    <p *ngIf="this.formType == 'aclForVoipForm'">
+                        {{ language['The VoIP Switch IP addresses below will be allowed to manage the GigaSpire VoIP Gateway'] }}.
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    {{ language['Enable ACL'] }}
+                </div>
+                <div class="col-md-3">
+                    <div class="checkbox switcher">
+                        <label for="backgroundSiteScanCheckBox">
+                            <input *ngIf="this.formType == 'aclForRemoteAccessForm'" type="checkbox"
+                                name="backgroundSiteScan" formControlName="RemoteAcl" id="backgroundSiteScanCheckBox">
+                            <input *ngIf="this.formType == 'aclForVoipForm'" type="checkbox" name="backgroundSiteScan"
+                                formControlName="SipAcl" id="backgroundSiteScanCheckBox">
+                            <span><small></small></span>
+                            <span *ngIf="this.formType == 'aclForRemoteAccessForm'" class="mx-2">
+                                {{form.get(formType).value.RemoteAcl ? language['enabled'] : language['Disabled']}}
+                            </span>
+                            <span *ngIf="this.formType == 'aclForVoipForm'" class="mx-2">
+                                {{form.get(formType).value.SipAcl ? language['enabled'] : language['Disabled']}}
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <button type="button" id="btn-newRule" class="btn-default primary px-3 mr-2"
+                        (click)="openaclModal(aclModal)">
+                        {{ language['New Rule'] }}
+                    </button>
+                </div>
+            </div>
+            <div class="acl-table">
+                <table id="scrolldi" datatable [dtOptions]="dtOptions" class="row-border hover">
+                    <thead>
+                        <tr>
+                            <th id="ip-addresses">{{ language['IP Addresses'] }}</th>
+                            <th id="version">{{ language['Version'] }}</th>
+                            <th id="action">{{ language['Action'] }}</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of rules; let ruleIndex = index;">
+                            <td>{{ item.IPAddress }}</td>
+                            <td>{{ item.Type == 'IPv4' ? language['ipv4'] : language['ipv6'] }}</td>
+                            <td>{{ language[item.action] }}</td>
+                            <td>
+                                <span class="delete primary pointer" (click)="deleteRule(ruleIndex)"
+                                    [title]="language['delete']">
+                                    <i aria-hidden="true" class="fa fa-trash-o"></i>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr *ngIf="!rules.length">
+                            <td colspan="3" class="no-data-available">{{ language['No data available in table'] }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+</div>
+
+<ng-template #aclModal let-modal>
+    <div class="acl-custom-title">
+        {{ language['ACL Rule'] }}
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="modal.dismiss()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="">{{ language['Version'] }}</div>
+    <div class="d-flex">
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="Type" [(ngModel)]="rule.Type"
+                (change)="validateIpAddress()" id="inlineRadio1" value="IPv4">
+            <label class="form-check-label" for="inlineRadio1">{{ language['ipv4'] }}</label>
+        </div>
+        <div *ngIf="this.formType == 'aclForRemoteAccessForm'" class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="Type" [(ngModel)]="rule.Type"
+                (change)="validateIpAddress()" id="inlineRadio2" value="IPv6">
+            <label class="form-check-label" for="inlineRadio2">{{ language['ipv6'] }}</label>
+        </div>
+    </div>
+    <div class="form-group ccl-form">
+        <label for="IPAddress">{{ language['IPAddress']}}<span class="error">*</span></label>
+        <input type="text" class="form-control" [(ngModel)]="rule.IPAddress" (ngModelChange)="validateIpAddress()"
+            id="IPAddress" aria-describedby="IPAddress" [placeholder]="language['Enter IP Address']">
+        <div class="errorMessage" *ngIf="IpAddressError">
+            <p>{{ language['Please enter the valid IP Address'] }}.</p>
+        </div>
+        <div class="errorMessage" *ngIf="duplicateIpAddressError">
+            <p>{{ language['IP Address already exists'] }}.</p>
+        </div>
+    </div>
+    <div class="form-group ccl-form">
+        <label for="IPAddress">{{ language['Action'] }}<span class="error">*</span></label>
+        <ng-select [(ngModel)]="rule.action" [placeholder]="language['select_value']" bindLabel="label"
+            bindValue="value" [searchable]="false">
+            <ng-option value="add">{{ language['add'] }}</ng-option>
+            <ng-option value="delete">{{ language['delete'] }}</ng-option>
+        </ng-select>
+        <div *ngIf="!rule.action && formTouched">
+            <span class="mandatory-msg">{{ language['This field is required'] }}.</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            <button type="button" class="btn-default btn-primary mr-3" (click)="addRule()">{{ language['addRule']}}</button>
+            <button type="button" id="" class="btn-default btn-dft" (click)="modalService.dismissAll()">
+                {{ language['Cancel'] }}
+            </button>
+        </div>
+    </div>
+</ng-template>

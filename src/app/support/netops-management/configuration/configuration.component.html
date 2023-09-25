@@ -1,0 +1,71 @@
+<h2 class="net-ops-title" id="net-ops-configuration">{{ language.Configurations }}</h2>
+<div class="ccl-tabs">
+  <ul id="tabs" class="nav nav-tabs sub-tab">
+    <li *ngIf="showAutoSiteScan && sso.getCscType() !== 'DME'" class="nav-item">
+      <a class="nav-link active" routerLink="/support/netops-management/configuration/background-site-scan"
+        (Click)="$event.preventDefault()" class="nav-link" id="autoSiteScanTabId" routerLinkActive="active">{{
+        language.Site_Scan }}</a>
+    </li>
+    <li *ngIf="showDialPlan" class="nav-item">
+      <a class="nav-link" routerLink="/support/netops-management/configuration/dial-plan"
+        (Click)="$event.preventDefault()" class="nav-link" id="dialPlanTabId" routerLinkActive="active">{{
+        language.Dial_Plan }}</a>
+    </li>
+    <li *ngIf="showExtrnlFileSrvr" class="nav-item">
+      <a class="nav-link" routerLink="/support/netops-management/configuration/external-file-server-list"
+        (Click)="$event.preventDefault()" class="nav-link" id="externalFileServerTabId" [ngClass]="[
+          router.url.includes('external-file-server-list') ||
+          router.url.includes('external-file-server-form')
+            ? 'active'
+            : ''
+        ]">{{ language.External_File_Server }}</a>
+    </li>
+    <li *ngIf="showSecureOnboarding && sso.getCscType() !== 'DME'" class="nav-item">
+      <a class="nav-link" routerLink="/support/netops-management/configuration/secure-onboarding"
+        (Click)="$event.preventDefault()" class="nav-link" id="secureOnboardingTabId" routerLinkActive="active">{{
+        language.Secure_Onboarding }}</a>
+    </li>
+    <li *ngIf="showSelfHeal && sso.getCscType() !== 'DME'" class="nav-item">
+      <a class="nav-link" routerLink="/support/netops-management/configuration/self-heal"
+        (Click)="$event.preventDefault()" class="nav-link" id="selfHealTabId" routerLinkActive="active">{{
+        language.Self_Heal }}</a>
+    </li>
+    <li *ngIf="showStaleDevicePurge" class="nav-item">
+      <a class="nav-link" routerLink="/support/netops-management/configuration/stale-device-purge"
+        (Click)="$event.preventDefault()" class="nav-link" id="staleDeviceOurgeTabId" routerLinkActive="active">{{
+        language['Stale System Purge'] }}</a>
+    </li>
+    <li *ngIf="showSubnetConfig" class="nav-item">
+      <a class="nav-link" routerLink="/support/netops-management/configuration/subnet-configuration"
+        (Click)="$event.preventDefault()" class="nav-link" id="subnetConfigTabId" routerLinkActive="active">{{
+        language.Subnet_Configuration }}</a>
+    </li>
+    <li class="nav-item" *ngIf="sso.getCscType() !== 'DME' && showSpeedTest">
+      <a class="nav-link" routerLink="/support/netops-management/configuration/speed-test"
+        (Click)="$event.preventDefault()" class="nav-link" id="speedTestTabId" routerLinkActive="active">{{
+        language['Performance Test'] }}</a>
+    </li>
+    <li class="nav-item" *ngIf="false">
+      <a class="nav-link" routerLink="/support/netops-management/configuration/background-site-scan"
+        (Click)="$event.preventDefault()" class="nav-link" id="speedTestTabId" routerLinkActive="active">{{
+        language.Background_Site_Scan }}</a>
+    </li>
+    <!-- <li class="nav-item"
+      *ngIf="(sso.getEntitlementsArr().indexOf('203') > -1 || sso.getEntitlementsArr().indexOf('204') > -1 || sso.getEntitlementsArr().indexOf('205') > -1) && showEdgeSuite">
+      <a class="nav-link" routerLink="/support/netops-management/configuration/edge-suites"
+        (Click)="$event.preventDefault()" class="nav-link" id="edgeSuiteTabId"
+        routerLinkActive="active">{{language['EDGE Suites Bulk Provisioning']}}</a>
+    </li> -->
+    <!-- <li class="nav-item">
+      <a class="nav-link" routerLink="/support/netops-management/configuration/external-ticketing-system"
+        class="nav-link" id="" routerLinkActive="active">External Ticketing System</a>
+    </li> -->
+    <!-- <li class="nav-item">
+      <a class="nav-link" routerLink="/support/netops-management/configuration/quality-experience"
+        (Click)="$event.preventDefault()" class="nav-link" id="qualityTabId" routerLinkActive="active">Quality of
+        Experience</a>
+    </li> -->
+  </ul>
+</div>
+
+<router-outlet></router-outlet>

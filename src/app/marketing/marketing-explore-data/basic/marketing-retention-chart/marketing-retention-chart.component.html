@@ -1,0 +1,466 @@
+<div *ngIf="retentionchartDownloadError" class="alert alert-warning alert-dismissible fade show" role="alert">
+    <strong>Error!</strong>{{retentionchartDownloadErrorMsg}}.
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true" (click)='errorReset()'></span>
+    </button>
+</div>
+
+<div class="subscriber-details" [ngClass]="!fullScreen ? 'd-block' : 'd-none'">
+    <div class="marketing-wizard flex">
+        <div class="mark-wiz-col brd-btm-snowgrey">
+            <div class="mwc-header flex">
+                <h3 class="chart-title greyaa mb0" id="churnRate">{{language.churn_Rate}}</h3>
+                <div class="mwc-btns flex">
+                    <button id="churnRateModelOpen" class="d-none btn-round btn-small-24 btn-grey btn-que"
+                        (click)="retentionChartModalOpen(language.churn_Rate)" data-toggle="tooltip"
+                        title="{{language.Churn_Info}}">
+                    </button>
+                    <button id="churnRateDownloadSection" class="btn-round btn-small-24 btn-grey btn-dload"
+                        (click)="downloadFunction(language.churn_Rate)" data-toggle="tooltip"
+                        title="{{language.subs_download_tip}}"></button>
+                    <button id="churnRateExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+                        (click)="fullScreenExpandFunction(language.churn_Rate)" data-toggle="tooltip"
+                        title="{{language.subs_fullscreen_tip}}"></button>
+                </div>
+            </div>
+            <div class="req-text text-center" *ngIf="churnRateInsightsDataError">
+                <div class="loader h-300-left">
+                    {{churnRateInsightsDataErrorMsg}}
+                </div>
+            </div>
+            <div class="text-center" *ngIf="!churnRateInsightsDataAvailable && !churnRateInsightsDataError">
+                <div class="h-300-lt">
+                    <div class="spinner-border text-primary loader">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <div [ngClass]="churnRateInsightsDataAvailable ? 'd-block' : 'd-none'">
+                <h5 class="greyaa mb0  heading-subtitle">{{language.Churn_Graph_Title}}&nbsp;
+                    {{totalChurnSubscribers | number}}</h5>
+                <div class="mwc-content">
+                    <div class="col-md-12 p-2 ">
+                        <div id="churn-rate-insights-chart" class="chart-box h-300-lt"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mark-wiz-col brd-btm-snowgrey">
+            <div class="mwc-header flex">
+                <h3 class="chart-title greyaa mb0" id="churnRisk">{{language.churn_Risk}}</h3>
+                <div class="mwc-btns flex">
+                    <button id="churnRiskModelOpen" class="d-none btn-round btn-small-24 btn-grey btn-que"
+                        (click)="retentionChartModalOpen(language.churn_Risk)" data-toggle="tooltip"
+                        title="{{language.ChurnRisk_Info}}"></button>
+                    <button id="churnRiskDownloadSection" class="btn-round btn-small-24 btn-grey btn-dload"
+                        (click)="downloadFunction(language.churn_Risk)" data-toggle="tooltip"
+                        title="{{language.subs_download_tip}}"></button>
+                    <button id="churnRiskExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+                        (click)="fullScreenExpandFunction(language.churn_Risk)" data-toggle="tooltip"
+                        title="{{language.subs_fullscreen_tip}}"></button>
+                </div>
+            </div>
+            <div class="req-text text-center" *ngIf="churnRiskDataError">
+                <div class="loader h-300-left">
+                    {{churnRiskDataErrorMsg}}
+                </div>
+            </div>
+            <div class="text-center" *ngIf="!churnRiskDataAvailable && !churnRiskDataError">
+                <div class="h-300-lt">
+                    <div class="spinner-border text-primary loader">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <div [ngClass]="churnRiskDataAvailable ? 'd-block' : 'd-none'">
+                <div class="mwc-content h-300-lt">
+                    <div class="col-md-12">
+                        <div class="chunk-space" *ngIf="churnRiskSummaryDataArray">
+                            <span class="text-center"
+                                *ngFor="let item of churnRiskSummaryDataArray; let isLast = last;">
+                                <span *ngIf="item.churnScore == 3 ">{{language.churnRisk_High}}</span>
+                                <span *ngIf="item.churnScore == 2 ">{{language.ChurnRisk_medium}}</span>
+                                <span *ngIf="item.churnScore == 1 ">{{language.ChurnRisk_Low}}</span> = {{item.count}}
+                                <span *ngIf="!isLast">,&nbsp;</span>
+                            </span>
+                        </div>
+                    </div>
+                    <table id="retentionChurnTable"
+                        class="table-responsive row-border hover table-alter smal  table-striped">
+                        <thead>
+                            <tr>
+                                <th class="greyaa insight-table-font">{{language.name_Chart}}</th>
+                                <th class="text-right greyaa insight-table-font">{{language.score_table}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of churnRiskDataArray">
+                                <td class=" insight-table-font">{{item.name}}</td>
+                                <td class="text-right insight-table-font">
+                                    <div [ngSwitch]="item.churnScore">
+                                        <div *ngSwitchCase="1">{{language.ChurnRisk_Low}}</div>
+                                        <div *ngSwitchCase="2">{{language.ChurnRisk_mediumTable}}</div>
+                                        <div *ngSwitchCase="3">{{language.churnRisk_High}}</div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr *ngIf="churnRiskDataArray.length === 0">
+                                <td colspan="4" class="text-center"> {{ language["No Data Available"] }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="mark-wiz-col brd-btm-snowgrey">
+            <div class="mwc-header flex">
+                <h3 class="chart-title greyaa mb0" id="Retention">{{language.Retention}}</h3>
+                <div class="mwc-btns flex">
+                    <button id="RetentionModelOpen" class="d-none btn-round btn-small-24 btn-grey btn-que"
+                        (click)="retentionChartModalOpen(language.Retention)" data-toggle="tooltip"
+                        title="{{language.Retention_Info}}"></button>
+                    <button id="RetentionDownloadSection" class="btn-round btn-small-24 btn-grey btn-dload"
+                        (click)="downloadFunction(language.Retention)" data-toggle="tooltip"
+                        title="{{language.subs_download_tip}}"></button>
+                    <button id="RetentionExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+                        (click)="fullScreenExpandFunction(language.Retention)" data-toggle="tooltip"
+                        title="{{language.subs_fullscreen_tip}}"></button>
+                </div>
+            </div>
+            <div class="req-text text-center" *ngIf="retentionDataError">
+                <div class="loader h-300-left">
+                    {{retentionDataErrorMsg}}
+                </div>
+            </div>
+            <div class="text-center" *ngIf="!retentionDataAvailable && !retentionDataError">
+                <div class="h-300-lt">
+                    <div class="spinner-border text-primary loader">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <div [ngClass]="retentionDataAvailable ? 'd-block' : 'd-none'">
+                <div class="mwc-content left-10">
+                    <table id="retentionTable"
+                        class="table-responsive row-border hover table-alter smal  table-striped">
+                        <thead>
+                            <tr>
+                                <th class="greyaa insight-table-font">{{language.name_Chart}}</th>
+                                <th class="text-right greyaa insight-table-font">{{language.servicelimit_Chart}}</th>
+                                <th class="text-right greyaa insight-table-font">{{language.speed_test}}</th>
+                                <th class="text-right greyaa insight-table-font">{{language.Competitor_Visits}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of retentionDataArray">
+                                <td class=" insight-table-font">{{item.name}}</td>
+                                <td class="text-right insight-table-font">{{item.downstreamServiceLimit}} /
+                                    {{item.upstreamServiceLimit}}</td>
+                                <td class="text-right insight-table-font">{{item.speedTest}}</td>
+                                <td class="text-right insight-table-font">{{item.competitor}}</td>
+                            </tr>
+                            <tr *ngIf="retentionDataArray.length === 0">
+                                <td colspan="4" class="text-center"> {{ language["No Data Available"] }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- churn rate -->
+<ng-template #retensionRateChartModal let-modal class="col-md-12">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addModal">{{popup_heading}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form class="custom-form">
+            <div class="form-group ccl-form ">
+                <!--<p>Content Come here</p>-->
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>{{language.churn_rate_popup1}}</p>
+                        <p>{{language.churn_rate_popup2}}</p>
+                        <ul class="list-block">
+                            <li>{{language.churn_rate_popup3}}</li>
+                            <li>{{language.churn_rate_popup4}}</li>
+                            <li>{{language.churn_rate_popup5}}</li>
+                            <li>{{language.churn_rate_popup6}}</li>
+                            <li>{{language.churn_rate_popup7}}</li>
+                            <li class="ml-20px"><span>{{language.churn_rate_popup8}}</span>
+                                {{language.churn_rate_popup12}}</li>
+                            <li class="ml-20px"><span>{{language.churn_rate_popup9}}</span>
+                                {{language.churn_rate_popup13}}</li>
+                            <li class="ml-20px"><span>{{language.churn_rate_popup10}}</span>
+                                {{language.churn_rate_popup14}}</li>
+                            <li class="ml-20px"><span>{{language.churn_rate_popup11}}</span>
+                                {{language.churn_rate_popup15}}</li>
+                        </ul>
+
+                    </div>
+                </div>
+
+            </div>
+            <!-- <button type="button" class="btn-default primary px-3 px-3">{{language.Save}}</button> -->
+            <button type="button" class="btn-default  btn-dft px-3 px-3 m-2" (click)="closeModal()"
+                data-dismiss="modal">{{language.Cancel}}</button>
+        </form>
+    </div>
+</ng-template>
+<!-- churn risk -->
+<ng-template #retensionRiskChartModal let-modal class="col-md-12">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addModal">{{popup_heading}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form class="custom-form">
+            <div class="form-group ccl-form ">
+                <!--<p>Content Come here</p>-->
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>{{language.churn_risk_popup1}}</p>
+
+                        <p>{{language.churn_risk_popup2}}</p>
+                        <ul class="list-block">
+                            <li>{{language.churn_risk_popup3}}</li>
+                            <li>{{language.churn_risk_popup4}}</li>
+                            <li>{{language.churn_risk_popup5}}</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+            <!-- <button type="button" class="btn-default primary px-3 px-3">{{language.Save}}</button> -->
+            <button type="button" class="btn-default  btn-dft px-3 px-3 m-2" (click)="closeModal()"
+                data-dismiss="modal">{{language.Cancel}}</button>
+        </form>
+    </div>
+</ng-template>
+<!-- retension -->
+<ng-template #retensionChartModal let-modal class="col-md-12">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addModal">{{popup_heading}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form class="custom-form">
+            <div class="form-group ccl-form ">
+                <!--<p>Content Come here</p>-->
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>{{language.retention_popup1}}</p>
+                        <ul class="list-block">
+                            <li><span>{{language.retention_popup2}}</span> {{language.retention_popup9}}</li>
+                            <li><span>{{language.retention_popup3}}</span> {{language.retention_popup10}}</li>
+                            <li><span>{{language.retention_popup4}}</span> {{language.retention_popup11}}</li>
+                        </ul>
+                        <p>{{language.retention_popup5}}</p>
+                        <ul class="list-block">
+                            <li>{{language.retention_popup6}}</li>
+                            <li>{{language.retention_popup7}}</li>
+                            <li>{{language.retention_popup8}}</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+            <button type="button" class="btn-default  btn-dft px-3 px-3 m-2" (click)="closeModal()"
+                data-dismiss="modal">{{language.Cancel}}</button>
+        </form>
+    </div>
+</ng-template>
+
+
+<div class="subscriber-details" [ngClass]="fullScreen ? 'd-block' : 'd-none'">
+    <div class="marketing-wizard flex">
+        <div class="mark-wiz-col brd-btm-snowgrey w-100">
+            <div class="mwc-header flex">
+                <h3 class="chart-title greyaa mb0">{{fullScreenChart}}</h3>
+                <div class="mwc-btns flex">
+                    <button id="retentionChartModalFullScreen" class="btn-round btn-small-24 btn-grey btn-que d-none"
+                        (click)="retentionChartModalOpen(fullScreenChart)" data-toggle="tooltip"
+                        title="{{language.Retention_Info}}"></button>
+                    <button id="retentionChartFullViewDownlod" *ngIf="getExportMenus.length === 0"
+                        [ngClass]="fullScreenDownload ? 'spinnershow': '' " (click)="downloadFunction(fullScreenChart)"
+                        data-toggle="tooltip" title="{{language.subs_download_tip}}"
+                        class="btn-round btn-small-24 btn-grey btn-dload"></button>
+                    <!-- EXPORT MENU -->
+                    <div *ngIf="getExportMenus.length > 0" class="dropdown-button" ngbDropdown>
+                        <button data-toggle="tooltip" title="{{language.explort_option}}"
+                            [ngClass]="fullScreenDownload ? 'spinnershow': '' "
+                            class="btn-round btn-small-24 btn-grey btn-dload" id="dropdownPeriod11" ngbDropdownToggle>
+                        </button>
+                        <div ngbDropdownMenu aria-labelledby="dropdownPeriod11">
+                            <button data-toggle="tooltip" title="{{item}}"
+                                (click)="downloadFunction(fullScreenChart,item)" *ngFor="let item of getExportMenus"
+                                ngbDropdownItem class="greyaa">{{item}}
+                            </button>
+                        </div>
+                    </div>
+                    <button id="retentionChartFullScreenClose" class="btn-round btn-small-24 btn-grey btn-expand-inv"
+                        (click)="fullScreenCloseFunction()" data-toggle="tooltip"
+                        title="{{language.subs_fullscreen_close_tip}}"></button>
+                </div>
+            </div>
+
+            <div class="col-12" [ngClass]="dataAvailable ? 'd-block' : 'd-none'">
+                <h5 class="greyaa mb0  heading-subtitle" *ngIf="fullScreenChart == language.churn_Rate">
+                    {{language.Churn_Graph_Title}}&nbsp;
+                    {{totalChurnSubscribers | number}}</h5>
+
+                <table id="retentionChurnRateChartFullview" *ngIf="fullScreenChart == language.Retention"
+                    class="table subscriber-table table-striped showTableDataInChart smal">
+                    <thead>
+                        <tr class="theading">
+                            <th>{{language.Name}}</th>
+                            <th>{{language.Email}}</th>
+                            <th class="text-right">{{language.accountNumber}}</th>
+                            <th class="text-right">{{language.Downstream_Service_Limit}}</th>
+                            <th class="text-right">{{language.Upstream_Service_Limit}}</th>
+                            <th class="text-right">{{language.speed_test}}</th>
+                            <th class="text-right">{{language.Competitor_Visits}}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="tbodyheading">
+                        <tr *ngFor="let item of retentionDataArray">
+                            <td>
+                                <span class="text-overflow-dynamic-container">
+                                    <span class="text-overflow-dynamic-ellipsis" class="textnowrap">{{item.name}}</span>
+                                </span>
+                            </td>
+                            <td class="fs13">{{item.email}}</td>
+                            <td class="text-right fs13">{{item.accountNumber}}&nbsp;&nbsp;</td>
+                            <td class="text-right fs13">{{item.downstreamServiceLimit}}&nbsp;&nbsp;&nbsp;</td>
+                            <td class="text-right fs13">{{item.upstreamServiceLimit}}&nbsp;&nbsp;&nbsp;</td>
+                            <td class="text-right fs13">{{item.speedTest}}&nbsp;&nbsp;&nbsp;</td>
+                            <td class="text-right fs13">{{item.competitor}}&nbsp;&nbsp;&nbsp;</td>
+                        </tr>
+                        <tr *ngIf="retentionDataArray.length === 0">
+                            <td colspan="7" class="text-center"> {{ language["No Data Available"] }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="chunk-space" *ngIf="fullScreenChart == language.churn_Risk && churnRiskSummaryDataArray">
+                    <span class="text-center" *ngFor="let item of churnRiskSummaryDataArray; let isLast = last;">
+                        <span *ngIf="item.churnScore == 3 ">{{language.churnRisk_High}}</span>
+                        <span *ngIf="item.churnScore == 2 ">{{language.ChurnRisk_medium}}</span>
+                        <span *ngIf="item.churnScore == 1 ">{{language.ChurnRisk_Low}}</span> = {{item.count}}
+                        <span *ngIf="!isLast">,&nbsp;</span>
+                    </span>
+                </div>
+                <table id="retentionChurnRiskChartFullview" *ngIf="fullScreenChart == language.churn_Risk"
+                    class="table subscriber-table table-striped showTableDataInChart smal">
+
+                    <thead>
+                        <tr class="theading">
+                            <th>{{language.Name}}</th>
+                            <th class="text-right">{{language.score_table}}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="tbodyheading">
+                        <tr *ngFor="let item of churnRiskDataArray">
+                            <td>
+                                <span class="text-overflow-dynamic-container">
+                                    <span class="text-overflow-dynamic-ellipsis">{{item.name}}</span>
+                                </span>
+                            </td>
+                            <td class="text-right">
+                                <div [ngSwitch]="item.churnScore">
+                                    <div *ngSwitchCase="1">{{language.ChurnRisk_Low}}</div>
+                                    <div *ngSwitchCase="2">{{language.ChurnRisk_mediumTable}}</div>
+                                    <div *ngSwitchCase="3">{{language.churnRisk_High}}</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr *ngIf="churnRiskDataArray.length === 0">
+                            <td colspan="2" class="text-center"> {{ language["No Data Available"] }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="chart-sec" *ngIf="fullScreenChart  == language.churn_Rate">
+                    <div id={{fullScreenChart}} class="chart-box h-400-w"></div>
+                </div>
+            </div>
+
+            <div class="text-center" *ngIf="!dataAvailable">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                </div>
+            </div>
+
+            <div [ngClass]="fullScreenTableAvailable ? 'd-block' : 'd-none'">
+                <div id="tableContentReady">
+                    <h4 *ngIf="fullScreenChart == language.churn_Rate && clickData" class="fullscreen-table-info">
+                        {{clickData.tier}} / {{clickData.tech}} </h4>
+
+                    <div class="full-screen-table table-w-overflow">
+                        <table [ngClass]="!fullScreenTableDataNotAvailable ? 'd-block' : 'd-none'"
+                            id="retentionInsightsChartFullview"
+                            class="table subscriber-table table-striped showTableDataInChart smal">
+                            <thead *ngIf="fullScreenChart == language.churn_Rate">
+                                <tr>
+                                    <td>{{language.accountNumber}} </td>
+                                    <td>{{language.Name}} </td>
+                                    <td>{{language.phonenumber}} </td>
+                                    <td>{{language.emailAddress}}</td>
+                                    <td>{{language.Service_address}} </td>
+                                    <td>{{language.Service_Tier}} </td>
+                                    <td class="text-center">{{language.attainableratembps}}</td>
+                                    <td class="text-right">{{language.upstreamlimithits}} </td>
+                                    <td class="text-right">{{language.downstreamlimithits}} </td>
+                                    <td class="text-right">{{language.Speed_Tests2}} </td>
+                                    <td class="text-right">{{language.Competitor_Web_Visits2}} </td>
+                                    <td class="text-right">{{language.Stream_Usuage}}</td>
+                                    <td class="text-right">{{language.Game_usage}}</td>
+                                    <td class="text-right">{{language.Total_Usage}}</td>
+                                    <td class="text-right">{{language.wifi_Chart}}</td>
+                                    <td class="text-right">{{language.device_Chart}}</td>
+                                    <td class="text-right">{{language.churnDate}}</td>
+                                </tr>
+                            </thead>
+
+                            <tbody class="tbodyheading" id="append-table-list">
+                            </tbody>
+                        </table>
+
+                        <!-- LOAD MORE BUTTON SECTION -->
+                        <div class="ccl-center text-center" *ngIf="loadMoreButton">
+                            <button id="retentionFullviewLoadMore" [ngClass]="loadingBtn ? 'cursor-ban': ''"
+                                class="btn-default primary dis-inline-f" (click)='loadMore()'
+                                id="loadMoreBtn">{{loadingBtn ?
+                                language.Loading_text : language.loadmore}}
+                                <div *ngIf="loadingBtn" class="spinner">
+                                    <i class="fa fa-spinner"></i>
+                                </div>
+                            </button>
+
+                        </div>
+                    </div>
+                    <div *ngIf="fullScreenTableDataNotAvailable" id="no-data-available"
+                        class="border-for-no-data text-center">
+                        <span>{{language.nodata}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center" *ngIf="tableLoader">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,504 @@
+<div class="loader" *ngIf="loading">
+    <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+</div>
+<div class="loader" *ngIf="loading1">
+    <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+</div>
+<!-- <div class="alert alert-success alert-dismissible fade show" role="alert" *ngIf="successmsg">
+  <strong>{{ language.Success }}!</strong>
+  {{ language.Call_Disposition_Successfully }}
+  <button type="button" class="close" (click)="successmsg = !successmsg closeModal()" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true"></span>
+  </button>
+</div> -->
+<div class="page-wrapper" [hidden]="loading">
+    <div class="subscriber-details mt-3">
+        <div class="subs-title">
+            <div class="st-header border-bottom">
+                <div class="sth-left position-relative">
+                    <div class="ccl-mktg-large-title greyaa" id="fb-configuration">
+                        {{language['Facebook Marketing Channel Configuration']}}</div>
+                    <span class="pos-abs">
+                        <div class="sth-rht flex">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                                (click)="closeComponent()">
+                                <span class="right-5" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="alert alert-success alert-dismissible fade show" role="alert" *ngIf="audiencePostSuccess">
+            <span *ngIf="!audiencefaild"> {{language.Facebook}}&nbsp;{{message}}&nbsp;</span>
+            <span style="color: red;" *ngIf="audiencefaild"><b>{{message}}</b> </span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="onclose()">
+                <span aria-hidden="true"></span>
+            </button>
+        </div> -->
+
+        <div class="alert alert-warning alert-dismissible fade show" role="alert" *ngIf="facebookError">
+            <span class="success-img"><img src="./assets/img/error-icon.svg" /></span>
+            <div class="d-inline-flex w-75 text-left"> Error! {{facebookErrorMsg}}.</div>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true" (click)='errorReset()'></span>
+            </button>
+        </div>
+
+        <div class="facebook-Config-container">
+            <div class="facebook-Config-left">
+                <div class="ccl-mktg-title border-bottom" id="fb-con-config">{{language['Connection Configuration']}}
+                    <span *ngIf="rem_active" class="d-inline-flex float-right mr-20p">
+                        <div class="view-data">
+                            <div class="dropdown-button dot-drop" ngbDropdown>
+                                <button class="mr-2" id="dropdownPeriod" ngbDropdownToggle>
+                                    <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+                                        xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512"
+                                        style="enable-background:new 0 0 512 512;" xml:space="preserve">
+                                        <g>
+                                            <g>
+                                                <g>
+                                                    <circle cx="256" cy="256" r="64" />
+                                                    <circle cx="256" cy="448" r="64" />
+                                                    <circle cx="256" cy="64" r="64" />
+                                                </g>
+                                            </g>
+                                        </g>
+
+                                    </svg>
+
+                                </button>
+                                <div ngbDropdownMenu aria-labelledby="dropdownPeriod">
+                                    <button ngbDropdownItem class="greyaa"
+                                        (click)="errorMailModalOpen()">{{language.remove_conection}}</button>
+
+                                </div>
+                            </div>
+                        </div>
+                    </span>
+                </div>
+                <!-- <div class="conf-sec mb-4 " *ngIf="!facebookconnection">
+                    <div class="ccl-mktg-title border-bottom" style="margin-top: 24px; margin-bottom: 16px;">
+                        {{language.Configure_fb}} </div>
+                    <button class="btn-default primary" (click)="facebookModalOpen()"> {{language.Connect_facebook}}
+                    </button>
+                </div> -->
+                <div class="row mb-5">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                        <form class="custom-form conf-sec">
+                            <div class="form-group ccl-form " [ngClass]="{ 'error': facebookexpired }">
+                                <label class="col-sm-12 col-form-label">{{language['Enter Facebook API Key *']}}<span
+                                        class="required-field"> *
+                                    </span>
+                                </label>
+                                <input type="text" maxlength="255" [(ngModel)]="fbApiKey" (keyup)="handleChange($event)"
+                                    [ngModelOptions]="{standalone: true}" autocomplete="off" placeholder=""
+                                    class="selectboxwidth" trimSpace (blur)="removeUnwantedSpace('fbApiKey',fbApiKey)">
+
+                            </div>
+
+                            <span class="error" *ngIf="checkValid">{{language['Enter valid API Key']}}</span>
+                            <span class="error"
+                                *ngIf="facebookexpired">{{language['Regenerate the API key and enter it here to re-configure the channel']}}</span>
+                            <div class="form-group ccl-form ">
+                                <label class="col-sm-12 col-form-label">{{language['Facebook Ad Account ID']}}<span
+                                        class="required-field"> *
+                                    </span>
+                                </label>
+                                <input type="text" maxlength="255" [(ngModel)]="fbBussines"
+                                    (keyup)="handleChange1($event)" [ngModelOptions]="{standalone: true}"
+                                    autocomplete="off" placeholder="" class="selectboxwidth" trimSpace (blur)="removeUnwantedSpace('fbBussines',fbBussines)">
+
+                            </div>
+                            <span class="error" *ngIf="checkValid1">{{language['Enter valid Account ID']}}</span>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" (change)="checkValue($event)"
+                                    id="defaultCheck1">
+                                <label class="form-check-label" for="defaultCheck1">
+                                    <!-- {{language['By checking this box you agree to Facebook Custom Audiences
+                                    Terms of Service']}} -->
+                                    {{language.facebook_termscond_1}}<a
+                                        href="https://www.facebook.com/legal/terms/customaudience "
+                                        target="_blank">&nbsp;{{language.facebook_termscond_2}}</a>
+                                </label>
+                            </div>
+                            <span class="error" *ngIf="checkValid2">{{language['Agree the terms of
+                                service']}}</span>
+                            <div class="pl-2">
+                                <button type="button" class="btn-default primary mt-15p" #testConnectionBlur [disabled]="saveEnable"
+                                    (click)="savefb()">{{language.Test_Connection}}</button>
+                            </div>
+                            <!-- <div class="pl-2 my-2" style="margin-top: 15px;">
+                                <div class="ccl-mktg-title border-bottom">
+                                    {{language.Test_Connection}} </div>
+                                <button class="btn-default primary"
+                                    (click)='testConnection()'>{{language.Test_Connection}}</button>
+                            </div> -->
+
+
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="facebook-Config-right">
+                <div class="conf-sec">
+                    <div class="ccl-mktg-title border-bottom" id="fb-intruction"> {{language.Instructions}} </div>
+                    <div class="container">
+
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-sm-12 px-0">
+
+                                <p>{{language.facebook_ins_2}}</p>
+                                <div class="facebook-info-list">
+                                    <ul>
+                                        <li>
+                                            <b>{{language['Facebook Business Account']}}</b>.&nbsp;{{language['You can
+                                            sign for a
+                                            business account']}}<a href="https://business.facebook.com/"
+                                                target="_blank">&nbsp;{{language.mailchimp_ins_2_1}}</a>&nbsp;{{language['if
+                                            you
+                                            don’t already have one']}}.
+
+                                        </li>
+                                        <li>
+                                            <b>{{language['Facebook Developer Account']}}</b>.&nbsp;{{language['If
+                                            you’ve signed
+                                            up for a Facebook Business Account, you’ll already have a ']}}<a
+                                                href="https://developers.facebook.com/"
+                                                target="_blank">{{language['Developers.Facebook.com']}}</a>&nbsp;{{language['account1']}}.
+
+                                        </li>
+                                        <li>
+                                            <b>{{language['Facebook App']}}</b>.&nbsp;{{language['You will have access
+                                            to Apps if
+                                            you have a Facebook Developer Account']}}.
+
+                                        </li>
+
+                                    </ul>
+                                </div>
+
+
+
+
+                                <p>{{language.facebook_ins_3}}</p>
+                                <div class="facebook-info-list">
+                                    <ol class="text-justify">
+                                        <li>{{language['First, log in to your Facebook Developer Account and click on
+                                            the']}}<b>&nbsp;{{language['My Apps']}}</b>
+                                            &nbsp;{{language['tab']}}</li>
+                                        <li>
+                                            {{language.facebook_ins_4}}<b>&nbsp;{{language['Marketing
+                                                API']}}</b>&nbsp;{{language.facebook_ins_5}}
+                                        </li>
+                                        <li>
+                                            {{language['Once you’ve expanded the Marketing API section, click
+                                            on']}}<b>&nbsp;{{language['Tools']}}</b>&nbsp;{{language['You should now see
+                                            the']}}<b>&nbsp;{{language['Get Access
+                                                Token']}}</b>&nbsp;{{language.facebook_ins_6}}<b>&nbsp;{{language['Get
+                                                Token']}}</b>
+                                        </li>
+                                        <li>
+                                            {{language['Copy the generated token and paste it in
+                                            the']}}<b>&nbsp;{{language['Facebook API Key']}}</b>&nbsp;{{language['field
+                                            on
+                                            this page.']}}
+                                        </li>
+                                        <li>
+                                            {{language.facebook_ins_7}}&nbsp;<b>{{language['Facebook Ad Account
+                                                ID']}}</b>{{language['You can find it when you click on']}}
+                                            <b>{{language['Dashboard1']}}</b>&nbsp;{{language.facebook_ins_9}}<b>{{language['More
+                                                Tools']}}</b>
+                                            {{language['in the menu on the left, then
+                                            select']}}&nbsp;<b>{{language['Audiences']}}</b>&nbsp;{{language.click_on_dropdown}}<b>{{language['Ad
+                                                Account ID']}}</b>.{{language['Paste the ID in
+                                            the']}}&nbsp;<b>{{language['Facebook AD Account ID1']}}</b>
+                                            &nbsp;{{language['on this page']}}
+                                        </li>
+                                        <li>
+                                            {{language.facebook_ins_key}}<b>&nbsp;{{language.testConnection_1}}</b>&nbsp;{{language['button
+                                            to make sure the connection is set up properly.']}}
+                                        </li>
+                                        <li> {{language.facebook_ins_8}}</li>
+                                        <p> {{language.mailchimp_ins_7_1}}<a href="https://community.calix.com/s/"
+                                                target="_blank">&nbsp;{{language.mailchimp_ins_7}}.</a>
+                                        </p>
+                                    </ol>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- <div class="container">
+
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-sm-12 px-0">
+
+                                <p>{{language.facebook_ins_2}}</p>
+                                <p><b>{{language['Facebook Business Account']}}</b>.&nbsp;{{language['You can sign for a business account']}}<a
+                                        href="https://business.facebook.com/"
+                                        target="_blank">&nbsp;{{language.mailchimp_ins_2_1}}</a>&nbsp;{{language['if you don’t already have one']}}.
+                                </p>
+                                <p><b>{{language['Facebook Developer Account']}}</b>.&nbsp;{{language['If you’ve signed up for a Facebook Business Account, you’ll already have a ']}}<a
+                                        href="https://developers.facebook.com/"
+                                        target="_blank">{{language['Developers.Facebook.com']}}</a>&nbsp;{{language['account1']}}.
+                                </p>
+                                <p><b>{{language['Facebook App']}}</b>.&nbsp;{{language['You will have access to Apps if you have a Facebook Developer Account']}}.
+                                </p>
+                                <p>{{language.facebook_ins_3}}</p>
+                                <ol style="margin-left: 25px;text-align: justify;">
+                                    <li>{{language['First, log in to your Facebook Developer Account and click on the']}}<b>&nbsp;{{language['My Apps']}}</b>
+                                        &nbsp;{{language['tab']}}</li>
+                                    <li>
+                                        {{language.facebook_ins_4}}<b>&nbsp;{{language['Marketing API']}}</b>&nbsp;{{language.facebook_ins_5}}
+                                    </li>
+                                    <li>
+                                        {{language['Once you’ve expanded the Marketing API section, click on']}}<b>&nbsp;{{language['Tools']}}</b>&nbsp;{{language['You should now see the']}}<b>&nbsp;{{language['Get Access Token']}}</b>
+                                        &nbsp;{{language.facebook_ins_6}}<b>&nbsp;{{language['Get Token']}}</b>
+                                    </li>
+                                    <li>
+                                        {{language['Copy the generated token and paste it in the']}}<b>&nbsp;{{language['Facebook API Key']}}</b>&nbsp;{{language['field on this page.']}}
+                                    </li>
+                                    <li>
+                                        {{language.facebook_ins_7}}&nbsp;<b>{{language['Facebook Ad Account ID']}}</b>{{language['You can find it when you click on']}}
+                                        <b>{{language['Dashboard1']}}</b>&nbsp;{{language.facebook_ins_9}}<b>{{language['More Tools']}}</b>
+                                        {{language['in the menu on the left, then select']}}&nbsp;<b>{{language['Audiences']}}</b>&nbsp;{{language.click_on_dropdown}}<b>{{language['Ad Account ID']}}</b>.{{language['Paste the ID in the']}}&nbsp;<b>{{language['Facebook AD Account ID1']}}</b>
+                                        &nbsp;{{language['on this page']}}
+                                    </li>
+                                    <li>
+                                        {{language.facebook_ins_key}}<b>&nbsp;{{language.testConnection_1}}</b>&nbsp;{{language['button to make sure the connection is set up properly.']}}
+                                    </li>
+                                    <li> {{language.facebook_ins_8}}</li>
+                                    <p> {{language.mailchimp_ins_7_1}}<a href="https://community.calix.com/s/"
+                                            target="_blank">&nbsp;{{language.mailchimp_ins_7}}.</a></p>
+                                </ol>
+                            </div>
+
+                        </div>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+
+        <!-- <div class="row mt-4" *ngIf="validMailchimpToken">
+      <div class="col-lg-6 col-md-6 col-sm-12">
+        <div class="conf-sec mb-4 border-bottom flex-space-between">
+          <label class="mb-0"> Configure * </label>
+          <span class="refresh-icon">
+            <img src="assets/images/refresh.svg">
+          </span>
+        </div>
+        <div class="conf-sec">
+          <label> Test Connection *</label>
+          <p> In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the
+            visual form of a document or a typeface without </p>
+          <ng-select id="statusId" bindLabel="name" bindValue="name" class="selectboxwidth d-inline-flex w-100"
+            [clearable]="false">
+          </ng-select>
+          <p class="text-muted mt-2 f-s-14px"> In publishing and graphic design, Lorem ipsum is a placeholder text
+            commonly used to demonstrate the visual form of a document or a typeface without </p>
+          <button class="btn-default primary"> Test Connection </button>
+        </div>
+      </div>
+    </div> -->
+    </div>
+</div>
+
+<ng-template #mailchimpModal let-modal class="col-md-12 small-model">
+    <div>
+        <h5>{{language.Connection_configuration}}</h5>
+        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button> -->
+    </div>
+    <div class="modal-header">
+        <div class="mail-chimp">
+            <img src="assets/img/Mailchimp-logo.png">
+            <h2 id="mail-chimp-span">{{language.Mailchimp}}</h2>
+        </div>
+
+    </div>
+
+</ng-template>
+<ng-template #facebookModal let-modal class="col-md-12 small-model">
+    <div>
+        <h5>{{language.Connection_configuration}}</h5>
+        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button> -->
+    </div>
+    <div class="modal-header">
+        <div class="mail-chimp">
+            <img src="assets/img/cmc-Facebook-logo.png">
+            <h2 id="mail-chimp-span">{{language.FaceBook}}</h2>
+        </div>
+
+    </div>
+
+    <div class="modal-body flex-center">
+        <button class="btn-default primary" (click)="openMailchimp()">
+            {{language.Log_in_Facebook}} </button>
+    </div>
+</ng-template>
+
+<ng-template #successConnectModal let-modal class="col-md-12 small-model">
+    <div class="modal-header">
+        <h2>{{ language.testConnection }}</h2>
+        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button> -->
+
+    </div>
+    <div class="modal-body">
+        <div class="text-center msg-content">
+            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
+                <circle class="path circle" fill="none" stroke="#73AF55" stroke-width="6" stroke-miterlimit="10"
+                    cx="65.1" cy="65.1" r="62.1" />
+                <polyline class="path check" fill="none" stroke="#73AF55" stroke-width="6" stroke-linecap="round"
+                    stroke-miterlimit="10" points="100.2,40.2 51.5,88.8 29.8,67.5 " />
+            </svg>
+
+
+            <h3> {{language.Successful_Connection}}</h3>
+            <p>{{language.Facebook_complete}}</p>
+            <button class="btn-default primary" (click)="openMarketingChannel()"> {{language.camapign_ok}} </button>
+        </div>
+
+    </div>
+</ng-template>
+<ng-template #successConnectErrorModal let-modal class="col-md-12 small-model">
+    <div class="modal-header">
+        <h2>{{ language.testConnection }}</h2>
+        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button> -->
+
+    </div>
+    <div class="modal-body">
+        <div class="text-center msg-content">
+            <!-- // success svg  -->
+            <!-- <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
+        <circle class="path circle" fill="none" stroke="#73AF55" stroke-width="6" stroke-miterlimit="10" cx="65.1"
+          cy="65.1" r="62.1" />
+        <polyline class="path check" fill="none" stroke="#73AF55" stroke-width="6" stroke-linecap="round"
+          stroke-miterlimit="10" points="100.2,40.2 51.5,88.8 29.8,67.5 " />
+      </svg> -->
+
+            <!-- // error svg  -->
+
+            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
+                <circle class="path circle" fill="none" stroke="#D06079" stroke-width="6" stroke-miterlimit="10"
+                    cx="65.1" cy="65.1" r="62.1" />
+                <line class="path line" fill="none" stroke="#D06079" stroke-width="6" stroke-linecap="round"
+                    stroke-miterlimit="10" x1="34.4" y1="37.9" x2="95.8" y2="92.3" />
+                <line class="path line" fill="none" stroke="#D06079" stroke-width="6" stroke-linecap="round"
+                    stroke-miterlimit="10" x1="95.8" y1="38" x2="34.4" y2="92.2" />
+            </svg>
+
+
+            <h3> {{language.connection_error}}</h3>
+            <p>{{language.Facebook_error}}</p>
+            <button class="btn-default primary" (click)="closeModalOk()"> {{language.camapign_ok}} </button>
+        </div>
+
+    </div>
+</ng-template>
+
+
+
+<ng-template #saveConnectModal let-modal class="col-md-12 small-model">
+
+    <div class="modal-body">
+        <div class="text-center msg-content">
+            <!-- // success svg  -->
+            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
+                <circle class="path circle" fill="none" stroke="#73AF55" stroke-width="6" stroke-miterlimit="10"
+                    cx="65.1" cy="65.1" r="62.1" />
+                <polyline class="path check" fill="none" stroke="#73AF55" stroke-width="6" stroke-linecap="round"
+                    stroke-miterlimit="10" points="100.2,40.2 51.5,88.8 29.8,67.5 " />
+            </svg>
+
+            <!-- // error svg  -->
+
+            <!-- <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
+        <circle class="path circle" fill="none" stroke="#D06079" stroke-width="6" stroke-miterlimit="10" cx="65.1" cy="65.1" r="62.1"/>
+        <line class="path line" fill="none" stroke="#D06079" stroke-width="6" stroke-linecap="round" stroke-miterlimit="10" x1="34.4" y1="37.9" x2="95.8" y2="92.3"/>
+        <line class="path line" fill="none" stroke="#D06079" stroke-width="6" stroke-linecap="round" stroke-miterlimit="10" x1="95.8" y1="38" x2="34.4" y2="92.2"/>
+      </svg> -->
+
+            <h3>{{language.facebook}}&nbsp;{{language.Save_Message}}&nbsp;</h3>
+            <button class="btn-default primary" (click)="openMarketingChannel()">{{language.camapign_ok}} </button>
+        </div>
+
+    </div>
+</ng-template>
+<ng-template #successLoadingModal let-modal class="col-md-12 small-model">
+    <div class="modal-header">
+        <h2>{{ language.testConnection }}</h2>
+        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button> -->
+
+    </div>
+    <div class="modal-body">
+        <div class="text-center msg-content">
+            <div class="spinner-border text-primary load-wh">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <br><br>
+            <h6><b>{{language.Few_Moments}}</b></h6>
+        </div>
+
+    </div>
+</ng-template>
+<ng-template #successFbLoadingModal let-modal class="col-md-12 small-model">
+
+    <div class="modal-body">
+        <div class="text-center msg-content">
+            <div class="spinner-border text-primary load-wh">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <br><br>
+            <h6><b>{{language.Few_Moments}}</b></h6>
+        </div>
+
+    </div>
+</ng-template>
+
+<ng-template #errorMailModal let-modal class="col-md-12 small-model">
+    <div class="modal-header">
+
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="msg-content">
+
+            <div class="">
+                <div class="warn-icon-wh"><img
+                        src="assets/img/warning-icon-36px.svg" alt="" /></div>
+                <div class="wh-float">
+                    <b> {{language.removemsgface}}</b>
+                    <br>
+                    {{language.removeerrormsgface}}
+                </div>
+
+            </div>
+            <div class="text-center"> <button class=" mt-2 btn-default primary" (click)="remove_connection()">
+                    {{language.remove_conection}} </button></div>
+
+        </div>
+
+    </div>
+</ng-template>

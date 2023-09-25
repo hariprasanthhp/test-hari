@@ -1,0 +1,154 @@
+<div class="mt-4">
+    <div class="w-100 fade show d-flex align-items-start warning-msg pt-2" id="claimWarning" *ngIf="isInCompleteDate">
+        <div class="err-image"><span class="error-img"><img src="./assets/img/warning-icon.svg" /></span></div>
+        <div class="err-msg mt-1" [innerHTML]=language.upgrade_msg(errMsg)></div>
+        <!-- <button type="button" class="btn btn-primary btn-default mt-1" (click)="isInCompleteDate && isInCompleteTime = false">{{language.ok}}</button> -->
+    </div>
+
+    <section>
+        <div class="form-group row" [ngClass]="{ 'error-occur-sec': error && !timezone }">
+            <label class="col-2 control-label f-w-600 text-right">
+                {{ language.Timezone }}
+            </label>
+            <div class="col-10">
+                <div class="custom-selectbox">
+                    <ng-select [items]="timezones" bindLabel="name" class="col-lg-10 col-md-12 col-sm-12" id="timeZone"
+                        (change)="checkMaintenanceWarning()"
+                        [style]="{ width: '100%', height: '36px', 'max-width': 'unset', padding: '0'}" autofocus
+                        bindValue="id" [(ngModel)]="timezone" [ngModelOptions]="{ standalone: true }"
+                        [searchable]="false">
+                    </ng-select>
+                </div>
+
+                <div class="error-msg-p">
+                    {{ language.select_value }}
+                </div>
+                <!-- <sup>If you plan to submit these results to the FCC, you need to be sure that the path to this test server is consistent with the requirements set out by the FCC for this testing.</sup> -->
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="form-group ccl-form row" [ngClass]="{ 'error-occur-sec': error && !startDate }">
+            <label for="Name" id="start_date_label" class="col-2 control-label f-w-600 text-right">
+                {{ language.startDate }}
+            </label>
+            <div class="col-10 calender">
+                <p-calendar id="start_date_2" [style]="{ width: '100%', height: '36px' }"
+                    [inputStyle]="{ height: '36px' }" appendTo="body" [autoZIndex]="true"
+                    (onSelect)="checkMaintenanceWarning()" (change)="checkMaintenanceWarning()"
+                    placeholder="Select Date" [(ngModel)]="startDate" [showIcon]="true"
+                    [ngModelOptions]="{ standalone: true }" [minDate]="minStartDate" dateFormat="yy-mm-dd">
+                </p-calendar>
+                <div class="error-msg-p">
+                    {{ language.select_value }}
+                </div>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="form-group row" [ngClass]="{ 'error-occur-sec': error && !noDays }">
+            <label class="col-2 control-label f-w-600 text-right">
+                {{ language.No_Of_days }}
+            </label>
+            <div class="col-10">
+                <div class="custom-selectbox">
+                    <ng-select [items]="dataPbitInput" (change)="checkMaintenanceWarning()" bindLabel="name"
+                        class="col-lg-10 col-md-12 col-sm-12" id="noDays"
+                        [style]="{ width: '100%', height: '36px', 'max-width': 'unset', padding: '0'}" bindValue="id"
+                        [(ngModel)]="noDays" [ngModelOptions]="{ standalone: true }" [searchable]="false">
+                    </ng-select>
+                </div>
+                <div class="error-msg-p">
+                    {{ language.select_value }}
+                </div>
+                <!-- <sup>If you plan to submit these results to the FCC, you need to be sure that the path to this test server is consistent with the requirements set out by the FCC for this testing.</sup> -->
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="form-group ccl-form row" [ngClass]="{ 'error-occur-sec': error && !startHour }">
+            <label for="Name" class="col-2 control-label f-w-600 text-right">
+                {{ language.Start_Hr }}
+            </label>
+            <div class="col-10 calender">
+                <!-- <p-calendar id="start_date" [style]="{'width': '100%','height': '36px'  }" [(ngModel)]="startHour"
+                    showTime="showTime" hourFormat="24" timeOnly="true" [inputStyle]="{'height': '36px'}"
+                    appendTo="body" [autoZIndex]="true" placeholder='Select Time' [showIcon]="true"
+                    [ngModelOptions]="{standalone: true}" dateFormat="H"></p-calendar> -->
+
+                <input placeholder="24hr format" aria-label="24hr format" [ngxTimepicker]="fullTime" [format]="24"
+                    readonly [hoursOnly]="true" [(ngModel)]="startHour" [value]="startHour" />
+                <ngx-material-timepicker #fullTime [hoursOnly]="true"
+                    (closed)="checkMaintenanceWarning()"></ngx-material-timepicker>
+
+                <!--          <div *ngIf="error && !startHour" id="startHour-error" class="errorMessage">
+                    <small>
+                        {{language.select_value}}
+                    </small>
+                </div> -->
+                <div class="error-msg-p">
+                    {{ language.select_value }}
+                </div>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="form-group row" [ngClass]="{ 'error-occur-sec': error && !numberOfHours }">
+            <label class="col-2 control-label f-w-600 text-right">{{
+                language.No_Of_hr
+                }}</label>
+            <div class="col-10">
+                <div class="custom-selectbox-shedule">
+                    <ng-select [items]="dataHoursInp" (change)="checkMaintenanceWarning()" bindLabel="name"
+                        class="col-lg-12 col-md-12 col-sm-12" id="noOfHours"
+                        [style]="{ width: '100%', height: '36px', 'max-width': 'unset', padding: '0' }" bindValue="id"
+                        [(ngModel)]="numberOfHours" [ngModelOptions]="{ standalone: true }" [searchable]="false">
+                    </ng-select>
+                </div>
+
+                <!--           <div *ngIf="error && !numberOfHours" id="numberOfHours-error" class="errorMessage">
+                    <small>
+                        {{language.select_value}}
+                    </small>
+                </div>
+ -->
+                <div class="error-msg-p">
+                    {{ language.select_value }}
+                </div>
+                <!-- <sup>If you plan to submit these results to the FCC, you need to be sure that the path to this test server is consistent with the requirements set out by the FCC for this testing.</sup> -->
+            </div>
+        </div>
+    </section>
+
+    <!-- <section>
+    <div class="row">
+      <div class="col-2"></div>
+      <div class="col-10">
+
+        <div *ngIf="isInCompleteDate && isInCompleteTime" id="claimWarning" class="errorMessage">
+                    <p class="m-0" [innerHTML]=language.langChange(errMsg)>
+                    </p>
+        </div>
+      </div>
+    </div>
+  </section> -->
+</div>
+<div class="d-inline-flex justify-content-start performance-testing-button">
+    <div>
+        <button type="button" (click)="gotoPrevious()" class="btn-arrow btn-arr-prev btn-grey"
+            id="netops-perftest-schedule-previous-btn">
+            <img src="assets/img/ic_chevronleft_grey.svg">
+            {{ language.Previous }}
+        </button>
+    </div>
+    <div>
+        <button type="button" class="btn-default btn-dft mx-2" (click)="reload()"
+            id="netops-perftest-schedule-cancel-btn">
+            {{ language.cancel }}
+        </button>
+        <button type="button" class="btn-arrow btn-arr-nxt primary" (click)="go_next()"
+            id="netops-perftest-schedule-next-btn">
+            {{ language.Next }} <img src="assets/img/ic_chevron-r-w.svg">
+        </button>
+    </div>
+</div>

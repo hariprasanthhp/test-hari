@@ -1,0 +1,201 @@
+<div id="workflows-status" class="tab-pane">
+   <div class="d-flex justify-content-between">
+      <div class="col-md-8 pl-0">
+         <div class="net-ops-secondary-title mb-0 d-inline-flex">{{language.Workflow_Status}}</div>
+         <div class="d-inline-flex"><button type="button" class="btn-default primary px-3 ml-3" (click)="Refresh()"
+               id="refresh">{{language.Refresh_Data}}</button></div>
+               <div class="d-inline-flex"><button type="button" class="btn-default btn-dft px-3 ml-3" (click)="Download()"
+                  id="download">{{language.Export_Data}}</button></div>
+      </div>
+      <div class="col-md-3 mt-3"><button type="button" (click)="closeWorkflow()" class="close"><span></span></button>
+      </div>
+   </div>
+
+
+
+   <div class="loader" *ngIf="loading">
+      <div class="d-flex justify-content-center">
+         <div class="spinner-border text-primary">
+            <span class="sr-only">{{language.Loading}}</span>
+         </div>
+      </div>
+   </div>
+   <!-- <div style="float: right;cursor: pointer;">
+        <a (click) = 'go_back()'>Back</a>
+    </div>     -->
+   <div class="pb-2">
+      <h4 class="net-ops-secondary-title status-title m-0">{{name}}</h4>
+      <!-- <div *ngIf='!showDetails && dataAvailable'> -->
+      <!-- <div *ngIf='!showDetails'> -->
+      <div [ngClass]="!showDetails ? '' : 'd-none'">
+         <table id="workflow-status-table" width="100%" datatable [dtOptions]="tableOptions"
+            class="row-border hover table-alter dataTable cursor-pointer">
+            <thead>
+               <tr>
+                  <th>{{language.Start_Time}}</th>
+                  <th>{{language.Status}}</th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+
+               </tr>
+            </thead>
+            <tbody>
+               <tr *ngFor="let item of workflowData" (click)='go_details(item)'>
+                  <td>
+                     <span>{{item.start | date: 'MM/dd/yyyy hh:mm a'}}</span>
+                  </td>
+                  <td>
+                     <p><span>{{ (item.succeededCount + item.failedCount) ? (((item.succeededCount +
+                           item.failedCount)/(item.succeededCount + item.failedCount + item.inProgressCount +
+                           item.pendingCount) *100) | number : '1.0-1' ) : '0'}}%</span> {{language.Completed}}</p>
+                  </td>
+                  <td>
+                     <p class="success"><span> {{item.succeededCount ? (((item.succeededCount)/(item.succeededCount +
+                           item.failedCount + item.inProgressCount + item.pendingCount) *100) | number : '1.0-1' ) :
+                           '0'}}%</span> {{language.Succeeded}}</p>
+                  </td>
+                  <td>
+                     <p class="failed "><span>{{item.failedCount ? (((item.failedCount)/(item.succeededCount +
+                           item.failedCount + item.inProgressCount + item.pendingCount) *100) | number : '1.0-1') :
+                           '0'}}%</span> {{language.Failed}}</p>
+                  </td>
+                  <td>
+                     <p class="inprogress"><span>{{item.inProgressCount ? (((item.inProgressCount)/(item.succeededCount
+                           + item.failedCount + item.inProgressCount + item.pendingCount) *100) | number : '1.0-1'): '0'
+                           }}%</span> {{language.In_Progress}}</p>
+                  </td>
+                  <td>
+                     <p class="pending"><span> {{item.pendingCount ? (((item.pendingCount)/(item.succeededCount +
+                           item.failedCount + item.inProgressCount + item.pendingCount) *100) | number : '1.0-1') :
+                           '0'}}%</span> {{language.Pending}}</p>
+                  </td>
+                  <i class="fas fa-caret-right"></i>
+               </tr>
+            </tbody>
+         </table>
+
+      </div>
+      <div *ngIf='showDetails' class="overflow-auto">
+         <table width="100%" class="row-border hover table-alter mt-4 mb-3 overflow-auto">
+            <tbody>
+               <tr class="with-filter-tr">
+                  <td>
+                     <p>{{workflowFil.start | date: 'MM/dd/yyyy hh:mm a'}}</p>
+                  </td>
+                  <td>
+                     <p><span>{{ (workflowFil.succeededCount + workflowFil.failedCount) ? (((workflowFil.succeededCount
+                           +
+                           workflowFil.failedCount)/(workflowFil.succeededCount + workflowFil.failedCount +
+                           workflowFil.inProgressCount +
+                           workflowFil.pendingCount) *100) | number : '1.0-1' ) : '0'}}%</span> {{language.Completed}}
+                     </p>
+                  </td>
+                  <td (click)='doFilter("Succeeded",workflowFil)' data-toggle="tooltip"
+                     title="{{workflowFil.succeededCount}} device(s)" id="success-filter">
+                     <p class="success pointer"><span> {{workflowFil.succeededCount ?
+                           (((workflowFil.succeededCount)/(workflowFil.succeededCount +
+                           workflowFil.failedCount + workflowFil.inProgressCount + workflowFil.pendingCount) *100) |
+                           number : '1.0-1' ) :
+                           '0'}}%</span>
+                        {{language.Succeeded}}
+                        <span [hidden]="!succeed"> <i class="fa fa-lg fa-fw fa-filter"></i></span>
+                     </p>
+                  </td>
+                  <td (click)='doFilter("Failed",workflowFil)' data-toggle="tooltip"
+                     title="{{workflowFil.failedCount}} device(s)" id="failed-filter">
+                     <p class="failed pointer"><span>{{workflowFil.failedCount ?
+                           (((workflowFil.failedCount)/(workflowFil.succeededCount +
+                           workflowFil.failedCount + workflowFil.inProgressCount + workflowFil.pendingCount) *100) |
+                           number : '1.0-1') :
+                           '0'}}%</span> {{language.Failed}}
+                        <span [hidden]="!failed"> <i class="fa fa-lg fa-fw fa-filter"></i></span>
+                     </p>
+                  </td>
+                  <td (click)='doFilter("In Progress",workflowFil)' data-toggle="tooltip"
+                     title="{{workflowFil.inProgressCount}} device(s)" id="inprogress-filter">
+                     <p class="inprogress pointer"><span>{{workflowFil.inProgressCount ?
+                           (((workflowFil.inProgressCount)/(workflowFil.succeededCount
+                           + workflowFil.failedCount + workflowFil.inProgressCount + workflowFil.pendingCount) *100) |
+                           number : '1.0-1'): '0'
+                           }}%</span>
+                        {{language.In_Progress}} <span [hidden]="!inprogress"> <i
+                              class="fa fa-lg fa-fw fa-filter"></i></span></p>
+                  </td>
+                  <td (click)='doFilter("Pending",workflowFil)' data-toggle="tooltip"
+                     title="{{workflowFil.pendingCount}} device(s)" id="pending-filter">
+                     <p class="pending pointer"><span>{{workflowFil.pendingCount ?
+                           (((workflowFil.pendingCount)/(workflowFil.succeededCount +
+                           workflowFil.failedCount + workflowFil.inProgressCount + workflowFil.pendingCount) *100) |
+                           number : '1.0-1') :
+                           '0'}}%</span>
+                        {{language.Pending}} <span [hidden]="!pending"> <i class="fa fa-lg fa-fw fa-filter"></i></span>
+                     </p>
+                  </td>
+                  <td id="go-back">
+                     <p class="pull-right back-to pointer">
+                        <i class="fa fa-angle-left"></i> <span class="ml-1"
+                           (click)='go_back();workflowFil = "";'>{{language.Back_Summary}}</span>
+                     </p>
+                  </td>
+               </tr>
+            </tbody>
+         </table>
+         <!-- <div class="scroll-table"> -->
+         <table id="workflow-status-info-table" width="100%" datatable [dtOptions]="tableFilterOptions"
+            [hidden]="!detailDataAvailable && excLogVisible"
+            class="row-border hover table-alter dataTable failed-table">
+            <thead>
+               <tr>
+                  <th data-orderable="false" class="w-12">{{language.FSAN_Serial_Number}}</th>
+                  <th data-orderable="false" class="w-10">{{language.IPAddress}}</th>
+                  <th data-orderable="false" class="w-10">{{language.model}}</th>
+                  <th data-orderable="false" class="w-10">{{language.Current_Software_Image_Version}}</th>
+                  <th data-orderable="false" class="w-10">{{language.Status}}</th>
+                  <th class="w-10">{{language.Start_Time}}</th>
+                  <th class="w-10">{{language.End_Time}}</th>
+               </tr>
+            </thead>
+            <tbody>
+               <tr *ngFor="let item of workflowfilter">
+                  <td>
+                     <span class="serial_a"><a (click)='go_device(item)'>{{item.serialNumber ?
+                           item.serialNumber :''}}</a></span>
+                  </td>
+                  <td>
+                     <span>{{item.ipAddress ? item.ipAddress :''}}</span>
+                  </td>
+                  <td>
+                     <span>{{item.modelName ? item.modelName:''}}</span>
+                  </td>
+                  <td>
+                     <span>{{item.softwareVersion ? item.softwareVersion:''}}</span>
+                  </td>
+                  <td class="max-w-300px">
+                     <div class="failed-msg">
+                        <p *ngIf="item.state == 'Succeeded'">{{item.state == "Succeeded" ? language.Succeeded : '' }}</p>
+                        <p *ngIf="item.state == 'In Progress'">{{item.state == "In Progress" ? language.In_Progress : '' }}</p>
+                        <p *ngIf="item.state == 'Pending'">{{item.state == "Pending" ? language.Pending : '' }}</p>
+                        <p *ngIf="item.state == 'Failed'">{{item.state == "Failed" ? language.Failed : '' }}</p>
+                        <p class="text-break">{{item?.failureSummary ==='myCommunityIQ Bulk Activation failed'? 'SmartTown Wi-Fi Bulk Activation failed':item?.failureSummary ==="myCommunityIQ Bulk Activation is pending"? 'SmartTown Wi-Fi Bulk Activation is pending':item.failureSummary}}</p>
+                     </div>
+                  </td>
+                  <td>
+                     {{item.start | date: 'MM/dd/yyyy hh:mm:ss a'}}
+                  </td>
+                  <td>
+                     {{item.end | date: 'MM/dd/yyyy hh:mm:ss a'}}
+                  </td>
+               </tr>
+            </tbody>
+            <tbody *ngIf="workflowfilter?.length == 0">
+               <tr>
+                  <td colspan="7" class="no-data-available">{{language['No data available in table']}}</td>
+               </tr>
+            </tbody>
+         </table>
+         <!-- </div>         -->
+      </div>
+   </div>
+</div>

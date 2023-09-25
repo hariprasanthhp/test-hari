@@ -1,0 +1,333 @@
+<div class="container position-relative">
+  <div class="w-100 alert alert-danger fade show" *ngIf="errorMessage">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+    <span>{{errorMessage}}</span>
+    <button type="button" class="close mt-10" (click)="closeAlert()">
+      <span></span>
+    </button>
+  </div>
+  <div class="w-100 alert alert-success fade show" *ngIf="successMessage">
+    <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+    <span>{{successMessage}}</span>
+    <button type="button" class="close mt-10" (click)="closeAlert()">
+      <span></span>
+    </button>
+  </div>
+  <div class="row mb-3">
+    <div class="d-flex w-100 align-items-center border-bottom-gray pb-3">
+      <div class="col-9 px-0">
+        <div class="ccl-admin-title align-items-center row">
+          <div class="col-auto text-nowrap subs-name pr-2">
+            {{selectedFile?.listName}}
+          </div>
+          <div class="col pt-3">
+            <!--  <div class="draft-but">
+              <span class="dot"></span>
+              {{ prospectMetaData.processed ? 'processed' : language['CREATING']}}
+            </div> -->
+          </div>
+        </div>
+      </div>
+      <div class="col-3 px-0">
+        <div class="d-flex align-items-center justify-content-end">
+          <!-- <button class="btn-dft btn-default py-1 mr-3">
+                    <span>...</span>
+                  </button> -->
+          <div class="subscriber-dot mr-3">
+            <!--  <div class="dropdown dropleft">
+              <button class="dropdown-toggle arrow-none" type="button" id="dropdownMenuSubs" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                ...
+              </button>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuSubs">
+                <a class="dropdown-item" (click)="SubscriberEditFileNameModal(SubscriberEditFileName)">{{'Edit File
+                  Name'}}</a>
+                <a class="dropdown-item">{{language['exportCSV']}}</a>
+                <a class="dropdown-item" (click)="SubscriberDeleteModal(SubscriberDelModal)">{{language['Delete
+                  List']}}</a>
+              </div>
+            </div> -->
+          </div>
+          <!--  <button class="btn-default primary mr-4" (click)="SubscriberAddEntryModal(SubscriberAddEntry)">
+            {{'Add Entry'}}
+          </button> -->
+          <button type="button" class="close" (click)="goBackToSubscriber()">
+            <span></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--end-->
+  <div class="row" [hidden]="loading">
+    <div class="table-filter w-100">
+      <div class="mb-3">
+        <p>
+          <b>{{prospectMetaData?.matchedCount ?? 0}}</b>
+          <span class="text-capitalize"> {{prospectMetaData?.listType ?? ''}} </span>
+          {{language['successfully matched to existing records']}}
+        </p>
+      </div>
+      <div class="ccl-form">
+        <div class="table-filter d-flex flex-wrap justify-content-between align-items-center w-100">
+          <div class="ccl-form">
+            <div class="d-flex flex-wrap">
+              <div class="search-input pr-4">
+                <input type="text" placeholder="{{language.Search}}" [(ngModel)]="searchText"
+                  (input)="searchName($event.target.value)" />
+                <span class="pos-abs-right" *ngIf="searchText" (click)="clearText()"><img
+                    src="../../../../../assets/img/close-icon.svg" /></span>
+              </div>
+            </div>
+          </div>
+          <div class="d-inline-flex align-items-center">
+            <!--  <button class="del-btn btn-default primary mr-3"
+              (click)="SubscriberListDeleteModal(SubscriberListDelModal)">
+              {{language['Delete Selection']}}
+            </button> -->
+            <div class="ngselect-min">
+              <ng-select class="w-100" (change)="allSelected()" [(ngModel)]="selectedFilter">
+                <ng-option value="All">{{language['All']}} {{language['entries']}}</ng-option>
+                <ng-option value="Match">{{language['Matching entries']}}</ng-option>
+                <ng-option value="Non-Match">{{language['Non-Matching entries']}}</ng-option>
+              </ng-select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--end-->
+    <div class="overflow-auto w-100 mt-3">
+      <table class="zip-code-table table table-hover" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+        <thead>
+          <tr>
+            <!-- <th>
+              <div class="form-check">
+                <input type="checkbox" class="checkbox-intermediate" />
+              </div>
+            </th> -->
+            <th class="w-20">{{language['First Name']}}</th>
+            <th class="w-20">{{language['Last Name']}}</th>
+            <th class="w-30">{{language['Street Address']}}</th>
+            <th class="w-20">{{language['Email(s)']}}</th>
+            <th class="w-10">{{language['Record Match']}}</th>
+            <!-- <th class="th-del-action"></th> -->
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of prospectDetailLists">
+            <!-- <td>
+              <input type="checkbox" class="checkbox-intermediate" /> -->
+            <td>{{item.firstName}}</td>
+            <td>{{item.lastName}}</td>
+            <td>{{item.addressLine1}}, {{item.addressLine2}}, {{item.city}}, {{item.state}}, {{item.zip}}</td>
+            <td>{{item.email}}</td>
+            <td class="text-center">
+              <span [ngClass]="item.matched ? 'icon-checked' : 'icon-close'">
+                <span>{{item.matched}}</span>
+              </span>
+            </td>
+            <!-- <td>
+              <div class="action-icons-row text-center">
+                <a class="primary cursor-pointer mr-3" (click)="SubscriberEditModal(SubscriberEdit)"><i
+                    class="fa fa-pencil"></i></a>
+                <a class="primary cursor-pointer" (click)="SubscriberListDeleteModal(SubscriberListDelModal)"><i
+                    class="fa fa-trash-o"></i></a>
+              </div>
+            </td> -->
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="center-chart flex mt-60" *ngIf="loading">
+  <div class="spinner-border text-primary mt-60">
+    <span class="sr-only">{{language.Loading}}</span>
+  </div>
+</div>
+<ng-template #SubscriberEditFileName let-modal>
+  <div class="w-100 py-3">
+    <button type="button" class="close mt-1" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span></span>
+    </button>
+  </div>
+  <div class="subscriber-modal-content">
+    <div class="ccl-admin-title mb-3">{{"Edit File Name"}}</div>
+    <div class="ccl-form mb-2">
+      <label>{{language['fileName']}}</label>
+      <input type="text" value={{selectedFile.listName}} />
+    </div>
+    <div class="mt-4">
+      <button class="btn-default primary mr-3">{{language['Save Changes']}}</button>
+      <button class="btn-link primary" (click)="modal.close('Close click')">{{language.Cancel}}</button>
+    </div>
+  </div>
+</ng-template>
+<ng-template #SubscriberAddEntry let-modal>
+  <div class="w-100 pb-3">
+    <button type="button" class="close mt-1" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span></span>
+    </button>
+  </div>
+  <div class="subscriber-modal-content">
+    <div class="ccl-admin-title mb-2" id="AddSubscriberListTitle">{{"Add Entry"}}</div>
+    <div class="modal-form-container">
+      <div class="row">
+        <div class="col-sm-6 ccl-form mb-2">
+          <label>{{language['First Name']}}</label>
+          <input type="text" />
+        </div>
+        <div class="col-sm-6 ccl-form mb-2">
+          <label>{{language['Last Name']}}</label>
+          <input type="text" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 ccl-form mb-2">
+          <label>{{"Email(s)"}}</label>
+          <input type="text" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-6 ccl-form mb-2">
+          <label>{{language['Street Address']}}</label>
+          <input type="text" />
+        </div>
+        <div class="col-sm-6 ccl-form mb-2">
+          <label>{{'Apt, Suite, etc.'}}</label>
+          <input type="text" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-6 ccl-form mb-2">
+          <label>{{'Town'}}</label>
+          <input type="text" />
+        </div>
+        <div class="col-sm-6 ccl-form mb-2">
+          <label>{{'State/Province'}}</label>
+          <input type="text" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6 ccl-form mb-2">
+          <label>{{'ZIP/ZIP+4/Postal Code'}}</label>
+          <input type="text" class="max-160px" />
+        </div>
+      </div>
+    </div>
+    <div class="mt-4">
+      <button class="btn-default primary mr-3">{{language['Save']}}</button>
+      <button class="btn-link primary" (click)="modal.close('Close click')">{{language.Cancel}}</button>
+    </div>
+  </div>
+</ng-template>
+<ng-template #SubscriberEdit let-modal>
+  <div class="w-100 pb-3">
+    <button type="button" class="close mt-1" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span></span>
+    </button>
+  </div>
+  <div class="subscriber-modal-content">
+    <div class="ccl-admin-title mb-2" id="AddSubscriberListTitle">{{"Edit Entry"}}</div>
+    <div class="modal-form-container">
+      <div class="row">
+        <div class="col-sm-6 ccl-form mb-2">
+          <label>{{language['First Name']}}</label>
+          <input type="text" value="Stev" />
+        </div>
+        <div class="col-sm-6 ccl-form mb-2">
+          <label>{{language['Last Name']}}</label>
+          <input type="text" value="Smith" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 ccl-form mb-2">
+          <label>{{"Email(s)"}}</label>
+          <input type="text" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-6 ccl-form mb-2">
+          <label>{{language['Street Address']}}</label>
+          <input type="text" />
+        </div>
+        <div class="col-sm-6 ccl-form mb-2">
+          <label>{{'Apt, Suite, etc.'}}</label>
+          <input type="text" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-6 ccl-form mb-2">
+          <label>{{'Town'}}</label>
+          <input type="text" />
+        </div>
+        <div class="col-sm-6 ccl-form mb-2">
+          <label>{{'State/Province'}}</label>
+          <input type="text" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6 ccl-form mb-2">
+          <label>{{'ZIP/ZIP+4/Postal Code'}}</label>
+          <input type="text" class="max-160px" value="600015" />
+        </div>
+      </div>
+    </div>
+    <div class="mt-4">
+      <button class="btn-default primary mr-3">{{language['Save Changes']}}</button>
+      <button class="btn-link primary" (click)="modal.close('Close click')">{{language.Cancel}}</button>
+    </div>
+  </div>
+</ng-template>
+<ng-template #SubscriberDelModal let-modal>
+  <div class="w-100 py-3">
+    <button type="button" class="close mt-1" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span></span>
+    </button>
+  </div>
+  <div class="subscriber-modal-content">
+    <div class="d-flex">
+      <div class="warn-icon-min">
+        <img src="../../../assets/img/warning-icon-36px.svg" />
+      </div>
+      <div>
+        <div class="ccl-Secondary-title mb-3">Are you sure you want to delete {{selectedFile.listName}}?</div>
+        <button class="btn-default primary mr-3">{{language.Delete}}</button>
+        <button class="btn-dft btn-default py-1" (click)="modal.close('Close click')">{{language.Cancel}}</button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<ng-template #SubscriberListDelModal let-modal>
+  <div class="w-100 py-3">
+    <button type="button" class="close mt-1" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span></span>
+    </button>
+  </div>
+  <div class="subscriber-modal-content">
+    <div class="d-flex">
+      <div class="warn-icon-min">
+        <img src="../../../assets/img/warning-icon-36px.svg" />
+      </div>
+      <div>
+        <div class="ccl-Secondary-title mb-3">Are you sure you want to delete the following Subscriber(s)?</div>
+        <ul class="my-3 pl-4 pb-4">
+          <li>
+            Bessie
+          </li>
+          <li>
+            Darrell
+          </li>
+          <li>
+            Kathryn
+          </li>
+        </ul>
+        <button class="btn-default primary mr-3">{{language.Delete}}</button>
+        <button class="btn-dft btn-default py-1" (click)="modal.close('Close click')">{{language.Cancel}}</button>
+      </div>
+    </div>
+  </div>
+</ng-template>

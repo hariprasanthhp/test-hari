@@ -1,0 +1,265 @@
+<div class="modole-content-spacing">
+    <div class="w-100 alert alert-danger  fade show my-3" *ngIf="errorMsg">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+        <button type="button" class="close" (click)="errorMsg = ''"><span></span></button>
+        <div class="d-inline-flex" [innerHtml]="errorMsg"></div>
+    </div>
+    <div class="loader" *ngIf="loader">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">{{language.Loading}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="row ">
+        <div class="col-12 px-0 text-right"><img aria-hidden="true" src="assets/img/ic_close-44px.svg" class="pointer"
+                data-dismiss="modal" aria-label="Close" (click)="refreshAckShelve()">
+        </div>
+        <div class="col-12 d-inline-flex align-items-center">
+
+            <div class="ccl-admin-title d-inline-flex pr-4">
+                {{ fullData['subject'] ? fullData['subject'].alarmEventName: '' }}
+            </div>
+            <div class="d-inline-flex align-items-center pt-2"
+                *ngIf="clickedAlarmType === 'Alarm' && alarmType !== 'Event'">
+                <div
+                    class="{{(fullData['subject'] && fullData['subject'].perceivedSeverity && colorClass[fullData['subject'].perceivedSeverity]) ? colorClass[fullData['subject'].perceivedSeverity] : 'black clear-sev-but'}}">
+                    <span class="dot"></span> {{
+                    fullData['subject'] ? language[fullData['subject'].perceivedSeverity] ||
+                    fullData['subject'].perceivedSeverity: '' }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row ">
+        <div class="col-12 d-flex flex-wrap px-0 my-2">
+            <!-- ccl-admin-title -->
+            <div class="col-auto kbi-col">
+                <div class="kbi-content">
+                    <label class="cco-list-label mb-0">{{language['Reported Time']}} </label>
+                    <h3 class="stats-value stats-value-24">{{ (fullData['subject'] && fullData['subject']['timeRaised'])
+                        ?
+                        convertToDateTime(fullData['subject']['timeRaised']): '' }}</h3>
+                    <div class="device-text">(UTC/{{timeZone}})</div>
+                </div>
+            </div>
+            <div class="col-auto kbi-col">
+                <div class="kbi-content">
+                    <label class="cco-list-label mb-0">{{language['Synced Time']}}</label>
+                    <h3 class="stats-value stats-value-24">
+                        {{ fullData['time'] ? convertToDateTime(fullData['time']): '' }}
+                    </h3>
+                    <div class="device-text">(UTC/{{timeZone}})</div>
+                </div>
+            </div>
+            <div class="col-auto kbi-col">
+                <div class="kbi-content">
+                    <label class="cco-list-label mb-0">
+                        {{ clickedAlarmType === 'Alarm' && alarmType !== 'Event' ? language['Category']:
+                        language['Category'] }}
+                    </label>
+                    <h3 class="stats-value stats-value-24">
+                        {{ fullData['subject'] ? fullData['subject'].category: '' }}
+                    </h3>
+                </div>
+
+            </div>
+            <div class="col-12 kbi-col">
+                <div class="kbi-content">
+                    <label class="cco-list-label mb-0">{{language["Resource"]}}</label>
+                    <h3 class="stats-value stats-value-24"
+                        [innerHtml]="(fullData['subject'] && fullData['subject']['resourceForUI']) ? fullData['subject']['resourceForUI']: ''">
+                    </h3>
+                </div>
+
+            </div>
+        </div>
+        <!-- <table class="table table-borderless">
+        <thead>
+            <tr>
+                <th>{{language['Reported Time']}} (UTC/{{timeZone}})</th>
+                <th>{{language['Synced Time']}} (UTC/{{timeZone}})</th>
+                <th>{{ clickedAlarmType === 'Alarm' && alarmType !== 'Event' ? language['Alarm Name']:
+                    'Event Name' }}</th>
+                <th>{{ clickedAlarmType === 'Alarm' && alarmType !== 'Event' ? language['Alarm Category']:
+                    'Category' }}</th>
+                <th>{{language.Resource}}</th>
+                <th *ngIf="clickedAlarmType === 'Alarm' && alarmType !== 'Event'">{{language.Severity}}</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            <td>{{ (fullData['subject'] && fullData['subject']['timeRaised']) ?
+                convertToDateTime(fullData['subject']['timeRaised']): '' }}</td>
+            <td>{{ fullData['time'] ? convertToDateTime(fullData['time']): '' }}</td>
+            <td>{{ fullData['subject'] ? fullData['subject'].alarmEventName: '' }}</td>
+            <td>{{ fullData['subject'] ? fullData['subject'].category: '' }}</td>
+
+            <td class="text-break col-recom">
+                <div class="subj-text"
+                    [innerHtml]="(fullData['subject'] && fullData['subject']['resourceForUI']) ? fullData['subject']['resourceForUI']: ''">
+
+                </div>
+            </td>
+            <td *ngIf="clickedAlarmType === 'Alarm' && alarmType !== 'Event'">
+                <span
+                                [ngStyle]="{'color': (fullData['subject'] && fullData['subject'].perceivedSeverity && colors[fullData['subject'].perceivedSeverity]) ? colors[fullData['subject'].perceivedSeverity] : 'black' }">{{
+                                fullData['subject'] ? fullData['subject'].perceivedSeverity: '' }}</span> 
+                <div
+                    class="{{(fullData['subject'] && fullData['subject'].perceivedSeverity && colorClass[fullData['subject'].perceivedSeverity]) ? colorClass[fullData['subject'].perceivedSeverity] : 'black clear-sev-but'}}">
+                    <span class="dot"></span> {{
+                    fullData['subject'] ? language[fullData['subject'].perceivedSeverity] ||
+                    fullData['subject'].perceivedSeverity: '' }}
+                </div>
+            </td>
+
+        </tbody>
+    </table> -->
+        <div class="col-md-12 ccl-tabs">
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="Title-1" role="tabpanel" aria-labelledby="home-tab">
+                    <div class="row">
+                        <div class="col-lg-12 col-xl-12 col-md-12 col-sm-12">
+                            <div class="support-key-value pl-12">
+                                <table class="table table-borderless mb-0">
+
+                                    <tbody>
+                                        <tr>
+
+                                            <td>{{language.Type}}</td>
+                                            <td>
+                                                <div
+                                                    *ngIf="fullData['subject'] && fullData['subject']['transformedAlarms']">
+                                                    {{fullData['type']}}
+                                                </div>
+                                                <div
+                                                    *ngIf="!(fullData['subject'] && fullData['subject']['transformedAlarms'])">
+                                                    {{(fullData && fullData['subject']) ?
+                                                    fullData['subject'].alarmType : ''}}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+
+                                            <td>{{language['Description']}}</td>
+                                            <td>{{(fullData && fullData['subject']) ?
+                                                fullData['subject'].description : ''}}</td>
+                                        </tr>
+                                        <tr>
+
+                                            <td>{{language.Details}}</td>
+                                            <td class="white-space-preline">{{(fullData && fullData['subject'])
+                                                ?
+                                                fullData['subject'].details : ''}}</td>
+                                        </tr>
+                                        <!-- <tr *ngIf="!isDev">
+                                                    <td>{{language['Manual Acknowledged']}}</td>
+                                                    <td>{{(fullData && fullData['subject'] &&
+                                                        fullData['subject'].manualAcknowledged) ? 'Yes' : 'No'}}</td>
+                                                </tr>
+                                                <tr *ngIf="!isDev">
+                                                    <td>{{language['Manual Shelved']}}</td>
+                                                    <td>{{(fullData && fullData['subject'] &&
+                                                        fullData['subject'].manualShelved) ? 'Yes' : 'No'}}</td>
+                                                </tr> -->
+                                        <tr>
+                                            <td>{{language['Cloud Acknowledged']}}</td>
+                                            <td>{{(fullData && fullData['subject'] &&
+                                                fullData['subject'].ccoAck) ? 'Yes' : 'No'}}</td>
+                                        </tr>
+                                        <tr *ngIf="fullData?.subject?.ccoAck">
+                                            <td>{{language['Acknowledger']}}</td>
+                                            <td>{{(fullData && fullData['subject'] &&
+                                                fullData['subject'].ccoAckUser) ?
+                                                fullData['subject'].ccoAckUser : ''}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>{{language['Cloud Shelved']}}</td>
+                                            <td>{{(fullData && fullData['subject'] &&
+                                                fullData['subject'].ccoShelved) ? 'Yes' : 'No'}}</td>
+                                        </tr>
+                                        <tr>
+
+                                            <td>{{language['Repair Action']}}</td>
+                                            <td>{{(fullData && fullData['subject']) ?
+                                                fullData['subject'].repairAction : ''}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>{{language['Service Affecting']}}</td>
+                                            <td>{{(fullData && fullData['subject'] &&
+                                                fullData['subject'].serviceAffecting) ? 'Yes' : 'No'}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>{{language['Service Impacting']}}</td>
+                                            <td>{{(fullData && fullData['subject'] &&
+                                                fullData['subject'].serviceImpacting) ? 'Yes' : 'No'}}</td>
+                                        </tr>
+                                        <tr *ngIf="!hideSource">
+                                            <td>{{language.Source}}</td>
+                                            <td>
+                                                <div class="source-overflow-auto"
+                                                    *ngIf="fullData && fullData['subject'] && fullData['subject']['transformedAlarms']">
+                                                    {{fullData['subject']['source']}}
+                                                </div>
+                                                <div class="source-overflow-auto"
+                                                    *ngIf="!(fullData && fullData['subject'] && fullData['subject']['transformedAlarms'])">
+                                                    {{(fullData && fullData['subject']) ?
+                                                    fullData['subject'].source
+                                                    : ''}}</div>
+                                            </td>
+                                        </tr>
+
+                                        <tr *ngIf="fullData['subject']?.impacted_onts_count_ui">
+                                            <td>{{language['Impacted ONTs Count']}}</td>
+                                            <td>
+                                                <div class="maxh-overflow-auto">
+                                                    {{fullData['subject']?.impacted_onts_count_ui}}</div>
+                                            </td>
+                                        </tr>
+
+                                        <tr *ngIf="fullData['subject']?.relatedAlarmsStr">
+                                            <td>{{language['Related Alarms']}}</td>
+                                            <td>
+                                                <div class="maxh-overflow-auto"
+                                                    [innerHtml]="fullData['subject']?.relatedAlarmsStr">
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr *ngIf="showNotes">
+                                            <td>{{language.Notes}}</td>
+                                            <td>{{(fullData && fullData['subject']) ? fullData['subject'].notes
+                                                : ''}}</td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+
+                                <table class="table table-borderless mb-0"
+                                    *ngIf="fullData && fullData['subject'] && fullData['subject']['customAdditionalAttributes']">
+                                    <tbody>
+
+                                        <tr *ngFor="let item of fullData['subject']['customAdditionalAttributes']">
+                                            <td>{{item.key}}</td>
+                                            <td>{{item.value}}</td>
+                                        </tr>
+
+
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="button-padding">
+                                <app-alarm-ack-shelve [fullData]="fullData" (ackShelveData)="onAckShelve($event)"
+                                    *ngIf="hasWriteAccess && showAckShelveBtn && connected"
+                                    (enableLoader)="onEnableLoader($event);" (errorMessage)="onErrorMsg($event)">
+                                </app-alarm-ack-shelve>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

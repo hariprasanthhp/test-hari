@@ -1,0 +1,37 @@
+<div class="col-12 col-md-12 pl-0 ccl-tabs">
+
+  <h2 class="net-ops-title" id="netops-reports">{{language.Reports}}</h2>
+  <ul id="tabs" class="nav nav-tabs sub-tab">
+    <li *ngIf="showInventoryReport" class="nav-item">
+      <a routerLink="/support/netops-management/reports/inventory-report" (Click)="$event.preventDefault()"
+        class="nav-link small f-size-16" id="inventoryReportTabId"
+        routerLinkActive="active">{{language.Inventory_Report}}</a>
+    </li>
+    <li *ngIf="showCallOutcome && sso.getCscType() !== 'DME'" class="nav-item">
+      <a class="nav-link small f-size-16" routerLink="/support/netops-management/reports/call-outcome-report"
+        (Click)="$event.preventDefault()" routerLinkActive="active"
+        id="callOutcomeReportTabId">{{language.Call_Outcome_Report}}</a>
+    </li>
+
+    <li *ngIf="showUnassociatedDevices" class="nav-item"><a class="nav-link small f-size-16"
+        routerLink="/support/netops-management/reports/unassociated-devices" id="unassociatedDevicesMenuId"
+        (Click)="$event.preventDefault()" routerLinkActive="active">{{language['Unassociated Systems']}}</a></li>
+    <li *ngIf="showOrphanDevices" class="nav-item"><a class="nav-link small f-size-16"
+          routerLink="/support/netops-management/reports/orphan-devices" id="orphanDevicesMenuId"
+          (Click)="$event.preventDefault()" routerLinkActive="active">{{language['Orphan_Devices']}}</a></li>
+    <!-- <li  class="nav-item" *ngIf="showCallAvoidance && sso.getCscType() !== 'DME'">
+       <a class="nav-link small f-size-16"
+          routerLink="/support/netops-management/reports/call-avoidance-report"
+          id="call-avoidance-report"
+          routerLinkActive="active">
+            {{language.Call_Avoidance_Report}} </a>
+    </li> -->
+
+    <li *ngIf="showAuditReport && sso.getCscType() !== 'DME'" class="nav-item">
+      <a class="nav-link small f-size-16" routerLink="/support/netops-management/reports/audit-report"
+        (Click)="$event.preventDefault()" routerLinkActive="active"
+        id="callOutcomeReportTabId">{{language.Audit_Report}}</a>
+    </li>
+  </ul>
+</div>
+<router-outlet></router-outlet>

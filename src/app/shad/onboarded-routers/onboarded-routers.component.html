@@ -1,0 +1,47 @@
+<div class="main-card">
+    <div class="loader" *ngIf="loader">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary" role="">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    </div>
+    <div class="main-card-header text-center">
+        <h4>{{language.Onboarded_Routers}}</h4>
+    </div>
+
+    <div class="alert alert-warning alert-dismissible fade show" role="alert" *ngIf="error">
+        <strong>{{language.Error_map}}!</strong> {{errorMsg}}.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+
+    <div class="p-2" style="position: relative ;" [hidden]="loader">
+
+
+        <a href="#" id="testAnchor"></a>
+        <div id="container_count_div" style="width: 80%;display: inline-block; text-align: center;"></div>
+        <button id='DLtoExcel' class="btn btn-sm btn-success pull-right" style="margin-bottom: 15px;display: none;"
+            (click)="downloadExcel();" *ngIf="showExportBtn">{{language.Exprt_Data_Excel}}</button>
+        <table class="table table-bordered text-center" id="billing-report-table" style="display: none;">
+            <thead>
+                <tr>
+                    <th rowspan="2" style="vertical-align:middle;">{{language.Name}}</th>
+                    <th rowspan="2" style="vertical-align:middle;">{{language.Email}}</th>
+                    <th colspan="4">Routers</th>
+                </tr>
+                <tr>
+                    <th>{{language.MAC_Address}}</th>
+                    <th>{{language.FSAN_Serilno}}</th>
+                    <th>{{language.Model_Number}}</th>
+                    <th>{{language.Type}}</th>
+                </tr>
+            </thead>
+            <tbody id="billing-report-body">
+
+            </tbody>
+        </table>
+    </div>
+
+</div>

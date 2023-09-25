@@ -1,0 +1,41 @@
+<div id="netops" class="netops-wrapper flex">
+    <div class="container-fluid p-0">
+        <div class="row">
+            <div class="col-12">
+                <div class="over-tit flex">
+                    <h1 class="net-ops-title mb-2" id="csc-netops-title">{{language.NetOps}}</h1>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-12 col-lg-2 pr-0 ccl-tabs">
+                <ul id="netops-list-menu" class="nav flex-column left-menu tab-view-style">
+                    <li *ngIf="showSubscriberMngmnt" class="nav-item"><a class="list-group-item list-group-item-action"
+                            routerLink="/support/netops-management/subscriber-management" id="subscriberManageMenuId"
+                            (Click)="$event.preventDefault()"
+                            routerLinkActive="active">{{language.Subscriber_Management}}</a></li>
+                    <li class="nav-item" *ngIf="showReports"><a class="list-group-item list-group-item-action"
+                            id="reportsMenuId" routerLink="/support/netops-management/reports"
+                            (Click)="$event.preventDefault()" routerLinkActive="active">{{language.Reports}}</a></li>
+                    <li *ngIf="showOperations" class="nav-item"><a class="list-group-item list-group-item-action"
+                            id="operationsMenuId" routerLink="/support/netops-management/operations"
+                            (Click)="$event.preventDefault()" routerLinkActive="active">{{language.Operations}}</a></li>
+                    <li *ngIf="showConfiguration" class="nav-item"><a class="list-group-item list-group-item-action"
+                            id="configurationMenuId" routerLink="/support/netops-management/configuration"
+                            (Click)="$event.preventDefault()" routerLinkActive="active">{{language.Configurations}}</a>
+                    </li>
+                </ul>
+
+                <!--            <ng-container *ngIf="pageavailble">
+                    <div><i [ngClass]="(divopen)?'d-block':'d-none'" (click)="openNav()"
+                            class="fas fa-chevron-right circle-icon"></i></div>
+                    open
+                    <div><i [ngClass]="(!divopen)?'d-block':'d-none'" (click)="CloseNav()"
+                            class="fas fa-chevron-left chevron-icon circle-icon"></i></div>
+                    close
+                </ng-container> -->
+            </div>
+            <div class="col-sm-12 col-md-12 col-lg-10 pl-4">
+                <router-outlet></router-outlet>
+            </div>
+        </div>
+    </div>
+</div>

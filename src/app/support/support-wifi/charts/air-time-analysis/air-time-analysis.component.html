@@ -1,0 +1,145 @@
+<div class="loader" *ngIf="loading || radioSummaryLoading">
+  <div class="d-flex justify-content-center">
+    <div class="spinner-border text-primary">
+      <span class="sr-only">{{ language.Loading }}</span>
+    </div>
+  </div>
+</div>
+<div class="w-100 alert alert alert-danger fade show" *ngIf="error">
+  <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+  <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+  <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+</div>
+
+<div class="airtime-analysis-container" style="min-height: 350px;"
+  *ngIf="!radioSummaryEmpty && !noDataAvail && chartData.length">
+
+  <div class="airtime-analysis-item " id="wifi-airtime-analysis-24g-container"
+    *ngIf="metaData?.RadioAirtime24G && !noDataAvail">
+    <div class="ccl-Secondary-title border-bottom">
+      2.4GHz {{ language.Airtime_Analysis }}
+    </div>
+    <div *ngIf="
+        radioSummary &&
+          radioSummary &&
+          radioSummary['2.4G'] &&
+          radioSummary['2.4G'].RadioEnabled == 'false';
+        else chart24g
+      ">
+      {{ language["Radio 2.4GHz is Disabled"] }}
+    </div>
+    <ng-template #chart24g>
+      <div *ngIf="
+          (hasRadioSummary && !radioSummary) ||
+          (radioSummary &&
+            radioSummary &&
+            radioSummary['2.4G'] &&
+            radioSummary['2.4G'].RadioEnabled == 'true') ||
+          !hasRadioSummary
+        " id="air-time-chart25" style="height: 350px; width: 100%;"></div>
+    </ng-template>
+  </div>
+
+  <div class="airtime-analysis-item " id="wifi-airtime-analysis-5g-container" *ngIf="show5gWidgets && !noDataAvail">
+    <div class="ccl-Secondary-title border-bottom">
+      5GHz {{ language.Airtime_Analysis }}
+    </div>
+    <div *ngIf="
+        radioSummary &&
+          radioSummary &&
+          radioSummary['5G'] &&
+          radioSummary['5G'].RadioEnabled == 'false';
+        else chart5g
+      ">
+      {{ language["Radio 5GHz is Disabled"] }}
+    </div>
+    <ng-template #chart5g>
+      <div *ngIf="
+          (hasRadioSummary && !radioSummary) ||
+          (radioSummary &&
+            radioSummary &&
+            radioSummary['5G'] &&
+            radioSummary['5G'].RadioEnabled == 'true') ||
+          !hasRadioSummary
+        " id="air-time-chart5" style="height: 350px; width: 100%;"></div>
+    </ng-template>
+  </div>
+
+  <div class="airtime-analysis-item " id="wifi-airtime-analysis-6g-container"
+    *ngIf="metaData?.RadioAirtime6G && !noDataAvail">
+    <div class="ccl-Secondary-title border-bottom">
+      6GHz {{ language.Airtime_Analysis }}
+    </div>
+    <div *ngIf="radioSummary &&
+              radioSummary['6G'] &&
+              radioSummary['6G']?.RadioEnabled == 'false';
+            else chart6g
+          ">
+      {{ language["Radio 6GHz is Disabled"] ? language["Radio 6GHz is Disabled"] : "Radio 6GHz is Disabled" }}
+    </div>
+    <ng-template #chart6g>
+      <div *ngIf="
+              (hasRadioSummary && !radioSummary) ||
+              (radioSummary &&
+                radioSummary &&
+                radioSummary['6G'] &&
+                radioSummary['6G']?.RadioEnabled == 'true') ||
+              !hasRadioSummary
+            " id="air-time-chart-6g" style="height: 350px; width: 100%;"></div>
+    </ng-template>
+  </div>
+
+  <!-- <div class="airtime-analysis-item" *ngIf="radioSummaryEmpty">
+    <div>
+      {{ language.Radio_Off }}
+    </div>
+  </div>
+  <div class="airtime-analysis-item" *ngIf="noDataAvail">
+    <div>
+      {{ 'No data to display' }}
+    </div>
+  </div> -->
+</div>
+
+
+<div class="airtime-analysis-container" style="min-height: 350px;" *ngIf="radioSummaryEmpty || noDataAvail">
+  <div class="airtime-analysis-item " id="wifi-airtime-analysis-24g-container" *ngIf="metaData?.RadioAirtime24G">
+    <div class="ccl-Secondary-title border-bottom">
+      2.4GHz {{ language.Airtime_Analysis }}
+    </div>
+    <div *ngIf="radioSummaryEmpty">
+      {{ language.Radio_Off }}
+    </div>
+    <div *ngIf="noDataAvail">
+      {{ 'No data to display' }}
+    </div>
+  </div>
+  <div class="airtime-analysis-item " id="wifi-airtime-analysis-5g-container" *ngIf="metaData?.RadioAirtime5G">
+    <div class="ccl-Secondary-title border-bottom">
+      5GHz {{ language.Airtime_Analysis }}
+    </div>
+    <div *ngIf="radioSummaryEmpty">
+      {{ language.Radio_Off }}
+    </div>
+    <div *ngIf="noDataAvail">
+      {{ 'No data to display' }}
+    </div>
+  </div>
+  <div class="airtime-analysis-item " id="wifi-airtime-analysis-6g-container" *ngIf="metaData?.RadioAirtime6G">
+    <div class="ccl-Secondary-title border-bottom">
+      6GHz {{ language.Airtime_Analysis }}
+    </div>
+    <div *ngIf="radioSummaryEmpty">
+      {{ language.Radio_Off }}
+    </div>
+    <div *ngIf="noDataAvail">
+      {{ 'No data to display' }}
+    </div>
+  </div>
+</div>
+<!-- <div class="row" id="wifi-airtime-analysis-title" *ngIf="radioSummaryEmpty || noDataAvail">
+  <div class="col-md-12">
+    <h4 class="user-name">{{ language.Airtime_Analysis }}</h4>
+    <hr />
+  </div>
+</div> -->

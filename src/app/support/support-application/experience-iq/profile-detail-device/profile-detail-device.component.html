@@ -1,0 +1,428 @@
+<!-- <router-outlet></router-outlet> -->
+
+<!-- // tab experienceiQ -->
+    <div class="row my-3 experience-sec">
+        <div class="col-lg-2 col-md-3 col-sm-12 tab-sec border-right">
+            <ul id="tabs" class="nav nav-tabs sub-tab vertical-tab">
+                <li class="nav-item">
+                    <a data-toggle="tab" href="javascript:void(0)"
+                        class="nav-link small active"  id="details" (click)="sectionToShow = 'details'" >{{language.Details}}</a>
+                </li>
+                <li class="nav-item">
+                    <a data-toggle="tab" href="javascript:void(0)"
+                        class="nav-link small "  id="alert" (click)="sectionToShow = 'alert'" >{{language.Alert}}</a>
+                </li>
+                <li class="nav-item">
+                    <a data-toggle="tab"
+                    class="nav-link small" href="javascript:void(0)" (click)="sectionToShow = 'people'" id="People" >{{language.People}}</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-lg-10 col-md-9 col-sm-12 details-sec">
+        	<!-- // details -->
+	        <div class="row" id="details" role="tab" aria-labelledby="details" *ngIf="sectionToShow == 'details'">
+		        <div class="col-lg-6 col-md-12 col-sm-12">
+		            <div class="Protect-iq-table">
+		                <div class="border-bottom">
+		                    <h2 class="user-name">Setting</h2>
+		                </div>
+		                <table class="detail-list mt-3">
+		                    <tbody>
+		                        <tr>
+		                            <th scope="row" class="">{{language.Subscribed}} </th>
+		                            <td class="">
+		                                <div class="toggle-swtbtn  checkbox switcher mb-2">
+		                                    <label for="selfHealCheckbox">
+		                                    <input type="checkbox" id="selfHealCheckbox" checked>
+		                                    <span><small></small></span>
+		                                    </label>
+		                                </div>
+		                            </td>
+		                        </tr>
+		                        <tr>
+		                        <th scope="row" class="">{{language.Enabled}} </th>
+		                            <td class="">
+		                                <div class="toggle-swtbtn  checkbox switcher mb-2">
+		                                    <label for="selfHealCheckbox1">
+		                                    <input type="checkbox" id="selfHealCheckbox1" checked>
+		                                    <span><small></small></span>
+		                                    </label>
+		                                </div>
+		                            </td>
+		                        </tr>
+		                    </tbody>
+		                </table>
+		            </div>
+		        </div>
+	        </div>
+
+
+	        <!-- // Alert -->
+
+	        <div class="col-12" id="alert" role="tab" aria-labelledby="alert" *ngIf="sectionToShow == 'alert'">
+                 <div class="Protect-iq-table">
+                    <table class="detail-list skip-device ">
+                        <thead>
+                            <th class="w-30">
+                                <h5 class="user-name">{{language.Occurred}}</h5>
+                            </th>
+                            <th class="w-60">
+                                <h5 class="user-name">{{language.Alert_Details}}</h5>
+                            </th>
+                            <th class="w-10">
+                            </th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="3">
+                                    <div class="protect-iq-accordion">
+                                        <div id="accordion">
+                                            <div class="card">
+                                                <div class="card-header" id="alert-carc" data-toggle="collapse" data-target="#collapse1"
+                                                    aria-expanded="false" aria-controls="collapse1">
+                                                    <div class="row mb-0">
+                                                    	<ul class="alert-ul">
+                                                        	<li class="occurr-date">
+                                                        		<div class="Protect-iq-info">
+		                                                            <span class="plus-minus-toggle mr-2">
+		                                                                <span class="plus"> + </span>
+		                                                                <!-- <span class="minus"> - </span> -->
+		                                                            </span>
+                                                            		Nov 23, 2020 8:08 am
+                                                        		</div>
+                                                        	</li>
+                                                        	<li class="alert-details">
+                                                        		<div class="f-w-600">
+                                                        			clients1.google.com {{language.Is_Blocked}}
+                                                        		</div>
+                                                        	</li>
+                                                        	<li class="alert-btn">
+                                                        		<button class="btn default-btn">
+                                                        			{{language.Add_To_trust}}
+                                                        		</button>
+                                                        	</li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div id="collapse1" class="collapse" aria-labelledby="alert-carc" data-parent="#accordion">
+                                                    <table class="table device-detail experience-detail table-borderless">
+                                                        <tbody>
+                                                            <tr>
+                                                            	<th class="w-30">
+                                                            	</th>
+                                                                <th class=" w-60 p-0">
+                                                                 	<table class="detail-list">
+										                 	           <tbody>
+										                                <tr>
+										                                    <th scope="row" class="">Type : </th>
+										                                    <td class="">{{language.User_Defined_Website_Blocked}} (clients1.google.com)</td>
+										                                </tr>
+										                                <tr>
+										                                    <th scope="row">Action : </th>
+										                                    <td> Internet Portals </td>
+										                                </tr>
+										                                <tr>
+										                                    <th scope="row">Device: </th>
+										                                    <td>{{language.Basement}} TV</td>
+										                                </tr>
+										                            </tbody>
+										                        </table>
+                                                            </th>
+                                                          </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        <tr>
+	                        <td colspan="3">
+	                            <div class="protect-iq-accordion">
+	                                <div id="accordion">
+	                                    <div class="card">
+	                                        <div class="card-header" id="headingThree" data-toggle="collapse" data-target="#collapse1"
+	                                            aria-expanded="false" aria-controls="collapse1">
+	                                            <div class="row mb-0">
+	                                            	<ul class="alert-ul">
+	                                                	<li class="occurr-date">
+	                                                		<div class="Protect-iq-info">
+	                                                            <span class="plus-minus-toggle mr-2">
+	                                                                <span class="plus"> + </span>
+	                                                                <!-- <span class="minus"> - </span> -->
+	                                                            </span>
+	                                                    		Nov 23, 2020 8:08 am
+	                                                		</div>
+	                                                	</li>
+	                                                	<li class="alert-details">
+	                                                		<div class="f-w-600">
+	                                                			clients1.google.com {{language.Is_Blocked}}
+	                                                		</div>
+	                                                	</li>
+	                                                	<li class="alert-btn">
+                                                        		<button class="btn default-btn">
+                                                        			{{language.Add_To_trust}}
+                                                        		</button>
+                                                        	</li>
+	                                                </ul>
+	                                            </div>
+	                                        </div>
+	                                        <div id="collapse1" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+	                                            <table class="table device-detail experience-detail table-borderless">
+	                                                <tbody>
+	                                                    <tr>
+	                                                    	<th class="w-30">
+	                                                    	</th>
+	                                                        <th class=" w-60 p-0">
+	                                                         	<table class="detail-list">
+									                 	           <tbody>
+									                                <tr>
+									                                    <th scope="row" class="">Type : </th>
+									                                    <td class="">{{language.User_Defined_Website_Blocked}} (clients1.google.com)</td>
+									                                </tr>
+									                                <tr>
+									                                    <th scope="row">Action : </th>
+									                                    <td> Internet Portals </td>
+									                                </tr>
+									                                <tr>
+									                                    <th scope="row">Device: </th>
+									                                    <td>{{language.Basement}} TV</td>
+									                                </tr>
+									                            </tbody>
+									                        </table>
+	                                                    </th>
+	                                                  </tr>
+	                                                </tbody>
+	                                            </table>
+	                                        </div>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </td>
+				        </tr>
+                       	<tr>
+                            <td colspan="3">
+                                <div class="protect-iq-accordion">
+                                    <div id="accordion">
+                                        <div class="card">
+                                            <div class="card-header" id="headingThree" data-toggle="collapse" data-target="#collapse1"
+                                                aria-expanded="false" aria-controls="collapse1">
+                                                <div class="row mb-0">
+                                                	<ul class="alert-ul">
+                                                    	<li class="occurr-date">
+                                                    		<div class="Protect-iq-info">
+	                                                            <span class="plus-minus-toggle mr-2">
+	                                                                <span class="plus"> + </span>
+	                                                                <!-- <span class="minus"> - </span> -->
+	                                                            </span>
+                                                        		Nov 23, 2020 8:08 am
+                                                    		</div>
+                                                    	</li>
+                                                    	<li class="alert-details">
+                                                    		<div class="f-w-600">
+                                                    			clients1.google.com {{language.Is_Blocked}}
+                                                    		</div>
+                                                    	</li>
+                                                    	<li class="alert-btn">
+                                                        		<button class="btn default-btn">
+                                                        			{{language.Add_To_trust}}
+                                                        		</button>
+                                                        	</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div id="collapse1" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+                                                <table class="table device-detail experience-detail table-borderless">
+                                                    <tbody>
+                                                        <tr>
+                                                        	<th class="w-30">
+                                                        	</th>
+                                                            <th class=" w-60 p-0">
+                                                             	<table class="detail-list">
+									                 	           <tbody>
+									                                <tr>
+									                                    <th scope="row" class="">Type : </th>
+									                                    <td class="">{{language.User_Defined_Website_Blocked}} (clients1.google.com)</td>
+									                                </tr>
+									                                <tr>
+									                                    <th scope="row">Action : </th>
+									                                    <td> Internet Portals </td>
+									                                </tr>
+									                                <tr>
+									                                    <th scope="row">Device: </th>
+									                                    <td>{{language.Basement}} TV</td>
+									                                </tr>
+									                            </tbody>
+									                        </table>
+                                                        </th>
+                                                      </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            	</div>
+        	</div>
+
+        	<!-- // -- People -->
+
+        	<div class="col-12" id="people" role="tab" aria-labelledby="people" *ngIf="sectionToShow == 'people'">
+                 <div class="Protect-iq-table">
+                    <div class="flex skip-btns">
+                        <button type="button" class="btn btn-primary br-26 b-none mr-3" >
+
+                               {{language.Add_People}}
+                        </button>
+                           <button type="button" class="btn btn-default br-26 b-none">
+                               {{language.Disconnect_All}}
+                        </button>
+                    </div>
+                    <table class="detail-list dataTable add-people-table mt-4">
+                        <thead>
+                            <th>
+                               {{language.Name}}
+                            </th>
+                            <th >
+                                {{language.Status}}
+                            </th>
+                            <th >
+                             	{{language.Systems}}
+                            </th>
+                            <th >
+                             	{{language.Daily_Usage}}
+                            </th>
+                            <th >
+                             	{{language.Weekly_Usage}}
+                            </th>
+                            <th >
+                             	{{language.Monthly_Usage}}
+                            </th>
+                        </thead>
+                        <tbody>
+                        	<tr>
+                        		<td>
+                        			<div class="people-info" routerlink="experienceIQ/profile-detail">
+                        				<img src="assets/img/people-img.png">
+                        				<span> Darik </span>
+                        			</div>
+                        		</td>
+                        		<td>
+                        			{{language.Connected}}
+                        		</td>
+                        		<td>
+                        			6
+                        		</td>
+                        		<td>
+                        			8 Hours
+                        		</td>
+                        		<td>
+                        			54 Hours
+                        		</td>
+                        		<td>
+                        			148 Hours
+                        		</td>
+                        	</tr>
+                        	<tr>
+                        		<td>
+                        			<div class="people-info">
+                        				<img src="assets/img/people-img.png">
+                        				<span> Darik </span>
+                        			</div>
+                        		</td>
+                        		<td>
+                              {{language.Connected}}
+                        		</td>
+                        		<td>
+                        			6
+                        		</td>
+                        		<td>
+                        			8 Hours
+                        		</td>
+                        		<td>
+                        			54 Hours
+                        		</td>
+                        		<td>
+                        			148 Hours
+                        		</td>
+                        	</tr><tr>
+                        		<td>
+                        			<div class="people-info">
+                        				<img src="assets/img/people-img.png">
+                        				<span> Mary </span>
+                        			</div>
+                        		</td>
+                        		<td>
+                              {{language.Connected}}
+                        		</td>
+                        		<td>
+                        			6
+                        		</td>
+                        		<td>
+                        			8 Hours
+                        		</td>
+                        		<td>
+                        			54 Hours
+                        		</td>
+                        		<td>
+                        			148 Hours
+                        		</td>
+                        	</tr><tr>
+                        		<td>
+                        			<div class="people-info">
+                        				<img src="assets/img/people-img.png">
+                        				<span> Jamie </span>
+                        			</div>
+                        		</td>
+                        		<td>
+                              {{language.Connected}}
+                        		</td>
+                        		<td>
+                        			6
+                        		</td>
+                        		<td>
+                        			8 Hours
+                        		</td>
+                        		<td>
+                        			54 Hours
+                        		</td>
+                        		<td>
+                        			148 Hours
+                        		</td>
+                        	</tr><tr>
+                        		<td>
+                        			<div class="people-info">
+                        				<img src="assets/img/people-img.png">
+                        				<span> Dhoni </span>
+                        			</div>
+                        		</td>
+                        		<td>
+                              {{language.Connected}}
+                        		</td>
+                        		<td>
+                        			6
+                        		</td>
+                        		<td>
+                        			8 Hours
+                        		</td>
+                        		<td>
+                        			54 Hours
+                        		</td>
+                        		<td>
+                        			148 Hours
+                        		</td>
+                        	</tr>
+                        </tbody>
+                	</table>
+            	</div>
+        	</div>
+	   </div>
+	<!-- </div> -->
+
+

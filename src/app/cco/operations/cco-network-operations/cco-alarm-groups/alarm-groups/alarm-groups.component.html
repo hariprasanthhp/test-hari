@@ -1,0 +1,200 @@
+<section>
+  <div class="w-100 alert alert-success fade show my-3" *ngIf="success">
+    <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+    <button type="button" class="close" (click)="success = false">
+      <span></span>
+    </button>
+    <div class="d-inline-flex" [innerHtml]="language[successInfo] || successInfo"></div>
+  </div>
+  <div class="w-100 alert alert-danger fade show my-3" *ngIf="error">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+    <button type="button" class="close" (click)="closeAlert()">
+      <span></span>
+    </button>
+    <div class="d-inline-flex" [innerHtml]="language[errorInfo] || errorInfo"></div>
+  </div>
+  <div class="row mb-3" *ngIf="loading">
+    <div class="col-md-12">
+      <div class="loader mt-15">
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border text-primary">
+            <span class="sr-only">{{ language.Loading }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="row justify-content-between">
+        <div class="col-md-8 mt-1">
+          <label class="cco-secondary-title">{{language['Alarm Category Subgroups']}}</label>
+        </div>
+        <div class="col-md-1 d-flex align-items-center justify-content-end">
+          <a href="javascript:void(0)" 
+          (click) = "goToListView()"
+            >
+            <img src=" assets/img/close-icon.svg" alt="" />
+          </a>
+          <!-- routerLink="/cco/operations/cco-network-operations/cco-alarm-groups" -->
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="ccl-form" [ngClass]="groupAlarmData.groupAlarmId != '' ? 'cursornallow' : ''">
+            <label>{{language['Group Name']}} <span class="error">*</span></label>
+            <input (keydown) = "avoidInitialSpacing($event)" maxlength="50" [ngClass]="{ disable: groupAlarmData.groupAlarmId != '' }" (focusout) = "updateGroupError()" (keyup) = "updateGroupError()" class="form-control" type="text" #group_name [(ngModel)]="groupAlarmData.group_name"
+              placeholder="{{language['Group Name']}}" />
+              <div class="errorMessage" *ngIf="group_error">
+              <p>{{ language["This field is required"] }}.</p>
+            </div>
+          </div>
+          <div class="ccl-form">
+            <label for="description"
+              >{{ language.description
+              }}<small> ({{ language.Optional }})</small>
+            </label>
+            <textarea
+              class="form-control"
+              id="description"
+              rows="3"
+              [(ngModel)]="groupAlarmData.description"
+              placeholder="{{ language.Decription }}"
+              minlength="0"
+              maxlength="200"
+            ></textarea>
+            <!-- <span
+              *ngIf="groupAlarmData.description && groupAlarmData.description.length > 0"
+              (click)="clearSearch()"
+              aria-hidden="true"
+              class="custom-clear"
+              >×</span
+            > -->
+            <div id="the-count" style="text-align: right">
+              <span id="current">{{
+                groupAlarmData["description"]
+                  ? groupAlarmData["description"].length
+                  : 0
+              }}</span>
+              <span id="maximum">/200</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 text-right">
+          <div class="ccl-form">
+            <button *ngIf = "groupAlarmData.wfLinkedFlag == 'false'" type="button" id="nextbtn" [disabled]="btnDisabled"
+              class="btn-arrow btn-arr-nxt primary px-3 mr-2 mt-4" (click)="saveAlarmGroup()">
+              {{ language.save }}
+              <img src="assets/img/ic_chevron-r-w.svg" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="box-list">
+        <div class="tab-content">
+          <div class="row">
+            <div class="col-md-12 mt-2 mb-3">
+              <label class="cco-secondary-title main-title">{{language['All Alarms']}}</label>
+            </div>
+          </div>
+          <div id="alarm_groups" class="tab-pane alarm-menu-info active">
+            <div class="alarm-menu-info">
+              <app-alarm-groups-datatable (addRemoveAlarmList)="callAddRemove($event)"
+                [alarmData]="groupAlarmData.nonMonitoredGroupAlarm" [canShowTableBodyInputSubject]="canShowTableBodySubject"></app-alarm-groups-datatable>
+              <!-- <div class="row mb-3" *ngIf="loading">
+                <div class="col-md-12">
+                  <div class="loader mt-15">
+                    <div class="d-flex justify-content-center">
+                      <div class="spinner-border text-primary">
+                        <span class="sr-only">{{ language.Loading }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div> -->
+            </div>
+            <ng-template *ngIf="groupAlarmData.nonMonitoredGroupAlarm?.data?.length <= 0"
+              [ngTemplateOutlet]="noAlarmsTemplate"></ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="box-list">
+        <div class="tab-content">
+          <div class="row">
+            <div class="col-md-12 mt-2 mb-3">
+              <label class="cco-secondary-title main-title">{{language['Selected Alarms']}}<span class="error">*</span> ({{
+                groupAlarmData.totMonitoredAlarms | number }}) </label>
+            </div>
+          </div>
+          <div id="alarm_groups_selected" class="tab-pane alarm-menu-info active">
+            <div class="alarm-menu-info">
+              <app-alarm-groups-datatable (addRemoveAlarmList)="callAddRemove($event)"
+                [alarmData]="groupAlarmData.monitoredGroupAlarm"></app-alarm-groups-datatable>
+            </div>
+            <ng-template *ngIf="groupAlarmData.monitoredGroupAlarm?.data?.length <= 0"
+              [ngTemplateOutlet]="noMonitoredAlarmsTemplate"></ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<ng-template #noMonitoredAlarmsTemplate>
+  <div class="text-center" style="color: #808080; margin-top: 100px">
+    <span> {{language['There are no selected alarms']}}</span>
+    <br /><br /><br />
+    <span>
+      {{language['From the left panel, select and add']}} <br />
+      {{language['the alarms you wish to add to the group']}}</span>
+  </div>
+</ng-template>
+<ng-template #noAlarmsTemplate>
+  <div class="text-center" style="color: #808080; margin-top: 100px">
+    <span> {{language['There are no alarms']}}</span>
+    <br /><br /><br />
+  </div>
+</ng-template>
+<ng-template #deleteModal let-data let-ref="dialogRef">
+  <div class="modal-header">
+    <h4 *ngIf = "!diffCategoryModal" class="modal-title" id="modal-basic-title">{{language.Remove}}</h4>
+    <h4 *ngIf = "diffCategoryModal" class="modal-title" id="modal-basic-title">{{language.Note}}</h4>
+    <button
+      type="button"
+      class="close"
+      aria-label="Close"
+      (click)="close('No')"
+    >
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p [innerHtml]="removeName"></p>
+  </div>
+  <div class="modal-footer" *ngIf = "!diffCategoryModal">
+    <button type="button" class="btn-default btn-dft" (click)="close('No')">
+      {{ language.no }}
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="doRemoveAlarms()"
+      style="margin-left: 3px"
+    >
+      {{ language.Yes }}
+    </button>
+  </div>
+  <!-- <div class="modal-footer" *ngIf = "diffCategoryModal">
+    <button type="button" class="btn-default btn-dft" (click)="close('No')">
+      {{ language.Close }}
+    </button>
+  </div> -->
+</ng-template>

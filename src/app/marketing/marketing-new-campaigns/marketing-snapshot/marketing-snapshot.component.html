@@ -1,0 +1,186 @@
+<div class="img my-2">
+
+    <div class="mwc-content">
+        <div class="col-md-12 p-2">
+            <div class="d-flex justify-content-end">
+
+                <div class="select_period mb-2">
+                    <div class="time-drop" *ngIf="!expand">
+                        <ng-select id="typeId" bindLabel="name" [(ngModel)]="activePeriod" bindValue="name"
+                            class="selectboxwidth" (ngModelChange)="selectTimeFrame($event)" [items]="timeframes"
+                            [clearable]="false">
+                        </ng-select>
+                    </div>
+                </div>
+
+            </div>
+            <section [ngClass]="!fullScreen ? 'd-block full_screen' : 'd-none'">
+                <div class="container" [ngClass]="!deduplicatedDataAvailable ? 'd-block' : 'd-none'">
+
+                    <div class="w-100">
+                        <div class="title_with_bar mwc-header border-bottom">
+                            <div class="title-second greyaa" id="segment-revenue">{{language.Average_revenue}}&nbsp;<span *ngIf="updatedDate != ''">({{language.Updated}}&nbsp;{{updatedDate}})</span></div>
+                            <div class="mwc-btns">
+                                <button id="CMCsegmentchannelDownload" (click)="download_camp()"
+                                    class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                                    title="{{language.subs_download_tip}}"></button>
+                                <button id="CMCsegmentchannelExpandSection" (click)="expandFull()"
+                                    class="btn-round btn-small-24 btn-grey btn-expand" data-toggle="tooltip"
+                                    title="{{language.subs_fullscreen_tip}}"></button>
+                            </div>
+                        </div>
+
+                        <div class="rev_box" *ngIf="!revenuecampEdgeSuitsError">
+                            <div>
+                                <!-- <span>{{language.Daily_Campaign_Audience}}</span>
+                                <h3>{{ campaignSegFormatter(totalNonOptRevenue?totalNonOptRevenue:totalcampRevenue, 1)
+                                    }}</h3> -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="req-text text-center" *ngIf="revenuecampEdgeSuitsError">{{language.nodata}}</div>
+                    <div *ngIf="!revenuecampEdgeSuitsError" id="revenue-home-chart" class="chart-box h-300">
+                    </div>
+
+                    <div class="title_with_bar mwc-header border-bottom">
+                        <div class="title-second greyaa" id="total-revenue">{{language.total_audience}}&nbsp;<span *ngIf="updatedDate != ''">({{language.Updated}}&nbsp;{{updatedDate}})</span></div>
+                        <div class="mwc-btns">
+                            <button id="CMCsegmentchannelDownload" (click)="download()"
+                                class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                                title="{{language.subs_download_tip}}"></button>
+                            <button id="CMCsegmentchannelExpandSection" (click)="expandFull_rev()"
+                                class="btn-round btn-small-24 btn-grey btn-expand" data-toggle="tooltip"
+                                title="{{language.subs_fullscreen_tip}}"></button>
+                        </div>
+                    </div>
+
+                    <div class="rev_container">
+                        <div class="total_revenue">
+                            <!-- <div class="rev_box" *ngIf="!revenueEdgeSuitsError">
+                                <div>
+                                    <span>{{language.Total_Subscribers}}</span>
+                                    <h3>{{ campaignRevFormatter(totalRevenue, 1) }}</h3>
+                                </div>
+                            </div> -->
+                        </div>
+                    </div>
+                    <div class="req-text text-center" *ngIf="revenueEdgeSuitsError">{{language.nodata}}</div>
+                    <div *ngIf="!revenueEdgeSuitsError" id="subscribe-home-chart"
+                        class="chart-box h-300 mt-3"></div>
+
+
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+
+
+
+    <section [ngClass]="fullScreen ? 'd-block full_screen' : 'd-none'">
+        <div class="container" [ngClass]="deduplicatedDataAvailable_cam ? 'd-block' : 'd-none'">
+            <div class="row my-3">
+                <div class="col-md-12">
+                    <div class="issue-overview-wrapper">
+                        <div class="issue-overview-item">
+                            <div class="d-flex justify-content-between">
+
+                                <div class="mwc-header flex w-100 border-bottom">
+                                    <div class="cco-secondary-title">
+                                        <div class="title-second greyaa" id="segment-revenue">
+                                            {{language.Average_revenue}}&nbsp;<span *ngIf="updatedDate != ''">({{language.Updated}}&nbsp;{{updatedDate}})</span></div>
+                                    </div>
+                                    <div class="mwc-btns flex align-items-center">
+
+                                        <div class="mwc-btns">
+                                            <button id="Campaign-Segmentchannel-Download" (click)="download_camp()"
+                                                class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                                                title="{{language.subs_download_tip}}"></button>
+                                            <button id="Campaign-Segmentchannel-ExpandSection" (click)="expandFull1()"
+                                                class="btn-round btn-small-24 btn-grey btn-expand-inv"
+                                                data-toggle="tooltip"
+                                                title="{{language.subs_fullscreen_close_tip}}"></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="img my-2">
+                                <div class="mwc-content">
+                                    <div class="col-md-12 p-2">
+                                        <!-- <div *ngIf="!revenuecampEdgeSuitsError">
+                                            <span>{{language.Daily_Campaign_Audience}}</span>
+                                            <h3><b>{{ campaignSegFormatter(totalNonOptRevenue?totalNonOptRevenue:totalcampRevenue, 1) }}</b></h3>
+
+                                        </div> -->
+                                        <div *ngIf="!revenuecampEdgeSuitsError" id="revenue-home-chart-ex"
+                                            class="chart-box h-300">
+                                        </div>
+                                        <div *ngIf="revenuecampEdgeSuitsError" class="req-text text-center">
+                                            {{language.nodata}}</div>
+                                    </div>
+                                </div>
+                                <!-- <img src="assets/images/cco-images/Deduplicated-Alarms.jpg" alt=""> -->
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="container" [ngClass]="deduplicatedDataAvailable_rev ? 'd-block' : 'd-none'">
+            <div class="row my-3">
+                <div class="col-md-12">
+                    <div class="issue-overview-wrapper">
+                        <div class="issue-overview-item">
+                            <div class="d-flex justify-content-between">
+
+                                <div class="mwc-header flex w-100 border-bottom">
+                                    <div class="cco-secondary-title">
+                                        <div class="title-second greyaa">{{language.total_audience}}&nbsp;<span *ngIf="updatedDate != ''">({{language.Updated}}&nbsp;{{updatedDate}})</span></div>
+                                    </div>
+                                    <div class="mwc-btns flex align-items-center">
+
+                                        <div class="mwc-btns">
+                                            <button id="segmentchannelDownloadrev"
+                                                class="btn-round btn-small-24 btn-grey btn-dload" (click)="download()"
+                                                data-toggle="tooltip" title="{{language.subs_download_tip}}"></button>
+                                            <button id="segmentchannelExpandSectionrev" (click)="expandFull1()"
+                                                class="btn-round btn-small-24 btn-grey btn-expand-inv"
+                                                data-toggle="tooltip"
+                                                title="{{language.subs_fullscreen_close_tip}}"></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="img my-2">
+                                <div class="mwc-content">
+                                    <div class="col-md-12 p-2">
+                                        <!-- <div *ngIf="!revenueEdgeSuitsError">
+                                            <span>{{language.Total_Subscribers}}</span>
+                                            <h3><b>{{ campaignRevFormatter(totalRevenue, 1) }}</b></h3>
+
+                                        </div> -->
+                                        <div *ngIf="!revenueEdgeSuitsError" id="subscribe-home-chart-ex"
+                                            class="chart-box h-300">
+                                        </div>
+                                    </div>
+                                    <div *ngIf="revenueEdgeSuitsError" class="req-text text-center">
+                                        {{language.nodata}}
+                                    </div>
+                                </div>
+                              
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+</div>

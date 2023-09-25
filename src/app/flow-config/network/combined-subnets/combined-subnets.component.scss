@@ -1,0 +1,20 @@
+div.disable-edit-btn {
+    cursor: not-allowed;
+    i {
+        color:#CCCCCC !important;
+    }
+}
+
+.subnet-select-div {
+    display: flex;
+    justify-content: space-around;
+}
+.modal-scrll {
+    overflow-y: auto;
+    max-height: 400px;
+}
+.w-nowrap{white-space: nowrap}
+.w-200px{width: 200px;}
+.action-button-nowrap{white-space: nowrap;width: 10% !important;}
+ .f-size13{font-size:13px}
+ .t-left-w200{text-align: left; width:200px;}

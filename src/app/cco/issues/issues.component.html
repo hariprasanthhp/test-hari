@@ -1,0 +1,102 @@
+<div role="alert" class="alert alert-warning" *ngIf="!hasPageAccess">
+  {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} </div>
+<section class="mb-4" *ngIf="hasPageAccess ">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 col-md-2 px-0 mobile-center">
+        <span class="cco-title">{{ language.Issues }}</span>
+      </div>
+    </div>
+  </div>
+</section>
+<section *ngIf="hasPageAccess ">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="test-container">
+        <div class="item" id="current-issues-Total-alarms">
+          <span class="stats-label">{{language['total_alarms']}}</span>
+          <div class="d-flex align-content-around flex-wrap">
+            <span class="stats-value">{{totalAlarms ? totalAlarms : 0}} </span>
+          </div>
+        </div>
+        <div class="item" id="current-issues-critical-alarms">
+          <span class="stats-label">{{language['Critical Alarms']}}</span>
+          <div class="d-flex align-content-around flex-wrap">
+            <span class="stats-value">{{criticalAlarms ? criticalAlarms : 0}} </span>
+          </div>
+        </div>
+        <div class="item" id="current-issues-major-alarms">
+          <span class="stats-label">{{language['Major Alarms']}}</span>
+          <div class="d-flex align-content-around flex-wrap">
+            <span class="stats-value"> {{majorAlarms ? majorAlarms : 0}} </span>
+          </div>
+        </div>
+        <div class="item" id="current-issues-minor-alarms">
+          <span class="stats-label">{{language['Minor Alarms']}}</span>
+          <div class="d-flex align-content-around flex-wrap">
+            <span class="stats-value">{{minorAlarms ? minorAlarms : 0}} </span>
+          </div>
+        </div>
+
+        <div class="item" id="current-issues-warning-alarms">
+          <span class="stats-label">{{language['Warning Alarms']}}</span>
+          <div class="d-flex align-content-around flex-wrap">
+            <span class="stats-value">{{countData && countData['warning'] ? countData['warning']: 0
+              }}
+            </span>
+          </div>
+        </div>
+
+        <div class="item" id="current-issues-info-alarms">
+          <span class="stats-label">{{language['Info Alarms']}}</span>
+          <div class="d-flex align-content-around flex-wrap">
+            <span class="stats-value">{{ countData && countData['info'] ? countData['info']: 0 }}</span>
+          </div>
+        </div>
+        <div class="item" id="historical-reports-Total-Events"
+          *ngIf="urls.includes(('/cco/issues/health/history-reports'))||urls.includes('/cco/issues/device/history-reports')||urls.includes('/cco/issues/connectivity/history-reports')">
+          <span class="stats-label">{{language['total_events']}}</span>
+          <div class="d-flex align-content-around flex-wrap">
+            <span class="stats-value">{{ totalEvents ? totalEvents : 0 }}</span>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+</section>
+<section [hidden]="!hasPageAccess">
+  <div class="container mp-0">
+    <div class="row mm-0">
+      <div class="m-center col-sm-12 col-md-12 px-0  mb-4">
+        <div class="ccl-tabs">
+          <ul id="tabs" class="nav nav-tabs">
+            <li class="nav-item" *ngIf="menus['realtime']">
+              <a data-toggle="tab" class="nav-link" routerLink="./device" routerLinkActive="active"
+                aria-controls="alarms" aria-selected="true">
+                {{language['Alarms']}}
+              </a>
+            </li>
+            <li class="nav-item" *ngIf="menus['cloud']">
+              <a data-toggle="tab" class="nav-link" class="nav-link small" routerLink="./cloud-health"
+                routerLinkActive="active" aria-controls="disconncted" aria-selected="true">
+                {{language['Cloud Health']}}
+              </a>
+            </li>
+            <li class="nav-item" *ngIf="menus['connect']">
+              <a data-toggle="tab" class="nav-link" class="nav-link small" routerLink="./connectivity"
+                routerLinkActive="active" aria-controls="disconncted" aria-selected="true">
+                {{language['Cloud Connectivity']}}
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="col-12 px-0" id="current-issue-table">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+</section>

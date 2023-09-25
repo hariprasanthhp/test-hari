@@ -1,0 +1,56 @@
+<div class="loader" *ngIf="loading">
+    <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+            <span class="sr-only"></span>
+        </div>
+    </div>
+</div>
+<div class="w-100 alert alert alert-danger  fade show" *ngIf="error">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+    <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+    <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+</div>
+
+<div class="row mt-2" *ngIf="1">
+    <div class="col-md-12 px-0 ccl-tabs">
+        <ul id="tabs" class="nav nav-tabs">
+            <li class="nav-item" (click)="changeTab(true, true);" id="wifi-historical-airtime-24g-tab">
+                <a [ngClass]="{'active' : showTab24G === true}" class="nav-link small">
+                    2.4GHz
+
+                </a>
+
+            </li>
+            <li class="nav-item" *ngIf="show5gWidgets" (click)="changeTab(false, true);"
+                id="wifi-historical-airtime-5g-tab">
+                <a [ngClass]="{'active' : showTab24G === false}" class="nav-link small">
+                    5GHz
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<!-- 21.1 -->
+<!-- <div class="row" style="min-height: 400px;">
+    <div class="col-md-12" id="wifi-channelscore-24g-container" [ngClass]="!showChart24G ? 'd-none' : ''">
+        <div id="channel-scores-chart-24g" style="height: 400px;"></div>
+    </div>
+    <div class="col-md-12" id="wifi-channelscore-24g-container" *ngIf="(!showChart24G  && !showChart24G && apiDone)">
+        <p *ngIf="language">{{language['No Channel Score data available']}}</p>
+    </div>
+</div>
+<div class="row" style="min-height: 400px;" *ngIf="show5gWidgets">
+    <div class="col-md-12 " id="wifi-channelscore-5g-container" [ngClass]="!showChart5G ? 'd-none' : ''">
+        <div id="channel-scores-chart-5g" style="height: 400px;"></div>
+    </div>
+</div> -->
+
+<div class="row" style="min-height: 400px;">
+    <div class="col-md-12" id="wifi-channelscore-container" [ngClass]="!showChart ? 'd-none' : ''">
+        <div id="channel-scores-chart" style="height: 400px;"></div>
+    </div>
+    <div class="col-md-12" id="wifi-channelscore-info-container" *ngIf="(!showChart && apiDone)">
+        <p *ngIf="language">{{language['No Channel Score data available']}}</p>
+    </div>
+</div>

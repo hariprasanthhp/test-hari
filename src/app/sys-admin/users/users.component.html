@@ -1,0 +1,134 @@
+<div class="container position-relative" #scrollTopId id="scrollTopId">
+    <div class="loader" *ngIf="!dataAvailable">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">{{language.Loading}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="w-100 alert alert-danger  fade show" *ngIf="error">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+        <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+        <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+    </div>
+
+    <div class="w-100 alert alert-success fade show" *ngIf="success">
+        <div class="success-alert-wrapper align-items-center">
+            <div class="success-alert-icon">
+                <img src="../../../assets/img/success-icon.svg" alt="">
+            </div>
+            <div class="success-alert-msg">
+                <span [innerHtml]="successInfo"></span>
+            </div>
+            <div class="success-alert-close">
+                <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+            </div>
+            </div>
+    </div>
+
+    <!------------------- Row for Title ------------------->
+    <div class="row mb-3" *ngIf="pageAvailable">
+        <div class="col-md-12 ccl-admin-title">{{language.users}}</div>
+    </div>
+    <!------------------- Row for Title End ------------------->
+    <!------------------- Add Users & Search ------------------->
+    <div class="row my-3" *ngIf="pageAvailable">
+        <div class="col-12">
+            <div class="d-flex flex-wrap w-100 justify-content-end">
+            <div class="mr-3 mb-2">
+                <div class="dropdown dropleft d-inline-flex mb-2" *ngIf="showMFARequestForm">
+                    <button class="btn dropdown-toggle px-0" type="button" 
+                    id="userDropdownMenuBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        ...
+                    </button>
+                    <div class="dropdown-menu mt-4 ml-5" aria-labelledby="userDropdownMenuBtn">
+                        <a class="dropdown-link d-block text-center mt-1 mb-2 cursor-pointer" (click)="openMFAForm()" target="_blank">
+                        <span class="mr-2">{{language['MFA Request Form']}}</span> 
+                        <img class="ml-2" src="../../../assets/img/Preview-icon.svg"/>
+                        </a>
+                        <p class="text-center mt-1">{{language['To enable MFA for your organization, complete this MFA request form.']}}</p>
+                    </div>
+                </div>
+                <button *ngIf="(isCalixAdminModule || showAddUsers)" class="btn-default primary d-inline-flex ml-3"
+                    (click)="addUser()">{{language.addUsers}}</button>
+            </div>
+            <div class="search-min mb-2">
+                <div class="ccl-form">
+                    <input type="text" name="searchbox" class="input-sm" #searchBar
+                        placeholder="{{language.searchUsers}}" (keyup)="search($event.target.value)"
+                        (search)="search($event.target.value)">
+                        <span class="clear-icon" [hidden]="!searchClearable" (click)="onSearchClearing(searchBar)"> <img src="assets/img/close-icon.svg"></span>
+                    <!-- <button class="serach-but btn-default primary btn-icon-md inline"><i class="fa fa-search"
+                                                        aria-hidden="true"></i></button> -->
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+    <!------------------- Add Users & Search End ------------------->
+    <!------------------- Users Table ------------------->
+    <div class="row my-3" *ngIf="pageAvailable">
+        <div class="col" *ngIf="countReceived" [hidden]="!dataAvailable">
+            <table id="users-table" width="100%" class="row-border hover table-alter " datatable
+                [dtOptions]="dtOptions">
+                <thead class="">
+                    <tr>
+                        <th>{{language.username}}</th>
+                        <th>{{language.emailAddress}}</th>
+                        <th>{{language.firstname}}</th>
+                        <th>{{language.lastname}}</th>
+                        <th>{{language.action}}</th>
+                    </tr>
+                </thead>
+                <tbody *ngIf="usersTableData?.length !=0">
+                    <tr id="{{item._id}}" *ngFor="let item of usersTableData">
+                        <td>{{item.username}}</td>
+                        <td>{{item.email}}</td>
+                        <td>{{item.firstName}}</td>
+                        <td>{{item.lastName}}</td>
+                        <td class="actions">
+                            <button *ngIf="isCalixAdminModule && isLoggedUserSameOrganization" class="btn-trans-icon"
+                                (click)="gotoUserSecuredAccess(item)">
+                                <img src="assets/images/user_secure_access_icon.png">
+                            </button>
+                            <a (click)="gotoUserDetail(item)"><i
+                                    class="fas fa-pencil-alt p-1 primary cursor-pointer" title="{{language.Edit}}"></i></a>
+                            <i *ngIf="isCalixAdminModule || showAddUsers" (click)="deleteUser(item)"
+                                title="{{language.delete}}"
+                                class="fas fa-trash-alt p-1 primary cursor-pointer"></i>
+                        </td>
+                    </tr>
+                </tbody>
+                <tbody
+                    *ngIf="(usersTableData?.length == 0 || (usersCount != 'undefined' && usersCount === 0) || (filterCount != 'undefined' && filterCount === 0))">
+                    <tr>
+                        <td colspan="5" class="no-data-available">{{language['No matching records found']}}</td>
+                    </tr>
+                <tbody>
+            </table>
+        </div>
+    </div>
+    <!------------------- Users Table End ------------------->
+</div>
+
+
+<!-- Modals -->
+<ng-template #deleteModal let-data let-ref="dialogRef">
+
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{modalTitle}}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        {{ modalInfo }}
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn-default primary px-3" data-dismiss="modal"
+            (click)="confirmDeleteSecleted()">{{language.yes}}</button>
+        <button type="button" class="btn-default btn-dft py-1 px-3" data-dismiss="modal"
+        (click)="closeModal()">{{language.no}}</button>
+    </div>
+</ng-template>
+<!-- Modals -->

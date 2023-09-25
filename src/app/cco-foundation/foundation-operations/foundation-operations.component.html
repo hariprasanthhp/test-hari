@@ -1,0 +1,33 @@
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="cco-title">
+        {{ language.Operations }}
+      </div>
+    </div>
+  </div>
+</section>
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 p-0 ccl-tabs my-2">
+        <ul id="tabs" class="nav nav-tabs sub-tab">
+          <li class="nav-item">
+            <a routerLink="/cco-foundation/foundation-operations/foundation-system-operation" class="nav-link small"
+              id="configuration" routerLinkActive="active" data-toggle="tab" class="nav-link"
+              style="padding-left: 0%">{{ language.Subscriber_Operations }}</a>
+          </li>
+          <li class="nav-item">
+            <a routerLink="/cco-foundation/foundation-operations/foundation-reports" class="nav-link small" id="reports"
+              routerLinkActive="active" data-toggle="tab" class="nav-link">{{ language.Reports }}</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12 col-md-12 col-lg-12 p-0">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+</section>

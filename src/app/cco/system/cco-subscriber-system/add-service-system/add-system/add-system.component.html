@@ -1,0 +1,264 @@
+<section class="loader-wrapper">
+    <div class="loader-wrapper-info"
+        *ngIf="loading || saveSystemLoading || modelLoading || devGrpLoading || bandwidthLoading">
+        <div class="loader">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{ language.Loading }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="w-100 alert alert-danger fade show" *ngIf="error || (unSavedData && continue)">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+        <button type="button" class="close" (click)="closeAlert()">
+            <span></span>
+        </button>
+        <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+    </div>
+
+    <div class="w-100 alert alert-success fade show" *ngIf="success">
+        <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+        <button type="button" class="close" (click)="closeAlert()">
+            <span></span>
+        </button>
+        <div class="d-inline-flex" [innerHtml]="successInfo"></div>
+    </div>
+
+    <section [formGroup]="systemsListForm" id="form-wrapper">
+        <div class="border-bottom pb-2" formArrayName="systems"
+            *ngFor="let item of systemsListForm.get('systems')['controls']; let ind = index;">
+            <div class="row my-3" [formGroupName]="ind">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="ccl-form">
+                                <label for="deviceId" id="pendoCCOSystemFSANSNRegId">{{language['FSAN/SN/Reg ID/MAC Address']}} <span class="error">*</span></label>
+                                <input type="deviceId" formControlName="deviceId" (change)="deviceDetails(ind)" [attr.maxLength]="macAddressLength[ind]"
+                                    (keypress)="clsAlphaNoOnly($event);maxLength(ind);"  [ngClass]="{ 'inp-disabled': systemsListForm.value['systems'][ind].saved }"
+                                    class="form-control" id="deviceId" placeholder="{{language['FSAN/SN/Reg ID/MAC Address']}}"
+                                    [readonly]="systemsListForm.value['systems'][ind].saved">
+                                <!-- <button id="" class="btn-default primary" style="position: absolute; right: -80px;top: 36px;"
+                                    (click)="saveSystem(ind);">Save</button> -->
+
+
+
+                            </div>
+
+                        </div>
+                        <div class="col-md-4 pt-35">
+                        <div class="d-inline-flex">
+                            <button id="" class="btn-default primary"
+                                (click)="saveSystem(ind);" [disabled]="!systemsListForm.value['systems'][ind].deviceId || (systemsListForm.value['systems'][ind].deviceId && !systemInfoChecked[systemsListForm.value['systems'][ind].deviceId])"
+                               >{{language.Save}}</button>
+                               
+                        </div>
+                        <div class="d-inline-flex pl-2">
+                            <div class="add-remove pt-0">
+                                <!-- <img *ngIf="(ind == (systemsListForm?.value['systems']?.length - 1))"
+                                    class="pointer mr-3" src="assets/img/Icon_Circle-Plus.svg"
+                                    (click)="AddMoreSystem(ind)"
+                                    [ngClass]="!systemsListForm?.value['systems'][ind]?.saved ? 'not-allow' : ''" /> -->
+                                <img *ngIf="ind !== 0 && !systemsListForm?.value['systems'][ind]?.saved" class="pointer"
+                                    src="assets/img/ic_minus_sign_circle.svg" (click)="removeSystem(ind)" />
+                                <img *ngIf=" systemsListForm?.value['systems'][ind]?.saved" class="pointer"
+                                    src="assets/img/ic_minus_sign_circle.svg"
+                                    (click)="displayWaringMessageModel(systemsListForm.value['systems'][ind].deviceId,this.systemsListForm.value['systems'][ind].opmode ,systemDeleteWarning)" />
+                            </div>
+                        </div>
+                      </div>
+                    </div>
+
+
+                </div>
+
+
+                <div class="col-md-4">
+
+
+                    <div class="ccl-form">
+                        <small class="sm-text">{{ language.reg_Hint }}&nbsp; &amp; &nbsp;{{
+                            language.EXOS
+                            }},<br>
+                            {{language._MAC_Address}}</small>
+                    </div>
+                    <div *ngIf="systemsListForm.value['systems'][ind].deviceId && !systemsListForm?.value['systems'][ind]?.saved">
+                        <span >{{language.OntlinkageType}} <span class="text-color">{{linkageType}}.</span> {{language.please}} <span class="text-color">{{RegErrorName}}</span>  {{language.associateONT}} </span>
+                    </div>
+                    <!-- {{opMode}} -->
+                    <div class="ccl-form my-3">
+                     <!-- *ngIf="opMode !== 'ONT'"> -->
+                        <!-- <a class="btn-link primary" (click)="showAdvancedForm(ind)"
+                            [ngClass]="!systemsListForm?.value['systems'][ind]?.saved ? 'not-allow' : ''">Advanced
+                        </a> -->
+                        <a class="btn-link primary" (click)="showAdvancedForm(ind)">{{language.Advanced}}
+                        </a>
+
+                    </div>
+                </div>
+
+            </div>
+            <!-- <app-advanced-system id="advanced_from_{{ind}}" [iId]="ind"
+                [systemId]="systemsListForm.value['systems'][ind].deviceId"
+                *ngIf="servicesFormData[systemsListForm.value['systems'][ind].deviceId]"
+                [hidden]="systemsListForm.value['systems'][ind].showAdvanced"
+                [sys_ServiceTiers]="servicesFormData[systemsListForm.value['systems'][ind].deviceId]"
+                (Out_Data_Change)="updateForm($event, ind);" (Out_Data_Submit)="save(ind);">
+            </app-advanced-system> -->
+            <section *ngIf="systemsListForm.value['systems'][ind].showAdvanced">
+
+            </section>
+
+            <app-advanced-system id="advanced_from_{{ind}}" [iId]="ind" [isPreProvistionedSystem]="isPreProvistionedSystem"
+                [systemId]="systemsListForm.value['systems'][ind].deviceId" [deviceModels]="Modelitems"
+                [deviceDataList]="deviceDataList" *ngIf="systemsListForm.value['systems'][ind].showAdvanced"
+                [sys_ServiceTiers]="servicesFormData[systemsListForm.value['systems'][ind].deviceId]"
+                [systemInfoData]="systemInfoFormData[systemsListForm.value['systems'][ind].deviceId]"
+                [ontDevice]="ontDevice" [deviceData]="deviceData[systemsListForm.value['systems'][ind].deviceId]"
+                [formOptions]="formOptions" (Out_Data_Change)="updateForm($event, ind);" (Out_Data_Submit)="save(ind);"
+                (Out_System_Info)="updateSystemForm($event, ind);" (Out_unsavedData)="unsavedData($event, ind)" (Out_wifiNotchanged)="wifiNotchanged($event, ind)"
+                [wifiObj]="wifiInfoFormData[systemsListForm.value['systems'][ind].deviceId]" [tempWifiObj]="tempWifiObj"
+                (Out_WiFi_Info)="updateWifiForm($event, ind);" (Out_Unified)="Out_Unified($event, ind)" [disableSystem]="disableSystem" [editMode]="editMode"
+                [addDevObj]="addDeviceObj[systemsListForm.value['systems'][ind].deviceId]"
+                (Out_LAN_Info)="updateDeviceObjForm($event, ind, 'settings');">
+            </app-advanced-system>
+            <div class="add">
+                <img *ngIf="(ind == (systemsListForm?.value['systems']?.length - 1))" class="pointer mr-3"
+                    src="assets/img/Icon_Circle-Plus.svg" (click)="AddMoreSystem(ind)"
+                    [ngClass]="!systemsListForm?.value['systems'][ind]?.saved ? 'not-allow' : ''" />
+
+            </div>
+
+        </div>
+
+
+    </section>
+
+</section>
+
+
+
+<!-- <section>
+    <app-advanced-system *ngIf="showAdvanced"></app-advanced-system>
+</section> -->
+
+<ng-template #deleteDeviceModel let-modal class="col-md-12">
+
+    <div class="loader-wrapper">
+        <div class="loader-wrapper-info" *ngIf="modalLoader">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="sr-only"></span>
+                </div>
+            </div>
+        </div>
+        <div class="modal-header">
+            <h5 class="modal-title" id="deletePopup">{{ language.Remove_System }}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeDeleteModal()">
+                <span aria-hidden="true"></span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="py-3 alert alert-danger" *ngIf="isModalError">
+                <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+                <button type="button" id="close-error-btn" class="close" data-dismiss="alert" aria-label="Close"
+                    (click)="isModalError = !isModalError">
+                    <span></span>
+                </button>
+                <div class="d-inline-flex" [innerHtml]="modalWarningMessage"></div>
+            </div>
+
+
+            <div class="py-3 warning-msg" *ngIf="deleteAndDisassociateSystemMsg">
+                <div class="w-100">
+                    <div [innerHtml]="deleteAndDisassociateSystemMsg"></div>
+                </div>
+                <div class="w-100">
+                    <div class="btn-con-sec">
+                        <!-- Previously used for delete -->
+                        <button class="btn warn-btn mr-2" id="deleteAndDisassociateSystemMsgBtn"
+                            (click)="deleteAndDisassSystem()">
+                            {{language.Confirm}}
+                        </button>
+                        <button class="btn warn-btn" (click)="closeDeleteModal()">
+                            {{language.Cancel}}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="py-3 warning-msg" *ngIf="disassociateSystemMsg">
+                <div class="w-100">
+                    <div [innerHtml]="disassociateSystemMsg"></div>
+                </div>
+                <div class="w-100">
+                    <div class="btn-con-sec">
+                        <button class="btn warn-btn mr-2" id="disassociateSystemMsgCnfrmBtn" (click)="disassSystem()">
+                            {{language.Confirm}}
+                        </button>
+                        <button class="btn warn-btn" (click)="closeDeleteModal()">
+                            {{language.Cancel}}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="showDeleteBtn" class="d-flex">
+                <span>
+                    <h5>{{ language.Device_Delete_Disassociate_Confirmation }}</h5>
+                </span>
+            </div>
+            <div *ngIf="showDeleteBtn" class="pl-20">
+                <div class="remove-device-form form-check p-0 mb-2">
+                    <input class="form-check-input mr-2" type="radio" name="exampleRadios" id="exampleRadios1"
+                        value="disassociate" checked (change)="getDeleteOption($event)" />
+                       <label class="form-check-label" for="exampleRadios1"> {{
+                        language.Disassociate_Device }}</label>
+                </div>
+                <div class="form-check p-0">
+                    <input class="form-check-input mr-2" type="radio" name="exampleRadios" id="exampleRadios2"
+                        value="delete" (change)="getDeleteOption($event)" />
+                        <label class="form-check-label" for="exampleRadios2">{{ language['Disassociate and Delete
+                            System'] }}</label> 
+                </div>
+            </div>
+            <section *ngIf="showDeleteBtn">
+                <button type="button" (click)="showDissAssConfirmMsg()" *ngIf="!isDeleteAndDisAss"
+                    id="removeDeviceConfirm" class="btn-default primary px-3 mr-3 mt-5">
+                    {{ language.Disassociate_Device }}
+                </button>
+                <button type="button" (click)="showDeleteAndDissAssConfirmMsg()" id="removeDeviceConfirm"
+                    class="btn-default primary px-3 mr-3 mt-5" *ngIf="isDeleteAndDisAss">
+                    {{ language['Disassociate and Delete System'] }}
+                </button>
+                <button type="button" (click)="closeDeleteModal()" id="removeDeviceCancel"
+                    class="btn-default transparant px-3 mr-3 mt-5">
+                    {{ language.cancel }}
+                </button>
+            </section>
+
+        </div>
+    </div>
+</ng-template>
+<ng-template #systemDeleteWarning let-modal let-ref="dialogRef">
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title"> {{language["Cannot delete system"]}}</h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+    <div class="modal-body">
+        <div class="warning-alert align-items-center">
+          <div class="warning-alert-icon w-auto mr-3">
+            <img src="./assets/img/warning-icon.svg">
+          </div>
+          <div class="warning-alert-message">
+        {{language['You must delete eduroam and RG membership before deleting system']}}
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer text-right">
+        <button type="button" class="btn-default primary" data-dismiss="modal" (click)="modal.dismiss()">{{language.Okay}}</button>
+      </div>
+  </ng-template>

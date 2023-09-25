@@ -1,0 +1,191 @@
+<div class="container position-relative tab-pane active" id="acs">
+    <div class="loader" *ngIf="loading">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-12  mt-3">
+            {{language.acscontent}}
+        </div>
+    </div>
+    <div class="row my-3">
+        <div class="col-md-3 ">
+            <label for="staticEmail" class=" "> {{language.http}} :</label>
+        </div>
+        <div class="col-md-9">
+            <div class="ccl-form-readonly">
+                <input type="text" class="acs-input" id="acs_https_ipv4" value="" name="acs_https_ipv4"
+                    [(ngModel)]="acsIPv4Url" readonly>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row my-3">
+        <div class="col-md-3">
+            <label for="staticEmail" class=" "> {{language.userLabel}} : <span class="error">*</span></label>
+        </div>
+        <div class="col-md-9">
+            <div class="ccl-form">
+                <input type="text" class="acs-input" [ngClass]="{'state-error-ip': (acsSaveClicked && acsUsernameErr)}"
+                    [(ngModel)]="aclUsername" id="username" value="" (input)="changeAclUsername()" name="acs_username"
+                    autocomplete="new-password" trimSpace (blur)="removeUnwantedSpace('aclUsername',aclUsername)">
+                <span *ngIf="acsSaveClicked && acsUsernameErr" id="downloadurl-error"
+                    class="state-error err-red-text">{{language['This
+                    field is required']}}</span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row my-3">
+        <div class="col-md-3">
+            <label for="staticEmail" class=" "> {{language.passLabel}} : <span class="error">*</span></label>
+        </div>
+        <div class="col-md-9">
+            <div class="ccl-form position-relative">
+                <input class="acs-input" id="pass" name="acs_password" [(ngModel)]="password" (input)="changeAcsPassword()"
+                    [type]="hideACS ? 'password' : 'text'" value="" > <!-- CCL-43163 -->
+                <span class="pwd-icon" [ngClass]="hideACS ? 'password_hide' : 'password_view'"
+                    (click)="showPass('acs')"></span>
+                    <span *ngIf="acsSaveClicked && acsPasswordErr" id="downloadurl-error"
+                    class="state-error err-red-text">{{language['This
+                    field is required']}}</span>
+            </div>
+        </div>
+
+    </div>
+    <div class="row my-3">
+        <div class="col-md-3">
+            <label for="staticEmail" class=" "> {{language.httpLabel}} :</label>
+        </div>
+        <div class="col-md-9">
+            <div class="ccl-form-readonly">
+                <input type="text" class="acs-input" id="ipv6" [(ngModel)]="acsIPv6Url" value="" name="acs_https_ipv6"
+                    readonly>
+            </div>
+        </div>
+
+    </div>
+    <div class="row my-3">
+        <div class="col-md-3">
+            <label for="staticEmail" class=" "> {{language.httpIpv4}} :</label>
+        </div>
+        <div class="col-md-9">
+            <div class="ccl-form-readonly">
+                <input type="text" class=" acs-input" id="ipv4" [(ngModel)]="cpeAcsUrl" value="" name="acs_http_ipv4"
+                    readonly>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-12 ccl-title">
+            {{language.apiWebclients}}
+        </div>
+    </div>
+
+
+
+    <div class="row my-3">
+        <div class="col-md-3">
+            <label for="staticEmail" class=" "> {{language.https}} :</label>
+        </div>
+        <div class="col-md-9">
+            <div class="ccl-form-readonly">
+                <input type="text" class="acs-input" id="https" value="" name="https" [(ngModel)]="apiHttpsUrl"
+                    readonly>
+            </div>
+        </div>
+    </div>
+    <div class="row my-3">
+        <div class="col-md-3">
+            <label for="staticEmail" class=" "> {{language.userLabel}} : <span class="error">*</span></label>
+        </div>
+        <div class="col-md-9">
+            <div class="ccl-form">
+                <input type="text" class="acs-input" [ngClass]="{'state-error-ip': (acsSaveClicked && apiUsernameErr)}"
+                    id="apiusername" [(ngModel)]="apiUsername" (input)="changeApiUsername()" value="" name="apiusername"
+                    autocomplete="new-password" trimSpace (blur)="removeUnwantedSpace('apiUsername',apiUsername)">
+                <span *ngIf="acsSaveClicked && apiUsernameErr" id="downloadurl-error"
+                    class="state-error err-red-text">{{language['This
+                    field is required']}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="row my-3">
+        <div class="col-md-3">
+            <label for="staticEmail" class=" ">{{language.passLabel}} : <span class="error">*</span></label>
+        </div>
+        <div class="col-md-9">
+            <div class="ccl-form position-relative">
+                <input class="acs-input" id="apipassword" name="apipassword" [(ngModel)]="apiClientPassword" (input)="changeApiClientPassword()"
+                    [type]="hideAPI ? 'password' : 'text'" value="">
+                <span class="pwd-icon" [ngClass]="hideAPI ? 'password_hide' : 'password_view'"
+                    (click)="showPass('api')"></span>
+                    <span *ngIf="acsSaveClicked && apiClientPasswordErr" id="downloadurl-error"
+                    class="state-error err-red-text">{{language['This
+                    field is required']}}</span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 ccl-title">
+            {{language.captiveportal}}
+        </div>
+    </div>
+
+
+    <div class="row my-3">
+        <div class="col-md-3">
+            <label for="staticEmail" class=" ">{{language.url}} :</label>
+        </div>
+        <div class="col-md-9">
+            <div class="ccl-form">
+                <input type="text" class="acs-input" [ngClass]="{'state-error-ip': (acsSaveClicked && captiveUrlErr)}"
+                    id="captiveurl" [(ngModel)]="captiveUrl" (input)="changeCaptiveUrl()" value="" name="captiveurl" 
+                    trimSpace (blur)="removeUnwantedSpace('captiveUrl',captiveUrl)">
+                <span *ngIf="acsSaveClicked && captiveUrlErr" id="downloadurl-error"
+                    class="state-error err-red-text">{{language['Please enter a valid URL.']}}</span>
+            </div>
+        </div>
+
+    </div>
+    <div class="row my-3" *ngIf="isCalixAdminModule">
+        <div class="col-md-3">
+            <label for="staticEmail" class=" ">{{language.proxy}} :</label>
+        </div>
+        <div class="col-md-9">
+            <div class="ccl-form">
+                <input type="text" class="acs-input" (input)="on_ChangeACSInput()" id="captiveproxy" [(ngModel)]="proxy"
+                    value="" name="captiveproxy" autocomplete="new-password" trimSpace (blur)="removeUnwantedSpace('proxy',proxy)">
+            </div>
+        </div>
+
+    </div>
+    <div class="row my-3">
+        <div class="col-md-3 ">
+            <label for="serverAllias" class=" "> {{language.serverAlias}} :</label>
+        </div>
+        <div class="col-md-9">
+            <div class="ccl-form">
+                <input type="text" class="acs-input" id="acs_server_alias" value="" name="acs_server_alias"
+                    [(ngModel)]="acsServerAlias" (input)="on_ChangeACSInput()" trimSpace (blur)="removeUnwantedSpace('acsServerAlias',acsServerAlias)">
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row my-3" *ngIf="acsShowButtons">
+        <div class="col-md-4 offset-md-8 text-right">
+            <button class="btn-default btn-dft py-1 md-btn mr-3" (click)="resetACSList()">{{language.reset}}</button>
+            <button class="btn-default primary md-btn px-0 " (click)="acsSave()">{{language.submit}}</button>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,22 @@
+<div role="alert" class="alert alert-warning" *ngIf="!menus['network'] && !menus['location'] && !menus['applications']">
+    {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} </div>
+<section class="m-2" *ngIf="menus['network'] || menus['location'] || menus['applications']">
+    <div class="row">
+        <div class="col-md-12 my-2 ccl-tabs">
+            <ul id="tabs" class="nav nav-tabs">
+                <li class="nav-item"><a [routerLink]="['/cco/traffic/endpoints/realtime']"
+                        [queryParams]="{id: endpointID}" (Click)="$event.preventDefault()" data-toggle="tab"
+                        class="nav-link small" id="realtime" routerLinkActive="active">{{language['Real Time']}}</a>
+                </li>
+                <li *ngIf="!webSocketService.isUnmapped" [routerLink]="['/cco/traffic/endpoints/reports']"
+                    [queryParams]="{id: endpointID}" class="nav-item"><a (Click)="$event.preventDefault()" id="reports"
+                        data-toggle="tab" class="nav-link small" routerLinkActive="active">
+                        {{language.Reports}}</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-12  pl-0">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+</section>

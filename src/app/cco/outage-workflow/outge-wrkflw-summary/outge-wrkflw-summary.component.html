@@ -1,0 +1,97 @@
+<section *ngIf="!loader">
+    <div class="row mb-2" *ngIf="showTitle">
+        <div class="col-md-12 pb-1 position-relative">
+            <div class="ccl-admin-title text-truncate pr-3" title="{{workflowObj?.name}}">
+                {{workflowObj?.name}}
+            </div>
+            <div class="close-page">
+                <a class="cursor-pointer" routerLink="/cco/operations/alarms/health-alarm-notifications"
+                    routerLinkActive="active">
+                    <img src="assets/img/ic_close-44px.svg" alt="" />
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="heading-4">
+                {{ language['Notification Trigger'] }}
+            </div>
+            <div class="summary-info-table monitored">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td>{{language['Frequency Threshold']}}</td>
+                            <td>{{workflowObj?.outagePollInterval}} {{
+                                language['Minute(s)'] }}</td>
+                        </tr>
+                        <!-- <tr>
+                            <td>Exclusions</td>
+                            <td>
+                                <span *ngFor="let exclusion of exclusions; let last=last;">
+                                    Every {{exclusion?.daysOfWeek}} {{exclusion?.fromTime|date:'shortTime'}} to
+                                    {{exclusion?.toTime|date:'shortTime'}}<br *ngIf="!last" />
+                                </span>
+                            </td>
+                        </tr> -->
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="heading-4">{{ language["Regions & Locations"] }}</div>
+            <div class="summary-info-table">
+                <table class="table">
+                    <tbody>
+                        <tr *ngIf="showAllRegions">
+                            <td>{{ language["All Regions"] }}</td>
+                            <td>{{ language["All Locations"] }}</td>
+                        </tr>
+                        <tr *ngFor="let geo of geoInfo|keyvalue">
+                            <td>{{regionsObj[geo?.key]}}</td>
+                            <td>
+                                <div *ngIf="workflowObj?.location?.length">
+                                    <span *ngIf="!geo?.value?.length">{{language["All Locations"]}}
+                                    </span>
+                                    <span *ngIf="geo?.value?.length">{{geo?.value?.length}}
+                                        {{language['Location(s)']}}</span>
+                                    <span *ngFor="let loc of geo?.value"><br />{{loc}}</span>
+                                </div>
+
+                                <div *ngIf="!workflowObj?.location?.length">
+                                    <span>{{language['All Locations']}}</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="heading-4">{{ language['Recipients'] }}</div>
+            <div class="summary-info-table">
+                <app-summary-recepients [workflowObj]="recepientsInfo"></app-summary-recepients>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section *ngIf="loader">
+    <div class="container">
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <div class="loader mt-5">
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border text-primary">
+                            <span class="sr-only">{{ language.Loading }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

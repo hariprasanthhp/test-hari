@@ -1,0 +1,162 @@
+<section class="loader-wrapper">
+  <div class="loader-wrapper-info" *ngIf="loading">
+    <div class="loader">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{language.Loading}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="row my-3" *ngIf="showCharts">
+    <div class="col-md-12 col-lg-3 col-xl-3" id="signal-strength-period-filter">
+      <span class="small-text">{{language.period}}</span>
+      <div class="dropdown">
+        <ng-select [items]="periods" bindLabel="label" bindValue="value" [multiple]="false" placeholder=""
+          [(ngModel)]="periodSelected" (click)="dropDownchange()" [ngModelOptions]="{standalone: true}"
+          [clearable]="false" [searchable]="false">
+          <ng-template ng-label-tmp let-item="item">
+            {{language[item.label] }}
+          </ng-template>
+          <ng-template ng-option-tmp let-item="item" let-index="index">
+            {{language[item.label] }}
+          </ng-template>
+        </ng-select>
+      </div>
+    </div>
+    <div class="col-md-2 d-flex align-items-end smy-2">
+      <button class="btn-default primary" (click)="loadChart(true);"
+        id="signal-strength-filter-btn">{{language.Load}}</button>
+    </div>
+  </div>
+
+  <section class="time-frame-section mb-3 p-0 mh-100" *ngIf="periodSelected == 2">
+    <div class="loader-wrapper-info" *ngIf="loading">
+      <div class="loader">
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border text-primary">
+            <span class="sr-only">{{ language.Loading }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="multi-point-slider" *ngIf="showIntervalSlider">
+      <ngx-slider [(value)]="selectedInterval" (userChangeEnd)="sliderEvent()" [options]="timeIntervalOptions">
+      </ngx-slider>
+      <span class="left-most-slider-time"><label> {{ leftSliderTime}}</label></span>
+      <span class="right-most-slider-time"><label>{{ rightSliderTime}}</label></span>
+    </div>
+  </section>
+  <div class="w-100 alert alert alert-danger  fade show" *ngIf="error">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+    <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+    <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+  </div>
+  <section *ngIf="showCharts">
+    <div class="row mh-400">
+      <div class="col-md-12" id="wifi-signal-chart-container" [ngClass]="!showChart ? 'd-none' : ''">
+        <div id="wifi-signal-chart" class="h-500"></div>
+      </div>
+    </div>
+  </section>
+
+
+  <section *ngIf="showSteeringLog && hasSteering" class="mh-20v">
+    <div class="row">
+      <div class="col-md-12 border-bottom mt-3 mb-1  px-0" id="wifi-steering--log-title">
+        <h4 class="user-name.mb-0">{{language.Steering_Logs}}
+          <span class="cursor-pointer primary mx-3" id="signal-strength-refresh-btn" (click)="refreshLog();">
+            <i class="fas fa-sync refreshicon"></i>
+          </span>
+        </h4>
+      </div>
+    </div>
+    <div class="w-100 alert alert alert-danger  fade show" *ngIf="errorSteering">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+      <button type="button" class="close" (click)="errorSteering = false;"><span></span></button>
+      <div class="d-inline-flex" [innerHtml]="errorSteeringInfo"></div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 px-0" [hidden]="!steeringAvailable">
+        <table datatable id="wifi-signal-strngth-table" class="row-border row-border hover table-alter" width="100%"
+          [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+          <thead>
+            <tr>
+              <th>{{language.Date}}</th>
+              <!--<th>{{language.Time}}</th>-->
+              <th>{{language.From}}</th>
+              <th>{{language.Move_To}}</th>
+              <!--<th>{{language.Target}}</th>-->
+              <th>{{language.Final}} SSID</th>
+              <!--<th>{{language.Final}}</th>-->
+              <th *ngIf="!showCharts">SSID</th>
+              <th *ngIf="!showCharts">{{language.Reason + '/' + language.Mode}}</th>
+              <th>{{language.Technique}}</th>
+
+              <!-- <th>{{language.Result}}</th> -->
+              <th>{{language['Client Response']}}</th>
+              <th>{{language['Status']}}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="wifi-steering-log-row-{{i}}" *ngFor="let data of steeringTableData; let i=index;">
+              <td>{{data.startTime ? changeDate(data.startTime) : ''}}</td>
+              <td>{{(data.current && data.current?.routerName) ? data.current?.routerName : ''}}<span> / {{
+                  (data.current
+                  &&
+                  data.current?.radio) ? data.current?.radio : ''}}</span>
+              </td>
+
+              <td>
+                <span *ngIf="data.target && data.target?.routerName && data.target?.radio">
+                  {{ (data.target && data.target?.routerName) ? data.target?.routerName : ''}}<span> / {{( data.target
+                    &&
+                    data.target?.radio) ? data.target?.radio : ''}}</span>
+                </span>
+                <span *ngIf="data.target && !data.target?.routerName && !data.target?.radio" class="ml-2">
+                  -
+                </span>
+
+              </td>
+              <td>
+                <span *ngIf="data.ending && data.ending?.routerName && data.ending?.radio">
+                  {{ (data.ending && data.ending?.routerName) ? data.ending?.routerName : ''}}<span> / {{ (data.ending
+                    &&
+                    data.ending?.radio) ? data.ending?.radio : ''}}</span>
+                </span>
+                <span *ngIf="data.target && !data.ending?.routerName && !data.ending?.radio" class="ml-2">
+                  -
+                </span>
+              </td>
+
+              <td *ngIf="!showCharts">{{data.ssid ? data.ssid : ' -'}}</td>
+              <td *ngIf="!showCharts">{{data.reason ? data.reason : ' -'}}</td>
+              <td>{{data.method ? ('802.' + data.method | lowercase) : ''}}</td>
+
+              <td>{{data.result || ''}}{{data.note ? (' - ' + data.note) : ''}}</td>
+              <!---------->
+              <td>
+                <span
+                  *ngIf="data.target && data.target?.routerName && data.target?.radio || data.ending && data.ending?.routerName && data.ending?.radio "
+                  [ngClass]="(data.target?.routerName == data.ending?.routerName) && (data.target?.radio==data.ending?.radio) ? 'success' : 'failed' ">
+
+                  {{ (data.target?.routerName == data.ending?.routerName) && (data.target?.radio==data.ending?.radio) ?
+                  language['Success'] : language['Fail'] }}
+
+                </span>
+                <span
+                  *ngIf="data.target && !data.target?.routerName && !data.target?.radio && data.target && !data.ending?.routerName && !data.ending?.radio"
+                  class="ml-2">
+                  -
+                </span>
+
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</section>

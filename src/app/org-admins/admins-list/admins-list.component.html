@@ -1,0 +1,80 @@
+<div class="container position-relative" #scrollTopId id="scrollTopId">
+    <div class="loader" *ngIf="loading">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    </div>
+    <div class="w-100 alert alert-danger  fade show" *ngIf="error">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+        <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+        <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+    </div>
+
+    <div class="w-100 alert alert-success fade show" *ngIf="success">
+        <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+        <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+        <div class="d-inline-flex" [innerHtml]="successInfo"></div>
+    </div>
+
+    <!------------------- Row for Title ------------------->
+    <div class="row my-3" *ngIf="pageAvailable">
+        <div class="col-md-12 ccl-title">{{ORG_NAME}} {{language.adminsList}}</div>
+    </div>
+    <!------------------- Row for Title End ------------------->
+    <!------------------- Add admins & Search ------------------->
+    <div class="row my-3" *ngIf="1">
+        <div class="col-md-6 offset-md-6">
+            <div class="text-right flat-right">
+                <div class="row">
+                    <div class="col-md-4">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="ccl-form admins-list">
+                            <input type="text" name="searchbox" class="input-sm" #searchBar
+                                placeholder="{{language.searchAdmins}}" (keyup)="search($event.target.value)"
+                                (search)="search($event.target.value)">
+                                <span class="clear-icon" [hidden]="!searchClearable" (click)="onSearchClearing(searchBar)"> <img src="assets/img/close-icon.svg"></span>
+                                <!-- CCL-56186 -->
+                                <!-- <span>
+                                    <img src="../../../assets/img/close-icon.svg" alt="">
+                                </span> -->
+                                <!-- <button class="serach-but btn-default primary btn-icon-md inline"><i class="fa fa-search"
+                                                                                                                                aria-hidden="true"></i></button> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!------------------- Add Users & Search End ------------------->
+    <!------------------- admins Table ------------------->
+    <div class="row my-3" *ngIf="pageAvailable" style="min-height: 65vh;">
+        <div class="col" *ngIf="dataAvailable">
+            <table id="admins-table" width="100%" class="row-border hover table-alter " datatable
+                [dtOptions]="dtOptions">
+                <thead class="">
+                    <tr>
+                        <th>{{language.firstname}}</th>
+                        <th>{{language.lastname}}</th>
+                        <th>{{language.emailAddress}}</th>
+                    </tr>
+                </thead>
+                <tbody *ngIf="adminsTableData?.length !=0">
+                    <tr id="{{item._id}}" *ngFor="let item of adminsTableData">
+                        <td>{{item.firstName ? item.firstName : ''}}</td>
+                        <td>{{item.lastName ? item.lastName : ''}}</td>
+                        <td>{{item.email ? item.email : ''}}</td>
+                </tbody>
+                <tbody
+                    *ngIf="(adminsTableData?.length == 0 || (adminsCount != 'undefined' && adminsCount === 0) || (filterCount != 'undefined' && filterCount === 0))">
+                    <tr>
+                        <td colspan="5" class="no-data-available">{{searchClearable ? language['No matching records found'] : language['No data available in table']}}</td>
+                    </tr>
+                <tbody>
+            </table>
+        </div>
+    </div>
+    <!------------------- admins Table End ------------------->
+</div>

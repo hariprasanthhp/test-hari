@@ -1,0 +1,50 @@
+<top-nav-bar *ngIf="isLatestVersion" [menus]="menus" (activeTab)="selectedTab($event)"></top-nav-bar>
+
+<div class="security-settings mt-4">
+
+    <!-- error message -->
+    <div class="w-100 alert alert alert-danger fade show d-flex justify-content-between align-items-center"
+        *ngIf="errorMessage">
+        <div class="error-img"><img src="./assets/img/ic_error-36px.svg" /></div>
+        <div class="d-inline-flex wrn-msg" [innerHtml]="errorMessage"></div>
+        <button type="button" class="btn-default primary ok" (click)="errorMessage = ''">
+            {{ language.OK }}
+        </button>
+    </div>
+    <!-- error message end -->
+
+    <!-- loader -->
+    <div class="loader" *ngIf="loading">
+        <div class=" d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">{{ language.Loading }}</span>
+            </div>
+        </div>
+    </div>
+    <!-- loader end -->
+
+    <div class="row col-5">
+        <div class="col-12 toggles-switch">
+            <div class="toggle-swtbtn checkbox switcher d-flex justify-content-between">
+                <span class="cco-list-label">{{ language['IPS Protocol Anomaly'] }}</span>
+                <label>
+                    <input type="checkbox" [(ngModel)]="securitySettings.protocolAnomaly"
+                        (change)="onSettingChange('PA')" name="protocolAnomaly" id="protocol-anomaly" />
+                    <span class="mr-1"><small></small></span>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="row col-5">
+        <div class="col-12 toggles-switch">
+            <div class="toggle-swtbtn checkbox switcher d-flex justify-content-between">
+                <span class="cco-list-label">{{ language['IPS Port Scan Defense'] }}</span>
+                <label>
+                    <input type="checkbox" [(ngModel)]="securitySettings.portScanDefence"
+                        (change)="onSettingChange('PSD')" name="portScanDefence" id="port-scan-defence" />
+                    <span class="mr-1"><small></small></span>
+                </label>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,61 @@
+<section>
+    <div class="">
+        <div class="mb-3" *ngIf="loading">
+            <div class="col-md-12">
+                <div class="loader mt-5">
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border text-primary">
+                            <span class="sr-only">{{ language.Loading }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="" [formGroup]="detailsForm">
+            <div class="col-md-6 px-0">
+                <div class="ccl-form mb-3">
+                    <label for="notification_name">{{ language.Name }} <span class="error">*</span></label>
+                    <input placeholder="{{ language.Name }}" trimSpace [formValue]="detailsForm" formControlName="name" id="name" (change)="formvaluechange()"  (keyup)="nameValidation()"/>
+                    <div class="errorMessage" >
+                        <div *ngIf="formControls?.name?.errors?.required" class="mt-1">
+                            {{language['This field is required.']}}
+                        </div>
+
+                        <!-- <div *ngIf="nameError" class="mt-1">
+                            Please fill out this field, 1-50 characters including letters, numbers and spaces
+                            only
+                        </div> -->
+
+                    </div>
+                </div>
+                <div class="ccl-form mb-3">
+                    <label for="migrationType">{{ language["Migration Type"] }} </label>
+                    <input placeholder=""  formControlName="deviceType"  id="name" (change)="formvaluechange()" [readonly]="true"/>
+                </div>
+                
+
+                <!-- <div class="custom-selectbox">
+                    <label class="filter-label col-form-label">{{ language["Migration Type"] }}<span class="error">*</span></label>
+                    <ng-select id="type"
+                      placeholder="{{language['None Selected']}}" [searchable]="false" formControlName="deviceType" (change)="formvaluechange()">
+                      <ng-option value="Ont">{{ language['Ont'] }}</ng-option>
+                      <ng-option value="RG">{{ language['RG'] }}</ng-option>
+                    </ng-select>
+                  </div> -->
+          
+                <div class="form-group ccl-form">
+                    <label for="description">{{ language.description
+                        }}<small> ({{ language.Optional }})</small>
+                    </label>
+                    <textarea class="form-control min-h-85px" id="description" formControlName="description" rows="3"
+                        placeholder="{{ language.Decription }}" minlength="0" maxlength="200" (change)="formvaluechange()"></textarea>
+                    <div id="the-count" class="text-right">
+                        <span id="current">
+                            {{detailsForm.get('description').value?.length ? detailsForm.get('description').value?.length : 0}}</span>
+                        <span id="maximum">/200</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

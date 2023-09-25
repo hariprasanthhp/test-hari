@@ -1,0 +1,25 @@
+<div class="w-100 alert alert-danger fade show my-3" *ngIf="error">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+    <button type="button" class="close" (click)="closeAlert()">
+        <span></span>
+    </button>
+    <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+</div>
+<div class="tab-content" id="myTabContent" *ngIf="hasScopeAccess">
+    <div class="tab-pane fade show active" id="Current-Issues" role="tabpanel" aria-labelledby="home-tab">
+        <div class="filter-elemnts" id="current-issues-filter">
+            <app-common-realtime-filter [activeTab]="activeTab"></app-common-realtime-filter>
+        </div>
+        <div class="row" id="current-issues-results">
+            <div class="col-md-12 mt-3">
+                <div class="current-issues-table overflow-auto" id="current-issue-table">
+                    <app-connected-alarms *ngIf="activeTab === 'alarms'"></app-connected-alarms>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess"> {{language['Access denied due to RBAC. Please
+    consult your Organization Administrator for access.']}} </div>

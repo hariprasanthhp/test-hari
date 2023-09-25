@@ -1,0 +1,182 @@
+<div class="container px-0" *ngIf="isDevices else notDevices">
+    <div class="row">
+        <div class="col-md-5 px-0 text-left"><span class="big-text primary"><i class="fa fa-long-arrow-left"
+                    aria-hidden="true"></i>
+
+            </span></div>
+        <div class="col-md-6 text-left">
+            <h4>Darik Devices</h4>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12  px-0 float-right text-right">
+            <button type="button" class="btn-default primary px-3" (click)="isDevices = false">{{language.Add_Devices}}
+                <i class="fa fa-plus mx-1" aria-hidden="true"></i></button></div>
+    </div>
+    <div class="row my-4">
+        <div class="col-md-4 px-0">
+            <div class="row">
+                <div class="col-md-5 text-left">
+                    <h5 class="m-0">Realme</h5>
+                    <span>7c:6b:9c:23:0b:0b</span>
+                </div>
+                <div class="col-md-6 text-right">
+                    <span class="big-text pointer"><i class="fa fa-minus-circle primary" aria-hidden="true"></i></span>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-4 ">
+            <div class="row">
+                <div class="col-md-5 text-left">
+                    <h5 class="m-0">Realme</h5>
+                    <span>7c:6b:9c:23:0b:0b</span>
+                </div>
+                <div class="col-md-6 text-right">
+                    <span class="big-text pointer"><i class="fa fa-minus-circle primary" aria-hidden="true"></i></span>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-4 px-0">
+            <div class="row">
+                <div class="col-md-5 text-left">
+                    <h5 class="m-0">Realme</h5>
+                    <span>7c:6b:9c:23:0b:0b</span>
+                </div>
+                <div class="col-md-6 text-right">
+                    <span class="big-text pointer"><i class="fa fa-minus-circle primary" aria-hidden="true"></i></span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<ng-template #notDevices>
+    <div class="container my-4">
+        <div class="row my-4">
+            <div class="col-md-5 px-0 text-left"><span class="big-text primary"><i class="fa fa-long-arrow-left"
+                        aria-hidden="true"></i>
+
+                </span></div>
+            <div class="col-md-6 my-2 text-left">
+                <h4> {{language.Add_Devices}}</h4>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 px-0">
+                <div class="row">
+                    <div class="col-md-6 px-0 text-left">
+                        <h5 class="m-0">Realme</h5>
+                        <span>7c:6b:9c:23:0b:0b</span>
+                    </div>
+                    <div class="col-md-4 text-right">
+                        <form>
+                            <div class="ccl-form-group">
+                                <input type="checkbox" id="Realme">
+                                <label for="Realme"></label>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-4 ">
+                <div class="row">
+                    <div class="col-md-6 text-left">
+                        <h5 class="m-0">IphoneX</h5>
+                        <span>7c:6b:9c:23:0b:0b</span>
+                    </div>
+                    <div class="col-md-4 text-right">
+                        <form>
+                            <div class="ccl-form-group">
+                                <input type="checkbox" id="IphoneX">
+                                <label for="IphoneX"></label>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-4 px-0">
+                <div class="row">
+                    <div class="col-md-6 text-left">
+                        <h5 class="m-0">Oppo</h5>
+                        <span>7c:6b:9c:23:0b:0b</span>
+                    </div>
+                    <div class="col-md-4 text-right">
+                        <form>
+                            <div class="ccl-form-group">
+                                <input type="checkbox" id="html">
+                                <label for="html"></label>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="row my-4">
+            <div class="col-md-4 px-0">
+                <div class="row">
+                    <div class="col-md-6 px-0  text-left">
+                        <h5 class="m-0">Realme</h5>
+                        <span>7c:6b:9c:23:0b:0b</span>
+                    </div>
+                    <div class="col-md-4 text-right">
+                        <form>
+                            <div class="ccl-form-group">
+                                <input type="checkbox" id="Realme">
+                                <label for="Realme"></label>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-4 ">
+                <div class="row">
+                    <div class="col-md-6 text-left">
+                        <h5 class="m-0">IphoneX</h5>
+                        <span>7c:6b:9c:23:0b:0b</span>
+                    </div>
+                    <div class="col-md-4 text-right">
+                        <form>
+                            <div class="ccl-form-group">
+                                <input type="checkbox" id="IphoneX">
+                                <label for="IphoneX"></label>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-4 px-0">
+                <div class="row">
+                    <div class="col-md-6 text-left">
+                        <h5 class="m-0">Oppo</h5>
+                        <span>7c:6b:9c:23:0b:0b</span>
+                    </div>
+                    <div class="col-md-4 text-right">
+                        <form>
+                            <div class="ccl-form-group">
+                                <input type="checkbox" id="html">
+                                <label for="html"></label>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="row my-4">
+            <div class="col-md-12 text-center">
+                <button type="button" class="btn-default primary px-3" (click)="isDevices = true">{{language.Submit}}
+                </button>
+            </div>
+        </div>
+    </div>
+</ng-template>

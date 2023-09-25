@@ -1,0 +1,105 @@
+<div class="subscriber-list">
+    <div class="title-row flex">
+        <h2 class="title flex">{{language.Subscribers}}(789) </h2>
+        <div class="filter-rht flex">
+            <div class="dropdown-button" ngbDropdown>
+                <button class="mr-2" id="dropdownManual" ngbDropdownToggle>
+                    <label class="chartno">{{language.Issue_type}}</label>
+                    <p class="listdata mb0">{{language.All}} <span></span></p>
+                </button>
+                <div ngbDropdownMenu aria-labelledby="dropdownManual">
+                    <button ngbDropdownItem class="greyaa">{{language.region}} 1 <span>{{language.Data}} 1</span></button>
+                    <button ngbDropdownItem class="greyaa">{{language.region}} 2 <span>{{language.Data}} 1</span></button>
+                    <button ngbDropdownItem class="greyaa">{{language.region}} 3 <span>{{language.Data}} 1</span></button>
+                </div>
+            </div>
+            <div class="dropdown-button" ngbDropdown>
+                <button class="mr-2" id="dropdownExchange" ngbDropdownToggle>
+                    <label class="chartno">{{language.Outcome}}</label>
+                    <p class="listdata mb0">{{language.All}} <span></span></p>
+                </button>
+                <div ngbDropdownMenu aria-labelledby="dropdownExchange">
+                    <button ngbDropdownItem class="greyaa">{{language.Exchanges}} 1 <span>{{language.Data}} 1</span></button>
+                    <button ngbDropdownItem class="greyaa">{{language.Exchanges}} 2 <span>{{language.Data}} 1</span></button>
+                    <button ngbDropdownItem class="greyaa">{{language.Exchanges}} 3 <span>{{language.Data}} 1</span></button>
+                </div>
+            </div>
+            <a href="javascript:void(0)">{{language.Advanced}}</a>
+        </div>
+    </div>
+    <div class="subscriber-list-wrap">
+        <div class="table-responsive table-data-no">
+            <table datatable class="row-border hover table-alter">
+                <thead>
+                    <tr>
+                        <th>{{language.Name}}</th>
+                        <th>{{language.Service_address}}</th>
+                        <th>{{language.Last_contact}}</th>
+                        <th>{{language.Issue}}</th>
+                        <th>{{language.Call_Outcome}}</th>
+                        <th>{{language.Heading}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="javascript:void(0)" [routerLink]="['/support/overview']">Jonathon Mason</a>
+                        </td>
+                        <td>11 31st Street</td>
+                        <td>Today</td>
+                        <td>Account Enquiry</td>
+                        <td>Resolved</td>
+                        <td>Lorem Ipsum</td>
+                    </tr>
+                    <tr>
+                        <td><a href="javascript:void(0)">Jonathon Mason</a> </td>
+                        <td>11 31st Street</td>
+                        <td>Today</td>
+                        <td>Account Enquiry</td>
+                        <td>Resolved</td>
+                        <td>Lorem Ipsum</td>
+                    </tr>
+                    <tr>
+                        <td><a href="javascript:void(0)">Jonathon Mason</a> </td>
+                        <td>11 31st Street</td>
+                        <td>Today</td>
+                        <td>Account Enquiry</td>
+                        <td>Resolved</td>
+                        <td>Lorem Ipsum</td>
+                    </tr>
+                    <tr>
+                        <td><a href="javascript:void(0)">Jonathon Mason</a> </td>
+                        <td>11 31st Street</td>
+                        <td>Today</td>
+                        <td>Account Enquiry</td>
+                        <td>Resolved</td>
+                        <td>Lorem Ipsum</td>
+                    </tr>
+                    <tr>
+                        <td><a href="javascript:void(0)">Jonathon Mason</a> </td>
+                        <td>11 31st Street</td>
+                        <td>Today</td>
+                        <td>Account Enquiry</td>
+                        <td>Resolved</td>
+                        <td>Lorem Ipsum</td>
+                    </tr>
+                    <tr>
+                        <td><a href="javascript:void(0)">Jonathon Mason</a> </td>
+                        <td>11 31st Street</td>
+                        <td>Today</td>
+                        <td>Account Enquiry</td>
+                        <td>Resolved</td>
+                        <td>Lorem Ipsum</td>
+                    </tr>
+                    <tr>
+                        <td><a href="javascript:void(0)">Jonathon Mason</a> </td>
+                        <td>11 31st Street</td>
+                        <td>Today</td>
+                        <td>Account Enquiry</td>
+                        <td>Resolved</td>
+                        <td>Lorem Ipsum</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

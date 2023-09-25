@@ -1,0 +1,6 @@
+::ng-deep{
+ #workflowWizard .stepper-ui li button {
+    max-width: 240px !important;
+    span{ max-width: 185px !important;}
+ }
+}

@@ -1,0 +1,58 @@
+<div class="container position-relative" id="scrollTopId">
+  <div class="w-100 alert alert-danger  fade show" *ngIf="nameError">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+    <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+    <div class="d-inline-flex" [innerHtml]="nameErrorInfo"></div>
+  </div>
+
+  <div class="w-100 alert alert-success fade show" *ngIf="success">
+    <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+    <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+    <div [innerHtml]="successInfo"></div>
+  </div>
+  <!------------------ Row for Title & Back Button ------------------>
+  <div class="row justify-content-end mb-3">
+    <div class="col-md-4">
+      <div class="ccl-title">{{language.addOrganization}}</div>
+    </div>
+    <div class="col-md-8 px-0">
+      <div class="text-right"><a class="back-text" (click)="goToOrgList();">
+          <i class="fa fa-angle-left mr-1" aria-hidden="true"></i> {{language.backToOrganizationList}}</a> </div>
+    </div>
+  </div>
+  <!------------------ Row for Title & Back Button End ------------------>
+  <!------------------ container for Organization & Submit, save Button  ------------------>
+  <div class="container px-0">
+    <form autocomplete="off">
+      <div class="row">
+        <div class="col-md-6 my-3">
+          <div class="form-group ccl-form">
+            <label for="first">{{language.organizationName}}</label>
+            <span class="required-field">*</span>
+            <input type="text" class="" [(ngModel)]="orgName" id="orgName" name="orgName"
+              placeholder="{{language.EnterOrganizationName}}" autocomplete="new-password" 
+              trimSpace (blur)="removeUnwantedSpace('orgName',orgName)">
+          </div>
+        </div>
+        <div class="col-md-6 my-3 pr-0">
+          <div class="form-group ccl-form">
+            <label for="last">{{language.description}}</label>
+            <input type="text" class="" [(ngModel)]="orgDescription" id="orgDescription" name="orgDescription"
+              placeholder="{{language.EnterDescription}}" autocomplete="new-password" 
+              trimSpace (blur)="removeUnwantedSpace('orgDescription',orgDescription)" >
+          </div>
+        </div>
+
+      </div>
+
+
+    </form>
+  </div>
+  <!------------------ container for Organization & Submit, save Button  ------------------>
+  <div class="row">
+    <div class="w-100 my-2 text-right pr-0">
+      <button _ngcontent-veq-c50="" class="btn-default primary mx-3" (click)="addNewOrg()">{{language.submit}}</button>
+      <button _ngcontent-veq-c50="" class="btn-default btn-dft py-1" (click)="cancel();">{{language.Cancel}}</button>
+    </div>
+  </div>
+</div>

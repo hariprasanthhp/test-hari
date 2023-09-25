@@ -1,0 +1,26 @@
+.close-icon {
+    cursor: pointer;
+}
+.cco-secondary-title-system {
+    font-size: 24px;
+    line-height: 53px;
+    font-weight: 500;
+}
+a.disabled {
+    color: gray;
+    cursor: not-allowed;
+    text-decoration: none;
+    font-size: 18px;
+    line-height: 40px;
+    padding: 0px 16px;
+}
+a:hover{
+    color: gray;
+    border-bottom: none !important;
+}
+.border-bottom-grey{
+    border-bottom: 2px solid #cccccc;
+}
+.pointer {
+    cursor: pointer;
+}

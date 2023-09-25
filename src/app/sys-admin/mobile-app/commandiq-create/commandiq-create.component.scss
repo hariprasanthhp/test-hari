@@ -1,0 +1,115 @@
+.label-link {
+  margin-bottom: 15px;
+  text-align: right;
+  a{
+  text-decoration: underline!important;
+  font-weight: 600;
+  cursor: pointer;
+  &:hover{
+      color: #0279ff;
+  }
+  }
+}
+.nodata {
+  text-align: center;
+  font-size: 16px;
+}
+
+.detail-view .form-group{margin-bottom: 13px;}
+
+.value-text{
+font-weight: 400;
+font-size: 16px;
+line-height: 20px;
+color: #808080;
+min-height: 36px;
+padding: 8px 16px;
+margin-bottom: 0;
+min-width: 100px;
+word-break: break-word;
+}
+input.value-text{width: 100%;}
+.max-w-100{max-width: 100px;}
+.min-w-135{min-width: 135px;}
+.color-box {
+  cursor: default !important;
+  min-width: 50px;
+  max-width: 77px;
+  height: 36px;
+  border-radius: 3px !important;
+  font-size: 0;
+  box-shadow: none !important;
+  margin-left: 12px;
+}
+.btn-custom-close {
+  position:absolute;
+  top: 14px;
+  right: 14px;
+}
+.btn-custom-close span{
+  width: 12px;
+  height: 12px;
+  top: 0;
+  right: 0;
+  background-size: 11px;
+}
+
+.logo-box{
+background: #EBEAEF;
+border-radius: 6px;
+width: 100%;
+height: 100px;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+border: 1px solid #dad9de;
+margin-bottom: 10px;
+img{
+  width: auto;
+  height: auto;
+  max-height: 100px;
+}
+
+}
+.logo-guidelines ul{
+list-style-type: disc;
+li{font-weight: 400;
+  font-size: 14px;
+  line-height: 18px;
+  color: #4C4C4C;}
+}
+.custom-file-upload {
+  border: 1px solid #ccc;
+  display: inline-block;
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 22px;
+  padding: 3px 20px !important;
+  height: 24px;
+  line-height: 16px;
+}
+.white-logo-input{display: none;}
+.opacity-50{opacity: 50%;}
+
+.toggle-swtbtn.checkbox.switcher label input + span{
+  width: 35px;
+  height: 18px;
+}
+.toggle-swtbtn.checkbox.switcher label input + span small{
+  width: 12px;
+  height: 12px;
+}
+.toggle-swtbtn.checkbox.switcher label input:checked + span small{
+  margin-left: 3px
+}
+//
+.Commandiq-loge-name {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: 188px;
+}
+
+  .whitelabel-name{
+    font-size: 24px;	font-style: normal;	font-weight: 400;	line-height: 30px;	letter-spacing: 0em;
+    text-align: left;padding-bottom:7px;	margin-bottom:7px
+  }

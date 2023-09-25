@@ -1,0 +1,956 @@
+{
+  "5": {
+    "IgmpSnoopEnable": "true",
+    "VLANID": "52",
+    "Hairpin": "false",
+    "MacffAr": [
+      {
+        "IPAddress": "00:0f:e2:ae:02:7a",
+        "MACAddress": "192.168.32.1",
+        "State": "MacffResolved"
+      },
+      {
+        "IPAddress": "00:0f:e2:ae:02:7a",
+        "MACAddress": "192.168.32.1",
+        "State": "MacffResolved"
+      },
+      {
+        "IPAddress": "00:0f:e2:ae:02:7a",
+        "MACAddress": "192.168.32.1",
+        "State": "MacffResolved"
+      },
+      {
+        "IPAddress": "00:0f:e2:ae:02:7a",
+        "MACAddress": "192.168.32.1",
+        "State": "MacffResolved"
+      },
+      {
+        "IPAddress": "00:0f:e2:ae:02:7a",
+        "MACAddress": "192.168.32.1",
+        "State": "MacffResolved"
+      },
+      {
+        "IPAddress": "00:0f:e2:ae:02:7a",
+        "MACAddress": "192.168.32.1",
+        "State": "MacffResolved"
+      },
+      {
+        "IPAddress": "00:0f:e2:ae:02:7a",
+        "MACAddress": "192.168.32.1",
+        "State": "MacffResolved"
+      },
+      {
+        "IPAddress": "00:0f:e2:ae:02:7a",
+        "MACAddress": "192.168.32.1",
+        "State": "MacffResolved"
+      },
+      {
+        "IPAddress": "00:0f:e2:ae:02:7a",
+        "MACAddress": "192.168.32.1",
+        "State": "MacffResolved"
+      },
+      {
+        "IPAddress": "00:0f:e2:ae:02:7a",
+        "MACAddress": "192.168.32.1",
+        "State": "MacffResolved"
+      },
+      {
+        "IPAddress": "00:0f:e2:ae:02:7a",
+        "MACAddress": "192.168.32.1",
+        "State": "MacffResolved"
+      },
+      {
+        "IPAddress": "00:0f:e2:ae:02:7a",
+        "MACAddress": "192.168.32.1",
+        "State": "MacffResolved"
+      }
+    ],
+    "MacffStation": [
+      {
+        "IPAddress": "192.168.32.248",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "4"
+      },
+      {
+        "IPAddress": "192.168.32.241",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "1"
+      },
+      {
+        "IPAddress": "192.168.32.242",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "2"
+      },
+      {
+        "IPAddress": "192.168.32.243",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "3"
+      },
+      {
+        "IPAddress": "192.168.32.244",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "4"
+      },
+      {
+        "IPAddress": "192.168.32.245",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "5"
+      },
+      {
+        "IPAddress": "192.168.32.246",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "6"
+      },
+      {
+        "IPAddress": "192.168.32.247",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "7"
+      },
+      {
+        "IPAddress": "192.168.32.248",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "8"
+      },
+      {
+        "IPAddress": "192.168.32.249",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "9"
+      },
+      {
+        "IPAddress": "192.168.32.210",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "10"
+      },
+      {
+        "IPAddress": "192.168.32.248",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "4"
+      },
+      {
+        "IPAddress": "192.168.32.241",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "1"
+      },
+      {
+        "IPAddress": "192.168.32.242",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "2"
+      },
+      {
+        "IPAddress": "192.168.32.243",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "3"
+      },
+      {
+        "IPAddress": "192.168.32.244",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "4"
+      },
+      {
+        "IPAddress": "192.168.32.245",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "5"
+      },
+      {
+        "IPAddress": "192.168.32.246",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "6"
+      },
+      {
+        "IPAddress": "192.168.32.247",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "7"
+      },
+      {
+        "IPAddress": "192.168.32.248",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "8"
+      },
+      {
+        "IPAddress": "192.168.32.249",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "9"
+      },
+      {
+        "IPAddress": "192.168.32.210",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "10"
+      },
+      {
+        "IPAddress": "192.168.32.248",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "4"
+      },
+      {
+        "IPAddress": "192.168.32.241",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "1"
+      },
+      {
+        "IPAddress": "192.168.32.242",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "2"
+      },
+      {
+        "IPAddress": "192.168.32.243",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "3"
+      },
+      {
+        "IPAddress": "192.168.32.244",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "4"
+      },
+      {
+        "IPAddress": "192.168.32.245",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "5"
+      },
+      {
+        "IPAddress": "192.168.32.246",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "6"
+      },
+      {
+        "IPAddress": "192.168.32.247",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "7"
+      },
+      {
+        "IPAddress": "192.168.32.248",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "8"
+      },
+      {
+        "IPAddress": "192.168.32.249",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "9"
+      },
+      {
+        "IPAddress": "192.168.32.210",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "10"
+      },
+      {
+        "IPAddress": "192.168.32.248",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "4"
+      },
+      {
+        "IPAddress": "192.168.32.241",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "1"
+      },
+      {
+        "IPAddress": "192.168.32.242",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "2"
+      },
+      {
+        "IPAddress": "192.168.32.243",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "3"
+      },
+      {
+        "IPAddress": "192.168.32.244",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "4"
+      },
+      {
+        "IPAddress": "192.168.32.245",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "5"
+      },
+      {
+        "IPAddress": "192.168.32.246",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "6"
+      },
+      {
+        "IPAddress": "192.168.32.247",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "7"
+      },
+      {
+        "IPAddress": "192.168.32.248",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "8"
+      },
+      {
+        "IPAddress": "192.168.32.249",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "9"
+      },
+      {
+        "IPAddress": "192.168.32.210",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "10"
+      },{
+        "IPAddress": "192.168.32.248",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "4"
+      },
+      {
+        "IPAddress": "192.168.32.241",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "1"
+      },
+      {
+        "IPAddress": "192.168.32.242",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "2"
+      },
+      {
+        "IPAddress": "192.168.32.243",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "3"
+      },
+      {
+        "IPAddress": "192.168.32.244",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "4"
+      },
+      {
+        "IPAddress": "192.168.32.245",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "5"
+      },
+      {
+        "IPAddress": "192.168.32.246",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "6"
+      },
+      {
+        "IPAddress": "192.168.32.247",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "7"
+      },
+      {
+        "IPAddress": "192.168.32.248",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "8"
+      },
+      {
+        "IPAddress": "192.168.32.249",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "9"
+      },
+      {
+        "IPAddress": "192.168.32.210",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "10"
+      },
+      {
+        "IPAddress": "192.168.32.248",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "4"
+      },
+      {
+        "IPAddress": "192.168.32.241",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "1"
+      },
+      {
+        "IPAddress": "192.168.32.242",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "2"
+      },
+      {
+        "IPAddress": "192.168.32.243",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "3"
+      },
+      {
+        "IPAddress": "192.168.32.244",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "4"
+      },
+      {
+        "IPAddress": "192.168.32.245",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "5"
+      },
+      {
+        "IPAddress": "192.168.32.246",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "6"
+      },
+      {
+        "IPAddress": "192.168.32.247",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "7"
+      },
+      {
+        "IPAddress": "192.168.32.248",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "8"
+      },
+      {
+        "IPAddress": "192.168.32.249",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "9"
+      },
+      {
+        "IPAddress": "192.168.32.210",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "10"
+      },
+      {
+        "IPAddress": "192.168.32.248",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "4"
+      },
+      {
+        "IPAddress": "192.168.32.241",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "1"
+      },
+      {
+        "IPAddress": "192.168.32.242",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "2"
+      },
+      {
+        "IPAddress": "192.168.32.243",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "3"
+      },
+      {
+        "IPAddress": "192.168.32.244",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "4"
+      },
+      {
+        "IPAddress": "192.168.32.245",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "5"
+      },
+      {
+        "IPAddress": "192.168.32.246",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "6"
+      },
+      {
+        "IPAddress": "192.168.32.247",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "7"
+      },
+      {
+        "IPAddress": "192.168.32.248",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "8"
+      },
+      {
+        "IPAddress": "192.168.32.249",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "9"
+      },
+      {
+        "IPAddress": "192.168.32.210",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "10"
+      }
+    ],
+    "DhcpLease": [
+      {
+        "Acks": "0",
+        "BirthDate": "1634712251",
+        "ChAddress": "68:63:59:03:8d:7f",
+        "DhcpServer": "10.20.253.25",
+        "Discovers": "0",
+        "ExpiryTime": "1635012303",
+        "IPAddress": "192.168.32.248",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "Informs": "0",
+        "LastRenewal": "1634812271",
+        "Offers": "0",
+        "PortInterface": "4",
+        "Requests": "0"
+      },
+      {
+        "Acks": "0",
+        "BirthDate": "1634712251",
+        "ChAddress": "68:63:59:03:8d:7f",
+        "DhcpServer": "10.20.253.25",
+        "Discovers": "0",
+        "ExpiryTime": "1635012303",
+        "IPAddress": "192.168.32.248",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "Informs": "0",
+        "LastRenewal": "1634812271",
+        "Offers": "0",
+        "PortInterface": "4",
+        "Requests": "0"
+      },
+      {
+        "Acks": "0",
+        "BirthDate": "1634712251",
+        "ChAddress": "68:63:59:03:8d:7f",
+        "DhcpServer": "10.20.253.25",
+        "Discovers": "0",
+        "ExpiryTime": "1635012303",
+        "IPAddress": "192.168.32.248",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "Informs": "0",
+        "LastRenewal": "1634812271",
+        "Offers": "0",
+        "PortInterface": "4",
+        "Requests": "0"
+      },
+      {
+        "Acks": "0",
+        "BirthDate": "1634712251",
+        "ChAddress": "68:63:59:03:8d:7f",
+        "DhcpServer": "10.20.253.25",
+        "Discovers": "0",
+        "ExpiryTime": "1635012303",
+        "IPAddress": "192.168.32.248",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "Informs": "0",
+        "LastRenewal": "1634812271",
+        "Offers": "0",
+        "PortInterface": "4",
+        "Requests": "0"
+      },
+      {
+        "Acks": "0",
+        "BirthDate": "1634712251",
+        "ChAddress": "68:63:59:03:8d:7f",
+        "DhcpServer": "10.20.253.25",
+        "Discovers": "0",
+        "ExpiryTime": "1635012303",
+        "IPAddress": "192.168.32.248",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "Informs": "0",
+        "LastRenewal": "1634812271",
+        "Offers": "0",
+        "PortInterface": "4",
+        "Requests": "0"
+      },
+      {
+        "Acks": "0",
+        "BirthDate": "1634712251",
+        "ChAddress": "68:63:59:03:8d:7f",
+        "DhcpServer": "10.20.253.25",
+        "Discovers": "0",
+        "ExpiryTime": "1635012303",
+        "IPAddress": "192.168.32.248",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "Informs": "0",
+        "LastRenewal": "1634812271",
+        "Offers": "0",
+        "PortInterface": "4",
+        "Requests": "0"
+      },
+      {
+        "Acks": "0",
+        "BirthDate": "1634712251",
+        "ChAddress": "68:63:59:03:8d:7f",
+        "DhcpServer": "10.20.253.25",
+        "Discovers": "0",
+        "ExpiryTime": "1635012303",
+        "IPAddress": "192.168.32.248",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "Informs": "0",
+        "LastRenewal": "1634812271",
+        "Offers": "0",
+        "PortInterface": "4",
+        "Requests": "0"
+      },
+      {
+        "Acks": "0",
+        "BirthDate": "1634712251",
+        "ChAddress": "68:63:59:03:8d:7f",
+        "DhcpServer": "10.20.253.25",
+        "Discovers": "0",
+        "ExpiryTime": "1635012303",
+        "IPAddress": "192.168.32.248",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "Informs": "0",
+        "LastRenewal": "1634812271",
+        "Offers": "0",
+        "PortInterface": "4",
+        "Requests": "0"
+      },
+      {
+        "Acks": "0",
+        "BirthDate": "1634712251",
+        "ChAddress": "68:63:59:03:8d:7f",
+        "DhcpServer": "10.20.253.25",
+        "Discovers": "0",
+        "ExpiryTime": "1635012303",
+        "IPAddress": "192.168.32.248",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "Informs": "0",
+        "LastRenewal": "1634812271",
+        "Offers": "0",
+        "PortInterface": "4",
+        "Requests": "0"
+      },
+      {
+        "Acks": "0",
+        "BirthDate": "1634712251",
+        "ChAddress": "68:63:59:03:8d:7f",
+        "DhcpServer": "10.20.253.25",
+        "Discovers": "0",
+        "ExpiryTime": "1635012303",
+        "IPAddress": "192.168.32.248",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "Informs": "0",
+        "LastRenewal": "1634812271",
+        "Offers": "0",
+        "PortInterface": "4",
+        "Requests": "0"
+      },
+      {
+        "Acks": "0",
+        "BirthDate": "1634712251",
+        "ChAddress": "68:63:59:03:8d:7f",
+        "DhcpServer": "10.20.253.25",
+        "Discovers": "0",
+        "ExpiryTime": "1635012303",
+        "IPAddress": "192.168.32.248",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "Informs": "0",
+        "LastRenewal": "1634812271",
+        "Offers": "0",
+        "PortInterface": "4",
+        "Requests": "0"
+      },
+      {
+        "Acks": "0",
+        "BirthDate": "1634712251",
+        "ChAddress": "68:63:59:03:8d:7f",
+        "DhcpServer": "10.20.253.25",
+        "Discovers": "0",
+        "ExpiryTime": "1635012303",
+        "IPAddress": "192.168.32.248",
+        "IPAddressMask": "255.255.255.0",
+        "IPGateway": "192.168.32.1",
+        "Informs": "0",
+        "LastRenewal": "1634812271",
+        "Offers": "0",
+        "PortInterface": "4",
+        "Requests": "0"
+      }
+    ],
+    "DhcpStatsLan": [
+      {
+        "ChaddrErrors": "0",
+        "FlawedPackets": "0",
+        "GiaddrErrors": "0",
+        "LimitDrops": "0",
+        "Opt82Errors": "0",
+        "OtherErrors": "0",
+        "PortInterface": "4",
+        "ReleaseErrors": "0",
+        "RxDeclines": "0",
+        "RxDiscovers": "0",
+        "RxInforms": "0",
+        "RxReleases": "0",
+        "RxRequests": "0",
+        "ServerMsgDrops": "0",
+        "TxAcks": "0",
+        "TxNaks": "0",
+        "TxOffers": "0"
+      }
+    ],
+    "DhcpStatsWan": [
+      {
+        "ClientDropMessages": "0",
+        "FlawedPackets": "0",
+        "MacCollisions": "0",
+        "NoSessionDrops": "0",
+        "OtherErrors": "0",
+        "RxAcks": "0",
+        "RxNaks": "0",
+        "RxOffers": "0",
+        "TxDeclines": "0",
+        "TxDiscovers": "0",
+        "TxInforms": "0",
+        "TxReleases": "0",
+        "TxRequests": "0"
+      }
+    ],
+    "DhcpLimitsPort": [
+      {
+        "Count": "1",
+        "Limit": "0",
+        "PortInterface": "4"
+      }
+    ],
+    "DhcpLimitsMac": [
+      {
+        "ExpiryTime": "1634885681",
+        "IsLease": "true",
+        "MACAddress": "68:63:59:03:8d:7f",
+        "PortInterface": "4"
+      }
+    ],
+    "Stats": {
+      "ArpProxyDownstreamDrops": "2",
+      "ArpProxyUpstreamDrops": "0",
+      "CircuitIdString": "",
+      "DhcpDownstreamSnoopHits": "0",
+      "DhcpUpstreamSnoopHits": "0",
+      "DownstreamBcastErrors": "0",
+      "FilteredMulticastPackets": "0",
+      "IPV6UpstreamHits": "0",
+      "IPv6DownstreamHits": "0",
+      "InvalidBcastErrors": "0",
+      "L2CPDownstreamHits": "0",
+      "L2CPUpstreamHits": "0",
+      "LldpFramesReceived": "386",
+      "LldpOltPort": "1/1/g3",
+      "LldpOltSystemId": "Anson_E7",
+      "MulticastPoliceUpstreamDrops": "0",
+      "NonArDaErrors": "0",
+      "NonIpOrArpErrors": "0",
+      "RemoteIdString": "",
+      "StationInvalidCount": "0",
+      "StationInvalidEtype": "0",
+      "StationValidCount": "0",
+      "UpstreamUnknownUnicastMacff": "0"
+    }
+  },
+  "6": {
+    "IgmpSnoopEnable": "false",
+    "VLANID": "300",
+    "Hairpin": "false",
+    "DhcpStatsLan": [
+      {
+        "RxDiscovers": "1",
+        "RxRequests": "1",
+        "RxReleases": "1",
+        "RxInforms": "0",
+        "RxDeclines": "0",
+        "TxAcks": "1",
+        "TxNaks": "0",
+        "TxOffers": "1",
+        "FlawedPackets": "0",
+        "ServerMsgDrops": "0",
+        "GiaddrErrors": "0",
+        "ChaddrErrors": "0",
+        "Opt82Errors": "0",
+        "LimitDrops": "0",
+        "ReleaseErrors": "0",
+        "OtherErrors": "0",
+        "PortInterface": "1"
+      }
+    ],
+    "DhcpStatsWan": [
+      {
+        "TxDiscovers": "1",
+        "TxRequests": "1",
+        "TxReleases": "1",
+        "TxInforms": "0",
+        "TxDeclines": "0",
+        "RxAcks": "1",
+        "RxNaks": "0",
+        "RxOffers": "1",
+        "FlawedPackets": "0",
+        "ClientDropMessages": "0",
+        "NoSessionDrops": "0",
+        "MacCollisions": "0",
+        "OtherErrors": "0"
+      }
+    ],
+    "DhcpLimitsPort": [
+      {
+        "Limit": "11",
+        "Count": "0",
+        "PortInterface": "1"
+      }
+    ],
+    "Stats": {
+      "DhcpUpstreamSnoopHits": "3",
+      "DhcpDownstreamSnoopHits": "2",
+      "StationValidCount": "0",
+      "IPv6DownstreamHits": "0",
+      "IPV6UpstreamHits": "0",
+      "L2CPDownstreamHits": "0",
+      "L2CPUpstreamHits": "0",
+      "StationInvalidCount": "0",
+      "StationInvalidEtype": "0",
+      "NonIpOrArpErrors": "0",
+      "InvalidBcastErrors": "0",
+      "UpstreamUnknownUnicastMacff": "0",
+      "ArpProxyUpstreamDrops": "0",
+      "ArpProxyDownstreamDrops": "6",
+      "NonArDaErrors": "0",
+      "FilteredMulticastPackets": "0",
+      "DownstreamBcastErrors": "0",
+      "MulticastPoliceUpstreamDrops": "0",
+      "CircuitIdString": "%ronta",
+      "RemoteIdString": "%ronta",
+      "LldpOltSystemId": "Anson_E7",
+      "LldpOltPort": "1/1/g3",
+      "LldpFramesReceived": "386"
+    }
+  }
+}

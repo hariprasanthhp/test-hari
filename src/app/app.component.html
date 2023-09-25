@@ -1,0 +1,137 @@
+<!-- <router-outlet></router-outlet> -->
+<div class="update-popup animated " *ngIf="isUpdateAvailable" [ngClass]="!isUpdateAnimation ? 'fadeInUp' : 'fadeInDwon'">
+   <div class="ml-3">
+       <img src="../assets/img/ic_info_white.svg" alt="">
+   </div>
+   <div class="text-white w-72">
+       <h3 class="m-0">Updates Available</h3>
+       <p class="m-0">Calix Cloud has been updated. Do you want to apply these changes now?  Updating will cause this page to refresh.</p>
+   </div>
+   <div class="d-flex align-items-center flex-column w-20">
+       <button class="btn-default text-dark" (click)="hideUpdatePopup();refreshPage();">Update now</button>
+       <a *ngIf="!updateLaterClicked" class="text-white text-decoration-none pointer mt-1" (click)="hideUpdatePopup();updateLater();">Remind me in 30m</a>
+       <!-- <a *ngIf="updateLaterClicked" style="cursor: pointer;" class="text-white text-decoration-none" (click)="close();">close</a> -->
+   </div>
+</div>
+
+<div class="w-100 alert alert-danger  fade show my-3" *ngIf="errorMsg">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+    <button type="button" class="close" (click)="errorMsg = ''"><span></span></button>
+    <div class="d-inline-flex" [innerHtml]="errorMsg"></div>
+</div>
+<div [hidden]="!tosAgreed" id="app-main-div">
+    <router-outlet></router-outlet>
+</div>
+<router-outlet></router-outlet>
+
+<div class="loader-wrapper-info" *ngIf="loadingRouteConfig">
+    <div class="loader">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary" role="">
+                <span class="sr-only">{{language.Loading}}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #tosModal let-data let-ref="dialogRef" id="TermOfServiceModal">
+
+    <div class="modal-header">
+
+        <h4>{{language['Terms of Service']}}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="loadDeclineTosModal();"><span
+                aria-hidden="true"></span></button>
+    </div>
+    <div class="modal-body terms-content" id="tos-body" #tosModalBody>
+        <div [innerHtml]="body"></div>
+    </div>
+    <div class="modal-footer" style="display:block !important;align-items:none;">
+        <div class="row">
+            <div class="col-12">
+                <p class="mb-0">{{language.Note}}: {{language['Scroll terms to bottom to enable the Accept button']}}.
+                </p>
+            </div>
+            <div class="col-12">
+                <div class="flex-end">
+                    <button type="button" class="btn btn-default" (click)="loadDeclineTosModal();">
+                        {{language['I Decline']}} </button>
+                    <button type="button" class="btn btn-primary ml-2" [disabled]="acceptBtnDisabled"
+                        (click)="agreeTos();">{{language['I Accept']}}</button>
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+    <!-- <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">macErrorHeader</h4>
+        <button type="button" class="close" aria-label="Close" (click)="close()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <p>macErrorBody</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="close();">Close </button>
+    </div> -->
+</ng-template>
+
+
+<ng-template #declineTOSModal let-data let-ref="dialogRef">
+    <div class="modal-header">
+        <h4 class="modal-title">{{language['Decline Terms of Service']}}</h4>
+    </div>
+    <div class="modal-body">
+        <i class="fa fa-info-circle" aria-hidden="true"></i>
+        {{language['Since you did not accept the Terms of Service, we are logging you out']}}.<br>
+        {{language['If you would like to sign in successfully, we recommend you read and accept the terms of service
+        agreement']}}.<br>
+        {{language['You will be directed to the Cloud product page']}}.<br>
+    </div>
+    <div class="modal-footer">
+        <button type="button" id="popupConfirmButton" class="btn btn-default btn-lg" data-dismiss="modal"
+            (click)="doLogout();">{{language.Close}}</button>
+    </div>
+</ng-template>
+
+
+<ng-template #apigeeErrorModal let-data let-ref="dialogRef">
+    <div class="modal-header">
+        <h4 class="modal-title"></h4>
+    </div>
+    <div class="modal-body">
+        {{language['Invalid apigee keys force logging out you']}}.
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-lg" data-dismiss="modal"
+            (click)="doLogout();">{{language.Close}}</button>
+    </div>
+</ng-template>
+
+<!-- 
+<ng-template #refreshModal let-data let-ref="dialogRef" id="refresh-modal">
+    <div class="modal-header">
+        <h4>New Update!!!</h4> -->
+        <!-- <button type="button" class="close" aria-label="Close" (click)="close();">
+            <span aria-hidden="true"></span></button> -->
+    <!-- </div>
+    <div class="modal-body" style="align-items:center;">
+        <div class="row">
+            <div class="col-12">
+                <p class="mb-0">
+                    New Update Available. Do you wish to update app?
+                </p>
+            </div>
+            <div class="col-12">
+                <div class="flex-end">
+                    <button type="button" class="btn btn-primary" (click)="refreshPage();">Update</button>
+                    <button *ngIf="!updateLaterClicked" type="button" class="btn btn-default ml-2" (click)="updateLater();">Update After 5 Mins</button>
+                    <button *ngIf="updateLaterClicked" type="button btn-default" class="btn btn-default ml-2" (click)="close();">Not now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template> -->

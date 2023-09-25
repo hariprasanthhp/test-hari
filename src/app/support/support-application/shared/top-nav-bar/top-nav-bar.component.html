@@ -1,0 +1,10 @@
+<ul id="tabs" class="nav nav-tabs top-nav-border">
+    <ng-container *ngFor="let menu of menus; let menuIndex = index;">
+        <li *ngIf="menu.display" class="nav-item">
+            <a [class]="'nav-link small ' + menu.state" [id]="menu.value" (click)="tabSelectedEvent(menu.value)"
+                data-toggle="tab" class="nav-link">
+                {{ language[menu.label] }}
+            </a>
+        </li>
+    </ng-container>
+</ul>

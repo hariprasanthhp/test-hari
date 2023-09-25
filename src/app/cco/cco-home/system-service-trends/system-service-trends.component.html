@@ -1,0 +1,224 @@
+<div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess"> 
+    {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} </div>
+<section class="my-3">
+    <div class="container">
+        <div class="row">
+            <div class="test-container">
+                <div class="item" *ngIf="menus['systemstatus']">
+                    <span class="cco-list-label" id="pendoActiveSystems">{{language["Active Systems"]}}</span>
+                    <div class="d-flex" *ngIf="FormData">
+                        <h3>{{active}}</h3>
+                        <span class="sub-menu-list-icon" *ngIf=" arrowPositive">{{activeper}}
+                            <a *ngIf="!arrowactiveEnable">
+                                <i class="gly-rotate-90"></i>
+                            </a>
+                        </span>
+                        <span class="sub-menu-list-icon2" *ngIf=" !arrowPositive">{{activeper}}
+                            <a *ngIf="!arrowactiveEnable">
+                                <i class="gly-rotate-45"></i>
+                            </a>
+                        </span>
+                    </div>
+                    <div class="d-flex" *ngIf="!FormData">
+                        <h3>0</h3>
+                        <span class="sub-menu-list-icon">0%
+                        </span>
+                    </div>
+                    <div class="past-hours"> {{language.Past_24_hours}}</div>
+                </div>
+                <div class="item" *ngIf="menus['systemstatus']">
+                    <span class="cco-list-label" id="pendoPreProvisionedSystems">
+                        {{language["Pre-Provisioned Systems"]}}</span>
+                    <div class="d-flex" *ngIf="FormData">
+                        <h3>{{preprovision}}</h3>
+                        <span class="sub-menu-list-icon" *ngIf="arrowPositivepro">
+                            <a *ngIf="!arrowprovisionEnable ">
+                                <i class="gly-rotate-90"></i>
+                            </a>{{preprovisionper}}
+                        </span>
+                        <span class="sub-menu-list-icon2" *ngIf="!arrowPositivepro">
+                            <a *ngIf="!arrowprovisionEnable ">
+                                <i class="gly-rotate-45"></i>
+                            </a>{{preprovisionper}}
+                        </span>
+                    </div>
+                    <div class="d-flex" *ngIf="!FormData">
+                        <h3>0</h3>
+                        <span class="sub-menu-list-icon">0%
+                        </span>
+                    </div>
+                    <div class="past-hours"> {{language.Past_24_hours}}</div>
+                </div>
+                <div class="item" *ngIf="menus['systemstatus']">
+                    <span class="cco-list-label" id="pendoUnAssociatedSystem">{{language["Unassociated_System"]}}</span>
+                    <div class="d-flex" *ngIf="FormData">
+                        <h3>{{unassociate}}</h3>
+                        <!-- <span class="sub-menu-list-icon">{{unassociateper}}
+                      <a *ngIf="!arrowunassoEnable && arrowPositiveunasso">
+                        <i class="gly-rotate-90"></i>
+                      </a>
+                      <a *ngIf="!arrowunassoEnable && !arrowPositiveunasso">
+                        <i class="gly-rotate-45"></i>
+                      </a>
+                    </span> -->
+                        <span class="sub-menu-list-icon" *ngIf="arrowPositiveunasso">{{unassociateper}}
+                            <a *ngIf="!arrowunassoEnable">
+                                <i class="gly-rotate-90"></i>
+                            </a>
+                        </span>
+                        <span class="sub-menu-list-icon2" *ngIf="!arrowPositiveunasso">
+                            <a *ngIf="!arrowunassoEnable">
+                                <i class="gly-rotate-45"></i>
+                            </a>{{unassociateper}}
+                        </span>
+                    </div>
+                    <div class="d-flex" *ngIf="!FormData">
+                        <h3>0</h3>
+                        <span class="sub-menu-list-icon">0%
+                        </span>
+                    </div>
+                    <div class="past-hours"> {{language.Past_24_hours}}</div>
+                </div>
+                <div class="item" *ngIf="menus['cmndiqstatus']">
+                    <span class="cco-list-label" id="pendoCommandIqSubscribers">
+                        {{smallBizIQentitlement?language['CommandIQ & CommandWorx Subscribers']:language["CommandIQ Subscribers"]}}</span>
+                    <div class="d-flex" *ngIf="commandIQvalue">
+                        <h3>{{commandIQ}}</h3>
+                        <!-- <span class="sub-menu-list-icon">{{commandIqper}}
+                      <a *ngIf="!arrowcommandIqperEnable && arrowPositivecommand">
+                        <i class="gly-rotate-90"></i>
+                      </a>
+                      <a *ngIf="!arrowcommandIqperEnable && !arrowPositivecommand">
+                        <i class="gly-rotate-45"></i>
+                      </a>
+                    </span> -->
+                        <span class="sub-menu-list-icon" *ngIf="arrowPositivecommand">{{commandIqper}}
+                            <a *ngIf="!arrowcommandIqperEnable">
+                                <i class="gly-rotate-90"></i>
+                            </a>
+                        </span>
+                        <span class="sub-menu-list-icon2" *ngIf="!arrowPositivecommand">
+                            <a *ngIf="!arrowcommandIqperEnable">
+                                <i class="gly-rotate-45"></i>
+                            </a>{{commandIqper}}
+                        </span>
+                    </div>
+                    <div class="d-flex" *ngIf="!commandIQvalue">
+                        <h3>0</h3>
+                        <span class="sub-menu-list-icon">0%
+                        </span>
+                    </div>
+                    <div class="past-hours"> {{language.Past_24_hours}}</div>
+                </div>
+                <div class="item" *ngIf="menus['revedgesuiteecosystemstatus'] &&(arloEnableentitlement|| this.arloUnlimitedentitlement || this.arloUnlimitedplusentitlement || ServifyEnableentitlement|| this.ServifyGoldentitlement || this.ServifySilverentitlement || this.ServifyPlatinumentitlement || Bark_Premiumentitlement || Bark_Juniorentitlement || productIQEnableentitlement || ExperienceIQEnableentitlement || proAndExpEnableentitlement || MyCommunityIQentitlement )">
+                    <span class="cco-list-label" id="pendoEDGESuiteSubscrivers"> {{language['Managed Services Subscriptions']}} </span>
+                    <div class="d-flex">
+                        <h3>{{edgeSuit}}</h3>
+                        <span class="sub-menu-list-icon" *ngIf='arrowPositiveedge'>{{edgeSuitper}}
+                            <a *ngIf="!arrowedgeSuitperEnable">
+                                <i class="gly-rotate-90"></i>
+                            </a>
+                        </span>
+                        <span class="sub-menu-list-icon2" *ngIf=" !arrowPositiveedge">
+                            <a *ngIf="!arrowedgeSuitperEnable">
+                                <i class="gly-rotate-45"></i>
+                            </a>{{edgeSuitper}}
+                        </span>
+                    </div>
+                    <div class="past-hours"> {{language.Past_24_hours}}</div>
+                </div>
+                <!-- <div class="item" *ngIf="menus['revedgesuiteecosystemstatus'] && (arloEnableentitlement|| this.arloUnlimitedentitlement || this.arloUnlimitedplusentitlement || ServifyEnableentitlement|| this.ServifyGoldentitlement || this.ServifySilverentitlement || this.ServifyPlatinumentitlement || Bark_Premiumentitlement || Bark_Juniorentitlement) ">
+                    <span class="cco-list-label" id="pendoEDGESuiteSubscrivers"> {{language["EDGE_Ecosystem_Suite_Subscriptions"]}} </span>
+                    <div class="d-flex">
+                        <h3>{{edgeSuiteco}}</h3>
+                        <span class="sub-menu-list-icon" *ngIf='arrowPositiveedgeEco'>{{edgeSuitpereco}}
+                            <a *ngIf="!arrowedgeSuitecoperEnable">
+                                <i class="gly-rotate-90"></i>
+                            </a>
+                        </span>
+                        <span class="sub-menu-list-icon2" *ngIf=" !arrowPositiveedgeEco">
+                            <a *ngIf="!arrowedgeSuitecoperEnable">
+                                <i class="gly-rotate-45"></i>
+                            </a>{{edgeSuitpereco}}
+                        </span>
+                    </div>
+                    <div class="past-hours"> {{language.Past_24_hours}}</div>
+                </div> -->
+            </div>
+        </div>
+
+    </div>
+</section>
+<div class="container">
+    <div class="row my-3">
+        <div class="d-flex w-100" id="current-issues-interval">
+            <label class="label-chart-timeframe pr-3">
+                {{language['Chart Timeframe']}}</label>
+            <div class="min-w-170">
+                <ng-select [searchable]="false" placeholder="{{ language.Last_7_Days }}" [(ngModel)]="filterDays"
+                    (change)="getData()">
+                    <ng-option value="7"> {{ language.Last_7_Days }}</ng-option>
+                    <ng-option value="30">{{ language.Last_30_Days }} </ng-option>
+                </ng-select>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="subscriber-trends-wrapper">
+            <div class="subscriber-trends-item" *ngIf="menus['systemstatus']">
+                <div class="home-title"> <span id="pendoSystemStatus">  RG {{ language['Systems Status'] }}</span> </div>
+                <app-system-status (Out_sysStatus)="OnFormData($event)"></app-system-status>
+            </div>
+            <div class="subscriber-trends-item" *ngIf="menus['systemtype']">
+                <div class="home-title" id="pendoCCOSystemByType">
+                    {{language['RG/Mesh']}} {{ language.System_by_Type }}
+                </div>
+                <app-systems-by-type></app-systems-by-type>
+            </div>
+            <div class="subscriber-trends-item" *ngIf="menus['systemmodel']">
+                <div class="home-title" id="pendoCCOSystemByModel">
+                    {{language['RG/Mesh']}}   {{ language["Systems by Model"] }}
+                </div>
+                <app-subscribers-system-model></app-subscribers-system-model>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="subscriber-trends-wrapper">
+            <div class="subscriber-trends-item" *ngIf="menus['systembyrevenueedgeiqsuites'] &&(smallBizIQentitlement|| MyCommunityIQentitlement)">
+                <div class="home-title" data-toggle="tooltip" data-placement="top"
+                  title="{{language['Systems by Managed Services']}}">
+                  {{language['Systems by Managed Services']}}
+                </div>
+                <app-mycommunity-iq></app-mycommunity-iq>
+              </div>
+            <div class="subscriber-trends-item" *ngIf="menus['cmndiqstatus']">
+                <div class="home-title" data-toggle="tooltip" data-placement="top" title='{{ smallBizIQentitlement?language["Subscribers with CommandIQ and CommandWorx"] :language["Subscribers with CommandIQ"] }}'
+                    id="subscribersWithCommandIQ">
+                    {{ smallBizIQentitlement?language["Subscribers with CommandIQ and CommandWorx"] :language["Subscribers with CommandIQ"]}}
+                </div>
+                <app-command-iq-status (Out_commandIQ)="on_CommandIQdata($event)"></app-command-iq-status>
+            </div>
+
+             <div class="subscriber-trends-item" *ngIf="menus['revedgesuiteecosystemstatus'] && (productIQEnableentitlement || ExperienceIQEnableentitlement || proAndExpEnableentitlement|| MyCommunityIQentitlement||arloEnableentitlement || this.arloUnlimitedentitlement || this.arloUnlimitedplusentitlement || ServifyEnableentitlement || this.ServifyGoldentitlement || this.ServifySilverentitlement || this.ServifyPlatinumentitlement  || Bark_Premiumentitlement || Bark_Juniorentitlement)">
+                <div class="home-title" id="subscribersByRevenueEdgeSuite" data-toggle="tooltip" data-placement="top"
+                    title="{{language['Subscribers with Managed Services']}}">
+                  {{language['Subscribers with Managed Services']}}
+                </div>
+                <app-revenue-edge-iqsuites (Out_EdgeSuitIQ)="on_edgesuitiqData($event)"></app-revenue-edge-iqsuites>
+              </div>
+              <!-- <div class="subscriber-trends-item ml-0" *ngIf="menus['revedgesuiteecosystemstatus'] && (arloEnableentitlement || this.arloUnlimitedentitlement || this.arloUnlimitedplusentitlement || ServifyEnableentitlement || this.ServifyGoldentitlement || this.ServifySilverentitlement || this.ServifyPlatinumentitlement  || Bark_Premiumentitlement || Bark_Juniorentitlement)">
+                <div class="home-title" id="subscribersByRevenueEdgeSuiteeco" data-toggle="tooltip" data-placement="top"
+                    title="{{language['Subscribers with Managed Services']}}">
+                  {{language['Subscribers with Managed Services']}}
+                </div>
+                <app-revenue-edge-ecosystem (Out_EdgeSuitEco)="on_edgesuitecoData($event)"></app-revenue-edge-ecosystem>
+              </div>    -->
+        </div>
+    </div>
+    <div class="row">
+        <div class="subscriber-trends-wrapper">
+        </div>
+    </div>
+</div>

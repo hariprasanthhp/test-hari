@@ -1,0 +1,15 @@
+/** Window Reference Service */
+import { Injectable } from '@angular/core';
+function getWindow(): any {
+  return window;
+}
+
+@Injectable()
+export class WindowRefService {
+  get nativeWindow(): any {
+    // return origin with callback
+    const getOrigin = getWindow();
+    return `${getOrigin.location.origin}`;
+  }
+}
+

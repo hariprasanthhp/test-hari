@@ -1,0 +1,92 @@
+<div class="container position-relative mh-65">
+    <div class="loader" *ngIf="loading">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    </div>
+    <div class="w-100 alert alert-danger  fade show" *ngIf="error">
+        <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+        <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+        <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+    </div>
+
+    <div class="w-100 alert alert-success fade show" *ngIf="success">
+        <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+        <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+        <div [innerHtml]="successInfo"></div>
+    </div>
+    <!--------------- Row for Title & Back Button --------------->
+    <div class="row my-3">
+        <div class="col-md-12">
+            <div class="ccl-title">{{language.secureAccessOrganizationList}}</div>
+        </div>
+    </div>
+    <!--------------- Row for Title & Back Button End --------------->
+    <!--------------- Row for Organization Secured  --------------->
+    <div class="row my-3">
+        <div class="col-md-4 offset-md-8 pr-0">
+            <div class="text-right flat-right">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="ccl-form">
+                            <input type="text" (keyup)="search($event.target.value)" #searchBar
+                                (search)="search($event.target.value)" class="ccl-input" id="exampleInputEmail1"
+                                aria-describedby="emailHelp" placeholder="{{language.searchOrganizations}}">
+                                <span class="clear-icon" [hidden]="!searchClearable" (click)="onSearchClearing(searchBar)"> <img src="assets/img/close-icon.svg"></span>
+                            <!-- <button class="serach-but btn-default primary btn-icon-md inline"><i class="fa fa-search"
+                                                                aria-hidden="true"></i></button> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row my-3">
+        <div class="col-md-12" [hidden]="!dataAvailable">
+            <table id="org-secure-access" width="100%" datatable [dtOptions]="tableOptions" [dtTrigger]="dtTrigger"
+                class="row-border hover table-alter">
+                <thead>
+                    <tr>
+                        <th>{{language.organizationName}}</th>
+                        <th>{{language.orgId}}</th>
+                        <th>{{language.accesstype}}</th>
+                        <th>{{language.duration}}</th>
+                        <th>{{language.Action}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr id="{{item._id}}" *ngFor="let item of orgsTableData">
+                        <td>
+                            {{item.orgName ? item.orgName : ''}}
+                        </td>
+                        <td>
+                            {{item.orgId ? item.orgId : ''}}
+                        </td>
+                        <td>
+                            {{(checkType(item.type) == 'Read and Write' ) ? language['Read and Write'] : language['Read
+                            only']}}
+                        </td>
+                        <td>
+                            <!-- {{item.beginTime|date:'short'}} - {{item.endTime|date:'short'}} -->
+                            {{checkExpiry(item)}}
+                        </td>
+                        <td class="actions"> 
+
+                            <button id="org-detail-btn" (click)="gotoSecureAcccess(item.orgId)" 
+                            title="{{language['secureAccess']}}">
+                                <div class="org-profile-icon"> <span><i class="fas fa-user"></i></span>
+
+                                </div>
+                            </button>
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!--------------- Row for Organization Secured End --------------->
+</div>

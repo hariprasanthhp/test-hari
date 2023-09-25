@@ -1,0 +1,1021 @@
+<div *ngIf="!resultDataAvailable" class="no-data">
+    <div class="spinner-border text-primary">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+<div class="result row" *ngIf="resultDataAvailable">
+
+    <div class="col-md-12 col-sm-12">
+        <div class="flex-container">
+            <div class="item" id="result-segment">
+                <div class="box_cont" >
+                    <span>{{language.SEGMENT}}</span>
+                    <h5>{{resultDataObject.segmentName}}</h5>
+                </div>
+            </div>
+            <div class="item" id="result-segment-size" >
+                <div class="box_cont">
+                    <span *ngIf="!triggeredCampaign">{{language['Audience']}}</span>
+                    <span *ngIf="triggeredCampaign">{{language.Audience_last}}</span>
+                    <h5 >{{resultDataObject.audienceSize}} </h5>
+                </div>
+            </div>
+            <div class="item" id="result-start-date">
+                <div class="box_cont">
+                    <span>{{language.START_DATE}}</span>
+                    <h5>{{resultDataObject.startDate}}</h5>
+                </div>
+            </div>
+            <!-- <div class="item" id="">
+                <div class="box_cont">
+                    <span>{{language.END_DATE}}</span>
+                    <h5>May 11, 2021</h5>
+                </div>
+            </div> -->
+            <div class="item" id="result-end-date">
+                <div class="box_cont">
+                    <span>{{language.END_DATE}}</span>
+                    <h5>{{resultDataObject.endDate}}</h5>
+                </div>
+            </div>
+
+            <div class="item" id="result-conversion-rate">
+                <div class="box_cont">
+                    <span>{{language.CONVERSION_TARGET}}</span>
+                    <h5 *ngIf="resultDataObject.conversionTarget!=''">{{resultDataObject.conversionTarget}}%</h5>
+                   
+                </div>
+            </div>
+            <div class="item" id="result-budget">
+                <div class="box_cont">
+                    <span>{{language.BUDGET}}</span>
+                    <h5 *ngIf="resultDataObject.budget!=''">${{resultDataObject.budget | number}}</h5>
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex-container" *ngIf="!onlymailchimp">
+        <div *ngIf="!triggeredCampaign" [ngClass]="allSelected ? 'dflex-col-8' : 'dflex-col-8 dflex-single-col'">
+            <div [ngClass]="(!hideMobileNotification && !fullScreen) ? 'd-block' : 'd-none'">
+                <div class="mb-3" *ngIf="MobileNotification">
+                    <div class="mobile_cont title_with_bar">
+                        <h5 class="title_bar">{{language.Mobile_Notification}}</h5>
+                    </div>
+                    <div class="flex-container flex-alt">
+                        <div class="item">
+                            <div class="box_cont">
+                                <span>{{language.Schedule}}</span>
+                                <h5>{{resultCampaignDataObject.scheduleType}}</h5>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="box_cont">
+                                <span>{{language.Segment_Members}}</span>
+                                <h5>{{resultDataObject.segmentMobileAppSize}}</h5>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="box_cont">
+                                <span>{{language.Notifications_Sent}}</span>
+                                <h5>{{resultDataObject.notificationSent}}</h5>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="box_cont">
+                                <span>{{language.Depolyment_Status}}</span>
+                                <h5 *ngIf="resultCampaignDataObject.status!='Error'">{{resultCampaignDataObject.status}}
+                                </h5>
+                                <div class="error-state" *ngIf="resultCampaignDataObject.status=='Error'">
+                                    <label class="ccl-error mr-2">
+                                        {{language.ERROR}}
+                                    </label>
+                                    <button type="button" class="btn btn-primary" (mousedown)="openRedeployCiqModal()">
+                                        {{language.Re_Deploy}}
+                                    </button>
+                                    <div class="error-summary">
+                                        {{resultCampaignDataObject.errorReason}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-12 col-sm-12" *ngIf="allSelected && Mailchimp">
+                        <div class=" title_with_bar">
+                            <h5 class="title_bar">{{language.Mailchimp}}</h5>
+                            <div class="box_cont">
+                                <span>{{language.Depolyment_Status}}</span>
+                                <h5 *ngIf="mailchimpResultCampaignDataObject.status!='Error'">
+                                    {{mailchimpResultCampaignDataObject.status}}</h5>
+                                <div class="error-state" *ngIf="mailchimpResultCampaignDataObject.status=='Error'">
+                                    <label class="ccl-error mr-2">
+                                        {{language.ERROR}}
+                                    </label>
+                                    <button type="button" class="btn btn-primary"
+                                        (mousedown)="openRedeployMailchimpModal()">
+                                        {{language.Re_Deploy}}
+                                    </button>
+                                    <div class="error-summary">
+                                        {{mailchimpResultCampaignDataObject.errorReason}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-12 col-sm-12" *ngIf="allSelected && Facebook">
+                        <div class=" title_with_bar">
+                            <h5 class="title_bar">{{language.Facebook}}</h5>
+                            <div class="box_cont">
+                                <span>{{language.Depolyment_Status}}</span>
+                                <h5 *ngIf="facebookResultCampaignDataObject.status!='Error'">
+                                    {{facebookResultCampaignDataObject.status}}</h5>
+                                <div class="error-state" *ngIf="facebookResultCampaignDataObject.status=='Error'">
+                                    <label class="ccl-error mr-2">
+                                        {{language.ERROR}}
+                                    </label>
+                                    <button type="button" class="btn btn-primary" (mousedown)="openRedeployFbModal()">
+                                        {{language.Re_Deploy}}
+                                    </button>
+                                    <div class="error-summary">
+                                        {{facebookResultCampaignDataObject.errorReason}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-12 col-sm-12" *ngIf="allSelected && Hubspot">
+                        <div class=" title_with_bar">
+                            <h5 class="title_bar">{{language.HubSpot}}</h5>
+                            <div class="box_cont">
+                                <span>{{language.Depolyment_Status}}</span>
+                                <h5 *ngIf="hubspotResultCampaignDataObject.status!='Error'">
+                                    {{hubspotResultCampaignDataObject.status}}</h5>
+                                <div class="error-state" *ngIf="hubspotResultCampaignDataObject.status=='Error'">
+                                    <label class="ccl-error mr-2">
+                                        {{language.ERROR}}
+                                    </label>
+                                    <button type="button" class="btn btn-primary"
+                                        (mousedown)="openRedeployHubSpotModal()">
+                                        {{language.Re_Deploy}}
+                                    </button>
+                                    <div class="error-summary">
+                                        {{hubspotResultCampaignDataObject.errorReason}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-12 col-sm-12" *ngIf="ConstantContact && allSelected">
+                        <div class=" title_with_bar">
+                            <h5 class="title_bar">{{language.constantcontact}}</h5>
+                            <div class="box_cont">
+                                <span>{{language.Depolyment_Status}}</span>
+                                <h5 *ngIf="constantResultCampaignDataObject.status!='Error'">
+                                    {{constantResultCampaignDataObject.status}}</h5>
+                                <div class="error-state" *ngIf="constantResultCampaignDataObject.status=='Error'">
+                                    <label class="ccl-error mr-2">
+                                        {{language.ERROR}}
+                                    </label>
+                                    <button type="button" class="btn btn-primary"
+                                        (mousedown)="openRedeployConstantContactModal()">
+                                        {{language.Re_Deploy}}
+                                    </button>
+                                    <div class="error-summary">
+                                        {{constantResultCampaignDataObject.errorReason}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div [ngClass]="allSelected ? 'dflex-col-8' : 'dflex-col-8'">
+                <div [ngClass]="!fullScreen ? 'd-block' : 'd-none'">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-12 col-sm-12" *ngIf="Mailchimp && !allSelected">
+                            <div class=" title_with_bar">
+                                <h5 class="title_bar">{{language.Mailchimp}}</h5>
+                                <div class="box_cont">
+                                    <span>{{language.Depolyment_Status}}</span>
+                                    <h5 *ngIf="mailchimpResultCampaignDataObject.status!='Error'">
+                                        {{mailchimpResultCampaignDataObject.status}}</h5>
+                                    <div class="error-state" *ngIf="mailchimpResultCampaignDataObject.status=='Error'">
+                                        <label class="ccl-error mr-2">
+                                            {{language.ERROR}}
+                                        </label>
+                                        <button type="button" class="btn btn-primary"
+                                            (mousedown)="openRedeployMailchimpModal()">
+                                            {{language.Re_Deploy}}
+                                        </button>
+                                        <div class="error-summary">
+                                            {{mailchimpResultCampaignDataObject.errorReason}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-12 col-sm-12" *ngIf="Facebook && !allSelected">
+                            <div class=" title_with_bar">
+                                <h5 class="title_bar">{{language.Facebook}}</h5>
+                                <div class="box_cont">
+                                    <span>{{language.Depolyment_Status}}</span>
+                                    <h5 *ngIf="facebookResultCampaignDataObject.status!='Error'">
+                                        {{facebookResultCampaignDataObject.status}}</h5>
+                                    <div class="error-state" *ngIf="facebookResultCampaignDataObject.status=='Error'">
+                                        <label class="ccl-error mr-2">
+                                            {{language.ERROR}}
+                                        </label>
+                                        <button type="button" class="btn btn-primary"
+                                            (mousedown)="openRedeployFbModal()">
+                                            {{language.Re_Deploy}}
+                                        </button>
+                                        <div class="error-summary">
+                                            {{facebookResultCampaignDataObject.errorReason}}
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-12 col-sm-12" *ngIf="Hubspot && !allSelected">
+                            <div class=" title_with_bar">
+                                <h5 class="title_bar">{{language.HubSpot}}</h5>
+                                <div class="box_cont">
+                                    <span>{{language.Depolyment_Status}}</span>
+                                    <h5 *ngIf="hubspotResultCampaignDataObject.status!='Error'">
+                                        {{hubspotResultCampaignDataObject.status}}</h5>
+                                    <div class="error-state" *ngIf="hubspotResultCampaignDataObject.status=='Error'">
+                                        <label class="ccl-error mr-2">
+                                            {{language.ERROR}}
+                                        </label>
+                                        <button type="button" class="btn btn-primary"
+                                            (mousedown)="openRedeployHubSpotModal()">
+                                            {{language.Re_Deploy}}
+                                        </button>
+                                        <div class="error-summary">
+                                            {{hubspotResultCampaignDataObject.errorReason}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-12 col-sm-12" *ngIf="ConstantContact && !allSelected">
+                            <div class=" title_with_bar">
+                                <h5 class="title_bar">{{language.constantcontact}}</h5>
+                                <div class="box_cont">
+                                    <span>{{language.Depolyment_Status}}</span>
+                                    <h5 *ngIf="constantResultCampaignDataObject.status!='Error'">
+                                        {{constantResultCampaignDataObject.status}}</h5>
+                                    <div class="error-state" *ngIf="constantResultCampaignDataObject.status=='Error'">
+                                        <label class="ccl-error mr-2">
+                                            {{language.ERROR}}
+                                        </label>
+                                        <button type="button" class="btn btn-primary"
+                                            (mousedown)="openRedeployConstantContactModal()">
+                                            {{language.Re_Deploy}}
+                                        </button>
+                                        <div class="error-summary">
+                                            {{constantResultCampaignDataObject.errorReason}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="triggeredCampaign" class="dflex-col-8">
+            <div class="col-12 title_with_bar mt-2" *ngFor="let trigger of triggeredData; let i = index">
+                <div class="title_bar">
+                    {{trigger.marketingChannelName == 
+                        "Mobile Notification" ? language['Mobile_Notification'] : 
+                        language['Mailchimp']}}
+                </div>
+                <div class="flex-container flex-nowrap">
+                    <div class="item w-50" *ngIf="trigger.errorReason == ''">
+                        <p>Deployment Status</p>
+                        <div class="d-flex align-items-center" ><h4 class="ccl-error user-name mr-3">Error</h4><button class="btn-default primary py-1" (click)="redeploy(trigger.marketingChannelName,i)" *ngIf="trigger.marketingChannelName =='Mobile Notification'">Re-Deploy</button></div>
+                        <p class="text-secondary m-0">{{trigger.errorReason}}</p>
+                    </div>
+                    <div class="item">
+                      <div class="box_cont">
+                         <label class="cco-list-label mb-0">Last Deployment</label>
+                         <h1 class="stats-value">{{trigger.lastDeploymentDate}}</h1>
+                      </div>
+                    </div>
+                    <div class="item">
+                        <div class="box_cont">
+                           <label class="cco-list-label mb-0">Total Channel Audience</label>
+                           <h1 class="stats-value">{{trigger.totalChannelAudience}}</h1>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="box_cont">
+                           <label class="cco-list-label mb-0">
+                            {{trigger.marketingChannelName == 
+                                "Mobile Notification" ? language['Notifications_Sent'] : 
+                                'Synced to Mailchimp'}}</label>
+                           <h1 class="stats-value">
+                            {{trigger.marketingChannelName == 
+                                "Mobile Notification" ? trigger.audienceLastSent : 
+                                trigger.audienceLastSent}}
+                            </h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+       
+        </div>
+        <div [ngClass]="[allSelected ? 'dflex-col-4' : 'dflex-col-4']">
+            <div [ngClass]="!fullScreen ? 'd-block' : 'd-none'">
+                <div class=" title_with_bar mwc-header position-relative">
+                    <h5 *ngIf="!triggeredCampaign" class="title_bar seg_dis_title" title="{{language['Audience Distribution']}}"
+                        data-toggle="tooltip" id="segmentchannelDownload">
+                        {{language['Audience Distribution']}}</h5>
+                        <h5 *ngIf="triggeredCampaign" class="title_bar seg_dis_title" title="{{language['Audience Distribution']}}"
+                        data-toggle="tooltip" id="segmentchannelDownload">
+                        {{language['Audience Distribution']}}</h5>
+                    <div class="mwc-btns">
+                        <button id="Campaign-Segmentchannel-Download" class="btn-round btn-small-24 btn-grey btn-dload"
+                            data-toggle="tooltip" (click)="download()" title="{{language.subs_download_tip}}"></button>
+                        <button id="Campaign-Segmentchannel-ExpandSection"
+                            class="btn-round btn-small-24 btn-grey btn-expand" data-toggle="tooltip"
+                            (click)="expandFull('channel')" title="{{language.subs_fullscreen_tip}}"></button>
+                    </div>
+                    
+                    <div>
+                        <p class="p-small"  *ngIf="triggeredCampaign">{{language['Cumulative Audience Members Included in Selected Channels']}}&nbsp;{{resultDataObject.startDate}}</p>
+                        <p class="p-small"  *ngIf="!triggeredCampaign">{{language['Audience Members Included in Selected Channels']}}</p>
+                    </div>
+
+                    <div id="subscriber-tier-home-chart" name="container">
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <section [ngClass]="fullScreen ? 'd-block full_screen' : 'd-none'">
+            <div class="container" [ngClass]="deduplicatedDataAvailable ? 'd-block' : 'd-none'">
+                <div class="row my-3">
+                    <div class="col-md-12">
+                        <div class="issue-overview-wrapper">
+                            <div class="issue-overview-item">
+                                <div class="d-flex justify-content-end">
+
+                                    <div class="mwc-header flex w-100">
+                                        <div class="cco-secondary-title" *ngIf="!triggeredCampaign">
+                                            {{language['Audience Distribution']}}
+                                        </div>
+                                        <div class="cco-secondary-title" *ngIf="triggeredCampaign">
+                                            {{language['Audience Distribution']}}
+                                        </div>
+                                        <div class="mwc-btns flex align-items-center">
+
+                                            <button id="ChannelAppDownloadSection"
+                                                class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                                                (click)="download()" title="{{language.subs_download_tip}}"></button>
+                                            <button id="Campaign-Channel-AppExpandSection"
+                                                (click)="fullScreenExpandFunction('channel')"
+                                                class="btn-round btn-small-24 btn-grey btn-expand-inv"
+                                                data-toggle="tooltip" title="{{Dismiss}}"></button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="title_with_bar">
+                                    <p *ngIf="!triggeredCampaign">{{language['Audience Members Included in Selected Channels']}}</p>
+                                    <p *ngIf="triggeredCampaign">{{language['Cumulative Audience Members Included in Selected Channels']}} {{resultDataObject.startDate}}</p>
+                                </div>
+                                <div class="img my-2">
+                                    <div class="mwc-content">
+                                        <div class="col-md-12 p-2">
+                                            <div id="subscriber-home-chart" class="chart-box h-300p">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </div>
+
+    <div class="col-lg-12 col-md-12 col-sm-12" >
+        <div class="title_with_bar">
+            <h5 class="title_bar mb-4" id="campaign-performance">{{language.Campaign_Performance}}</h5>
+            <div>
+            </div>
+        </div>
+        <!-- <ng-container *ngIf="triggeredCampaign">
+            <app-marketing-triggered [storeLanguage]="language"></app-marketing-triggered>
+        </ng-container> -->
+
+        <ng-container *ngIf="!triggeredCampaign && scheduledCampaign">
+            <app-marketing-snapshot [storeLanguage]="language"></app-marketing-snapshot>
+        </ng-container>
+        <div class="container-fluid" *ngIf="!hasScope  && nullCampaign && !scheduledCampaign && !triggeredCampaign">
+            <div class="row">
+                <div class="my-sidebar position-relative p-0" [ngClass]="(!divopen)?'col-md-2':'col-md-1'">
+                    <div id="mySidebar" class=" ccl-tabs sidebar" *ngIf="revenueScreen">
+                        <ul id="result-list-menu" class="nav flex-column left-menu tab-view-style">
+
+                            <li class="nav-item w-100" id="subscribeData-list-menu"><a
+                                    class="list-group-item list-group-item-action cursor-pointer"
+                                    (click)="chartChange('revenue')"
+                                    [ngClass]="{'active': revenue}">{{language.T_Revenue}}</a>
+                            </li>
+                            <li class="nav-item w-100" id="serviceData-list-menu"><a
+                                    class="list-group-item list-group-item-action cursor-pointer"
+                                    (click)="chartChange('subscriber')"
+                                    [ngClass]="{'active': subscriber}">{{language.T_Subscribers}}</a>
+                            </li>
+                            <!-- <li class="nav-item w-100" id="serviceData-list-menu"><a
+                                    class="list-group-item list-group-item-action cursor-pointer"
+                                    (click)="chartChange('subscriber')"
+                                    [ngClass]="{'active': subscriber}">Audience Sync Details</a>
+                            </li> -->
+                           
+                        </ul>
+                    </div>
+
+                    <div id="mySidebar" class=" ccl-tabs sidebar" *ngIf="!revenueScreen">
+                        <ul id="result-list-menu" class="nav flex-column left-menu tab-view-style">
+
+
+                            <li class="nav-item w-100" id="serviceData-list-menu"><a
+                                    class="list-group-item list-group-item-action cursor-pointer"
+                                    (click)="chartChange('subscriber')"
+                                    [ngClass]="{'active': subscriber}">{{language.T_Subscribers}}</a>
+                            </li>
+
+                        </ul>
+                    </div>
+
+                </div>
+
+                <div [ngClass]="(!divopen)?'col-sm-10 col-md-10 col-lg-10 pr-0':'col-sm-11 col-md-11 col-lg-11 pr-0'"
+                    class="">
+                    <div *ngIf="revenueScreen">
+                        <ng-container *ngIf="activeChart == 'revenue'">
+                            <app-marketing-revenue></app-marketing-revenue>
+                        </ng-container>
+                        <ng-container *ngIf="activeChart == 'subscriber'">
+                            <app-marketing-totalsubscriber></app-marketing-totalsubscriber>
+                        </ng-container>
+                        <!-- <ng-container *ngIf="activeChart == 'campaignMetrics'">
+                            <app-marketing-campaign-metrics></app-marketing-campaign-metrics>
+                        </ng-container> -->
+                    
+                    </div>
+                   
+                    <div *ngIf="!revenueScreen">
+                        <ng-container *ngIf="activeChart == 'subscriber'">
+                            <app-marketing-totalsubscriber [storeLanguage]="language"></app-marketing-totalsubscriber>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="container-fluid" *ngIf="triggeredCampaign && !scheduledCampaign">
+            <div class="row">
+                <div class="my-sidebar position-relative p-0" [ngClass]="(!divopen)?'col-md-2':'col-md-1'">
+                
+                    <div id="mySidebar" class=" ccl-tabs sidebar" >
+                        <ul id="result-list-menu" class="nav flex-column left-menu tab-view-style">
+
+                          
+                           <li class="nav-item w-100" id="audienceHistory-list-menu"><a
+                            class="list-group-item list-group-item-action cursor-pointer"
+                            (click)="chartChange('audienceHistory')"
+                            [ngClass]="{'active': audienceHistory}">{{language['Audience History']}}</a>
+                           </li>
+                           <li class="nav-item w-100" id="Audience-Sync-Details"><a
+                            class="list-group-item list-group-item-action cursor-pointer"   (click)="chartChange('campaignMetrics')"  [ngClass]="{'active': campaignMetrics}">{{language['Audience Sync Details']}}</a>
+                           </li>
+                        </ul>
+                    </div>
+               
+                </div>
+
+                <div [ngClass]="(!divopen)?'col-sm-10 col-md-10 col-lg-10 pr-0':'col-sm-11 col-md-11 col-lg-11 pr-0'"
+                    class="">
+                    <div >
+                        <ng-container *ngIf="activeChart == 'audienceHistory'">
+                            <app-marketing-triggered [storeLanguage]="language"></app-marketing-triggered>
+                        </ng-container>
+                    <ng-container *ngIf="activeChart == 'campaignMetrics'">
+                            <app-marketing-campaign-metrics [campaignId]="campaignId"></app-marketing-campaign-metrics>
+                        </ng-container>
+                        </div>
+                   
+                </div>
+            </div>
+        </div>
+
+        <!-- ----------------Facebook------------------- -->
+        <ng-template #redeployFbModal let-modal>
+            <div class="modal-body">
+                <div class="w-100 alert-box">
+                    <button class="close" aria-label="Close" (click)="closeModel()">
+                        <span></span>
+                    </button>
+                    <div class="box-content">
+                        <div class="icon">
+                            <img src="../../../../assets/img/ic_info_outline.svg" alt="icon here" />
+                        </div>
+                        <div class="content">
+                            <h3>{{language.Re_Deploy_Facebook}} </h3>
+                            <p>{{language.follow_action}}:</p>
+                            <ul>
+                                <li> {{language.send_facebook}}.</li>
+                            </ul>
+                            <div class="w-100 mt-4 pt-2">
+                                <button type="button" id="submitReDeploy" class="btn-default primary mr-3"
+                                    (click)="ReDeployFacebook()">
+                                    {{language.Re_Deploy}}
+                                </button>
+                                <button type="button" id="cancelReDeploy" class="btn-default btn-dft" aria-label="Close"
+                                    (click)="closeModel()">
+                                    {{language.Cancel}}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+
+        <!-- -----Mailchimp--------- -->
+
+        <ng-template #redeployMailchimpModal let-modal>
+            <div class="modal-body">
+                <div class="w-100 alert-box">
+                    <button class="close" aria-label="Close" (click)="closeModel()">
+                        <span></span>
+                    </button>
+                    <div class="box-content">
+                        <div class="icon">
+                            <img src="../../../../assets/img/ic_info_outline.svg" alt="icon here" />
+                        </div>
+                        <div class="content">
+                            <h3>{{language.Re_Deploy_Mailchimp}} </h3>
+                            <p>{{language.follow_action}}:</p>
+                            <ul>
+                                <li> {{language.send_mailchimp}}.</li>
+                            </ul>
+                            <div class="w-100 mt-4 pt-2">
+                                <button type="button" id="submitReDeploy" class="btn-default primary mr-3"
+                                    (click)="ReDeployMailchimp()">
+                                    {{language.Re_Deploy}}
+                                </button>
+
+                                <button type="button" id="cancelReDeploy" class="btn-default btn-dft" aria-label="Close"
+                                    (click)="closeModel()">
+                                    {{language.Cancel}}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+
+        <!-- --------HubSpot Modal------ -->
+
+        <ng-template #redeployHubSpotModal let-modal>
+            <div class="modal-body">
+                <div class="w-100 alert-box">
+                    <button class="close" aria-label="Close" (click)="closeModel()">
+                        <span></span>
+                    </button>
+                    <div class="box-content">
+                        <div class="icon">
+                            <img src="../../../../assets/img/ic_info_outline.svg" alt="icon here" />
+                        </div>
+                        <div class="content">
+                            <h3>{{language. Re_Deploy_HubSpot}}</h3>
+                            <p>{{language.follow_action}}:</p>
+                            <ul>
+                                <li> {{language.send_hubspot}}.</li>
+                            </ul>
+                            <div class="w-100 mt-4 pt-2">
+                                <button type="button" id="submitReDeploy" class="btn-default primary mr-3"
+                                    (click)="ReDeployHubSpot()">
+                                    {{language.Re_Deploy}}
+                                </button>
+
+                                <button type="button" id="cancelReDeploy" class="btn-default btn-dft" aria-label="Close"
+                                    (click)="closeModel()">
+                                    {{language.Cancel}}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+
+        <!-- --------ConstantContact Modal------ -->
+
+        <ng-template #redeployConstantContactModal let-modal>
+            <div class="modal-body">
+                <div class="w-100 alert-box">
+                    <button class="close" aria-label="Close" (click)="closeModel()">
+                        <span></span>
+                    </button>
+                    <div class="box-content">
+                        <div class="icon">
+                            <img src="../../../../assets/img/ic_info_outline.svg" alt="icon here" />
+                        </div>
+                        <div class="content">
+                            <h3>{{language.Re_Deploy_Constant_Contact}}</h3>
+                            <p>{{language.follow_action}}:</p>
+                            <ul>
+                                <li> {{language.send_constant}}.</li>
+                            </ul>
+                            <div class="w-100 mt-4 pt-2">
+                                <button type="button" id="submitReDeploy" class="btn-default primary mr-3"
+                                    (click)="ReDeployConstantContact()">
+                                    {{language.Re_Deploy}}
+                                </button>
+
+                                <button type="button" id="cancelReDeploy" class="btn-default btn-dft" aria-label="Close"
+                                    (click)="closeModel()">
+                                    {{language.Cancel}}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+
+
+        <!-- ---------Mobile Notification--------- -->
+
+        <ng-template #redeployCiqModal let-modal>
+            <div class="modal-body">
+                <div class="w-100 alert-box">
+                    <button type="button" class="close" aria-label="Close" (mousedown)="closeModel()">
+                        <span></span>
+                    </button>
+                    <div class="box-content">
+                        <div class="icon">
+                            <img src="../../../../assets/img/ic_info_outline.svg" alt="icon here" />
+                        </div>
+                        <div class="content">
+
+                            <h3>{{language.Re_Deploy_CommandIQ_Mobile_Notification}} </h3>
+                            <p>{{language.follow_action}}:</p>
+                            <ul>
+                                <li>{{language.Re_Deploy_CommandIQ_Mobile_Notification}}.</li>
+                            </ul>
+                            <div class="w-100 mt-4 pt-2">
+                                <button type="button" id="submitReDeployCiq" class="btn-default primary mr-3"
+                                    (click)="openReviewCiqModal()">
+                                    {{language.Re_Deploy}}
+                                </button>
+                                <button type="button" id="cancelReDeployCiq" class="btn-default btn-dft"
+                                    aria-label="Close" (mousedown)="closeModel()">
+                                    {{language.Cancel}}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+
+        <!-- ---------Mobile Notification Form--------- -->
+        <ng-template #reviewCiqModal let-modal>
+            <div class="modal-header">
+                <div class="ccl-mktg-large-title">{{language.Review_CommandIQ_Mobile_Notification}}</div>
+                <button class="close" aria-label="Close" (click)="closeModel()">
+                    <span></span>
+                </button>
+            </div>
+            <div class="modal-body my-2">
+                <div class="row w-100">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-lg-4 col-md-4 col-sm-12">
+                                <div class="custom-form">
+                                    <div class="form-group ccl-form ">
+                                        <label for="account"
+                                            class="col-sm-12 col-form-label">{{language.notificationname}}<span
+                                                class="required-field"> *
+                                            </span>
+                                        </label>
+                                        <div class="ccl">
+                                            <textarea maxlength="178" autocomplete="off" id="notification-name"
+                                                placeholder="{{language.notificationname}}"
+                                                [(ngModel)]="notificationName"
+                                                (ngModelChange)="notificationNameChange($event)"
+                                                class="form-control cus-selctbox"
+                                                [ngModelOptions]="{standalone: true}"></textarea>
+                                            <div class="word-counter" id="counter">
+                                                <span id="current">0</span>
+                                                <span id="maximum">/ 178</span>
+                                            </div>
+                                        </div>
+                                        <!-- Error -->
+                                        <div *ngIf="notificationNameError">
+                                            <span class="mandatory-msg req-text">{{notificationNameErrorMsg ?
+                                                notificationNameErrorMsg :
+                                                language.notificationNameRequiredErrorMsg}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group ccl-form ">
+                                        <label for="account" class="col-sm-12 col-form-label">{{language.Link}}
+                                        </label>
+                                        <input type="url" autocomplete="off" id="campaign-link"
+                                            placeholder="{{language.Campaign_Link}}" [(ngModel)]="campaignLink"
+                                            (ngModelChange)="campaignLinkChange($event)" class="selectboxwidth"
+                                            [ngModelOptions]="{standalone: true}">
+                                        <!-- Error -->
+                                        <div *ngIf="campaignLinkError">
+                                            <span class="mandatory-msg req-text">{{campaignLinkErrorMsg ? campaignLinkErrorMsg :
+                                                language.campaignLinkRequiredErrorMsg}}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class=" form-group browse-file">
+                                        <label for="account" class="col-sm-12 col-form-label">{{language.Image}}
+                                        </label>
+                                        <button (click)="imageupload.click()"
+                                            class="btn-default primary active custom-file-upload">{{language.Browse}}</button>
+                                        <input #imageupload (change)="campaignImageUploader($event);" type="file"
+                                            accept="image/*" hidden="hidden" />
+                                        <!-- Error -->
+                                        <div *ngIf="campaignImageError">
+                                            <span class="mandatory-msg req-text">{{campaignImageErrorMsg ? campaignImageErrorMsg :
+                                                ''}}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group tab-reg" *ngIf="!triggeredCampaign">
+                                        <label for="account" class="col-sm-12 col-form-label">{{language.Schedule}}
+                                            <span class="required-field"> *</span>
+                                        </label>
+                                        <ng-select id="scheduleId" [(ngModel)]="scheduleSelected"
+                                            (ngModelChange)="selectSchedule($event)"
+                                            placeholder="{{language.Select_Schedule}}" [items]="scheduleArray"
+                                            class="selectboxwidth" [ngModelOptions]="{standalone: true}"
+                                            [clearable]="false">
+                                        </ng-select>
+                                    </div>
+                                    <!--Event-Driven-->
+                                    <ng-container *ngIf="scheduleSelected == 'Event-Driven' && !triggeredCampaign">
+                                        <div class="w-100">
+                                            <div class="form-group tab-reg">
+                                                <label for="account" class="col-sm-12 col-form-label">{{language.Event}}
+                                                    <span class="required-field"> *</span>
+                                                </label>
+                                                <ng-select id="eventId" [(ngModel)]="eventSelected"
+                                                    (ngModelChange)="selectEvent($event)"
+                                                    placeholder="{{language.Select_Event_Type}}" bindLabel="name"
+                                                    bindValue="id" [items]="eventTypeDataArray" class="selectboxwidth"
+                                                    [ngModelOptions]="{standalone: true}" [clearable]="false">
+                                                </ng-select>
+                                                <!-- Error -->
+                                                <div *ngIf="evenTypeError">
+                                                    <span class="mandatory-msg req-text">{{language.Event}}
+                                                        {{language.Required}}.</span>
+                                                </div>
+                                            </div>
+
+                                            <!--end form group-->
+
+                                            <div class="form-group ccl-form ">
+                                                <label for="account"
+                                                    class="col-sm-12 col-form-label">{{language.Threshold}} <span
+                                                        class="required-field"> *
+                                                    </span>
+                                                </label>
+                                                <input type="number" autocomplete="off" id="campaign-threshold"
+                                                    placeholder="{{language.Threshold}}" [(ngModel)]="thresholdValue"
+                                                    (ngModelChange)="thresholdChange($event)" class="selectboxwidth"
+                                                    [ngModelOptions]="{standalone: true}">
+                                                <!-- Error -->
+                                                <div *ngIf="thresHoldError">
+                                                    <span class="mandatory-msg req-text">{{language.Threshold}}
+                                                        {{language.Required}}.</span>
+                                                </div>
+                                                <div *ngIf="maxlenght && !thresHoldError">
+                                                    <span class="mandatory-msg req-text">{{language.Valid_Threshold_Value}}</span>
+                                                </div>
+                                            </div>
+
+                                            <!--end form group-->
+
+                                            <div *ngIf="scheduleSelected != 'Immediate'" class="form-group tab-reg">
+                                                <label for="account"
+                                                    class="col-sm-12 col-form-label">{{language.TimeZone}}
+                                                    <span class="required-field"> *</span>
+                                                </label>
+                                                <ng-select id="timeZoneId" [(ngModel)]="timeZoneSelected"
+                                                    (ngModelChange)="selectTimeZone($event)"
+                                                    placeholder="{{language.Select_Timezone}}"
+                                                    [items]="timeZoneDataArray" class="selectboxwidth"
+                                                    [ngModelOptions]="{standalone: true}" [clearable]="false">
+                                                </ng-select>
+                                                <!-- Error -->
+                                                <div *ngIf="timeZoneError">
+                                                    <span class="mandatory-msg req-text">{{language.TimeZone}}
+                                                        {{language.Required}}</span>
+                                                </div>
+                                            </div>
+                                            <!--end form group-->
+
+                                            <div class="form-group ccl-form position-not-time">
+                                                <label for="account"
+                                                    class="col-sm-12 col-form-label">{{language.Notification_Time}}
+                                                    <span class="required-field"> *
+                                                    </span>
+                                                </label>
+                                                <p-calendar id="notify_time"
+                                                    [style]="{'width': '100%','height': '36px'  }"
+                                                    [inputStyle]="{'height': '36px'}" appendTo="body"
+                                                    [autoZIndex]="true" [(ngModel)]="notificationTime"
+                                                    [showIcon]="false" (ngModelChange)="notificationTimeChange($event)"
+                                                    [ngModelOptions]="{standalone: true}" timeOnly="true"
+                                                    showTime="true" hourFormat="12" [utc]="true">
+                                                </p-calendar>
+                                                <div class="pos-abs-clock">
+                                                    <i class="fa fa-clock"></i>
+                                                </div>
+                                                <!-- Error -->
+                                                <div *ngIf="notificationTimeError">
+                                                    <span class="mandatory-msg req-text">{{language.Notification_Time}}
+                                                        {{language.Required}}.</span>
+                                                </div>
+
+                                            </div>
+                                            <!--end form group-->
+                                        </div>
+                                    </ng-container>
+                                    <!-- End Event-Driven-->
+                                    <ng-container *ngIf="scheduleSelected == 'Scheduled' && !triggeredCampaign">
+                                        <div class="form-group ccl-form position-not-time">
+                                            <label for="account"
+                                                class="col-sm-12 col-form-label">{{language.Notification_Date_Time}}
+                                                <span class="required-field"> *
+                                                </span>
+                                            </label>
+                                            <p-calendar id="notify_time" [style]="{'width': '100%','height': '36px'  }"
+                                                [inputStyle]="{'height': '36px'}" appendTo="body" [autoZIndex]="true"
+                                                [(ngModel)]="notificationDate_Time" [showIcon]="false"
+                                                [minDate]="minimumDatenew"
+                                                (ngModelChange)="notificationDateTimeChange($event)"
+                                                [ngModelOptions]="{standalone: true}" showTime="true" hourFormat="12"
+                                                [utc]="true">
+                                            </p-calendar>
+                                            <div class="pos-abs-clock">
+                                                <i class="far fa-clock"></i>
+                                            </div>
+                                            <!-- Error -->
+                                            <div *ngIf="dateValidation">
+                                                <span class="mandatory-msg req-text">
+                                                    {{language['Start date should be earlier than current date']}}
+                                                </span>
+                                              </div>
+                                            <div *ngIf="notificationDateTimeError">
+                                                <span class="mandatory-msg req-text">{{language.Notification_Date_Time}}
+                                                    {{language.Required}}.</span>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+
+                                    <ng-container *ngIf="triggeredCampaign">
+                                        <div  class="form-group tab-reg">
+                                            <label for="account"
+                                                class="col-sm-12 col-form-label">{{language.TimeZone}}
+                                                <span class="required-field"> *</span>
+                                            </label>
+                                            <ng-select id="timeZoneId" [(ngModel)]="timeZoneSelected"
+                                                (ngModelChange)="selectTimeZone($event)"
+                                                placeholder="{{language.Select_Timezone}}"
+                                                [items]="timeZoneDataArray" class="selectboxwidth"
+                                                [ngModelOptions]="{standalone: true}" [clearable]="false">
+                                            </ng-select>
+                                            <!-- Error -->
+                                            <div *ngIf="timeZoneError">
+                                                <span class="mandatory-msg req-text">{{language.TimeZone}}
+                                                    {{language.Required}}</span>
+                                            </div>
+                                        </div>
+                                        <!--end form group-->
+
+                                        <div class="form-group ccl-form position-not-time">
+                                            <label for="account"
+                                                class="col-sm-12 col-form-label">{{language.Notification_Time}}
+                                                <span class="required-field"> *
+                                                </span>
+                                            </label>
+                                            <p-calendar id="notify_time"
+                                                [style]="{'width': '100%','height': '36px'  }"
+                                                [inputStyle]="{'height': '36px'}" appendTo="body"
+                                                [autoZIndex]="true" [(ngModel)]="notificationTime"
+                                                [showIcon]="false" (ngModelChange)="notificationTimeChange($event)"
+                                                [ngModelOptions]="{standalone: true}" timeOnly="true"
+                                                showTime="true" hourFormat="12" [utc]="true">
+                                            </p-calendar>
+                                            <div class="pos-abs-clock">
+                                                <i class="fa fa-clock"></i>
+                                            </div>
+                                            <!-- Error -->
+                                            <div *ngIf="notificationTimeError">
+                                                <span class="mandatory-msg req-text">{{language.Notification_Time}}
+                                                    {{language.Required}}.</span>
+                                            </div>
+
+                                        </div>
+                                    </ng-container>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-12 mobile-prev">
+                                <div class="img-flex-box">
+                                    <img *ngIf="campaignImage" [src]="campaignImageFile">
+                                    <div id="img-container" *ngIf="!campaignImage "
+                                        [ngClass]="!campaignImage ? 'img-bg-color': ''">
+                                        <img *ngIf="campaignImageFileResult" [src]="campaignImageFileResult">
+                                        <div *ngIf="!campaignImageFileResult">
+                                            <h3 class="title-second primary imagePreview" id="text">
+                                                <span>
+                                                    {{language.Image}}
+                                                </span>
+                                                <span>
+                                                    {{language.Preview}}
+                                                </span>
+                                            </h3>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-12 p-0 mobile-frame">
+                                <div class="mobile-box">
+                                    <div class="icon-bar">
+                                        <img src="../../../../assets/img/phone_bar.svg" />
+                                    </div>
+                                    <div class="icon-time-lock text-center">
+                                        <div class="mb-4">
+                                            <img src="../../../../assets/img/lock.svg" />
+                                        </div>
+                                        <img src="../../../../assets/img/phone_time.svg" />
+                                    </div>
+                                    <div class="info-box">
+                                        <div class="info-title">
+                                            <div class="left-el">
+                                                <span class="icon"><img
+                                                        src="../../../../assets/img/ic_home.svg" /></span>
+                                                <span class="caption">{{language.COMMANDIQ}}</span>
+                                            </div>
+                                            <span class="time-int">2 {{language.min_ago}}</span>
+                                        </div>
+                                        <div class="info-conent">
+                                            <p *ngIf="isEnteredText">
+                                                {{language['Notification message received from CommandIQ']}}</p>
+                                            <!-- <div class="info-msg">{{enteredText}}</div> -->
+                                            <div class="info-msg">{{notificationName}}</div>
+                                            <div class="img-icon-prv">
+                                                <img *ngIf="campaignImage" [src]="campaignImageFile">
+                                            </div>
+                                            <div class="img-icon-prv" *ngIf="!campaignImage">
+                                                <img *ngIf="campaignImageFileResult" [src]="campaignImageFileResult">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="disclaimer-text">
+                                    {{language.push_notification}}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--end modal body-->
+            <div class="modal-footer justify-content-start p-0">
+                <button type="button" id="submitReviewCiq" class="btn-default primary m-0 mr-3"
+                    (click)="campaignDataAssiner()">
+                    {{language.Re_Deploy}}
+                </button>
+                <button type="button" id="cancelReviewCiq" class="btn primary m-0" aria-label="Close"
+                    (click)="closeModel()">
+                    {{language.Cancel}}
+                </button>
+            </div>
+        </ng-template>

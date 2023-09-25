@@ -1,0 +1,226 @@
+@import "~src/assets/variables";
+.subscriber-list {
+    margin-top: 20px;
+    .title-row {
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #ccc;
+     
+      h2 {
+        justify-content: flex-start;
+        align-items: center;
+        b {
+          margin-left: 5px;
+        }
+        a {
+          margin-left: 20px;
+          background: $wgrey;
+          background-image: url(../../../assets/img/h-ellipsis-grey.svg);
+          background-position: center;
+          background-repeat: no-repeat;
+          &:hover {
+            background: $snowgrey;
+            background-image: url(../../../assets/img/h-ellipsis-grey.svg);
+            background-position: center;
+            background-repeat: no-repeat;
+          }
+          &:focus {
+            background-image: url(../../../assets/img/h-ellipsis-blue.svg);
+            background-position: center;
+            background-repeat: no-repeat;
+          }
+        }
+      }
+      .filter-rht {
+        justify-content: flex-end;
+        align-items: center;
+        .dropdown-button {
+          margin-left: 20px;
+        }
+        a {
+          font-size: 13px;
+          font-weight: 400;
+          color: $primary;
+          margin-left: 40px;
+          &:hover {
+            text-decoration: none;
+          }
+        }
+      }
+    }
+    .subscriber-list-wrap {
+      margin-bottom: 40px;
+      #searchResult {
+        th {
+          border : 0px;
+        }
+        td {
+          padding: 0px;
+        }
+        .subscriberName {
+          font-weight: 600;
+        }
+      }
+      .listlabels {
+        font-weight: 100;
+      }
+      .slw-list {
+        border-bottom: solid thin $snowgrey;
+        padding: 20px;
+        &:hover {
+          cursor: pointer;
+          //background: $wgrey;
+        }
+        h2 {
+          justify-content: flex-start;
+          align-items: center;
+          font-size: 18px;
+          font-weight: 300;
+          color: $greyaa;
+          margin-bottom: 10px;
+          span.subs-title {
+            min-width: 300px;
+          }
+          span.phone {
+            font-size: 18px;
+          }
+        }
+        .slwl-row {
+          justify-content: space-between;
+          align-items: flex-start;
+          .slwl-addr {
+            width: 40%;
+            p {
+              margin-bottom: 0;
+            }
+          }
+          .slwl-detl {
+            width: 58%;
+            p {
+              margin-bottom: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+
+
+ul.address-list{
+    display: flex;
+    width: 100%;
+    flex: 0 0 100%;
+    padding: 10px 15px;
+    margin-bottom: 0px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.detials {
+    width: 180px;
+    line-height: 30px;
+}
+.address-des p {
+    margin-bottom: 10px;
+    // text-transform: lowercase;
+}
+
+.w-10{
+  width: 10%
+}
+
+.w-20{
+  width: 20%
+}
+
+.w-30{
+  width: 30%
+}
+
+.w-70{
+  width: 70%;
+}
+.w-50{
+  width: 50%;
+}
+
+.list-pagelink {
+    display: flex;
+    vertical-align: bottom;
+    flex-direction: column-reverse;
+}
+
+.list-pagelink p{
+  margin-bottom: 5px;
+}
+
+@media (max-width: 900px) {
+    .subscriber-list {
+        .title-row {
+          .filter-rht {
+            width: 100%;
+          }
+        }
+      }
+}
+
+:host ::ng-deep .dataTables_empty {
+  display: none;
+}
+.no-data-available {
+  text-align: center;
+}
+.resultSplitter {
+  position: relative;
+  border-top: 1px solid #00000038;
+  /* &:after {
+    padding: 0;
+    margin: 0;
+    display: block;
+    content: "";
+    width: 25%;
+    height: 1.1px;
+    background-color: white;
+    position: absolute;
+    right: 0;
+    top: -1px;
+  } */
+}
+
+.subscriber-title{
+  width: 100%;
+  table{
+    width: 100%;
+    thead{
+      tr{
+        border-bottom: 1px solid #CCCCCC;
+        th{
+          padding: 10px;
+          font-size: 16px;
+    font-weight: 600 !important;
+    color: #1A1F22;
+    line-height: 18.75px;
+   
+        }
+        th:nth-child(1) {
+          
+          padding-left:15px;
+        }
+        th:nth-child(2) {
+          
+          padding-left:5px;
+        }
+        th:nth-child(3) {
+         
+          padding-left:0px;
+        }
+      }
+    }
+  }
+}
+.text-small
+{
+  font-size: 14px;
+  font-weight: 600;
+}

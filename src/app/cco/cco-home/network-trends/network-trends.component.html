@@ -1,0 +1,614 @@
+<div class="loader-wrapper">
+    <section class="my-3">
+        <div class="container">
+            <div class="row">
+                <div class="test-container" *ngIf="hasScopeAccess">
+                    <div class="item" id="nw-trend-outages">
+                        <span id="pendoOuttages">{{language['PONServiceDisruptions'] || 'Loss of PON Alarms'}}</span>
+                        <div class="d-flex align-content-around flex-wrap pointer" (click)="gotoIssues()">
+                            <h3>{{outageInfo['count']}}</h3>
+                            <span *ngIf="outageInfo['percent'] && outageInfo['percent'] > 0"
+                                class="sub-menu-list-icon2">
+                                <i class="gly-rotate-90_reversed"></i>{{outageInfo['percent']}}%
+                            </span>
+
+                            <span *ngIf="outageInfo['percent'] < 0" class="sub-menu-list-icon">
+                                <i class="gly-rotate-45_reversed"></i>{{-1*outageInfo['percent']}}%
+                            </span>
+
+                            <span *ngIf="!outageInfo['percent']" class="sub-menu-list-icon">0%
+                            </span>
+
+                        </div>
+                        <div class="past-hours"> {{language.Past_24_hours}}</div>
+                    </div>
+                    <div class="item" id="nw-trend-pon">
+                        <span id="pendoPONCapacityHits"> {{language['PON Capacity Hits']}}</span>
+                        <div class="d-flex align-content-around flex-wrap pointer" (click)="gotoHealthPON()">
+                            <h3>{{PONCAPACITY ? PONCAPACITY:0}}</h3>
+                            <span *ngIf="PONCAPACITYpercent && PONCAPACITYpercent >= 0" class="sub-menu-list-icon3">
+                                <i class="gly-rotate-90"></i>{{PONCAPACITYpercent}}%
+                            </span>
+
+                            <span *ngIf="PONCAPACITYpercent <0" class="sub-menu-list-icon3">
+                                <i class="gly-rotate-45 mr-2"></i>{{-1*PONCAPACITYpercent}}%
+                            </span>
+
+                            <span *ngIf="!PONCAPACITYpercent" class="sub-menu-list-icon">0%
+                            </span>
+                        </div>
+                        <div class="past-hours"> {{language.Past_24_hours}}</div>
+                    </div>
+
+                    <div class="item" id="nw-trend-active-sys">
+                        <span id="newConnectedASystems">{{language['Total Systems']}} </span>
+                        <div class="d-flex align-content-around flex-wrap">
+                            <h3>{{newConnectedSystemsInfo['count']}}</h3>
+                        </div>
+                        <!-- <div class="past-hours"> {{language.Past_24_hours}}</div> -->
+                    </div>
+
+                    <div class="item" id="nw-trend-active-sys">
+                        <span id="pendoActiveSystems">{{language['Unsynchronized AXOS Systems']}} </span>
+                        <div class="d-flex align-content-around flex-wrap pointer" (click)="gotoSystem('AXOS')">
+                            <h3>{{activeSystemsInfo['axos']['count']}}</h3>
+                        </div>
+                    </div>
+
+                    <div class="item" id="nw-trend-active-sys">
+                        <span id="pendoActiveSystems">{{language['Unsynchronized CMS/EXA Systems']}} </span>
+                        <div class="d-flex align-content-around flex-wrap pointer" (click)="gotoSystem('cmsExa')">
+                            <h3>{{activeSystemsInfo['cmsExa']['count']}}</h3>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="loader-wrapper-info" *ngIf="loading && hasScopeAccess">
+        <div class="loader">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary" role="">
+                    <span class="sr-only">{{ language.Loading }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex w-100 px-0 mt-2" id="current-issues-interval" *ngIf="hasScopeAccess && !fullscreen">
+        <label class="label-chart-timeframe">{{language['Chart Timeframe']}}</label>
+        <div class="min-w-170px ml-2">
+            <ng-select [searchable]="false" placeholder="{{ language.Last_7_Days }}" [(ngModel)]="filterDays"
+                (change)="getData();" [clearable]="false">
+                <ng-option value="7"> {{ language.Last_7_Days }}</ng-option>
+                <ng-option value="30">{{ language.Last_30_Days }} </ng-option>
+            </ng-select>
+        </div>
+    </div>
+    <div class="d-flex w-100 px-0 mb-3" id="current-issues-interval" *ngIf="fullscreen">
+        <label class="label-chart-timeframe">{{language['Chart Timeframe']}}</label>
+      <!---  <div class="pointer">-->
+            <div class="custom-selectbox w-100">
+                <span *ngIf="filterDays === '7'">{{ language.Last_7_Days }}</span>
+                <span *ngIf="filterDays === '30'">{{ language.Last_30_Days }}</span>
+            </div>
+       <!--- </div>-->
+    </div>
+    <div class="network-trends-chart-container mb-2 mt-14px" [hidden]="!AlamBipWrapper" [hidden]="!LosPonsubImpWrapper">
+        <div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess"> {{language['Access denied due to RBAC.
+            Please consult your Organization Administrator for access.']}} </div>
+        <div class="network-trends-chart-item" *ngIf="feature['activealarm']">
+            <div class="w-100">
+                <div class="cco-secondary-title border-bottom mb-2" id="nw-active-alarm-title">
+                    {{language['Active System Alarms']}}
+                </div>
+                <h5 class="greyaa mb0  heading-subtitle">{{language['Select a severity to view active system alarms of that severity']}}
+                </h5>
+                <div class="w-100 alert alert-danger  fade show my-3" *ngIf="errors['severity']">
+                    <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+                    <button type="button" class="close" (click)="errors['severity'] = ''"><span></span></button>
+                    <div class="d-inline-flex" [innerHtml]="errors['severity']"></div>
+                </div>
+                <div id="severityContainer" class="chart-box"></div>
+            </div>
+        </div>
+        <div class="network-trends-chart-item" *ngIf="hasScopeAccess">
+            <div class="w-100">
+                <div class="cco-secondary-title border-bottom mb-2" id="nw-alert-type-title">
+                    {{language['Alert Type']}}
+                </div>
+                <h5 class="greyaa mb0  heading-subtitle">Select an alert type count to view the alarms for that alert type.</h5>
+                <div class="w-100">
+                 <table class="w-100 table" datatable [dtOptions]="talertTypeDtOptions" [dtTrigger]="dtTrigger">
+                    <thead>
+                        <tr>
+                            <th class="pl-2">{{language['Alert Type']}}</th>
+                            <th>{{language['Count']}}</th>
+                            <th>{{language['% of Alarms']}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor = "let alerts of alertsTypeData">
+                            <td class="pl-2">{{alerts['alertTypeName']}}</td>
+                            <td>
+                                <a class="primary text-decoration-none cursor-pointer" (click) = "redirectToAlerts(alerts)">{{alerts['count']}}</a>
+                            </td>
+                            <td>{{alerts['percent']}}%</td>
+                        </tr>
+                    </tbody>
+                    <tbody *ngIf="!alertsTypeData?.length">
+                        <tr>
+                            <td colspan="3" class="no-data-available">{{language['No data available in
+                                table']}}
+                            </td>
+                        </tr>
+                    <tbody>
+                 </table>
+                </div>
+            </div>
+        </div>
+        <div class="network-trends-chart-item" *ngIf="feature['activepons']">
+            <div class="w-100">
+                <div class="d-flex justify-content-between border-bottom mb-2">
+                    <div class="cco-secondary-title " id="pendoNewCCOLossOfPONs">
+                        {{language['Loss of PON Alarms']}}
+                    </div>
+                    
+                    <!-- <div *ngIf="!isDev" class="mwc-btns flex align-items-center"><button id="SeverityExpandSection"
+                        data-toggle="tooltip" title="{{language.lossofpon_fullscreen_tip}}"
+                        class="btn-round btn-small-24 btn-grey btn-expand"
+                        (click)="fullScreenExpand('loss-of-pon')"></button>
+                </div> -->
+                </div>
+                <h5 class="greyaa mb0  heading-subtitle">{{language['Select a day to view Loss of PON Alarms for that day.']}}</h5>
+                <div class="w-100 alert alert-danger  fade show my-3" *ngIf="errors['loss-of-pon']">
+                    <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+                    <button type="button" class="close" (click)="errors['loss-of-pon'] = ''"><span></span></button>
+                    <div class="d-inline-flex" [innerHtml]="errors['loss-of-pon']"></div>
+                </div>
+                <app-network-availability [data]="data" *ngIf="data"></app-network-availability>
+            </div>
+        </div>
+        <div class="network-trends-chart-item" *ngIf="feature['subscriberimpacted']">
+            <div class="w-100">
+                <div class="d-flex justify-content-between border-bottom mb-2">
+                    <div title="{{language['Subscribers affected by ONT or PON Alarms']}}" class="cco-secondary-title" id="pendoNewCCOSubscribersImpacted">
+                        {{language['Subscribers affected by ONT or PON Alarms']}}
+                    </div>
+                    
+                    <div class="mwc-btns flex align-items-center"><button id="SeverityExpandSection" data-toggle="tooltip" title="{{language.subImpac_fullscreen_tip}}"
+                        class="btn-round btn-small-24 btn-grey btn-expand" (click)="fullScreenExpand('new-subscriber-disruptions')"></button></div>
+                </div>
+                <h5 class="greyaa mb0  heading-subtitle">{{language['Select a day to view Subscribers affected by ONT or PON Alarms for that day.']}}</h5>
+                <div class="w-100 alert alert-danger  fade show my-3" *ngIf="errors['subscriber']">
+                    <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+                    <button type="button" class="close" (click)="errors['subscriber'] = ''"><span></span></button>
+                    <div class="d-inline-flex" [innerHtml]="errors['subscriber']"></div>
+                </div>
+                <app-subscribers-impacted [data]="data" *ngIf="data" (barClicked) = "fullScreenExpandOnBarClick($event)"></app-subscribers-impacted>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" [ngClass] = "{showHideBipError : !feature['biperrors']}">
+        <div class="col-12">
+            <div class="cco-secondary-title border-bottom mb-2" id="nw-bip-error-title">{{language['BIP Errors']}}
+            </div>
+            <h5 class="greyaa mb0  heading-subtitle">{{language.HOME_Bip_Sub}}
+            </h5>
+    
+            <div class="w-100 alert alert-danger  fade show my-3" *ngIf="errors['biperror']">
+                <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+                <button type="button" class="close" (click)="errors['biperror'] = ''"><span></span></button>
+                <div class="d-inline-flex" [innerHtml]="errors['biperror']"></div>
+            </div>
+    
+            <div id="BipContainer" class="chart-box"></div>
+        </div>
+    </div>
+
+    <!-- Expand Loss of PONs -->
+    <section class="mb-2" [ngClass]="fullscreen ? 'd-block' : 'd-none'">
+        <div class="container" *ngIf="showLossofPons">
+
+
+            <div class="row">
+                <div class="d-flex justify-content-between border-bottom mb-2 w-100">
+                    <div class="cco-secondary-title">
+                        <!-- {{language['Service_Outage']}} -->
+                        {{language['Loss of PON Alarms']}}
+                    </div>
+                    <div class="mwc-btns flex align-items-center"><button id="fullScreenExpandSection"
+                            data-toggle="tooltip" title="{{language.lossofpon_fullscreen_close_tip}}"
+                            (click)="lossOfPonfullScreenMin()"
+                            class="btn-round btn-small-24 btn-grey btn-expand-inv"></button></div>
+                </div>
+
+
+            </div>
+            <div class="row">
+                <div class="col-md-12 px-0">
+                    <app-network-availability [data]="data" [chsttype]='chsttype'></app-network-availability>
+                </div>
+                <div class="container">
+                    <div class="col-md-12 px-0" *ngIf="showTable">
+                        <div class="col-md-12 px-0 overflow-auto">
+
+                            <table class="table table-borderless" datatable [dtOptions]="dtOptions">
+                                <thead>
+                                    <tr>
+                                        <th class="max-w-74px">{{language.Severity}}</th>
+                                        <th class="sorting-th-custom">{{language['Reported Time']}} (UTC/{{timeZone}})
+                                        </th>
+                                        <th>{{language['Synced Time']}} (UTC/{{timeZone}})
+                                        </th>
+                                        <th>{{language['Alarm Name']}}</th>
+                                        <th>{{language['Alarm Category']}}</th>
+                                        <th class="col-resource">{{language.Resource}}</th>
+                                        <th class="max-w-90px">{{language["Subscriber Impact"]}}</th>
+                                        <th class="col-recom">{{language.Recommendation}}</th>
+
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let item of list; let i = index" class="pointer"
+                                        (click)="viewDetails(item)">
+                                        <td data-toggle="modal" data-target=".bd-example-modal-lg">
+                                            <!-- <span
+                                                [ngStyle]="{'color': (item['subject'] && item['subject'].perceivedSeverity && colors[item['subject'].perceivedSeverity]) ? colors[item['subject'].perceivedSeverity] : 'black' }">{{
+                                                item['subject'] ? language[item['subject'].perceivedSeverity] ||
+                                                item['subject'].perceivedSeverity: '' }}</span> -->
+                                            <div
+                                                class="{{(item['subject'] && item['subject'].perceivedSeverity && colorClass[item['subject'].perceivedSeverity]) ? colorClass[item['subject'].perceivedSeverity] : 'black clear-sev-but'}}">
+                                                <span class="dot"></span> {{
+                                                item['subject'] ? language[item['subject'].perceivedSeverity] ||
+                                                item['subject'].perceivedSeverity: '' }}
+                                            </div>
+                                        </td>
+
+                                        <td data-toggle="modal" data-target=".bd-example-modal-lg">{{ (item['subject']
+                                            &&
+                                            item['subject']['timeRaised']) ?
+                                            convertToDateTime(item['subject']['timeRaised']): '' }}</td>
+                                        <td data-toggle="modal" data-target=".bd-example-modal-lg">{{ item['time'] ?
+                                            convertToDateTime(item['time']): '' }}</td>
+                                        <td data-toggle="modal" data-target=".bd-example-modal-lg">{{ item['subject'] ?
+                                            item['subject'].alarmEventName: '' }}</td>
+                                        <td data-toggle="modal" data-target=".bd-example-modal-lg">{{ item['subject'] ?
+                                            item['subject'].category: '' }}</td>
+
+                                        <td class="col-resource col-recom" data-toggle="modal"
+                                            data-target=".bd-example-modal-lg">
+                                            <div class="col-res-data subj-text"> ({{
+                                                item['subject'] ? item['subject'].region: '' }}/{{ item['subject'] ?
+                                                item['subject'].location: '' }}/{{ item['subject'] ?
+                                                item['subject'].deviceName:
+                                                ''
+                                                }})<br>{{ item['subject']['source'] ? item['subject']['source']: ''}}
+                                            </div>
+                                        </td>
+                                        <td>{{(item && item['subject'] &&
+                                            item['subject'].serviceAffecting) ? 'Yes' : 'No'}}</td>
+
+                                        <td class="col-recom" data-toggle="modal" data-target=".bd-example-modal-lg">
+                                            <div class="subj-text">{{ item['subject'] ?
+                                                item['subject'].repairAction: '' }}</div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tbody *ngIf="list?.length === 0">
+                                    <tr>
+                                        <td colspan="8" class="no-data-available">{{language['No data available in
+                                            table']}}
+                                        </td>
+                                    </tr>
+                                <tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Expand Loss of PONs -->
+
+
+        <!-- Expand Subscribers Impacted -->
+
+
+        <div class="container" *ngIf="showsubImpacted">
+            <div class="row">
+                <div class="d-flex justify-content-between border-bottom mb-2 w-100">
+                    <div class="cco-secondary-title">{{language['Subscribers affected by ONT or PON Alarms']}}</div>
+                    <div class="mwc-btns flex align-items-center"><button id="fullScreenExpandSection"
+                            data-toggle="tooltip" title="{{language.subImpac_fullscreen_close_tip}}"
+                            (click)="subImpfullScreenMin()"
+                            class="btn-round btn-small-24 btn-grey btn-expand-inv"></button>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="row">
+                <div class="col-md-12 px-0">
+                    <app-subscribers-impacted [data]="data" [chsttype]='chsttype' (showDataTable) = "showSubscriberImpactedDt($event)"></app-subscribers-impacted>
+                </div>
+                <div class="container">
+                    <div class="col-md-12 px-0" *ngIf="showTable">
+                        <div class="col-md-12 row justify-content-between align-items-center">
+                            <p>{{language['Subscribers affected by ONT or PON Alarms']}} on {{subscriberImpactedClickedDate}}</p>
+                            <button class="btn-default btn-dft h-24-btn" [disabled]="disableExprtBtn" (click)="doExport()" [disabled] = "!subscriberDisrutionList || (subscriberDisrutionList && subscriberDisrutionList.length <= 0)">{{language['Export']}}</button>
+                        </div>
+                        <div class="col-md-12 px-0 overflow-auto">
+                            <!-- <div class="loader-wrapper-info" *ngIf="loading && hasScopeAccess">
+                                <div class="loader">
+                                    <div class="d-flex justify-content-center">
+                                        <div class="spinner-border text-primary" role="">
+                                            <span class="sr-only">{{ language.Loading }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> -->
+                            <table class="table table-borderless" datatable [dtOptions]="dtOptions">
+                                <thead>
+                                    <tr>
+
+                                        <th class="max-w-74px">{{language.Date}}</th>
+                                        <th>{{language['FSAN']}}</th>
+                                        <th>{{language['Resource']}}</th>
+                                        <th>{{language['Subscriber Name']}}</th>
+                                        <th>{{language['Service Address']}}</th>
+                                        <th>{{language.cause || 'Cause'}}</th>
+
+
+                                        <!-- <th class="max-w-74px">{{language.Severity}}</th>
+                                        <th>{{language['Reported Time']}} (UTC/{{timeZone}})</th>
+                                        <th>{{language['Synced Time']}} (UTC/{{timeZone}})</th>
+                                        <th>{{language['Alarm Name']}}</th>
+                                        <th>{{language['Alarm Category']}}</th>
+                                        <th>{{language.Resource}}</th>
+                                        <th class="max-w-90px">{{language["Subscriber Impact"]}}</th>
+                                        <th>{{language.Recommendation}}</th> -->
+
+
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    <tr *ngFor="let item of subscriberDisrutionList; let i = index"
+                                        (click)="viewDetails(item)">
+                                        <td>{{ (item['timeRaised']) ?
+                                            convertToDateTime(item['timeRaised']): '' }}</td>
+
+                                        <td>{{ item['fsan'] ?
+                                            item['fsan']: '' }}</td>
+                                        <td>{{ item['resource'] ?
+                                                item['resource']: '' }}</td>
+                                        <td>{{ item['subscriberName'] ?
+                                                    item['subscriberName']: '' }}</td>
+                                        <td>{{ item['serviceAddress'] ?
+                                                        item['serviceAddress']: '' }}</td>
+                                        <td>
+                                            <ng-container *ngIf = "item['cause'] == 'ont-missing'">
+                                                <a class="primary text-decoration-none cursor-pointer" (click) = "redirectToHistoryReport(item)">{{ item['cause'] ?
+                                                    item['cause']: '' }}</a>
+                                            </ng-container>
+                                            <ng-container *ngIf = "item['cause'] != 'ont-missing'">
+                                                {{ item['cause'] ?
+                                                    item['cause']: '' }}
+                                            </ng-container>
+                                        </td>
+
+                                    </tr>
+                                </tbody>
+                                <tbody *ngIf="!subscriberDisrutionList?.length">
+                                    <tr>
+                                        <td colspan="6" class="no-data-available">{{language['No data available in
+                                            table']}}
+                                        </td>
+                                    </tr>
+                                <tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Expand Subscribers Impacted -->
+    </section>
+    <ng-template #showInfoModal let-modal class="col-md-12">
+        <div class="modal-header d-block">
+            <h5 class="modal-title" id="showInfoModal">{{ modalTitle }}</h5>
+
+            <div>
+                {{modalInfo}}
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                (click)="modal.dismiss('Cross click')">
+                <span aria-hidden="true"></span>
+            </button>
+        </div>
+        <div class="modal-body add-device-model">
+            <button type="button" class="btn-default primary px-3 px-3" data-dismiss="modal"
+                (click)="modal.close('Save click')">
+                {{ language.Ok }}
+            </button>
+        </div>
+    </ng-template>
+    <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg">Large
+      modal</button> -->
+
+    <!-- ------------------- Modal Area ----------- -->
+    <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-large">
+            <div class="modal-content">
+                <div class="row">
+                    <div class="col-md-11">
+                        <div class="ccl-Secondary-title">{{ fullData['subject'] ? fullData['subject'].alarmEventName: ''
+                            }}
+                        </div>
+                    </div>
+                    <div class="col-md-1 text-right"><img aria-hidden="true" src="assets/img/ic_close-44px.svg"
+                            class="pointer" data-dismiss="modal" aria-label="Close">
+                    </div>
+                </div>
+                <div class="row">
+                    <table class="table table-borderless">
+                        <thead>
+                            <tr>
+                                <th>{{language['Reported Time']}} (UTC/{{timeZone}})</th>
+                                <th>{{language['Synced Time']}} (UTC/{{timeZone}})</th>
+                                <th>{{language['Alarm Name']}}</th>
+                                <th>{{language['Alarm Category']}}</th>
+                                <th class="col-resource">{{language.Resource}}</th>
+                                <th>{{language.Severity}}</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <td>{{ (fullData['subject'] && fullData['subject']['timeRaised']) ?
+                                convertToDateTime(fullData['subject']['timeRaised']): '' }}</td>
+                            <td>{{ fullData['time'] ? convertToDateTime(fullData['time']): '' }}</td>
+                            <td>{{ fullData['subject'] ? fullData['subject'].alarmEventName: '' }}</td>
+                            <td>{{ fullData['subject'] ? fullData['subject'].category: '' }}</td>
+
+                            <td class="col-resource">
+                                <div class="col-res-data-modal">({{
+                                    fullData['subject'] ? fullData['subject'].region: '' }}/{{ fullData['subject'] ?
+                                    fullData['subject'].location: '' }}/{{ fullData['subject'] ?
+                                    fullData['subject'].deviceName:
+                                    ''
+                                    }})<br>{{ fullData['subject'] && fullData['subject']['source'] ?
+                                    fullData['subject']['source']: ''}}</div>
+                            </td>
+                            <td>
+                                <!-- <span
+                                    [ngStyle]="{'color': (fullData['subject'] && fullData['subject'].perceivedSeverity && colors[fullData['subject'].perceivedSeverity]) ? colors[fullData['subject'].perceivedSeverity] : 'black' }">{{
+                                    fullData['subject'] ? fullData['subject'].perceivedSeverity: '' }}</span> -->
+                                <div
+                                    class="{{(fullData['subject'] && fullData['subject'].perceivedSeverity && colorClass[fullData['subject'].perceivedSeverity]) ? colorClass[fullData['subject'].perceivedSeverity] : 'black clear-sev-but'}}">
+                                    <span class="dot"></span> {{
+                                    fullData['subject'] ? language[fullData['subject'].perceivedSeverity] ||
+                                    fullData['subject'].perceivedSeverity: '' }}
+                                </div>
+
+                            </td>
+
+                        </tbody>
+                    </table>
+                    <div class="col-md-12 ccl-tabs">
+
+                        <div class="tab-content" id="myTabContent">
+                            <div class="tab-pane fade show active" id="Title-1" role="tabpanel"
+                                aria-labelledby="home-tab">
+                                <div class="row">
+                                    <div class="col-lg-12 col-xl-12 col-md-12 col-sm-12">
+                                        <!-- <div class="ccl-Secondary-title m-0">
+                                          Title
+                                      </div> -->
+                                        <div class="support-key-value">
+                                            <table class="table table-borderless">
+                                                <!-- <thead>
+                                                  <tr>
+                                                      <th>Status</th>
+                                                      <th>online</th>
+                                                  </tr>
+                                              </thead> -->
+                                                <tbody>
+                                                    <tr>
+
+                                                        <td>{{language.Type}}</td>
+                                                        <td>{{(fullData && fullData['subject']) ?
+                                                            fullData['subject'].alarmType : ''}}</td>
+                                                    </tr>
+                                                    <tr>
+
+                                                        <td>{{language['Description']}}</td>
+                                                        <td>{{(fullData && fullData['subject']) ?
+                                                            fullData['subject'].description : ''}}</td>
+                                                    </tr>
+                                                    <tr>
+
+                                                        <td>{{language.Details}}</td>
+                                                        <td class="white-space-preline">{{(fullData &&
+                                                            fullData['subject']) ?
+                                                            fullData['subject'].details : ''}}</td>
+                                                    </tr>
+                                                    <tr>
+
+                                                        <td>{{language['Manual Acknowledged']}}</td>
+                                                        <td>{{(fullData && fullData['subject'] &&
+                                                            fullData['subject'].manualAcknowledged) ? 'Yes' : 'No'}}
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+
+                                                        <td>{{language['Manual Shelved']}}</td>
+                                                        <td>{{(fullData && fullData['subject'] &&
+                                                            fullData['subject'].manualShelved) ? 'Yes' : 'No'}}</td>
+                                                    </tr>
+                                                    <tr>
+
+                                                        <td>{{language['Repair Action']}}</td>
+                                                        <td>{{(fullData && fullData['subject']) ?
+                                                            fullData['subject'].repairAction : ''}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>{{language['Service Affecting']}}</td>
+                                                        <td>{{(fullData && fullData['subject'] &&
+                                                            fullData['subject'].serviceAffecting) ? 'Yes' : 'No'}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>{{language['Service Impacting']}}</td>
+                                                        <td>{{(fullData && fullData['subject'] &&
+                                                            fullData['subject'].serviceImpacting) ? 'Yes' : 'No'}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>{{language.Source}}</td>
+                                                        <td>{{(fullData && fullData['subject']) ?
+                                                            fullData['subject'].source
+                                                            : ''}}</td>
+                                                    </tr>
+                                                    <!-- <tr>
+                                                        <td>Notes</td>
+                                                        <td>{{(fullData && fullData['subject']) ?
+                                                            fullData['subject'].notes
+                                                            : ''}}</td>
+                                                    </tr> -->
+
+                                                </tbody>
+                                            </table>
+
+                                            <table class="table table-borderless"
+                                                *ngIf="fullData && fullData['subject'] && fullData['subject']['customAdditionalAttributes']">
+                                                <tbody>
+
+                                                    <tr
+                                                        *ngFor="let item of fullData['subject']['customAdditionalAttributes']">
+                                                        <td>{{item.key}}</td>
+                                                        <td>{{item.value}}</td>
+                                                    </tr>
+
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="Title-2" role="tabpanel" aria-labelledby="profile-tab">...
+                            </div>
+                            <div class="tab-pane fade" id="Title-3" role="tabpanel" aria-labelledby="contact-tab">...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

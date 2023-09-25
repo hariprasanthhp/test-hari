@@ -1,0 +1,315 @@
+<div class="container position-relative">
+    <div class="loader" *ngIf="loading">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row py-4" *ngIf="buttonVisible">
+        <div class="col-md-9 ">
+            <div class="d-flex">
+                <div>
+                    <button id="create-btn" class="btn-default primary mx-2"
+                        (click)="create()">{{language.create}}</button>
+                </div>
+                <div>
+                    <button id="export-btn" class="btn-default primary  mx-2"
+                        (click)="export()">{{language.export}}</button>
+                </div>
+                <div class="upload-btn-wrapper">
+                    <button class="btn-default primary mx-2"
+                        (click)="fullImportUpload()">{{language.fullImport}}</button>
+                    <input type="file" accept=".xls,.xlsx,.csv" id="fullImportUpload" style="display:none"
+                        (change)="fullImport($event, true)" />
+                </div>
+                <div class="upload-btn-wrapper">
+                    <label for="inc-import"
+                        class="btn-default primary mx-2 cursor-pointer">{{language.incrementalImport}}
+                    </label>
+                    <input type="file" id="inc-import" accept=".xls,.xlsx,.csv" (change)="fullImport($event, false)"
+                        style="display:none" #incImport (click)="incImport.value = null" value="" />
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3 align-self-end d-none">
+            <div class="ccl-form">
+                <input type="search" name="searchbox" class="input-sm" placeholder="">
+                <button class="serach-but btn-default primary btn-icon-md inline">
+                    <i class="fa fa-search" aria-hidden="true"></i></button>
+            </div>
+        </div>
+    </div>
+    <section *ngIf="formVisible">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <form>
+                    <div class="ccl-form row my-2">
+                        <label class="col-sm-4 col-form-label">{{language.subnet}}</label>
+                        <div class="col-sm-8">
+                            <ng-select id="subnet-select" style="text-align: left;" [items]="subnetVersions"
+                                [multiple]="false" placeholder="" [(ngModel)]="subnetVersionsSelected"
+                                [ngModelOptions]="{standalone: true}" [clearable]="false" [searchable]="false"
+                                (change)=subnetVerChoose()>
+                            </ng-select>
+                        </div>
+                    </div>
+                    <div class="ccl-form row my-2">
+                        <label for="newSubnetV4" class="col-sm-4 col-form-label">{{language.subnetIpv4}} <span
+                                class="error">*</span></label>
+                        <div class="col-sm-8">
+                            <input id="newSubnetV4" type="text" name="newSubnetV4" class="" placeholder=""
+                                [(ngModel)]="newSubnetipv4" [disabled]="subnetVersionsSelected == 'SubnetIPV6'">
+                        </div>
+                    </div>
+                    <div class="ccl-form row my-2">
+                        <label for="newSubnetV6" class="col-sm-4 col-form-label">{{language.subnetIpv6}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input id="newSubnetV6" type="text" name="newSubnetV6" class="" placeholder=""
+                                [(ngModel)]="newSubnetipv6" [disabled]="subnetVersionsSelected == 'SubnetIPV4'">
+                        </div>
+                    </div>
+                    <div class="ccl-form row my-2">
+                        <label class="col-sm-4 col-form-label">{{language.excluded}}
+                        </label>
+                        <div class="col-sm-8">
+                            <ng-select style="text-align: left;" [items]="selectOptions" [multiple]="false"
+                                placeholder="" [(ngModel)]="selectedSubnet" [ngModelOptions]="{standalone: true}"
+                                [clearable]="false" [searchable]="false">
+                            </ng-select>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+
+        </div>
+
+        <div class="row my-4">
+            <div class="col-md-8 offset-md-4">
+                <button class="btn-default primary px-3 mx-3" (click)="submit()">{{language.submit}}</button>
+                <button class="btn-default primary px-3" (click)="cancel()">{{language.Cancel}}</button>
+            </div>
+        </div>
+    </section>
+
+    <section *ngIf="tablePreview">
+        <div class="row" *ngIf="tablePreview">
+            <div class="col-md-12 ccl-admin-table">
+                <table id="example" datatable [dtOptions]="importTableOptions" class="row-border hover table-alter">
+                    <thead>
+                        <tr>
+                            <th>{{language.action}}</th>
+                            <th>{{language.subnet}}</th>
+                            <th>{{language.excluded}}</th>
+                            <th>{{language.old}} {{language.excluded}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let obj of previewTableBody">
+                            <td>{{obj.action}}</td>
+                            <td>{{obj.subnet}}</td>
+                            <td>{{obj.excluded}}</td>
+                            <td>{{obj["Old excluded"]}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row my-4">
+            <div class="col-md-8 offset-md-4">
+                <button class="btn-default primary px-3 mx-3" (click)="submitImport()">{{language.submit}}</button>
+                <button class="btn-default primary px-3" (click)="cancel()">{{language.Cancel}}</button>
+            </div>
+        </div>
+    </section>
+    <div class="row">
+        <div class="col-md-12 ccl-admin-table" [hidden]="!dataAvailable">
+            <table id="subnets-table" width="100%" datatable [dtOptions]="tableOptions" [dtTrigger]="dtTrigger"
+                class="row-border hover table-alter mb30">
+                <thead>
+                    <tr>
+                        <th class="mxw-200" style="white-space: nowrap;">
+                            <div class="d-flex justify-content-end">
+                                <div *ngIf="!editOnValue" class="d-flex align-items-center mr-1">
+                                    <input type="checkbox" class="" value="" id="selectDeselectAll"
+                                        (change)="selectDeselectAll($event.target.checked)"
+                                        [disabled]="subnetData?.length == 0">
+                                    <span class="checkbox-ui" id="selectDeselectAll-span"
+                                        (click)="showAllInnerCheckBox($event)" style="display: none;"></span>
+                                </div>
+                                <div *ngIf="!editOnValue" class="text-center justify-content-center">
+                                    <button id="delete-selected-btn" (click)="deleteAllSelected()"
+                                        class="btn-default primary px-2" title="{{language['Delete selected']}}"
+                                        [disabled]="!subnetData?.length || !deleteIds?.length">
+                                        <i class="far fa-trash-alt"></i> {{language.selected}}
+                                    </button>
+                                </div>
+                            </div>
+                        </th>
+                        <th class="mw-250">{{language.subnet}}</th>
+                        <th class="w-250">{{language.excluded}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr id="{{item._id}}" *ngFor="let item of subnetData">
+                        <td class="action-button" style="white-space: nowrap;width: 10% !important;">
+
+                            <div *ngIf="editOnValue != item._id" class="editable-td text-center" style="font-size:13px">
+                                <div class="ccl-fc-table-icon">
+                                    <span class="pr-2">
+                                        <div (click)="edit(item);updateDis=true;" id="edit-btn" class="primary "
+                                            title="{{language['Edit']}}">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </div>
+                                        <!-- <div id="edit-btn" class="icon-disabled" title="{{language['Edit']}}">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </div> -->
+                                    </span>
+                                    <span class="pr-2">
+                                        <input type="checkbox" value="{{item._id}}" name="delete_id_{{item._id}}"
+                                            class="delete_id_{{item._id}}" (click)="getDeleteIds($event, item);"
+                                            title="{{language['Select']}}">
+                                    </span>
+                                    <span class="pr-2">
+                                        <div (click)="delete(item)" id="delete-btn" class="primary "
+                                            title="{{language['Delete']}}">
+                                            <i class="far fa-trash-alt"></i>
+                                        </div>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div *ngIf="editOnValue == item._id"
+                                class="save-cancel-btn-group d-flex justify-content-center">
+                                <div class="ccl-fc-table-icon">
+                                    <span class="pr-1">
+                                        <button (click)="updateSave(item._id)" [disabled]="updateDis" id="save-btn"
+                                            class="primary mx-3 ">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    </span>
+                                    <span class="pr-1">
+                                        <div (click)="updateCancel()" id="cancel-btn" class="primary">
+                                            <i class="fas fa-times"></i>
+                                        </div>
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div *ngIf="editOnValue != item._id">
+                                {{item.subnet ? item.subnet : ''}}
+                            </div>
+                            <div *ngIf="editOnValue == item._id" class="subnet-select-div ccl-form">
+                                <ng-select style="text-align: left; width:200px;" [items]="subnetVersions"
+                                    [multiple]="false" placeholder="" [(ngModel)]="editSubnetVersionsSelected"
+                                    [ngModelOptions]="{standalone: true}" (change)="objmodifycheck(item._id)"
+                                    [clearable]="false" [searchable]="false">
+                                </ng-select>
+                                <input class="edit-text" (change)="objmodifycheck(item._id)" type="text"
+                                    [(ngModel)]="editSubnetv4" [ngModelOptions]="{standalone: true}"
+                                    style="width: 200px;">
+                            </div>
+                        </td>
+                        <td class="w-250">
+                            <div *ngIf="editOnValue != item._id">
+                                {{item.excluded ? item.excluded : ''}}
+                            </div>
+                            <div *ngIf="editOnValue == item._id">
+                                <ng-select style="text-align: left; width: 200px;" [items]="selectOptions"
+                                    [multiple]="false" placeholder="" [(ngModel)]="editSelectedExcluded"
+                                    (change)="objmodifycheck(item._id)" [ngModelOptions]="{standalone: true}"
+                                    [clearable]="false" [searchable]="false">
+                                </ng-select>
+                            </div>
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modals -->
+<ng-template #infoModal let-data let-ref="dialogRef">
+
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{infoTitle}}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        {{infoBody}}
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn-default primary px-3" data-dismiss="modal"
+            (click)="closeModal()">{{language['Okay']}}</button>
+    </div>
+</ng-template>
+
+<ng-template #deleteModal let-data let-ref="dialogRef">
+
+    <ng-container>
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">{{infoTitle}}</h4>
+            <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+                <span aria-hidden="true"></span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <table [innerHtml]="infoBody"></table>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-default primary px-3" data-dismiss="modal"
+                (click)="closeModal()">{{language['Cancel']}}</button>
+            <button type="button" class="btn-default primary px-3" data-dismiss="modal"
+                (click)="confirmDelete()">{{language['Okay']}}</button>
+        </div>
+    </ng-container>
+
+</ng-template>
+
+<ng-template #multiDeleteModal let-data let-ref="dialogRef">
+
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{infoTitle}}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <table [innerHtml]="infoBody"></table>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn-default primary px-3" data-dismiss="modal"
+            (click)="closeModal()">{{language['Cancel']}}</button>
+        <button type="button" class="btn-default primary px-3" data-dismiss="modal"
+            (click)="confirmDeleteSecleted()">{{language['Okay']}}</button>
+    </div>
+</ng-template>
+
+<ng-template #importModal let-data let-ref="dialogRef">
+
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{infoTitle}}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <table [innerHtml]="infoBody"></table>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn-default primary px-3" data-dismiss="modal"
+            (click)="closeModal()">{{language['Cancel']}}</button>
+        <button type="button" class="btn-default primary px-3" data-dismiss="modal"
+            (click)="proceedImport()">{{language['Okay']}}</button>
+    </div>
+</ng-template>
+<!-- Modals -->

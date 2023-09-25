@@ -1,0 +1,144 @@
+.hideMin .p-minute-picker {
+
+  color: gray;
+  cursor: not-allowed !important;
+
+  text-decoration: none;
+
+  button {
+
+    cursor: not-allowed !important;
+    color: gray;
+  }
+}
+
+.loader-wrapper {
+  position: relative;
+}
+
+.loader-wrapper-info {
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  position: absolute;
+  width: 100%;
+
+  z-index: 100;
+  height: 100%;
+}
+
+.legendSolid {
+  width: 20px;
+  height: 3px;
+  border-top: 2px solid #0a77fb;
+  margin-top: 0.8rem !important;
+}
+
+.serviceLegend {
+  width: 13px;
+  height: 13px;
+  margin-top: 0.4rem !important;
+  border-radius: 50%;
+
+}
+
+
+.opac {
+  opacity: 0.5;
+}
+
+.time-frame-section {
+  // background-color: #F8F8FA;
+  padding: 2px 0px 1px 140px;
+  position: relative;
+
+  .left-label {
+    position: absolute;
+    left: 0;
+    top: 25px;
+    font-size: 16px;
+
+    label {
+      margin-bottom: -8px !important;
+      display: block;
+    }
+
+    span {
+      color: #9E9E9E;
+      font-size: 12px;
+    }
+  }
+}
+
+
+::ng-deep {
+  .multi-point-slider {
+    .ngx-slider-bar {
+      height: 5px !important;
+      background: #EBEAEF !important;
+      border-radius: 6px;
+    }
+
+    .ngx-slider .ngx-slider-bubble {
+      color: #4C4C4C !important;
+      font-size: 14px !important;
+      font-weight: 600;
+      bottom: 8px !important;
+      padding: 0px 15px !important;
+    }
+
+    .ngx-slider-pointer {
+      background-color: #0279ff !important;
+      cursor: pointer;
+      width: 32px !important;
+      height: 12px !important;
+      top: -3px !important;
+
+      &:after {
+        display: none;
+      }
+    }
+  }
+
+  .multi-point-slider {
+    position: relative;
+
+    .left-most-slider-time,
+    .right-most-slider-time {
+      position: absolute;
+      color: #4C4C4C;
+      font-size: 12px;
+      font-weight: normal;
+      bottom: -16px;
+    }
+
+    .left-most-slider-time {
+      left: 0;
+    }
+
+    .right-most-slider-time {
+      right: 0;
+    }
+  }
+
+  .dir-arrows {
+    cursor: pointer;
+    position: absolute;
+    top: 5px;
+    right: 0;
+    z-index: 999;
+    background-repeat: no-repeat !important;
+    width: 20px;
+    height: 15px;
+  }
+
+  #slider-click-next {
+    background: url(../../../../assets/img/ic_chevronright_blue.svg);
+    background-position: 14px 0px !important;
+  }
+
+  #slider-click-prev {
+    background: url(../../../../assets/img/ic_chevronleft_blue.svg);
+    left: 0;
+  }
+}

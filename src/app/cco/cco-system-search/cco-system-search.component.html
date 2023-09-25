@@ -1,0 +1,1125 @@
+
+<div class="subscriber-list cust-searchlist m-0">
+    <section *ngIf="language">
+        <div class="loader" *ngIf="loading">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                </div>
+            </div>
+        </div>
+        <div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess">
+            {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} 
+        </div>
+        <div class="">
+            <div class="w-100 alert alert-danger fade show" [hidden]="!error">
+                <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+                <button type="button" class="close" (click)="closeAlert()">
+                    <span></span>
+                </button>
+                <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+            </div>
+
+            <div class="alert alert-success alert-dismissible fade show" role="alert" *ngIf="showSuccess">
+                <span class="mr-2"><img src="./assets/img/success-icon.svg" class="wh-26"/></span>
+                <div class="d-inline">
+                    <strong class="mr-2">{{ createdSubscriberName }}</strong>
+                    {{ editSubscriber ? language.Updated_Successfully : language.Successfully_Added }}
+                    <!-- <u (click)="addSystem(createdSubcriberData)"> {{ successMsg }}</u> -->
+                    &nbsp;
+                </div>
+                <div class="d-inline">
+                    <button type="button" class="close" (click)="closeAlert()"><span></span></button>
+                </div>
+            </div>
+
+            <div class="row mb-24" *ngIf="isSystemView">
+                <!-- {{ccoSystemSearchText}} -->
+                <div class="col-md-12" *ngIf="!isProvisioned">
+                    <button type="button" class="btn-default primary px-3 mr-3"
+                        *ngIf="isDev && hasWrite && allowAddSystems"
+                        routerLink="/cco/system/cco-subscriber-system/add-service-system">
+                        {{ language.Add_Subscriber }}
+                    </button>
+                    <!-- <button  *ngIf="serviceEnable" type="button" class="btn-default primary px-3 mr-3" (click)="gotoServiceProfiles()">
+                        Back to Service Profiles
+                      </button> -->
+                      <!-- <button *ngIf="isProvisioned" type="button" (click)="exportSubscribers()" class="btn-default primary px-3 mr-3">
+                        Export Results
+                      </button> -->
+
+                </div>
+       
+            <div class="row justify-content-between align-items-baseline col-12">
+                <div *ngIf="hasScopeAccess" class="col-md-3 smy-2 ccl-form mt-24" >
+                    <input class="form-control mr-sm-2" type="text" class="ccl-from" [(ngModel)]="searchText"
+                        placeholder="{{ language.Search_subscribers }}" aria-label="Search"
+                        (keyup)="searchByCharacters($event)" (search)="searchByCharacters($event)"
+                        (keyup.enter)="performSearch()" />
+                    <span *ngIf="searchText" class="search-close" (click)="clearSearch(searchText)"><img
+                            src="assets/img/ic_close-44px.svg"> </span>
+                    <!-- <span
+                        class="add-search-icon">
+                        <img src="assets/img/ic_search_white.svg" id="performSearchId"
+                            (click)="performSearch()" /></span> -->
+                </div>
+             
+                  <button type="button" *ngIf="isProvisioned" [disabled]="!tableCount" (click)="exportSubscribers()"  class="btn-transparent ml-2"> {{language['Export Subscribers']}} </button>
+            </div>
+
+
+
+            </div>
+
+            <!-- <div class="title-row flex">
+                <h4 class="title flex" id="filterCountId" *ngIf="showResult && showCount">
+                    {{ showFilterCount ? filterCount : tableCount }}
+                    {{
+                    filterCount <= 1 || filterCount <=1 ? language["Result"] : language["Results"] }} {{
+                        ccoSystemSearchText ? language["for"] : "" }} &nbsp; <b id="searchedValue"> {{
+                        ccoSystemSearchText }}</b>
+                </h4>
+                <div class="filter-rht flex"></div>
+            </div> -->
+        </div>
+    </section>
+    <section *ngIf="language">
+        <div class="container">
+            <div class="row" *ngIf="countAvailable">
+                <div class="col-md-12 px-0" *ngIf="showResult" [hidden]="!dataAvailable">
+                    <table width="100%" class="row-border row-border hover table-alter" datatable
+                        [dtOptions]="dtOptions">
+                        <thead>
+                            <tr>
+                                <th>{{ language.Subscriber }}</th>
+                                <th>{{ language.Phone_No }}</th>
+                                <th>{{ language.Device }}(s)</th>
+                                <th class="text-right" *ngIf="hasWrite">{{ language.Action }}</th>
+                                <!-- <th>{{ language["Revenue EDGE Suites"] }}</th>
+                            <th>{{ language.Service_Plan }}</th> -->
+                                <!-- <th style="color: #ffffff;">00</th> -->
+                            </tr>
+                        </thead>
+                        <tbody *ngIf="systemsList?.length !=0">
+                            <tr class="address-list" *ngFor="let data of systemsList">
+                                <td class="list-list w-30">
+                                    <div class="address-detail pl-2">
+                                        <div class="address-des">
+                                            <div class="subscriberName">
+                                                <span class="action-info-u primary p-blue"
+                                                    *ngIf="data.name" (click)="
+                                                showDetailedView(data)
+                                              " [innerHTML]="data.name | highlight: searchText">{{
+                                                    data.name
+                                                    }}
+                                                </span>
+                                                <span 
+                                                    *ngIf="!data.name && !data.subscriberId">{{
+                                                    "-"
+                                                    }}
+                                                </span>
+                                                <!-- <a href="javascript:void(0)" (click)="showAssociateSubscriberModal(data, d)" *ngIf="!data.name && !data.subscriberId">
+                                                                        {{
+                                                                        "Click here to associate subscriber"
+                                                                        }}
+                                                                    </a> -->
+                                                &nbsp;&nbsp;
+                                                <!-- <span
+                                                                    *ngIf=" isSystemView && (data.name || data.subscriberId)"
+                                                                    (click)="openAddSubscriberModal(data)"
+                                                                    class="cursor-pointer editIcon subscriberEdit">
+                                                                    <i class="fas fa-pencil-alt" style="font-size: 16px;
+                                                                                        font-weight: 600;">
+                                                                    </i>
+                                                                </span> -->
+                                                &nbsp;&nbsp;
+                                                <!-- <span
+                                                                    *ngIf=" isSystemView && (data.name || data.subscriberId)"
+                                                                    class="cursor-pointer editIcon subscriberEdit">
+                                                                    <a class="action-info w-s-nowrap addDeviceClass"
+                                                                        (click)="goAddServices(data)"
+                                                                        routerLinkActive="active">+ {{
+                                                                        language.Add_Service }}</a>
+                                                                </span> -->
+                                            </div>
+                                            <div class="detials">{{ data.serviceAddress }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td class="list-list w-20" (click)="
+                                            showDetailedView(data)
+                                          ">
+                                    <div class="list-id">{{ data.phone ? data.phone : '-' }}</div>
+
+                                </td>
+
+                                <td class="list-list w-70" (click)="
+                                            showDetailedView(data)
+                                          ">
+
+
+                                    <div class="list-pagelink flex-column">
+                                        <ng-container *ngFor="let device of data.devices; let i = index">
+                                            <p *ngIf="!_array.isArray(device); else arrayDevice">
+                                                <!-- <span >{{ device | sortDeviceData }}</span> -->
+                                                <a class="action-info-u" (click)="showDetailedView(data, device)">{{
+                                                    device | sortDeviceData :'show'}}</a>
+
+                                            </p>
+                                            <ng-template #arrayDevice>
+                                                <div [ngClass]="{ 'mt-2 pt-2 resultSplitter': i }">
+                                                    <p *ngFor="let rgSet of device">
+                                                        <span class="action-info-u"
+                                                            (click)="showDetailedView(data, rgSet)">
+                                                            {{ rgSet | sortDeviceData :'show'}}
+                                                        </span>
+
+                                                    </p>
+                                                </div>
+                                            </ng-template>
+                                        </ng-container>
+                                        <ng-container *ngIf="data?.devices?.length === 0">
+                                            <p>
+                                                <!-- <span >{{ device | sortDeviceData }}</span> -->
+                                                <a class="action-info-u">-</a>
+
+                                            </p>
+
+                                        </ng-container>
+                                    </div>
+
+                                </td>
+
+                                <td class="list-list w-30" *ngIf="isSystemView && hasWrite && allowAddSystems">
+                                    <!-- <p class="mb-0 add-device" *ngIf="isSystemView">
+                                                        <a class="action-info w-s-nowrap addDeviceClass"
+                                                            (click)="addSystem(data)"
+                                                            *ngIf="(data.name || data.subscriberId)"
+                                                            routerLinkActive="active">+ {{
+                                                            language.Add_System }}</a>
+                                                    </p> -->
+                                    <section *ngIf="data.subscriberId">
+                                        <div class="dropdown dropleft">
+
+                                            <button class="list-button" type="button" data-boundary="viewport"
+                                                data-toggle="dropdown" >
+                                                ...
+                                            </button>
+                                            <div  class="text-left">
+                                                <ul  class="dropdown-menu">
+
+                                                    <li>
+                                                        <button class="btn btn-white"
+                                                            (click)="goToEditSubscriber(data, 'add-details');">
+                                                            {{language['Edit Subscriber']}}
+                                                        </button>
+                                                    </li>
+                                                    <li>
+                                                        <button class="btn btn-white" *ngIf="allowsupportCloud"
+                                                            (click)="goToSupportCloud(data, data?.devices);">
+                                                         {{language.supportcloud}}
+                                                        </button>
+                                                    </li>
+
+                                                    <li>
+                                                        <button class="btn btn-white"
+                                                            (click)="goToEditSubscriber(data, 'add-services');">
+                                                            {{language['Add Subscriber Service']}}
+                                                        </button>
+                                                    </li>
+                                                    <li>
+                                                        <button class="btn btn-white"
+                                                            (click)="goToEditSubscriber(data, 'add-system');">
+                                                            {{language['Add New System']}}
+                                                        </button>
+                                                    </li>
+                                                    <li class="caption-li-subs">
+                                                        <button class="btn btn-white text-left"
+                                                            (click)="checkSubscriberHasCommunities(data,deletesubscriberModal)">
+                                                            {{ language.Delete_Subscriber }}
+                                                        </button>
+                                                    </li>
+                                                    <ng-container *ngFor="let device of data.devices; let ds = index">
+                                                        <ul>
+                                                            <li class="caption-li">
+                                                                <label>
+                                                                    {{
+                                                                    device.serialNumber
+                                                                    ? device.serialNumber
+                                                                    : !checkRegIdAndMac(device.deviceId)
+                                                                    ? device.deviceId
+                                                                    : device.macAddress
+                                                                    ? device.macAddress
+                                                                    : device.registrationId
+                                                                    ? device.registrationId
+                                                                    : device.deviceId
+                                                                    }}
+                                                                    <span class="small-text"
+                                                                        *ngIf="device.opMode && false">
+                                                                        {{
+                                                                        device.opMode == "RG"
+                                                                        ? "(RG)"
+                                                                        : device.opMode.replace(
+                                                                        "WAP-IGMP",
+                                                                        "Mesh(SAT)"
+                                                                        ).replace("WAP", "Mesh(SAT)")
+                                                                        }}
+                                                                    </span>
+                                                                </label>
+                                                            </li>
+                                                            <li>
+                                                                <button class="btn btn-white"
+                                                                    *ngIf="device.opMode != 'WAP' && (!device.ont || (device.ont && device._id))"
+                                                                    (click)="goToEditSubscriberSystem(data, device)">
+                                                                    {{ language.Edit_system }}
+                                                                </button>
+                                                            </li>
+                                                            <li>
+                                                                <button class="btn btn-white text-left"
+                                                                    (click)="opendissasciateDeviceModel(data, device)">
+                                                                    {{ language.Disassociate_System }}
+                                                                </button>
+                                                            </li>
+                                                            <li>
+                                                                <button class="btn btn-white text-left"
+                                                                    *ngIf="!device.ont || (device.ont && device._id)"
+                                                                    (click)="opendeleteDevicerModal(data, device)">
+                                                                    {{ language.disassociateDeletesystem }}
+                                                                </button>
+                                                            </li>
+                                                            <li>
+                                                                <button class="btn btn-white text-left"
+                                                                    *ngIf="device.ont && !device._id"
+                                                                    (click)="opendeleteDevicerModal(data, device,true)">
+                                                                    {{ language.disassociateDeletesystem }}
+                                                                </button>
+                                                            </li>
+                                                            <li>
+                                                                <button class="btn btn-white"
+                                                                    *ngIf="(!device.ont || (device.ont && device._id)) && device.serialNumber"
+                                                                    (click)="openResetModal(data, device)">
+                                                                    {{ language.factoryResetLabel(device?.modelName) }}
+                                                                </button>
+
+                                                            </li>
+                                                            <li *ngIf="device['reboot']">
+                                                                <button class="btn btn-white"
+                                                                    *ngIf="(!device.ont || (device.ont && device._id)) && device.serialNumber"
+                                                                    (click)="openRebootModal(data, device)">
+                                                                    {{language['Reboot System']}}
+                                                                </button>
+                                                                <button class="btn btn-white"
+                                                                    *ngIf="device.ont && !device._id "
+                                                                    (click)="openRebootModal(data, device,'ont')">
+                                                                  {{language['Reboot System']}}
+                                                                </button>
+                                                            </li>
+                                                        </ul>
+                                                    </ng-container>
+                                                    <!-- <ng-container>
+                                                        <ul>
+                                                            <li class="caption-li-subs">
+                                                                <button class="btn btn-white text-left"
+                                                                    (click)="opendeleteSubscriberModal(data)">
+                                                                    {{ language.Delete_Subscriber }}
+                                                                </button>
+                                                            </li>
+                                                        </ul>
+                                                    </ng-container> -->
+
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </section>
+                                    <section *ngIf="!data.subscriberId && data.devices && data.devices.length;">
+                                        <div class="dropdown dropleft">
+
+                                            <button class="list-button" type="button" data-boundary="viewport"
+                                                data-toggle="dropdown" >
+                                                ...
+                                            </button>
+                                            <div  class="text-left">
+                                                <ul  class="dropdown-menu" >
+                                                    <li>
+                                                        <button class="btn btn-white" *ngIf="allowsupportCloud"
+                                                            (click)="goToSupportCloud(data, data?.devices);">
+                                                            {{language.supportcloud}}
+                                                        </button>
+                                                    </li>
+
+
+
+                                                    <ng-container *ngFor="let device of data.devices; let ds = index">
+                                                        <ul>
+                                                            <li class="caption-li">
+                                                                <label>
+                                                                    {{
+                                                                    device.serialNumber
+                                                                    ? device.serialNumber
+                                                                    : !checkRegIdAndMac(device.deviceId)
+                                                                    ? device.deviceId
+                                                                    : device.macAddress
+                                                                    ? device.macAddress
+                                                                    : device.registrationId
+                                                                    ? device.registrationId
+                                                                    : device.deviceId
+                                                                    }}
+                                                                    <span class="small-text"
+                                                                        *ngIf="device.opMode && false">
+                                                                        {{
+                                                                        device.opMode == "RG"
+                                                                        ? "(RG)"
+                                                                        : device.opMode.replace(
+                                                                        "WAP-IGMP",
+                                                                        "Mesh(SAT)"
+                                                                        ).replace("WAP", "Mesh(SAT)")
+                                                                        }}
+                                                                    </span>
+                                                                </label>
+                                                            </li>
+                                                            <li>
+                                                                <button class="btn btn-white text-left"
+                                                                    (click)="showAssociateSubscriberModal(data, device)">
+                                                                    {{ language.associateSubscriber }}
+                                                                </button>
+                                                            </li>
+                                                            <li *ngIf="false">
+                                                                <button class="btn btn-white"
+                                                                    *ngIf="device.opMode != 'WAP'  && (!device.ont || (device.ont && device._id))"
+                                                                    (click)="goToSystemEdit(data, device)">
+                                                                    {{ language.Edit_system }}
+                                                                </button>
+                                                            </li>
+
+                                                            <!-- <li>
+                                                                                <button class="btn btn-white text-left"
+                                                                                    (click)="opendissasciateDeviceModel(data, device)">
+                                                                                    {{ language.Disassociate_System }}
+                                                                                </button>
+                                                                            </li> -->
+                                                            <li>
+                                                                <button class="btn btn-white text-left"
+                                                                    *ngIf="!device.ont || (device.ont && device._id) "
+                                                                    (click)="opendeleteDevicerModal(data, device)">
+                                                                    {{ language.deleteDevice }}
+                                                                </button>
+                                                            </li>
+                                                            <li>
+                                                                <button class="btn btn-white text-left"
+                                                                    *ngIf="device.ont && !device._id"
+                                                                    (click)="opendeleteDevicerModal(data, device,true)">
+                                                                    {{ language.deleteDevice }}
+                                                                </button>
+                                                            </li>
+                                                            <li>
+                                                                <button class="btn btn-white"
+                                                                    *ngIf=" (!device.ont || (device.ont && device._id)) && device.serialNumber"
+                                                                    (click)="openResetModal(data, device)">
+                                                                    {{ language.factoryResetLabel(device?.modelName) }}
+                                                                </button>
+
+                                                            </li>
+                                                            <li *ngIf="device['reboot']">
+                                                                <button class="btn btn-white"
+                                                                    *ngIf="(!device.ont || (device.ont && device._id)) && device.serialNumber"
+                                                                    (click)="openRebootModal(data, device)">
+                                                                    {{language['Reboot System']}}
+                                                                </button>
+                                                                <button class="btn btn-white"
+                                                                    *ngIf="device.ont && !device._id "
+                                                                    (click)="openRebootModal(data, device,'ont')">
+                                                                  {{language['Reboot System']}}
+                                                                </button>
+                                                            </li>
+                                                        </ul>
+                                                    </ng-container>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </section>
+
+                                </td>
+                            </tr>
+                        </tbody>
+
+                        <tbody
+                            *ngIf="((tableCount != undefined && tableCount === 0) || (filterCount != undefined && filterCount === 0))">
+                            <tr>
+                                <td colspan="8" class="no-data-available">{{language['No data available in table']}}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+<ng-template #dissasciateDeviceModel let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">
+            {{ language.Disassociate_System }}
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="cancelModel()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="py-3 alert alert-danger" *ngIf="isModalError">
+            <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+            <button type="button" id="close-error-btn" class="close" data-dismiss="alert" aria-label="Close"
+                (click)="isModalError = !isModalError">
+                <span></span>
+            </button>
+            <div class="d-inline-flex" [innerHtml]="modalWarningMessage"></div>
+        </div>
+        <div class="loader" *ngIf="modalLoader">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{ language.Loading }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="pb-3 mt-0 warning-msg" *ngIf="deleteServicesAssociateWithSbscrbrMsg && showwarning">
+            <div class="w-100">
+                <div [innerHtml]="deleteServicesAssociateWithSbscrbrMsg"></div>
+            </div>
+            <div class="w-100">
+                <div class="btn-con-sec mt-3">
+                    <button class="btn-default btn-primary mr-2" id="deleteServicesAssociateWithSbscrbrMsgCnfrmBtn"
+                        (click)="disassociateDeviceData()">
+                        {{ language.Confirm }}
+                    </button>
+                    <button class="btn-default btn-dft" (click)="closeDeleteServicesAssociateWithSbscrbrMsg()">
+                        {{ language.Cancel }}
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="ccl-form row my-2" *ngIf="showconfirmation">
+            <div class="del-dev">
+                {{language['Are you sure you want to disassociate system']}} &nbsp;<b>{{syssN}}</b>?
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer" *ngIf="showconfirmation">
+        <button type="button" class="btn-default primary px-3 px-3"
+            (click)="confirmDeleteServicesAssociateWithSbscrbrMsg()">
+            {{ language.Disassociate }}
+        </button>
+        <button type="button" class="btn-default btn-dft px-3 px-3 m-2" data-dismiss="modal" (click)="cancelModel()">
+            {{ language.Cancel }}
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #deleteDevicerModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">
+            {{ language.deleteDevice }}
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="cancelModel()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="py-3 alert alert-danger" *ngIf="isModalError">
+            <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+            <button type="button" id="close-error-btn" class="close" data-dismiss="alert" aria-label="Close"
+                (click)="isModalError = !isModalError">
+                <span></span>
+            </button>
+            <div class="d-inline-flex" [innerHtml]="modalWarningMessage"></div>
+        </div>
+        <div class="loader" *ngIf="modalLoader">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{ language.Loading }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="pb-3 mt-0 warning-msg" *ngIf="deleteDeviceAndServicesAssociateWithSbscrbrMsg && showwarning">
+            <div class="w-100">
+                <div [innerHtml]="deleteDeviceAndServicesAssociateWithSbscrbrMsg"></div>
+            </div>
+            <div class="w-100">
+                <div class="btn-con-sec mt-3">
+                    <button class="btn-default btn-primary mr-2" id="deleteDeviceAndServicesAssociateWithSbscrbrMsgCnfrmBtn"
+                        (click)="DeleteAndDisassociated()">
+                        {{ language.Confirm }}
+                    </button>
+                    <button class="btn-default btn-dft" (click)="closeDeleteDeviceAndServicesAssociateWithSbscrbrMsg()">
+                        {{ language.Cancel }}
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="ccl-form row my-2" *ngIf="showconfirmation">
+            <div class="del-dev">
+                {{language['Are you sure you want to Delete Device']}} &nbsp;<b>{{syssN}}</b>?
+            </div>
+
+        </div>
+    </div>
+    <div class="modal-footer" *ngIf="showconfirmation">
+        <button type="button" class="btn-default primary px-3 px-3"
+            (click)="confirmDeleteDeviceAndServicesAssociateWithSbscrbrMsg()">
+            {{ language.deleteDevice }}
+        </button>
+        <button type="button" class="btn-default btn-dft px-3 px-3 m-2" data-dismiss="modal" (click)="cancelModel()">
+            {{ language.Cancel }}
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #deleteSubscriberModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">
+            {{ language.Delete_Subscriber }}
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="cancelModel()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="py-3 alert alert-danger" *ngIf="isModalError">
+            <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+            <button type="button" id="close-error-btn" class="close" data-dismiss="alert" aria-label="Close"
+                (click)="isModalError = !isModalError">
+                <span></span>
+            </button>
+            <div class="d-inline-flex" [innerHtml]="modalWarningMessage"></div>
+        </div>
+        <div class="loader" *ngIf="modalLoader">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{ language.Loading }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="pb-3 mt-0 warning-msg" *ngIf="deleteSbscrbrMsg && showwarning">
+            <div class="w-100">
+                <div [innerHtml]="deleteSbscrbrMsg"></div>
+            </div>
+            <div class="w-100">
+                <div class="btn-con-sec mt-3">
+                    <button class="btn-default btn-primary mr-2" id="deleteSbscrbrMsgCnfrmBtn" (click)="deleteSubscriber()">
+                        {{ language.Confirm }}
+                    </button>
+                    <button class="btn-default btn-dft" (click)="closeSbscrbrMsg()">
+                        {{ language.Cancel }}
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="ccl-form row my-2" *ngIf="showconfirmation">
+            <div class="del-dev">
+                {{ language["Are you sure you want to Delete Subscriber?"].slice(0,-1) }} &nbsp;<b>{{subscriberName}}</b>?
+            </div>
+
+        </div>
+
+    </div>
+    <div class="modal-footer" *ngIf="showconfirmation">
+        <button type="button" class="btn-default primary px-3" (click)="confirmWithSbscrbrMsg()">
+            {{language.Delete_Subscriber}}
+        </button>
+        <button type="button" class="btn-default btn-dft px-3 m-2" data-dismiss="modal" (click)="cancelModel()">
+            {{ language.Cancel }}
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #associateSubscriberModal let-modal class="col-md-12">
+    <div class="modal-content addSubscriber" (click)="closeSearch()">
+        <div class="modal-header">
+            <div class="">
+                <h5 class="modal-title" id="addModal">
+                    {{ language.Associate_Subscriber }}
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="cancelAssociate()">
+                    <span aria-hidden="true"></span>
+                </button>
+            </div>
+        </div>
+
+        <div class="modal-body">
+            <div class="hide" id="associateDeviceDataId"></div>
+            <form [formGroup]="associateSubscriber" novalidate>
+                <div class="w-100 alert alert alert-danger fade show" *ngIf="isAssociateError">
+                    <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+                </div>
+                <div class="form-group ccl-form row">
+                    <label for="account" class="col-12 col-sm-4 col-form-label">{{
+                        language.Account
+                        }}</label>
+                    <div class="col-12 col-sm-8">
+                        <!-- <input type="text"  formControlName="account" placeholder="{{language.Enter + language.Account}}"> -->
+                        <input type="text" placeholder="{{ language.Enter + language.Account }}"
+                            formControlName="account" (keyup)="searchByCharacters1($event)"
+                            (keyup.enter)="performSearch()" (change)="associateChange()" id="account"
+                            autocomplete="off" />
+                        <div class="asso-search-dropdown">
+                            <!-- <h3>{{language.Subscribers}}</h3> -->
+                            <div class="for-scroll">
+                                <table class="table" id="searchResultId">
+                                    <tr *ngFor="let data of accountSearchResult" (click)="showSubscriberdata(data)">
+                                        <td class="w-33" [innerHTML]="data.name | highlight: accountSearchText">
+                                            {{ data.name }}
+                                        </td>
+                                        <td class="w-33">
+                                            <span>{{ data.account }}</span>
+                                            <span *ngIf="
+                            !data.account && !data.name && data.devices.length
+                          ">{{ data.devices[0]["deviceId"] }}</span>
+                                        </td>
+                                        <td class="w-33">{{ data.serviceAddress }}</td>
+                                    </tr>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group ccl-form row">
+                    <label for="locationId" class="col-12 col-sm-4 col-form-label">{{
+                        language.Subscriber_Location_ID
+                        }}<span class="error">*</span></label>
+                    <div class="col-12 col-sm-8" [ngClass]="[
+                modalForm.subscriberLocationId.errors && submitted
+                  ? 'errorMessage'
+                  : ''
+              ]">
+                        <input type="text" id="locationId" formControlName="subscriberLocationId"
+                            [readonly]="disableSub" required placeholder="{{
+                  language.Enter + language.Subscriber_Location_ID 
+                }}" />
+                        <div *ngIf="submitted && modalForm.subscriberLocationId.errors" class="errorMessage">
+                            <small *ngIf="modalForm.subscriberLocationId.errors.required">
+                                {{ language["This field is required"] }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group ccl-form row">
+                    <label for="Name" class="col-12 col-sm-4 col-form-label">{{
+                        language.Name
+                        }}<span class="error">*</span></label>
+                    <div class="col-12 col-sm-8" [ngClass]="[
+                submitted && modalForm.name.errors ? 'errorMessage' : ''
+              ]">
+                        <input type="text" id="Name" [readonly]="disableSub" formControlName="name"
+                            placeholder="{{ language.Enter + language.name }}" />
+                        <div *ngIf="submitted && modalForm.name.errors" class="errorMessage">
+                            <small *ngIf="modalForm.name.errors.required">
+                                {{ language["This field is required"] }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group ccl-form row">
+                    <label for="serviceAddress" class="col-12 col-sm-4 col-form-label">{{
+                        language.Service_Address
+                        }}</label>
+                    <div class="col-12 col-sm-8">
+                        <input type="text" id="serviceAddress" [readonly]="disableSub" formControlName="serviceAddress"
+                            placeholder="{{ language.Enter + language.Service_Address }}" />
+                    </div>
+                </div>
+                <div class="form-group ccl-form row">
+                    <label for="phone" class="col-12 col-sm-4 col-form-label">{{
+                        language.Phone
+                        }}</label>
+                    <div class="col-12 col-sm-8">
+                        <input type="text" id="phone" [readonly]="disableSub" formControlName="phone"
+                            placeholder="{{ language.Enter + language.Phone }}" />
+                    </div>
+                </div>
+                <div class="form-group ccl-form row">
+                    <label for="inputEmail3" class="col-12 col-sm-4 col-form-label">{{
+                        language.Email
+                        }}</label>
+                    <div class="col-12 col-sm-8" [ngClass]="[
+                submitted && modalForm.email.errors ? 'errorMessage' : ''
+              ]">
+                        <input type="email" id="inputEmail3" [readonly]="disableSub" formControlName="email"
+                            placeholder="{{ language.Enter + language.Email }}" />
+                        <div *ngIf="submitted && modalForm.email.errors" class="errorMessage">
+                            <small *ngIf="modalForm.email.errors.pattern">
+                                {{ language["Please enter a valid email address"] }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="form-group ccl-form row">
+                    <label for="hubbId" class="col-12 col-sm-4 col-form-label">{{language['HUBB ID']}}</label>
+                    <div class="col-12 col-sm-8">
+                        <input type="text" id="hubbId" formControlName="hubbLocationId" name="hubbId"
+                            placeholder="{{language['Enter HUBB ID']}}" [readonly]="disableSub" />
+                        <div *ngIf="false" class="errorMessage">
+                            <label *ngIf="false">
+                                {{language['Please enter a valid HUBB ID']}}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group ccl-form row">
+                    <label for="hubbSubscriberId" class="col-12 col-sm-4 col-form-label">{{language['FCC Subscriber ID']}}</label>
+                    <div class="col-12 col-sm-8">
+                        <input type="text" id="hubbSubscriberId" formControlName="fccSubscriberId"
+                            (keyup)="formChange('fccSubscriberId');formChange('account');" name="hubbSubId"
+                            placeholder="{{language['Enter Subscriber ID']}}" [readonly]="disableSub" />
+                        <sup class="error"
+                            *ngIf="submitted && associateSubscriber.value.fccSubscriberId && !valid.fccSubscriberId">
+                            {{language["FCC Subscriber ID value shouldn't be same as Account"]}}
+                        </sup>
+
+                    </div>
+                </div>
+
+
+                <div class="form-group ccl-form row float-right">
+                    <button type="button" class="btn-default transparant px-3 m-2" (click)="cancelAssociate()"
+                        data-dismiss="modal" id="cancelAssociateDevice">
+                        {{ language.cancel }}
+                    </button>
+                    <button type="button" class="btn-default primary m-2 px-3 px-3" id="associateDevice"
+                        (click)="saveAssociate(unassociatedSubscriber, true)">
+                        {{language.Associate}}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+
+<ng-template #CreateSubscriberModal let-modal class="col-md-12">
+    <div class="modal-content">
+        <div class="loader" *ngIf="loading">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only"></span>
+                </div>
+            </div>
+        </div>
+        <div class="modal-header">
+            <div class="">
+                <h5 class="modal-title" id="createModal">
+                    <!-- {{ language.Add_Subscriber }} -->
+                    {{
+                    editSubscriber
+                    ? language.Edit + " " + (editSubscriberData.name ? editSubscriberData.name :
+                    editSubscriberData.subscriberLocationId)
+                    : language.Add_Subscriber
+                    }}
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                    (click)="closeAddSubscriberModal()">
+                    <span aria-hidden="true"></span>
+                </button>
+            </div>
+        </div>
+
+        <div class="modal-body">
+            <form [formGroup]="createSubscriber" novalidate>
+                <div class="w-100 alert alert alert-danger fade show" *ngIf="isAddError">
+                    <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+                </div>
+                <div class="form-group ccl-form row">
+                    <label for="account" class="col-12 col-sm-4 col-form-label">{{
+                        language.Account
+                        }}</label>
+                    <div class="col-12 col-sm-8">
+                        <input type="text" formControlName="account" placeholder="{{language.Enter + language.Account}}"
+                            autocomplete="off">
+                    </div>
+                </div>
+                <div class="form-group ccl-form row">
+                    <label for="locationId" class="col-12 col-sm-4 col-form-label">{{ language.Subscriber_Location_ID
+                        }}<span class="error">*</span></label>
+                    <div class="col-12 col-sm-8" [ngClass]="[ createSubsModalForm.subscriberLocationId.errors && createSubmitted ? 'errorMessage'
+                  : '' ]">
+                        <input type="text" id="locationId" formControlName="subscriberLocationId" required placeholder="{{
+                  language.Enter + language.Subscriber_Location_ID 
+                }}" />
+                        <div *ngIf="createSubmitted && createSubsModalForm.subscriberLocationId.errors"
+                            class="errorMessage">
+                            <small *ngIf="createSubsModalForm.subscriberLocationId.errors.required">
+                                {{ language["This field is required"] }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group ccl-form row">
+                    <label for="Name" class="col-12 col-sm-4 col-form-label">{{ language.Name }}<span
+                            class="error">*</span></label>
+                    <div class="col-12 col-sm-8"
+                        [ngClass]="[ createSubmitted && createSubsModalForm.name.errors ? 'errorMessage' : ''  ]">
+                        <input type="text" id="Name" formControlName="name" placeholder="{{ language.name }}"
+                            required />
+                        <div *ngIf="createSubmitted && createSubsModalForm.name.errors" class="errorMessage">
+                            <small *ngIf="createSubsModalForm.name.errors.required">
+                                {{ language["This field is required"] }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group ccl-form row">
+                    <label for="serviceAddress" class="col-12 col-sm-4 col-form-label">{{ language.Service_Address
+                        }}</label>
+                    <div class="col-12 col-sm-8">
+                        <input type="text" id="serviceAddress" formControlName="serviceAddress"
+                            placeholder="{{ language.Enter + language.Service_Address }}" />
+                    </div>
+                </div>
+                <div class="form-group ccl-form row">
+                    <label for="phone" class="col-12 col-sm-4 col-form-label">{{
+                        language.Phone
+                        }}</label>
+                    <div class="col-12 col-sm-8">
+                        <input type="text" id="phone" formControlName="phone"
+                            placeholder="{{ language.Enter + language.Phone }}" />
+                    </div>
+                </div>
+                <div class="form-group ccl-form row">
+                    <label for="inputEmail3" class="col-12 col-sm-4 col-form-label">{{
+                        language.Email
+                        }}</label>
+                    <div class="col-12 col-sm-8" [ngClass]="[
+                createSubmitted && createSubsModalForm.email.errors ? 'errorMessage' : ''
+              ]">
+                        <input type="email" id="inputEmail3" formControlName="email"
+                            placeholder="{{ language.Enter + language.Email }}" />
+                        <div *ngIf="createSubmitted && createSubsModalForm.email.errors" class="errorMessage">
+                            <small *ngIf="createSubsModalForm.email.errors.pattern">
+                                {{ language["Please enter a valid email address"] }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group ccl-form row float-right">
+                    <button type="button" class="btn-default transparant px-3 m-2" (click)="closeAddSubscriberModal()"
+                        data-dismiss="modal" id="cancelAssociateDevice">
+                        {{ language.cancel }}
+                    </button>
+                    <button type="button" class="btn-default primary m-2 px-3 px-3" id="associateDevice"
+                        (click)="createSubscriberSave()">
+                        {{ language.submit }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #factoryresetModal let-modal class="col-md-12 custom-modal">
+    <div class="modal-header">
+        <div class="modal-title  ml-2" id="addModal">
+            {{ language.factoryResetLabel(deviceInfo?.modelName) }}
+        </div>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeAllModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="custom-content px-2">
+            <b>
+                {{ language.FactoryResetModel(deviceInfo?.modelName) }}
+            </b>
+            <p>{{ language.confirmation }}</p>
+        </div>
+
+        <button type="button" id="router_facres_confirm_bttn" class="btn-default primary px-3 px-3"
+            (click)="closeAllModal(); openResetconfirmModal(deviceInfo?.modelName); factoryReset(deviceInfo?.modelName)">
+            {{ language.Confirm }}
+        </button>
+        <button type="button" id="router_facres_close_bttn" class="btn-default transparant px-3 px-3 m-2"
+            (click)="closeAllModal()" data-dismiss="modal">
+            {{ language.Cancel }}
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #resetconfirmModal let-modal class="col-md-12 custom-modal">
+    <div class="modal-header">
+        <div class="modal-title ml-2" id="addModal">{{ language.factoryResetLabel(model) }}</div>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeAllModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="loader" *ngIf="modalLoader">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{ language.Loading }}</span>
+                </div>
+            </div>
+        </div>
+        <div id="backup" class="tab-pane">
+            <div class="col-12 pb-2">
+                <ng-container *ngFor="let list of completionStatus">
+                    <p>
+                        {{ list.isTime }}
+                        <span class="font-weight-bold">{{ language[list.isResponse] || list.isResponse }}</span>
+                    </p>
+                </ng-container>
+            </div>
+        </div>
+        <div class="add-bnt">
+            <!-- <button type="button" class="btn-default primary px-3 px-3">Reset</button> -->
+            <button type="button" id="router_facres_done_bttn" class="btn-default primary px-3 px-3"
+                (click)="closeAllModal()" data-dismiss="modal">
+                {{ language.Done }}
+            </button>
+        </div>
+    </div>
+</ng-template>
+<ng-template #reboot let-modal>
+    <div class="modal-header">
+        <div class="ccl-Secondary-title" id="addModal">{{ language.Reboot }}</div>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+            (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+
+    <div class="modal-body">
+        <p class="">
+            {{ language.Reboot_Warning }}
+        </p>
+        <p class="mb-2 f-size-14">
+            {{ language.Reboot_Confirmation }}
+        </p>
+        <div class="add-bnt">
+            <button id="auto_trigger" type="button" id="router_reboot_confirm_bttn" class="btn btn-primary br-26 b-none"
+                (click)="
+            modal.close('Save click');
+            openrebootStatusModel();
+            rebootDevice()
+          ">
+                {{ language.Confirm }}
+            </button>
+            <button type="button" class="btn-sm btn-default transparant ml-2 br-26" id="router_reboot_cancel_bttn"
+                (click)="modal.close('Save click')">
+                {{ language.Cancel }}
+            </button>
+        </div>
+    </div>
+</ng-template>
+<ng-template #rebootStatus id="rebootStatus" let-modal>
+    <div class="modal-header">
+        <div class="ccl-Secondary-title" id="rebootStatus-label">{{language.Reboot}}</div>
+        <button type="button" class="close" id="rebootStatus-close-btn" data-dismiss="modal" aria-label="Close"
+            (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="col-12 ccl-tabs">
+            <p class="font-weight-bold"></p>
+        </div>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="backup" role="tabpanel" aria-labelledby="backup-tab">
+                <div class="loader" *ngIf="modalLoader">
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border text-primary">
+                            <span class="sr-only">{{ language.Loading }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-100 alert alert alert-danger fade show" *ngIf="isModalError">
+                    <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+                    <button type="button" id="hide-error-btn" class="close" (click)="isModalError = false">
+                        <span></span>
+                    </button>
+                    <div class="d-inline-flex" [innerHtml]="modalWarningMessage"></div>
+                </div>
+                <div id="backup" class="tab-pane">
+                    <p class="" *ngIf="modalLoader && bootHappening">
+                        {{ language.Reboot_Warning }}
+                    </p>
+                    <div class="col-12 pb-2">
+                        <ng-container *ngFor="let list of completionStatus">
+                            <p>
+                                [{{ list.isTime }}]
+                                <span class="font-weight-bold">{{ language[list.isResponse] || list.isResponse }}</span>
+                            </p>
+                        </ng-container>
+                    </div>
+                    <div class="add-bnt">
+                        <button type="button" id="reboot-again" class="btn btn-primary br-26 b-none reboot-btn" (click)="
+                  modal.close('Save click');
+                  openrebootStatusModel();
+                  rebootDevice()
+                " [disabled]="completionStatus && completionStatus.length == 1">
+                            {{ language.Reboot_Again }}
+                        </button>
+                        <button type="button" id="reboot-cancel" class="btn-sm btn-default ml-2 br-26 transparant"
+                            (click)="modal.close('Save click')">
+                            {{ language.Cancel }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<ng-template #deletesubscriberModal let-modal>
+    <div class="modal-body">
+      <div class="w-100 alert-box">
+        <button
+          class="close"
+          aria-label="Close"
+          (click)="modal.dismiss('Cross click')"
+        >
+          <span></span>
+        </button>
+        <div class="box-content">
+          <div class="icon">
+            <img
+              src="../../../../assets/img/ic_warning-36px.svg"
+              alt="icon here"
+            />
+          </div>
+          <div class="content">
+            <h3>{{language["Delete_Subscriber"]}}</h3>
+            <p>
+              {{language['The subscriber you are attempting to delete is a member of at least one active community.']}}
+            </p>
+            <ul class="mt-3">
+                <li>{{language['If you want the subscriber to keep all community memberships, delete the system only (if there is any).']}}</li>
+            <!-- <li>{{language['If you want the subscriber to keep all community memberships, delete the stystem only.']}}</li>
+            <li *ngIf="systemLength">{{language['If you want the subscriber to keep the communities other than the one sponsored by you, delete their']}} <i>{{language['c-default']}}</i> {{language['community and the system.']}} </li> -->
+            </ul>
+            <p class="mt-2">{{language['By proceeding with subscriber deletion, you will delete everything including community memberships and systems.']}}<span>{{language['All associated system(s) will be deleted and restore default as well.']}}</span><span *ngIf="showServifyText"> {{language['This subscriber has active Servify subscription also.']}}</span> {{language['Are you sure you want to Delete Subscriber?'].slice(0,-1)}} "{{subscriber}}"? </p>
+            <div class="w-100 mt-4 pt-2">
+              <button
+                type="button"
+                id="removeDeleteSubscriberBtn"
+                class="btn-default primary mr-3"
+                (click)="deleteSubscriber()"
+              >
+                {{language["Delete_Subscriber"]}}
+              </button>
+              <button
+                type="button"
+                id="canceltDeleteSubscriberBtn"
+                class="btn-default btn-dft"
+                aria-label="Close"
+                (click)="modal.dismiss('Cross click')"
+              >
+                {{ language.Cancel }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+<router-outlet></router-outlet>

@@ -1,0 +1,39 @@
+<!-- error message -->
+<div class="w-100 alert alert alert-danger fade show" *ngIf="errorMessage">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+    <button type="button" class="btn-default primary ok float-right" (click)="errorMessage = ''">
+        {{ language.OK }}
+    </button>
+    <span class="d-inline-flex wrn-msg" [innerHtml]="errorMessage"></span>
+</div>
+<!-- error message end -->
+
+<div class="row my-3" *ngIf="scopeFlag.configRead">
+    <div class="col-lg-2 col-md-3 col-sm-12 tab-sec border-right smy-2">
+
+        <!-- loader -->
+        <div class="loader" *ngIf="loading">
+            <div class=" d-flex justify-content-center">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{ language.Loading }}</span>
+                </div>
+            </div>
+        </div>
+        <!-- loader end -->
+
+        <ul id="tabs" class="w-100 nav nav-tabs sub-tab vertical-tab">
+            <ng-container *ngFor="let menu of menus; let menuIndex = index;">
+                <li class="nav-item" *ngIf="menu.display">
+                    <a data-toggle="tab" [class]="'nav-link small ' + (menu.active ? 'active' : '')"
+                        href="javascript:void(0)" [id]="menu.name" [routerLink]="menu.routerLink" [state]="menu.state"
+                        [title]="language[menu.label]">
+                        {{ language[menu.label] }}
+                    </a>
+                </li>
+            </ng-container>
+        </ul>
+    </div>
+    <div class="col-lg-10 col-md-9 col-sm-12 details-sec">
+        <router-outlet></router-outlet>
+    </div>
+</div>

@@ -1,0 +1,114 @@
+<section>
+
+    <div class="container position-relative">
+        <div>
+            <h4>{{language.External_ticket_System}}</h4>
+        </div>
+        <div class="alert alert-success alert-dismissible">
+            <span class="success-img"><img src="../../../../../assets/img/success-icon.svg" /></span>
+            <button type="button" class="close" (click)="closeAlert()" id="success-msg"><span></span></button>
+            <div class="d-inline-flex"><strong>{{ successMsg | titlecase }}</strong></div>
+        </div>
+        <div class="alert alert-error alert-dismissible py-0">
+            <!-- <button type="button" class="close" (click)="closeAlert()" id="err-msg"><span></span></button>
+            <div [innerHtml]="errorMsg"></div> -->
+            <div class="warning-msg pt-2 pb-1 m-0">
+                <span class="error-img"><img src="./assets/img/ic_warning-36px.svg" /></span>
+                <span class="msg-details">
+                    <span style="font-weight: bold">{{ language["Warning"] }}! </span>
+                    <span [innerHtml]="language[errorMsg] || errorMsg"></span>
+                </span>
+                <button class="btn-default px-3 ok-btn float-right" (click)="closeAlert()" id="inprpwarn-ok">
+                    {{ language.Ok }}
+                </button>
+            </div>
+            <!--<strong>{{ errorMsg | titlecase }}</strong>-->
+        </div>
+        <div class="loader" *ngIf="loading">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-5 my-3">
+                <form id="externalTicketForm" (ngSubmit)=" f.form.valid && externalTicketFormUpdate(f)"
+                    class="form-group ccl-form" #f="ngForm" novalidate>
+                    <div class="ccl-form mb-3">
+                        <label for="Ticketing-System-URL">{{language['Ticketing System URL']}}<span
+                                class="error">*</span> </label>
+                        <input class="form-control" id="url" name="url" #url="ngModel" type="text" required
+                            [(ngModel)]="externalTicketData.url" aria-describedby="" placeholder=""
+                            [pattern]="patternvalidation" (change)="changeButtonDisabled()" trimSpace [formValue]="externalTicketData">
+                        <button type="button" (click)="testConnection(f)"
+                            class="btn-default primary px-3 position-right ">{{language.Test_Connection}}</button>
+                        <!-- https?:\/\/(?:www\.|(?!www)) -->
+                        <!-- <div class="errorMessage"
+                            *ngIf="(url.touched || f.submitted || url.untouched)  && !externalTicketData.url "
+                            id="name-error">
+                            {{language['Please enter URL']}}
+                        </div> -->
+                        <div *ngIf="url.touched && url.invalid" class="errorMessage">
+                            <!-- <div *ngIf="url.errors?.required">Please provide url</div> -->
+                            <div *ngIf="url.errors?.pattern">{{language['Please provide valid url']}}</div>
+                        </div>
+                    </div>
+                    <div class="ccl-form mb-3">
+                        <label for="user-name">{{language['User_Name']}}<span class="error">*</span></label>
+                        <input class="form-control" id="username" name="username" #username="ngModel" type="text"
+                            [(ngModel)]="externalTicketData.username" aria-describedby="" placeholder="" required
+                            (change)="changeButtonDisabled()" trimSpace [formValue]="externalTicketData">
+                        <!-- <div class="errorMessage"
+                            *ngIf="(username.touched || f.submitted || username.untouched)  && !externalTicketData.username "
+                            id="name-error">
+                            {{language['Please enter username']}}
+                        </div> -->
+                    </div>
+                    <div class="ccl-form mb-3" style="position: relative;">
+                        <label for="Password">{{language.Password}} <span class="error">*</span></label>
+                        <input class="form-control" id="password" name="password" type="text"
+                            [(ngModel)]="extUserPassword" aria-describedby="" placeholder="" required
+                            [type]="passwordHide ? 'text' : 'password'" (change)="changeButtonDisabled()">
+                        <!-- <div class="errorMessage"
+                            *ngIf="(password.touched || f.submitted || password.untouched)  && !externalTicketData.password "
+                            id="name-error">
+                            {{language['Please enter password']}}
+                        </div> -->
+                        <span class="" [ngClass]="passwordHide ? 'password_view':'password_hide'" (click)="passwordedit()"> </span>
+                            <!-- <i *ngIf="!show" class="fa fa-eye-slash" aria-hidden="true"></i>
+                            <i *ngIf="show" class="fa fa-eye" aria-hidden="true"></i> -->
+                    </div>
+                    <div class="ccl-form mb-3">
+                        <label for="Ticketing_Service_Provider">{{language['Ticketing Service
+                            Provider']}}<span class="error">*</span></label>
+                        <!-- <input type="text" class="form-control" id="Ticketing_Service_Provider" aria-describedby=""
+                            placeholder=" " id="name" name="name" #name="ngModel" [(ngModel)]="externalTicketData.name"> -->
+                        <ng-select [items]="Frame" bindLabel="name" bindValue="id"
+                            [(ngModel)]="exteranalTicketDefualtValue" name="name" required>
+                        </ng-select>
+                    </div>
+                    <div class="ccl-form mb-3">
+                        <label for="companyNumber">{{language['Company Number']}}<span class="error">*</span></label>
+                        <input class="form-control" id="companyNumber" name="companyNumber" #companyNumber="ngModel"
+                            type="text" [(ngModel)]="externalTicketData.companyNumber" aria-describedby="" required
+                            placeholder="" (change)="changeButtonDisabled()" trimSpace [formValue]="externalTicketData">
+                        <!-- <div class="errorMessage"
+                            *ngIf="(companyNumber.touched || f.submitted || companyNumber.untouched)  && !externalTicketData.companyNumber "
+                            id="name-error">
+                            {{language['Please enter company Number']}}
+                        </div> -->
+                    </div>
+                    <div class="mt-3">
+                        <button type="submit" class="btn-default primary px-3 mr-3"
+                            [disabled]="isButtonDisabled">{{language.submit}}</button>
+                        <button type="button" id="cancel-btn" class="btn-default btn-dft mr-3"
+                            (click)="cancelExternalticketDetails(f)">{{language.cancel}}</button>
+                        <button type="button" id="delete-btn" (click)="deleteticketDetails(f)"
+                            class="btn-default primary px-3 ">{{language.Delete}}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>

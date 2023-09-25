@@ -1,0 +1,74 @@
+<div class="container tab-pane active  fade show" id="speedtest">
+    <div class="loader" *ngIf="loading">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    </div>
+    <section *ngIf="showForm">
+        <div class="row mb-3">
+            <div class="col-md-12 ccl-admin-title">
+                {{language.speedtestContent}}
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="col-md-3 ">
+                <label for="staticEmail" class=""> {{language.downURL}} :</label>
+                <label for="t" class="small d-flex"> (TR-143 Only)</label>
+            </div>
+            <div class="col-md-9">
+                <div class="col-sm-10 ccl-form speed-test-form-group" [ngClass]="{'ccl-error': spDownloadUrlErr}">
+                    <input type="text" class="" id="downloadurl" name="downloadUrl" [(ngModel)]="downloadUrl"
+                        style="width:70%;" (keyup)="changeDownloadUrl()" placeholder="" autocomplete="new-password">
+                    <em *ngIf="spSaveClicked && spDownloadUrlErr" id="downloadurl-error"
+                        class="ccl-error">{{language['This field is required']}}</em>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row my-3">
+            <div class="col-md-3">
+                <label for="staticEmail" class=" "> {{language.uploadURL}} :</label>
+                <label for="t" class="small d-flex"> (TR-143 Only)</label>
+            </div>
+            <div class="col-md-9">
+                <div class="col-sm-10 ccl-form speed-test-form-group" [ngClass]="{'ccl-error': spUploadurlErr}">
+                    <input type="text" class="" name="uploadUrl" (keyup)="changeUploadurl()" id="uploadurl"
+                        [(ngModel)]="uploadUrl" style="width:70%;" placeholder="" autocomplete="new-password">
+                    <em *ngIf="spSaveClicked && spUploadurlErr" id="uploadurl-error" class="ccl-error">{{language['This
+                        field is required']}}</em>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row my-3">
+            <div class="col-md-3">
+                <label for="staticEmail" class=" "> {{language.uploadSize}} :</label>
+                <label for="t" class="small d-flex"> (TR-143 Only)</label>
+            </div>
+            <div class="col-md-9">
+                <div class="col-sm-10 ccl-form speed-test-form-group" [ngClass]="{'ccl-error': spUploadSizeErr}">
+                    <input type="number" min="1" [ngClass]="{'ccl-error': spUploadSizeErr}" class=""
+                        (keyup)="changeUploadSize()" (change)="changeUploadSize()" id="uploadsize"
+                        [(ngModel)]="uploadSize" style="width:70%;" placeholder="" name="uploadSize"
+                        autocomplete="new-password">
+                    <em *ngIf="spSaveClicked && spUploadSizeErr" id="uploadSize-error"
+                        class="ccl-error">{{uploadSizeErrorInfo}}</em>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row my-3" *ngIf="spShowButtons">
+            <div class="col-md-3 offset-md-9 text-right pr-0">
+                <button class="btn-default primary md-btn mr-2 "
+                    (click)="resetSpeedtestForm()">{{language.reset}}</button>
+                <button class="btn-default primary md-btn pr-0 " (click)="spSave()">{{language.submit}}</button>
+            </div>
+        </div>
+    </section>
+
+</div>

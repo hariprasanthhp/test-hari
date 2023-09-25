@@ -1,0 +1,99 @@
+<div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess"> 
+    {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} </div>
+<div class="loader" *ngIf="(loading && hasScopeAccess) || loadingRecords">
+    <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+            <span class="sr-only">{{ language.Loading }}</span>
+        </div>
+    </div>
+</div>
+<div class="row" *ngIf="hasScopeAccess">
+    <div class="col-md-12 mt-3"><button type="button" class="close" (click)="gotolist()"><span></span></button></div>
+    <div class="col-md-12">
+        <div class="profile-wizard" id="profileWizard">
+            <span class="net-ops-secondary-title" id="addProfile">{{
+                language.Wizard
+                }}</span>
+            <div class="row">
+                <div class="w-100 alert alert-danger  fade show my-3" *ngIf="error">
+                    <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+                    <button type="button" class="close" (click)=" error = false"><span></span></button>
+                    <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+                </div>
+
+                <div class="w-100 alert alert-success fade show my-3" *ngIf="success">
+                    <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+                    <button type="button" class="close" (click)="success = false"><span></span></button>
+                    <div class="d-inline-flex" [innerHtml]="language[successInfo] || successInfo"></div>
+                </div>
+            </div>
+            <!--this.addProfileObj.buildProfile.categoryList.length > 0 -->
+            <section class="stepper-main" >
+                <!-- <div class="stepper col-12 px-0">
+                    <div title="{{ language[tab] }}" class="step--{{ i + 1 }}"
+                        *ngFor="let tab of addProfileTab; let i = index" (click)="onTabChange(i)" [ngClass]="{
+                'step-success':
+                  ((this.addProfileObj.start.name &&
+                    tab === 'Start' &&
+                    activeTab !== tab )|| 
+                    (this.addProfileObj.buildProfile.allfieldvalid &&
+                    tab === 'Build Profile' &&
+                      activeTab !== tab)),
+                'step-active': activeTab === tab
+              }">
+                        {{ language[tab] }}
+                    </div>
+                </div> -->
+                <!--new stepper-->
+                <ul class="stepper-ui">
+                    <li *ngFor="let tab of addProfileTab; let i = index">
+                        <button title="{{ language[tab] }}" (click)="onTabChange(i)" [ngClass]="{
+                        'step-done':
+                          ((this.addProfileObj.start.name &&
+                            tab === 'Start' &&
+                            activeTab !== tab )|| 
+                            (this.addProfileObj.buildProfile.allfieldvalid &&
+                            tab === 'Build Profile' &&
+                              activeTab !== tab)),
+                        'step-current': activeTab === tab
+                      }">
+                            <span>{{ language[tab] }}</span></button>
+                    </li>
+                </ul>
+                <!--end new stepper-->
+                <div style="position: absolute; right: 0px; top: 0px;">
+                    <!--<button type="button" id="previousbtn" class="btn-arrow btn-arr-prev btn-grey mr-2"
+            [disabled]="selectedTabIndex === 0" [ngClass]="{ primary: selectedTabIndex !== 0 }"
+            (click)="onTabChange(selectedTabIndex - 1)">-->
+                    <button type="button" id="previousbtn" class="btn-arrow btn-arr-prev btn-grey mr-2"
+                        [disabled]="selectedTabIndex === 0" (click)="onTabChange(selectedTabIndex - 1)">
+                        <img src="assets/img/ic_chevronleft_grey.svg"> {{ language.Previous }}
+                    </button>
+                    <button type="button" id="nextbtn" class="btn-arrow btn-arr-nxt primary mr-2"
+                        *ngIf="selectedTabIndex + 1 !== addProfileTab?.length"
+                        (click)="onTabChange(selectedTabIndex + 1);submitted = true"  [disabled]="saveDisabled || disableSave">
+                        {{ language.Next }} <img src="assets/img/ic_chevron-r-w.svg">
+                    </button>
+                    <button type="button" id="finishbtn" class="btn-default primary px-3"
+                        *ngIf="selectedTabIndex + 1 === addProfileTab?.length" (click)="onSave()">
+                        {{ language.Finish }}
+                    </button>
+                </div>
+                <app-start [submitted]="submitted" [addProfileObj]="addProfileObj" *ngIf="activeTab === 'Start'" (Out_Start_Focus)="saveEnableDisable($event)" (Out_Name_Error)="CopyName($event)"></app-start>
+                <app-process [buildProfileObj]="addProfileObj.buildProfile" (globleVlanErrMsg)="vlanValidation($event)" [addProfileObj]="addProfileObj"
+                    *ngIf="activeTab === 'Build Profile'"></app-process>    
+            </section>
+
+            <!-- <app-profile-start-wizard [addProfileObj]="addProfileObj" *ngIf="activeTab === 'Start'">
+            </app-profile-start-wizard>
+            <app-profile-build-wizard [buildProfileObj]="addProfileObj.buildProfile"
+                *ngIf="activeTab === 'Build Profile'">
+            </app-profile-build-wizard>
+            <app-profile-review-wizard [isOverViewPage]="false" [addProfileObj]="addProfileObj"
+                *ngIf="activeTab === 'Review'">
+            </app-profile-review-wizard> -->
+
+
+        </div>
+    </div>
+</div>

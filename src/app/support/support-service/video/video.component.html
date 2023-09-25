@@ -1,0 +1,332 @@
+<div class="row">
+  <div class="col-12">
+    <div class="loader" *ngIf="loader">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{language.Loading}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <span class="cursor-pointer primary mx-3" id="serviceVideoRefresh" (click)="(subsId && ssoService.getEntitlementsArr().indexOf('102') > -1) ? getAllSubsServicesData() : loadData('refresh')">
+          <i class="fas fa-sync refreshicon"></i>
+        </span>
+
+        <!-- <button type="button"  class="btn-default btn-dft px-3 mx-2"
+          >{{language.Refresh}}</button> -->
+      </div>
+      <!--<div class="col-md-6">
+        <div *ngIf="deviceInfo.length > 1" class="col-md-8 float-right ">
+          <ng-select id="serialNumberList" name="serialNumberList" data-toggle="tooltip" data-placement="bottom"
+            title="Select Serial-Number List to Update" (change)="loadData('')" [(ngModel)]="serialNumberSelected"
+            [items]="deviceInfo" placeholder="Select Serial Number" bindLabel="serialNumber" bindValue="serialNumber"
+            [searchable]="false" [clearable]="false">
+          </ng-select>
+        </div>
+      </div>-->
+
+    </div>
+    <!--<div class="w-100 alert alert alert-success  fade show mt-2" *ngIf="isSuccess">
+      <button type="button" class="close" (click)="isSuccess = false;">&times;</button>
+      {{language.Operation_Successful}}
+    </div>-->
+    <div class="w-100 alert alert alert-danger  fade show mt-2" *ngIf="isError">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+      <button type="button" class="close" (click)="isError = false;"><span></span></button>
+      <div class="d-inline-flex" [innerHtml]="alertMessage"></div>
+    </div>
+    <div class="loader" *ngIf="loader">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{language.Loading}}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 pl-22 pr-0" *ngIf="ssoService.getEntitlementsArr().indexOf('102') > -1 && (videoServicesStatus?.usoc || (usocVideo&& this.videoser?.activate) )">
+          <div class="row">
+           <div class="col-md-12 px-0 border-bottom d-flex justify-content-start">
+             <div class="col-md-12 px-0">
+               <div class="net-ops-secondary-title user-name mb-0">
+                 {{language['Video Service']}}
+               </div>
+             </div>
+           </div>
+           <div class="col-md-12 support-key-value mt-2 px-0">
+            <table id="wanVideo" class="">
+              <tbody>
+                <tr>
+                  <th scope="row">{{language['Video Plan']}}</th>
+                  <td>{{videoServicesStatus?.usoc ? videoServicesStatus?.usoc : usocVideo && this.videoser?.activate ? usocVideo:'-'}}</td>
+                </tr>
+                <tr>
+                  <th scope="row">{{language['Service Status']}}</th>
+                   <!--<td [ngClass]="{
+                    green: enablestatus == 'True',
+                    red: enablestatus == 'False'
+                  }">{{ language[enablestatus] || enablestatus || "-"}}</td>-->
+                  <td>{{enablestatus ? enablestatus:'-'}}</td>
+                </tr>
+                 </tbody>
+            </table>
+           </div>
+          </div>
+        </div>
+      </div>
+      <div class="row justify-content-between video-content-info">
+        <!---------->
+        <div class="width-75" *ngIf="multicastStream.data.length && objectExistence(metaData?.VideoMulticastSystems)">
+          <ng-container *ngFor="let mc of multicastStream.data; let i=index">
+            <div class="row border-bottom mb-2">
+              <div class="net-ops-secondary-title user-name.mb-0">{{language.Multicast_Stream}}
+                {{mc.PortInterface}}({{mc.NumberOfGroups}} Groups)</div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-12 px-0 service-video-tables">
+                <table class="" [attr.id]="'multicastStreamTable_'+i">
+                  <thead>
+                    <tr>
+                      <th scope="col" *ngIf="mc.MulticastSubscriber.length && mc.MulticastSubscriber[0]['Tci']">
+                        {{language.VLAN}}</th>
+                      <th scope="col" *ngIf="mc.MulticastSubscriber.length && mc.MulticastSubscriber[0]['Tci']">
+                        {{language.PBit}}</th>
+                      <th scope="col" *ngIf="mc.MulticastSubscriber.length && mc.MulticastSubscriber[0]['Tci']">
+                        {{language.CFI}}</th>
+                      <th scope="col">{{language.Group_IP}}</th>
+                      <th scope="col">{{language.Source_IP}}
+                      </th>
+                      <th scope="col">{{language.Client_IP}}
+                      </th>
+                      <th scope="col">{{language.Joined_Time}}</th>
+
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let data of mc.MulticastSubscriber">
+                      <td *ngIf="data['Tci']">{{data.VLAN || 'NA'}}</td>
+                      <td *ngIf="data['Tci']">{{data.PBit || 'NA'}}</td>
+                      <td *ngIf="data['Tci']">{{data.CFI || 'NA'}}</td>
+                      <td>{{data.GroupIpAddress}}</td>
+                      <td>{{data.SourceIpAddress}}</td>
+                      <td>{{data.ClientIpAddress}}</td>
+                      <td>{{data.JoinedTime | date:'MM/dd/yyyy, h:mm:ss a'}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+        <div class="service-data-info width-25"
+          *ngIf="wanInfo.length && objectExistence(metaData?.WANInfo) else wanInfoError">
+          <div class="row">
+            <div class="col-md-12 px-0 border-bottom d-flex justify-content-start"
+              [ngClass]="{'stopAction' : !wanInfo.length}">
+              <div class="col-md-5" *ngIf='wanInfo.length > 1'>
+                <div class="net-ops-secondary-title user-name  mb-0"><!--{{language.Wan_Status}}-->{{language['Router WAN Status']}}</div>
+              </div>
+              <div class="col-md-12 px-0" *ngIf='wanInfo.length === 1'>
+                <div class="net-ops-secondary-title user-name  mb-0"><!--{{language.Wan_Status}}-->{{language['Router WAN Status']}} -
+                  <span>{{wanInfo[0].Name}}</span>
+                </div>
+              </div>
+              <div class="col-md-7 text-right p-0" *ngIf='wanInfo.length > 1'>
+                <div class="d-flex justify-content-end arrow-down">
+                  <div class="wan-dropdown net-ops-secondary-title" id="wanStatusSelectedId">{{wanInfo[0].Name}}</div>
+                  <div class="cus-dd dropdown-button custom-dropdown-btn" ngbDropdown>
+                    <button class="mr-2" id="dropdownExchange" ngbDropdownToggle>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="15.472" height="8.442" viewBox="0 0 15.472 8.442">
+                        <path id="ic_chevrondown" d="M7.738,7.038.7,0,0,.7,7.034,7.742l.7.7.7-.7L15.472.7l-.7-.7Z"
+                          fill="#9e9e9e" />
+                      </svg>
+
+                    </button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownExchange" class="wanDropDown pt-3 pb-3">
+                      <button ngbDropdownItem class="greyaa" *ngFor="let wi of wanInfo; let i = index"
+                        (click)="wanSelection(i)"><span>{{wi.Name}}</span></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+            </div>
+
+            <div class="col-md-12 support-key-value mt-2 px-0">
+              <table id="wanVideo" class="">
+                <tbody>
+                  <tr *ngIf="metaData?.WANInfo?.Enable">
+                    <th scope="row">{{language.Enabled}}</th>
+                    <td
+                      [ngClass]="{'green': (wanInfoToDisplay.Enable == 'True' ), 'red': (wanInfoToDisplay.Enable == 'False')}">
+                      {{wanInfoToDisplay.Enable || '-'}} </td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.Uptime && metaData?.WANInfo?.Uptime">
+                    <th scope="row">{{language.Uptime}}</th>
+                    <td>{{wanInfoToDisplay.Uptime ? upTime : '-' || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.ConnectionStatus">
+                    <th scope="row">{{language.Connection_Status}}
+                    </th>
+                    <td>{{wanInfoToDisplay.ConnectionStatus || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.IPv6ConnStatus">
+                    <th scope="row">{{"IPv6 Connection Status"}}
+                    </th>
+                    <td>{{wanInfoToDisplay.IPv6ConnStatus || '-'}}</td>
+                  </tr>
+
+                  <tr *ngIf="wanInfoToDisplay.MACAddress && metaData?.WANInfo?.MACAddress">
+                    <th scope="row">{{language.MAC_Address}}</th>
+                    <td>{{wanInfoToDisplay.MACAddress || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.DownstreamRate && metaData?.WANInfo?.DownstreamRate">
+                    <th scope="row">{{language.Downstream_Mbps}}</th>
+                    <td>{{wanInfoToDisplay.DownstreamRate || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.UpstreamRate && metaData?.WANInfo?.UpstreamRate">
+                    <th scope="row">{{language.Upstream_Mbps}}</th>
+                    <td>{{wanInfoToDisplay.UpstreamRate || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.VlanId && metaData?.WANInfo?.VlanID">
+                    <th scope="row">{{language.VLAN_ID}}</th>
+                    <td>{{wanInfoToDisplay.VlanId || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.Vlan">
+                    <th scope="row">{{language.VLAN}}</th>
+                    <td>{{wanInfoToDisplay.Vlan || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.VlanPriority && metaData?.WANInfo?.VlanPriority">
+                    <th *ngIf="wanInfoToDisplay.VlanPriority" scope="row">{{language.VLAN_Priotiry}}</th>
+                    <td>{{wanInfoToDisplay.VlanPriority || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.BytesReceived && metaData?.WANInfo?.BytesReceived">
+                    <th scope="row">{{language.Bytes_Received}}</th>
+                    <td>{{wanInfoToDisplay.BytesReceived || '-'}}</td>
+
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.BytesSent && metaData?.WANInfo?.BytesSent">
+                    <th scope="row">{{language.Byte_Sent}}</th>
+                    <td>{{wanInfoToDisplay.BytesSent || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.PacketsReceived && metaData?.WANInfo?.PacketsReceived">
+                    <th scope="row">{{language.Packets_Received}}</th>
+                    <td>{{wanInfoToDisplay.PacketsReceived || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.PacketsSent && metaData?.WANInfo?.PacketsSent">
+                    <th scope="row">{{language.Packets_Sent}}</th>
+                    <td>{{wanInfoToDisplay.PacketsSent || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="
+                  wanInfoToDisplay?.BridgeLANInterface
+                ">
+                    <th scope="row">{{language.Bridge_LAN_Interface}}</th>
+                    <td>{{ wanInfoToDisplay.BridgeLANInterface || "-" }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <!--<div class="w-100 alert warning-msg fade show" *ngIf="false">
+              <span class="success-img w-40-float"><img
+                  src="./assets/img/warning-icon.svg" /></span>
+              <button type="button" class="close ml-2" (click)="Bridgelanwarning = false">
+                <img src="assets/img/ic_close-44px.svg" />
+              </button>
+              <span>Bridge LAN Interface Not Support</span>
+        
+            </div>-->
+            <div class="col-md-12 border-bottom  px-0">
+              <div class="net-ops-secondary-title user-name.mb-0"><!--{{language.Wan_Configuration}}-->{{language['Router WAN Configuration']}}</div>
+            </div>
+            <div class="col-md-12 support-key-value mt-2 px-0">
+              <table class="" id="wanConfigVideo">
+                <tbody>
+                  <tr *ngIf="wanInfoToDisplay.Username">
+                    <th scope="">{{language.Username}}</th>
+                    <td>{{wanInfoToDisplay.Username || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.AddressingType">
+                    <th scope="">{{language.Addressing_Type}}</th>
+                    <td>{{wanInfoToDisplay.AddressingType || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.ConnectionType && metaData?.WANInfo?.ConnectionType">
+                    <th scope="">{{language.Connection_Type}}</th>
+                    <td>{{wanInfoToDisplay.ConnectionType || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.RemoteIPAddress">
+                    <th scope="">{{language.Remote_IP_Address}}</th>
+                    <td>{{wanInfoToDisplay.RemoteIPAddress || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.DefaultGateway">
+                    <th scope="row">{{language.Default_Gateway}}
+                    </th>
+                    <td>{{wanInfoToDisplay.DefaultGateway || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.SubnetMask">
+                    <th scope="row">{{language.Subnet_Mask}}
+                    </th>
+                    <td>{{wanInfoToDisplay.SubnetMask || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.DNSServers">
+                    <th scope="row">{{language.DNS_Servers}}</th>
+                    <td>{{wanInfoToDisplay.DNSServers || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.ExternalIPAddress">
+                    <th scope="row">{{language.External_IP_Address}}</th>
+                    <td>{{ wanInfoToDisplay.ExternalIPAddress || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.IPv6ConnType">
+                    <th scope="">{{"IPv6 Connection Type"}}</th>
+                    <td>{{ wanInfoToDisplay.IPv6ConnType || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.IPv6AddressingType && metaData?.WANInfo?.IPv6AddressingType">
+                    <th scope="">{{"IPv6 Addressing Type"}}</th>
+                    <td>{{wanInfoToDisplay.IPv6AddressingType || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.DefaultIPv6Gateway && metaData?.WANInfo?.DefaultIPv6Gateway">
+                    <th scope="row">{{"Default IPv6 Gateway"}}
+                    </th>
+                    <td>{{wanInfoToDisplay.DefaultIPv6Gateway || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.IPv6DNSServers && metaData?.WANInfo?.IPv6DNSServer">
+                    <th scope="row">{{"IPv6 DNS Servers"}}</th>
+                    <td>{{wanInfoToDisplay.IPv6DNSServers || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.ExternalIPv6Address && metaData?.WANInfo?.ExternalIPv6Address">
+                    <th scope="row">{{"External IPv6 Address"}}</th>
+                    <td>{{wanInfoToDisplay.ExternalIPv6Address || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.IANA && metaData?.WANInfo?.IANA">
+                    <th scope="row">{{language.IANA}}</th>
+                    <td>{{wanInfoToDisplay.IANA || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.GRP && metaData?.WANInfo?.GRP">
+                    <th scope="row">{{language.GRP}}</th>
+                    <td>{{wanInfoToDisplay.GRP || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.IPv6SitePrefixPltime">
+                    <th scope="row">{{'Preferred Lifetime'}}</th>
+                    <td>{{wanInfoToDisplay.IPv6SitePrefixPltime || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="wanInfoToDisplay.IPv6SitePrefixVltime">
+                    <th scope="row">{{'Valid Lifetime'}}</th>
+                    <td>{{wanInfoToDisplay.IPv6SitePrefixVltime || '-'}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <ng-template #wanInfoError>
+          {{data?.wanInfo?.error}}
+        </ng-template>
+      </div>
+    </div>
+   <div class="text-center-fbold my-3" *ngIf="!wanInfo.length && !multicastStream.data.length && !this.loader && !(ssoService.getEntitlementsArr().indexOf('102') > -1 && (videoServicesStatus?.usoc || usocVideo))">
+      {{language.No_Record_Found}}
+    </div>
+  </div>
+</div>

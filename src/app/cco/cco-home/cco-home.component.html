@@ -1,0 +1,316 @@
+<div role="alert" class="alert alert-warning" *ngIf="!hasPageAccess"> 
+  {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}} </div>
+<section class="" *ngIf="hasPageAccess">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-6 col-sm-6 col-md-8 justify-content-start pl-0">
+        <div class="cco-title">{{language.Home}}</div>
+      </div>
+      <!-- <div class="col-6 col-sm-6 col-md-4 justify-content-end text-right">
+        {{ language.Last_hours }}
+      </div> -->
+    </div>
+  </div>
+</section>
+<section class="" *ngIf="hasPageAccess">
+  <div class="container">
+    <div class="row">
+      <div class="test-container" *ngIf="network_trends && menus['network']">
+        <div class="item pointer" (click)="gotoIssues()">
+          <span>{{language.Outages}}</span>
+          <div class="d-flex align-content-around flex-wrap">
+            <h3>{{outageInfo['count']}}</h3>
+            <span *ngIf="outageInfo['percent'] && outageInfo['percent'] > 0"
+              class="sub-menu-list-icon">+{{outageInfo['percent']}}%
+              <i class="fa fa-arrow-right gly-rotate-90" aria-hidden="true"></i>
+            </span>
+
+            <span *ngIf="outageInfo['percent'] < 0" class="sub-menu-list-icon2">-{{outageInfo['percent']}}%
+              <i class="fa fa-arrow-right gly-rotate-45" aria-hidden="true"></i>
+            </span>
+
+            <span *ngIf="!outageInfo['percent']" class="sub-menu-list-icon2">0%
+            </span>
+
+          </div>
+          <div class="past-hours"> {{language.Past_24_hours}}</div>
+        </div>
+        <div class="item pointer" (click)="gotoHealthPON()">
+          <span> {{language['Pon Capacity Hits']}}</span>
+          <div class="d-flex align-content-around flex-wrap">
+            <h3>{{PONCAPACITY ? PONCAPACITY:0}}</h3>
+            <span *ngIf="PONCAPACITYpercent && PONCAPACITYpercent > 0"
+              class="sub-menu-list-icon">+{{PONCAPACITYpercent}}%
+              <i class="fa fa-arrow-right gly-rotate-90" aria-hidden="true"></i>
+            </span>
+
+            <span *ngIf="PONCAPACITYpercent < 0" class="sub-menu-list-icon2">{{PONCAPACITYpercent}}%
+              <i class="fa fa-arrow-right gly-rotate-45" aria-hidden="true"></i>
+            </span>
+
+            <span *ngIf="!PONCAPACITYpercent" class="sub-menu-list-icon2">0%
+            </span>
+          </div>
+          <div class="past-hours"> {{language.Past_24_hours}}</div>
+        </div>
+        <div class="item pointer" (click)="gotoSystem()">
+          <span>{{language['Active Systems']}} </span>
+          <!-- <div class="d-flex align-content-around flex-wrap">
+            <h3>{{active}}</h3>
+            <span class="sub-menu-list-icon" *ngIf=" arrowPositive">{{activeper}}
+              <a *ngIf="!arrowactiveEnable">
+                <i class="fa fa-arrow-right gly-rotate-90"></i>
+              </a>
+            </span>
+            <span class="sub-menu-list-icon2" *ngIf=" !arrowPositive">{{activeper}}
+              <a *ngIf="!arrowactiveEnable">
+                <i class="fa fa-arrow-right gly-rotate-45"></i>
+              </a>
+            </span>
+          </div> -->
+          <div class="d-flex align-content-around flex-wrap">
+            <h3>{{activeSystemsInfo['count']}}</h3>
+            <!-- <span *ngIf="activeSystemsInfo['percent'] && activeSystemsInfo['percent'] > 0"
+              class="sub-menu-list-icon">+{{activeSystemsInfo['percent']}}%
+              <i class="fa fa-arrow-right gly-rotate-90" aria-hidden="true"></i>
+            </span>
+
+            <span *ngIf="activeSystemsInfo['percent'] < 0"
+              class="sub-menu-list-icon2">-{{activeSystemsInfo['percent']}}%
+              <i class="fa fa-arrow-right gly-rotate-45" aria-hidden="true"></i>
+            </span>
+
+            <span *ngIf="!activeSystemsInfo['percent']" class="sub-menu-list-icon2">0%
+            </span> -->
+
+          </div>
+          <div class="past-hours"> {{language.Past_24_hours}}</div>
+        </div>
+        <!-- <div class="item">
+          <span>{{ language["NETWORK REBOOTS"] }}</span>
+          <div class="d-flex align-content-around flex-wrap">
+            <h3>186</h3>
+            <span class="sub-menu-list-icon"
+              >+12%
+              <i class="fa fa-arrow-right gly-rotate-90" aria-hidden="true"></i
+            ></span>
+          </div>
+        </div>
+        <div class="item">
+          <span> {{ language["Unassociated System"] }}</span>
+          <div class="d-flex align-content-around flex-wrap">
+            <h3>186</h3>
+            <span class="sub-menu-list-icon"
+              >+12%
+              <i class="fa fa-arrow-right gly-rotate-90" aria-hidden="true"></i
+            ></span>
+          </div>
+        </div> -->
+      </div>
+      <div class="test-container" *ngIf="system_trends  && menus['system']">
+        <div class="item">
+          <span class="cco-list-label">{{language["Active Systems"]}}</span>
+          <div class="d-flex">
+            <h3>{{active}}</h3>
+            <!-- <span class="sub-menu-list-icon">{{activeper}}
+              <a *ngIf="!arrowactiveEnable && arrowPositive">
+                <i class="gly-rotate-90"></i>
+              </a>
+              <a *ngIf="!arrowactiveEnable && !arrowPositive">
+                <i class="gly-rotate-45"></i>
+              </a>
+            </span> -->
+            <span class="sub-menu-list-icon" *ngIf=" arrowPositive">{{activeper}}
+              <a *ngIf="!arrowactiveEnable">
+                <i class="fa fa-arrow-right gly-rotate-90"></i>
+              </a>
+            </span>
+            <span class="sub-menu-list-icon2" *ngIf=" !arrowPositive">{{activeper}}
+              <a *ngIf="!arrowactiveEnable">
+                <i class="fa fa-arrow-right gly-rotate-45"></i>
+              </a>
+            </span>
+          </div>
+          <div class="past-hours"> {{language.Past_24_hours}}</div>
+        </div>
+        <div class="item">
+          <span class="cco-list-label">{{language["Pre-Provisioned Systems"]}}</span>
+          <div class="d-flex">
+            <h3>{{preprovision}}</h3>
+            <span class="sub-menu-list-icon" *ngIf="arrowPositivepro">{{preprovisionper}}
+              <a *ngIf="!arrowprovisionEnable ">
+                <i class="fa fa-arrow-right gly-rotate-90"></i>
+              </a>
+            </span>
+            <span class="sub-menu-list-icon2" *ngIf="!arrowPositivepro">{{preprovisionper}}
+              <a *ngIf="!arrowprovisionEnable ">
+                <i class="fa fa-arrow-right gly-rotate-45"></i>
+              </a>
+            </span>
+          </div>
+          <div class="past-hours"> {{language.Past_24_hours}}</div>
+        </div>
+        <div class="item">
+          <span class="cco-list-label">{{language["Unassociated_System"]}}</span>
+          <div class="d-flex">
+            <h3>{{unassociate}}</h3>
+            <!-- <span class="sub-menu-list-icon">{{unassociateper}}
+              <a *ngIf="!arrowunassoEnable && arrowPositiveunasso">
+                <i class="gly-rotate-90"></i>
+              </a>
+              <a *ngIf="!arrowunassoEnable && !arrowPositiveunasso">
+                <i class="gly-rotate-45"></i>
+              </a>
+            </span> -->
+            <span class="sub-menu-list-icon" *ngIf="arrowPositiveunasso">{{unassociateper}}
+              <a *ngIf="!arrowunassoEnable">
+                <i class="fa fa-arrow-right gly-rotate-90"></i>
+              </a>
+            </span>
+            <span class="sub-menu-list-icon2" *ngIf="!arrowPositiveunasso">
+              <a *ngIf="!arrowunassoEnable">
+                <i class="fa fa-arrow-right gly-rotate-45"></i>
+              </a>{{unassociateper}}
+            </span>
+          </div>
+          <div class="past-hours"> {{language.Past_24_hours}}</div>
+        </div>
+        <div class="item">
+          <span class="cco-list-label">{{language["CommandIQ Subscribers"]}}</span>
+          <div class="d-flex">
+            <h3>{{commandIQ}}</h3>
+            <!-- <span class="sub-menu-list-icon">{{commandIqper}}
+              <a *ngIf="!arrowcommandIqperEnable && arrowPositivecommand">
+                <i class="gly-rotate-90"></i>
+              </a>
+              <a *ngIf="!arrowcommandIqperEnable && !arrowPositivecommand">
+                <i class="gly-rotate-45"></i>
+              </a>
+            </span> -->
+            <span class="sub-menu-list-icon" *ngIf="arrowPositivecommand">{{commandIqper}}
+              <a *ngIf="!arrowcommandIqperEnable">
+                <i class="fa fa-arrow-right gly-rotate-90"></i>
+              </a>
+            </span>
+            <span class="sub-menu-list-icon2" *ngIf="!arrowPositivecommand">
+              <a *ngIf="!arrowcommandIqperEnable">
+                <i class="fa fa-arrow-right gly-rotate-45"></i>
+              </a>{{commandIqper}}
+            </span>
+          </div>
+          <div class="past-hours"> {{language.Past_24_hours}}</div>
+        </div>
+        <div class="item">
+          <span class="cco-list-label">{{language["EDGE Suite Subscribers"]}}</span>
+          <div class="d-flex">
+            <h3>{{edgeSuit}}</h3>
+            <!-- <span class="sub-menu-list-icon">{{edgeSuitper}}
+              <a *ngIf='!arrowedgeSuitperEnable && arrowPositiveedge'>
+                <i class="gly-rotate-90"></i></a>
+              <a *ngIf="!arrowedgeSuitperEnable && !arrowPositiveedge">
+                <i class="gly-rotate-45"></i>
+              </a>
+            </span> -->
+            <span class="sub-menu-list-icon" *ngIf='arrowPositiveedge'>{{edgeSuitper}}
+              <a *ngIf="!arrowedgeSuitperEnable">
+                <i class="fa fa-arrow-right gly-rotate-90"></i>
+              </a>
+            </span>
+            <span class="sub-menu-list-icon2" *ngIf=" !arrowPositiveedge">
+              <a *ngIf="!arrowedgeSuitperEnable">
+                <i class="fa fa-arrow-right gly-rotate-45"></i>
+              </a>{{edgeSuitper}}
+            </span>
+          </div>
+          <div class="past-hours"> {{language.Past_24_hours}}</div>
+        </div>
+
+
+
+
+      </div>
+    </div>
+  </div>
+</section>
+<section class="mb-3" *ngIf="hasPageAccess">
+  <div class="container">
+    <div class="row mt-1">
+      <div class="col-md-10 px-0">
+        <div class="ccl-tabs w-100">
+          <ul id="tabs" class="nav nav-tabs">
+            <li class="nav-item" *ngIf="menus['network']">
+              <a href="javascript:void(0)" [routerLink]="['./network-trends']" data-toggle="tab" class="nav-link"
+                routerLinkActive="active">
+                {{ language["Network Trends"] }}
+              </a>
+            </li>
+            <!-- <li class="nav-item">
+              <a href="javascript:void(0)" [routerLink]="['./subscriber-trends']" data-toggle="tab" class="nav-link"
+                routerLinkActive="active">
+                {{ language["Subscriber Trends"] }}
+              </a>
+            </li> -->
+            <li class="nav-item" *ngIf="menus['system']">
+              <a href="javascript:void(0)" [routerLink]="['./system-service-trends']" data-toggle="tab" class="nav-link"
+                routerLinkActive="active">
+                {{language['Subscriber_Trends']}}
+              </a>
+            </li>
+
+            <li class="nav-item" *ngIf="menus['geomap']">
+              <a href="javascript:void(0)" [routerLink]="['./active-systems-geomap']" data-toggle="tab" class="nav-link"
+                routerLinkActive="active">
+                {{language['Active GeoMap'] || 'Active GeoMap'}}
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-12 col-md-2 pr-0 pl-0" style="border-bottom: 2px solid #cccccc;">
+        <!--<div class="w-100 float-right">
+          <div class="custom-selectbox" id="current-issues-interval" *ngIf="hasScopeAccess">
+            <ng-select [searchable]="false" placeholder="{{ language.Last_7_Days }}" [(ngModel)]="filterDays"
+              (change)="setFilterDays()">
+              <ng-option value="7"> {{ language.Last_7_Days }}</ng-option>
+              <ng-option value="30">{{ language.Last_30_Days }} </ng-option>
+            </ng-select>
+           <span *ngIf=testForm.get('testName').errors?.required?>Please fill this field</span>
+                <div *ngIf="frequency.errors?.required && (myForm.submitted|| frequency.touched)" id="frequency-error">
+                {{language['This field is required']}}
+              </div> 
+          </div>
+        </div>-->
+      </div>
+    </div>
+  </div>
+</section>
+<div [hidden]="!hasPageAccess">
+  <router-outlet></router-outlet>
+</div>
+
+<!-- hiding default onboarding popup now for CCL-59517. in case feature we need we can use this -->
+<!-- <ng-template #GetStartedModal let-modal class="col-md-12" >
+  <div class="modal-content">
+
+    <div class="modal-header">
+      <div class="col-md-10"></div>
+      <div class="col-md-2 text-right"> <span class="close-icon pointer" (click)="closeAllModal()" ><img src="assets/img/close-icon.svg" alt="" ></span>
+      </div>
+    </div>
+
+    <div class="modal-body" style="text-align: center; padding: 42px 30px;">
+      <div class=""><img src="assets/img/calix-Cloud-logo.svg" style="width: 290px;"></div>
+      <div class="cco-title mb-4">{{language['Welcome to']}}<br>
+        {{language['Revenue EDGE Deployment Cloud']}}
+      </div>
+      <div class="cco-secondary-title mb-4" style="line-height: initial !important;">
+        {{language['Before you jump in, we\'d like to walk you']}}<br>
+        {{language['through your system onboarding setup']}}.
+      </div>
+
+      <div class="cco-secondary-title " style="color:#0279ff !important" (click)="goToInitialOnboarding()">
+        <span class="cursor-pointer">{{language.Lets_Started}}</span>
+      </div>
+    </div>
+  </div>
+</ng-template> -->

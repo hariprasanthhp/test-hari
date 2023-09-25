@@ -1,0 +1,70 @@
+<section class="mb-4">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-12 px-0">
+                <div class="cco-title">{{language.configuration}}</div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<section class="mb-3">
+    <div class="container">
+        <div class="row mt-4">
+            <div class="col-md-12 px-0">
+                <div class="ccl-tabs w-100">
+                    <ul id="tabs" class="nav nav-tabs">
+                        <li *ngIf="settingsShow" class="nav-item">
+                            <a href="javascript:void(0)" [routerLink]="['./configuration-settings']" data-toggle="tab"
+                                class="nav-link" routerLinkActive="active">
+                                {{language.settings}}
+                            </a>
+                        </li>
+
+                        <li *ngIf="workflowPreShow" class="nav-item">
+                            <a href="javascript:void(0)" [routerLink]="['./configuration-prerequisites']"
+                                data-toggle="tab" class="nav-link" routerLinkActive="active">
+                                {{language['Workflow Prerequisites']}}
+                            </a>
+                        </li>
+                        <li *ngIf="workflowsShow" class="nav-item">
+                            <a href="javascript:void(0)" [routerLink]="['./configuration-workflow']" data-toggle="tab"
+                                class="nav-link" routerLinkActive="active">
+                                {{language.Workflows}}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+<ng-template #GetStartedModal let-modal class="col-md-12" >
+    <div class="modal-content">
+  
+      <div class="modal-header">
+        <div class="col-md-10"></div>
+        <div class="col-md-2 text-right"> <span class="close-icon pointer" (click)="closeAllModal()"><img src="assets/img/close-icon.svg" alt=""></span>
+        </div>
+      </div>
+  
+      <div class="modal-body pad-align">
+        <div class=""><img class="w-290" src="assets/img/calix-Cloud-logo.svg"></div>
+        <div class="cco-title mb-4">Welcome to<br>
+          Revenue EDGE Deployment Cloud
+        </div>
+        <div class="cco-secondary-title mb-4 line-height-ini">
+          Before you jump in, we'd like to walk you<br>
+          through your system onboarding setup.
+        </div>
+  
+        <div class="cco-secondary-title prime-imp" (click)="goToInitialOnboarding()">
+          <span class="cursor-pointer">Let's get started</span>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+<router-outlet></router-outlet>

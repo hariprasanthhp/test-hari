@@ -1,0 +1,11 @@
+.filter-col{min-width: 120px;width: 20%;}
+.modal-cust-space{
+	padding: 42px 74px 42px 62px;
+	padding-left: 62px;
+	padding-right: 74px;
+  }
+  ::ng-deep{
+	.modal-cust-md .modal-dialog{max-width: 45.55% !important;}
+	.default-modal-ui .modal-content{padding: 0 !important;}
+	.default-modal-ui .modal-body{padding-top: 0 !important;}
+  }

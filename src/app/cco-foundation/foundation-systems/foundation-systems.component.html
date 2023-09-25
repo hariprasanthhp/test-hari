@@ -1,0 +1,73 @@
+<section class="mb-2" *ngIf="showTabs">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 px-0" *ngIf="!isProvisioned">
+                <div class="cco-title">{{language.Systems}}</div>
+            </div>
+        </div>
+        <div class="row ccl-tabs" *ngIf="isProvisioned && ccoSearchText">
+            <div class="col-md-12 px-0  d-flex justify-content-between nav-tabs mb-0 ">
+                <div class="cco-title pb-3">{{ccoSearchText}} : {{language['Provisioned Subscribers']}}</div>
+                <img class="mr-3 service-profiles-img cursor-pointer" src="assets/img/ic_close-44px.svg" alt="" (click)="gotoServiceProfiles()">
+            </div>
+            
+        </div>
+    </div>
+</section>
+<section *ngIf="showTabs && !isProvisioned">
+    <div class="container mb-2">
+        <div class="row">
+            <div class="col-md-12 px-0">
+                <div class="ccl-tabs">
+                    <ul id="tabs" class="nav nav-tabs sub-tab">
+
+                        <li *ngIf="scopeFlag.manage" class="nav-item">
+                            <a routerLink="/cco-foundation/foundation-systems/foundation-manage/foundation-system-list"
+                                class="nav-link small" id="manage" routerLinkActive="active"
+                                [ngClass]="currentPage == 'foundation-manage' ? 'active' : ''" data-toggle="tab"
+                                class="nav-link">
+                                {{language.Manage}}
+                            </a>
+                        </li>
+                        <li *ngIf="scopeFlag.geographic" class="nav-item">
+                            <a (click)="setCurrentTab('foundation-geographic-view');"
+                                routerLink="/cco-foundation/foundation-systems/foundation-geographic-view"
+                                class="nav-link small" id="geographic" routerLinkActive="active" data-toggle="tab"
+                                class="nav-link">
+                                {{language.Geographic_View}}
+                            </a>
+                        </li>
+
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<ng-template #GetStartedModal let-modal class="col-md-12" >
+    <div class="modal-content">
+
+        <div class="modal-header">
+            <div class="col-md-10"></div>
+            <div class="col-md-2 text-right"> <span class="close-icon pointer" (click)="closeAllModal()"><img src="assets/img/close-icon.svg" alt=""></span>
+            </div>
+        </div>
+
+        <div class="modal-body" style="text-align: center; padding: 42px 30px;">
+            <div class=""><img src="assets/img/calix-Cloud-logo.svg" style="width: 290px;"></div>
+            <div class="cco-title mb-4">{{language['Welcome to']}}<br>
+                {{language['Revenue EDGE Deployment Cloud']}}
+            </div>
+            <div class="cco-secondary-title mb-4" style="line-height: initial !important;">
+                {{language['Before you jump in, we\'d like to walk you']}}<br>
+                {{language['through your system onboarding setup']}}.
+            </div>
+
+            <div class="cco-secondary-title " style="color:#0279ff !important" (click)="goToInitialOnboarding()">
+                <span class="cursor-pointer">{{language['Lets_Started']}}</span>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<router-outlet *ngIf="scopeFlag.manage || scopeFlag.geographic"></router-outlet>

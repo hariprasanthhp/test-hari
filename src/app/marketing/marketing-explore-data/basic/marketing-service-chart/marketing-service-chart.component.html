@@ -1,0 +1,657 @@
+<div *ngIf="servicechartDownloadError" class="alert alert-warning alert-dismissible fade show" role="alert">
+    <strong>Error!</strong>{{servicechartDownloadErrorMsg}}.
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true" (click)='errorReset()'></span>
+    </button>
+</div>
+<div class="subscriber-details" [ngClass]="!fullScreen ? 'd-block' : 'd-none'">
+    <div class="marketing-wizard flex">
+        <div class="mark-wiz-col brd-btm-snowgrey">
+            <div class="mwc-header flex">
+                <h3 class="chart-title greyaa mb0" id="ServTierTech">{{language.Serv_Tier_Tech}}</h3>
+                <div class="mwc-btns flex">
+                    <button id="serviceTierModelOpen" class="d-none btn-round btn-small-24 btn-grey btn-que"
+                        (click)="serviceChartModalOpen(language.Serv_Tier_Tech)" data-toggle="tooltip"
+                        title="{{language.serviceTier_content_tip}}"></button>
+                    <button id="serviceTierDownloadSection" class="btn-round btn-small-24 btn-grey btn-dload"
+                        (click)="downloadFunction(language.Serv_Tier_Tech)" data-toggle="tooltip"
+                        title="{{language.subs_download_tip}}"></button>
+                    <button id="serviceTierExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+                        (click)="fullScreenExpandFunction(language.Serv_Tier_Tech)" data-toggle="tooltip"
+                        title="{{language.subs_fullscreen_tip}}"></button>
+                </div>
+            </div>
+            <div class="req-text text-center" *ngIf="subscriberTierTechDataError">
+                <div class="loader h-300-left">
+                    {{subscriberTierTechDataErrorMsg}}
+                </div>
+            </div>
+            <div class="text-center" *ngIf="!subscriberTierTechDataAvailable && !subscriberTierTechDataError">
+                <div class="h-300-lt">
+                    <div class="spinner-border text-primary loader">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <div [ngClass]="subscriberTierTechDataAvailable ? 'd-block' : 'd-none'">
+                <div class="mwc-content">
+                    <div class="col-md-12 p-2 ">
+                        <div id="subscriber-tier-tech-chart" class="chart-box h-300-lt">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mark-wiz-col">
+            <div class="mwc-header flex">
+                <h3 class="chart-title greyaa mb0" id="HouseholdDeviceTrends">{{language.Household_Device_Trends}}</h3>
+                <div class="mwc-btns flex">
+                    <button id="houseHoldModelOpen" class="d-none btn-round btn-small-24 btn-grey btn-que"
+                        (click)="serviceChartModalOpen(language.Household_Device_Trends)" data-toggle="tooltip"
+                        title="{{language.HouseholdOptions_Info}}"></button>
+                    <button id="houseHoldDownloadSection" class="btn-round btn-small-24 btn-grey btn-dload"
+                        (click)="downloadFunction(language.Household_Device_Trends)" data-toggle="tooltip"
+                        title="{{language.subs_download_tip}}"></button>
+                    <button id="houseHoldExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+                        (click)="fullScreenExpandFunction(language.Household_Device_Trends)" data-toggle="tooltip"
+                        title="{{language.subs_fullscreen_tip}}"></button>
+                </div>
+            </div>
+            <div class="req-text text-center" *ngIf="householdDevicesDataError">
+                <div class="loader h-300-left">
+                    {{householdDevicesDataErrorMsg}}
+                </div>
+            </div>
+            <div class="text-center" *ngIf="!householdDevicesDataAvailable && !householdDevicesDataError">
+                <div class="h-300-lt">
+                    <div class="spinner-border text-primary loader">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <div [ngClass]="householdDevicesDataAvailable ? 'd-block' : 'd-none'">
+                <h5 class="greyaa mb0  heading-subtitle">{{language.HouseholdOptions_Content}}:
+                    {{houseHoldDeviceTrendsSubscribers | number}}</h5>
+                <div class="mwc-content">
+                    <div class="l-m10">
+                        <div id="household-device-trends-chart" class="chart-box h-300-lt">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mark-wiz-col">
+            <div class="mwc-header flex">
+                <h3 class="chart-title greyaa mb0" id="adoptionChart">{{language.adoption_Chart}}</h3>
+                <div class="mwc-btns flex">
+                    <button id="serviceModuleModelOpen" class="d-none btn-round btn-small-24 btn-grey btn-que"
+                        (click)="serviceChartModalOpen(language.adoption_Chart)" data-toggle="tooltip"
+                        title="{{language.ServiceModuleAdoptionRate_Info}}"></button>
+                    <button id="serviceModuleDownloadSection" class="btn-round btn-small-24 btn-grey btn-dload"
+                        (click)="downloadFunction(language.adoption_Chart)" data-toggle="tooltip"
+                        title="{{language.subs_download_tip}}"></button>
+                    <button id="serviceModuleExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+                        (click)="fullScreenExpandFunction(language.adoption_Chart)" data-toggle="tooltip"
+                        title="{{language.subs_fullscreen_tip}}"></button>
+                </div>
+            </div>
+
+            <div class="req-text text-center" *ngIf="serviceModuleAdoptionRateDataError">
+                <div class="loader h-300-left">
+                    {{serviceModuleAdoptionRateDataErrorMsg}}
+                </div>
+            </div>
+            <div class="text-center"
+                *ngIf="!serviceModuleAdoptionRateDataAvailable && !serviceModuleAdoptionRateDataError">
+                <div class="h-300-lt">
+                    <div class="spinner-border text-primary loader">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <div [ngClass]="serviceModuleAdoptionRateDataAvailable ? 'd-block' : 'd-none'">
+                <div class="mwc-content">
+                    <div class="l-m10">
+                        <div id="service-module-adoption-rate-chart" class="chart-box h-300-lt">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="mark-wiz-col">
+            <div class="mwc-header flex">
+                <h3 class="chart-title greyaa mb0" id="ecoChart">{{language.ecosystem_Chart}}</h3>
+                <div class="mwc-btns flex">
+                    <button id="ecoModuleModelOpen" class="d-none btn-round btn-small-24 btn-grey btn-que"
+                        (click)="serviceChartModalOpen(language.ecosystem_Chart)" data-toggle="tooltip"
+                        title="{{language.ServiceModuleAdoptionRate_Info}}"></button>
+                    <button id="ecoModuleDownloadSection" class="btn-round btn-small-24 btn-grey btn-dload"
+                        (click)="downloadFunction(language.ecosystem_Chart)" data-toggle="tooltip"
+                        title="{{language.subs_download_tip}}"></button>
+                    <button id="ecoModuleExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+                        (click)="fullScreenExpandFunction(language.ecosystem_Chart)" data-toggle="tooltip"
+                        title="{{language.subs_fullscreen_tip}}"></button>
+                </div>
+            </div>
+
+            <div class="req-text text-center" *ngIf="ecoModuleAdoptionRateDataError">
+                <div class="loader h-300-left">
+                    {{ecoModuleAdoptionRateDataErrorMsg}}
+                </div>
+            </div>
+            <div class="text-center" *ngIf="!ecoModuleAdoptionRateDataAvailable && !ecoModuleAdoptionRateDataError">
+                <div class="h-300-lt">
+                    <div class="spinner-border text-primary loader">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <div [ngClass]="ecoModuleAdoptionRateDataAvailable ? 'd-block' : 'd-none'">
+                <div class="mwc-content">
+                    <div class="l-m10">
+                        <div id="eco-rate-chart" class="chart-box h-300-lt">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+
+        <div class="mark-wiz-col" [ngClass]="wifiDeviceCategoryTrendsDataObjectLength ? 'd-block' : 'd-none'">
+            <div class="mwc-header flex">
+                <h3 class="chart-title greyaa mb0" id="wifiCategory">{{language.wifi_Category}}</h3>
+                <div class="mwc-btns flex">
+                    <button id="wifiModelOpen" class="d-none btn-round btn-small-24 btn-grey btn-que"
+                        (click)="serviceChartModalOpen(language.wifi_Category)" data-toggle="tooltip"
+                        title="{{language.wifi_Category_6}}"></button>
+                    <button id="wifiDownloadSection" class="btn-round btn-small-24 btn-grey btn-dload"
+                        (click)="downloadFunction(language.wifi_Category)" data-toggle="tooltip"
+                        title="{{language.subs_download_tip}}"></button>
+                    <button id="wifiExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+                        (click)="fullScreenExpandFunction(language.wifi_Category)" data-toggle="tooltip"
+                        title="{{language.subs_fullscreen_tip}}"></button>
+                </div>
+            </div>
+            <div class="req-text text-center" *ngIf="wifiDeviceCategoryTrendsDataError">
+                <div class="loader h-300-left">
+                    {{wifiDeviceCategoryTrendsDataErrorMsg}}
+                </div>
+            </div>
+            <div class="text-center"
+                *ngIf="!wifiDeviceCategoryTrendsDataAvailable && !wifiDeviceCategoryTrendsDataError">
+                <div class="h-300-lt">
+                    <div class="spinner-border text-primary loader">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <div [ngClass]="wifiDeviceCategoryTrendsDataAvailable ? 'd-block' : 'd-none'">
+                <div class="mwc-content">
+                    <div class="l-m10">
+                        <div id="wifi-device-category-chart" class="chart-box h-300-lt"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mark-wiz-col"
+            [ngClass]="blockThreatsInsightsDataArray && blockThreatsInsightsDataArray.length > 0 ? 'd-block' : 'd-none'">
+
+            <div class="mwc-header flex">
+                <h3 class="chart-title greyaa mb0" id="blockedthreat">{{language.blocked_threat}}</h3>
+
+                <div class="mwc-btns flex">
+                    <button id="blockThreatModelOpen" class="d-none btn-round btn-small-24 btn-grey btn-que"
+                        (click)="serviceChartModalOpen(language.blocked_threat)" data-toggle="tooltip"
+                        title="{{language.BlockedThreats_Info}}"></button>
+                    <button id="blockThreatDownloadSection" class="btn-round btn-small-24 btn-grey btn-dload"
+                        (click)="downloadFunction(language.blocked_threat)" data-toggle="tooltip"
+                        title="{{language.subs_download_tip}}"></button>
+                    <button id="blockThreatExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+                        (click)="fullScreenExpandFunction(language.blocked_threat)" data-toggle="tooltip"
+                        title="{{language.subs_fullscreen_tip}}"></button>
+                </div>
+            </div>
+            <div class="req-text text-center" *ngIf="blockThreatsInsightsDataError">
+                <div class="loader h-300-left">
+                    {{blockThreatsInsightsDataErrorMsg}}
+                </div>
+            </div>
+            <div class="text-center" *ngIf="!blockThreatsInsightsDataAvailable && !blockThreatsInsightsDataError">
+                <div class="h-300-lt">
+                    <div class="spinner-border text-primary loader">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <div [ngClass]="blockThreatsInsightsDataAvailable ? 'd-block' : 'd-none'">
+                <div class="mwc-content">
+                    <div class="l-m10">
+                        <div id="block-threats-insights-chart" class="chart-box h-300-lt">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mark-wiz-col brd-btm-snowgrey">
+            <div class="mwc-header flex">
+                <h3 class="chart-title greyaa mb0" id="commandChart">{{language.command_Chart}}</h3>
+                <div class="mwc-btns flex">
+                    <button id="commandInModelOpen" class="d-none btn-round btn-small-24 btn-grey btn-que"
+                        (click)="serviceChartModalOpen(language.command_Chart)" data-toggle="tooltip"
+                        title="{{language.CommandIQ_Info}}"></button>
+                    <button id="commandInDownloadSection" class="btn-round btn-small-24 btn-grey btn-dload"
+                        (click)="downloadFunction(language.command_Chart)" data-toggle="tooltip"
+                        title="{{language.subs_download_tip}}"></button>
+                    <button id="commandInExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+                        (click)="fullScreenExpandFunction(language.command_Chart)" data-toggle="tooltip"
+                        title="{{language.subs_fullscreen_tip}}"></button>
+                </div>
+            </div>
+            <div class="req-text text-center" *ngIf="commandIQInsightsDataError">
+                <div class="loader h-300-left">
+                    {{commandIQInsightsDataErrorMsg}}
+                </div>
+            </div>
+            <div class="text-center" *ngIf="!commandIQInsightsDataAvailable && !commandIQInsightsDataError">
+                <div class="h-300-lt">
+                    <div class="spinner-border text-primary loader">
+                        <span class="sr-only">{{language.Loading}}</span>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="commandIQInsightsDataAvailable">
+                <div class="mwc-content">
+                    <table id="serviceCommandInsightTable"
+                        class="row-border hover table-alter smal  table-striped w-100">
+                        <thead>
+                            <tr>
+                                <th class="greyaa insight-table-font">{{language.name_Chart}}</th>
+                                <th class="greyaa insight-table-font">{{language.device_Chart}}</th>
+                                <th class="greyaa insight-table-font">{{language.usage_Chart}}</th>
+                                <th class="greyaa insight-table-font">{{language.wifi_Chart}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of commandIQ_Array">
+                                <td class="">{{item.name}}</td>
+                                <td>{{item.numOfDevices}}</td>
+                                <td>{{item.downUsage}} / {{item.upUsage}}</td>
+                                <td>{{item.wifiScore}}</td>
+                            </tr>
+                            <tr *ngIf="commandIQ_Array.length === 0">
+                                <td colspan="4" class="text-center"> {{ language["No Data Available"] }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- service tier -->
+<ng-template #serviceChartModal let-modal class="col-md-12">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addModal">{{popup_heading}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form class="custom-form">
+            <div class="form-group ccl-form ">
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>{{language.service_tier_popup1}}</p>
+                        <p>{{language.service_tier_popup2}}</p>
+                        <ul class="list-block">
+                            <li>{{language.service_tier_popup3}}</li>
+                            <li>{{language.service_tier_popup4}}</li>
+                            <li>{{language.service_tier_popup5}}</li>
+                            <li>{{language.service_tier_popup6}}</li>
+                            <li class="ml-20px"><span>{{language.service_tier_popup7}}</span>
+                                {{language.service_tier_popup10}}</li>
+                            <li class="ml-20px"><span>{{language.service_tier_popup8}}</span>
+                                {{language.service_tier_popup11}}</li>
+                            <li>{{language.service_tier_popup9}}</li>
+                        </ul>
+
+                    </div>
+                </div>
+
+            </div>
+            <!-- <button type="button" class="btn-default primary px-3 px-3">{{language.Save}}</button> -->
+            <button type="button" class="btn-default  btn-dft px-3 px-3 m-2" (click)="closeModal()"
+                data-dismiss="modal">{{language.Cancel}}</button>
+        </form>
+    </div>
+</ng-template>
+<!-- household -->
+<ng-template #serviceHouseChartModal let-modal class="col-md-12">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addModal">{{popup_heading}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form class="custom-form">
+            <div class="form-group ccl-form ">
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>{{language.household_popup1}}</p>
+                        <p>{{language.household_popup2}}</p>
+                        <ul class="list-block">
+                            <li>{{language.household_popup3}}</li>
+                            <li>{{language.household_popup4}}</li>
+                            <li>{{language.household_popup5}}</li>
+                            <li>{{language.household_popup6}}</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+            <!-- <button type="button" class="btn-default primary px-3 px-3">{{language.Save}}</button> -->
+            <button type="button" class="btn-default  btn-dft px-3 px-3 m-2" (click)="closeModal()"
+                data-dismiss="modal">{{language.Cancel}}</button>
+        </form>
+    </div>
+</ng-template>
+<!-- adoption -->
+<ng-template #serviceAdoptionChartModal let-modal class="col-md-12">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addModal">{{popup_heading}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form class="custom-form">
+            <div class="form-group ccl-form ">
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>{{language.service_module_popup1}}</p>
+                        <p>{{language.service_module_popup2}}</p>
+                        <ul class="list-block">
+                            <li>{{language.service_module_popup3}}</li>
+                            <li>{{language.service_module_popup4}}</li>
+                            <li>{{language.service_module_popup5}}</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+            <!-- <button type="button" class="btn-default primary px-3 px-3">{{language.Save}}</button> -->
+            <button type="button" class="btn-default  btn-dft px-3 px-3 m-2" (click)="closeModal()"
+                data-dismiss="modal">{{language.Cancel}}</button>
+        </form>
+    </div>
+</ng-template>
+<!-- wifi -->
+<ng-template #serviceWiFiChartModal let-modal class="col-md-12">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addModal">{{popup_heading}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form class="custom-form">
+            <div class="form-group ccl-form ">
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>{{language.wifi_popup1}}</p>
+                        <p>{{language.wifi_popup2}}</p>
+                        <ul class="list-block">
+                            <li>{{language.wifi_popup3}}</li>
+                            <li>{{language.wifi_popup4}}</li>
+                            <li>{{language.wifi_popup5}}</li>
+                            <li>{{language.wifi_popup6}}</li>
+                            <li class="ml-20px"><span>{{language.wifi_popup7}}</span>
+                                {{language.wifi_popup10}}</li>
+                            <li class="ml-20px"><span>{{language.wifi_popup8}}</span>
+                                {{language.wifi_popup11}}</li>
+                            <li>{{language.wifi_popup9}}</li>
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+            <!-- <button type="button" class="btn-default primary px-3 px-3">{{language.Save}}</button> -->
+            <button type="button" class="btn-default  btn-dft px-3 px-3 m-2" (click)="closeModal()"
+                data-dismiss="modal">{{language.Cancel}}</button>
+        </form>
+    </div>
+</ng-template>
+<!-- blocked -->
+<ng-template #serviceBlockedChartModal let-modal class="col-md-12">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addModal">{{popup_heading}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form class="custom-form">
+            <div class="form-group ccl-form ">
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>{{language.block_popup1}}</p>
+                        <p>{{language.block_popup2}}</p>
+                        <ul class="list-block">
+                            <li>{{language.block_popup3}}</li>
+                            <li>{{language.block_popup4}}</li>
+                            <li>{{language.block_popup5}}</li>
+                            <li class="ml-20px"><span>{{language.block_popup6}}</span>
+                                {{language.block_popup8}}</li>
+                            <li class="ml-20px"><span>{{language.block_popup7}}</span>
+                                {{language.block_popup9}}</li>
+
+                            <li>{{language.block_popup10}}</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+            <!-- <button type="button" class="btn-default primary px-3 px-3">{{language.Save}}</button> -->
+            <button type="button" class="btn-default  btn-dft px-3 px-3 m-2" (click)="closeModal()"
+                data-dismiss="modal">{{language.Cancel}}</button>
+        </form>
+    </div>
+</ng-template>
+<!-- insights -->
+<ng-template #serviceInsightsChartModal let-modal class="col-md-12">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addModal">{{popup_heading}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true"></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form class="custom-form">
+            <div class="form-group ccl-form ">
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>{{language.commandiq_popup1}}</p>
+                        <p>{{language.commandiq_popup2}}</p>
+                        <ul class="list-block">
+                            <li>{{language.commandiq_popup3}}</li>
+                            <li>{{language.commandiq_popup4}}</li>
+                            <li>{{language.commandiq_popup5}}</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+            <!-- <button type="button" class="btn-default primary px-3 px-3">{{language.Save}}</button> -->
+            <button type="button" class="btn-default  btn-dft px-3 px-3 m-2" (click)="closeModal()"
+                data-dismiss="modal">{{language.Cancel}}</button>
+        </form>
+    </div>
+</ng-template>
+<!-- FULL SCREEN -->
+<div class="subscriber-details" [ngClass]="fullScreen ? 'd-block' : 'd-none'">
+    <div class="marketing-wizard flex">
+        <div class="mark-wiz-col brd-btm-snowgrey w-100">
+            <div class="mwc-header flex">
+                <h3 class="chart-title greyaa mb0">{{fullScreenChart}}</h3>
+                <div class="mwc-btns flex">
+                    <button id="serviceChartModelFullView" class="d-none btn-round btn-small-24 btn-grey btn-que"
+                        (click)="serviceChartModalOpen(fullScreenChart)" data-toggle="tooltip"
+                        title="{{serviceFullScreenContent}}"></button>
+                    <button id="serviceChartModelDownload" *ngIf="getExportMenus.length === 0"
+                        (click)="downloadFunction(fullScreenChart)" [ngClass]="fullScreenDownload ? 'spinnershow': '' "
+                        class="btn-round btn-small-24 btn-grey btn-dload" data-toggle="tooltip"
+                        title="{{language.subs_download_tip}}"></button>
+                    <!-- EXPORT MENU -->
+                    <div *ngIf="getExportMenus.length > 0" class="dropdown-button" ngbDropdown>
+                        <button data-toggle="tooltip" title="{{language.explort_option}}"
+                            [ngClass]="fullScreenDownload ? 'spinnershow': '' "
+                            class="btn-round btn-small-24 btn-grey btn-dload" id="dropdownPeriod11" ngbDropdownToggle>
+                        </button>
+                        <div ngbDropdownMenu aria-labelledby="dropdownPeriod11">
+                            <button data-toggle="tooltip" title="{{item}}"
+                                (click)="downloadFunction(fullScreenChart,item)" *ngFor="let item of getExportMenus"
+                                ngbDropdownItem class="greyaa">{{item}}
+                            </button>
+                        </div>
+                    </div>
+                    <button id="serviceChartModelFullViewClose" class="btn-round btn-small-24 btn-grey btn-expand-inv"
+                        (click)="fullScreenCloseFunction()" data-toggle="tooltip"
+                        title="{{language.subs_fullscreen_close_tip}}"></button>
+                </div>
+            </div>
+
+            <h5 class="greyaa mb0  heading-subtitle" *ngIf="fullScreenChart == language.Household_Device_Trends">
+                {{language.Csc_Giga}}: {{houseHoldDeviceTrendsSubscribers | number}}</h5>
+            <div class="col-12" [ngClass]="chartAvailable ? 'd-block' : 'd-none'">
+                <table id="serviceCommandFullViewTable" *ngIf="fullScreenChart == language.command_Chart"
+                    class="table subscriber-table table-striped showTableDataInChart smal">
+                    <!-- COMMAND IQ INSIGHTS -->
+                    <thead>
+                        <tr class="theading">
+                            <th>{{language.Name}}</th>
+                            <th>{{language.Email}}</th>
+                            <th>{{language.accountNumber}}</th>
+                            <th>{{language.devices}}</th>
+                            <th>{{language.Down_Stream_Usage}}</th>
+                            <th>{{language.Up_Stream_Usage}}</th>
+                            <th>{{language.WiFi_Score}}</th>
+                            <th>{{language.Stream_Type}}</th>
+                            <th>{{language.Gamer}}</th>
+                            <th>{{language.Stream_Usage}}</th>
+                            <th>{{language.Customer}}</th>
+                            <th>{{language.servicetier}}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="tbodyheading">
+                        <tr *ngFor="let item of commandIQ_Array">
+                            <td>
+                                <span class="text-overflow-dynamic-container">
+                                    <span class="text-overflow-dynamic-ellipsis" class="textnowrap">{{item.name}}</span>
+                                </span>
+                            </td>
+                            <td class="fs13">{{item.email}}</td>
+                            <td class="fs13">{{item.accountNumber}}</td>
+                            <td class="fs13"> {{item.numOfDevices}}</td>
+                            <td class="fs13">{{item.downUsage}}</td>
+                            <td class="fs13">{{item.upUsage}}</td>
+                            <td class="fs13">{{item.wifiScore}}</td>
+                            <td class="fs13">{{item.streaming}}</td>
+                            <td class="fs13">{{item.gaming}}</td>
+                            <td class="fs13">{{item.streamingUsage}}</td>
+                            <td class="fs13">{{item.customerType}}</td>
+                            <td class="fs13">{{item.serviceTier}}</td>
+                        </tr>
+                        <tr *ngIf="commandIQ_Array.length === 0">
+                            <td colspan="12" class="text-center"> {{ language["No Data Available"] }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="chart-sec" *ngIf="fullScreenChart != language.command_Chart">
+                    <div  class="text-center h-200-pos" *ngIf="fullScreenChart == language.blocked_threat && ( blockThreatsInsightsDataArray.length == 0 || blockThreatsInsightsDataError )">
+                        {{ language["No Data Available"] }}
+                    </div>
+                    <div id={{fullScreenChart}} class="chart-box h-400-w"></div>
+            </div>
+
+            <!-- <div class="text-center" *ngIf="!chartAvailable">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                </div>
+            </div> -->
+
+            <div [ngClass]="fullScreenTableAvailable ? 'd-block' : 'd-none'">
+                <div id="tableContentReady">
+                    <h4 class="fullscreen-table-info" *ngIf="fullScreenChart == language.Serv_Tier_Tech && clickData">
+                        {{clickData.tier}} / {{clickData.tech}}</h4>
+                    <h4 class="fullscreen-table-info" *ngIf="fullScreenChart == language.blocked_threat && clickData">
+
+                        {{clickData.name}}</h4>
+
+
+                    <div class="table-responsive">
+                        <table [ngClass]="!fullScreenTableDataNotAvailable ? 'd-block' : 'd-none'"
+                            id="serviceTierChartModelFullViewTable"
+                            class="table subscriber-table table-striped showTableDataInChart smal">
+                            <!-- SUBSCRIBERS TIER TECH -->
+                            <thead *ngIf="fullScreenChart == language.Serv_Tier_Tech">
+                                <tr>
+                                    <td>{{language.actnumber}} </td>
+                                    <td>{{language.Name}} </td>
+                                    <td>{{language.phonenumber}} </td>
+                                    <td>{{language.serviceaddress}} </td>
+                                    <td>{{language.Email}}</td>
+                                    <td>{{language.region}} </td>
+                                    <td>{{language.Location}} </td>
+                                    <td>{{language.Customer_Type}}</td>
+                                    <td>{{language.downloadSpeedLabel}}</td>
+                                    <td>{{language.uploadSpeedLabel}}</td>
+                                    <td>{{language.attainableRateLabel}}</td>
+                                </tr>
+                            </thead>
+                            <thead *ngIf="fullScreenChart == language.blocked_threat">
+                                <tr>
+                                    <td>{{language.actnumber}} </td>
+                                    <td>{{language.Name}} </td>
+                                    <td>{{language.phonenumber}} </td>
+                                    <td>{{language.serviceaddress}} </td>
+                                    <td>{{language.Service_Tier}} </td>
+                                    <td>{{language.Email}} </td>
+                                    <td>{{language.MAC_Address}} </td>
+                                    <td>{{language.Threat_Count}}</td>
+                                    <td>{{language.Total_Usage}}</td>
+                                    <td>{{language.streamingusage}}</td>
+                                    <td>{{language.gamingusage}}</td>
+                                </tr>
+                            </thead>
+                            <tbody class="tbodyheading" id="append-table-list">
+                            </tbody>
+                        </table>
+
+                        <!-- LOAD MORE BUTTON SECTION -->
+                        <div class="ccl-center text-center" *ngIf="loadMoreButton">
+                            <button id="serviceChartFullViewLoadMore" [ngClass]="loadingBtn ? 'cursor-ban': ''"
+                                class="btn-default primary dis-inline-f" (click)='loadMore()'>{{loadingBtn ?
+                                language.Loading_text : language.loadmore}}
+                                <div *ngIf="loadingBtn" class="spinner">
+                                    <i class="fa fa-spinner"></i>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                    <div *ngIf="fullScreenTableDataNotAvailable" id="no-data-available"
+                        class="border-for-no-data text-center">
+                        <span>{{language.nodata}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center" *ngIf="tableLoader">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{language.Loading}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

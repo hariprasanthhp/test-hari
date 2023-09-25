@@ -1,0 +1,57 @@
+.years-holder{
+	font-size: 18px;
+	font-weight: 600;
+}
+
+.yearly-report {
+    margin: 10px 0px;
+
+}
+
+.year {
+    display: flex;
+    align-items: center;
+}
+
+.years-holder{
+	cursor: pointer;
+}
+
+span.toggle-arrow {
+    font-size: 35px;
+    padding-right: 11px;
+    cursor: pointer;
+}
+
+ .month-list-data{
+ 	margin-left: 25px;
+ }
+
+ .month-list-data ul li{
+ 	cursor: pointer;
+ }
+
+ .month-list-data ul li.active{
+ 	font-weight: 600;
+ }
+
+ .month-based-data {
+    margin: 20px 0px;
+}
+
+.empty-data{
+	display: flex;
+	width: 100%;
+	align-items: center;
+	justify-content: center;
+}
+
+.empty-data p{
+	font-size: 18px;
+}
+.btn-link{
+	color: blue;
+	margin: 10px 0px 0px;
+	font-size: 16px;
+
+}

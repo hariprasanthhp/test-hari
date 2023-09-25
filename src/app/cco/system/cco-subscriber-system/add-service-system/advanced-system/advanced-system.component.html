@@ -1,0 +1,373 @@
+
+<form class="ccl-form needs-validation" [formGroup]="systemInfoForm">
+ <!-- *ngIf="this.systemInfoData?.opMode !== 'ONT' "> -->
+    <div class="loader-wrapper-info"
+        *ngIf="loading">
+        <div class="loader">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary">
+                    <span class="sr-only">{{ language.Loading }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-5 col-md-5 col-sm-12 mpr-0">
+            <div class="form-group">
+                <label class="col-form-label"> {{language.Model}}</label>
+                <!-- <div  [ngClass]="{ 'btn-notallowed': modelnoteditable }">
+                    <ng-select id="deviceModels" [items]="deviceModels" bindLabel="name"
+                        bindValue="value" [multiple]="false" [readonly]="modelnoteditable"
+                        placeholder="{{ language.Device_Model }}" formControlName="modelName"
+                        (change)="systemInfochange();unsavedDta();onModelChange($event)" [clearable]="false" [searchable]="true"
+                        required>
+                    </ng-select>
+                    <div *ngIf="false && submitted && !systemInfoForm.value.modelName" class="">
+                        <div><small style="color: red">{{ language.Add_Sys_Validation1 }}</small></div>
+                    </div>
+                </div> -->
+                <div  [ngClass]="{ 'btn-notallowed': modelnoteditable }">
+                    <ng-select (change)="systemInfochange();unsavedDta();onModelChange($event)" [readonly]="modelnoteditable"
+                      [ngClass]="{ disableDropDown: modelnoteditable }"
+                      formControlName="modelName" 
+                      placeholder="{{ language['System Model'] }}">
+                      <ng-option *ngFor="let mode of deviceModels" autofocus [value]="mode">{{ mode }}</ng-option>
+                    </ng-select>
+                  </div>
+                  <div *ngIf="false && submitted && !systemInfoForm.value.modelName" class="">
+                    <div><small class="error">{{ language.Add_Sys_Validation1 }}</small></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="form-group" *ngIf="systemInfoForm.value.modelName">
+        <label class="col-form-label">{{ language.Mode }}</label>
+        <div class="col-12 col-lg-9 pl-0">
+            <label *ngIf="isRgBtnShow && !hideRadioButton" class="form-check form-check-inline" [ngClass]="{disableDropDown: DisableWifiSSID}">
+                <input type="radio" value="RG" (change)="handleModeChange($event);systemInfochange();unsavedDta();" [attr.disabled]="DisableWifiSSID ? '' : null"
+                    formControlName="opMode" class="mr-2" />{{ language.RG }}
+            </label>
+            <label *ngIf="isRgBtnShow && hideRadioButton" class="form-check form-check-inline" [ngClass]="{disableDropDown: DisableWifiSSID}">
+                <input value="RG" [hidden]="isRgBtnShow && hideRadioButton" (change)="handleModeChange($event);systemInfochange();unsavedDta();" [attr.disabled]="DisableWifiSSID ? '' : null"
+                    formControlName="opMode" class="mr-2" />{{ language.RG }}
+            </label>
+            <label *ngIf="isWapBtnShow && !hideRadioButton" class="form-check form-check-inline" [ngClass]="{disableDropDown: DisableWifiSSID}">
+                <input type="radio" value="WAP" (change)="handleModeChange($event);systemInfochange();unsavedDta();" [attr.disabled]="DisableWifiSSID ? '' : null"
+                    formControlName="opMode" class="mr-2" />{{ language.WAP }}
+            </label>
+            <label *ngIf="isWapBtnShow && hideRadioButton" class="form-check form-check-inline" [ngClass]="{disableDropDown: DisableWifiSSID}">
+                <input type="radio" value="WAP" [hidden]="isWapBtnShow && hideRadioButton" (change)="handleModeChange($event);systemInfochange();unsavedDta();" [attr.disabled]="DisableWifiSSID ? '' : null"
+                    formControlName="opMode" class="mr-2" />{{ language.WAP }}
+            </label>
+            <!-- <label *ngIf="isMangeBtnShow" class="form-check form-check-inline">
+                <input type="radio" value="Managed ONT" (change)="handleModeChange($event);systemInfochange();unsavedDta();"
+                    formControlName="opMode" class="mr-2" />{{ language.Managed_ONT }}
+            </label> -->
+            <label *ngIf="isModemBtnShow" class="form-check form-check-inline" [ngClass]="{disableDropDown: DisableWifiSSID}">
+                <input type="radio" value="Modem" (change)="handleModeChange($event);systemInfochange();unsavedDta();" [attr.disabled]="DisableWifiSSID ? '' : null"
+                    formControlName="opMode" class="mr-2" />{{ language.Modem }}
+            </label>
+            <label *ngIf="ONTmode" class="form-check form-check-inline" [ngClass]="{disableDropDown: DisableWifiSSID}">
+                <input type="radio" value="ONT" formControlName="opMode" class="mr-2" [attr.disabled]="DisableWifiSSID ? '' : null" />{{language.ONT}}
+            </label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-5 col-md-5 col-sm-12 mpr-0">
+            <div class="cco-secondary-title"> {{language['Static Groups']}}</div>
+            <div class="ccl-form needs-validation">
+                <div class="ccl-form">
+                    <label class="col-form-label"> {{ language.Add_Staticgrps }} </label>
+                    <div class="col-12 col-lg-6 pl-0">
+                        <div class="form-check form-check-inline">
+                            <input type="radio" id="materialInline1" name="static" formControlName="static" (change)="unsavedDta();"
+                                [value]="true" (click)="changeStatic()">
+                            <label class="form-check-label mx-2" for="materialInline1">{{ language.Yes }}</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input type="radio" id="materialInline2" name="static" formControlName="static" (change)="unsavedDta();"
+                                [value]="false" (click)="changeStatic()">
+                            <label class="form-check-label mx-2" for="materialInline2">{{language.No }}</label>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="form-group" *ngIf="systemInfoForm.value.static">
+                    <label class="col-form-label"> {{language.Static_Groups}}<span class="error">*</span></label>
+                    <div class="custom-selectbox" class="w-100">
+                        <ng-select id="deviceDataList" [items]="deviceDataList" bindLabel="name" bindValue="_id"
+                            [multiple]="true" placeholder="" formControlName="staticGroupList"
+                            (change)="systemInfochange();unsavedDta(); validateStaticGroups();" [clearable]="true"
+                            [searchable]="true">
+                        </ng-select>
+                        <div *ngIf="staticGroupError" class="">
+                            <div><small appFieldError class="mandatory-msg ">{{language['Please add at least one static group']}}</small>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-lg-7 col-md-7 col-sm-12 pl-5">
+
+        </div>
+    </div>
+</form>
+
+<div class="my-5">
+
+</div>
+<div class="alert alert-info margin-top-20" role="alert" *ngIf="WAPmode">
+    <span>{{ language.Serv_confg_wap }}</span>
+</div>
+<div class="alert alert-info margin-top-20" role="alert" *ngIf="ModemMode">
+    <span>{{ language.Service_config_Modem }}</span>
+</div>
+<div class="w-100 alert alert-danger fade show  px-0" *ngIf="error">
+    <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+    <button type="button" class="close" (click)="error = false;">
+        <span></span>
+    </button>
+    <div class="d-inline-flex" [innerHtml]="errorInfo"></div>
+</div>
+
+<div>
+    <app-advanced-system-ont id="advanced_from_{{iId}}" [iId]="iId" [systemId]="systemId" [deviceModels]="deviceModels"
+        [deviceDataList]="deviceDataList" *ngIf="ManagedONTMode" [sys_ServiceTiers]="sys_ServiceTiers"
+        [systemInfoData]="systemInfoData" [deviceData]="deviceData" [formOptions]="formOptions"
+        (Out_Data_Change)="updateServicesData($event, iId);" (Out_Data_Submit)="saveSystemONT($event);">
+    </app-advanced-system-ont>
+</div>
+
+<div class="mt-3"
+*ngIf="this.systemInfoData?.opMode !== 'ONT' && this.systemInfoData?.opMode !== 'WAP' && (isSSID2_4GZ || isSSID5_4GZ) && showSSIDOption">
+    <div class="row">
+        <div class="col-12">
+            <h4 class="net-ops-secondary-title border-bottom">{{language['Wi-Fi SSID']}}</h4>
+        </div>
+    </div>
+    <div class="row" *ngIf="showUnifiedWiFiSIDtoggle && (isSSID5_4GZ || isSSID6_4GZ)">
+        <div class="col-md-12" >
+          <div class="checkbox" [ngClass]="addDeviceObj.toggeledUnifiedPrimarySSID ? 'switcher-disabled' :'switcher'">
+            <label class="w-100 mb-0">{{language["Unified_SSID"]}}</label>
+            <label for="unifiedSSID">
+              <input type="checkbox" name="chkUnifiedWiFiSID" [(ngModel)]="UnifiedWiFiSID" id="unifiedSSID"
+                (change)="changeUnifiedWiFiSID($event);systemInfochange();"  [disabled]="addDeviceObj.toggeledUnifiedPrimarySSID || DisableWifiSSID">
+              <span [ngClass]="{'cursornotallow': DisableWifiSSID}"><small></small></span>
+            </label>
+            <label class="pl-4" [ngClass]="{disableDropDown: DisableWifiSSID}">{{ UnifiedWiFiSID?language.Enabled: language.Disabled }}</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex  alert-info-note"
+        *ngIf="(showUnifiedPrimarySSID && editMode && addDeviceObj.isUnifiedPrimarySSID) && !this.addDeviceObj.toggeledUnifiedPrimarySSID">
+        <div class="alert-info-icon">
+          <img src="../../../../../../assets/img/warning-icon.svg">
+        </div>
+        <div class="alert-info-content">
+          {{language.wifi_ssid_alertmsg}}.
+        </div>
+      </div>
+    <section id="wifi_ssid" class="">
+        <div class="row">
+            <div class="col-12">
+                <ul class="nav nav-tabs medium-tab" id="tabs" *ngIf="!showUnifiedPrimarySSID" [ngClass]="{'cursornotallow': DisableWifiSSID}">
+                    <li *ngIf="(isSSID2_4GZ || isSSID5_4GZ) && addDeviceObj.selectedModel === '836GE'"
+                        class="nav-item col-3 pl-0" (click)="onSwitchingWifiSSID('Primary SSID')">
+                        <a href="javascript: void(0)" class="nav-link"
+                            [ngClass]="{'active show': switchedWifiSSID === 'Primary SSID', 'cursornotallow': DisableWifiSSID}" role="tab"
+                            id="X_CALIX_SXACC_PRIMARY_2DOT4GHZ_SSID" data-toggle="pill">{{ language.Primary_SSID
+                            }}</a>
+                    </li>
+                    <li *ngIf="(isSSID2_4GZ || isSSID5_4GZ) &&
+                  addDeviceObj.selectedModel === '836GE' &&
+                  !ssoService.acceptGSModel(addDeviceObj?.selectedModel)" class="nav-item col-3"
+                        (click)="onSwitchingWifiSSID('Guest SSID')">
+                        <a href="javascript: void(0)" class="nav-link"
+                            [ngClass]="{'active show': switchedWifiSSID === 'Guest SSID', 'cursornotallow': DisableWifiSSID}" role="tab"
+                            id="X_CALIX_SXACC_GUEST_2DOT4GHZ_SSID" data-toggle="pill">{{ language.Guest_SSID }}</a>
+                    </li>
+                    <li *ngIf="(isSSID2_4GZ) && addDeviceObj.selectedModel !== '836GE'"
+                        class="nav-item col-3 pl-0" (click)="onSwitchingWifiSSID('2.4GHz Primary SSID')">
+                        <a href="javascript: void(0)" class="nav-link"
+                            [ngClass]="{ 'active show': switchedWifiSSID === '2.4GHz Primary SSID' , 'cursornotallow': DisableWifiSSID}" role="tab"
+                            id="X_CALIX_SXACC_PRIMARY_2DOT4GHZ_SSID" data-toggle="pill">2.4 {{
+                            language.GHz_Primary_SSID }}</a>
+                    </li>
+                    <li *ngIf=" (isSSID2_4GZ) && addDeviceObj.selectedModel !== '836GE' &&
+                    !ssoService.acceptGSModel(addDeviceObj?.selectedModel) "
+                        class="nav-item col-3" (click)="onSwitchingWifiSSID('2.4GHz Guest SSID')">
+                        <a href="javascript: void(0)" class="nav-link"
+                            [ngClass]="{ 'active show': switchedWifiSSID === '2.4GHz Guest SSID', 'cursornotallow': DisableWifiSSID}" role="tab"
+                            id="X_CALIX_SXACC_GUEST_2DOT4GHZ_SSID" data-toggle="pill">2.4 {{ language.GHz_Guest_SSID
+                            }}</a>
+                    </li>
+                    <li *ngIf="isSSID5_4GZ && addDeviceObj.selectedModel !== '836GE'" class="nav-item col-3"
+                        (click)="onSwitchingWifiSSID('5GHz Primary SSID')">
+                        <a href="javascript: void(0)" class="nav-link"
+                            [ngClass]="{'active show': switchedWifiSSID === '5GHz Primary SSID', 'cursornotallow': DisableWifiSSID }" role="tab"
+                            id="X_CALIX_SXACC_PRIMARY_5GHZ_SSID" data-toggle="pill">5 {{ language.GHz_Primary_SSID
+                            }}</a>
+                    </li>
+                    <li *ngIf=" isSSID5_4GZ && addDeviceObj.selectedModel !== '836GE' &&
+                    !ssoService.acceptGSModel(addDeviceObj?.selectedModel)"
+                        class="nav-item col-3" (click)="onSwitchingWifiSSID('5GHz Guest SSID')">
+                        <a href="javascript: void(0)" class="nav-link"
+                            [ngClass]="{'active show': switchedWifiSSID === '5GHz Guest SSID', 'cursornotallow': DisableWifiSSID }" role="tab"
+                            id="X_CALIX_SXACC_GUEST_5GHZ_SSID" data-toggle="pill">5 {{ language.GHz_Guest_SSID
+                            }}</a>
+                    </li>
+                    <li *ngIf="isSSID6_4GZ && addDeviceObj?.selectedModel !== '836GE'" class="nav-item"
+                    (click)="onSwitchingWifiSSID('6GHz Primary SSID')">
+                    <a href="javascript: void(0)" class="nav-link"
+                      [ngClass]="{'active show': switchedWifiSSID === '6GHz Primary SSID', 'cursornotallow': DisableWifiSSID}" role="tab"
+                      id="X_CALIX_SXACC_PRIMARY_6GHZ_SSID" data-toggle="pill">6 {{
+                      language.GHz_Primary_SSID
+                      }}</a>
+                  </li>
+    
+                  <li *ngIf="isSSID6_4GZ && addDeviceObj?.selectedModel !== '836GE'
+                                    && !ssoService.acceptGSModel(addDeviceObj?.selectedModel)
+                                  " class="nav-item" (click)="onSwitchingWifiSSID('6GHz Guest SSID')">
+                    <a href="javascript: void(0)" class="nav-link" [ngClass]="{
+                                      'active show': switchedWifiSSID === '6GHz Guest SSID', 'cursornotallow': DisableWifiSSID
+                                    }" role="tab" id="X_CALIX_SXACC_GUEST_6GHZ_SSID" data-toggle="pill">6 {{
+                      language.GHz_Guest_SSID
+                      }}</a>
+                  </li>
+                </ul>
+                <ul *ngIf="showUnifiedPrimarySSID" class="nav nav-tabs medium-tab" id="tabs">
+                    <li *ngIf="(isSSID2_4GZ || isSSID5_4GZ || isSSID6_4GZ) && addDeviceObj?.selectedModel !== '836GE'
+                          " class="nav-item col-3" (click)="onSwitchingWifiSSID('UNIFIED_PRIMARY_SSID')">
+                      <a href="javascript: void(0)" class="nav-link" [ngClass]="{
+                              'active show': switchedWifiSSID === 'UNIFIED_PRIMARY_SSID', 'cursornotallow': DisableWifiSSID
+                            }" role="tab" id="UNIFIED_PRIMARY_SSID" data-toggle="pill">{{language.Primary_SSID}}</a>
+                    </li>
+                  </ul>
+                <app-wifi-ssid-service [deviceData]="addDeviceObj"
+                    *ngIf=" switchedWifiSSID === 'Primary SSID' && (isSSID2_4GZ || isSSID5_4GZ)"
+                    [wifiSSIDObj]="addDeviceObj?.wifiSSID?.X_CALIX_SXACC_PRIMARY_2DOT4GHZ_SSID"
+                    [wifiType]="'X_CALIX_SXACC_PRIMARY_2DOT4GHZ_SSID'" [Security]="security"
+                    (emitWifiObj)="getWifiData($event)" [DisableWifiSSID]='DisableWifiSSID' (unsaved)="unsavedData($event)"  [metaData]="metaData2G" [Networktype]='switchedWifiSSID' [isWifi5Radio]='false' [ftrProperties]="ftrProperties" [editMode]="editMode"  [tempWifiObj]="tempWifiObj">
+                </app-wifi-ssid-service>
+                <app-wifi-ssid-service [deviceData]="addDeviceObj"
+                    *ngIf=" switchedWifiSSID === 'Guest SSID' && (isSSID2_4GZ || isSSID5_4GZ) "
+                    [wifiSSIDObj]="addDeviceObj?.wifiSSID?.X_CALIX_SXACC_GUEST_2DOT4GHZ_SSID"
+                    [wifiType]="'X_CALIX_SXACC_GUEST_2DOT4GHZ_SSID'" [DisableWifiSSID]='DisableWifiSSID' [Security]="security"
+                    (emitWifiObj)="getWifiData($event)" (unsaved)="unsavedData($event)"  [Networktype]='switchedWifiSSID' [isWifi5Radio]='false' [ftrProperties]="ftrProperties" [editMode]="editMode"  [tempWifiObj]="tempWifiObj">
+                </app-wifi-ssid-service>
+                <app-wifi-ssid-service [deviceData]="addDeviceObj"
+                    *ngIf="switchedWifiSSID === '2.4GHz Primary SSID' && (isSSID2_4GZ || isSSID5_4GZ)"
+                    [wifiSSIDObj]="addDeviceObj?.wifiSSID?.X_CALIX_SXACC_PRIMARY_2DOT4GHZ_SSID" [DisableWifiSSID]='DisableWifiSSID'
+                    [wifiType]="'X_CALIX_SXACC_PRIMARY_2DOT4GHZ_SSID'" [Security]="security" [metaData]="metaData2G"
+                    (emitWifiObj)="getWifiData($event)" (unsaved)="unsavedData($event)"  [Networktype]='switchedWifiSSID' [isWifi5Radio]='false' [ftrProperties]="ftrProperties" [editMode]="editMode"  [tempWifiObj]="tempWifiObj">
+                </app-wifi-ssid-service>
+                <app-wifi-ssid-service [deviceData]="addDeviceObj"
+                    *ngIf="switchedWifiSSID === '2.4GHz Guest SSID' && (isSSID2_4GZ || isSSID5_4GZ)"
+                    [wifiSSIDObj]="addDeviceObj?.wifiSSID?.X_CALIX_SXACC_GUEST_2DOT4GHZ_SSID"
+                    [wifiType]="'X_CALIX_SXACC_GUEST_2DOT4GHZ_SSID'" [Security]="security" [DisableWifiSSID]='DisableWifiSSID'
+                    (emitWifiObj)="getWifiData($event)" (unsaved)="unsavedData($event)"  [Networktype]='switchedWifiSSID' [isWifi5Radio]='false' [ftrProperties]="ftrProperties" [editMode]="editMode"  [tempWifiObj]="tempWifiObj">
+                </app-wifi-ssid-service>
+                <app-wifi-ssid-service [deviceData]="addDeviceObj"
+                    *ngIf="switchedWifiSSID === '5GHz Primary SSID' && isSSID5_4GZ"
+                    [wifiSSIDObj]="addDeviceObj?.wifiSSID?.X_CALIX_SXACC_PRIMARY_5GHZ_SSID"
+                    [wifiType]="'X_CALIX_SXACC_PRIMARY_5GHZ_SSID'"  [metaData]="metaData5G" [Security]="security" [DisableWifiSSID]='DisableWifiSSID'
+                    (emitWifiObj)="getWifiData($event)" (unsaved)="unsavedData($event)"  [Networktype]='switchedWifiSSID' [isWifi5Radio]='false' [ftrProperties]="ftrProperties" [editMode]="editMode"  [tempWifiObj]="tempWifiObj">
+                </app-wifi-ssid-service>
+                <app-wifi-ssid-service [deviceData]="addDeviceObj"
+                    *ngIf="switchedWifiSSID === '5GHz Guest SSID' && isSSID5_4GZ"
+                    [wifiSSIDObj]="addDeviceObj?.wifiSSID?.X_CALIX_SXACC_GUEST_5GHZ_SSID"
+                    [wifiType]="'X_CALIX_SXACC_GUEST_5GHZ_SSID'" [Security]="security" [DisableWifiSSID]='DisableWifiSSID'
+                    (emitWifiObj)="getWifiData($event)" (unsaved)="unsavedData($event)"  [Networktype]='switchedWifiSSID' [isWifi5Radio]='false' [ftrProperties]="ftrProperties" [editMode]="editMode"  [tempWifiObj]="tempWifiObj">
+                </app-wifi-ssid-service>
+                <!-- 6 GHZ Primary SSID -->
+
+            <app-wifi-ssid-service [deviceData]="addDeviceObj"
+            *ngIf="switchedWifiSSID === '6GHz Primary SSID' && isSSID6_4GZ" [isWifi5Radio]='false'
+            [wifiSSIDObj]="addDeviceObj?.wifiSSID?.X_CALIX_SXACC_PRIMARY_6GHZ_SSID"
+            [wifiType]="'X_CALIX_SXACC_PRIMARY_6GHZ_SSID'" [Networktype]='switchedWifiSSID' [metaData]="metaData5G" (unsaved)="unsavedData($event)" [DisableWifiSSID]='DisableWifiSSID'
+            [Security]="six_Ghz_SecurityOptions" [ftrProperties]="ftrProperties" (emitWifiObj)="getWifiData($event)"
+            [editMode]="editMode" [tempWifiObj]="tempWifiObj">
+          </app-wifi-ssid-service>
+          <app-wifi-ssid-service [deviceData]="addDeviceObj"
+            *ngIf="switchedWifiSSID === '6GHz Guest SSID' && isSSID6_4GZ"
+            [wifiSSIDObj]="addDeviceObj?.wifiSSID?.X_CALIX_SXACC_GUEST_6GHZ_SSID" [isWifi5Radio]='false'
+            [wifiType]="'X_CALIX_SXACC_GUEST_5GHZ_SSID'" [Networktype]='switchedWifiSSID' [DisableWifiSSID]='DisableWifiSSID'
+            [Security]="six_Ghz_SecurityOptions" [ftrProperties]="ftrProperties" (emitWifiObj)="getWifiData($event)" (unsaved)="unsavedData($event)"
+            [editMode]="editMode" [tempWifiObj]="tempWifiObj">
+          </app-wifi-ssid-service>
+
+          <app-wifi-ssid-service [deviceData]="addDeviceObj"
+            *ngIf="switchedWifiSSID === 'UNIFIED_PRIMARY_SSID'" [isWifi5Radio]='false'
+            [wifiSSIDObj]="addDeviceObj?.wifiSSID?.UNIFIED_PRIMARY_SSID" [wifiType]="'UNIFIED_PRIMARY_SSID'" (unsaved)="unsavedData($event)"
+            [Networktype]='switchedWifiSSID' [metaData]="metaData5G" [Security]="unifiedSSID_SecurityOptions" [DisableWifiSSID]='DisableWifiSSID'
+            [ftrProperties]="ftrProperties" (emitWifiObj)="getWifiData($event)" [editMode]="editMode"
+            [tempWifiObj]="tempWifiObj">
+          </app-wifi-ssid-service>
+            </div>
+        </div>
+          <!-- WIFI -Radio -->
+
+        <div class="row mt-3"
+          *ngIf="(addDeviceObj?.selectedModel !== '836GE') &&
+                 ((switchedWifiSSID === '2.4GHz Primary SSID' && (isSSID2_4GZ && isSSID5_4GZ)) ||
+                 (switchedWifiSSID === '5GHz Primary SSID' && isSSID5_4GZ) ||
+                 (switchedWifiSSID === '6GHz Primary SSID' && isSSID6_4GZ)) || (switchedWifiSSID === 'UNIFIED_PRIMARY_SSID' && ((isSSID2_4GZ && isSSID5_4GZ) || isSSID6_4GZ))">
+          <div class="col-12">
+            <h4 class="net-ops-secondary-title mb-0"> {{language.Wifi_Radio}} </h4>
+          </div>
+          <div class="col-12 mb-2">
+            <ul class="nav nav-tabs medium-tab">
+              <li class="nav-item pl-0" (click)="onSwitchingWifiSSIDRadio('FiveGRadio')"
+                *ngIf="isSSID5_4GZ && addDeviceObj?.selectedModel !== '836GE' && (isSSID2_4GZ && isSSID5_4GZ)">
+                <a class="nav-link active show" role="tab" id="5g_Radio_Pill" data-toggle="pill">
+                  {{language['5GHz Radio']}}
+                </a>
+              </li>
+              <li class="nav-item pl-0" (click)="onSwitchingWifiSSIDRadio('SixGRadio')"
+                *ngIf="isSSID6_4GZ && addDeviceObj?.selectedModel !== '836GE' && isSSID6_4GZ">
+                <a class="nav-link" role="tab" id="6g_Radio_Pill" data-toggle="pill">
+                  {{language['6GHz Radio']}}
+                </a>
+              </li>
+            </ul>
+            <app-wifi-ssid-service [deviceData]="addDeviceObj" *ngIf="switchedWifiSSIDRadio==='FiveGRadio' && 
+                                             isSSID5_4GZ
+                                            " [wifiSSIDObj]="
+                                              addDeviceObj?.wifiSSID
+                                                ?.X_CALIX_SXACC_PRIMARY_5GHZ_SSID
+                                            " [wifiType]="'X_CALIX_SXACC_PRIMARY_5GHZ_SSID'" [isWifi5Radio]='true'
+              [Security]="security" [metaData]="metaData2G" [ftrProperties]="ftrProperties"
+              (emitWifiObj)="getWifiData($event)" [editMode]="editMode" [tempWifiObj]="tempWifiObj">
+            </app-wifi-ssid-service>
+
+            <app-wifi-ssid-service [deviceData]="addDeviceObj" *ngIf="switchedWifiSSIDRadio==='SixGRadio' && 
+                                                              isSSID6_4GZ 
+                                                            " [wifiSSIDObj]="
+                                                              addDeviceObj?.wifiSSID
+                                                                ?.X_CALIX_SXACC_PRIMARY_6GHZ_SSID
+                                                            " [wifiType]="'X_CALIX_SXACC_PRIMARY_6GHZ_SSID'"
+              [isWifi5Radio]='true' [Security]="security" [metaData]="metaData2G" [ftrProperties]="ftrProperties"
+              (emitWifiObj)="getWifiData($event)" [editMode]="editMode" [tempWifiObj]="tempWifiObj">
+            </app-wifi-ssid-service>
+          </div>
+        </div>
+    </section>
+</div>
+
+<div class="mt-3" *ngIf="showLanSettings || ManagedONTMode">
+    <div class="row">
+        <div class="col-12">
+            <h4 class="net-ops-secondary-title">{{language['Additional LAN Settings']}}</h4>
+        </div>
+    </div>
+    <section id="lan_settings" class="">
+        <app-lan-settings [addDeviceObj]="addDeviceObj" (lanEmit)="updateSettings($event);"></app-lan-settings>
+    </section>
+</div>

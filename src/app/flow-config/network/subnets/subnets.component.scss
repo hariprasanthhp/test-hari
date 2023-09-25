@@ -1,0 +1,12 @@
+.subnet-select-div {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    input {
+        margin-left: 10px;
+    }
+}
+
+#subnets-table_wrapper {
+    margin-bottom: 30px;
+}

@@ -1,0 +1,743 @@
+
+  
+  <div class="container position-relative">
+    <div class="loader" *ngIf="loader || micrositeloader || loading || editLoader || bsploader">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{language.Loading}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="w-100 alert alert-danger fade show" *ngIf="error">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+      <button type="button" class="close" (click)="closeAlert()">
+        <span></span>
+      </button>
+      <div class="d-inline-flex" [innerHtml]="language[errorInfo] || errorInfo"></div>
+    </div>
+  
+    <div class="w-100 alert alert-success fade show" *ngIf="success">
+      <span class="success-img"><img src="./assets/img/success-icon.svg" /></span>
+      <button type="button" class="close" (click)="closeAlert()">
+        <span></span>
+      </button>
+      <div class="d-inline-flex" [innerHtml]="language[successInfo] || successInfo"></div>
+    </div>
+    <div *ngIf="loader && !refreshBack">
+  
+    </div>
+    <div *ngIf="!loader">
+      <form [formGroup]="bspForm">
+        <!-- <div class="row">
+          <div class="col-md-12 border-bottom d-flex align-items-center justify-content-between pb-2 mb-4">
+            <div class="cco-secondary-title"> {{language["Bsp_Info"]}}
+             
+             
+            </div>
+           
+          </div>
+        </div> -->
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group ccl-form">
+              <label for="staticEmail" class="col-form-label">{{language["Bsp_Serve_provid"]}} <span
+                  class="error">*</span></label>
+              <div class="">
+                <input type="text" formControlName="shortName" class="form-control" #inputPassword2 required
+                  (keyup)="checkMaxMin(inputPassword2.value,'bsp');clsAlphaNoOnly(inputPassword2.value, 'bsp')"
+                  placeholder="{{language['Bsp_Single_Word_Validation']}}" [readonly]="bspId"
+                  [ngClass]="{'ccl-error':bspFormSubmitted && bspForm.get('shortName').errors,'inp-disabled':bspId}"
+                  title="{{(BspData)?(language.Reset_BSP_Information_tooltip):''}}">
+                <!-- <span class="bsp-short-name">{{language['Bsp_Single_Word_Validation']}} </span> -->
+                <div *ngIf="bspForm.get('shortName').errors" class="ccl-error">
+                  <span *ngIf="bspForm.get('shortName').errors.pattern">{{language['Bsp_Single_Word_Validation']}}</span>
+                </div>
+                <div *ngIf="minimumErr.bsp" class="ccl-error">
+                  <span> {{language["The Service Provider's short name must be 4 to 63 characters and a single word."]}}
+                  </span>
+                </div>
+                <div *ngIf="communityError.bsp" class="ccl-error">
+                  <span> {{language["This field can only contain digits, lowercase letters, or hyphens(-), and should NOT\
+                    start or end\
+                    with a hyphen (-) and a single word."]}} </span>
+                </div>
+                <div *ngIf="(bspFormSubmitted || bspForm.get('shortName').touched) && bspForm.get('shortName').errors"
+                  class="ccl-error">
+                  <span *ngIf="bspForm.get('shortName').errors.required">{{language['This field is required']}}</span>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="staticEmail" class="col-form-label">{{language["Bsp_Time"]}} <span
+                  class="error">*</span></label>
+              <div class="">
+                <ng-select [items]="timeZoneList" bindLabel="displayName" bindValue="value" formControlName="timezone"
+                  placeholder="" [ngClass]="{'ccl-error':bspFormSubmitted && bspForm.get('timezone').errors}">
+  
+                </ng-select>
+                <div *ngIf="bspFormSubmitted && bspForm.get('timezone').errors?.required" class="ccl-error">
+                  <span *ngIf="bspForm.get('timezone').errors?.required">{{language['This field is required']}}</span>
+  
+                </div>
+              </div>
+  
+            </div>
+            <div class="form-group ccl-form">
+              <label for="defaultTerms" class="col-form-label">{{language["Bsp_T&C_URL"]}}<span
+                  class="error">*</span></label>
+              <div class="">
+                <input type="text" formControlName="defaultTerms" class="form-control" id="defaultTerms" required
+                  (keyup)="urlValidation(url.value)" #url placeholder="https://"
+                  [ngClass]="{'ccl-error':bspFormSubmitted && bspForm.get('defaultTerms').errors}" trimSpace
+                  [formValue]="bspForm">
+                <div *ngIf="UrLError">
+                  <p class="error">{{language['Please enter a valid URL.']}}</p>
+                </div>
+                <div *ngIf="bspFormSubmitted && bspForm.get('defaultTerms').errors" class="ccl-error">
+                  <span *ngIf="bspForm.get('defaultTerms').errors.required">{{language['This field is required']}}</span>
+                </div>
+              </div>
+            </div>
+
+            
+
+
+            <div class="form-group ccl-form">
+              <label for="FriendlyName" class="col-form-label pointer" data-toggle="tooltip"
+                data-placement="top"
+                title='{{language["Enter your preferred name for e-mail communications in SmartTown Wi-Fi (by default we use your ORG name)"]}}'>{{language["Service\
+                Provider’s Friendly Name"]}}</label>
+              <div class="">
+                <input type="text" formControlName="friendlyName" class="form-control" #FriendlyName
+                  (keyup)="checkMaxMin(FriendlyName.value,'friendlyName');"
+                  placeholder="{{language['Service Provider’s Friendly Name']}}"
+                  [ngClass]="{'ccl-error':bspFormSubmitted && bspForm.get('friendlyName').errors}" trimSpace
+                  [formValue]="bspForm">
+                <div *ngIf="minimumErr.friendlyName" class="ccl-error">
+                  <span>{{language["The Service Provider's Friendly Name shall not exceed 32 characters."]}}</span>
+                </div>
+              </div>
+            </div>
+            <div class="form-group ccl-form" *ngIf="BspData">
+              <label for="defaultTerms" class="col-form-label">{{language["Bsp_Microsite_Status"]}}</label>
+              <div class="">
+                <div class="d-inline-flex">
+                  <div *ngIf="status ==='READY'" class="active-but"><span class="dot"></span><span
+                      class="pl-1">{{language[status]}}</span></div>
+                  <div *ngIf="status ==='CREATING'" class="draft-but"><span class="dot"></span><span
+                      class="pl-1">{{language[status]}}</span></div>
+                  <div *ngIf="status ==='ERROR'" class="error-but"><span class="dot"></span><span
+                      class="pl-1">{{language[status]}}</span></div>
+                </div>
+               
+                
+              </div>
+            </div>
+            <div class="passpoint-config-title"> {{language["Bsp_Passpoint"]}} </div>
+            <div class="form-group ccl-form">
+              <label for="staticEmail" class="col-form-label">{{language["Bsp_Wifi"]}} <span
+                  class="error">*</span></label>
+              <div class="">
+                <input type="text" formControlName="wifiNetworkName" [readonly]="bspId" class="form-control" required
+                  #inputPassword3 (keyup)="checkMaxMin(inputPassword3.value,'wifi');"
+                  placeholder="{{language['Bsp_Wifi']}}"
+                  [ngClass]="{'ccl-error':bspFormSubmitted && bspForm.get('wifiNetworkName').errors,'inp-disabled':bspId}"
+                  title="{{(BspData)?(language.Reset_BSP_Information_tooltip):''}}">
+                <div *ngIf="bspFormSubmitted && bspForm.get('wifiNetworkName').errors" class="ccl-error">
+                  <span *ngIf="bspForm.get('wifiNetworkName').errors.required">{{language['This field is\
+                    required']}}</span>
+  
+                </div>
+                <div *ngIf="minimumErr.wifi" class="ccl-error">
+                  <span> {{language["The Wi-Fi Network name must be 3 to 32 characters."]}} </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="pb-4 relative-position">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class=""> {{language["Bsp_Default_community_Logo"]}} <span class="error"></span>
+                    <div class="form-input-field">
+                      <!-- <label class="label-control logo-info"></label> -->
+                      <div class="input-field">
+                        <div id="logo-image-view-div" class="logo-image-view ">
+                          <img id="logo-image-view" class="default-microsite-image"
+                            src="{{defaultLogo ? defaultLogo : './assets/img/empty_gary.svg'}}">
+                          <label for="logo" class="primary m-0 pointer"><p class="btn-default btn-dft">{{ defaultLogo ? language['Replace_Image']
+                              :language['Upload Image']}}</p></label>
+                          <input class="type-file" type="file" name="logo" required id="logo" #logo
+                            [ngClass]="{'ccl-error':bspFormSubmitted && !defaultLogo}" (change)="readURL(logo)">
+                        </div>
+                      </div>
+                      <!---->
+                    </div>
+                  </div>
+  
+                </div>
+                <div class="col-md-6">
+                  <div class="logo-guidelines">
+                    {{language["Logo_Guidelines"]}}
+                    <ul>
+                      <li>
+                        {{language["Max File Size: 400kb"]}}</li>
+                      <li> {{language["Format: .png, .jpeg"]}} </li>
+                      <li>{{language["Transparent background recommended"]}}
+                      </li>
+                    </ul>
+                  </div>
+  
+                </div>
+              </div>
+              <div class="row mt-2">
+                <div class="col-md-5">
+                  <div class="mb-3"> {{language["Bsp_Default_Micro_Primary"]}}
+  
+                    <div class="form-input-field ccl-form mt-3">
+                      <div class="input-field color-input w-75">
+                        <input class="form-control" formControlName="defaultPrimaryColor"
+                          [(colorPicker)]="bspForm.value.defaultPrimaryColor"
+                          [style.background]="bspForm.value.defaultPrimaryColor" id="defaultPrimaryColor"
+                          [(ngModel)]="bspForm.value.defaultPrimaryColor" [cpOutputFormat]="'hex'" style="color: #faf9f5;"
+                          [ngClass]="{'ccl-error':bspFormSubmitted && bspForm.get('defaultPrimaryColor').errors,'text-dark':getColorByBgColor(bspForm.value.defaultPrimaryColor),'text-white': !getColorByBgColor(bspForm.value.defaultPrimaryColor)}">
+                        <div *ngIf="bspFormSubmitted && bspForm.get('defaultPrimaryColor').errors" class="ccl-error">
+                          <span *ngIf="bspForm.get('defaultPrimaryColor').errors.required">{{language['This field is\
+                            required']}}</span>
+                        </div>
+                      </div>
+                    </div>
+  
+                  </div>
+                </div>
+                <div class="col-md-5">
+                  <div class=""> {{language["Bsp_Default_Micro_Secondary"]}}
+  
+                    <div class="form-input-field ccl-form mt-3">
+                      <div class="input-field color-input w-75"><input formControlName="defaultSecondaryColor"
+                          id="defaultSecondaryColor" [(ngModel)]="bspForm.value.defaultSecondaryColor"
+                          class="form-control ng-untouched ng-pristine ng-valid"
+                          [(colorPicker)]="bspForm.value.defaultSecondaryColor"
+                          [style.background]="bspForm.value.defaultSecondaryColor" [cpOutputFormat]="'hex'"
+                          style="color: #faf9f5;"
+                          [ngClass]="{'ccl-error':bspFormSubmitted && bspForm.get('defaultSecondaryColor').errors,'text-dark':getColorByBgColor(bspForm.value.defaultSecondaryColor),'text-white': !getColorByBgColor(bspForm.value.defaultSecondaryColor)}">
+                        <div *ngIf="bspFormSubmitted && bspForm.get('defaultSecondaryColor').errors" class="ccl-error">
+                          <span *ngIf="bspForm.get('defaultSecondaryColor').errors.required">{{language['This field is\
+                            required']}}</span>
+                        </div>
+                        <!---->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+  
+              <div class="col-md-12">
+                <div class="microsite-configuration-container">
+  
+  
+  
+                </div>
+              </div>
+  
+  
+            </div>
+          </div>
+          <div class="col-md-12 save-bsp">
+            <button class="btn-default primary px-3 mr-2" id="bsp-save" *ngIf="!bspId" (click)="verifyBSPInfoModal();">
+              {{language["Save BSP Information"]}}
+            </button>
+            <button class="btn-default primary px-3 mr-2" id="bsp-save" *ngIf="bspId" (click)="EditBspProvider();">
+              {{language["Save BSP Information"]}}</button>
+
+              <div class="d-inline-flex ml-1">
+                <div class="text-decoration-none  cursor-pointer btn-default btn-dft" *ngIf="BspData" (click)="BSPPreview()"> <span
+                    class="f-size-16px">{{language.Preview}} <img src="./assets/images/gray-preview-icon.svg" /> </span></div>
+              </div>
+              <div class="d-inline-flex ml-3">
+                <!-- verifyBSPInfoModal() BSPresetErrorModal() -->
+                <a class="text-decoration-none primary cursor-pointer " *ngIf="BspData && tableData?.length === 0"
+                  (click)="BSPInfoWarnModal()">{{language.reset}}</a>
+                <a class="text-decoration-none primary cursor-pointer" *ngIf="BspData && tableData?.length !==0"
+                  (click)="BSPresetErrorModal()">{{language.reset}}</a>
+              </div>
+
+
+          </div>
+        </div>
+      </form>
+  
+      <!-- Microsites -->
+      <!-- <div class="row relative-position">
+        <div class="col-md-12">
+          <div class="cco-secondary-title border-bottom mb-2">{{language["Bsp_Microsites"]}}
+          </div>
+        </div>
+        <div class="col-md-12"> <button class="btn-default primary px-3 mt-2" data-toggle="modal"
+            [disabled]="!ShowMicrosite" data-target=".bd-example-modal-lg"
+            (click)="addMicroSiteValue();buttonText = 'Bsp_Add_Microsite'">{{language["Bsp_Add_Microsite"]}} </button>
+          <div class="d-inline-flex ml-2" title="{{language.Refresh}}" *ngIf="tableData?.length"><span id="refreshicon"
+              (click)="GetMicrosites()" class="cursor-pointer"> <img src="./assets/img/ic_refresh.svg"> </span></div>
+        </div>
+        <div class="col-md-12">
+          <div class="microsites-table mt-3" [hidden]="!tableDataAvailable">
+            <table class="table" *ngIf="tableDataAvailable" #table1 datatable [dtOptions]="dtOptions">
+              <thead>
+                <tr>
+                  <th (click)="showNoDataAvailable()">{{language["Bsp_Microsite_Name"]}}</th>
+                  <th (click)="showNoDataAvailable()">{{language["Bsp_Microsite_Description"]}} </th>
+                  <th (click)="showNoDataAvailable()">{{language["Bsp_Microsite_Type"]}}</th>
+                  <th (click)="showNoDataAvailable()">{{language["Bsp_Microsite_Branding"]}} </th>
+                  <th (click)="showNoDataAvailable()">{{language["Bsp_Microsite_Status"]}} </th>
+                  <th class="Action-column" (click)="showNoDataAvailable()">{{language["Action"]}} </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of tableData;let i=index">
+                  <td>{{item.communityName}}</td>
+                  <td>{{item.communityDesc}}</td>
+                  <td>
+                    {{(item.isPredefinedCommunity)?language['Bsp_Add_Micro__Community_Pre-Defined']:language['Bsp_Add_Micro__Branding_Custom']}},
+                    {{item.communityType ? language[item.communityType]:item.communityType}}</td>
+                  <td>{{item.brandingType ? language[item.brandingType] : item.brandingType}}</td>
+                  <td>
+                    <div *ngIf="item.status ==='READY'" class="active-but"><span class="dot"></span>
+                      {{language[item.status]}}</div>
+                    <div *ngIf="item.status ==='CREATING'" class="draft-but"><span class="dot"></span>
+                      {{language[item.status]}}</div>
+                    <div *ngIf="item.status ==='ERROR'" class="error-but"><span class="dot"></span>
+                      {{language[item.status]}}</div>
+                  </td>
+                  <td class="actions">
+                    <div class="dropdown dropleft">
+                      <button class="btn dropdown-toggle px-0" type="button" id="actionDropBtn" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        <span>...</span>
+                      </button>
+                      <div class="dropdown-menu mt-4 ml-5" aria-labelledby="actionDropBtn">
+                        <button class="dropdown-item" (click)="editMicroSite(item,i);buttonText = 'Bsp_Update_Microsite '"
+                          title="{{language['Edit']}}" data-toggle="modal"
+                          data-target=".bd-example-modal-lg">{{language.Edit}}</button>
+                        <button class="dropdown-item" (click)="EditMicrositePreview(item)">{{language.Preview}}</button>
+                        <button class="dropdown-item" (click)="WarToDelMicrosite(item)"
+                          title="{{language['delete']}}">{{language.Delete}}</button>
+                      </div>
+                    </div>
+  
+            
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div> -->
+    </div>
+  
+  </div>
+<!--   
+  <ng-template #microSiteModal let-modal let-ref="dialogRef">
+  
+    <div class="loader" *ngIf="micrositeloader">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{language.Loading}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="w-100 alert alert-danger fade show d-flex align-items-center" *ngIf="iserror">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+      <div class="d-inline-flex w-80" [innerHtml]="errorInfoMicrosite"></div>
+      <button type="button" class="close" (click)="closeAlert()">
+        <span></span>
+      </button>
+  
+    </div>
+    <div class="row">
+      <div class="col-md-10">
+        <div class="modal-info-title">
+          {{language[buttonText]}}</div>
+      </div>
+      <div class="col-md-2"> <button type="button" class="close" (click)="closeAllModal();">
+          <span aria-hidden="true"></span>
+        </button>
+      
+      </div>
+    </div>
+    <form [formGroup]="addMicroSite">
+      <div class="form-group row">
+        <label for="inputPassword" class="col-sm-4 col-form-label">{{language["Bsp_Add_Micro__Community"]}}<span
+            class="error">*</span></label>
+        <div class="col-sm-8">
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" (click)="removeCommunity()"
+              formControlName="isPredefinedCommunity" [attr.disabled]="( disableCommunity) ? '' : null" [value]="true"
+              id="inlineRadio1">
+            <label class="form-check-label" for="inlineRadio1">{{language["Bsp_Add_Micro__Community_Pre-Defined"]}}
+            </label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" (click)="removeCommunity()"
+              formControlName="isPredefinedCommunity" [attr.disabled]="disblemicrosite ? '' : null" [value]="false"
+              id="inlineRadio2">
+            <label class="form-check-label" for="inlineRadio2">{{language["Bsp_Add_Micro__Community_new"]}}</label>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="Community" class="col-sm-4 col-form-label">{{language['Bsp_Microsite_Type']}}<span
+            class="error">*</span></label>
+        <div class="col-sm-8">
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" (click)="removeCommunity()" formControlName="communityType"
+              [attr.disabled]="( disblemicrosite) ? '' : null" value="Permanent" id="communityType1">
+            <label class="form-check-label" for="communityType1">{{language.Permanent}} </label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" (click)="removeCommunity()" formControlName="communityType"
+              [attr.disabled]="disblemicrosite ? '' : null" value="Non-permanent" id="communityType2">
+            <label class="form-check-label" for="communityType2">{{language['Non-permanent (events)']}}</label>
+          </div>
+        </div>
+      </div>
+      <div class="row" *ngIf="addMicroSite.value.isPredefinedCommunity">
+        <label for="inputPassword" class="col-sm-4 col-form-label">{{language["Bsp_Add_Micro__Community_Name"]}} <span
+            class="error">*</span><br></label>
+        <div class="col-md-8">
+          <div>
+            <ng-select [items]="communityArr" formControlName="communityName" (change)="patchCommunityDescription($event)"
+              bindLabel="name" bindValue="name" placeholder="{{language['Bsp_Add_Micro__Community_Name']}}"
+              [readonly]="disblemicrosite"
+              [ngClass]="{'ccl-error':addMicroSiteFormSubmitted && addMicroSite.get('communityName').errors,'inp-disabled':disblemicrosite}">
+            </ng-select>
+            <div *ngIf="addMicroSite.value.communityName">
+              {{communityDesc}}
+            </div>
+            <div *ngIf="addMicroSiteFormSubmitted && addMicroSite.get('communityName').errors" class="ccl-error">
+              <span *ngIf="addMicroSite.get('communityName').errors.required">{{language['This field is
+                required']}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group ccl-form row" *ngIf="!addMicroSite.value.isPredefinedCommunity">
+        <label for="staticEmail" class="col-sm-4 col-form-label">{{language["Bsp_Add_Micro__Community_Name"]}}<span
+            class="error">*</span></label>
+        <div class="col-sm-8">
+          <input type="text" class="form-control" formControlName="communityName" #inputPassword required
+            [readonly]="disblemicrosite"
+            (keyup)="checkMaxMin(inputPassword.value,'community');clsAlphaNoOnly(inputPassword.value, 'community'); checkSpace($event)"
+            placeholder="{{language['Bsp_Microsite_Name_placeholder']}}"
+            [ngClass]="{'ccl-error':addMicroSiteFormSubmitted && addMicroSite.get('communityName').errors,'inp-disabled':disblemicrosite}">
+          <div *ngIf="minimumErr.community" class="ccl-error">
+            <span> {{language["The_community_name_must_be_4_to_63_characters"]}} </span>
+          </div>
+          <div *ngIf="communityError.community" class="ccl-error">
+            <span> {{language["This field can only contain digits, lowercase letters, or hyphens(-), and should NOT start
+              or end
+              with a hyphen (-) and a single word."]}} {{language['New community name cannot start with “c-”.']}}</span>
+          </div>
+          <div *ngIf="addMicroSiteFormSubmitted && addMicroSite.get('communityName').errors" class="ccl-error">
+  
+            <span *ngIf="addMicroSite.get('communityName').errors.required">{{language['This field is required']}}</span>
+          </div>
+        </div>
+      </div>
+      <div class="form-group ccl-form row" *ngIf="!addMicroSite.value.isPredefinedCommunity">
+        <label for="staticEmail" class="col-sm-4 col-form-label">{{language["Bsp_Microsite_Description"]}} <span
+            class="error">*</span></label>
+        <div class="col-sm-8">
+          <textarea class="text-area-style" rows="3" formControlName="communityDesc" #description
+            placeholder="{{language['Bsp_Microsite_Description_placeholder']}}"
+            (keyup)="checkMaxMin(description.value,'description')"
+            [ngClass]="{'ccl-error':addMicroSiteFormSubmitted && addMicroSite.get('communityDesc').errors}"
+            required></textarea>
+          <div *ngIf="minimumErr.description" class="ccl-error">
+            <span> {{language["The community description shall not exceed 32 characters."]}} </span>
+          </div>
+          <div *ngIf="addMicroSiteFormSubmitted && addMicroSite.get('communityDesc').errors" class="ccl-error">
+  
+            <span *ngIf="addMicroSite.get('communityDesc').errors.required">{{language['This field is required']}}</span>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row my-2">
+        <label for="inputPassword" class="col-sm-4 col-form-label">{{language["Bsp_Microsite_Branding"]}} <span
+            class="error">*</span></label>
+        <div class="col-sm-8">
+          <div class="form-check form-check-inline branding-input">
+            <input class="form-check-input" type="radio" formControlName="brandingType" id="inlineRadio11"
+              (change)="checkColor()" value="Default">
+            <label class="form-check-label" for="inlineRadio11">{{language["Bsp_Add_Micro__Branding_Default"]}} </label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" formControlName="brandingType" id="inlineRadio22"
+              (change)="checkColor()" value="Custom">
+            <label class="form-check-label" for="inlineRadio22">{{language["Bsp_Add_Micro__Branding_Custom"]}} </label>
+          </div>
+        </div>
+      </div>
+      <div class="row my-2" *ngIf="addMicroSite.value.brandingType =='Custom'">
+        <div class="col-md-12">
+          <div class="add-microsite-container">
+            <div class="add-microsite-item">{{language["Add_Microsite_Image"]}}<span class="error"></span>
+              <div class="form-input-field">
+               
+                <div class="input-field">
+                  <div id="logo-customimage-view-div " class="logo-customimage-view mt-2">
+                    <img class="white-logo-image-box default-microsite-image" id="logo-customimage-view"
+                      src="{{Micrositelogo ? Micrositelogo : './assets/img/empty_gary.svg'}}">
+                    <label for="white_logo" class="primary m-0 pointer"><a> {{EditmicrositeId ?
+                        language["Replace_Image"]:language['Upload Image']}}</a></label>
+                    <input class="type-file" type="file" id="white_logo" name="white_logo" #white_logo
+                      (change)="convertIntoFileBase(white_logo)">
+                  </div>
+                </div>
+            
+              </div>
+  
+            </div>
+           
+            <div class="add-microsite-item logo-guidelines">
+              {{language["Logo_Guidelines"]}}
+              <ul class="mt-1">
+                <li>{{language["Max File Size: 400kb"]}}</li>
+                <li> {{language["Format: .png, .jpeg"]}} </li>
+                <li>{{language["Transparent background recommended"]}}</li>
+              </ul>
+            </div>
+           
+            <div class="add-microsite-item mb-2">
+              <div class="w-100 mb-2">{{language["Primary_Color"]}}
+                <div class="form-input-field ccl-form mt-2">
+                  <div class="input-field color-input">
+                    <input class="form-control" [(colorPicker)]="addMicroSite.value.primaryColor"
+                      [(ngModel)]="addMicroSite.value.primaryColor" [style.background]="addMicroSite.value.primaryColor"
+                      id="primaryColor" formControlName="primaryColor" [cpOutputFormat]="'hex'" style="color: #faf9f5;"
+                      [ngClass]="{'ccl-error':addMicroSiteFormSubmitted && addMicroSite.get('primaryColor').errors,'text-dark':getColorByBgColor(addMicroSite.value.primaryColor),'text-white': !getColorByBgColor(addMicroSite.value.primaryColor)}">
+                    <div *ngIf="addMicroSiteFormSubmitted && addMicroSite.get('primaryColor').errors" class="ccl-error">
+                      <span *ngIf="addMicroSite.get('primaryColor').errors.required">{{language['This field is
+                        required']}}</span>
+                    </div>
+                 
+                  </div>
+                </div>
+              </div>
+              <div class="w-100">{{language["Secondary_Color"]}}
+                <div class="form-input-field ccl-form mt-2">
+                  <div class="input-field color-input">
+                    <input id="secondaryColor" formControlName="secondaryColor"
+                      [(ngModel)]="addMicroSite.value.secondaryColor"
+                      class="form-control ng-untouched ng-pristine ng-valid"
+                      [(colorPicker)]="addMicroSite.value.secondaryColor"
+                      [style.background]="addMicroSite.value.secondaryColor" [cpOutputFormat]="'hex'"
+                      style="color: #faf9f5;"
+                      [ngClass]="{'ccl-error':addMicroSiteFormSubmitted && addMicroSite.get('secondaryColor').errors,'text-dark':getColorByBgColor(addMicroSite.value.secondaryColor),'text-white': !getColorByBgColor(addMicroSite.value.secondaryColor)}">
+                    <div *ngIf="addMicroSiteFormSubmitted && addMicroSite.get('secondaryColor').errors" class="ccl-error">
+                      <span *ngIf="addMicroSite.get('secondaryColor').errors.required">{{language['This field is
+                        required']}}</span>
+                    </div>
+                 
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-12 align-items-center">
+          <button *ngIf="!disblemicrosite" class="btn-default primary px-3 mr-3" type="button" id="addMicrosite"
+            [disabled]="minimumErr.community || communityError.community || !this.addMicroSite.value.brandingType || !this.addMicroSite.value.communityName"
+            (click)="onSubmit()">{{language['Bsp_Add_Microsite']}}</button>
+          <button *ngIf="disblemicrosite" (click)="onSubmit()" class="btn-default primary px-3 mr-3" type="button"
+            id="bsp-savechanges">{{language['Save_changes']}}</button>
+          <button *ngIf="!EditmicrositeId" class="btn-default btn-dft px-3 mr-3" type="button"
+            [disabled]="minimumErr.community || communityError.community || !this.addMicroSite.value.brandingType || !this.addMicroSite.value.communityName"
+            id="bsp-preview-btn" (click)="AddMicrositePreview();">{{language.Preview}} <img
+              src="./assets/img/icon_expand.svg" /></button>
+          <button *ngIf="EditmicrositeId" class="btn-default btn-dft px-3 mr-3" type="button"
+            [disabled]="minimumErr.community || communityError.community || !this.addMicroSite.value.brandingType || !this.addMicroSite.value.communityName"
+            id="bsp-preview-btn" (click)="EditMicroPreview();">{{language.Preview}} <img
+              src="./assets/img/icon_expand.svg" /></button>
+          <button (click)="closeAllModal();" id="bsp-cancel"
+            class="btn  primary pointer ">{{language["Bsp_Micro_Cancel"]}}
+          </button>
+        </div>
+      </div>
+    </form>
+  
+  </ng-template>
+  <ng-template #deleteModal let-modal let-ref="dialogRef">
+    <div class="loader" *ngIf="micrositeloader">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{language.Loading}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title"> {{language["Delete_Microsite"]}}</h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="mb-2"> {{language["Microsite_Delete_Mes_for_community"]}} </div>
+      {{language["Microsite_Delete_Mes"]}}
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-default primary px-3" data-dismiss="modal" (click)="DeleteMicrosite()">
+        {{language["yes"]}} </button>
+      <button type="button" class="btn-default primary px-3" data-dismiss="modal"
+        (click)="modal.dismiss()">{{language["no"]}}
+      </button>
+  
+    </div>
+  </ng-template> -->
+  <ng-template #verifyBSPModal let-modal>
+    <div class="loader" *ngIf="bsploader">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{language.Loading}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="w-100 alert alert-danger fade show d-flex align-items-center" *ngIf="iserror">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+      <div class="d-inline-flex w-80" [innerHtml]="errorInfoMicrosite"></div>
+      <button type="button" class="close" (click)="closeAlert()">
+        <span></span>
+      </button>
+    </div>
+    <div class="modal-header my-2">
+      <button type="button" class="close custom-close-btn" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span></span>
+      </button>
+    </div>
+  
+    <div class="modal-body">
+      <div class="d-flex">
+        <div class="alert-type-icon">
+          <img src="../../../assets/img/ic_info_outline.svg" />
+        </div>
+        <!--end-->
+        <div class="custom-alert-content">
+          <h1 class="cco-secondary-title">{{language['Verify the following BSP Information']}}</h1>
+          <ul class="list-disc-type">
+            <li>{{language.Service_Providers_Short_Name}}</li>
+            <li>{{language.Bsp_Wifi}} </li>
+          </ul>
+          <p>{{language.BSP_Information_Verify_Msg}}</p>
+          <div class="w-100 my-3">
+            <button type="button" class="btn-default btn-primary mr-2" *ngIf="!bspId" id="BSPInfoSaveBtn"
+              (click)="AddBspProvider()">{{language.Save}}</button>
+            <!-- <button type="button" class="btn-default btn-primary mr-2" *ngIf="bspId" id="BSPInfoSaveBtn" (click)="EditBspProvider()">{{language.Save}}</button> -->
+            <button type="button" class="btn-default btn-dft" id="BSPInfoCancelBtn"
+              (click)="modal.close('Close click')">{{language.cancel}}</button>
+          </div>
+          <!--end-->
+        </div>
+      </div>
+      <!--end-->
+    </div>
+  </ng-template>
+  <ng-template #bspResetErrorModal let-modal>
+    <div class="modal-header my-2">
+      <button type="button" class="close custom-close-btn" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span></span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="d-flex">
+        <div class="alert-type-icon">
+          <img src="../../../assets/img/ic_error-outline.svg" />
+        </div>
+        <!--end-->
+        <div class="custom-alert-content">
+          <h1 class="cco-secondary-title">{{language.Cannot_Reset_BSP_Information}}</h1>
+          <p>{{language.Reset_BSP_Information_Msg}}</p>
+          <div class="w-100 my-3">
+            <button type="button" class="btn-default btn-primary mr-2" id="BSPErrorOkayBtn"
+              (click)="modal.close('Save click')">{{language.Okay}}</button>
+          </div>
+          <!--end-->
+        </div>
+      </div>
+      <!--end-->
+    </div>
+  </ng-template>
+  <ng-template #bspInfoWarnModal let-modal>
+    <div class="loader" *ngIf="bsploader">
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary">
+          <span class="sr-only">{{language.Loading}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="w-100 alert alert-danger fade show d-flex align-items-center" *ngIf="iserror">
+      <span class="error-img"><img src="./assets/img/ic_error-36px.svg" /></span>
+      <div class="d-inline-flex w-80" [innerHtml]="errorInfoMicrosite"></div>
+      <button type="button" class="close" (click)="closeAlert()">
+        <span></span>
+      </button>
+    </div>
+    <div class="modal-header my-2">
+      <button type="button" class="close custom-close-btn" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span></span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="d-flex">
+        <div class="alert-type-icon">
+          <img src="../../../assets/img/warning-icon-36px.svg" />
+        </div>
+        <!--end-->
+        <div class="custom-alert-content">
+          <h1 class="cco-secondary-title">{{language.sure_reset_BSP_Information}}</h1>
+          <p>{{language['This action cannot be undone']}}</p>
+          <div class="w-100 my-3">
+            <button type="button" class="btn-default btn-primary mr-2" id="BSPWarnOkayBtn"
+              (click)="DeleteBSP()">{{language.Yes_reset_Btn}}</button>
+            <button type="button" class="btn-default btn-dft mr-2" id="BSPWarnCancelBtn"
+              (click)="modal.close('Close click')">{{language.No_cancel_Btn}}</button>
+  
+          </div>
+          <!--end-->
+        </div>
+      </div>
+      <!--end-->
+    </div>
+  </ng-template>
+  
+  <ng-template #verifyMicrositeModel let-modal>
+    <div class="modal-header my-2">
+      <button type="button" class="close custom-close-btn" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span></span>
+      </button>
+    </div>
+  
+    <div class="modal-body">
+      <div class="d-flex">
+        <div class="error-img">
+          <img src="./assets/img/ic_error-36px.svg" />
+        </div>
+        <!--end-->
+        <div class="custom-alert-content">
+          <h1 class="cco-secondary-title">{{language.Cannot_Delete}} {{micrositeName}}</h1>
+          <p class="mb-0">{{language.VerifyMicrositeTitle}}</p>
+          <ul class="list-disc-type">
+            <li *ngFor="let item of workFlowData">{{item?.name}}</li>
+          </ul>
+          <p>{{language.To_delete_this_microsite_msg}}.</p>
+          <div class="w-100 my-3">
+            <button type="button" class="btn-default btn-primary mr-2" id="microErrorOkayBtn"
+              (click)="modal.close('Save click')">{{language.Okay}}</button>
+          </div>
+          <!--end-->
+        </div>
+      </div>
+      <!--end-->
+    </div>
+  </ng-template>

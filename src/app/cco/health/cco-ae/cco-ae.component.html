@@ -1,0 +1,380 @@
+<div role="alert" class="alert alert-warning" *ngIf="!hasScopeAccess">
+  {{language['Access denied due to RBAC. Please consult your Organization Administrator for access.']}}
+</div>
+<div class="d-flex justify-content-between align-items-center">
+  <div class="health-ae-menu-wrapper my-3 col-8 p-0">
+    <div class="health-ae-menu-item kbi-item">
+      <span class="menu-title" id="pendoCCOTotalONTs">{{language['Total AE ONTs']}}</span>
+      <div class="d-flex align-content-around flex-wrap">
+        <h3 class="">{{aeCounts ? aeCounts : 0}}</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="dropleft">
+    <span class="primary dropdown-toggle cursor-pointer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" *ngIf="hasShowAccess" [disabled]="!showTheshold" [ngClass]="{ 'inp-disabled': !showTheshold }">
+      <img class="ic_info" src="../../../../assets/img/ic_info.svg" alt="">
+      Show Thresholds</span>
+    <div class="dropdown-menu pop">
+      <button class="close" type="button"><span></span></button>
+      <p class="title">Upstream or Downstream Ethernet/AE Capacity Utilization</p>
+      <table class="mb-4 ml-3">
+        <tr>
+          <td class="text-right">Set Threshold:</td>
+          <td class="pl-3">{{this.convert_number(this.thresholdData?.etyPortHiUtilThreshold)}}%</td>
+        </tr>
+        <tr>
+          <td class="text-right">Clear Threshold:</td>
+          <td class="pl-3">{{this.convert_number(this.thresholdData?.etyPortHiUtilThresholdClear)}}%</td>
+        </tr>
+      </table>
+      <a class="text-decoration-none cursor-pointer" *ngIf="hasWriteAccess" (click)="navigateThreshold()">Edit Threshold</a>
+    </div>
+  </div>
+</div>
+
+<!--------------------- Apply filter ---------------------------------------->
+<section class="filter-container pb-2" *ngIf="hasScopeAccess">
+  <div class="row px-2">
+    <div class="col-item ccl-form" id="current-issues-region">
+      <label>{{language['Start_Date']}}</label>
+      <div width="100%">
+        <p-calendar id="start_date" [style]="{ width: '100%', height: '38px' }" [inputStyle]="{ height: '36px' }"
+          appendTo="body" [autoZIndex]="true" placeholder="{{ language['START_DATE'] }}" [(ngModel)]="fromDate"
+          [showIcon]="true" [selectOtherMonths]="true" [ngModelOptions]="{ standalone: true }"
+          [minDate]="minDateForstart" (onSelect)="changeDate()" dateFormat="mm-dd-yy" [maxDate]="toDate"
+          [styleClass]="'p-cal-custom'">
+        </p-calendar>
+      </div>
+    </div>
+    <div class="col-item ccl-form" id="current-issues-region">
+      <label>{{language['END_DATE']}}</label>
+      <div width="100%">
+        <p-calendar id="start_date" [style]="{ width: '100%', height: '38px' }" [inputStyle]="{ height: '36px' }"
+          appendTo="body" [autoZIndex]="true" placeholder="{{ language['END_DATE'] }}" [(ngModel)]="toDate"
+          [showIcon]="true" [selectOtherMonths]="true" [ngModelOptions]="{ standalone: true }" (onSelect)="changeDate()"
+          dateFormat="mm-dd-yy" [maxDate]="maxDate" [minDate]="fromDate" [styleClass]="'p-cal-custom'">
+        </p-calendar>
+      </div>
+    </div>
+    <div class="col-item ccl-form" id="current-issues-region">
+      <label>{{language['Region']}}</label>
+      <ng-select width="100%" [(ngModel)]="regionSelected" [items]="regionDataArray" bindValue="id" bindLabel="name"
+        class="selectboxwidth" (ngModelChange)="getLocationValue($event)" [clearable]="false" [searchable]="true"
+        placeholder="{{ language.region }}">
+        <ng-template ng-label-tmp let-item="item" >
+          <div class="text-truncate" title="{{item.name ? item.name : item}}">{{item.name ? item.name : item}}</div>
+        </ng-template>
+        <ng-template ng-option-tmp let-item="item">
+          <div class="text-truncate" title="{{item.name ? item.name : item}}">{{item.name ? item.name : item}}</div>
+        </ng-template>
+      </ng-select>
+    </div>
+    <div class="col-item ccl-form" id="current-issues-location">
+      <label>{{language['Location']}}</label>
+      <ng-select width="100%" [(ngModel)]="locationSelected" [items]="locationDataArray" bindValue="id" bindLabel="name"
+        (ngModelChange)="getSystemValue($event)" class="selectboxwidth" placeholder="{{ language.Location }}"
+        [clearable]="false" [searchable]="true">
+        <ng-template ng-label-tmp let-item="item" >
+          <div class="text-truncate" title="{{item.name ? item.name : item}}">{{item.name ? item.name : item}}</div>
+        </ng-template>
+        <ng-template ng-option-tmp let-item="item">
+          <div class="text-truncate" title="{{item.name ? item.name : item}}">{{item.name ? item.name : item}}</div>
+        </ng-template>
+      </ng-select>
+    </div>
+    <div class="col-item ccl-form" id="current-issues-System">
+      <label>{{language['System']}}</label>
+      <ng-select width="100%" [(ngModel)]="systemSelected" [items]="systemDataArray" bindValue="uuid" bindLabel="name"
+        (ngModelChange)="getInterfaceValue($event)" class="selectboxwidth" placeholder="{{ language.System }}"
+        [clearable]="false" [searchable]="true">
+        <ng-template ng-label-tmp let-item="item" >
+          <div class="text-truncate" title="{{item.name ? item.name : item}}">{{item.name ? item.name : item}}</div>
+        </ng-template>
+        <ng-template ng-option-tmp let-item="item">
+          <div class="text-truncate" title="{{item.name ? item.name : item}}">{{item.name ? item.name : item}}</div>
+        </ng-template>
+      </ng-select>
+    </div>
+    <div class="col-item ccl-form" id="current-issues-interface">
+      <label>{{language['Interface']}}</label>
+      <ng-select width="100%" [(ngModel)]="interfaceSelected" [items]="interfaceDataArray" bindValue="name"
+        bindLabel="name" (ngModelChange)="selectInterface($event)" class="selectboxwidth"
+        placeholder="{{language.Interface}}" [clearable]="false" [searchable]="true">
+        <ng-template ng-label-tmp let-item="item" >
+          <div class="text-truncate" title="{{item.name ? item.name : item}}">{{item.name ? item.name : item}}</div>
+        </ng-template>
+        <ng-template ng-option-tmp let-item="item">
+          <div class="text-truncate" title="{{item.name ? item.name : item}}">{{item.name ? item.name : item}}</div>
+        </ng-template>
+      </ng-select>
+    </div>
+    <div class="col-item ccl-form position-relative" id="current-issues-fsan">
+      <label>{{language.FSAN}}</label>
+      <div class="ccl-form">
+        <input type="text" placeholder="{{language.FSAN}}" [(ngModel)]="fsan" maxlength="12"
+          (keypress)="removespecialcharacter($event)" (keyup)="fsanChanges($event)">
+        <small class="vald-tag mandatory-msg position-absolute" *ngIf="fsanValid">{{language['Invalid FSAN']}}</small>
+      </div>
+    </div>
+    <div class="col-item col-item-action">
+      <div class="d-inline-flex align-items-center">
+        <button class="btn-default btn-primary py-0 mr-2" title="{{language['apply']}}" (click)="applyfilter(true)">
+          <span>{{language['apply']}}</span>
+        </button>
+        <button class="btn-link btn-over-ellipse primary" title="{{language['TClearFilter']}}" id="#"
+          (click)="clearFilter()">
+          <span>{{language['TClearFilter']}}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+<!--------------------- All Chart ---------------------------------------->
+<section *ngIf="!hideInterface" [ngClass]="!fullScreen ? 'd-block' : 'd-none'">
+  <div class="row my-3" id="Region">
+    <div class="col-md-6 col-lg-6">
+      <div class="d-flex justify-content-between border-bottom">
+        <div data-toggle="tooltip" class="long-title-ellips" title='{{language[chartTitlePon]||chartTitlePon}}'>
+          <div class="cco-secondary-title"> {{language[chartTitlePon]||chartTitlePon}}</div>
+        </div>
+        <div class="mwc-btns row align-items-center">
+          <button id="PortCourtDownloadSection" title="{{language.export}}"
+            class="btn-round btn-small-24 btn-grey btn-dload"
+            (click)="downloadFunction(chartName, '#PortCourt',chartDownType,ponChart,chartTitlePon,chartId)"
+            data-toggle="tooltip"></button>
+          <button id="PortCourtExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+            title="{{language.expand}}"
+            (click)="fullScreenExpandFunction(chartTitlePon,chartType,'ponchart',ponChart)"
+            data-toggle="tooltip"></button>
+        </div>
+      </div>
+      <div class="img my-2">
+        <div class="mt-3" *ngIf="loading">
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary" role="">
+              <span class="sr-only">{{language.Loading}}</span>
+            </div>
+          </div>
+        </div>
+        <div class="w-100 alert alert-danger  fade show my-3" *ngIf="errorMsg">
+          <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+          <button type="button" class="close" (click)=" errorMsg = ''"><span></span></button>
+          <div class="d-inline-flex" [innerHtml]="errorMsg"></div>
+        </div>
+        <div class="mwc-content" [ngClass]="!loading && !errorMsg? 'd-block' : 'd-none'">
+          <h5 class="greyaa mb0  heading-subtitle">{{language[chartSubTitle] || chartSubTitle}}
+          </h5>
+          <h5 class="chart-gray-subtitle mb-0">{{subTitle}}
+          </h5>
+          <div class="col-md-12 p-2">
+            <div id="PortCourtChart" class="chart-box h-300px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-6">
+      <div class="d-flex justify-content-between border-bottom">
+        <div data-toggle="tooltip" class="long-title-ellips" title='{{language[chartTitlePacket]||chartTitlePacket }}'>
+          <div class="cco-secondary-title"> {{ language[chartTitlePacket]||chartTitlePacket}} </div>
+        </div>
+        <div class="mwc-btns row align-items-center">
+          <button id="PacketDroppedDownloadSection" title="{{language.export}}"
+            class="btn-round btn-small-24 btn-grey btn-dload" (click)="
+                      downloadFunction('ae_packet', '#PacketDropped',chartDownType,packetErrorData,chartTitlePacket,chartId)
+                    " data-toggle="tooltip"></button>
+          <button id="PacketDroppedExpandSection" class="btn-round btn-small-24 btn-grey btn-expand"
+            title="{{language.expand}}"
+            (click)="fullScreenExpandFunction(chartTitlePacket,chartType,'packagechart',packetErrorData)"
+            data-toggle="tooltip"></button>
+        </div>
+      </div>
+      <div class="img my-2">
+        <div class="mt-3" *ngIf="loading">
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+              <span class="sr-only">{{language.Loading}}</span>
+            </div>
+          </div>
+        </div>
+        <div class="w-100 alert alert-danger  fade show my-3" *ngIf="packetErrormsg">
+          <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+          <button type="button" class="close" (click)=" packetErrormsg = ''"><span></span></button>
+          <div class="d-inline-flex" [innerHtml]="packetErrormsg"></div>
+        </div>
+        <div class="mwc-content" [ngClass]="!loading && !packetErrormsg? 'd-block' : 'd-none'">
+          <h5 class="greyaa mb0  heading-subtitle">
+            {{chartType=='Interface' ? language[chartSubTitleforPackets] || chartSubTitleforPackets :language[chartSubTitle] || chartSubTitle }}
+          </h5>
+          <h5 class="chart-gray-subtitle mb-0">{{subTitle}}
+          </h5>
+          <div class="col-md-12 p-2">
+            <div id="PacketDroppedChart" class="chart-box h-320px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!--------------------------All table Show------------------------------------------------->
+<section [ngClass]="!fullScreen && !hideInterface ? 'd-block' : 'd-none'" class="mb-3">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="d-flex justify-content-between border-bottom">
+        <div data-toggle="tooltip" class="long-title-ellips">
+          <div class="cco-secondary-title pb-2">
+            {{language[tableName] ||tableName }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 smy-2 ccl-form position-relative my-4">
+      <button *ngIf="searchText" class="search-close" (click)="clearSearch(searchText)"><img
+          src="../../../../../assets/img/ic_close-44px.svg" /></button>
+      <input type="text" [(ngModel)]="searchText" aria-label="Search" (keyup)="search($event.target.value)"
+        (search)="search($event.target.value)" class="ccl-from pr-3 ng-pristine ng-valid ng-touched"
+        placeholder="{{language[searchType]||searchType }}" />
+    </div>
+    <div class="col-md-12">
+      <div class="pon-report-table">
+        <table id="pon_table" width="100%" class="row-border hover table-alter" datatable [dtOptions]="dtOptions"
+          [dtTrigger]="dtTrigger">
+          <thead>
+            <tr>
+              <th>
+                {{language[chartType] ||chartType }}
+              </th>
+              <th>{{language['US/DS Threshold Exceeded']}}</th>
+              <th>{{language['Received/Transmitted Error Packets']}}</th>
+            </tr>
+          </thead>
+          <div class="loader" *ngIf="loading">
+            <div class="d-flex justify-content-center">
+              <div class="spinner-border text-primary" role="">
+                <span class="sr-only">{{language.Loading}}</span>
+              </div>
+            </div>
+          </div>
+          <tbody *ngIf="!loading">
+            <tr *ngFor="let item of tableData">
+              <td class="text-link" *ngIf="!item?.deleted"> <a href="javascript:void(0)" (click)="applyfilter(false,'',item)">{{item[chartDownType]?item[chartDownType]:"--"}}<span *ngIf="chartType === 'Interface'"><img class="mx-2"
+                src="../../../../../assets/img/plus-icon.svg" alt=""></span></a></td>
+              <td  *ngIf="item?.deleted">{{item[chartDownType]?item[chartDownType]:"--"}}</td>
+              <td>
+                <div class="d-flex">
+                  <div><img class="mx-2" src="../../../../../assets/img/chart-up.svg"
+                      alt=""><span>{{item.usUtilExcCnt ? countconvert(item.usUtilExcCnt) : '0' }}</span>
+                  </div>
+                  <div><img class="mx-2" src="../../../../../assets/img/chart-down.svg"
+                      alt=""><span>{{item.dsUtilExcCnt ? countconvert(item.dsUtilExcCnt) : '0'}}</span></div>
+                </div>
+              </td>
+              <td>
+                <div class="d-flex">
+                  <div><img class="mx-2" src="../../../../../assets/img/chart-up.svg"
+                      alt=""><span>{{item.rxErr ? countconvert(item.rxErr) : '0'}}</span>
+                  </div>
+                  <div><img class="mx-2" src="../../../../../assets/img/chart-down.svg"
+                      alt=""><span>{{item.txErr ? countconvert(item.txErr) : '0'}}</span></div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+<!--------------Full Screen ------------------------>
+<div class="row my-3" id="full_screen" [ngClass]="fullScreen ? 'd-block' : 'd-none'">
+  <div class="subscriber-trends-wrapper overflow-auto">
+    <div class="w-100 px-3">
+
+      <div class="d-flex justify-content-between border-bottom mb-2">
+        <div class="cco-secondary-title">{{fullScreenChartName}}</div>
+        <div class="mwc-btns flex">
+          <button id="fullScreenChartDownloadSection" title="{{language.export}}"
+            class="btn-round btn-small-24 btn-grey btn-dload" (click)="
+                downloadFunction(fullScrChart, '#fullScreenChart', fullScreenChartType, fullScreenData,downloadTitle)  
+              " data-toggle="tooltip"></button>
+          <button id="fullScreenChartExpandSection" title="{{language.shrink}}"
+            class="btn-round btn-small-24 btn-grey btn-expand-inv" (click)="fullScreenInvertFunction()"
+            data-toggle="tooltip"></button>
+        </div>
+      </div>
+
+      <div class="ml-3 mr-3">
+        <div class="mt-3" *ngIf="loading">
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary">
+              <span class="sr-only">{{language.Loading}}</span>
+            </div>
+          </div>
+        </div>
+        <div class="w-100 alert alert-danger  fade show my-3" *ngIf="fullScreenMsg">
+          <span class="error-img"><img src="./assets/img/ic_error-36px.svg"></span>
+          <button type="button" class="close" (click)=" fullScreenMsg = ''"><span></span></button>
+          <div class="d-inline-flex" [innerHtml]="fullScreenMsg"></div>
+        </div>
+        <div class="mwc-content" [ngClass]="!fullScreenMsg  ? 'd-block' : 'd-none'">
+          <div id="fullScreenChart" class="chart-box hw-full"></div>
+        </div>
+      </div>
+
+      <div class="row col-md-12" class="w-100">
+        <table id="ont-fullscreen" width="100%" class="row-border hover table-alter" datatable [dtOptions]="dtOptions"
+          [dtTrigger]="dtTrigger1">
+          <thead>
+            <tr>
+              <th>{{language[fullScreenChartType] || fullScreenChartType }}</th>
+              <th [hidden]="fullScreenChart !='ponchart' ">{{language.Upstream}}</th>
+              <th [hidden]="fullScreenChart !='ponchart' ">{{language.Downstream}}</th>
+              <th [hidden]="fullScreenChart !='packagechart' ">{{language['Received Discarded Packets']}}
+              </th>
+              <th [hidden]="fullScreenChart !='packagechart' ">{{language['Transmitted Discarded Packets']}}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let list of fullScreenData">
+              <td>{{list[fullScreenChartType]?list[fullScreenChartType]:"--"}}{{list.deleted?' (Deleted)':""}} </td>
+              <td [hidden]="fullScreenChart !='ponchart' ">{{countconvert(list.usUtilExcCnt) }}</td>
+              <td [hidden]="fullScreenChart !='ponchart' ">{{countconvert(list.dsUtilExcCnt)}}</td>
+              <td [hidden]="fullScreenChart !='packagechart' ">{{countconvert(list.rxErr)}}</td>
+              <td [hidden]="fullScreenChart !='packagechart' ">{{countconvert(list.txErr)}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<!--------------------------Time Series chart------------------------------------------->
+<section class="my-3">
+  <div *ngIf="timeseriesChart && !fullScreen">
+    <div class="w-100 my-2" *ngFor="let item of multipleTimeseriesChartList; let i=index">
+      <app-aetimeseries [wholedata]=item [title]=item.title [system]=item.system (valueChange)="clearChartContainer($event)">
+
+      </app-aetimeseries>
+    </div>
+  </div>
+</section>
+<!-------------------modal------------------------------------------------------------->
+<ng-template #showInfoModal let-modal class="col-md-12">
+  <div class="modal-header d-block">
+    <h5 class="modal-title" id="showInfoModal">{{ modalTitle }}</h5>
+
+    <div>
+      {{modalInfo}}
+    </div>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+  <div class="modal-body add-device-model">
+    <button type="button" class="btn-default primary px-3 px-3" data-dismiss="modal"
+      (click)="modal.close('Save click')">
+      {{ language.Ok }}
+    </button>
+  </div>
+</ng-template>

@@ -1,0 +1,24 @@
+<div class="maximus  sys-admin-cont">
+
+    <app-admin-header></app-admin-header>
+
+
+    <div class="row">
+        <div class="col-md-2 col-sm-3 col-xs-12 pr-2">
+            <app-org-admins-side-menu></app-org-admins-side-menu>
+        </div>
+        <div class="col-md-10 col-sm-9 col-xs-12" #scrollTopId>
+            <!-- <div class="w-100 alert alert-danger  fade show" *ngIf="error">
+                <button type="button" class="close" (click)="closeAlert()">&times;</button>
+                {{errorInfo}}
+            </div>
+
+            <div class="w-100 alert alert-success fade show" *ngIf="success">
+                <button type="button" class="close" (click)="closeAlert()">&times;</button>
+                {{successInfo}}
+            </div> -->
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+</div>
+<app-admin-footer></app-admin-footer>
